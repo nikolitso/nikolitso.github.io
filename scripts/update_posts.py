@@ -11,8 +11,8 @@ from email.utils import parsedate_to_datetime
 from pathlib import Path
 
 FEEDS = [
-    ("What Algo Missed", "film", "https://whatalgomissed.com/feed"),
     ("The Edge", "", "https://analyticsports.substack.com/feed"),
+    ("What Algo Missed", "film", "https://whatalgomissed.com/feed"),
 ]
 PER_FEED = 3
 INDEX = Path(__file__).resolve().parent.parent / "index.html"
