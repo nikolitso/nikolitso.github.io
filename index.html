@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta property="og:title" content="Antonis Nikolitsopoulos">
+<meta property="og:description" content="Sports analytics tools and writing on world cinema and decision science.">
+<meta property="og:url" content="https://antonisnikolitsopoulos.com/">
+<link rel="canonical" href="https://antonisnikolitsopoulos.com/">
+<title>Antonis Nikolitsopoulos</title>
+<meta name="description" content="Antonis Nikolitsopoulos: sports analytics tools and writing on world cinema and decision science.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Source+Serif+4:ital,opsz,wght@0,8..60,400..600;1,8..60,400&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a match-programme index. Oversized condensed name, then the work as a numbered-free ledger of rows grouped by kind. */
+:root {
+  --paper: #f3f4f1;
+  --ink: #14171b;
+  --muted: #5d636b;
+  --rule: #d4d7d2;
+  --accent: #1f46c8;   /* cobalt: links, tags */
+  --film: #b8541a;     /* warm tag for cinema */
+  --row-hover: #e8eae5;
+  --display: "Archivo", "Arial Narrow", "Helvetica Neue", Arial, sans-serif;
+  --body: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #111317; --ink: #eceee9; --muted: #9aa0a8; --rule: #2a2e35;
+    --accent: #8ea6ff; --film: #f0915a; --row-hover: #1a1d22; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #111317; --ink: #eceee9; --muted: #9aa0a8; --rule: #2a2e35;
+  --accent: #8ea6ff; --film: #f0915a; --row-hover: #1a1d22; color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  margin: 0;
+}
+.wrap {
+  max-width: 68rem;
+  margin: 0 auto;
+  padding-inline: clamp(16px, 4vw, 40px);
+  padding-block: clamp(2rem, 6vw, 4.5rem) 3rem;
+}
+a { color: inherit; }
+a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
+
+/* Masthead */
+.top {
+  display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; flex-wrap: wrap;
+  font-family: var(--mono); font-size: .75rem; letter-spacing: .06em; text-transform: uppercase; color: var(--muted);
+  border-bottom: 1px solid var(--ink); padding-bottom: .6rem;
+}
+.top nav { display: flex; gap: 1.25rem; }
+.top nav a { text-decoration: none; }
+.top nav a:hover { color: var(--accent); }
+
+.hero { padding-block: clamp(2rem, 6vw, 4rem) clamp(2rem, 5vw, 3.5rem); }
+h1 {
+  font-family: var(--display);
+  font-stretch: 62%;
+  font-weight: 850;
+  text-transform: uppercase;
+  line-height: .86;
+  letter-spacing: -.01em;
+  font-size: clamp(3.4rem, 13.5vw, 10.5rem);
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+h1 .last { display: block; color: var(--accent); }
+.lede {
+  margin: clamp(1.5rem, 3vw, 2.25rem) 0 0;
+  max-width: 34ch;
+  font-size: clamp(1.3rem, 2.6vw, 1.75rem);
+  line-height: 1.35;
+  text-wrap: balance;
+}
+.lede em { font-style: italic; color: var(--muted); }
+
+/* Sections */
+section { padding-block: 1.5rem 1rem; }
+.sec-head {
+  display: flex; justify-content: space-between; align-items: baseline; gap: 1rem;
+  border-top: 1px solid var(--ink); padding-top: .6rem;
+}
+h2 {
+  font-family: var(--display); font-stretch: 75%; font-weight: 800; text-transform: uppercase;
+  font-size: 1.05rem; letter-spacing: .08em; margin: 0;
+}
+.sec-head span { font-family: var(--mono); font-size: .75rem; color: var(--muted); }
+
+.rows { list-style: none; margin: 0; padding: 0; }
+.row a {
+  display: grid;
+  grid-template-columns: 11rem minmax(0, 1fr) auto;
+  gap: .4rem 2rem;
+  align-items: baseline;
+  padding: 1.5rem .75rem;
+  margin-inline: -.75rem;
+  text-decoration: none;
+  border-bottom: 1px solid var(--rule);
+  transition: background-color .15s ease;
+}
+.row a:hover { background: var(--row-hover); }
+.tag {
+  font-family: var(--mono); font-size: .72rem; letter-spacing: .06em; text-transform: uppercase;
+  color: var(--accent);
+}
+.tag.film { color: var(--film); }
+.title {
+  font-family: var(--display); font-stretch: 80%; font-weight: 750;
+  font-size: clamp(1.6rem, 3.4vw, 2.4rem); line-height: 1.05; margin: 0;
+  text-wrap: balance;
+}
+.desc { margin: .5rem 0 0; color: var(--muted); max-width: 60ch; }
+.meta {
+  margin: .7rem 0 0; font-family: var(--mono); font-size: .75rem; color: var(--muted);
+  display: flex; flex-wrap: wrap; gap: .25rem 1.25rem;
+}
+.go {
+  font-family: var(--mono); font-size: .8rem; color: var(--muted); white-space: nowrap;
+  display: inline-flex; gap: .4rem; align-items: baseline;
+}
+.go i { font-style: normal; transition: transform .15s ease; display: inline-block; }
+.row a:hover .go { color: var(--accent); }
+.row a:hover .go i { transform: translateX(4px); }
+
+/* Elsewhere */
+.else { display: flex; flex-wrap: wrap; gap: .75rem; padding-top: 1.25rem; }
+.else a {
+  display: inline-flex; gap: .6rem; align-items: baseline;
+  border: 1px solid var(--ink); border-radius: 999px; padding: .55rem 1.1rem;
+  font-family: var(--mono); font-size: .8rem; text-decoration: none;
+  transition: background-color .15s ease, color .15s ease;
+}
+.else a:hover { background: var(--ink); color: var(--paper); }
+.else a span { color: var(--muted); }
+.else a:hover span { color: inherit; }
+
+footer {
+  margin-top: 3rem; border-top: 1px solid var(--rule); padding-top: 1rem;
+  font-family: var(--mono); font-size: .72rem; color: var(--muted);
+  display: flex; justify-content: space-between; flex-wrap: wrap; gap: .5rem;
+}
+
+@media (max-width: 720px) {
+  .row a { grid-template-columns: minmax(0, 1fr); gap: .35rem; }
+  .go { margin-top: .5rem; }
+  .top nav { gap: .9rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; }
+}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="top">
+    <span>Sports data · Film · Books</span>
+    <nav aria-label="Sections">
+      <a href="#writing">Writing</a>
+      <a href="#tools">Tools</a>
+      <a href="#elsewhere">Elsewhere</a>
+    </nav>
+  </header>
+
+  <div class="hero">
+    <h1>Antonis <span class="last">Nikolitsopoulos</span></h1>
+    <p class="lede">I build sports analytics tools and write about the films, books and edges <em>the algorithm tends to miss.</em></p>
+  </div>
+
+  <section id="writing" aria-labelledby="h-writing">
+    <div class="sec-head"><h2 id="h-writing">Writing</h2><span>Film &amp; books</span></div>
+    <ul class="rows">
+      <li class="row">
+        <a href="https://whatalgomissed.com/" target="_blank" rel="noopener">
+          <span class="tag film">Blog · World cinema</span>
+          <div>
+            <h3 class="title">What Algo Missed</h3>
+            <p class="desc">A personal map of world cinema, built on the idea that the most honest, most alive filmmaking often comes from places the algorithm has no reason to recommend.</p>
+            <p class="meta"><span>Essays &amp; recommendations</span><span>Launched 2026</span></p>
+          </div>
+          <span class="go">whatalgomissed.com <i aria-hidden="true">→</i></span>
+        </a>
+      </li>
+      <li class="row">
+        <a href="https://analyticsports.substack.com/" target="_blank" rel="noopener">
+          <span class="tag">Blog · Book takeaways</span>
+          <div>
+            <h3 class="title">The Edge</h3>
+            <p class="desc">Book takeaways on sports analytics, betting, decision science, and building an edge at work and in life.</p>
+            <p class="meta"><span>Analytics · Betting · Decision science</span><span>Launched 2026</span></p>
+          </div>
+          <span class="go">analyticsports.substack.com <i aria-hidden="true">→</i></span>
+        </a>
+      </li>
+    </ul>
+  </section>
+
+  <section id="tools" aria-labelledby="h-tools">
+    <div class="sec-head"><h2 id="h-tools">Tools</h2><span>Greek football &amp; basketball data</span></div>
+    <ul class="rows">
+      <li class="row">
+        <a href="https://nikolitso.github.io/paok-hub/" target="_blank" rel="noopener">
+          <span class="tag">Stats hub · PAOK FC</span>
+          <div>
+            <h3 class="title">PAOK Hub</h3>
+            <p class="desc">A reference for PAOK FC: player ratings and profiles, fixtures and match reports, head-to-heads against the Big-3 and the rest of the league, referee analysis and expected league tables.</p>
+            <p class="meta"><span>Seasons 2020-21 → 2026-27</span><span>League · Cup · Europe</span><span>GitHub Pages</span></p>
+          </div>
+          <span class="go">nikolitso.github.io <i aria-hidden="true">→</i></span>
+        </a>
+      </li>
+      <li class="row">
+        <a href="https://nikolitso.github.io/paok-basketball/" target="_blank" rel="noopener">
+          <span class="tag">Fan site · PAOK Basketball</span>
+          <div>
+            <h3 class="title">PAOK Basketball</h3>
+            <p class="desc">An unofficial hub for PAOK's basketball season: roster, schedule, team and player stats, and standings, pulled from the official league data.</p>
+            <p class="meta"><span>Season 2026-27</span><span>EuroCup · Greek Basket League</span><span>GitHub Pages</span></p>
+          </div>
+          <span class="go">nikolitso.github.io <i aria-hidden="true">→</i></span>
+        </a>
+      </li>
+      <li class="row">
+        <a href="https://tsimento.pythonanywhere.com/" target="_blank" rel="noopener">
+          <span class="tag">Model · Odds</span>
+          <div>
+            <h3 class="title">Card Odds Compiler</h3>
+            <p class="desc">Prices Greek Super League matches from card data. It tracks how favourites and underdogs get booked, adjusts for each referee's tendencies and Big-4 bias, and breaks card averages down by team, coach era, odds range and venue.</p>
+            <p class="meta"><span>1X2 · Cards</span><span>2024-25 onward</span><span>Python web app</span></p>
+          </div>
+          <span class="go">tsimento.pythonanywhere.com <i aria-hidden="true">→</i></span>
+        </a>
+      </li>
+    </ul>
+  </section>
+
+  <section id="elsewhere" aria-labelledby="h-else">
+    <div class="sec-head"><h2 id="h-else">Elsewhere</h2><span>Follow or get in touch</span></div>
+    <div class="else">
+      <a href="https://www.linkedin.com/in/antonis-nikolitsopoulos/" target="_blank" rel="noopener">LinkedIn <span>/in/antonis-nikolitsopoulos</span></a>
+      <a href="https://whatalgomissed.com/" target="_blank" rel="noopener">Read <span>What Algo Missed</span></a>
+      <a href="https://analyticsports.substack.com/" target="_blank" rel="noopener">Read <span>The Edge</span></a>
+    </div>
+  </section>
+
+  <footer>
+    <span>© 2026 Antonis Nikolitsopoulos</span>
+    <span>Full time.</span>
+  </footer>
+</div>
+</body>
+</html>
