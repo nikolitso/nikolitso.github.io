@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta property="og:title" content="Antonis Nikolitsopoulos">
-<meta property="og:description" content="Sports analytics tools and writing on world cinema and decision science.">
+<meta property="og:description" content="Football Trading Team Leader at Kaizen Gaming. Sports analytics tools, and writing on world cinema and decision science.">
 <meta property="og:url" content="https://antonisnikolitsopoulos.com/">
 <meta property="og:type" content="website">
 <meta property="og:image" content="https://antonisnikolitsopoulos.com/og.png">
@@ -16,7 +16,7 @@
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="canonical" href="https://antonisnikolitsopoulos.com/">
 <title>Antonis Nikolitsopoulos</title>
-<meta name="description" content="Antonis Nikolitsopoulos: sports analytics tools and writing on world cinema and decision science.">
+<meta name="description" content="Antonis Nikolitsopoulos, Football Trading Team Leader at Kaizen Gaming: sports analytics tools, and writing on world cinema and decision science.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Source+Serif+4:ital,opsz,wght@0,8..60,400..600;1,8..60,400&family=JetBrains+Mono:wght@400;500&display=swap">
@@ -97,6 +97,18 @@ h1 .last { display: block; color: var(--accent); }
 
 /* Sections */
 section { padding-block: 1.5rem 1rem; }
+
+/* About */
+.about {
+  display: grid; grid-template-columns: minmax(0, 16rem) minmax(0, 1fr); gap: clamp(1.5rem, 4vw, 3.5rem);
+  align-items: start; border-top: 1px solid var(--ink); padding-block: 2rem 1.5rem;
+}
+.about img { width: 100%; height: auto; aspect-ratio: 4 / 5; object-fit: cover; display: block; }
+.about-text p { margin: .9rem 0 0; max-width: 62ch; }
+.about-text strong { font-weight: 600; }
+.facts { display: flex; flex-wrap: wrap; gap: 1rem 2.5rem; margin: 1.5rem 0 0; }
+.facts dt { font-family: var(--mono); font-size: .7rem; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.facts dd { margin: .15rem 0 0; font-family: var(--display); font-stretch: 85%; font-weight: 650; font-size: 1.05rem; }
 .sec-head {
   display: flex; justify-content: space-between; align-items: baseline; gap: 1rem;
   border-top: 1px solid var(--ink); padding-top: .6rem;
@@ -174,6 +186,8 @@ footer {
 }
 
 @media (max-width: 720px) {
+  .about { grid-template-columns: minmax(0, 1fr); }
+  .about img { max-width: 12rem; }
   .feeds { grid-template-columns: minmax(0, 1fr); gap: 1.5rem; }
   .feed li a { grid-template-columns: minmax(0, 1fr); gap: .1rem; }
   .row a { grid-template-columns: minmax(0, 1fr); gap: .35rem; }
@@ -189,8 +203,9 @@ footer {
 
 <div class="wrap">
   <header class="top">
-    <span>Sports data · Film · Books</span>
+    <span>Thessaloniki · Pricing &amp; data · Film · Books</span>
     <nav aria-label="Sections">
+      <a href="#about">About</a>
       <a href="#writing">Writing</a>
       <a href="#latest">Latest</a>
       <a href="#tools">Tools</a>
@@ -200,8 +215,23 @@ footer {
 
   <div class="hero">
     <h1>Antonis <span class="last">Nikolitsopoulos</span></h1>
-    <p class="lede">I build sports analytics tools and write about the films, books and edges <em>the algorithm tends to miss.</em></p>
+    <p class="lede">I price football markets for a living, build sports analytics tools for fun, and write about the films, books and edges <em>the algorithm tends to miss.</em></p>
   </div>
+
+  <section id="about" class="about" aria-labelledby="h-about">
+    <img src="photo.jpg" width="800" height="1000" alt="Portrait of Antonis Nikolitsopoulos">
+    <div class="about-text">
+      <h2 id="h-about">About</h2>
+      <p>I'm a Football Trading Team Leader at <strong>Kaizen Gaming</strong>, the company behind Betano. My work is pre-event pricing and quantitative modelling, and building the teams that price soccer markets at scale.</p>
+      <p>Outside work I build the same kind of thing for fun: stats hubs for PAOK football and basketball, and a card-based odds model for the Greek Super League.</p>
+      <p>I also write. <em>What Algo Missed</em> is my personal map of world cinema, from Greek and Danish to Iranian and Palestinian film. Every list started as a private obsession, and nothing is sponsored. <em>The Edge</em> is a working library of book reviews on analytics, betting, decision-making and career, usually written within a day or two of finishing the book.</p>
+      <dl class="facts">
+        <div><dt>Role</dt><dd>Football Trading Team Leader</dd></div>
+        <div><dt>Focus</dt><dd>Pre-event pricing · Quant modelling</dd></div>
+        <div><dt>Based in</dt><dd>Thessaloniki, Greece</dd></div>
+      </dl>
+    </div>
+  </section>
 
   <section id="writing" aria-labelledby="h-writing">
     <div class="sec-head"><h2 id="h-writing">Writing</h2><span>Film &amp; books</span></div>
@@ -298,6 +328,7 @@ footer {
     <div class="sec-head"><h2 id="h-else">Elsewhere</h2><span>Follow or get in touch</span></div>
     <div class="else">
       <a href="https://www.linkedin.com/in/antonis-nikolitsopoulos/" target="_blank" rel="noopener">LinkedIn <span>/in/antonis-nikolitsopoulos</span></a>
+      <a href="https://letterboxd.com/nikolitso/" target="_blank" rel="noopener">Letterboxd <span>/nikolitso</span></a>
       <a href="https://whatalgomissed.com/" target="_blank" rel="noopener">Read <span>What Algo Missed</span></a>
       <a href="https://analyticsports.substack.com/" target="_blank" rel="noopener">Read <span>The Edge</span></a>
     </div>
