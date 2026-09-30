@@ -6,6 +6,14 @@
 <meta property="og:title" content="Antonis Nikolitsopoulos">
 <meta property="og:description" content="Sports analytics tools and writing on world cinema and decision science.">
 <meta property="og:url" content="https://antonisnikolitsopoulos.com/">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://antonisnikolitsopoulos.com/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.png" type="image/png" sizes="64x64">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="canonical" href="https://antonisnikolitsopoulos.com/">
 <title>Antonis Nikolitsopoulos</title>
 <meta name="description" content="Antonis Nikolitsopoulos: sports analytics tools and writing on world cinema and decision science.">
@@ -73,9 +81,9 @@ h1 {
   text-transform: uppercase;
   line-height: .86;
   letter-spacing: -.01em;
-  font-size: clamp(3.4rem, 13.5vw, 10.5rem);
+  font-size: clamp(2.5rem, 8.5vw, 7rem);
   margin: 0;
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word;
 }
 h1 .last { display: block; color: var(--accent); }
 .lede {
@@ -135,6 +143,18 @@ h2 {
 .row a:hover .go { color: var(--accent); }
 .row a:hover .go i { transform: translateX(4px); }
 
+/* Latest posts */
+.feeds { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem 3rem; padding-top: 1.25rem; }
+.feed .tag { margin: 0 0 .25rem; }
+.feed ul { list-style: none; margin: 0; padding: 0; }
+.feed li a {
+  display: grid; grid-template-columns: 7.5rem minmax(0, 1fr); gap: 1rem; align-items: baseline;
+  padding-block: .7rem; border-bottom: 1px solid var(--rule); text-decoration: none;
+}
+.feed time { font-family: var(--mono); font-size: .75rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+.feed li a span { font-family: var(--display); font-stretch: 85%; font-weight: 650; font-size: 1.1rem; line-height: 1.25; }
+.feed li a:hover span { color: var(--accent); }
+
 /* Elsewhere */
 .else { display: flex; flex-wrap: wrap; gap: .75rem; padding-top: 1.25rem; }
 .else a {
@@ -154,6 +174,8 @@ footer {
 }
 
 @media (max-width: 720px) {
+  .feeds { grid-template-columns: minmax(0, 1fr); gap: 1.5rem; }
+  .feed li a { grid-template-columns: minmax(0, 1fr); gap: .1rem; }
   .row a { grid-template-columns: minmax(0, 1fr); gap: .35rem; }
   .go { margin-top: .5rem; }
   .top nav { gap: .9rem; }
@@ -170,6 +192,7 @@ footer {
     <span>Sports data · Film · Books</span>
     <nav aria-label="Sections">
       <a href="#writing">Writing</a>
+      <a href="#latest">Latest</a>
       <a href="#tools">Tools</a>
       <a href="#elsewhere">Elsewhere</a>
     </nav>
@@ -206,6 +229,30 @@ footer {
         </a>
       </li>
     </ul>
+  </section>
+
+  <section id="latest" aria-labelledby="h-latest">
+    <div class="sec-head"><h2 id="h-latest">Latest</h2><span>Updated daily</span></div>
+    <div class="feeds">
+      <!-- posts:start -->
+      <div class="feed">
+        <p class="tag film">What Algo Missed</p>
+        <ul>
+          <li><a href="https://whatalgomissed.com/p/what-algo-missed" target="_blank" rel="noopener"><time datetime="2026-05-28">28 May 2026</time><span>Some films take years to find you</span></a></li>
+          <li><a href="https://whatalgomissed.com/p/films-by-year" target="_blank" rel="noopener"><time datetime="2026-05-28">28 May 2026</time><span>All Films — Ranked by Year</span></a></li>
+          <li><a href="https://whatalgomissed.com/p/europa-european-cinema" target="_blank" rel="noopener"><time datetime="2026-05-11">11 May 2026</time><span>Europa</span></a></li>
+        </ul>
+      </div>
+      <div class="feed">
+        <p class="tag">The Edge</p>
+        <ul>
+          <li><a href="https://analyticsports.substack.com/p/game-theory" target="_blank" rel="noopener"><time datetime="2026-08-13">13 Aug 2026</time><span>Game Theory</span></a></li>
+          <li><a href="https://analyticsports.substack.com/p/inside-the-box-how-constraints-make" target="_blank" rel="noopener"><time datetime="2026-06-01">1 Jun 2026</time><span>Inside the Box</span></a></li>
+          <li><a href="https://analyticsports.substack.com/p/how-to-win-the-world-cup" target="_blank" rel="noopener"><time datetime="2026-05-12">12 May 2026</time><span>How to Win the World Cup</span></a></li>
+        </ul>
+      </div>
+      <!-- posts:end -->
+    </div>
   </section>
 
   <section id="tools" aria-labelledby="h-tools">
