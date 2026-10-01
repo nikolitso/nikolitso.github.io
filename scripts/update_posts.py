@@ -12,7 +12,7 @@ from pathlib import Path
 
 FEEDS = [
     ("The Edge", "", "https://analyticsports.substack.com/feed"),
-    ("What Algo Missed", "film", "https://whatalgomissed.com/feed"),
+    ("What Algo Missed", "film", "https://whatalgomissed.com/feed.xml"),
 ]
 PER_FEED = 3
 INDEX = Path(__file__).resolve().parent.parent / "index.html"
