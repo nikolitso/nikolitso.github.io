@@ -63,12 +63,18 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-
 /* ---------- Header ---------- */
 .site-head { background: var(--night); color: var(--on-dark); border-bottom: 1px solid var(--line-dark); position: sticky; top: 0; z-index: 10; }
 .bar { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 1rem; min-height: 76px; }
-.brand { display: inline-flex; flex-direction: column; align-items: center; gap: .35rem; text-decoration: none; justify-self: start; }
+.brand { display: inline-flex; align-items: center; gap: .8rem; text-decoration: none; justify-self: start; color: var(--on-dark); }
 .mono {
-  width: 34px; height: 34px; border-radius: 9px; display: grid; place-items: center;
-  background: var(--accent); color: #fff; font-family: var(--display); font-size: 1.25rem; line-height: 1; font-style: italic;
+  width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex: none;
+  border: 1px solid rgba(255,255,255,.35); font-family: var(--display); font-size: 1.15rem; line-height: 1; letter-spacing: .02em;
+  transition: border-color .25s, background .25s;
 }
-.brand b { font-size: .62rem; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; }
+.mono i { color: #8fa9ff; }
+.brand:hover .mono { border-color: #8fa9ff; background: rgba(143,169,255,.08); }
+.wordmark { display: flex; flex-direction: column; line-height: 1.05; }
+.wordmark span { font-family: var(--display); font-size: 1.3rem; letter-spacing: .005em; }
+.wordmark span em { color: #8fa9ff; }
+.wordmark small { font-size: .58rem; font-weight: 600; letter-spacing: .2em; text-transform: uppercase; color: var(--on-dark-muted); margin-top: .3rem; }
 .menu { display: flex; gap: clamp(1.25rem, 2.6vw, 2.25rem); }
 .menu a {
   text-decoration: none; font-size: .74rem; font-weight: 600; letter-spacing: .14em; text-transform: uppercase;
@@ -172,7 +178,9 @@ section.alt .card .meta span { background: var(--paper-2); }
 
 @media (max-width: 860px) {
   .bar { grid-template-columns: 1fr auto; min-height: 64px; }
-  .brand { flex-direction: row; gap: .6rem; }
+  .brand { gap: .6rem; }
+  .wordmark small { display: none; }
+  .wordmark span { font-size: 1.1rem; }
   .site-head .menu { grid-column: 1 / -1; grid-row: 2; justify-content: center; padding-bottom: .9rem; gap: 1.25rem; }
   .hero-in { grid-template-columns: minmax(0, 1fr); }
   .portrait { justify-self: start; width: min(70%, 16rem); order: -1; }
@@ -200,8 +208,8 @@ section.alt .card .meta span { background: var(--paper-2); }
 <header class="site-head">
   <div class="wrap bar">
     <a class="brand" href="#top" aria-label="Antonis Nikolitsopoulos, home">
-      <span class="mono">AN</span>
-      <b>Antonis Nikolitsopoulos</b>
+      <span class="mono">A<i>N</i></span>
+      <span class="wordmark"><span>Antonis <em>Nikolitsopoulos</em></span><small>Sports analytics · Data</small></span>
     </a>
     <nav class="menu" aria-label="Sections">
       <a href="#about">About</a>
