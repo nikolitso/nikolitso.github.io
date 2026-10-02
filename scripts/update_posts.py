@@ -38,14 +38,33 @@ def latest(url):
     return posts[:PER_FEED]
 
 
-def render():
+def current_block(page, name):
+    """The feed's block as it is on the page now, used when its feed can't be reached."""
+    m = re.search(
+        r'      <div class="feed">\n        <p class="[^"]*">' + re.escape(html.escape(name)) + r"</p>.*?\n      </div>",
+        page,
+        flags=re.S,
+    )
+    return m.group(0) if m else None
+
+
+def render(page):
     cols = []
     for name, kind, url in FEEDS:
+        try:
+            posts = latest(url)
+        except Exception as e:  # e.g. the blog host blocks GitHub's servers for a while
+            old = current_block(page, name)
+            if old is None:
+                raise
+            print(f"::warning::{name}: could not read {url} ({e}); keeping current posts")
+            cols.append(old)
+            continue
         items = "\n".join(
             f'          <li><a href="{html.escape(link)}" target="_blank" rel="noopener">'
             f'<time datetime="{d:%Y-%m-%d}">{d.day} {d:%b %Y}</time>'
             f'<span>{html.escape(title)}</span></a></li>'
-            for d, title, link in latest(url)
+            for d, title, link in posts
         )
         tag_class = f"tag {kind}".strip()
         cols.append(
@@ -61,7 +80,7 @@ def main():
     page = INDEX.read_text(encoding="utf-8").replace("\r\n", "\n")
     new = re.sub(
         r"(<!-- posts:start -->).*?(\n[ \t]*<!-- posts:end -->)",
-        lambda m: m.group(1) + "\n" + render() + m.group(2),
+        lambda m: m.group(1) + "\n" + render(page) + m.group(2),
         page,
         flags=re.S,
     )
