@@ -62,7 +62,7 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-
 
 /* ---------- Header ---------- */
 .site-head { background: var(--night); color: var(--on-dark); border-bottom: 1px solid var(--line-dark); position: sticky; top: 0; z-index: 10; }
-.bar { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 1rem; min-height: 76px; }
+.bar { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 1rem; min-height: 76px; }
 .brand { display: inline-flex; align-items: center; gap: .8rem; text-decoration: none; justify-self: start; color: var(--on-dark); }
 .mono {
   width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex: none;
@@ -218,12 +218,6 @@ section.alt .card .meta span { background: var(--paper-2); }
       <span class="mono">A<i>N</i></span>
       <span class="wordmark"><span>Antonis <em>Nikolitsopoulos</em></span><small>Sports analytics · Data</small></span>
     </a>
-    <nav class="menu" aria-label="Sections">
-      <a href="#about"><sup>01</sup>About</a>
-      <a href="#writing"><sup>02</sup>Writing</a>
-      <a href="#latest"><sup>03</sup>Latest</a>
-      <a href="#paok"><sup>04</sup>PAOK</a>
-    </nav>
     <ul class="social" aria-label="Social links">
       <li><a href="https://x.com/nikolitso" target="_blank" rel="noopener" aria-label="X (Twitter)" title="X"><svg><use href="#i-x"/></svg></a></li>
       <li><a href="https://www.linkedin.com/in/antonis-nikolitsopoulos/" target="_blank" rel="noopener" aria-label="LinkedIn" title="LinkedIn"><svg><use href="#i-in"/></svg></a></li>
@@ -360,10 +354,5 @@ section.alt .card .meta span { background: var(--paper-2); }
     </div>
   </div>
 </footer>
-<script>
-(function(){var L=[].slice.call(document.querySelectorAll('.site-head .menu a'));if(!('IntersectionObserver'in window))return;
-var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){L.forEach(function(a){a.classList.toggle('on',a.getAttribute('href')==='#'+e.target.id)})}})},{rootMargin:'-45% 0px -50% 0px'});
-L.forEach(function(a){var s=document.querySelector(a.getAttribute('href'));if(s)io.observe(s)})})();
-</script>
 </body>
 </html>
