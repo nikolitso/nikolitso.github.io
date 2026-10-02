@@ -29,7 +29,15 @@ def fetch(url):
 def latest_substack_api(url):
     """Substack's archive API: a second route for when the RSS feed refuses GitHub's servers."""
     base = url.rsplit("/feed", 1)[0]
-    data = json.loads(fetch(f"{base}/api/v1/archive?sort=new&limit={PER_FEED}"))
+    api = f"{base}/api/v1/archive?sort=new&limit={PER_FEED}"
+    try:
+        data = json.loads(fetch(api))
+    except Exception as e:
+        # Substack blocks GitHub's servers outright, so ask the r.jina.ai reader to fetch it for us
+        print(f"Archive API failed ({e}); trying via r.jina.ai")
+        req = urllib.request.Request(f"https://r.jina.ai/{api}", headers={"X-Return-Format": "text"})
+        with urllib.request.urlopen(req, timeout=60) as r:
+            data = json.loads(r.read())
     posts = [
         (datetime.fromisoformat(p["post_date"].replace("Z", "+00:00")), p["title"].strip(), p["canonical_url"])
         for p in data
