@@ -13,14 +13,22 @@ from email.utils import parsedate_to_datetime
 from pathlib import Path
 
 FEEDS = [
-    ("The Edge", "", "https://analyticsports.substack.com/feed"),
+    ("The Edge", "", "https://antonisnikolitsopoulos.com/the-edge/feed.xml"),
     ("What Algo Missed", "film", "https://whatalgomissed.com/feed.xml"),
 ]
 PER_FEED = 3
 INDEX = Path(__file__).resolve().parent.parent / "index.html"
 
 
+ROOT = Path(__file__).resolve().parent.parent
+SELF = "https://antonisnikolitsopoulos.com/"
+
+
 def fetch(url):
+    if url.startswith(SELF):  # our own feed: read the freshly built file, no network needed
+        local = ROOT / url[len(SELF):]
+        if local.exists():
+            return local.read_bytes()
     req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0 (portfolio feed updater)"})
     with urllib.request.urlopen(req, timeout=30) as r:
         return r.read()
@@ -67,6 +75,11 @@ def latest(url):
     return posts[:PER_FEED]
 
 
+def ext_attrs(link):
+    """Open other sites in a new tab; keep our own pages in the same tab."""
+    return "" if link.startswith(("/", SELF)) else ' target="_blank" rel="noopener"'
+
+
 def current_block(page, name):
     """The feed's block as it is on the page now, used when its feed can't be reached."""
     m = re.search(
@@ -90,7 +103,7 @@ def render(page):
             cols.append(old)
             continue
         items = "\n".join(
-            f'          <li><a href="{html.escape(link)}" target="_blank" rel="noopener">'
+            f'          <li><a href="{html.escape(link)}"{ext_attrs(link)}>'
             f'<time datetime="{d:%Y-%m-%d}">{d.day} {d:%b %Y}</time>'
             f'<span>{html.escape(title)}</span></a></li>'
             for d, title, link in posts

@@ -1,0 +1,40 @@
+name: Build The Edge
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "_edge/**"
+      - "scripts/build_edge.py"
+      - "scripts/edge.css"
+      - ".github/workflows/build-edge.yml"
+  workflow_dispatch:        # "Run workflow" button in the Actions tab
+
+permissions:
+  contents: write
+
+concurrency:
+  group: build-edge
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: Build pages (and download any new covers)
+        run: python scripts/build_edge.py
+      - name: Refresh "Latest" on the homepage
+        run: python scripts/update_posts.py || echo "posts update skipped"
+      - name: Commit if changed
+        run: |
+          git add -A the-edge index.html
+          if git diff --cached --quiet; then exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Build The Edge"
+          git pull --rebase
+          git push

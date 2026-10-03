@@ -1,0 +1,52 @@
+media:
+  input: the-edge/covers
+  output: /the-edge/covers
+
+content:
+  - name: edge
+    label: The Edge — books
+    type: collection
+    path: _edge/books
+    filename: "{primary}.md"
+    view:
+      primary: title
+      fields: [title, topic, year]
+      sort: date
+      order: desc
+    fields:
+      - name: title
+        label: Book title
+        type: string
+        required: true
+      - name: subtitle
+        label: One-line summary
+        type: string
+      - name: authors
+        label: Authors
+        type: string
+        list: true
+      - name: year
+        label: Year published
+        type: number
+      - name: date
+        label: Date (newest appear first on the site and in "Latest")
+        type: date
+      - name: topic
+        label: Topic
+        type: select
+        options:
+          values: ["Football", "Betting & markets", "Sports analytics", "Thinking & decisions", "Personal development", "Work & leadership"]
+      - name: cover
+        label: Cover image
+        description: Upload the book cover (portrait). Leave as is for imported books.
+        type: image
+      - name: draft
+        label: Draft (hide from the site)
+        type: boolean
+      - name: substack
+        label: Original Substack link (old posts only)
+        type: string
+      - name: body
+        label: Takeaways
+        description: Write the review. For the special boxes, use a bold line "Key ideas:" followed by a bullet list, and a paragraph starting with bold "Worth it if:".
+        type: rich-text
