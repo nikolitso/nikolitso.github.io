@@ -161,6 +161,9 @@ section.alt .card .meta span { background: var(--paper-2); }
 .card:hover .go { color: var(--accent); }
 .card:hover .go i { transform: translateX(4px); }
 
+.card-shot { margin: calc(-1 * clamp(1.5rem, 3vw, 2.25rem)) calc(-1 * clamp(1.5rem, 3vw, 2.25rem)) 1.5rem; aspect-ratio: 16 / 9; overflow: hidden; border-radius: 18px 18px 0 0; border-bottom: 1px solid var(--rule); background: var(--paper-2); }
+.card-shot img { width: 100%; height: 100%; object-fit: cover; object-position: top center; display: block; transition: transform .5s ease; }
+.card:hover .card-shot img { transform: scale(1.03); }
 /* Latest */
 .feeds { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.25rem; margin-top: 2.5rem; }
 .feed { background: var(--paper); border: 1px solid var(--rule); border-radius: 18px; padding: 1.5rem clamp(1.25rem, 3vw, 2rem) .75rem; }
@@ -317,12 +320,14 @@ section.alt .card .meta span { background: var(--paper-2); }
       <p class="sec-intro">Independent analytics hubs for PAOK, a lifelong passion.</p>
       <div class="cards">
         <a class="card" href="https://antonisnikolitsopoulos.com/paok-hub/" target="_blank" rel="noopener">
+          <div class="card-shot"><img src="paok-hub.jpg" width="1200" height="675" loading="lazy" alt="PAOK Hub: the Expected Table"></div>
           <span class="tag">Stats hub · PAOK FC</span>
           <h3>PAOK Hub</h3>
           <p>PAOK's football seasons told through data: how the team plays, how the players perform, and how results compare with what the numbers expected.</p>
           <span class="go">Open the hub <i aria-hidden="true">→</i></span>
         </a>
         <a class="card" href="https://antonisnikolitsopoulos.com/paok-basketball/" target="_blank" rel="noopener">
+          <div class="card-shot"><img src="paok-basketball.jpg" width="1200" height="675" loading="lazy" alt="PAOK Basketball hub: next game and season leaders"></div>
           <span class="tag">Stats hub · PAOK Basketball</span>
           <h3>PAOK Basketball</h3>
           <p>Everything about PAOK's basketball season in one place: roster, schedule, team and player stats, and standings, built on official league data.</p>
