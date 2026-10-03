@@ -12,6 +12,7 @@ on:
 
 permissions:
   contents: write
+  issues: write
 
 concurrency:
   group: build-edge
@@ -22,6 +23,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
       - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
@@ -38,3 +41,10 @@ jobs:
           git commit -m "Build The Edge"
           git pull --rebase
           git push
+      - name: Email a one-tap "Post on X" link for each new book
+        if: github.event_name == 'push' && github.event.before != '0000000000000000000000000000000000000000'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          NEW=$(git diff --name-only --diff-filter=A ${{ github.event.before }} ${{ github.sha }} -- '_edge/books/*.md' || true)
+          if [ -n "$NEW" ]; then python scripts/share_on_x.py $NEW; else echo "no new books"; fi
