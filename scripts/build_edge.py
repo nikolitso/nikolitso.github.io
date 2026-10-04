@@ -22,7 +22,7 @@ OUT = ROOT / "the-edge"
 COVERS = OUT / "covers"
 SITE = "https://antonisnikolitsopoulos.com"
 BASE = "/the-edge/"
-GA = "G-47WEJE6NHJ"
+CF_BEACON = "b67bbb76d0e24af196b24ded3ab71ad0"  # Cloudflare Web Analytics (cookieless)
 
 TOPICS = [  # order shown on the site
     ("football", "Football", "#2f7d4f"),
@@ -194,9 +194,7 @@ def layout(title, body, path, desc, image=None, active="books"):
     return f"""<!doctype html>
 <html lang="en">
 <head>
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id={GA}"></script>
-<script>window.dataLayer=window.dataLayer||[];function gtag(){{dataLayer.push(arguments);}}gtag('js',new Date());gtag('config','{GA}');</script>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{{"token": "{CF_BEACON}"}}'></script>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>{esc(full)}</title>
