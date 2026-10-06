@@ -357,7 +357,7 @@ def page_book(b, books, by_date):
         <h1>{esc(b['title'])}</h1>
         {f'<p class="sub">{esc(b["subtitle"])}</p>' if b["subtitle"] else ''}
         <p class="by">{('by ' + authors_html) if authors_html else ''}{' · ' if authors_html and b['year'] else ''}{esc(b['year'])}</p>
-        <a class="share-x" href="{esc(share_x(b))}" target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#i-x"/></svg>Share on X</a>
+        <a class="share-x" data-owner hidden href="{esc(share_x(b))}" target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#i-x"/></svg>Share on X</a><script>(function(){{try{{var k='owner';if(location.hash==='#me')localStorage.setItem(k,'1');if(location.hash==='#notme')localStorage.removeItem(k);if(localStorage.getItem(k)==='1')document.querySelectorAll('[data-owner]').forEach(function(e){{e.hidden=false}});}}catch(e){{}}}})();</script>
       </div>
     </div>
   </section>

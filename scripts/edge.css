@@ -179,3 +179,6 @@ img { max-width: 100%; display: block; }
 .share-x { display: inline-flex; align-items: center; gap: .5rem; margin-top: 1.2rem; padding: .5rem 1rem; border-radius: 999px; border: 1px solid var(--rule); background: var(--paper); text-decoration: none; font-size: .85rem; font-weight: 600; color: var(--ink); transition: background .2s, color .2s, border-color .2s; }
 .share-x svg { width: 15px; height: 15px; fill: currentColor; }
 .share-x:hover { background: var(--night); color: #fff; border-color: var(--night); }
+
+/* Owner-only controls stay hidden unless revealed by script */
+[data-owner][hidden]{display:none!important}
