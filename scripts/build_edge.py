@@ -136,7 +136,7 @@ def cover_for(slug, url):
     if _fail["n"] < 6:
         ext = os.path.splitext(url.split("?")[0])[1].lower()
         ext = ext if ext in (".jpg", ".jpeg", ".png", ".webp") else ".jpg"
-        # direct first; then via a public image proxy, as Substack's hosts can refuse GitHub's servers
+        # direct first; then via a public image proxy, as some image hosts refuse GitHub's servers
         sources = [url, "https://images.weserv.nl/?url=" + urllib.parse.quote(url.split("://", 1)[-1], safe="")]
         for src in sources:
             try:

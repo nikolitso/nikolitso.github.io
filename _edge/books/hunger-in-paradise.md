@@ -6,8 +6,7 @@ authors:
 year: 2016
 date: 2016-07-01
 topic: "Football"
-cover: "https://substack-post-media.s3.amazonaws.com/public/images/b8fe18c5-6596-4501-a018-2d5dcb26dc47_320x500.jpeg"
-substack: "https://analyticsports.substack.com/p/hunger-in-paradise"
+cover: "/the-edge/covers/hunger-in-paradise.jpeg"
 ---
 <p>Ankersen, who later became co-owner and sporting director of Brentford FC, traveled the world studying the small clubs and academies that produce outsized numbers of elite footballers, asking what conditions actually manufacture talent.</p>
 

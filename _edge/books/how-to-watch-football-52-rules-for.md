@@ -6,8 +6,7 @@ authors:
 year: 2022
 date: 2022-07-01
 topic: "Football"
-cover: "https://substack-post-media.s3.amazonaws.com/public/images/d57f00dd-3418-44e1-9fcd-28cbbfb9e775_479x500.jpeg"
-substack: "https://analyticsports.substack.com/p/how-to-watch-football-52-rules-for"
+cover: "/the-edge/covers/how-to-watch-football-52-rules-for.jpeg"
 ---
 <p>Tifo Football built a following on YouTube doing tactical breakdowns that assume you already like football but want to understand what you’re actually looking at — why a back three shifts the way it does, what a false nine is really solving for, why a manager’s substitution pattern isn’t random. How To Watch Football is that same instinct in book form: 52 bite-sized rules for watching more like a coach and less like a fan following the ball.</p>
 

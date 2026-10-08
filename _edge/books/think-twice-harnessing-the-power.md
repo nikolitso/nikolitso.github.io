@@ -7,7 +7,6 @@ year: 2009
 date: 2009-11-01
 topic: "Thinking & decisions"
 cover: "https://covers.openlibrary.org/b/id/12179043-L.jpg"
-substack: "https://analyticsports.substack.com/p/think-twice-harnessing-the-power"
 ---
 <p>Mauboussin, a longtime investment strategist, catalogues the recurring decision-making traps that snare smart, experienced people specifically — overconfidence from past success, mistaking correlation for causation, anchoring on the wrong reference class — and offers concrete, checklist-style habits to counteract each one.</p>
 

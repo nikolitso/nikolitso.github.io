@@ -6,8 +6,7 @@ authors:
 year: 2019
 date: 2019-04-01
 topic: "Work & leadership"
-cover: "https://substack-post-media.s3.amazonaws.com/public/images/34a00dae-a638-47f3-8e1d-2a827d78d782_3185x3224.jpeg"
-substack: "https://analyticsports.substack.com/p/the-making-of-a-manager-what-to-do"
+cover: "/the-edge/covers/the-making-of-a-manager-what-to-do.jpeg"
 ---
 <p>Julie Zhuo became a manager at Facebook at 25, with no formal training and no idea what she was doing beyond the job title — and The Making of a Manager is the honest, memoir-adjacent account of learning the role from inside it, rather than a top-down framework written by someone who forgot what it felt like to be new at this.</p>
 

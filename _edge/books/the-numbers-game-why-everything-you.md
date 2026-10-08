@@ -7,8 +7,7 @@ authors:
 year: 2013
 date: 2013-03-01
 topic: "Football"
-cover: "https://substack-post-media.s3.amazonaws.com/public/images/e30cc618-31d6-4cfc-9207-3d8228d7b1ff_1076x1500.jpeg"
-substack: "https://analyticsports.substack.com/p/the-numbers-game-why-everything-you"
+cover: "/the-edge/covers/the-numbers-game-why-everything-you.jpeg"
 ---
 <p>Chris Anderson and David Sally’s The Numbers Game picks specific pieces of football folklore — corners are dangerous, red cards are decisive, star strikers win you the league — and tests them against the actual data. A lot of the folklore loses.</p>
 

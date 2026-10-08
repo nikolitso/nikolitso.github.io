@@ -6,8 +6,7 @@ authors:
 year: 2011
 date: 2011-06-01
 topic: "Personal development"
-cover: "https://substack-post-media.s3.amazonaws.com/public/images/89242e37-baf7-4c5a-ac5b-86ce38cf978a_400x430.jpeg"
-substack: "https://analyticsports.substack.com/p/be-excellent-at-anything-four-changes"
+cover: "/the-edge/covers/be-excellent-at-anything-four-changes.jpeg"
 ---
 <p>Likely Tony Schwartz’s work (founder of The Energy Project), built around a genuinely useful reframe: the constraint on performance usually isn’t time, it’s energy — physical, emotional, mental, and spiritual — and managing energy well across a day matters more than squeezing more hours out of it.</p>
 

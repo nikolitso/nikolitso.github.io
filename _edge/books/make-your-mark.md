@@ -7,7 +7,6 @@ year: 2014
 date: 2014-04-01
 topic: "Work & leadership"
 cover: "https://covers.openlibrary.org/b/isbn/9781477801239-L.jpg"
-substack: "https://analyticsports.substack.com/p/make-your-mark"
 ---
 <p>The third and final 99U book shifts from individual craft to actually building something — turning creative skill into a business with real income and a team, aimed at makers who are strong on the creative side but less sure how to build a sustainable venture around it.</p>
 

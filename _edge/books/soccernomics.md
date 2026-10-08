@@ -7,8 +7,7 @@ authors:
 year: 2009
 date: 2009-09-01
 topic: "Football"
-cover: "https://substack-post-media.s3.amazonaws.com/public/images/be352dd5-5806-432a-84b4-1ca174a8a844_683x1024.webp"
-substack: "https://analyticsports.substack.com/p/soccernomics"
+cover: "/the-edge/covers/soccernomics.webp"
 ---
 <p>Soccernomics is the book that made “the data disagrees with the pundits” a genre. Simon Kuper and Stefan Szymanski take a Freakonomics-style scalpel to football’s received wisdom — and a lot of it doesn’t survive.</p>
 

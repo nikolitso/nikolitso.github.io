@@ -6,8 +6,7 @@ authors:
 year: 2016
 date: 2016-06-26
 topic: "Betting & markets"
-cover: "https://substack-post-media.s3.amazonaws.com/public/images/2284deda-02ed-48bd-9c0b-11fef6e263cd_652x1000.jpeg"
-substack: "https://analyticsports.substack.com/p/squares-and-sharps-suckers-and-sharks"
+cover: "/the-edge/covers/squares-and-sharps-suckers-and-sharks.jpeg"
 ---
 <p>Buchdahl's focus here isn't betting mechanics at all — it's psychology: why a small group of bettors (“sharps”) consistently win over time while the much larger group (“squares”) consistently don't, even when both have access to the same odds.</p>
 

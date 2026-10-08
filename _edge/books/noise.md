@@ -8,8 +8,7 @@ authors:
 year: 2021
 date: 2021-06-01
 topic: "Thinking & decisions"
-cover: "https://substack-post-media.s3.amazonaws.com/public/images/1c8c6612-5a02-4d2c-aa3e-52ddf02b1284_418x648.jpeg"
-substack: "https://analyticsports.substack.com/p/noise"
+cover: "/the-edge/covers/noise.jpeg"
 ---
 <p>Daniel Kahneman's earlier work explored bias — the systematic ways judgment tilts in a predictable direction. Noise, co-written with Olivier Sibony and Cass Sunstein, is about bias's quieter, less-discussed sibling: unwanted variability in judgment, where the same case gets a different verdict depending on which judge, doctor, or underwriter happens to look at it, on no principled basis at all.</p>
 

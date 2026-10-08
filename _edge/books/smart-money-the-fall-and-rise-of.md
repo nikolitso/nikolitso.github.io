@@ -6,8 +6,7 @@ authors:
 year: 2024
 date: 2024-07-01
 topic: "Football"
-cover: "https://substack-post-media.s3.amazonaws.com/public/images/b1bf02cf-c7e9-4753-8c3c-a0e0501ad1fc_260x400.jpeg"
-substack: "https://analyticsports.substack.com/p/smart-money-the-fall-and-rise-of"
+cover: "/the-edge/covers/smart-money-the-fall-and-rise-of.jpeg"
 ---
 <p>Duff, a Bloomberg journalist, tells the story of how Brentford — a small, unglamorous West London club — used data-driven recruitment and an unconventional ownership philosophy to climb from League One obscurity to the Premier League, largely by finding undervalued players other clubs' scouting missed.</p>
 

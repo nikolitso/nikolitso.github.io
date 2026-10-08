@@ -6,8 +6,7 @@ authors:
 year: 2013
 date: 2013-07-01
 topic: "Betting & markets"
-cover: "https://substack-post-media.s3.amazonaws.com/public/images/425283cd-1c7a-4331-bd55-47b8430f7ee2_907x1360.jpeg"
-substack: "https://analyticsports.substack.com/p/sports-betting-basics"
+cover: "/the-edge/covers/sports-betting-basics.jpeg"
 ---
 <p>Moody spent years as About.com's “Sports Gambling Guide” columnist, and this book compiles and refines that material into a single beginner-oriented primer covering both team sports and horse racing.</p>
 

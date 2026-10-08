@@ -7,7 +7,6 @@ year: 2025
 date: 2025-11-07
 topic: "Personal development"
 cover: "https://covers.openlibrary.org/b/isbn/9780593716625-L.jpg"
-substack: "https://analyticsports.substack.com/p/the-art-of-spending-money"
 ---
 <p>Housel's follow-up to The Psychology of Money shifts focus from earning and saving to a harder, less-discussed question: how to actually spend money well, given that most people's spending habits are shaped by insecurity and social comparison rather than by what would genuinely make them happier.</p>
 

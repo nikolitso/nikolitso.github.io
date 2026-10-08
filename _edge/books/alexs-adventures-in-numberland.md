@@ -6,8 +6,7 @@ authors:
 year: 2010
 date: 2010-05-01
 topic: "Thinking & decisions"
-cover: "https://substack-post-media.s3.amazonaws.com/public/images/04731729-419f-40bc-aefd-0fbbcc5097b1_335x500.jpeg"
-substack: "https://analyticsports.substack.com/p/alexs-adventures-in-numberland"
+cover: "/the-edge/covers/alexs-adventures-in-numberland.jpeg"
 ---
 <p>Alex Bellos’s Adventures in Numberland is popular math done right: a genuinely globe-trotting tour of mathematics, visiting a Japanese abacus school, an Amazonian tribe with no words for numbers past five, and the origins of zero, all in service of showing that math is stranger and more human than the classroom version suggests.</p>
 

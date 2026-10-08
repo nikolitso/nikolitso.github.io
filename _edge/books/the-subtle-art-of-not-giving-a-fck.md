@@ -6,8 +6,7 @@ authors:
 year: 2016
 date: 2016-10-01
 topic: "Personal development"
-cover: "https://substack-post-media.s3.amazonaws.com/public/images/e5be55eb-0884-4d3a-85e8-ad5d6c4faa6b_1001x1500.jpeg"
-substack: "https://analyticsports.substack.com/p/the-subtle-art-of-not-giving-a-fck"
+cover: "/the-edge/covers/the-subtle-art-of-not-giving-a-fck.jpeg"
 ---
 <p>Mark Manson's central argument is a deliberate inversion of most self-help: the constant chase for more positivity and more things to care about is itself the problem, and the real skill is choosing — carefully and narrowly — what actually deserves your finite supply of caring, and ruthlessly not caring about the rest.</p>
 

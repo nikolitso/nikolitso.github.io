@@ -6,8 +6,7 @@ authors:
 year: 2019
 date: 2019-06-01
 topic: "Football"
-cover: "https://substack-post-media.s3.amazonaws.com/public/images/279275e8-d0b3-4b5f-9932-001ecdb40166_325x500.jpeg"
-substack: "https://analyticsports.substack.com/p/football-hackers-the-science-and"
+cover: "/the-edge/covers/football-hackers-the-science-and.jpeg"
 ---
 <p>Most football-analytics books explain a metric. Christoph Biermann’s Football Hackers explains a movement — the decade when data quietly took over how elite clubs actually coach, scout, and set up their teams, told through the people who pushed it in from the outside.</p>
 

@@ -6,8 +6,7 @@ authors:
 year: 2015
 date: 2015-07-02
 topic: "Football"
-cover: "https://substack-post-media.s3.amazonaws.com/public/images/8d218951-2632-4e6f-b242-5b6f8d2829e2_907x1360.jpeg"
-substack: "https://analyticsports.substack.com/p/money-and-soccer-a-soccernomics-guide"
+cover: "/the-edge/covers/money-and-soccer-a-soccernomics-guide.jpeg"
 ---
 <p>Szymanski, a sports economist, turns his attention specifically to the financial logic of football clubs — why most lose money, why relegation and promotion create such distorted incentives, and why the economics of the sport behave differently from a typical business despite superficially similar numbers.</p>
 

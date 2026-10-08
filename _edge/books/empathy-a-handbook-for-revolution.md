@@ -6,8 +6,7 @@ authors:
 year: 2014
 date: 2014-12-01
 topic: "Personal development"
-cover: "https://substack-post-media.s3.amazonaws.com/public/images/26bcdce1-fd77-4423-9e27-0eccc5544c5d_651x1024.jpeg"
-substack: "https://analyticsports.substack.com/p/empathy-a-handbook-for-revolution"
+cover: "/the-edge/covers/empathy-a-handbook-for-revolution.jpeg"
 ---
 <p>Roman Krznaric makes a bigger claim than most books that use the word “empathy” in the title: that it's a trainable skill with real social and political consequences, not just a nice personality trait some people happen to have more of.</p>
 

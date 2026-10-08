@@ -6,8 +6,7 @@ authors:
 year: 2013
 date: 2013-07-01
 topic: "Betting & markets"
-cover: "https://substack-post-media.s3.amazonaws.com/public/images/b554fffa-e961-42d2-a3c6-f1d42ffc3971_907x1360.jpeg"
-substack: "https://analyticsports.substack.com/p/becoming-a-winning-gambler"
+cover: "/the-edge/covers/becoming-a-winning-gambler.jpeg"
 ---
 <p>Moody's broader gambling book, expanding past sports into blackjack (card counting and basic strategy), poker, and horse racing, with separate sports-betting chapters split out by league — baseball, NBA, NFL, college football, college basketball.</p>
 

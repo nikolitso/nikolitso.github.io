@@ -7,7 +7,6 @@ year: 2022
 date: 2022-02-01
 topic: "Football"
 cover: "https://covers.openlibrary.org/b/id/13792951-L.jpg"
-substack: "https://analyticsports.substack.com/p/net-gains-inside-the-beautiful-games"
 ---
 <p>O'Hanlon, a football journalist, traces how data analytics moved from a fringe curiosity to a central part of how top clubs recruit, coach, and play, told through the people and ideas that drove the shift rather than through the math itself.</p>
 

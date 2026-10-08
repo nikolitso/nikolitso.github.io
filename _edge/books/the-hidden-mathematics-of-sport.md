@@ -7,8 +7,7 @@ authors:
 year: 2011
 date: 2011-07-01
 topic: "Sports analytics"
-cover: "https://substack-post-media.s3.amazonaws.com/public/images/a00d0398-2826-4b64-bab7-766972372dd8_931x1417.jpeg"
-substack: "https://analyticsports.substack.com/p/the-hidden-mathematics-of-sport"
+cover: "/the-edge/covers/the-hidden-mathematics-of-sport.jpeg"
 ---
 <p>Eastaway and Haigh's trick is keeping almost all the actual equations out of the main text — banished to an appendix — while still walking through genuinely rigorous ideas about probability and geometry across seventeen different sports.</p>
 

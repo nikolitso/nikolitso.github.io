@@ -6,8 +6,7 @@ authors:
 year: 2013
 date: 2013-05-01
 topic: "Work & leadership"
-cover: "https://substack-post-media.s3.amazonaws.com/public/images/b7ccf214-071c-4ba3-8014-772872da770a_318x429.jpeg"
-substack: "https://analyticsports.substack.com/p/how-to-find-fulfilling-work"
+cover: "/the-edge/covers/how-to-find-fulfilling-work.jpeg"
 ---
 <p>“Follow your passion” is famously bad career advice — vague, and it assumes you already know what your passion is. This entry pushes past that platitude into the harder, more useful question underneath it: what does “fulfilling” actually mean for you specifically, since it’s clearly not the same thing for everyone, and most people have never actually sat down and defined it before chasing it.</p>
 

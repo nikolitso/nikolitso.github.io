@@ -7,7 +7,6 @@ year: 2006
 date: 2006-03-28
 topic: "Personal development"
 cover: "https://covers.openlibrary.org/b/isbn/9781472139955-L.jpg"
-substack: "https://analyticsports.substack.com/p/mindset"
 ---
 <p>Dweck's core claim is that people operate from one of two implicit theories about ability: a "fixed mindset" that treats talent as an innate ceiling, or a "growth mindset" that treats it as something built through effort — and that this single belief shapes how people respond to failure, challenge, and criticism across school, sports, relationships, and work.</p>
 

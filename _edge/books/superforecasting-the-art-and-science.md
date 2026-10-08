@@ -7,8 +7,7 @@ authors:
 year: 2015
 date: 2015-09-01
 topic: "Thinking & decisions"
-cover: "https://substack-post-media.s3.amazonaws.com/public/images/dece7f99-4781-4ed0-a065-507fc5171fd7_324x500.jpeg"
-substack: "https://analyticsports.substack.com/p/superforecasting-the-art-and-science"
+cover: "/the-edge/covers/superforecasting-the-art-and-science.jpeg"
 ---
 <p>Drawing on Tetlock's Good Judgment Project, this book identifies what separates people who are actually good at predicting future events from the much larger group who merely sound confident — traits like updating beliefs incrementally, thinking in probabilities rather than certainties, and actively seeking disconfirming evidence.</p>
 

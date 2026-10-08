@@ -6,8 +6,7 @@ authors:
 year: 2004
 date: 2004-02-01
 topic: "Sports analytics"
-cover: "https://substack-post-media.s3.amazonaws.com/public/images/0c15fec9-4214-4c8a-a3e1-e55d7d29e89a_391x500.jpeg"
-substack: "https://analyticsports.substack.com/p/basketball-on-paper-rules-and-tools"
+cover: "/the-edge/covers/basketball-on-paper-rules-and-tools.jpeg"
 ---
 <p>If Moneyball popularized the idea of finding value with data, Basketball on Paper is where a lot of the actual math behind modern basketball analytics — offensive and defensive rating, possession-based efficiency, the Four Factors — got written down for the first time.</p>
 

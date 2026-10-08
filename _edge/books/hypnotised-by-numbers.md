@@ -6,8 +6,7 @@ authors:
 year: 2022
 date: 2022-07-01
 topic: "Football"
-cover: "https://substack-post-media.s3.amazonaws.com/public/images/1d7d35ad-1c38-4cee-ae7c-600f2a2bba88_1000x1500.jpeg"
-substack: "https://analyticsports.substack.com/p/hypnotised-by-numbers"
+cover: "/the-edge/covers/hypnotised-by-numbers.jpeg"
 ---
 <p>Part of a self-published trilogy on modern sports betting, this one pushes back on an assumption the rest of this shelf mostly takes for granted: that more data automatically means better decisions.</p>
 

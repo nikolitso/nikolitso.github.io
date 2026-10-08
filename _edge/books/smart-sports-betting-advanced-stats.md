@@ -6,8 +6,7 @@ authors:
 year: 2014
 date: 2014-11-01
 topic: "Betting & markets"
-cover: "https://substack-post-media.s3.amazonaws.com/public/images/e082fe10-fef6-4ca2-8258-8d269a104025_907x1360.jpeg"
-substack: "https://analyticsports.substack.com/p/smart-sports-betting-advanced-stats"
+cover: "/the-edge/covers/smart-sports-betting-advanced-stats.jpeg"
 ---
 <p>Rudnitsky opens with his own cautionary story — turning a $100 gift into roughly $8,000 before losing all of it — and the book is his attempt to distill what he learned studying successful bettors afterward.</p>
 

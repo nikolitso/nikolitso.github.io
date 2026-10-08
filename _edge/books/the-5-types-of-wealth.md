@@ -6,8 +6,7 @@ authors:
 year: 2025
 date: 2025-03-04
 topic: "Personal development"
-cover: "https://substack-post-media.s3.amazonaws.com/public/images/8e8eeca6-5992-4177-a45e-12b79ff20cab_326x500.jpeg"
-substack: "https://analyticsports.substack.com/p/the-5-types-of-wealth"
+cover: "/the-edge/covers/the-5-types-of-wealth.jpeg"
 ---
 <p>Bloom argues that treating money as the only form of wealth is a category error, and lays out five distinct types — Time, Social, Mental, Physical, and Financial — that together determine whether a life actually feels rich, not just looks rich on paper.</p>
 

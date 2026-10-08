@@ -7,8 +7,7 @@ authors:
 year: 2025
 date: 2025-04-01
 topic: "Work & leadership"
-cover: "https://substack-post-media.s3.amazonaws.com/public/images/0a1d7300-16bc-44bf-be6e-3aaeed130f01_833x1500.jpeg"
-substack: "https://analyticsports.substack.com/p/hbr-guide-to-generative-ai-for-managers"
+cover: "/the-edge/covers/hbr-guide-to-generative-ai-for-managers.jpeg"
 ---
 <p>Farri and Rosani write a practical, Harvard Business Review-style guide to what generative AI actually changes about managing a team — not the hype cycle, but the concrete decisions: which tasks to delegate to a model, how to redesign workflows around it, and how to keep judgment and accountability with people rather than letting them quietly evaporate into a tool.</p>
 

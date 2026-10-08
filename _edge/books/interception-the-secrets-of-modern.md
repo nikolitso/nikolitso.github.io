@@ -7,8 +7,7 @@ authors:
 year: 2023
 date: 2023-11-17
 topic: "Betting & markets"
-cover: "https://substack-post-media.s3.amazonaws.com/public/images/ff8cc761-052b-4969-9b61-d06c21978d98_971x1500.jpeg"
-substack: "https://analyticsports.substack.com/p/interception-the-secrets-of-modern"
+cover: "/the-edge/covers/interception-the-secrets-of-modern.jpeg"
 ---
 <p>Miller, a professional poker player and betting theorist, and Davidow pull back the curtain on how the modern sports betting industry actually works — not from the bettor's side, but from inside the machinery of lines, syndicates, and the algorithms that set and move odds.</p>
 

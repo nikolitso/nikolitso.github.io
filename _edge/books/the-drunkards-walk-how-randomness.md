@@ -6,8 +6,7 @@ authors:
 year: 2008
 date: 2008-06-01
 topic: "Thinking & decisions"
-cover: "https://substack-post-media.s3.amazonaws.com/public/images/85db28ca-7d14-4cf7-98e0-004571b4a446_304x450.jpeg"
-substack: "https://analyticsports.substack.com/p/the-drunkards-walk-how-randomness"
+cover: "/the-edge/covers/the-drunkards-walk-how-randomness.jpeg"
 ---
 <p>Leonard Mlodinow’s central argument in The Drunkard’s Walk is uncomfortable and hard to unsee once you’ve absorbed it: a huge amount of what we attribute to skill, intention, or destiny — a hot streak, a lucky break, a run of bad luck at exactly the wrong time — is much closer to pure randomness than the stories we tell about it afterward.</p>
 

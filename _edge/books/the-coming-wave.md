@@ -8,7 +8,6 @@ year: 2023
 date: 2023-10-05
 topic: "Thinking & decisions"
 cover: "https://covers.openlibrary.org/b/isbn/9780593593974-L.jpg"
-substack: "https://analyticsports.substack.com/p/the-coming-wave"
 ---
 <p>Suleyman's argument is that a wave of cheap, general-purpose technologies — frontier AI foremost among them, alongside synthetic biology and other fields — is about to become so powerful and so accessible that the usual tools states use to contain dangerous technology no longer work.</p>
 

@@ -6,8 +6,7 @@ authors:
 year: 2017
 date: 2017-05-01
 topic: "Personal development"
-cover: "https://substack-post-media.s3.amazonaws.com/public/images/553a3fae-7b71-4cd0-b18c-5108ad142eda_328x500.jpeg"
-substack: "https://analyticsports.substack.com/p/the-art-of-the-good-life-52-surprising"
+cover: "/the-edge/covers/the-art-of-the-good-life-52-surprising.jpeg"
 ---
 <p>Dobelli's follow-up applies the same catalog approach to something harder to pin down than cognitive bias: what actually makes a life go well.</p>
 

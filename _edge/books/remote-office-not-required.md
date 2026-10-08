@@ -7,8 +7,7 @@ authors:
 year: 2013
 date: 2013-06-01
 topic: "Work & leadership"
-cover: "https://substack-post-media.s3.amazonaws.com/public/images/097f2361-1f26-4457-89f1-e2fe9518bef1_942x1500.jpeg"
-substack: "https://analyticsports.substack.com/p/remote-office-not-required"
+cover: "/the-edge/covers/remote-office-not-required.jpeg"
 ---
 <p>Jason Fried and David Heinemeier Hansson (Basecamp’s founders) made the case for remote work years before it was forced on the rest of the working world — opinionated, occasionally combative, and largely vindicated once 2020 made the argument for them whether companies wanted it or not.</p>
 

@@ -6,8 +6,7 @@ authors:
 year: 2012
 date: 2012-07-01
 topic: "Personal development"
-cover: "https://substack-post-media.s3.amazonaws.com/public/images/f3c61816-3ef8-4c16-8c62-7645107b8a86_978x1500.jpeg"
-substack: "https://analyticsports.substack.com/p/all-the-money-in-the-world-what-the"
+cover: "/the-edge/covers/all-the-money-in-the-world-what-the.jpeg"
 ---
 <p>Likely Laura Vanderkam's book on the relationship between money and happiness — her research-driven, unsentimental style applied to a question most personal-finance writing avoids: not how to get more money, but what money actually does and doesn't buy in terms of genuine satisfaction, and where people consistently misjudge that relationship.</p>
 

@@ -6,8 +6,7 @@ authors:
 year: 2019
 date: 2019-01-03
 topic: "Work & leadership"
-cover: "https://substack-post-media.s3.amazonaws.com/public/images/a6537843-0448-4fe4-ae23-1d77ffa80791_364x500.jpeg"
-substack: "https://analyticsports.substack.com/p/the-emotionally-intelligent-office"
+cover: "/the-edge/covers/the-emotionally-intelligent-office.jpeg"
 ---
 <p>Most workplace advice treats the office as a purely rational space — process, incentives, org charts — and quietly ignores the fact that it’s also full of egos, insecurities, and unspoken emotional dynamics that shape how decisions actually get made. The Emotionally Intelligent Office applies The School of Life’s psychological lens to that gap: reading the room, managing your own reactions under pressure, understanding why a colleague’s behavior makes more sense once you see the anxiety underneath it.</p>
 

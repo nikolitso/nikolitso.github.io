@@ -6,8 +6,7 @@ authors:
 year: 2020
 date: 2020-07-01
 topic: "Work & leadership"
-cover: "https://substack-post-media.s3.amazonaws.com/public/images/3345f86d-cd47-4837-aa10-5945c5f5d8e7_360x500.jpeg"
-substack: "https://analyticsports.substack.com/p/how-to-get-on-with-your-colleagues"
+cover: "/the-edge/covers/how-to-get-on-with-your-colleagues.jpeg"
 ---
 <p>Most workplace-relationship advice is either HR-department-generic (“communicate openly!”) or purely tactical (how to run a meeting). This one stays closer to the imprint’s actual strength: the psychological undercurrents that make some colleague relationships easy and others quietly draining, and why “just communicate better” is true but not very actionable on its own.</p>
 

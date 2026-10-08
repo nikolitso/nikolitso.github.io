@@ -7,7 +7,6 @@ year: 2009
 date: 2009-07-01
 topic: "Betting & markets"
 cover: "https://covers.openlibrary.org/b/id/7626270-L.jpg"
-substack: "https://analyticsports.substack.com/p/mastering-betfair"
 ---
 <p>This is a practical manual for trading on Betfair's exchange rather than simply betting against a bookmaker — the distinction is the book's entire reason for existing.</p>
 

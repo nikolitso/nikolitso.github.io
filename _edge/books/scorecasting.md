@@ -7,8 +7,7 @@ authors:
 year: 2011
 date: 2011-02-01
 topic: "Sports analytics"
-cover: "https://substack-post-media.s3.amazonaws.com/public/images/d9bebea8-7605-4b40-8add-d17e3855e21a_311x500.jpeg"
-substack: "https://analyticsports.substack.com/p/scorecasting"
+cover: "/the-edge/covers/scorecasting.jpeg"
 ---
 <p>Wertheim and Moskowitz’s Scorecasting isn’t a football book specifically — it’s US-sports-heavy (NFL, NBA, MLB) — but it belongs on this shelf because the questions it asks translate directly: why does home advantage exist, and is it really about the crowd? Why do referees unconsciously favor the home team late in close games? Why do coaches make predictably conservative decisions even when the data says to be aggressive?</p>
 

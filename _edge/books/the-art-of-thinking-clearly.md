@@ -6,8 +6,7 @@ authors:
 year: 2013
 date: 2013-06-01
 topic: "Thinking & decisions"
-cover: "https://substack-post-media.s3.amazonaws.com/public/images/22dd11ee-6e80-4638-8af3-66f72d6d6a54_976x1500.jpeg"
-substack: "https://analyticsports.substack.com/p/the-art-of-thinking-clearly"
+cover: "/the-edge/covers/the-art-of-thinking-clearly.jpeg"
 ---
 <p>Rolf Dobelli spent years collecting the ways smart people reliably think badly — confirmation bias, sunk cost, survivorship bias — and turned the list into what amounts to a field guide to your own mind's shortcuts.</p>
 

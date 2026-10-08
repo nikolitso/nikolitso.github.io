@@ -6,8 +6,7 @@ authors:
 year: 2016
 date: 2016-06-01
 topic: "Football"
-cover: "https://substack-post-media.s3.amazonaws.com/public/images/0349943f-2c60-4fbd-b315-d3e414c59419_977x1500.jpeg"
-substack: "https://analyticsports.substack.com/p/soccermatics"
+cover: "/the-edge/covers/soccermatics.jpeg"
 ---
 <p>Sumpter, a mathematician, applies pattern-finding tools — game theory, network analysis, chaos theory — to football, arguing that the sport's fluid unpredictability is exactly what makes mathematics useful for understanding it, not what makes math irrelevant.</p>
 

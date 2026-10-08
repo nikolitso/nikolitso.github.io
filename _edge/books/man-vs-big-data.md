@@ -6,8 +6,7 @@ authors:
 year: 2017
 date: 2017-07-01
 topic: "Football"
-cover: "https://substack-post-media.s3.amazonaws.com/public/images/50e085f2-3149-471a-bf1c-6a8de24f6f4a_326x500.jpeg"
-substack: "https://analyticsports.substack.com/p/man-vs-big-data"
+cover: "/the-edge/covers/man-vs-big-data.jpeg"
 ---
 <p>Man vs Big Data looks at how data and algorithms are reshaping decisions once made on pure human judgment — from sports and dating to hiring and criminal justice — and where that shift genuinely improves outcomes versus where it introduces new, less visible biases.</p>
 

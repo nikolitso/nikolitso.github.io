@@ -7,8 +7,7 @@ authors:
 year: 2008
 date: 2008-12-30
 topic: "Betting & markets"
-cover: "https://substack-post-media.s3.amazonaws.com/public/images/1de6b113-5fac-4abe-9b13-63bbda06fa20_647x1000.jpeg"
-substack: "https://analyticsports.substack.com/p/the-definitive-guide-a-z-of-betting"
+cover: "/the-edge/covers/the-definitive-guide-a-z-of-betting.jpeg"
 ---
 <p>As the title suggests, this is a reference book rather than a narrative one: an alphabetical rundown of betting terminology, markets, and mechanics aimed at making the language of bookmaking legible to newcomers.</p>
 

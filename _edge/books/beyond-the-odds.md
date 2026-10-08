@@ -6,8 +6,7 @@ authors:
 year: 2024
 date: 2024-08-04
 topic: "Betting & markets"
-cover: "https://substack-post-media.s3.amazonaws.com/public/images/08712059-ab69-46fd-8324-f1ca211874d8_1000x1499.jpeg"
-substack: "https://analyticsports.substack.com/p/beyond-the-odds"
+cover: "/the-edge/covers/beyond-the-odds.jpeg"
 ---
 <p>Feustel is a professional handicapper best known for horse racing, and this book distills his statistical approach to finding genuine value against the market — the core argument being that most bettors lose not because they can't predict outcomes, but because they don't understand the gap between prediction and pricing.</p>
 

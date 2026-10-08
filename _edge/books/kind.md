@@ -6,8 +6,7 @@ authors:
 year: 2024
 date: 2024-11-10
 topic: "Work & leadership"
-cover: "https://substack-post-media.s3.amazonaws.com/public/images/419148a9-201c-4ba9-9377-4b80e92be1a2_932x1500.jpeg"
-substack: "https://analyticsports.substack.com/p/kind"
+cover: "/the-edge/covers/kind.jpeg"
 ---
 <p><strong>Graham Allcott</strong> is the bestselling author of How to Be a Productivity Ninja and the founder of Think Productive, one of the world's leading productivity training companies.</p>
 

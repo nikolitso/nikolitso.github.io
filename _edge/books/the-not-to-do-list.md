@@ -6,8 +6,7 @@ authors:
 year: 2025
 date: 2025-03-27
 topic: "Personal development"
-cover: "https://substack-post-media.s3.amazonaws.com/public/images/330b5873-dcf4-4ee2-8148-2a308b55ce16_977x1500.png"
-substack: "https://analyticsports.substack.com/p/the-not-to-do-list"
+cover: "/the-edge/covers/the-not-to-do-list.jpg"
 ---
 <p>Dobelli's premise, following his earlier work on cognitive bias, is that success is driven less by what high performers do than by what they systematically avoid — bad decisions, wasted effort, and predictable failure patterns that most success literature ignores in favor of positive habits to copy.</p>
 

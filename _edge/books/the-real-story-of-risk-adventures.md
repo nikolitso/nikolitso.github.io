@@ -6,8 +6,7 @@ authors:
 year: 2012
 date: 2012-07-01
 topic: "Thinking & decisions"
-cover: "https://substack-post-media.s3.amazonaws.com/public/images/9c39b66e-8d90-4eeb-aac0-115bbfd3d905_994x1500.jpeg"
-substack: "https://analyticsports.substack.com/p/the-real-story-of-risk-adventures"
+cover: "/the-edge/covers/the-real-story-of-risk-adventures.jpeg"
 ---
 <p>Croston, a biologist by training, traces human risk-misjudgment back to evolutionary mismatch — instincts built for ancient survival threats that misfire badly on the specific shape of modern risks.</p>
 

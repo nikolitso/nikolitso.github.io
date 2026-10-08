@@ -7,7 +7,6 @@ year: 2017
 date: 2017-10-01
 topic: "Sports analytics"
 cover: "https://covers.openlibrary.org/b/id/12438088-L.jpg"
-substack: "https://analyticsports.substack.com/p/the-greatest-the-quest-for-sporting"
 ---
 <p>Syed, a former table tennis champion turned journalist, profiles athletes and moments widely considered the pinnacle of sporting achievement, using them to probe what "greatness" actually means and whether it can be compared across sports and eras.</p>
 

@@ -6,8 +6,7 @@ authors:
 year: 2024
 date: 2024-10-01
 topic: "Football"
-cover: "https://substack-post-media.s3.amazonaws.com/public/images/3b9d17d6-21ac-4a6e-bf81-ef28785c5812_326x500.jpeg"
-substack: "https://analyticsports.substack.com/p/how-to-win-the-premier-league"
+cover: "/the-edge/covers/how-to-win-the-premier-league.jpeg"
 ---
 <p>Ian Graham ran Liverpool’s analytics department through the Klopp era — the actual research director behind the recruitment model that helped turn a mid-table-adjacent club into repeat title contenders. How to Win the Premier League is his account of doing the job from the inside, which makes it a rarer artifact than most books on this shelf: not a journalist or an academic explaining analytics from outside a club, but the person who built the model explaining what it actually took to get a boardroom, a manager, and a scouting department to trust it.</p>
 

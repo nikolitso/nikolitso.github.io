@@ -6,8 +6,7 @@ authors:
 year: 2025
 date: 2025-04-04
 topic: "Personal development"
-cover: "https://substack-post-media.s3.amazonaws.com/public/images/a6dab696-1b8b-4ae1-b370-86df9c73b088_1838x2775.jpeg"
-substack: "https://analyticsports.substack.com/p/tiny-experiments-how-to-live-freely"
+cover: "/the-edge/covers/tiny-experiments-how-to-live-freely.jpeg"
 ---
 <p>Anne-Laure Le Cunff — who writes the Ness Labs newsletter on neuroscience-informed productivity — makes a case in Tiny Experiments against the fixed, rigid goal-setting most self-help defaults to. Her alternative: treat life decisions as small, low-stakes experiments with a hypothesis and a review point, rather than as commitments you either heroically achieve or fail at.</p>
 

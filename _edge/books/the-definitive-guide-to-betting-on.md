@@ -6,8 +6,7 @@ authors:
 year: 2004
 date: 2004-11-01
 topic: "Betting & markets"
-cover: "https://substack-post-media.s3.amazonaws.com/public/images/8dc04704-7c0c-4636-92de-a0f3bc84690c_964x1469.jpeg"
-substack: "https://analyticsports.substack.com/p/the-definitive-guide-to-betting-on"
+cover: "/the-edge/covers/the-definitive-guide-to-betting-on.jpeg"
 ---
 <p>Edited by Bruce Millington, this entry in the Racing Post "Definitive Guide" series broadens out from horse racing to sports betting generally, with contributors covering how to approach markets across football, tennis, and other major sports.</p>
 

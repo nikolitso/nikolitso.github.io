@@ -6,8 +6,7 @@ authors:
 year: 2010
 date: 2010-04-01
 topic: "Work & leadership"
-cover: "https://substack-post-media.s3.amazonaws.com/public/images/075d18e9-1a4a-4dfd-8a13-e7867b94968e_994x1500.jpeg"
-substack: "https://analyticsports.substack.com/p/making-ideas-happen-overcoming-the"
+cover: "/the-edge/covers/making-ideas-happen-overcoming-the.jpeg"
 ---
 <p>Behance founder Scott Belsky’s core argument cuts against a lot of creative-industry mythology: the scarce resource for most people isn’t ideas, it’s execution — the unglamorous organizational habits (project management, community, capturing momentum) that turn a good idea into a finished thing instead of another notebook entry.</p>
 

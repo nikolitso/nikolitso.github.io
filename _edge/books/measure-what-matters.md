@@ -6,8 +6,7 @@ authors:
 year: 2018
 date: 2018-07-01
 topic: "Work & leadership"
-cover: "https://substack-post-media.s3.amazonaws.com/public/images/5211f22c-2c72-4346-beb1-b4f6da6af074_331x500.jpeg"
-substack: "https://analyticsports.substack.com/p/measure-what-matters"
+cover: "/the-edge/covers/measure-what-matters.jpeg"
 ---
 <p>Doerr, a venture capitalist who introduced Google to the OKR (Objectives and Key Results) framework early in its history, lays out the goal-setting system credited with shaping the discipline of some of the most successful companies in tech.</p>
 

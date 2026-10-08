@@ -6,8 +6,7 @@ authors:
 year: 2009
 date: 2009-04-01
 topic: "Betting & markets"
-cover: "https://substack-post-media.s3.amazonaws.com/public/images/adcb7fe9-f50d-40c4-a929-4dbbc9d11686_995x1500.jpeg"
-substack: "https://analyticsports.substack.com/p/betting-on-football"
+cover: "/the-edge/covers/betting-on-football.jpeg"
 ---
 <p><strong>Kevin Pullein</strong> is a professional sports betting analyst and author, best known for his long-running work at Sporting Life and Racing Post, where he has written extensively on the mathematics of football betting markets.</p>
 

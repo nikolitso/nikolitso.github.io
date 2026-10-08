@@ -6,8 +6,7 @@ authors:
 year: 2014
 date: 2014-06-27
 topic: "Work & leadership"
-cover: "https://substack-post-media.s3.amazonaws.com/public/images/5a048976-f85f-449f-8382-ac6dfd818d1e_987x1500.jpeg"
-substack: "https://analyticsports.substack.com/p/the-culture-map"
+cover: "/the-edge/covers/the-culture-map.jpeg"
 ---
 <p>Meyer's framework maps national business cultures across eight scales — communication, feedback, persuasion, leading, deciding, trusting, disagreeing, and scheduling — arguing that most cross-cultural friction at work comes from mismatched positions on these scales rather than differences in competence or intent.</p>
 

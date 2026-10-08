@@ -6,8 +6,7 @@ authors:
 year: 2016
 date: 2016-04-10
 topic: "Work & leadership"
-cover: "https://substack-post-media.s3.amazonaws.com/public/images/6dc785cc-5a5f-47f1-b306-2547ea16d05b_396x500.jpeg"
-substack: "https://analyticsports.substack.com/p/how-to-be-a-leader"
+cover: "/the-edge/covers/how-to-be-a-leader.jpeg"
 ---
 <p>Most leadership books are either war-story memoirs from famous executives or management-consultant frameworks. This one stays truer to The School of Life’s actual lane: leadership examined through psychological self-awareness rather than technique — what makes someone trustworthy to follow, why insecure leaders create insecure teams, and how much of “leadership” is really about managing your own anxiety well enough that it doesn’t leak onto everyone else.</p>
 

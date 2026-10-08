@@ -8,7 +8,6 @@ year: 2023
 date: 2023-11-24
 topic: "Thinking & decisions"
 cover: "https://covers.openlibrary.org/b/isbn/9781544542911-L.jpg"
-substack: "https://analyticsports.substack.com/p/the-anthology-of-balaji"
 ---
 <p>Jorgenson compiles Balaji Srinivasan's essays, tweets, and podcast appearances into a single career-spanning collection built around three pillars: how technology is reshaping the world, how to think clearly under a flood of bad information, and how to actually go build something instead of just commentating.</p>
 

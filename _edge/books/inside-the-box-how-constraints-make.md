@@ -6,8 +6,7 @@ authors:
 year: 2026
 date: 2026-06-01
 topic: "Personal development"
-cover: "https://substack-post-media.s3.amazonaws.com/public/images/3c48ac4d-879a-4d42-babd-02e79c799c23_333x500.jpeg"
-substack: "https://analyticsports.substack.com/p/inside-the-box-how-constraints-make"
+cover: "/the-edge/covers/inside-the-box-how-constraints-make.jpeg"
 ---
 <p>This book takes on a counterintuitive idea: that limitations — of time, resources, information, or freedom — often produce better thinking and better outcomes than having unlimited options, because constraints force real prioritization instead of endless optimization.</p>
 

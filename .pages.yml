@@ -43,9 +43,6 @@ content:
       - name: draft
         label: Draft (hide from the site)
         type: boolean
-      - name: substack
-        label: Original Substack link (old posts only)
-        type: string
       - name: body
         label: Takeaways
         description: Write the review. For the special boxes, use a bold line "Key ideas:" followed by a bullet list, and a paragraph starting with bold "Worth it if:".

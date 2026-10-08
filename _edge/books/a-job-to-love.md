@@ -6,8 +6,7 @@ authors:
 year: 2017
 date: 2017-03-01
 topic: "Work & leadership"
-cover: "https://substack-post-media.s3.amazonaws.com/public/images/c9323702-23d0-4c67-a73e-91288e999c22_334x500.jpeg"
-substack: "https://analyticsports.substack.com/p/a-job-to-love"
+cover: "/the-edge/covers/a-job-to-love.jpeg"
 ---
 <p>Another School of Life title, A Job to Love pushes back on the modern expectation that work should be a primary source of meaning and identity, arguing that this expectation — relatively new historically — sets most people up for disappointment, and that a more honest relationship with work starts with adjusting that expectation.</p>
 

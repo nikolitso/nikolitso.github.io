@@ -6,8 +6,7 @@ authors:
 year: 2005
 date: 2005-11-01
 topic: "Betting & markets"
-cover: "https://substack-post-media.s3.amazonaws.com/public/images/8a1abec6-b735-4059-aaf6-6b338b92595f_336x500.jpeg"
-substack: "https://analyticsports.substack.com/p/the-definitive-guide-to-betting-exchanges"
+cover: "/the-edge/covers/the-definitive-guide-to-betting-exchanges.jpeg"
 ---
 <p>Edited by Paul Kealy, this Racing Post guide focuses specifically on exchange betting — how exchanges like Betfair actually function, how to place back and lay bets, and how trading strategies differ from traditional wagering.</p>
 

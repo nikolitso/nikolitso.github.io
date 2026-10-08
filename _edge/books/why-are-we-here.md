@@ -6,8 +6,7 @@ authors:
 year: 2025
 date: 2025-02-21
 topic: "Work & leadership"
-cover: "https://substack-post-media.s3.amazonaws.com/public/images/45961463-8bb4-413c-bd16-7422ea6c9c1f_997x1500.jpeg"
-substack: "https://analyticsports.substack.com/p/why-are-we-here"
+cover: "/the-edge/covers/why-are-we-here.jpeg"
 ---
 <p>Moss, a workplace culture researcher, examines the modern crisis of meaning at work — burnout, disengagement, quiet quitting — and argues that purpose isn't a perk companies can bolt on, but something that has to be built into how work is actually structured and led.</p>
 

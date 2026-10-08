@@ -7,8 +7,7 @@ authors:
 year: 2013
 date: 2013-05-01
 topic: "Personal development"
-cover: "https://substack-post-media.s3.amazonaws.com/public/images/3d8406d5-a06c-44e3-9c11-159a8c32d727_575x874.jpeg"
-substack: "https://analyticsports.substack.com/p/focus-use-different-ways-of-seeing"
+cover: "/the-edge/covers/focus-use-different-ways-of-seeing.jpeg"
 ---
 <p>This is very likely Daniel Goleman’s Focus — his follow-up to Emotional Intelligence, arguing that attention itself is a trainable skill underlying almost everything else people call talent or leadership, from creativity to self-control to reading a room. (You had this listed as an audiobook, which fits — it’s the kind of book that works well narrated.)</p>
 

@@ -6,8 +6,7 @@ authors:
 year: 2013
 date: 2013-01-01
 topic: "Thinking & decisions"
-cover: "https://substack-post-media.s3.amazonaws.com/public/images/1e645397-f9ef-4990-bd79-4f3f3870206c_315x475.jpeg"
-substack: "https://analyticsports.substack.com/p/the-success-equation-untangling-skill"
+cover: "/the-edge/covers/the-success-equation-untangling-skill.jpeg"
 ---
 <p>Michael Mauboussin's core project in The Success Equation is separating skill from luck in outcomes that look identical from the outside — a winning trade, a championship season, a great quarter. His method: if you can't lose on purpose, it's mostly skill (chess); if a novice occasionally beats a pro, luck plays a real role (much of investing, some of sports).</p>
 

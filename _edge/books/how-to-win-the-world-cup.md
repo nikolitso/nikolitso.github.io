@@ -6,8 +6,7 @@ authors:
 year: 2026
 date: 2026-05-12
 topic: "Football"
-cover: "https://substack-post-media.s3.amazonaws.com/public/images/ea316540-4a0f-48be-98ba-bcba3c9d757e_977x1500.jpeg"
-substack: "https://analyticsports.substack.com/p/how-to-win-the-world-cup"
+cover: "/the-edge/covers/how-to-win-the-world-cup.jpeg"
 ---
 <p>Evans interviews the managers and coaches behind winning World Cup campaigns, distilling their approaches to squad building, tactics, and — especially — the human and psychological side of leading a team through a short, high-pressure tournament rather than a long league season.</p>
 

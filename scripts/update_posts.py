@@ -4,9 +4,7 @@ Rewrites everything between <!-- posts:start --> and <!-- posts:end -->.
 Run locally with `python scripts/update_posts.py`; a GitHub Action runs it daily.
 """
 import html
-import json
 import re
-from datetime import datetime
 import urllib.request
 import xml.etree.ElementTree as ET
 from email.utils import parsedate_to_datetime
@@ -34,35 +32,9 @@ def fetch(url):
         return r.read()
 
 
-def latest_substack_api(url):
-    """Substack's archive API: a second route for when the RSS feed refuses GitHub's servers."""
-    base = url.rsplit("/feed", 1)[0]
-    api = f"{base}/api/v1/archive?sort=new&limit={PER_FEED}"
-    try:
-        data = json.loads(fetch(api))
-    except Exception as e:
-        # Substack blocks GitHub's servers outright, so ask the r.jina.ai reader to fetch it for us
-        print(f"Archive API failed ({e}); trying via r.jina.ai")
-        req = urllib.request.Request(f"https://r.jina.ai/{api}", headers={"X-Return-Format": "text"})
-        with urllib.request.urlopen(req, timeout=60) as r:
-            data = json.loads(r.read())
-    posts = [
-        (datetime.fromisoformat(p["post_date"].replace("Z", "+00:00")), p["title"].strip(), p["canonical_url"])
-        for p in data
-        if p.get("title") and p.get("canonical_url") and p.get("post_date")
-    ]
-    posts.sort(reverse=True)
-    return posts[:PER_FEED]
-
 
 def latest(url):
-    try:
-        root = ET.fromstring(fetch(url))
-    except Exception as e:
-        if "substack.com" not in url:
-            raise
-        print(f"RSS failed for {url} ({e}); trying Substack's archive API")
-        return latest_substack_api(url)
+    root = ET.fromstring(fetch(url))
     posts = []
     for item in root.iter("item"):
         title = (item.findtext("title") or "").strip()

@@ -6,8 +6,7 @@ authors:
 year: 2024
 date: 2024-09-01
 topic: "Betting & markets"
-cover: "https://substack-post-media.s3.amazonaws.com/public/images/f33cd575-aa20-447d-854f-2b4fc410085e_975x1500.jpeg"
-substack: "https://analyticsports.substack.com/p/on-the-edge-the-art-of-risking-everything"
+cover: "/the-edge/covers/on-the-edge-the-art-of-risking-everything.jpeg"
 ---
 <p>Silver's framework splits the world into “The River” — poker players, VCs, quants, professional gamblers who think probabilistically for a living — and “The Village,” the more risk-averse academic and media establishment, and uses that lens to examine everything from Las Vegas to effective altruism.</p>
 

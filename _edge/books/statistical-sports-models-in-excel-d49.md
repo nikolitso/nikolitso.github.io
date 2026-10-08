@@ -6,8 +6,7 @@ authors:
 year: 2019
 date: 2019-08-01
 topic: "Betting & markets"
-cover: "https://substack-post-media.s3.amazonaws.com/public/images/c9ab5176-91b3-4e2b-8667-c8627c357a91_333x500.jpeg"
-substack: "https://analyticsports.substack.com/p/statistical-sports-models-in-excel-d49"
+cover: "/the-edge/covers/statistical-sports-models-in-excel-d49.jpeg"
 ---
 <p>Most sports-analytics books ask you to trust the math; Mack's pitch is that you can build the models yourself, in software you probably already have open at work.</p>
 

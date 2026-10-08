@@ -7,8 +7,7 @@ authors:
 year: 2018
 date: 2018-11-01
 topic: "Work & leadership"
-cover: "https://substack-post-media.s3.amazonaws.com/public/images/92a6eb54-01f2-459e-85e2-94a667a8c681_993x1500.jpeg"
-substack: "https://analyticsports.substack.com/p/it-doesnt-have-to-be-crazy-at-work"
+cover: "/the-edge/covers/it-doesnt-have-to-be-crazy-at-work.jpeg"
 ---
 <p>The Basecamp founders make the case against the grind culture and constant availability that many companies treat as inevitable, arguing instead for shorter workweeks, more focus time, and calm as a deliberate competitive advantage rather than a luxury.</p>
 

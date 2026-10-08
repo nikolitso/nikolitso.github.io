@@ -6,8 +6,7 @@ authors:
 year: 2026
 date: 2026-02-15
 topic: "Betting & markets"
-cover: "https://substack-post-media.s3.amazonaws.com/public/images/f8add772-ca6c-4a08-ab54-8665b16c3bab_988x1500.jpeg"
-substack: "https://analyticsports.substack.com/p/the-bookie"
+cover: "/the-edge/covers/the-bookie.jpeg"
 ---
 <p>Manteris ran sportsbooks in Las Vegas for decades, and this book is his insider account of the job — how odds actually get set and moved, how bookmakers manage risk against sharp bettors and public money alike, and the pressure of running a book during major events.</p>
 

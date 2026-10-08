@@ -6,8 +6,7 @@ authors:
 year: 2018
 date: 2018-09-01
 topic: "Thinking & decisions"
-cover: "https://substack-post-media.s3.amazonaws.com/public/images/4f659f6d-03e2-4ab9-adf3-ddb012794378_252x400.jpeg"
-substack: "https://analyticsports.substack.com/p/outnumbered"
+cover: "/the-edge/covers/outnumbered.jpeg"
 ---
 <p>David Sumpter, a mathematician, wrote Outnumbered to demystify the algorithms actually running Facebook's feed, Google's search results, dating apps, and the fake-news and filter-bubble dynamics they produce — explaining the real math behind headlines about AI, rather than either hyping or dismissing it.</p>
 

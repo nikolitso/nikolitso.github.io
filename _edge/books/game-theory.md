@@ -6,8 +6,7 @@ authors:
 year: 2026
 date: 2026-08-13
 topic: "Football"
-cover: "https://substack-post-media.s3.amazonaws.com/public/images/fa72bf3a-bada-4b51-8668-5c0dc7f64e46_816x1250.png"
-substack: "https://analyticsports.substack.com/p/game-theory"
+cover: "/the-edge/covers/game-theory.jpg"
 ---
 <p>Biermann's central claim is that football's obsession with tactics and talent evaluation understates the role of pure chance — a low-scoring sport where a handful of bounces and refereeing calls can swing a season, and the clubs that understand this variance make better decisions than the ones chasing narrative explanations for results.</p>
 

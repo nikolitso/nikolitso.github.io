@@ -6,8 +6,7 @@ authors:
 year: 2024
 date: 2024-07-01
 topic: "Football"
-cover: "https://substack-post-media.s3.amazonaws.com/public/images/43ad0472-2251-483d-bf0d-67b98a1c560c_350x549.jpeg"
-substack: "https://analyticsports.substack.com/p/soccer-analytics-an-introduction"
+cover: "/the-edge/covers/soccer-analytics-an-introduction.jpeg"
 ---
 <p>Most of the books on this shelf are written for readers who want to understand football analytics. This one is written for readers who want to do it. Part of the Chapman &amp; Hall/CRC statistics series, it walks through building football models in R — actual code, actual data, actual output — rather than explaining metrics from the outside.</p>
 

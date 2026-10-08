@@ -6,8 +6,7 @@ authors:
 year: 2009
 date: 2009-05-01
 topic: "Personal development"
-cover: "https://substack-post-media.s3.amazonaws.com/public/images/f1a9e3ad-02cf-4176-a862-b99f0e9bd74b_997x1500.jpeg"
-substack: "https://analyticsports.substack.com/p/what-i-wish-i-knew-when-i-was-20"
+cover: "/the-edge/covers/what-i-wish-i-knew-when-i-was-20.jpeg"
 ---
 <p>Stanford lecturer Tina Seelig’s whole book grows out of a single classroom exercise: give students $5 and two hours, and see who can generate the most value. The winning teams didn’t sell lemonade or wash cars — they redefined the problem entirely, which is the real thesis of the book: most constraints are more negotiable than they first appear, and the biggest limiting factor is usually how narrowly you’ve framed the problem, not the resources you actually have.</p>
 

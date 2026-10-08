@@ -6,8 +6,7 @@ authors:
 year: 2001
 date: 2001-11-01
 topic: "Work & leadership"
-cover: "https://substack-post-media.s3.amazonaws.com/public/images/822776ef-cc43-41ea-b83a-fa9a274ab08c_329x499.jpeg"
-substack: "https://analyticsports.substack.com/p/good-to-great"
+cover: "/the-edge/covers/good-to-great.jpeg"
 ---
 <p>Collins and his research team studied companies that sustained a leap from merely good to exceptional long-term performance, comparing them against similar companies that never made the leap, to isolate what actually distinguished the two groups.</p>
 

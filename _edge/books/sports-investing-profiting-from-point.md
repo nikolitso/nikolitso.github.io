@@ -7,8 +7,7 @@ authors:
 year: 2010
 date: 2010-05-02
 topic: "Betting & markets"
-cover: "https://substack-post-media.s3.amazonaws.com/public/images/21792a93-b04d-416b-9b09-e8851bafc1e8_907x1360.jpeg"
-substack: "https://analyticsports.substack.com/p/sports-investing-profiting-from-point"
+cover: "/the-edge/covers/sports-investing-profiting-from-point.jpeg"
 ---
 <p>The title tells you the angle directly: this treats sports wagering as an investing discipline specifically focused on point-spread markets, rather than a broader gambling guide.</p>
 

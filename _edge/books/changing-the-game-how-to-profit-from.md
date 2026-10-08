@@ -6,8 +6,7 @@ authors:
 year: 2012
 date: 2012-05-02
 topic: "Betting & markets"
-cover: "https://substack-post-media.s3.amazonaws.com/public/images/9120d7f3-af2b-4bdd-96fd-c9bf807a97e5_333x500.jpeg"
-substack: "https://analyticsports.substack.com/p/changing-the-game-how-to-profit-from"
+cover: "/the-edge/covers/changing-the-game-how-to-profit-from.jpeg"
 ---
 <p>Hall pitches this as Wall Street investment principles applied to sports betting and fantasy sports, built around his own “Get In and Win” system, with Billy Beane and Mark Cuban invoked as the data-driven-sports-management touchstones.</p>
 

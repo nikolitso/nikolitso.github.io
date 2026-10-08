@@ -6,8 +6,7 @@ authors:
 year: 2020
 date: 2020-03-29
 topic: "Betting & markets"
-cover: "https://substack-post-media.s3.amazonaws.com/public/images/05f2bc0d-2ca9-42a2-b253-9ca24bd5e99e_1000x1500.jpeg"
-substack: "https://analyticsports.substack.com/p/statistical-sports-models-in-excel"
+cover: "/the-edge/covers/statistical-sports-models-in-excel.jpeg"
 ---
 <p>The sequel to Mack's original Excel-modeling crash course, extending the same accessible, spreadsheet-based approach that made the first volume well-liked by readers without a statistics background.</p>
 

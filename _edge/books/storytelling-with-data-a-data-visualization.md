@@ -6,8 +6,7 @@ authors:
 year: 2015
 date: 2015-11-01
 topic: "Thinking & decisions"
-cover: "https://substack-post-media.s3.amazonaws.com/public/images/4d78d52d-12f0-4a47-94c7-1fd4518c51e0_321x400.jpeg"
-substack: "https://analyticsports.substack.com/p/storytelling-with-data-a-data-visualization"
+cover: "/the-edge/covers/storytelling-with-data-a-data-visualization.jpeg"
 ---
 <p>Cole Nussbaumer Knaflic’s book has become the standard reference for a reason that’s obvious within the first chapter: most business charts fail not because the data is wrong, but because the chart is decorating the data instead of arguing a point with it. She walks through concrete before-and-after redesigns — the same numbers, radically clearer once the chart junk is stripped out and the point is made visually obvious rather than left for the reader to dig out.</p>
 

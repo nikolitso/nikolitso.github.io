@@ -7,8 +7,7 @@ authors:
 year: 2019
 date: 2019-06-01
 topic: "Betting & markets"
-cover: "https://substack-post-media.s3.amazonaws.com/public/images/7056f105-72ac-4d34-90ce-e27ce5f6a5c2_880x1360.jpeg"
-substack: "https://analyticsports.substack.com/p/the-logic-of-sports-betting"
+cover: "/the-edge/covers/the-logic-of-sports-betting.jpeg"
 ---
 <p>Miller is a genuinely credible gambling-strategy author — well-regarded in poker circles for The Course — and here he and Davidow focus less on picks and more on how sportsbooks actually set and move their lines in the first place.</p>
 

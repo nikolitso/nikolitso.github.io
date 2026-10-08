@@ -6,8 +6,7 @@ authors:
 year: 1995
 date: 1995-01-01
 topic: "Football"
-cover: "https://substack-post-media.s3.amazonaws.com/public/images/12a621c8-30b4-4300-83e0-f824c2be4b78_1920x1080.jpeg"
-substack: "https://analyticsports.substack.com/p/football-against-the-enemy"
+cover: "/the-edge/covers/football-against-the-enemy.jpeg"
 ---
 <p>Simon Kuper wrote Football Against the Enemy in his twenties, traveling to more than twenty countries to report on how football reveals the politics underneath it — from Ukrainian ultras and Argentine military dictatorship-era football to Barcelona's identity as Catalan resistance in miniature.</p>
 

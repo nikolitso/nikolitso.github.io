@@ -6,8 +6,7 @@ authors:
 year: 2020
 date: 2020-07-01
 topic: "Football"
-cover: "https://substack-post-media.s3.amazonaws.com/public/images/02de1f73-1f11-498d-b3aa-c9e4aae10651_639x1000.jpeg"
-substack: "https://analyticsports.substack.com/p/against-the-elements-the-eruption"
+cover: "/the-edge/covers/against-the-elements-the-eruption.jpeg"
 ---
 <p>Iceland has a population smaller than a mid-size American college town, and somehow qualified for Euro 2016 and the 2018 World Cup — McGinn's book is his attempt to explain how, part travelogue and part academic case study.</p>
 

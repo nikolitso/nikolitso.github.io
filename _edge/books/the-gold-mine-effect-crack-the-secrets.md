@@ -6,8 +6,7 @@ authors:
 year: 2012
 date: 2012-04-01
 topic: "Sports analytics"
-cover: "https://substack-post-media.s3.amazonaws.com/public/images/0464662a-3f70-4fbd-aea6-6c4934ed63cf_307x480.jpeg"
-substack: "https://analyticsports.substack.com/p/the-gold-mine-effect-crack-the-secrets"
+cover: "/the-edge/covers/the-gold-mine-effect-crack-the-secrets.jpeg"
 ---
 <p>Rasmus Ankersen’s premise is a great one: instead of theorizing about talent development from a distance, go embed yourself in the places on Earth that produce a wildly disproportionate share of world-class performers — Kenyan and Ethiopian distance runners, Brazilian footballers, South Korean women’s golfers — and figure out what these “talent hotbeds” actually have in common.</p>
 

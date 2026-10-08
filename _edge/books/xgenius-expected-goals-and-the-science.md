@@ -6,8 +6,7 @@ authors:
 year: 2024
 date: 2024-07-01
 topic: "Football"
-cover: "https://substack-post-media.s3.amazonaws.com/public/images/c4b59ca0-f690-44fc-b700-3fb3e800add6_327x500.jpeg"
-substack: "https://analyticsports.substack.com/p/xgenius-expected-goals-and-the-science"
+cover: "/the-edge/covers/xgenius-expected-goals-and-the-science.jpeg"
 ---
 <p>James Tippett's second book on expected goals picks up where his first one left off — less "what is xG" and more "how is it actually built, and how do clubs use it once they have it." If the first book was the pitch for the metric, this one is closer to the mechanics underneath it.</p>
 

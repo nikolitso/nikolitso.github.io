@@ -6,8 +6,7 @@ authors:
 year: 2010
 date: 2010-06-01
 topic: "Personal development"
-cover: "https://substack-post-media.s3.amazonaws.com/public/images/b206f8bb-a53a-42f5-ae24-aae0f5173768_483x400.jpeg"
-substack: "https://analyticsports.substack.com/p/168-hours-you-have-more-time-than"
+cover: "/the-edge/covers/168-hours-you-have-more-time-than.jpeg"
 ---
 <p>Laura Vanderkam’s core move is simple and genuinely useful: everyone has the same 168 hours in a week, so “I don’t have time” claims usually don’t survive an honest, hour-by-hour audit of where the time actually goes. Most people who complain about time scarcity are, once they actually track a week, surprised by how much of it disappears into low-value defaults rather than being genuinely, unavoidably spoken for.</p>
 

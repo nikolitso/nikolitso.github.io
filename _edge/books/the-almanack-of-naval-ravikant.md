@@ -6,8 +6,7 @@ authors:
 year: 2020
 date: 2020-09-01
 topic: "Personal development"
-cover: "https://substack-post-media.s3.amazonaws.com/public/images/15cc500f-7740-4d52-9321-3fa820e03297_971x1500.jpeg"
-substack: "https://analyticsports.substack.com/p/the-almanack-of-naval-ravikant"
+cover: "/the-edge/covers/the-almanack-of-naval-ravikant.jpeg"
 ---
 <p>Jorgenson compiles and organizes Naval Ravikant's scattered tweets, podcast appearances, and essays into a single coherent book on building wealth and finding happiness — not as separate goals, but as related outcomes of clear thinking about leverage, specific knowledge, and long-term games.</p>
 

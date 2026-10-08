@@ -6,8 +6,7 @@ authors:
 year: 2021
 date: 2021-05-13
 topic: "Thinking & decisions"
-cover: "https://substack-post-media.s3.amazonaws.com/public/images/d2007c00-dd02-4680-a8af-eda082ba2784_994x1500.jpeg"
-substack: "https://analyticsports.substack.com/p/the-scout-mindset"
+cover: "/the-edge/covers/the-scout-mindset.jpeg"
 ---
 <p>Galef's central distinction is between "soldier mindset" — reasoning defensively to protect existing beliefs and identity — and "scout mindset" — reasoning to see things as accurately as possible, even when the truth is unflattering or inconvenient.</p>
 

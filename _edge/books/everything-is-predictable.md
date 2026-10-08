@@ -6,8 +6,7 @@ authors:
 year: 2025
 date: 2025-05-24
 topic: "Thinking & decisions"
-cover: "https://substack-post-media.s3.amazonaws.com/public/images/6a8b52f1-ffea-484b-8706-1badc7eb0c61_976x1500.jpeg"
-substack: "https://analyticsports.substack.com/p/everything-is-predictable"
+cover: "/the-edge/covers/everything-is-predictable.jpeg"
 ---
 <p>Chivers's case is that Bayes' theorem — a simple 18th-century formula for updating beliefs in light of new evidence — is quietly one of the most consequential ideas in science, showing up everywhere from courtroom statistics and medical testing to how AI systems reason under uncertainty.</p>
 

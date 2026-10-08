@@ -7,8 +7,7 @@ authors:
 year: 2012
 date: 2012-01-01
 topic: "Sports analytics"
-cover: "https://substack-post-media.s3.amazonaws.com/public/images/dfdebde6-9fa7-4c6e-b682-21c46a717f47_783x1200.jpeg"
-substack: "https://analyticsports.substack.com/p/how-to-watch-the-olympics-2016"
+cover: "/the-edge/covers/how-to-watch-the-olympics-2016.jpeg"
 ---
 <p>How to Watch the Olympics is a sport-by-sport viewer's guide, published ahead of the Rio 2016 Games, explaining the rules, scoring quirks, and things to actually watch for in the roughly 40 Olympic sports most casual viewers only tune into once every four years.</p>
 

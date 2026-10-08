@@ -7,7 +7,6 @@ year: 2013
 date: 2013-12-01
 topic: "Personal development"
 cover: "https://covers.openlibrary.org/b/isbn/9781477800898-L.jpg"
-substack: "https://analyticsports.substack.com/p/maximize-your-potential"
 ---
 <p>The second book in the 99U series turns from daily habits to career trajectory: how to develop genuine expertise, when to take a risk on an opportunity that isn't fully ready, and how to build a body of work that compounds instead of a series of disconnected gigs.</p>
 

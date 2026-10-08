@@ -6,8 +6,7 @@ authors:
 year: 2017
 date: 2017-09-01
 topic: "Football"
-cover: "https://substack-post-media.s3.amazonaws.com/public/images/4978d108-cb7b-4a40-a041-1eb4b1611141_933x1500.jpeg"
-substack: "https://analyticsports.substack.com/p/edge-what-business-can-learn-from"
+cover: "/the-edge/covers/edge-what-business-can-learn-from.jpeg"
 ---
 <p>Ben Lyttleton's Edge looks at how elite football clubs and organizations apply psychological research — decision-making under pressure, team culture, penalty-taking — to gain competitive advantage, treating the sport as a case study for broader lessons about high-performance environments.</p>
 

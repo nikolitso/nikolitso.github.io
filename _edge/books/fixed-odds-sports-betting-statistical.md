@@ -6,8 +6,7 @@ authors:
 year: 2004
 date: 2004-04-01
 topic: "Betting & markets"
-cover: "https://substack-post-media.s3.amazonaws.com/public/images/f84a7a8f-c685-4d7f-a3ec-09f5caa5fa04_309x475.jpeg"
-substack: "https://analyticsports.substack.com/p/fixed-odds-sports-betting-statistical"
+cover: "/the-edge/covers/fixed-odds-sports-betting-statistical.jpeg"
 ---
 <p>This is Buchdahl's earliest and most foundational book — the one where he first laid out the core idea running through his whole body of work: disciplined betting can function as a genuine form of low-risk investment, not just high-risk gambling.</p>
 

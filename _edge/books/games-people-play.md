@@ -6,8 +6,7 @@ authors:
 year: 2025
 date: 2025-07-25
 topic: "Personal development"
-cover: "https://substack-post-media.s3.amazonaws.com/public/images/cb301edb-36d9-43a0-a1e8-298710e474e7_977x1500.png"
-substack: "https://analyticsports.substack.com/p/games-people-play"
+cover: "/the-edge/covers/games-people-play.jpg"
 ---
 <p>Berne's foundational claim is that much of everyday social interaction runs on scripted, often unconscious routines he calls "games" — repeated patterns of exchange that look like ordinary conversation but are really structured to produce a predictable, usually self-defeating payoff for at least one player.</p>
 

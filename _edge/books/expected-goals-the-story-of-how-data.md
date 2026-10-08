@@ -6,8 +6,7 @@ authors:
 year: 2022
 date: 2022-11-01
 topic: "Football"
-cover: "https://substack-post-media.s3.amazonaws.com/public/images/2411220d-cc5a-487f-9736-c79ca13ed58a_1038x1500.jpeg"
-substack: "https://analyticsports.substack.com/p/expected-goals-the-story-of-how-data"
+cover: "/the-edge/covers/expected-goals-the-story-of-how-data.jpeg"
 ---
 <p>Smith is the New York Times' chief soccer correspondent, and this is the definitive narrative history of how xG — and data more broadly — went from a stats-Twitter argument to a number broadcast live during matches.</p>
 
