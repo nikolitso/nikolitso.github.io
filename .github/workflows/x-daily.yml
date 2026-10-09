@@ -1,0 +1,66 @@
+name: Daily X posts
+
+# Book at 14:00 and film at 19:00 Athens time. Cron is UTC-only, so each slot runs
+# at both possible UTC hours (summer / winter time); the script posts on the right one.
+on:
+  schedule:
+    - cron: "3 11,12 * * *"   # book
+    - cron: "3 16,17 * * *"   # film
+  workflow_dispatch:
+    inputs:
+      kind:
+        description: "What to post"
+        type: choice
+        options: [book, film]
+        default: book
+      dry_run:
+        description: "Dry run (show the post, don't publish)"
+        type: boolean
+        default: true
+
+permissions:
+  contents: write
+
+concurrency:
+  group: x-daily
+  cancel-in-progress: false
+
+jobs:
+  post:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/checkout@v5
+        with:
+          repository: nikolitso/whatalgomissed
+          path: wam
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: Post
+        env:
+          WAM_DIR: wam
+          X_API_KEY: ${{ secrets.X_API_KEY }}
+          X_API_SECRET: ${{ secrets.X_API_SECRET }}
+          X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
+          X_ACCESS_TOKEN_SECRET: ${{ secrets.X_ACCESS_TOKEN_SECRET }}
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            KIND="${{ inputs.kind }}"
+            FLAGS="--force"
+            if [ "${{ inputs.dry_run }}" = "true" ]; then FLAGS="$FLAGS --dry-run"; fi
+          elif [ "${{ github.event.schedule }}" = "3 11,12 * * *" ]; then
+            KIND=book; FLAGS=""
+          else
+            KIND=film; FLAGS=""
+          fi
+          python scripts/x_daily.py "$KIND" $FLAGS
+      - name: Save what was posted
+        run: |
+          if git diff --quiet -- _x 2>/dev/null && [ -z "$(git ls-files --others -- _x)" ]; then exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add _x
+          git commit -m "X: record daily post"
+          git pull --rebase
+          git push
