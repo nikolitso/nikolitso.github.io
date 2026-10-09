@@ -39,6 +39,7 @@ jobs:
           python-version: "3.12"
       - name: Post
         env:
+          WAM_DIR: wam   # where the What Algo Missed repo is checked out above
           X_API_KEY: ${{ secrets.X_API_KEY }}
           X_API_KEY_SECRET: ${{ secrets.X_API_KEY_SECRET }}
           X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
