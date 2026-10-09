@@ -60,6 +60,33 @@ def first_sentence(text, limit=180):
     return s if len(s) <= limit else s[: limit - 1].rsplit(" ", 1)[0] + "…"
 
 
+def clean(text):
+    t = re.sub(r"<[^>]+>", " ", text)
+    t = re.sub(r"[*_`#>\[\]]", "", t)
+    return re.sub(r"\s+", " ", t).strip()
+
+
+def worth_it(body):
+    """The book review's own 'Worth it if: ...' line, as a sentence."""
+    m = re.search(r"Worth it if:?\s*(?:</strong>)?\s*(.+?)(?:</p>|\n\n|$)", body, re.S)
+    if not m:
+        return ""
+    clause = clean(m.group(1)).rstrip(".") + "."
+    return "Worth it if " + clause
+
+
+def verdict(body):
+    """The film review's closing line; a very short closer keeps the sentence before it."""
+    paras = [clean(x) for x in body.strip().split("\n\n") if clean(x)]
+    if not paras:
+        return ""
+    sents = [x.strip() for x in re.findall(r"[^.!?]+[.!?]+", paras[-1])] or [paras[-1]]
+    out = sents[-1]
+    if len(out) < 45 and len(sents) > 1:
+        out = sents[-2] + " " + out
+    return out
+
+
 def slugify(t):  # same rule as What Algo Missed's build.py
     t = str(t).lower()
     t = (t.replace("ά", "α").replace("έ", "ε").replace("ή", "η").replace("ί", "ι")
@@ -78,8 +105,8 @@ def books():
         authors = authors if isinstance(authors, list) else [authors]
         items[p.stem] = dict(
             title=m.get("title") or p.stem, by=", ".join(a for a in authors if a),
-            hook=(m.get("subtitle") if isinstance(m.get("subtitle"), str) and len(m.get("subtitle") or "") > 30
-                  else first_sentence(body)),
+            hook=worth_it(body) or first_sentence(body),
+            topic=str(m.get("topic") or ""),
             date=str(m.get("date") or ""), url=f"https://antonisnikolitsopoulos.com/the-edge/{p.stem}/")
     return items
 
@@ -91,21 +118,61 @@ def films():
         slug = slugify(m.get("slug") or p.stem)
         items[slug] = dict(
             title=m.get("title") or slug, year=m.get("year") or "", by=m.get("director") or "",
-            hook=first_sentence(body), date=str(m.get("added") or ""),
+            hook=verdict(body) or first_sentence(body), date=str(m.get("added") or ""),
+            country=str(m.get("country") or ""), rating=float(m.get("rating") or 0),
             url=f"https://whatalgomissed.com/films/{slug}/")
     return items
 
 
-def compose(kind, it):
-    if kind == "book":
-        head = f"From The Edge: {it['title']}" + (f" by {it['by']}" if it["by"] else "")
-    else:
-        head = f"From What Algo Missed: {it['title']} ({it['year']})" + (f", dir. {it['by']}" if it["by"] else "")
-    hook = it["hook"]
-    room = 280 - URL_LEN - len(head) - 4  # two line breaks + space
+TOPIC_PHRASE = {
+    "Betting & markets": "betting and markets", "Football": "football", "Sports analytics": "sports analytics",
+    "Thinking & decisions": "decision-making", "Personal development": "personal growth",
+    "Work & leadership": "work and leadership",
+}
+
+# Several ways to say it, rotated day by day so the feed never reads like a bot.
+# {hook} is the reviewer's own line: "Worth it if ..." for books, the closing verdict for films.
+BOOK_VOICES = [
+    "Notes on {title} by {by}.\n\n{hook}",
+    "{title} by {by}.\n\n{hook}\n\nMy notes:",
+    "If you're into {topic}: {title} by {by}.\n\n{hook}",
+    "One from my shelf: {title} by {by}.\n\n{hook}",
+    "Recommended reading on {topic}: {title} by {by}.\n\n{hook}",
+]
+FILM_VOICES = [
+    "{title} ({year}), {by}.\n\n{hook}",
+    "Tonight's pick: {title} ({year}) from {country}.\n\n{hook}",
+    "A film the algorithm probably never showed you: {title} ({year}) by {by}.\n\n{hook}",
+    "{hook}\n\n{title} ({year}), {country}. {stars}",
+    "If you haven't seen {title} ({year}) by {by} yet:\n\n{hook}",
+]
+
+
+def stars(r):
+    return "★" * int(r) + ("½" if r - int(r) >= .5 else "")
+
+
+def shorten(text, room):
+    """Cut at the last natural pause (dash, semicolon, comma) that fits; else at a word, with an ellipsis."""
+    for sep in (" — ", " – ", "; ", ", "):
+        cut = text[:room - 1].rfind(sep)
+        if cut > room * 0.45:
+            return text[:cut].rstrip(" ,;—–") + "."
+    return text[: max(room - 1, 0)].rsplit(" ", 1)[0] + "…"
+
+
+def compose(kind, it, variant=0):
+    voices = BOOK_VOICES if kind == "book" else FILM_VOICES
+    tpl = voices[variant % len(voices)]
+    if not it.get("by"):
+        tpl = tpl.replace(" by {by}", "").replace(", {by}", "")
+    fields = dict(it, topic=TOPIC_PHRASE.get(it.get("topic", ""), "this"), stars=stars(it.get("rating", 0)))
+    hook = fields.pop("hook")
+    shell = tpl.replace("{hook}", "\x00").format(**fields)
+    room = 280 - URL_LEN - 1 - (len(shell) - 1)
     if len(hook) > room:
-        hook = hook[: max(room - 1, 0)].rsplit(" ", 1)[0] + "…"
-    return f"{head}\n\n{hook}\n{it['url']}" if hook else f"{head}\n{it['url']}"
+        hook = shorten(hook, room)
+    return shell.replace("\x00", hook) + "\n" + it["url"]
 
 
 # ---------------------------------------------------------------- X API (OAuth 1.0a, user context)
@@ -169,7 +236,7 @@ def main():
             left = list(catalogue)
         slug = random.choice(left)
 
-    text = compose(kind, catalogue[slug])
+    text = compose(kind, catalogue[slug], len(st["log"]))
     print(f"--- {kind}: {slug} (round {st['round']}, {len(st['posted'])}/{len(catalogue)} posted)\n{text}\n---")
     if dry:
         print("dry run: nothing posted, state unchanged"); return
