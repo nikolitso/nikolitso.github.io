@@ -177,7 +177,7 @@ def compose(kind, it, variant=0):
 
 # ---------------------------------------------------------------- X API (OAuth 1.0a, user context)
 def post_to_x(text):
-    key, sec = os.environ["X_API_KEY"], os.environ["X_API_SECRET"]
+    key, sec = os.environ["X_API_KEY"], os.environ["X_API_KEY_SECRET"]
     tok, tsec = os.environ["X_ACCESS_TOKEN"], os.environ["X_ACCESS_TOKEN_SECRET"]
     url = "https://api.x.com/2/tweets"
     oauth = {
