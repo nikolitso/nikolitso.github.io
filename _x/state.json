@@ -112,16 +112,22 @@
     ],
     "round": 1,
     "posted": [
-      "how-to-get-on-with-your-colleagues"
+      "how-to-get-on-with-your-colleagues",
+      "the-definitive-guide-to-betting-on"
     ],
     "log": [
       {
         "day": "2026-10-09",
         "slug": "how-to-get-on-with-your-colleagues",
         "id": "2108556538545836342"
+      },
+      {
+        "day": "2026-10-10",
+        "slug": "the-definitive-guide-to-betting-on",
+        "id": "2108879709782020315"
       }
     ],
-    "last_day": "2026-10-09"
+    "last_day": "2026-10-10"
   },
   "film": {
     "seen": [
