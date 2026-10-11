@@ -55,12 +55,16 @@ jobs:
             KIND=film; FLAGS=""
           fi
           python scripts/x_daily.py "$KIND" $FLAGS
+      - name: Update the homepage's Today's picks card
+        env:
+          WAM_DIR: wam
+        run: python scripts/update_picks.py
       - name: Save what was posted
         run: |
-          if git diff --quiet -- _x 2>/dev/null && [ -z "$(git ls-files --others -- _x)" ]; then exit 0; fi
+          if git diff --quiet -- _x index.html 2>/dev/null && [ -z "$(git ls-files --others -- _x)" ]; then exit 0; fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add _x
-          git commit -m "X: record daily post"
+          git add _x index.html
+          git commit -m "X: record daily post and update Today's picks"
           git pull --rebase
           git push
