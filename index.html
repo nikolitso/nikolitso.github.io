@@ -138,10 +138,6 @@ section.alt { background: var(--paper-2); }
   text-decoration: none; overflow-wrap: anywhere; background: linear-gradient(var(--accent), var(--accent)) 0 100% / 100% 1px no-repeat;
   transition: color .2s ease; }
 .contact-mail a.addr:hover { color: var(--accent); }
-.copy-btn { font: inherit; font-size: .8rem; font-weight: 600; letter-spacing: .04em; color: var(--ink); background: transparent;
-  border: 1px solid var(--rule); border-radius: 999px; padding: .5rem 1rem; cursor: pointer; transition: border-color .2s ease, color .2s ease; }
-.copy-btn:hover { border-color: var(--accent); color: var(--accent); }
-.copy-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .kicker { font-size: .74rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: var(--accent); margin: 0 0 .75rem; }
 h2 { font-family: var(--display); font-weight: 400; font-size: clamp(2.2rem, 4.6vw, 3.4rem); line-height: 1.05; letter-spacing: -.01em; margin: 0; }
 .sec-intro { color: var(--muted); max-width: 52ch; margin: 1rem 0 0; }
@@ -359,11 +355,10 @@ section.alt .card .meta span { background: var(--paper-2); }
   <section id="contact" aria-labelledby="h-contact">
     <div class="wrap">
       <p class="kicker">Contact</p>
-      <h2 id="h-contact">Say hello</h2>
-      <p class="sec-intro">A book or film you think I should see, a question about pricing or data, or an idea worth working on together. Write to me, I read everything.</p>
+      <h2 id="h-contact">Get in touch</h2>
+      <p class="sec-intro">A film worth seeing, a book worth reading, a question about pricing and data, or an idea worth building together. Every message gets read, and every good one gets a reply.</p>
       <div class="contact-mail">
         <a class="addr" href="mailto:contact@antonisnikolitsopoulos.com">contact@antonisnikolitsopoulos.com</a>
-        <button class="copy-btn" type="button" data-copy="contact@antonisnikolitsopoulos.com">Copy address</button>
       </div>
     </div>
   </section>
@@ -387,16 +382,6 @@ section.alt .card .meta span { background: var(--paper-2); }
     </div>
   </div>
 </footer>
-<script>
-document.querySelectorAll('.copy-btn').forEach(function (b) {
-  b.addEventListener('click', function () {
-    var t = b.dataset.copy, done = function () { b.textContent = 'Copied'; setTimeout(function () { b.textContent = 'Copy address'; }, 1800); };
-    if (navigator.clipboard) { navigator.clipboard.writeText(t).then(done, fallback); } else { fallback(); }
-    function fallback() { var a = b.parentNode.querySelector('.addr'), r = document.createRange(); r.selectNodeContents(a);
-      var sel = getSelection(); sel.removeAllRanges(); sel.addRange(r); }
-  });
-});
-</script>
 <!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "b67bbb76d0e24af196b24ded3ab71ad0"}'></script><!-- End Cloudflare Web Analytics -->
 </body>
 </html>
