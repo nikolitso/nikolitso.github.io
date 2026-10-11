@@ -51,7 +51,6 @@ def render():
     return ('      <aside class="picks" aria-label="Today\'s picks">\n'
             '        <p class="picks-head">Today\'s picks</p>\n'
             + "\n".join(rows) + "\n"
-            '        <a class="picks-follow" href="https://x.com/nikolitso" target="_blank" rel="noopener">A book and a film, every day on X →</a>\n'
             '      </aside>')
 
 

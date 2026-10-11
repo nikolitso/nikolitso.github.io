@@ -111,23 +111,21 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-
 .hero h1 { font-family: var(--display); font-weight: 400; font-size: clamp(2.4rem, 5.4vw, 4.4rem); line-height: .95; letter-spacing: -.02em; margin: 0; }
 .hero h1 em { color: #8fa9ff; }
 /* Today's picks (hero card, updated by the daily X workflow) */
-.picks { justify-self: end; width: min(100%, 24rem); display: grid; gap: .75rem; padding: 1.25rem; border: 1px solid var(--line-dark);
+.picks { justify-self: end; width: min(100%, 30rem); display: grid; gap: .75rem; padding: 1.25rem; border: 1px solid var(--line-dark);
   border-radius: 18px; background: rgba(255,255,255,.03); backdrop-filter: blur(4px); }
 .picks-head { margin: 0 0 .25rem; font-size: .72rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: #8fa9ff; }
-.pick { display: grid; grid-template-columns: 5.5rem minmax(0, 1fr); gap: 1rem; align-items: center; padding: .6rem; margin: 0 -.6rem;
+.pick { display: grid; grid-template-columns: 9.5rem minmax(0, 1fr); gap: 1rem; align-items: center; padding: .6rem; margin: 0 -.6rem;
   border-radius: 12px; text-decoration: none; color: var(--on-dark); transition: background .2s ease; }
 .pick:hover { background: rgba(255,255,255,.06); }
 .pick-img { display: block; overflow: hidden; border-radius: 8px; background: rgba(255,255,255,.06); }
-.pick.book .pick-img { width: 3.9rem; aspect-ratio: 2 / 3; justify-self: center; }
+.pick.book .pick-img { width: 6.5rem; aspect-ratio: 2 / 3; justify-self: center; }
 .pick.film .pick-img { aspect-ratio: 16 / 10; }
 .pick-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .pick-text { display: grid; gap: .15rem; min-width: 0; }
 .pick-kind { font-size: .68rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--on-dark-muted); }
-.pick-title { font-family: var(--display); font-size: 1.3rem; line-height: 1.15; }
+.pick-title { font-family: var(--display); font-size: 1.45rem; line-height: 1.15; }
 .pick-sub { font-size: .85rem; color: var(--on-dark-muted); }
 .pick:hover .pick-title { color: #8fa9ff; }
-.picks-follow { margin-top: .25rem; font-size: .82rem; font-weight: 600; color: var(--on-dark-muted); text-decoration: none; }
-.picks-follow:hover { color: #fff; }
 @media (max-width: 860px) { .picks { justify-self: stretch; width: 100%; } }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
 .hero .lede { margin-top: 0; }
@@ -286,7 +284,7 @@ section.alt .card .meta span { background: var(--paper-2); }
         <h1 class="sr-only">Antonis Nikolitsopoulos</h1>
         <p class="lede">Football pricing by day, data obsessive by nature. Outside of work, mostly books on sports analytics, decision-making, getting better at things. And films; the quiet ones, the brave ones, the kind that stick around long after they're over.</p>
         <div class="ctas">
-          <a class="btn primary" href="/the-edge/">Read The Edge →</a>
+          <a class="btn primary" href="/the-edge/">The Edge</a>
           <a class="btn ghost" href="https://whatalgomissed.com/" target="_blank" rel="noopener">What Algo Missed</a>
         </div>
       </div>
@@ -295,7 +293,6 @@ section.alt .card .meta span { background: var(--paper-2); }
         <p class="picks-head">Today's picks</p>
         <a class="pick book" href="https://antonisnikolitsopoulos.com/the-edge/how-to-find-fulfilling-work/"><span class="pick-img"><img src="https://antonisnikolitsopoulos.com/the-edge/covers/how-to-find-fulfilling-work.jpeg" alt="" decoding="async"></span><span class="pick-text"><span class="pick-kind">Book</span><span class="pick-title">How to Find Fulfilling Work</span><span class="pick-sub">The School of Life</span></span></a>
         <a class="pick film" href="https://whatalgomissed.com/films/unraveled/" target="_blank" rel="noopener"><span class="pick-img"><img src="https://whatalgomissed.com/assets/backdrops/unraveled.jpg" alt="" decoding="async"></span><span class="pick-text"><span class="pick-kind">Film</span><span class="pick-title">Unraveled</span><span class="pick-sub">2026, Pernille Fischer Christensen</span></span></a>
-        <a class="picks-follow" href="https://x.com/nikolitso" target="_blank" rel="noopener">A book and a film, every day on X →</a>
       </aside>
       <!-- picks:end -->
     </div>
