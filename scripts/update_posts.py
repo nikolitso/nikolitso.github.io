@@ -18,7 +18,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 INDEX = ROOT / "index.html"
 SELF = "https://antonisnikolitsopoulos.com/"
-PER_FEED = 4
+PER_FEED = 3
 FEEDS = [
     dict(name="The Edge", kind="book", url=SELF + "the-edge/feed.xml", all_url="/the-edge/", all_label="All books"),
     dict(name="What Algo Missed", kind="film", url="https://whatalgomissed.com/feed.xml",
