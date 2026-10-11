@@ -324,6 +324,7 @@
       "touch",
       "triangle-of-sadness",
       "under-the-tree",
+      "unraveled",
       "valeria-is-getting-married",
       "victoria",
       "virgin-mountain",
@@ -339,15 +340,21 @@
     ],
     "round": 1,
     "posted": [
-      "suntan"
+      "suntan",
+      "unraveled"
     ],
     "log": [
       {
         "day": "2026-10-10",
         "slug": "suntan",
         "id": "2108676731863470204"
+      },
+      {
+        "day": "2026-10-11",
+        "slug": "unraveled",
+        "id": "2109316875637125622"
       }
     ],
-    "last_day": "2026-10-10"
+    "last_day": "2026-10-11"
   }
 }
