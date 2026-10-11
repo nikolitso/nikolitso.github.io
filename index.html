@@ -191,15 +191,22 @@ section.alt .card .meta span { background: var(--paper-2); }
 .card-shot img { width: 100%; height: 100%; object-fit: cover; object-position: top center; display: block; transition: transform .5s ease; }
 .card:hover .card-shot img { transform: scale(1.03); }
 /* Latest */
-.feeds { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.25rem; margin-top: 2.5rem; }
-.feed { background: var(--paper); border: 1px solid var(--rule); border-radius: 18px; padding: 1.5rem clamp(1.25rem, 3vw, 2rem) .75rem; }
-.feed .tag { margin: 0 0 .5rem; }
-.feed ul { list-style: none; margin: 0; padding: 0; }
-.feed li a { display: grid; grid-template-columns: 6.5rem minmax(0, 1fr); gap: 1rem; align-items: baseline; padding-block: .9rem; border-top: 1px solid var(--rule); text-decoration: none; }
-.feed li:first-child a { border-top: 0; }
-.feed time { font-size: .78rem; color: var(--muted); font-variant-numeric: tabular-nums; }
-.feed li a span { font-family: var(--display); font-size: 1.3rem; line-height: 1.25; transition: color .2s; }
-.feed li a:hover span { color: var(--accent); }
+.feeds { display: grid; gap: 2.5rem; margin-top: 2.5rem; }
+.feed-head { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; margin-bottom: 1rem; }
+.feed-head .tag { margin: 0; }
+.feed-head a { font-size: .85rem; font-weight: 600; color: var(--muted); text-decoration: none; }
+.feed-head a:hover { color: var(--accent); }
+.pcards { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1.25rem; }
+.pc { display: flex; flex-direction: column; gap: .35rem; text-decoration: none; color: inherit; }
+.pc-img { display: block; overflow: hidden; border-radius: 12px; background: var(--rule); }
+.pcards.film .pc-img { aspect-ratio: 16 / 9; }
+.pcards.book .pc-img { aspect-ratio: 2 / 3; max-width: 11rem; }
+.pc-img img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .4s ease; }
+.pc:hover .pc-img img { transform: scale(1.04); }
+.pc-meta { margin-top: .5rem; font-size: .72rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); font-variant-numeric: tabular-nums; }
+.pc-title { font-family: var(--display); font-size: 1.25rem; line-height: 1.2; transition: color .2s; }
+.pc:hover .pc-title { color: var(--accent); }
+@media (max-width: 860px) { .pcards { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 
 /* ---------- Footer ---------- */
 .site-foot { background: var(--night); color: var(--on-dark-muted); }
@@ -272,6 +279,35 @@ section.alt .card .meta span { background: var(--paper-2); }
   </div>
 
 
+  <section id="latest" aria-labelledby="h-latest">
+    <div class="wrap">
+      <p class="kicker">Latest</p>
+      <h2 id="h-latest">Fresh from both</h2>
+      <div class="feeds">
+      <!-- posts:start -->
+      <div class="feed-row" data-feed="The Edge">
+        <div class="feed-head"><p class="tag">The Edge</p><a href="/the-edge/">All books →</a></div>
+        <ul class="pcards book">
+          <li><a class="pc" href="https://antonisnikolitsopoulos.com/the-edge/fine-margins/"><span class="pc-img"><img src="https://antonisnikolitsopoulos.com/the-edge/covers/fine-margins.jpg" alt="" loading="lazy" decoding="async"></span><span class="pc-meta">6 Oct 2026</span><span class="pc-title">Fine Margins</span></a></li>
+          <li><a class="pc" href="https://antonisnikolitsopoulos.com/the-edge/game-theory/"><span class="pc-img"><img src="https://antonisnikolitsopoulos.com/the-edge/covers/game-theory.jpg" alt="" loading="lazy" decoding="async"></span><span class="pc-meta">13 Aug 2026</span><span class="pc-title">Game Theory</span></a></li>
+          <li><a class="pc" href="https://antonisnikolitsopoulos.com/the-edge/inside-the-box-how-constraints-make/"><span class="pc-img"><img src="https://antonisnikolitsopoulos.com/the-edge/covers/inside-the-box-how-constraints-make.jpeg" alt="" loading="lazy" decoding="async"></span><span class="pc-meta">1 Jun 2026</span><span class="pc-title">Inside the Box</span></a></li>
+          <li><a class="pc" href="https://antonisnikolitsopoulos.com/the-edge/how-to-win-the-world-cup/"><span class="pc-img"><img src="https://antonisnikolitsopoulos.com/the-edge/covers/how-to-win-the-world-cup.jpeg" alt="" loading="lazy" decoding="async"></span><span class="pc-meta">12 May 2026</span><span class="pc-title">How to Win the World Cup</span></a></li>
+        </ul>
+      </div><!-- /feed-row -->
+      <div class="feed-row" data-feed="What Algo Missed">
+        <div class="feed-head"><p class="tag film">What Algo Missed</p><a href="https://whatalgomissed.com/films/" target="_blank" rel="noopener">All films →</a></div>
+        <ul class="pcards film">
+          <li><a class="pc" href="https://whatalgomissed.com/films/unraveled/" target="_blank" rel="noopener"><span class="pc-img"><img src="https://whatalgomissed.com/assets/backdrops/unraveled.jpg" alt="" loading="lazy" decoding="async"></span><span class="pc-meta">2026</span><span class="pc-title">Unraveled</span></a></li>
+          <li><a class="pc" href="https://whatalgomissed.com/films/the-last-resort/" target="_blank" rel="noopener"><span class="pc-img"><img src="https://whatalgomissed.com/assets/backdrops/the-last-resort.jpg" alt="" loading="lazy" decoding="async"></span><span class="pc-meta">2026</span><span class="pc-title">The Last Resort</span></a></li>
+          <li><a class="pc" href="https://whatalgomissed.com/films/things-we-dont-say/" target="_blank" rel="noopener"><span class="pc-img"><img src="https://whatalgomissed.com/assets/backdrops/things-we-dont-say.jpg" alt="" loading="lazy" decoding="async"></span><span class="pc-meta">2026</span><span class="pc-title">Things We Don&#x27;t Say</span></a></li>
+          <li><a class="pc" href="https://whatalgomissed.com/films/left-handed-girl/" target="_blank" rel="noopener"><span class="pc-img"><img src="https://whatalgomissed.com/assets/backdrops/left-handed-girl.jpg" alt="" loading="lazy" decoding="async"></span><span class="pc-meta">2025</span><span class="pc-title">Left-Handed Girl</span></a></li>
+        </ul>
+      </div><!-- /feed-row -->
+      <!-- posts:end -->
+      </div>
+    </div>
+  </section>
+
   <section id="writing" class="alt" aria-labelledby="h-writing">
     <div class="wrap">
       <p class="kicker">Publications</p>
@@ -294,33 +330,6 @@ section.alt .card .meta span { background: var(--paper-2); }
           <div class="meta"><span>Reviews</span><span>Curated lists</span><span>Film finder</span></div>
           <span class="go">whatalgomissed.com <i aria-hidden="true">→</i></span>
         </a>
-      </div>
-    </div>
-  </section>
-
-  <section id="latest" aria-labelledby="h-latest">
-    <div class="wrap">
-      <p class="kicker">Latest</p>
-      <h2 id="h-latest">Fresh from both</h2>
-      <div class="feeds">
-      <!-- posts:start -->
-      <div class="feed">
-        <p class="tag">The Edge</p>
-        <ul>
-          <li><a href="https://antonisnikolitsopoulos.com/the-edge/fine-margins/"><time datetime="2026-10-06">6 Oct 2026</time><span>Fine Margins</span></a></li>
-          <li><a href="https://antonisnikolitsopoulos.com/the-edge/game-theory/"><time datetime="2026-08-13">13 Aug 2026</time><span>Game Theory</span></a></li>
-          <li><a href="https://antonisnikolitsopoulos.com/the-edge/inside-the-box-how-constraints-make/"><time datetime="2026-06-01">1 Jun 2026</time><span>Inside the Box</span></a></li>
-        </ul>
-      </div>
-      <div class="feed">
-        <p class="tag film">What Algo Missed</p>
-        <ul>
-          <li><a href="https://whatalgomissed.com/films/valeria-is-getting-married/" target="_blank" rel="noopener"><time datetime="2026-10-09">9 Oct 2026</time><span>Valeria Is Getting Married (2022)</span></a></li>
-          <li><a href="https://whatalgomissed.com/films/the-priests-children/" target="_blank" rel="noopener"><time datetime="2026-10-09">9 Oct 2026</time><span>The Priest&#x27;s Children (2013)</span></a></li>
-          <li><a href="https://whatalgomissed.com/films/the-deep/" target="_blank" rel="noopener"><time datetime="2026-10-09">9 Oct 2026</time><span>The Deep (2012)</span></a></li>
-        </ul>
-      </div>
-      <!-- posts:end -->
       </div>
     </div>
   </section>
