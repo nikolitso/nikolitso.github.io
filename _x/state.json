@@ -113,7 +113,8 @@
     "round": 1,
     "posted": [
       "how-to-get-on-with-your-colleagues",
-      "the-definitive-guide-to-betting-on"
+      "the-definitive-guide-to-betting-on",
+      "how-to-find-fulfilling-work"
     ],
     "log": [
       {
@@ -125,9 +126,14 @@
         "day": "2026-10-10",
         "slug": "the-definitive-guide-to-betting-on",
         "id": "2108879709782020315"
+      },
+      {
+        "day": "2026-10-11",
+        "slug": "how-to-find-fulfilling-work",
+        "id": "2109242170964357492"
       }
     ],
-    "last_day": "2026-10-10"
+    "last_day": "2026-10-11"
   },
   "film": {
     "seen": [
