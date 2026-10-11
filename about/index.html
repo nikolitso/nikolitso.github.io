@@ -163,6 +163,14 @@ h2 { font-family: var(--display); font-weight: 400; font-size: clamp(2.2rem, 4.6
 .about-body a { color: var(--accent); }
 .about-body em { font-family: var(--display); font-size: 1.12em; }
 .about-body .facts { clear: both; }
+.about-body h2 { font-family: var(--display); font-weight: 400; font-size: clamp(1.7rem, 3vw, 2.2rem); line-height: 1.1; margin: 2.5rem 0 1rem; clear: both; }
+.timeline { list-style: none; margin: 0 0 1.5rem; padding: 0; border-left: 1px solid var(--rule); }
+.timeline li { position: relative; padding: 0 0 1.4rem 1.5rem; }
+.timeline li::before { content: ""; position: absolute; left: -5px; top: .45rem; width: 9px; height: 9px; border-radius: 50%; background: var(--paper); border: 2px solid var(--accent); }
+.timeline li:last-child { padding-bottom: 0; }
+.timeline .when { display: block; font-size: .72rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); font-variant-numeric: tabular-nums; }
+.timeline .role { display: block; font-weight: 600; margin: .15rem 0 .2rem; }
+.timeline p { margin: 0; color: var(--muted); line-height: 1.65; }
 @media (max-width: 600px) { .about-photo { float: none; display: block; width: min(100%, 15rem); margin: 0 0 1.5rem; } }
 
 /* Cards */
@@ -262,7 +270,22 @@ section.alt .card .meta span { background: var(--paper-2); }
       <div class="about-body">
         <img class="about-photo" src="/photo.jpg" width="800" height="1000" alt="Portrait of Antonis Nikolitsopoulos">
         <p class="about-lead">Turning data into prices, and curiosity into ideas worth sharing.</p>
-        <p>Football Trading Team Leader, based in Thessaloniki, Greece. The day job is pre-event pricing and quantitative modelling: building the models, and the teams and processes, that turn data into prices for football markets at scale.</p>
+        <p>Football Trading Team Leader, based in Thessaloniki, Greece. More than 25 years around football and betting markets: from one of the first betting newspaper pullouts in Greece to leading a team that prices pre-event soccer markets today.</p>
+        <p>The day job is pre-event pricing and quantitative modelling: building the models, and the teams and processes, that turn data into prices for football markets at scale.</p>
+        <h2>Career</h2>
+        <ol class="timeline">
+          <li><span class="when">2023 – today</span><span class="role">Pre-event Team Leader, soccer</span>
+            <p>Leading a team of analysts in soccer pre-event trading, with full ownership of pricing quality, model development and team performance.</p></li>
+          <li><span class="when">2018 – 2023</span><span class="role">Soccer trader</span>
+            <p>Hands-on pre-event trading across soccer markets, combining statistical analysis with real-time pricing decisions and probability assessment.</p></li>
+          <li><span class="when">2008 – 2017</span><span class="role">Sports betting content editor</span>
+            <p>Nine years producing and managing sports betting content at scale for one of Europe's leading operators, working remotely.</p></li>
+          <li><span class="when">2000 – 2003</span><span class="role">Betting content editor</span>
+            <p>Managed a team of betting writers for one of the first dedicated betting newspaper pullouts in Greece.</p></li>
+          <li><span class="when">Before that</span><span class="role">Chemical engineering</span>
+            <p>Studied chemical engineering, and left before finishing: a career on the factory floor was never the plan. Betting markets were a better fit.</p></li>
+        </ol>
+        <h2>Outside work</h2>
         <p>The same discipline carries into everything else. <a href="/the-edge/"><em>The Edge</em></a> is a working library of more than 100 books on analytics, betting, decision-making, management and personal development, each distilled into practical takeaways. <a href="https://whatalgomissed.com/"><em>What Algo Missed</em></a> is a personal map of world cinema, nearly 200 films from more than 30 countries, chosen one by one, far from what the algorithm would recommend.</p>
         <p>And then there's PAOK, a lifelong passion, with analytics hubs to match: <a href="/paok-hub/">PAOK Hub</a> for football, built on seasons of match data, and <a href="/paok-basketball/">PAOK Basketball</a> for the basketball team, built on official league data.</p>
         <p>Elsewhere: <a href="https://www.linkedin.com/in/antonis-nikolitsopoulos/">LinkedIn</a>, <a href="https://x.com/nikolitso">X</a> and <a href="https://letterboxd.com/nikolitso/">Letterboxd</a>. To get in touch, write to <a href="mailto:contact@antonisnikolitsopoulos.com">contact@antonisnikolitsopoulos.com</a>.</p>
