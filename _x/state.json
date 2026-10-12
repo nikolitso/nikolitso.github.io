@@ -179,6 +179,7 @@
       "blue-is-the-warmest-colour",
       "broken-vein",
       "brothers",
+      "calle-malaga",
       "capernaum",
       "caramel",
       "charter",
@@ -347,7 +348,8 @@
     "round": 1,
     "posted": [
       "suntan",
-      "unraveled"
+      "unraveled",
+      "calle-malaga"
     ],
     "log": [
       {
@@ -359,8 +361,13 @@
         "day": "2026-10-11",
         "slug": "unraveled",
         "id": "2109316875637125622"
+      },
+      {
+        "day": "2026-10-12",
+        "slug": "calle-malaga",
+        "id": "2109680011145818566"
       }
     ],
-    "last_day": "2026-10-11"
+    "last_day": "2026-10-12"
   }
 }
