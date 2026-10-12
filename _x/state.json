@@ -114,7 +114,8 @@
     "posted": [
       "how-to-get-on-with-your-colleagues",
       "the-definitive-guide-to-betting-on",
-      "how-to-find-fulfilling-work"
+      "how-to-find-fulfilling-work",
+      "manage-your-day-to-day"
     ],
     "log": [
       {
@@ -131,9 +132,14 @@
         "day": "2026-10-11",
         "slug": "how-to-find-fulfilling-work",
         "id": "2109242170964357492"
+      },
+      {
+        "day": "2026-10-12",
+        "slug": "manage-your-day-to-day",
+        "id": "2109608294813675733"
       }
     ],
-    "last_day": "2026-10-11"
+    "last_day": "2026-10-12"
   },
   "film": {
     "seen": [
