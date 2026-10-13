@@ -115,7 +115,8 @@
       "how-to-get-on-with-your-colleagues",
       "the-definitive-guide-to-betting-on",
       "how-to-find-fulfilling-work",
-      "manage-your-day-to-day"
+      "manage-your-day-to-day",
+      "beyond-the-odds"
     ],
     "log": [
       {
@@ -137,9 +138,14 @@
         "day": "2026-10-12",
         "slug": "manage-your-day-to-day",
         "id": "2109608294813675733"
+      },
+      {
+        "day": "2026-10-13",
+        "slug": "beyond-the-odds",
+        "id": "2110069852350407008"
       }
     ],
-    "last_day": "2026-10-12"
+    "last_day": "2026-10-13"
   },
   "film": {
     "seen": [
