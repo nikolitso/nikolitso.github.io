@@ -156,7 +156,7 @@ function render(){
       <div><div class="big">${r.w}–${r.l}</div><div class="lbl">${r.n} game${r.n>1?'s':''}${where ? ` · ${esc(A)}${where}` : ''}</div></div>
       <div><div class="name">${esc(B)}</div><div class="ctry">${esc(sub(B))}</div></div></div>
       <div class="bar"><i style="width:${r.w/r.n*100}%"></i><i style="width:${r.l/r.n*100}%"></i></div>
-      <div class="facts"><span>Points <b>${r.pf}–${r.pa}</b></span><span>Avg margin <b>${r.pg?((r.pf-r.pa)/r.pg>0?'+':'')+((r.pf-r.pa)/r.pg).toFixed(1):'–'}</b> for ${esc(A)}</span><span>First meeting <b>${fmtDate(h[h.length-1].m[3])}</b></span></div></div>`;
+      <div class="facts"><span>Avg points <b>${r.pg ? (r.pf/r.pg).toFixed(1) + '–' + (r.pa/r.pg).toFixed(1) : '–'}</b></span><span>Avg margin <b>${r.pg?((r.pf-r.pa)/r.pg>0?'+':'')+((r.pf-r.pa)/r.pg).toFixed(1):'–'}</b> for ${esc(A)}</span><span>First meeting <b>${fmtDate(h[h.length-1].m[3])}</b></span></div></div>`;
     if (mode === 'country'){
       const by = {};
       for (const g of h){ const k = g.own+'|'+g.opp; (by[k] ||= []).push(g); }
