@@ -23,7 +23,7 @@ h1 a:hover{color:var(--gold)}
 .home-link:hover{color:var(--gold)}
 .sub{font:400 13px var(--mono);color:var(--muted);letter-spacing:.04em;margin-bottom:32px}
 .controls{display:grid;grid-template-columns:auto 1fr auto 1fr;gap:12px;align-items:end;margin-bottom:28px}
-.tabs{display:flex;gap:28px;border-bottom:1px solid var(--line);margin:0 0 26px}
+.tabs{display:flex;flex-wrap:wrap;gap:10px 28px;border-bottom:1px solid var(--line);margin:0 0 26px}
 .tabs button{background:none;border:0;border-bottom:2px solid transparent;color:var(--muted);font:600 18px var(--serif);padding:0 0 10px;margin-bottom:-1px;cursor:pointer}
 .tabs button.on{color:var(--text);border-color:var(--gold)}
 .tabs button:hover{color:var(--text)}
@@ -76,9 +76,11 @@ tr.click{cursor:pointer} tr.click:hover td{background:rgba(212,175,55,.08)}
   <div class="tabs" id="tabs">
     <button data-view="h2h" class="on">Head to Head</button>
     <button data-view="fixtures">Fixtures</button>
+    <button data-view="rankings">Power Rankings</button>
   </div>
 
   <div id="fxView" hidden></div>
+  <div id="rkView" hidden></div>
 
   <div id="h2hView">
   <div class="controls">
@@ -268,13 +270,64 @@ function openMatch([, , home, away]){
   sync(); render();
   window.scrollTo({top: 0, behavior: 'smooth'});
 }
+// ---------- Power rankings: country Elo over all games in date order
+// Start 1500; K 20; home advantage 75 Elo points; margin-of-victory multiplier as in
+// FiveThirtyEight's NBA Elo. Same-country games are skipped; awarded games count without margin.
+let RANK = null;
+function computeRankings(){
+  const K = 20, HCA = 75, elo = {}, st = {};
+  const get = c => (elo[c] ??= 1500);
+  const s = c => (st[c] ??= {g: 0, w: 0, l: 0, pf: 0, pa: 0, pg: 0, last: ''});
+  const games = matches.slice().sort((x, y) => x[3].localeCompare(y[3]));
+  for (const [, , , date, h, a, hp, ap, status] of games){
+    const ch = teams[h], ca = teams[a];
+    if (!ch || !ca || ch === ca) continue;
+    const rh = get(ch), ra = get(ca);
+    const exp = 1 / (1 + 10 ** ((ra - (rh + HCA)) / 400));
+    const homeWon = hp > ap ? 1 : 0;
+    const margin = Math.abs(hp - ap);
+    const winDiff = homeWon ? (rh + HCA - ra) : (ra - rh - HCA);
+    const mult = status === 'AWA.' ? 1 : ((margin + 3) ** 0.8) / (7.5 + 0.006 * winDiff);
+    const d = K * mult * (homeWon - exp);
+    elo[ch] = rh + d; elo[ca] = ra - d;
+    for (const [c, own, opp] of [[ch, hp, ap], [ca, ap, hp]]){
+      const x = s(c); x.g++; own > opp ? x.w++ : x.l++; x.last = date;
+      if (status !== 'AWA.'){ x.pf += own; x.pa += opp; x.pg++; }
+    }
+  }
+  return Object.keys(st).map(c => ({c, elo: elo[c], ...st[c]})).sort((x, y) => y.elo - x.elo);
+}
+function renderRankings(){
+  RANK ||= computeRankings();
+  const rows = RANK.map((r, i) => {
+    const m = r.pg ? (r.pf - r.pa) / r.pg : 0;
+    return `<tr class="click" data-c="${esc(r.c)}"><td class="n">${i + 1}</td>
+      <td><b>${esc(r.c)}</b> <span class="tag">(${esc(code(r.c))})</span></td>
+      <td class="n"><b class="hcp">${Math.round(r.elo)}</b></td><td class="n">${r.g}</td>
+      <td class="n"><span class="w">${r.w}</span>–<span class="l">${r.l}</span></td>
+      <td class="n">${(r.w / r.g * 100).toFixed(0)}%</td>
+      <td class="n">${(m > 0 ? '+' : m < 0 ? '−' : '') + Math.abs(m).toFixed(1)}</td>
+      <td class="n tag">${fmtDate(r.last)}</td></tr>`;
+  }).join('');
+  $('rkView').innerHTML = `<div class="scroll"><table class="fx"><tr><th class="n">#</th><th>Country</th>
+    <th class="n" title="Elo rating: starts at 1500, rises with wins (more for beating strong sides, by more, away)">Rating</th>
+    <th class="n" title="Games against clubs from other countries">Games</th><th class="n">W–L</th><th class="n">Win %</th>
+    <th class="n" title="Average points margin per game">Margin</th><th class="n">Last game</th></tr>${rows}</table></div>
+    <div class="tag" style="margin-top:14px">Elo rating, updated game by game since 2015–16, so it reflects current strength. Games between clubs from the same country are not counted. Click a country for its full record.</div>`;
+  $('rkView').querySelectorAll('tr.click').forEach(tr => tr.onclick = () => {
+    setMode('country'); $('a').value = tr.dataset.c; $('b').value = ''; setVenue('all');
+    setView('h2h'); sync(); render(); window.scrollTo({top: 0, behavior: 'smooth'});
+  });
+}
 function setView(v){
-  view = v === 'fixtures' ? 'fixtures' : 'h2h';
+  view = ['fixtures', 'rankings'].includes(v) ? v : 'h2h';
   document.querySelectorAll('#tabs button').forEach(b => b.classList.toggle('on', b.dataset.view === view));
   $('fxView').hidden = view !== 'fixtures';
+  $('rkView').hidden = view !== 'rankings';
   $('h2hView').hidden = view !== 'h2h';
-  $('h1v').textContent = view === 'fixtures' ? 'Fixtures' : 'Head to Head';
+  $('h1v').textContent = {fixtures: 'Fixtures', rankings: 'Power Rankings'}[view] || 'Head to Head';
   if (view === 'fixtures') renderFixtures();
+  if (view === 'rankings') renderRankings();
 }
 document.querySelectorAll('#tabs button').forEach(b => b.onclick = () => { setView(b.dataset.view); sync(); });
 // Home: back to the start (countries, all venues, nothing selected, head to head tab)
