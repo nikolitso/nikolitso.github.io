@@ -192,25 +192,34 @@ function render(){
 let view = 'h2h';
 const FX = (window.FIXTURES && window.FIXTURES.list) || [];
 // head to head between two sides, from the first side's point of view; key: club or country name
-function h2hRecord(x, y, byCountry){
+// FIBA / IOC three-letter country codes
+const CODE = {'Austria':'AUT','Azerbaijan':'AZE','Belarus':'BLR','Belgium':'BEL','Bosnia and Herzegovina':'BIH','Bulgaria':'BUL',
+  'Croatia':'CRO','Cyprus':'CYP','Czech Republic':'CZE','Denmark':'DEN','Estonia':'EST','Finland':'FIN','France':'FRA','Georgia':'GEO',
+  'Germany':'GER','Greece':'GRE','Hungary':'HUN','Iceland':'ISL','Israel':'ISR','Italy':'ITA','Kosovo':'KOS','Latvia':'LAT',
+  'Lithuania':'LTU','Malta':'MLT','Montenegro':'MNE','Netherlands':'NED','North Macedonia':'MKD','Poland':'POL','Portugal':'POR',
+  'Romania':'ROU','Russia':'RUS','Slovakia':'SVK','Spain':'ESP','Sweden':'SWE','Switzerland':'SUI','Turkey':'TUR','Ukraine':'UKR',
+  'United Kingdom':'GBR'};
+const code = c => CODE[c] || (c || '').slice(0, 3).toUpperCase();
+// head to head from x's point of view; homeOnly: only games where x was at home
+function h2hRecord(x, y, byCountry, homeOnly){
   let w = 0, l = 0;
   for (const [, , , , h, a, hp, ap] of matches){
     const eh = byCountry ? teams[h] : h, ea = byCountry ? teams[a] : a;
     if (eh === x && ea === y) (hp > ap ? w++ : l++);
-    else if (eh === y && ea === x) (ap > hp ? w++ : l++);
+    else if (!homeOnly && eh === y && ea === x) (ap > hp ? w++ : l++);
   }
   return {w, l, n: w + l};
 }
+const recCell = r => r.n ? `<b>${r.w}–${r.l}</b>` : '<span class="tag">–</span>';
 function fixtureRow(f, i){
   const [when, round, home, away] = f;
   const ch = teams[home] || '', ca = teams[away] || '';
-  const same = ch && ch === ca;
-  const r = same ? h2hRecord(home, away, false) : h2hRecord(ch, ca, true);
-  const who = same ? `${esc(home)} vs ${esc(away)}` : `${esc(ch)} vs ${esc(ca)}`;
-  const rec = r.n ? `<b>${r.w}–${r.l}</b> <span class="tag">${who}</span>` : `<span class="tag">${same ? 'First meeting' : `${esc(ch)} vs ${esc(ca)}: first meeting`}</span>`;
+  const same = ch && ch === ca;                       // same country: compare the clubs instead
+  const [x, y, byC] = same ? [home, away, false] : [ch, ca, true];
+  const all = h2hRecord(x, y, byC, false), atHome = h2hRecord(x, y, byC, true);
   return `<tr class="click" data-i="${i}"><td class="n">${when.slice(11)}</td>
-    <td><b>${esc(home)}</b> <span class="tag">${esc(ch)}</span> – <b>${esc(away)}</b> <span class="tag">${esc(ca)}</span></td>
-    <td class="n">${rec}</td></tr>`;
+    <td><b>${esc(home)}</b> <span class="tag">(${esc(code(ch))})</span> – <b>${esc(away)}</b> <span class="tag">(${esc(code(ca))})</span></td>
+    <td class="n">${recCell(all)}</td><td class="n">${recCell(atHome)}</td></tr>`;
 }
 function renderFixtures(){
   const box = $('fxView');
@@ -224,9 +233,9 @@ function renderFixtures(){
   const days = {};
   for (const [f, i] of list) (days[f[0].slice(0, 10)] ||= []).push([f, i]);
   const dayName = d => new Date(d + 'T12:00').toLocaleDateString('en-GB', {weekday:'long', day:'numeric', month:'long'});
-  box.innerHTML = `<div class="tag" style="margin-bottom:8px">Next 7 days · Greek time · country head to head shown for each match (club head to head when both teams are from the same country). Click a match for the full record.</div>` +
+  box.innerHTML =
     Object.entries(days).map(([d, rows]) => `<h2>${dayName(d)} <span class="tag">${esc(rows[0][0][1])}</span></h2>
-      <div class="scroll"><table><tr><th class="n">Time</th><th>Match</th><th class="n">Head to head</th></tr>${rows.map(([f, i]) => fixtureRow(f, i)).join('')}</table></div>`).join('') +
+      <div class="scroll"><table><tr><th class="n">Time</th><th>Match</th><th class="n" title="All games between the two countries, from the home side">H2H</th><th class="n" title="Only games where the home side was at home">H2H home</th></tr>${rows.map(([f, i]) => fixtureRow(f, i)).join('')}</table></div>`).join('') +
     `<div class="tag" style="margin-top:18px">Fixtures as of ${esc(window.FIXTURES.updated)}.</div>`;
   box.querySelectorAll('tr.click').forEach(tr => tr.onclick = () => openMatch(FX[+tr.dataset.i]));
 }
