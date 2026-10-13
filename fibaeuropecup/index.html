@@ -242,12 +242,14 @@ function fixtureRow(f, i){
 function renderFixtures(){
   const box = $('fxView');
   if (!FX.length){ box.innerHTML = '<div class="empty">No upcoming fixtures.</div>'; return; }
-  // only the next 7 days (today included)
-  const day = d => d.toLocaleDateString('en-CA');            // YYYY-MM-DD in local time
-  const now = new Date(), end = new Date(now); end.setDate(now.getDate() + 7);
-  const today = day(now), until = day(end);
-  const list = FX.map((f, i) => [f, i]).filter(([f]) => f[0].slice(0, 10) >= today && f[0].slice(0, 10) < until);
-  if (!list.length){ box.innerHTML = '<div class="empty">No fixtures in the next 7 days.</div>'; return; }
+  // only the next round: the round of the earliest game from today on, all of its games
+  const today = new Date().toLocaleDateString('en-CA');      // YYYY-MM-DD in local time
+  const upcoming = FX.map((f, i) => [f, i]).filter(([f]) => f[0].slice(0, 10) >= today)
+                     .sort((x, y) => x[0][0].localeCompare(y[0][0]));
+  if (!upcoming.length){ box.innerHTML = '<div class="empty">No upcoming fixtures.</div>'; return; }
+  const nextRound = upcoming[0][0][1];
+  const list = nextRound ? upcoming.filter(([f]) => f[1] === nextRound)
+                         : upcoming.filter(([f]) => f[0].slice(0, 10) === upcoming[0][0][0].slice(0, 10));
   const days = {};
   for (const [f, i] of list) (days[f[0].slice(0, 10)] ||= []).push([f, i]);
   const dayName = d => new Date(d + 'T12:00').toLocaleDateString('en-GB', {weekday:'long', day:'numeric', month:'long'});
