@@ -1,11 +1,13 @@
 name: Daily X posts
 
-# Book at 14:00 and film at 19:00 Athens time. Cron is UTC-only, so each slot runs
-# at both possible UTC hours (summer / winter time); the script posts on the right one.
+# Book at 14:00 and film at 19:00 Athens time. GitHub's scheduler can run late or skip
+# runs, so this checks every hour through the afternoon and evening; on each run the
+# script posts a book and/or a film only if it's past that one's time and it hasn't
+# gone out yet today, so extra checks never cause duplicates. (UTC 11-21 covers
+# 14:00-24:00 Athens in both summer and winter time.)
 on:
   schedule:
-    - cron: "3 11,12 * * *"   # book
-    - cron: "3 16,17 * * *"   # film
+    - cron: "7 11-21 * * *"
   workflow_dispatch:
     inputs:
       kind:
@@ -49,17 +51,21 @@ jobs:
             KIND="${{ inputs.kind }}"
             FLAGS="--force"
             if [ "${{ inputs.dry_run }}" = "true" ]; then FLAGS="$FLAGS --dry-run"; fi
-          elif [ "${{ github.event.schedule }}" = "3 11,12 * * *" ]; then
-            KIND=book; FLAGS=""
+            python scripts/x_daily.py "$KIND" $FLAGS
           else
-            KIND=film; FLAGS=""
+            # scheduled check: try both; each posts only when due
+            status=0
+            python scripts/x_daily.py book || status=1
+            python scripts/x_daily.py film || status=1
+            exit $status
           fi
-          python scripts/x_daily.py "$KIND" $FLAGS
       - name: Update the homepage's Today's picks card
+        if: ${{ !cancelled() }}   # record a successful post even if the other kind failed
         env:
           WAM_DIR: wam
         run: python scripts/update_picks.py
       - name: Save what was posted
+        if: ${{ !cancelled() }}   # record a successful post even if the other kind failed
         run: |
           if git diff --quiet -- _x index.html 2>/dev/null && [ -z "$(git ls-files --others -- _x)" ]; then exit 0; fi
           git config user.name "github-actions[bot]"
