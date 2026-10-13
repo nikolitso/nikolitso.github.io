@@ -51,6 +51,10 @@ table{width:100%;border-collapse:collapse;font-size:15px}
 th{font:400 11px var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.1em;text-align:left;padding:8px 10px;border-bottom:1px solid var(--line)}
 td{padding:9px 10px;border-bottom:1px solid var(--line)}
 td.n,th.n{text-align:right;font-family:var(--mono);font-size:14px;white-space:nowrap}
+.fx th.grp{text-align:center;color:var(--gold);border-bottom:1px solid var(--line)}
+.fx .gap{border-right:1px solid var(--line);padding-right:14px}
+.fx td.n{padding-left:6px;padding-right:8px}
+.fx .hcp{color:var(--gold)}
 tr.click{cursor:pointer} tr.click:hover td{background:rgba(212,175,55,.08)}
 .w{color:var(--win)} .l{color:var(--loss)}
 .tag{font:400 11px var(--mono);color:var(--muted)}
@@ -200,17 +204,31 @@ const CODE = {'Austria':'AUT','Azerbaijan':'AZE','Belarus':'BLR','Belgium':'BEL'
   'Romania':'ROU','Russia':'RUS','Slovakia':'SVK','Spain':'ESP','Sweden':'SWE','Switzerland':'SUI','Turkey':'TUR','Ukraine':'UKR',
   'United Kingdom':'GBR'};
 const code = c => CODE[c] || (c || '').slice(0, 3).toUpperCase();
-// head to head from x's point of view; homeOnly: only games where x was at home
+// head to head from x's point of view; homeOnly: only games where x was at home.
+// pf/pa = points for x / against x, over pg games with a real score (awarded games excluded)
 function h2hRecord(x, y, byCountry, homeOnly){
-  let w = 0, l = 0;
-  for (const [, , , , h, a, hp, ap] of matches){
+  let w = 0, l = 0, pf = 0, pa = 0, pg = 0;
+  for (const [, , , , h, a, hp, ap, status] of matches){
     const eh = byCountry ? teams[h] : h, ea = byCountry ? teams[a] : a;
-    if (eh === x && ea === y) (hp > ap ? w++ : l++);
-    else if (!homeOnly && eh === y && ea === x) (ap > hp ? w++ : l++);
+    let own, opp;
+    if (eh === x && ea === y) [own, opp] = [hp, ap];
+    else if (!homeOnly && eh === y && ea === x) [own, opp] = [ap, hp];
+    else continue;
+    own > opp ? w++ : l++;
+    if (status !== 'AWA.'){ pf += own; pa += opp; pg++; }
   }
-  return {w, l, n: w + l};
+  return {w, l, n: w + l, pf, pa, pg};
 }
-const recCell = r => r.n ? `<b>${r.w}–${r.l}</b>` : '<span class="tag">–</span>';
+const fmt1 = v => v.toFixed(1);
+const sgn = v => (v > 0 ? '+' : v < 0 ? '−' : '') + Math.abs(v).toFixed(1);
+// four cells: W–L, home side avg, away side avg, home handicap (minus the average margin)
+function recCells(r){
+  if (!r.n) return '<td class="n tag">–</td><td class="n tag">–</td><td class="n tag">–</td><td class="n tag gap">–</td>';
+  const avg = r.pg ? [r.pf / r.pg, r.pa / r.pg] : null;
+  return `<td class="n"><b>${r.w}–${r.l}</b></td>` +
+    (avg ? `<td class="n">${fmt1(avg[0])}</td><td class="n">${fmt1(avg[1])}</td><td class="n gap hcp">${sgn(avg[1] - avg[0])}</td>`
+         : '<td class="n tag">–</td><td class="n tag">–</td><td class="n tag gap">–</td>');
+}
 function fixtureRow(f, i){
   const [when, round, home, away] = f;
   const ch = teams[home] || '', ca = teams[away] || '';
@@ -219,7 +237,7 @@ function fixtureRow(f, i){
   const all = h2hRecord(x, y, byC, false), atHome = h2hRecord(x, y, byC, true);
   return `<tr class="click" data-i="${i}"><td class="n">${when.slice(11)}</td>
     <td><b>${esc(home)}</b> <span class="tag">(${esc(code(ch))})</span> – <b>${esc(away)}</b> <span class="tag">(${esc(code(ca))})</span></td>
-    <td class="n">${recCell(all)}</td><td class="n">${recCell(atHome)}</td></tr>`;
+    ${recCells(all)}${recCells(atHome)}</tr>`;
 }
 function renderFixtures(){
   const box = $('fxView');
@@ -235,7 +253,7 @@ function renderFixtures(){
   const dayName = d => new Date(d + 'T12:00').toLocaleDateString('en-GB', {weekday:'long', day:'numeric', month:'long'});
   box.innerHTML =
     Object.entries(days).map(([d, rows]) => `<h2>${dayName(d)} <span class="tag">${esc(rows[0][0][1])}</span></h2>
-      <div class="scroll"><table><tr><th class="n">Time</th><th>Match</th><th class="n" title="All games between the two countries, from the home side">H2H</th><th class="n" title="Only games where the home side was at home">H2H home</th></tr>${rows.map(([f, i]) => fixtureRow(f, i)).join('')}</table></div>`).join('') +
+      <div class="scroll"><table class="fx"><tr><th rowspan="2" class="n">Time</th><th rowspan="2">Match</th><th colspan="4" class="grp gap" title="All games between the two sides">H2H</th><th colspan="4" class="grp" title="Only games with this fixture&#39;s home side at home">H2H home</th></tr><tr><th class="n">W–L</th><th class="n" title="Home side average points">Home</th><th class="n" title="Away side average points">Away</th><th class="n gap" title="Home side handicap: minus the average margin">Hcp</th><th class="n">W–L</th><th class="n" title="Home side average points">Home</th><th class="n" title="Away side average points">Away</th><th class="n" title="Home side handicap: minus the average margin">Hcp</th></tr>${rows.map(([f, i]) => fixtureRow(f, i)).join('')}</table></div>`).join('') +
     `<div class="tag" style="margin-top:18px">Fixtures as of ${esc(window.FIXTURES.updated)}.</div>`;
   box.querySelectorAll('tr.click').forEach(tr => tr.onclick = () => openMatch(FX[+tr.dataset.i]));
 }
