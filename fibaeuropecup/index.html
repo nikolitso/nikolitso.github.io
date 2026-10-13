@@ -19,7 +19,8 @@ h1{font:700 clamp(30px,5vw,46px)/1.1 var(--serif);margin:0 0 6px}
 h1 span{color:var(--gold)}
 .sub{font:400 13px var(--mono);color:var(--muted);letter-spacing:.04em;margin-bottom:32px}
 .controls{display:grid;grid-template-columns:auto 1fr auto 1fr;gap:12px;align-items:end;margin-bottom:28px}
-.seg{display:flex;border:1px solid var(--line);border-radius:6px;overflow:hidden;grid-column:1/-1;width:max-content}
+.segs{display:flex;flex-wrap:wrap;gap:12px;grid-column:1/-1}
+.seg{display:flex;border:1px solid var(--line);border-radius:6px;overflow:hidden;width:max-content}
 .seg button{background:none;border:0;color:var(--muted);font:500 13px var(--mono);padding:9px 18px;cursor:pointer;letter-spacing:.06em;text-transform:uppercase}
 .seg button.on{background:var(--gold);color:#0c1424}
 label{font:400 11px var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.1em;display:block;margin-bottom:5px}
@@ -60,9 +61,16 @@ tr.click{cursor:pointer} tr.click:hover td{background:rgba(212,175,55,.08)}
   <div class="sub" id="sub"></div>
 
   <div class="controls">
-    <div class="seg" id="seg">
-      <button data-mode="team" class="on">Teams</button>
-      <button data-mode="country">Countries</button>
+    <div class="segs">
+      <div class="seg" id="seg">
+        <button data-mode="country" class="on">Countries</button>
+        <button data-mode="team">Teams</button>
+      </div>
+      <div class="seg" id="venue" aria-label="Venue">
+        <button data-venue="all" class="on">All</button>
+        <button data-venue="home">Home</button>
+        <button data-venue="away">Away</button>
+      </div>
     </div>
     <div><label for="a" id="la">Team</label><input id="a" list="opts" autocomplete="off" placeholder="Start typing"></div>
     <div class="vs">vs</div>
@@ -74,7 +82,8 @@ tr.click{cursor:pointer} tr.click:hover td{background:rgba(212,175,55,.08)}
 <script src="data.js"></script>
 <script>
 const {matches, teams} = window.DATA;
-let mode = 'team';
+let mode = 'country';
+let venue = 'all';   // all | home | away, from the first pick's point of view
 const $ = id => document.getElementById(id);
 const ent = t => mode === 'team' ? t : teams[t];
 const fmtDate = d => d.split('-').reverse().join('.');
@@ -119,17 +128,18 @@ function render(){
   const ok = n => names().includes(n);
   if (!A){ out.innerHTML = `<div class="empty">Pick a ${mode} to see its record against everyone, or two to see their head to head.</div>`; return; }
   if (!ok(A)){ out.innerHTML = `<div class="empty">No ${mode} called “${esc(A)}”. Choose from the suggestions.</div>`; return; }
-  const gs = gamesFor(A);
+  const gs = gamesFor(A).filter(g => venue === 'all' || (venue === 'home') === g.home);
+  const where = venue === 'all' ? '' : (venue === 'home' ? ' at home' : ' away');
 
   if (B && ok(B)){
     if (A === B){ out.innerHTML = `<div class="empty">Pick two different ${mode === 'team' ? 'teams' : 'countries'}.</div>`; return; }
     const h = gs.filter(g => g.oppE === B).sort((x,y) => y.m[3].localeCompare(x.m[3]));
-    if (!h.length){ out.innerHTML = `<div class="empty">${esc(A)} and ${esc(B)} have not met in this competition.</div>`; return; }
+    if (!h.length){ out.innerHTML = `<div class="empty">${esc(A)} and ${esc(B)} have not met${venue === 'all' ? ' in this competition' : ` with ${esc(A)} playing${where}`}.</div>`; return; }
     const r = record(h);
     const sub = x => mode === 'team' ? teams[x] : '';
     let html = `<div class="card"><div class="score">
       <div><div class="name">${esc(A)}</div><div class="ctry">${esc(sub(A))}</div></div>
-      <div><div class="big">${r.w}–${r.l}</div><div class="lbl">${r.n} game${r.n>1?'s':''}</div></div>
+      <div><div class="big">${r.w}–${r.l}</div><div class="lbl">${r.n} game${r.n>1?'s':''}${where ? ` · ${esc(A)}${where}` : ''}</div></div>
       <div><div class="name">${esc(B)}</div><div class="ctry">${esc(sub(B))}</div></div></div>
       <div class="bar"><i style="width:${r.w/r.n*100}%"></i><i style="width:${r.l/r.n*100}%"></i></div>
       <div class="facts"><span>Points <b>${r.pf}–${r.pa}</b></span><span>Avg margin <b>${r.pg?((r.pf-r.pa)/r.pg>0?'+':'')+((r.pf-r.pa)/r.pg).toFixed(1):'–'}</b> for ${esc(A)}</span><span>First meeting <b>${fmtDate(h[h.length-1].m[3])}</b></span></div></div>`;
@@ -146,13 +156,13 @@ function render(){
   }
 
   // Single selection: record vs every opponent
-  if (!gs.length){ out.innerHTML = `<div class="empty">No games found for ${esc(A)}.</div>`; return; }
+  if (!gs.length){ out.innerHTML = `<div class="empty">No games found for ${esc(A)}${where}.</div>`; return; }
   const by = {};
   for (const g of gs) (by[g.oppE] ||= []).push(g);
   const rows = Object.entries(by).map(([o,v]) => ({o, r:record(v), last:v.reduce((a,g)=>g.m[3]>a?g.m[3]:a,'')}))
     .sort((x,y) => y.r.n - x.r.n || x.o.localeCompare(y.o));
   const tot = record(gs);
-  out.innerHTML = `<div class="card"><div class="score"><div></div><div><div class="name">${esc(A)}</div><div class="ctry">${mode==='team'?esc(teams[A]):''}</div><div class="big" style="margin-top:12px">${tot.w}–${tot.l}</div><div class="lbl">${tot.n} games · ${rows.length} opponents</div></div><div></div></div></div>
+  out.innerHTML = `<div class="card"><div class="score"><div></div><div><div class="name">${esc(A)}</div><div class="ctry">${mode==='team'?esc(teams[A]):''}</div><div class="big" style="margin-top:12px">${tot.w}–${tot.l}</div><div class="lbl">${tot.n} games${where} · ${rows.length} opponents</div></div><div></div></div></div>
     <div class="tag" style="margin-bottom:8px">Click an opponent for the full head to head.</div>
     <div class="scroll"><table><tr><th>Opponent</th><th class="n">P</th><th class="n">W</th><th class="n">L</th><th class="n">Pts</th><th class="n">Last</th></tr>` +
     rows.map(({o,r,last}) => `<tr class="click" data-o="${esc(o)}"><td>${esc(o)}${mode==='team'?` <span class="tag">${esc(teams[o])}</span>`:''}</td><td class="n">${r.n}</td><td class="n w">${r.w}</td><td class="n l">${r.l}</td><td class="n">${r.pf}–${r.pa}</td><td class="n">${fmtDate(last)}</td></tr>`).join('') + `</table></div>`;
@@ -160,7 +170,7 @@ function render(){
 }
 
 function sync(){
-  const q = new URLSearchParams({mode, a:$('a').value, b:$('b').value});
+  const q = new URLSearchParams({mode, venue, a:$('a').value, b:$('b').value});
   history.replaceState(null, '', '#' + q.toString());
 }
 function setMode(m){
@@ -171,12 +181,18 @@ function setMode(m){
   fillOptions();
 }
 document.querySelectorAll('#seg button').forEach(b => b.onclick = () => { setMode(b.dataset.mode); $('a').value = $('b').value = ''; sync(); render(); });
+function setVenue(v){
+  venue = ['home','away'].includes(v) ? v : 'all';
+  document.querySelectorAll('#venue button').forEach(b => b.classList.toggle('on', b.dataset.venue === venue));
+}
+document.querySelectorAll('#venue button').forEach(b => b.onclick = () => { setVenue(b.dataset.venue); sync(); render(); });
 ['a','b'].forEach(id => $(id).addEventListener('input', () => { sync(); render(); }));
 $('a').addEventListener('change', render); $('b').addEventListener('change', render);
 
 // restore from URL hash
 const p = new URLSearchParams(location.hash.slice(1));
-setMode(p.get('mode') === 'country' ? 'country' : 'team');
+setMode(p.get('mode') === 'team' ? 'team' : 'country');
+setVenue(p.get('venue'));
 $('a').value = p.get('a') || ''; $('b').value = p.get('b') || '';
 render();
 </script>
