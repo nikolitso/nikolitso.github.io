@@ -60,6 +60,10 @@ tr.click{cursor:pointer} tr.click:hover td{background:rgba(212,175,55,.08)}
 .tag{font:400 11px var(--mono);color:var(--muted)}
 .empty{color:var(--muted);padding:30px 0;text-align:center}
 .scroll{overflow-x:auto}
+.pjbar{display:flex;flex-wrap:wrap;align-items:center;gap:10px 22px;margin:0 0 8px}
+.pjbar label{font:400 13px var(--mono);color:var(--muted);text-transform:none;letter-spacing:0;margin:0;display:flex;align-items:center;gap:8px}
+select.peer{background:var(--panel);border:1px solid var(--line);border-radius:6px;color:var(--text);font:500 14px var(--mono);padding:4px 6px;cursor:pointer}
+select.peer:focus{outline:2px solid var(--gold)}
 @media(max-width:640px){
   .controls{grid-template-columns:1fr auto 1fr}
   .vs{display:none} .swap{grid-column:2;grid-row:2}
@@ -233,15 +237,18 @@ function recCells(r){
     (avg ? `<td class="n">${fmt1(avg[0])}</td><td class="n">${fmt1(avg[1])}</td><td class="n gap hcp">${sgn(avg[0] - avg[1])}</td>`
          : '<td class="n tag">–</td><td class="n tag">–</td><td class="n tag gap">–</td>');
 }
-function fixtureRow(f, i){
-  const [when, round, home, away] = f;
+function h2hCells(home, away){
   const ch = teams[home] || '', ca = teams[away] || '';
   const same = ch && ch === ca;                       // same country: compare the clubs instead
   const [x, y, byC] = same ? [home, away, false] : [ch, ca, true];
-  const all = h2hRecord(x, y, byC, false), atHome = h2hRecord(x, y, byC, true);
+  return recCells(h2hRecord(x, y, byC, false)) + recCells(h2hRecord(x, y, byC, true));
+}
+function fixtureRow(f, i){
+  const [when, round, home, away] = f;
+  const ch = teams[home] || '', ca = teams[away] || '';
   return `<tr class="click" data-i="${i}"><td class="n">${when.slice(11)}</td>
     <td><b>${esc(home)}</b> <span class="tag">(${esc(code(ch))})</span> – <b>${esc(away)}</b> <span class="tag">(${esc(code(ca))})</span></td>
-    ${recCells(all)}${recCells(atHome)}</tr>`;
+    ${h2hCells(home, away)}</tr>`;
 }
 // the next round: the round of the earliest game from today on, all of its games, as [fixture, index]
 function nextRoundGames(){
@@ -281,61 +288,90 @@ function openMatch([, , home, away]){
   sync(); render();
   window.scrollTo({top: 0, behavior: 'smooth'});
 }
-// ---------- Projections: additive points model on the last three seasons
-// home pts = home attack + away defence - league average + half the home advantage (away: the mirror).
-// Team attack/defence are shrunk toward the team's country, and the country toward the league (K games each).
-let MODEL = null;
-function buildModel(){
-  const seasons = [...new Set(matches.map(m => m[0]))].sort().slice(-3);
-  const K = 8, recent = matches.filter(m => seasons.includes(m[0]) && m[8] !== 'AWA.');
-  const add = (o, k, f, a) => { const x = (o[k] ||= {f: 0, a: 0, n: 0}); x.f += f; x.a += a; x.n++; };
-  const tm = {}, ct = {};
-  let tot = 0, hm = 0;
-  for (const [, , , , h, a, hp, ap] of recent){
-    add(tm, h, hp, ap); add(tm, a, ap, hp);
-    if (teams[h]) add(ct, teams[h], hp, ap);
-    if (teams[a]) add(ct, teams[a], ap, hp);
-    tot += hp + ap; hm += hp - ap;
+// ---------- Projections: peer-group points model
+// Each side is replaced by the countries ranked within +/- N places of its own country in the power rankings
+// (N = 1..5, default 3, set separately for the home and the away side). Every past game between a club of the
+// home group and a club of the away group is used, home advantage is taken out of each score, and the projection
+// is the group's neutral average plus half the league home advantage for the home side (minus it for the away side).
+const PEER_DEFAULT = 3;
+let pjAll = {h: PEER_DEFAULT, a: PEER_DEFAULT}, pjRow = {};      // global setting, per-fixture overrides by index
+let HADV = null;
+function homeAdvantage(){
+  if (HADV === null){
+    const g = matches.filter(m => m[8] !== 'AWA.' && teams[m[4]] !== teams[m[5]]);
+    HADV = g.reduce((t, m) => t + m[6] - m[7], 0) / g.length;
   }
-  const L = tot / (2 * recent.length), H = hm / recent.length;
-  const shrink = (x, prior) => x ? {o: (x.f + K * prior.o) / (x.n + K), d: (x.a + K * prior.d) / (x.n + K), n: x.n} : {...prior, n: 0};
-  const league = {o: L, d: L};
-  const country = c => shrink(ct[c], league);
-  const team = t => shrink(tm[t], country(teams[t]));
-  return {L, H, team, seasons, games: recent.length};
+  return HADV;
 }
-function project(home, away){
-  MODEL ||= buildModel();
-  const h = MODEL.team(home), a = MODEL.team(away);
-  const hp = h.o + a.d - MODEL.L + MODEL.H / 2, ap = a.o + h.d - MODEL.L - MODEL.H / 2;
-  return {hp, ap, hn: h.n, an: a.n};
+function peers(c, n){
+  RANK ||= computeRankings();
+  const i = RANK.findIndex(r => r.c === c);
+  if (i < 0) return null;
+  return {set: new Set(RANK.slice(Math.max(0, i - n), i + n + 1).map(r => r.c)), rank: i + 1};
 }
+function project(home, away, nh, na){
+  const gh = peers(teams[home], nh), ga = peers(teams[away], na);
+  if (!gh || !ga) return null;
+  const H = homeAdvantage();
+  let n = 0, sh = 0, sa = 0;
+  for (const [, , , , h, a, hp, ap, status] of matches){
+    if (status === 'AWA.' || teams[h] === teams[a]) continue;
+    for (const [A, B, pa, pb, aHome] of [[h, a, hp, ap, true], [a, h, ap, hp, false]]){
+      if (!gh.set.has(teams[A]) || !ga.set.has(teams[B])) continue;
+      const d = aHome ? -H / 2 : H / 2;          // back to a neutral court
+      n++; sh += pa + d; sa += pb - d;
+    }
+  }
+  if (!n) return null;
+  return {hp: sh / n + H / 2, ap: sa / n - H / 2, n};
+}
+const peerSelect = (i, side, v) => `<select class="peer" data-i="${i}" data-side="${side}" aria-label="${side === 'h' ? 'Home' : 'Away'} places">` +
+  [1, 2, 3, 4, 5].map(k => `<option value="${k}"${k === v ? ' selected' : ''}>±${k}</option>`).join('') + '</select>';
 function projectionRow(f, i){
   const [when, round, home, away] = f;
   const ch = teams[home] || '', ca = teams[away] || '';
-  const p = project(home, away);
-  p.hp = Math.round(p.hp * 10) / 10; p.ap = Math.round(p.ap * 10) / 10;   // round first so the row adds up
-  const hcp = p.hp - p.ap;
-  const thin = (p.hn < 4 || p.an < 4) ? ' <span class="tag" title="Few recent games for one side: leans on its country average">·</span>' : '';
+  const nh = pjRow[i]?.h ?? pjAll.h, na = pjRow[i]?.a ?? pjAll.a;
+  const p = project(home, away, nh, na);
+  let cells = '<td class="n tag gap" colspan="5">No comparable games</td>';
+  if (p){
+    const hp = Math.round(p.hp * 10) / 10, ap = Math.round(p.ap * 10) / 10;   // round first so the row adds up
+    cells = `<td class="n gap"><b>${hp.toFixed(1)}</b></td><td class="n"><b>${ap.toFixed(1)}</b></td>
+      <td class="n tag">${(hp + ap).toFixed(1)}</td><td class="n hcp">${sgn(hp - ap)}</td><td class="n tag" title="Past games between the two groups">${p.n}</td>`;
+  }
+  const rk = c => { const r = RANK.findIndex(x => x.c === c); return r < 0 ? '' : ` #${r + 1}`; };
   return `<tr class="click" data-i="${i}"><td class="n">${when.slice(11)}</td>
-    <td><b>${esc(home)}</b> <span class="tag">(${esc(code(ch))})</span> – <b>${esc(away)}</b> <span class="tag">(${esc(code(ca))})</span>${thin}</td>
-    <td class="n">${p.hp.toFixed(1)}</td><td class="n">${p.ap.toFixed(1)}</td><td class="n tag">${(p.hp + p.ap).toFixed(1)}</td>
-    <td class="n hcp">${sgn(hcp)}</td></tr>`;
+    <td><b>${esc(home)}</b> <span class="tag">(${esc(code(ch))}${rk(ch)})</span> – <b>${esc(away)}</b> <span class="tag">(${esc(code(ca))}${rk(ca)})</span></td>
+    ${h2hCells(home, away)}
+    <td class="n gap">${peerSelect(i, 'h', nh)}</td><td class="n">${peerSelect(i, 'a', na)}</td>${cells}</tr>`;
 }
 function renderProjections(){
   const box = $('pjView');
   const list = nextRoundGames();
   if (!list.length){ box.innerHTML = '<div class="empty">No upcoming fixtures.</div>'; return; }
-  MODEL ||= buildModel();
-  box.innerHTML = Object.entries(byDay(list)).map(([d, rows]) => `<h2>${dayName(d)} <span class="tag">${esc(rows[0][0][1])}</span></h2>
-      <div class="scroll"><table class="fx"><tr><th class="n">Time</th><th>Match</th>
-      <th class="n" title="Projected home points">Home</th><th class="n" title="Projected away points">Away</th>
-      <th class="n" title="Projected total points">Total</th><th class="n" title="Projected handicap: home minus away">Hcp</th></tr>
+  RANK ||= computeRankings();
+  const head = `<div class="pjbar"><span class="tag">Places either side in the power rankings, all matches:</span>
+    <label>Home side ${peerSelect('all', 'h', pjAll.h)}</label><label>Away side ${peerSelect('all', 'a', pjAll.a)}</label>
+    <span class="tag">Each match can be adjusted on its own row.</span></div>`;
+  box.innerHTML = head + Object.entries(byDay(list)).map(([d, rows]) => `<h2>${dayName(d)} <span class="tag">${esc(rows[0][0][1])}</span></h2>
+      <div class="scroll"><table class="fx"><tr><th rowspan="2" class="n">Time</th><th rowspan="2">Match</th>
+      <th colspan="4" class="grp gap" title="All games between the two sides">H2H</th><th colspan="4" class="grp" title="Only games with this fixture&#39;s home side at home">H2H home</th>
+      <th colspan="2" class="grp gap" title="How many places either side of each country in the power rankings feed its group">Places</th>
+      <th colspan="5" class="grp gap">Projection</th></tr>
+      <tr><th class="n">W–L</th><th class="n">Home</th><th class="n">Away</th><th class="n gap">Hcp</th><th class="n">W–L</th><th class="n">Home</th><th class="n">Away</th><th class="n">Hcp</th>
+      <th class="n gap">Home</th><th class="n">Away</th>
+      <th class="n gap" title="Projected home points">Home</th><th class="n" title="Projected away points">Away</th><th class="n" title="Projected total points">Total</th><th class="n" title="Projected handicap: home minus away">Hcp</th><th class="n" title="Games used">n</th></tr>
       ${rows.map(([f, i]) => projectionRow(f, i)).join('')}</table></div>`).join('') +
-    `<div class="tag" style="margin-top:14px">Points model on ${MODEL.seasons[0].slice(0, 4)}–${MODEL.seasons[2].slice(-4)} (${MODEL.games} games):
-     each side's attack and defence per game, blended toward its country and the league average (${MODEL.L.toFixed(1)} points) when it has few games;
-     home advantage ${MODEL.H.toFixed(1)} points. Click a match for the head to head.</div>`;
-  box.querySelectorAll('tr.click').forEach(tr => tr.onclick = () => openMatch(FX[+tr.dataset.i]));
+    `<div class="tag" style="margin-top:14px">How it works: each side is stood in for by the countries ranked within the chosen number of places of its own country in the power rankings
+     (the country itself included; at the top or bottom of the table the window is cut short). Every game since 2015–16 between a club from the home group and a club from the away group counts.
+     Home advantage (${homeAdvantage().toFixed(1)} points) is taken out of each score; the projection is each group's neutral average with half of it added to the home side and taken off the away side.
+     Click a match for the head to head.</div>`;
+  box.querySelectorAll('tr.click').forEach(tr => tr.onclick = e => { if (!e.target.closest('select')) openMatch(FX[+tr.dataset.i]); });
+  box.querySelectorAll('select.peer').forEach(sel => sel.onchange = () => {
+    const v = +sel.value, side = sel.dataset.side;
+    if (sel.dataset.i === 'all'){ pjAll[side] = v; pjRow = {}; }
+    else (pjRow[sel.dataset.i] ||= {})[side] = v;
+    renderProjections();
+  });
 }
 
 // ---------- Power rankings: country Elo over all games in date order
