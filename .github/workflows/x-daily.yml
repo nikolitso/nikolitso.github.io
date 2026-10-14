@@ -11,9 +11,9 @@ on:
   workflow_dispatch:
     inputs:
       kind:
-        description: "What to post"
+        description: "What to post (auto = the regular check: each kind only if due and not yet posted today)"
         type: choice
-        options: [book, film]
+        options: [book, film, auto]
         default: book
       dry_run:
         description: "Dry run (show the post, don't publish)"
@@ -47,7 +47,8 @@ jobs:
           X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
           X_ACCESS_TOKEN_SECRET: ${{ secrets.X_ACCESS_TOKEN_SECRET }}
         run: |
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+          # "auto" is what the Cloudflare scheduler sends: behave exactly like the scheduled check
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.kind }}" != "auto" ]; then
             KIND="${{ inputs.kind }}"
             FLAGS="--force"
             if [ "${{ inputs.dry_run }}" = "true" ]; then FLAGS="$FLAGS --dry-run"; fi
