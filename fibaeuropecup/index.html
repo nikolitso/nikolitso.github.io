@@ -319,7 +319,7 @@ function project(home, away, nh, na){
   return {hp: g.games.reduce((t, m) => t + m[6], 0) / n, ap: g.games.reduce((t, m) => t + m[7], 0) / n, n, w, l: n - w};
 }
 const peerSelect = (i, side, v) => `<select class="peer" data-i="${i}" data-side="${side}" aria-label="${side === 'h' ? 'Home' : 'Away'} places">` +
-  [1, 2, 3].map(k => `<option value="${k}"${k === v ? ' selected' : ''}>±${k}</option>`).join('') + '</select>';
+  [0, 1, 2, 3].map(k => `<option value="${k}"${k === v ? ' selected' : ''}>±${k}</option>`).join('') + '</select>';
 function projectionRow(f, i){
   const [when, round, home, away] = f;
   const ch = teams[home] || '', ca = teams[away] || '';
@@ -487,8 +487,8 @@ function sync(){
   if (view === 'projections' && pjDetail !== null && FX[pjDetail]){
     q.set('home', FX[pjDetail][2]); q.set('away', FX[pjDetail][3]);
     const r = pjRow[pjDetail] || {};
-    if (r.h && r.h !== PEER_DEFAULT) q.set('h', r.h);
-    if (r.a && r.a !== PEER_DEFAULT) q.set('a', r.a);
+    if (r.h !== undefined && r.h !== PEER_DEFAULT) q.set('ph', r.h);   // places, kept apart from the head to head picks a / b
+    if (r.a !== undefined && r.a !== PEER_DEFAULT) q.set('pa', r.a);
   }
   history.replaceState(null, '', '#' + q.toString());
 }
@@ -512,13 +512,14 @@ $('a').addEventListener('change', render); $('b').addEventListener('change', ren
 const p = new URLSearchParams(location.hash.slice(1));
 setMode(p.get('mode') === 'team' ? 'team' : 'country');
 setVenue(p.get('venue'));
-$('a').value = p.get('a') || ''; $('b').value = p.get('b') || '';
+if (p.get('view') !== 'projections'){ $('a').value = p.get('a') || ''; $('b').value = p.get('b') || ''; }
 render();
 if (p.get('view') === 'projections' && p.get('home') && p.get('away')){
   const i = FX.findIndex(f => f[2] === p.get('home') && f[3] === p.get('away'));
   if (i >= 0){
     pjDetail = i;
-    pjRow[i] = {h: Math.min(3, Math.max(1, +p.get('h') || PEER_DEFAULT)), a: Math.min(3, Math.max(1, +p.get('a') || PEER_DEFAULT))};
+    const places = k => { const v = p.get(k); return v === null || isNaN(+v) ? PEER_DEFAULT : Math.min(3, Math.max(0, Math.round(+v))); };
+    pjRow[i] = {h: places('ph'), a: places('pa')};
   }
 }
 setView(p.get('view'));
