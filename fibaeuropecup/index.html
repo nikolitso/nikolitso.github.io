@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>FIBA Europe Cup Head to Head</title>
+<title>FIBA Europe Cup</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Playfair+Display:wght@600;700&family=Source+Serif+4:wght@400;600&display=swap" rel="stylesheet">
 <style>
@@ -76,21 +76,21 @@ select.peer:focus{outline:2px solid var(--gold)}
 <body>
 <div class="wrap">
   <a class="home-link" href="/fibaeuropecup/" data-home>&#8962; Home</a>
-  <h1><a href="/fibaeuropecup/" data-home>FIBA Europe Cup</a> <span id="h1v">Head to Head</span></h1>
+  <h1><a href="/fibaeuropecup/" data-home>FIBA Europe Cup</a></h1>
   <div class="sub" id="sub"></div>
 
   <div class="tabs" id="tabs">
-    <a href="#view=h2h" data-view="h2h" class="on">Head to Head</a>
-    <a href="#view=fixtures" data-view="fixtures">Fixtures</a>
+    <a href="#view=fixtures" data-view="fixtures" class="on">Fixtures</a>
     <a href="#view=projections" data-view="projections">Projections</a>
+    <a href="#view=h2h" data-view="h2h">Head to Head</a>
     <a href="#view=rankings" data-view="rankings">Country Power Rankings</a>
   </div>
 
-  <div id="fxView" hidden></div>
+  <div id="fxView"></div>
   <div id="rkView" hidden></div>
   <div id="pjView" hidden></div>
 
-  <div id="h2hView">
+  <div id="h2hView" hidden>
   <div class="controls">
     <div class="segs">
       <div class="seg" id="seg">
@@ -203,7 +203,7 @@ function render(){
 }
 
 // ---------- Fixtures
-let view = 'h2h';
+let view = 'fixtures';
 const FX = (window.FIXTURES && window.FIXTURES.list) || [];
 // head to head between two sides, from the first side's point of view; key: club or country name
 // FIBA / IOC three-letter country codes
@@ -455,13 +455,12 @@ function renderRankings(){
   });
 }
 function setView(v){
-  view = ['fixtures', 'projections', 'rankings'].includes(v) ? v : 'h2h';
+  view = ['fixtures', 'projections', 'h2h', 'rankings'].includes(v) ? v : 'fixtures';
   document.querySelectorAll('#tabs a').forEach(b => b.classList.toggle('on', b.dataset.view === view));
   $('fxView').hidden = view !== 'fixtures';
   $('rkView').hidden = view !== 'rankings';
   $('pjView').hidden = view !== 'projections';
   $('h2hView').hidden = view !== 'h2h';
-  $('h1v').textContent = {fixtures: 'Fixtures', projections: 'Projections', rankings: 'Country Power Rankings'}[view] || 'Head to Head';
   if (view === 'fixtures') renderFixtures();
   if (view === 'rankings') renderRankings();
   if (view === 'projections') renderProjections();
@@ -471,7 +470,7 @@ document.querySelectorAll('#tabs a').forEach(b => b.onclick = e => { if (e.metaK
 document.querySelectorAll('[data-home]').forEach(a => a.onclick = e => {
   e.preventDefault();
   setMode('country'); setVenue('all'); $('a').value = $('b').value = '';
-  setView('h2h'); render();
+  setView('fixtures'); render();
   history.replaceState(null, '', location.pathname);
   window.scrollTo({top: 0, behavior: 'smooth'});
 });
