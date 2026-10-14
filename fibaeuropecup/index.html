@@ -442,7 +442,14 @@ document.querySelectorAll('[data-home]').forEach(a => a.onclick = e => {
 });
 
 function sync(){
-  const q = new URLSearchParams({view, mode, venue, a:$('a').value, b:$('b').value});
+  // only the head to head page carries its picks; defaults and empty fields stay out of the link
+  const q = new URLSearchParams({view});
+  if (view === 'h2h'){
+    if (mode !== 'country') q.set('mode', mode);
+    if (venue !== 'all') q.set('venue', venue);
+    if ($('a').value) q.set('a', $('a').value);
+    if ($('b').value) q.set('b', $('b').value);
+  }
   history.replaceState(null, '', '#' + q.toString());
 }
 function setMode(m){
