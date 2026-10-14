@@ -31,7 +31,7 @@ STATE = ROOT / "_x" / "state.json"
 BOOKS = ROOT / "_edge" / "books"
 FILMS = Path(os.environ.get("WAM_DIR", ROOT.parent / "whatalgomissed")) / "content" / "films"
 ATHENS = ZoneInfo("Europe/Athens")
-TARGET_HOUR = {"book": 14, "film": 19}
+TARGET_HOUR = {"book": 14, "film": 20}
 URL_LEN = 23  # X counts every link as 23 characters
 
 

@@ -1,6 +1,6 @@
 name: Daily X posts
 
-# Book at 14:00 and film at 19:00 Athens time. GitHub's scheduler can run late or skip
+# Book at 14:00 and film at 20:00 Athens time. GitHub's scheduler can run late or skip
 # runs, so this checks every hour through the afternoon and evening; on each run the
 # script posts a book and/or a film only if it's past that one's time and it hasn't
 # gone out yet today, so extra checks never cause duplicates. (UTC 11-21 covers
