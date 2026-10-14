@@ -81,7 +81,7 @@ select.peer:focus{outline:2px solid var(--gold)}
     <a href="#view=h2h" data-view="h2h" class="on">Head to Head</a>
     <a href="#view=fixtures" data-view="fixtures">Fixtures</a>
     <a href="#view=projections" data-view="projections">Projections</a>
-    <a href="#view=rankings" data-view="rankings">Power Rankings</a>
+    <a href="#view=rankings" data-view="rankings">Country Power Rankings</a>
   </div>
 
   <div id="fxView" hidden></div>
@@ -426,7 +426,7 @@ function setView(v){
   $('rkView').hidden = view !== 'rankings';
   $('pjView').hidden = view !== 'projections';
   $('h2hView').hidden = view !== 'h2h';
-  $('h1v').textContent = {fixtures: 'Fixtures', projections: 'Projections', rankings: 'Power Rankings'}[view] || 'Head to Head';
+  $('h1v').textContent = {fixtures: 'Fixtures', projections: 'Projections', rankings: 'Country Power Rankings'}[view] || 'Head to Head';
   if (view === 'fixtures') renderFixtures();
   if (view === 'rankings') renderRankings();
   if (view === 'projections') renderProjections();
