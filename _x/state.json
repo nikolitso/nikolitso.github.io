@@ -169,6 +169,7 @@
       "about-elly",
       "acab-all-cops-are-bastards",
       "accused",
+      "adam",
       "after-love",
       "after-the-wedding",
       "all-about-my-mother",
@@ -361,7 +362,8 @@
     "posted": [
       "suntan",
       "unraveled",
-      "calle-malaga"
+      "calle-malaga",
+      "adam"
     ],
     "log": [
       {
@@ -378,8 +380,13 @@
         "day": "2026-10-12",
         "slug": "calle-malaga",
         "id": "2109680011145818566"
+      },
+      {
+        "day": "2026-10-14",
+        "slug": "adam",
+        "id": "2110462829065113614"
       }
     ],
-    "last_day": "2026-10-12"
+    "last_day": "2026-10-14"
   }
 }
