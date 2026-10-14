@@ -24,9 +24,9 @@ h1 a:hover{color:var(--gold)}
 .sub{font:400 13px var(--mono);color:var(--muted);letter-spacing:.04em;margin-bottom:32px}
 .controls{display:grid;grid-template-columns:auto 1fr auto 1fr;gap:12px;align-items:end;margin-bottom:28px}
 .tabs{display:flex;flex-wrap:wrap;gap:10px 28px;border-bottom:1px solid var(--line);margin:0 0 26px}
-.tabs button{background:none;border:0;border-bottom:2px solid transparent;color:var(--muted);font:600 18px var(--serif);padding:0 0 10px;margin-bottom:-1px;cursor:pointer}
-.tabs button.on{color:var(--text);border-color:var(--gold)}
-.tabs button:hover{color:var(--text)}
+.tabs a{background:none;border:0;border-bottom:2px solid transparent;color:var(--muted);font:600 18px var(--serif);padding:0 0 10px;margin-bottom:-1px;cursor:pointer;text-decoration:none}
+.tabs a.on{color:var(--text);border-color:var(--gold)}
+.tabs a:hover{color:var(--text)}
 .segs{display:flex;flex-wrap:wrap;gap:12px;grid-column:1/-1}
 .seg{display:flex;border:1px solid var(--line);border-radius:6px;overflow:hidden;width:max-content}
 .seg button{background:none;border:0;color:var(--muted);font:500 13px var(--mono);padding:9px 18px;cursor:pointer;letter-spacing:.06em;text-transform:uppercase}
@@ -74,10 +74,10 @@ tr.click{cursor:pointer} tr.click:hover td{background:rgba(212,175,55,.08)}
   <div class="sub" id="sub"></div>
 
   <div class="tabs" id="tabs">
-    <button data-view="h2h" class="on">Head to Head</button>
-    <button data-view="fixtures">Fixtures</button>
-    <button data-view="projections">Projections</button>
-    <button data-view="rankings">Power Rankings</button>
+    <a href="#view=h2h" data-view="h2h" class="on">Head to Head</a>
+    <a href="#view=fixtures" data-view="fixtures">Fixtures</a>
+    <a href="#view=projections" data-view="projections">Projections</a>
+    <a href="#view=rankings" data-view="rankings">Power Rankings</a>
   </div>
 
   <div id="fxView" hidden></div>
@@ -191,8 +191,8 @@ function render(){
   const tot = record(gs);
   out.innerHTML = `<div class="card"><div class="score"><div></div><div><div class="name">${esc(A)}</div><div class="ctry">${mode==='team'?esc(teams[A]):''}</div><div class="big" style="margin-top:12px">${tot.w}–${tot.l}</div><div class="lbl">${tot.n} games${where} · ${rows.length} opponents</div></div><div></div></div></div>
     <div class="tag" style="margin-bottom:8px">Click an opponent for the full head to head.</div>
-    <div class="scroll"><table><tr><th>Opponent</th><th class="n">P</th><th class="n">W</th><th class="n">L</th><th class="n">Pts</th><th class="n">Last</th></tr>` +
-    rows.map(({o,r,last}) => `<tr class="click" data-o="${esc(o)}"><td>${esc(o)}${mode==='team'?` <span class="tag">${esc(teams[o])}</span>`:''}</td><td class="n">${r.n}</td><td class="n w">${r.w}</td><td class="n l">${r.l}</td><td class="n">${r.pf}–${r.pa}</td><td class="n">${fmtDate(last)}</td></tr>`).join('') + `</table></div>`;
+    <div class="scroll"><table><tr><th>Opponent</th><th class="n">P</th><th class="n">W</th><th class="n">L</th><th class="n">Pts</th></tr>` +
+    rows.map(({o,r,last}) => `<tr class="click" data-o="${esc(o)}"><td>${esc(o)}${mode==='team'?` <span class="tag">${esc(teams[o])}</span>`:''}</td><td class="n">${r.n}</td><td class="n w">${r.w}</td><td class="n l">${r.l}</td><td class="n">${r.pf}–${r.pa}</td></tr>`).join('') + `</table></div>`;
   out.querySelectorAll('tr.click').forEach(tr => tr.onclick = () => { $('b').value = tr.dataset.o; sync(); render(); window.scrollTo({top:0,behavior:'smooth'}); });
 }
 
@@ -388,7 +388,7 @@ function renderRankings(){
 }
 function setView(v){
   view = ['fixtures', 'projections', 'rankings'].includes(v) ? v : 'h2h';
-  document.querySelectorAll('#tabs button').forEach(b => b.classList.toggle('on', b.dataset.view === view));
+  document.querySelectorAll('#tabs a').forEach(b => b.classList.toggle('on', b.dataset.view === view));
   $('fxView').hidden = view !== 'fixtures';
   $('rkView').hidden = view !== 'rankings';
   $('pjView').hidden = view !== 'projections';
@@ -398,7 +398,7 @@ function setView(v){
   if (view === 'rankings') renderRankings();
   if (view === 'projections') renderProjections();
 }
-document.querySelectorAll('#tabs button').forEach(b => b.onclick = () => { setView(b.dataset.view); sync(); });
+document.querySelectorAll('#tabs a').forEach(b => b.onclick = e => { if (e.metaKey || e.ctrlKey || e.shiftKey || e.button) return; e.preventDefault(); setView(b.dataset.view); sync(); });
 // Home: back to the start (countries, all venues, nothing selected, head to head tab)
 document.querySelectorAll('[data-home]').forEach(a => a.onclick = e => {
   e.preventDefault();
