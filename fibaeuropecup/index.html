@@ -294,9 +294,10 @@ function openMatch([, , home, away]){
 // The home side is replaced by the countries ranked within +/- N places of its own country in the power rankings,
 // the away side likewise (N = 1..5, default 3, set separately). Only past games in which a club of the home group
 // played AT HOME against a club of the away group playing AWAY are used; the projection is the average score of each.
-const PEER_DEFAULT = 3;
+const PEER_DEFAULT = 2;
 let pjAll = {h: PEER_DEFAULT, a: PEER_DEFAULT}, pjRow = {};      // global setting, per-fixture overrides by index
 let pjDetail = null;                                             // fixture index whose games are open, or null for the list
+const rankOf = c => { RANK ||= computeRankings(); const r = RANK.findIndex(x => x.c === c); return r < 0 ? '' : ` #${r + 1}`; };
 function peers(c, n){
   RANK ||= computeRankings();
   const i = RANK.findIndex(r => r.c === c);
@@ -317,7 +318,7 @@ function project(home, away, nh, na){
   return {hp: g.games.reduce((t, m) => t + m[6], 0) / n, ap: g.games.reduce((t, m) => t + m[7], 0) / n, n};
 }
 const peerSelect = (i, side, v) => `<select class="peer" data-i="${i}" data-side="${side}" aria-label="${side === 'h' ? 'Home' : 'Away'} places">` +
-  [1, 2, 3, 4, 5].map(k => `<option value="${k}"${k === v ? ' selected' : ''}>±${k}</option>`).join('') + '</select>';
+  [1, 2, 3].map(k => `<option value="${k}"${k === v ? ' selected' : ''}>±${k}</option>`).join('') + '</select>';
 function projectionRow(f, i){
   const [when, round, home, away] = f;
   const ch = teams[home] || '', ca = teams[away] || '';
@@ -329,7 +330,7 @@ function projectionRow(f, i){
     cells = `<td class="n"><b>${hp.toFixed(1)}</b></td><td class="n"><b>${ap.toFixed(1)}</b></td>
       <td class="n tag">${(hp + ap).toFixed(1)}</td><td class="n hcp">${sgn(hp - ap)}</td><td class="n tag" title="Games used: home-group clubs at home against away-group clubs away">${p.n}</td>`;
   }
-  const rk = c => { const r = RANK.findIndex(x => x.c === c); return r < 0 ? '' : ` #${r + 1}`; };
+  const rk = rankOf;
   return `<tr class="click" data-i="${i}"><td class="n">${when.slice(11)}</td>
     <td><b>${esc(home)}</b> <span class="tag">(${esc(code(ch))}${rk(ch)})</span> – <b>${esc(away)}</b> <span class="tag">(${esc(code(ca))}${rk(ca)})</span></td>
     <td class="n">${peerSelect(i, 'h', nh)}</td><td class="n gap">${peerSelect(i, 'a', na)}</td>${cells}</tr>`;
@@ -342,7 +343,7 @@ function renderProjectionDetail(i){
   const g = pjGames(home, away, nh, na);
   const group = (grp, c) => [...grp.set].map(x => { const r = RANK.findIndex(y => y.c === x) + 1; return `${x === c ? '<b>' : ''}${esc(x)} <span class="tag">#${r}</span>${x === c ? '</b>' : ''}`; }).join(', ');
   let html = `<a class="back" href="#view=projections" id="pjBack">&larr; All projections</a>
-    <h2 style="margin-top:10px"><b>${esc(home)}</b> <span class="tag">(${esc(code(ch))})</span> – <b>${esc(away)}</b> <span class="tag">(${esc(code(ca))})</span></h2>
+    <h2 style="margin-top:10px"><b>${esc(home)}</b> <span class="tag">(${esc(code(ch))}${rankOf(ch)})</span> – <b>${esc(away)}</b> <span class="tag">(${esc(code(ca))}${rankOf(ca)})</span></h2>
     <div class="tag" style="margin-bottom:14px">${dayName(when.slice(0, 10))}, ${when.slice(11)} · ${esc(round)}</div>
     <div class="pjbar"><span class="tag">Places either side in the power rankings:</span>
       <label>Home side ${peerSelect(i, 'h', nh)}</label><label>Away side ${peerSelect(i, 'a', na)}</label></div>`;
@@ -360,7 +361,7 @@ function renderProjectionDetail(i){
       <div class="tag" style="margin-bottom:18px"><b>Away group (±${na}):</b> ${group(g.ga, ca)}</div>
       <h2>Games used</h2><div class="scroll"><table class="fx"><tr><th class="n">Date</th><th>Match</th><th class="n">Score</th><th>Competition</th></tr>` +
       list.map(m => { const [season, stage, rnd, date, h, a, ph, pa, status] = m;
-        return `<tr><td class="n">${fmtDate(date)}</td><td>${esc(h)} <span class="tag">(${esc(code(teams[h]))})</span> – ${esc(a)} <span class="tag">(${esc(code(teams[a]))})</span></td>
+        return `<tr><td class="n">${fmtDate(date)}</td><td>${esc(h)} <span class="tag">(${esc(code(teams[h]))}${rankOf(teams[h])})</span> – ${esc(a)} <span class="tag">(${esc(code(teams[a]))}${rankOf(teams[a])})</span></td>
           <td class="n"><b>${ph}–${pa}</b>${status === 'AET' ? ' <span class="tag">OT</span>' : ''}</td><td class="tag">${esc(season)} · ${esc(stage)} · ${esc(rnd.replace(/ - /, ' · '))}</td></tr>`; }).join('') +
       `</table></div>`;
   }
@@ -517,7 +518,7 @@ if (p.get('view') === 'projections' && p.get('home') && p.get('away')){
   const i = FX.findIndex(f => f[2] === p.get('home') && f[3] === p.get('away'));
   if (i >= 0){
     pjDetail = i;
-    pjRow[i] = {h: Math.min(5, Math.max(1, +p.get('h') || PEER_DEFAULT)), a: Math.min(5, Math.max(1, +p.get('a') || PEER_DEFAULT))};
+    pjRow[i] = {h: Math.min(3, Math.max(1, +p.get('h') || PEER_DEFAULT)), a: Math.min(3, Math.max(1, +p.get('a') || PEER_DEFAULT))};
   }
 }
 setView(p.get('view'));
