@@ -76,11 +76,13 @@ tr.click{cursor:pointer} tr.click:hover td{background:rgba(212,175,55,.08)}
   <div class="tabs" id="tabs">
     <button data-view="h2h" class="on">Head to Head</button>
     <button data-view="fixtures">Fixtures</button>
+    <button data-view="projections">Projections</button>
     <button data-view="rankings">Power Rankings</button>
   </div>
 
   <div id="fxView" hidden></div>
   <div id="rkView" hidden></div>
+  <div id="pjView" hidden></div>
 
   <div id="h2hView">
   <div class="controls">
@@ -241,17 +243,26 @@ function fixtureRow(f, i){
     <td><b>${esc(home)}</b> <span class="tag">(${esc(code(ch))})</span> – <b>${esc(away)}</b> <span class="tag">(${esc(code(ca))})</span></td>
     ${recCells(all)}${recCells(atHome)}</tr>`;
 }
-function renderFixtures(){
-  const box = $('fxView');
-  if (!FX.length){ box.innerHTML = '<div class="empty">No upcoming fixtures.</div>'; return; }
-  // only the next round: the round of the earliest game from today on, all of its games
+// the next round: the round of the earliest game from today on, all of its games, as [fixture, index]
+function nextRoundGames(){
   const today = new Date().toLocaleDateString('en-CA');      // YYYY-MM-DD in local time
   const upcoming = FX.map((f, i) => [f, i]).filter(([f]) => f[0].slice(0, 10) >= today)
                      .sort((x, y) => x[0][0].localeCompare(y[0][0]));
-  if (!upcoming.length){ box.innerHTML = '<div class="empty">No upcoming fixtures.</div>'; return; }
+  if (!upcoming.length) return [];
   const nextRound = upcoming[0][0][1];
-  const list = nextRound ? upcoming.filter(([f]) => f[1] === nextRound)
-                         : upcoming.filter(([f]) => f[0].slice(0, 10) === upcoming[0][0][0].slice(0, 10));
+  return nextRound ? upcoming.filter(([f]) => f[1] === nextRound)
+                   : upcoming.filter(([f]) => f[0].slice(0, 10) === upcoming[0][0][0].slice(0, 10));
+}
+const dayName = d => new Date(d + 'T12:00').toLocaleDateString('en-GB', {weekday:'long', day:'numeric', month:'long'});
+function byDay(list){
+  const days = {};
+  for (const [f, i] of list) (days[f[0].slice(0, 10)] ||= []).push([f, i]);
+  return days;
+}
+function renderFixtures(){
+  const box = $('fxView');
+  const list = nextRoundGames();
+  if (!list.length){ box.innerHTML = '<div class="empty">No upcoming fixtures.</div>'; return; }
   const days = {};
   for (const [f, i] of list) (days[f[0].slice(0, 10)] ||= []).push([f, i]);
   const dayName = d => new Date(d + 'T12:00').toLocaleDateString('en-GB', {weekday:'long', day:'numeric', month:'long'});
@@ -270,6 +281,63 @@ function openMatch([, , home, away]){
   sync(); render();
   window.scrollTo({top: 0, behavior: 'smooth'});
 }
+// ---------- Projections: additive points model on the last three seasons
+// home pts = home attack + away defence - league average + half the home advantage (away: the mirror).
+// Team attack/defence are shrunk toward the team's country, and the country toward the league (K games each).
+let MODEL = null;
+function buildModel(){
+  const seasons = [...new Set(matches.map(m => m[0]))].sort().slice(-3);
+  const K = 8, recent = matches.filter(m => seasons.includes(m[0]) && m[8] !== 'AWA.');
+  const add = (o, k, f, a) => { const x = (o[k] ||= {f: 0, a: 0, n: 0}); x.f += f; x.a += a; x.n++; };
+  const tm = {}, ct = {};
+  let tot = 0, hm = 0;
+  for (const [, , , , h, a, hp, ap] of recent){
+    add(tm, h, hp, ap); add(tm, a, ap, hp);
+    if (teams[h]) add(ct, teams[h], hp, ap);
+    if (teams[a]) add(ct, teams[a], ap, hp);
+    tot += hp + ap; hm += hp - ap;
+  }
+  const L = tot / (2 * recent.length), H = hm / recent.length;
+  const shrink = (x, prior) => x ? {o: (x.f + K * prior.o) / (x.n + K), d: (x.a + K * prior.d) / (x.n + K), n: x.n} : {...prior, n: 0};
+  const league = {o: L, d: L};
+  const country = c => shrink(ct[c], league);
+  const team = t => shrink(tm[t], country(teams[t]));
+  return {L, H, team, seasons, games: recent.length};
+}
+function project(home, away){
+  MODEL ||= buildModel();
+  const h = MODEL.team(home), a = MODEL.team(away);
+  const hp = h.o + a.d - MODEL.L + MODEL.H / 2, ap = a.o + h.d - MODEL.L - MODEL.H / 2;
+  return {hp, ap, hn: h.n, an: a.n};
+}
+function projectionRow(f, i){
+  const [when, round, home, away] = f;
+  const ch = teams[home] || '', ca = teams[away] || '';
+  const p = project(home, away);
+  p.hp = Math.round(p.hp * 10) / 10; p.ap = Math.round(p.ap * 10) / 10;   // round first so the row adds up
+  const hcp = p.hp - p.ap;
+  const thin = (p.hn < 4 || p.an < 4) ? ' <span class="tag" title="Few recent games for one side: leans on its country average">·</span>' : '';
+  return `<tr class="click" data-i="${i}"><td class="n">${when.slice(11)}</td>
+    <td><b>${esc(home)}</b> <span class="tag">(${esc(code(ch))})</span> – <b>${esc(away)}</b> <span class="tag">(${esc(code(ca))})</span>${thin}</td>
+    <td class="n">${p.hp.toFixed(1)}</td><td class="n">${p.ap.toFixed(1)}</td><td class="n tag">${(p.hp + p.ap).toFixed(1)}</td>
+    <td class="n hcp">${sgn(hcp)}</td></tr>`;
+}
+function renderProjections(){
+  const box = $('pjView');
+  const list = nextRoundGames();
+  if (!list.length){ box.innerHTML = '<div class="empty">No upcoming fixtures.</div>'; return; }
+  MODEL ||= buildModel();
+  box.innerHTML = Object.entries(byDay(list)).map(([d, rows]) => `<h2>${dayName(d)} <span class="tag">${esc(rows[0][0][1])}</span></h2>
+      <div class="scroll"><table class="fx"><tr><th class="n">Time</th><th>Match</th>
+      <th class="n" title="Projected home points">Home</th><th class="n" title="Projected away points">Away</th>
+      <th class="n" title="Projected total points">Total</th><th class="n" title="Projected handicap: home minus away">Hcp</th></tr>
+      ${rows.map(([f, i]) => projectionRow(f, i)).join('')}</table></div>`).join('') +
+    `<div class="tag" style="margin-top:14px">Points model on ${MODEL.seasons[0].slice(0, 4)}–${MODEL.seasons[2].slice(-4)} (${MODEL.games} games):
+     each side's attack and defence per game, blended toward its country and the league average (${MODEL.L.toFixed(1)} points) when it has few games;
+     home advantage ${MODEL.H.toFixed(1)} points. Click a match for the head to head.</div>`;
+  box.querySelectorAll('tr.click').forEach(tr => tr.onclick = () => openMatch(FX[+tr.dataset.i]));
+}
+
 // ---------- Power rankings: country Elo over all games in date order
 // Start 1500; K 20; home advantage 75 Elo points; margin-of-victory multiplier as in
 // FiveThirtyEight's NBA Elo. Same-country games are skipped; awarded games count without margin.
@@ -306,13 +374,12 @@ function renderRankings(){
       <td class="n"><b class="hcp">${Math.round(r.elo)}</b></td><td class="n">${r.g}</td>
       <td class="n"><span class="w">${r.w}</span>–<span class="l">${r.l}</span></td>
       <td class="n">${(r.w / r.g * 100).toFixed(0)}%</td>
-      <td class="n">${(m > 0 ? '+' : m < 0 ? '−' : '') + Math.abs(m).toFixed(1)}</td>
-      <td class="n tag">${fmtDate(r.last)}</td></tr>`;
+      <td class="n">${(m > 0 ? '+' : m < 0 ? '−' : '') + Math.abs(m).toFixed(1)}</td></tr>`;
   }).join('');
   $('rkView').innerHTML = `<div class="scroll"><table class="fx"><tr><th class="n">#</th><th>Country</th>
     <th class="n" title="Elo rating: starts at 1500, rises with wins (more for beating strong sides, by more, away)">Rating</th>
     <th class="n" title="Games against clubs from other countries">Games</th><th class="n">W–L</th><th class="n">Win %</th>
-    <th class="n" title="Average points margin per game">Margin</th><th class="n">Last game</th></tr>${rows}</table></div>
+    <th class="n" title="Average points margin per game">Margin</th></tr>${rows}</table></div>
     <div class="tag" style="margin-top:14px">Elo rating, updated game by game since 2015–16, so it reflects current strength. Games between clubs from the same country are not counted. Click a country for its full record.</div>`;
   $('rkView').querySelectorAll('tr.click').forEach(tr => tr.onclick = () => {
     setMode('country'); $('a').value = tr.dataset.c; $('b').value = ''; setVenue('all');
@@ -320,14 +387,16 @@ function renderRankings(){
   });
 }
 function setView(v){
-  view = ['fixtures', 'rankings'].includes(v) ? v : 'h2h';
+  view = ['fixtures', 'projections', 'rankings'].includes(v) ? v : 'h2h';
   document.querySelectorAll('#tabs button').forEach(b => b.classList.toggle('on', b.dataset.view === view));
   $('fxView').hidden = view !== 'fixtures';
   $('rkView').hidden = view !== 'rankings';
+  $('pjView').hidden = view !== 'projections';
   $('h2hView').hidden = view !== 'h2h';
-  $('h1v').textContent = {fixtures: 'Fixtures', rankings: 'Power Rankings'}[view] || 'Head to Head';
+  $('h1v').textContent = {fixtures: 'Fixtures', projections: 'Projections', rankings: 'Power Rankings'}[view] || 'Head to Head';
   if (view === 'fixtures') renderFixtures();
   if (view === 'rankings') renderRankings();
+  if (view === 'projections') renderProjections();
 }
 document.querySelectorAll('#tabs button').forEach(b => b.onclick = () => { setView(b.dataset.view); sync(); });
 // Home: back to the start (countries, all venues, nothing selected, head to head tab)
