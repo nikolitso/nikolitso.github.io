@@ -116,7 +116,8 @@
       "the-definitive-guide-to-betting-on",
       "how-to-find-fulfilling-work",
       "manage-your-day-to-day",
-      "beyond-the-odds"
+      "beyond-the-odds",
+      "the-5-types-of-wealth"
     ],
     "log": [
       {
@@ -143,9 +144,14 @@
         "day": "2026-10-13",
         "slug": "beyond-the-odds",
         "id": "2110069852350407008"
+      },
+      {
+        "day": "2026-10-14",
+        "slug": "the-5-types-of-wealth",
+        "id": "2110397170708881574"
       }
     ],
-    "last_day": "2026-10-13"
+    "last_day": "2026-10-14"
   },
   "film": {
     "seen": [
