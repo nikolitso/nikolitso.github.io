@@ -332,16 +332,16 @@ function projectionRow(f, i){
   const ch = teams[home] || '', ca = teams[away] || '';
   const nh = pjRow[i]?.h ?? pjAll.h, na = pjRow[i]?.a ?? pjAll.a;
   const p = project(home, away, nh, na);
-  let cells = '<td class="n tag gap" colspan="5">No comparable games</td>';
+  let cells = '<td class="n tag" colspan="5">No comparable games</td>';
   if (p){
     const hp = Math.round(p.hp * 10) / 10, ap = Math.round(p.ap * 10) / 10;   // round first so the row adds up
-    cells = `<td class="n gap"><b>${hp.toFixed(1)}</b></td><td class="n"><b>${ap.toFixed(1)}</b></td>
+    cells = `<td class="n"><b>${hp.toFixed(1)}</b></td><td class="n"><b>${ap.toFixed(1)}</b></td>
       <td class="n tag">${(hp + ap).toFixed(1)}</td><td class="n hcp">${sgn(hp - ap)}</td><td class="n tag" title="Past games between the two groups">${p.n}</td>`;
   }
   const rk = c => { const r = RANK.findIndex(x => x.c === c); return r < 0 ? '' : ` #${r + 1}`; };
   return `<tr class="click" data-i="${i}"><td class="n">${when.slice(11)}</td>
     <td><b>${esc(home)}</b> <span class="tag">(${esc(code(ch))}${rk(ch)})</span> – <b>${esc(away)}</b> <span class="tag">(${esc(code(ca))}${rk(ca)})</span></td>
-    <td class="n">${peerSelect(i, 'h', nh)}</td><td class="n">${peerSelect(i, 'a', na)}</td>${cells}</tr>`;
+    <td class="n">${peerSelect(i, 'h', nh)}</td><td class="n gap">${peerSelect(i, 'a', na)}</td>${cells}</tr>`;
 }
 function renderProjections(){
   const box = $('pjView');
@@ -353,10 +353,10 @@ function renderProjections(){
     <span class="tag">Each match can be adjusted on its own row.</span></div>`;
   box.innerHTML = head + Object.entries(byDay(list)).map(([d, rows]) => `<h2>${dayName(d)} <span class="tag">${esc(rows[0][0][1])}</span></h2>
       <div class="scroll"><table class="fx"><tr><th rowspan="2" class="n">Time</th><th rowspan="2">Match</th>
-      <th colspan="2" class="grp" title="How many places either side of each country in the power rankings feed its group">Places</th>
-      <th colspan="5" class="grp gap">Projection</th></tr>
-      <tr><th class="n">Home</th><th class="n">Away</th>
-      <th class="n gap" title="Projected home points">Home</th><th class="n" title="Projected away points">Away</th><th class="n" title="Projected total points">Total</th><th class="n" title="Projected handicap: home minus away">Hcp</th><th class="n" title="Games used">n</th></tr>
+      <th colspan="2" class="grp gap" title="How many places either side of each country in the power rankings feed its group">Places</th>
+      <th colspan="5" class="grp">Projection</th></tr>
+      <tr><th class="n">Home</th><th class="n gap">Away</th>
+      <th class="n" title="Projected home points">Home</th><th class="n" title="Projected away points">Away</th><th class="n" title="Projected total points">Total</th><th class="n" title="Projected handicap: home minus away">Hcp</th><th class="n" title="Games used">n</th></tr>
       ${rows.map(([f, i]) => projectionRow(f, i)).join('')}</table></div>`).join('') +
     `<div class="tag" style="margin-top:14px">How it works: each side is stood in for by the countries ranked within the chosen number of places of its own country in the power rankings
      (the country itself included; at the top or bottom of the table the window is cut short). Every game since 2015–16 between a club from the home group and a club from the away group counts.
