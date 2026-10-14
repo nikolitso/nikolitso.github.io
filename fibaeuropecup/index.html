@@ -341,8 +341,7 @@ function projectionRow(f, i){
   const rk = c => { const r = RANK.findIndex(x => x.c === c); return r < 0 ? '' : ` #${r + 1}`; };
   return `<tr class="click" data-i="${i}"><td class="n">${when.slice(11)}</td>
     <td><b>${esc(home)}</b> <span class="tag">(${esc(code(ch))}${rk(ch)})</span> – <b>${esc(away)}</b> <span class="tag">(${esc(code(ca))}${rk(ca)})</span></td>
-    ${h2hCells(home, away)}
-    <td class="n gap">${peerSelect(i, 'h', nh)}</td><td class="n">${peerSelect(i, 'a', na)}</td>${cells}</tr>`;
+    <td class="n">${peerSelect(i, 'h', nh)}</td><td class="n">${peerSelect(i, 'a', na)}</td>${cells}</tr>`;
 }
 function renderProjections(){
   const box = $('pjView');
@@ -354,11 +353,9 @@ function renderProjections(){
     <span class="tag">Each match can be adjusted on its own row.</span></div>`;
   box.innerHTML = head + Object.entries(byDay(list)).map(([d, rows]) => `<h2>${dayName(d)} <span class="tag">${esc(rows[0][0][1])}</span></h2>
       <div class="scroll"><table class="fx"><tr><th rowspan="2" class="n">Time</th><th rowspan="2">Match</th>
-      <th colspan="4" class="grp gap" title="All games between the two sides">H2H</th><th colspan="4" class="grp" title="Only games with this fixture&#39;s home side at home">H2H home</th>
-      <th colspan="2" class="grp gap" title="How many places either side of each country in the power rankings feed its group">Places</th>
+      <th colspan="2" class="grp" title="How many places either side of each country in the power rankings feed its group">Places</th>
       <th colspan="5" class="grp gap">Projection</th></tr>
-      <tr><th class="n">W–L</th><th class="n">Home</th><th class="n">Away</th><th class="n gap">Hcp</th><th class="n">W–L</th><th class="n">Home</th><th class="n">Away</th><th class="n">Hcp</th>
-      <th class="n gap">Home</th><th class="n">Away</th>
+      <tr><th class="n">Home</th><th class="n">Away</th>
       <th class="n gap" title="Projected home points">Home</th><th class="n" title="Projected away points">Away</th><th class="n" title="Projected total points">Total</th><th class="n" title="Projected handicap: home minus away">Hcp</th><th class="n" title="Games used">n</th></tr>
       ${rows.map(([f, i]) => projectionRow(f, i)).join('')}</table></div>`).join('') +
     `<div class="tag" style="margin-top:14px">How it works: each side is stood in for by the countries ranked within the chosen number of places of its own country in the power rankings
