@@ -62,6 +62,12 @@ tr.click{cursor:pointer} tr.click:hover td{background:rgba(212,175,55,.08)}
 .scroll{overflow-x:auto}
 .back{font:500 13px var(--mono);color:var(--gold);text-decoration:none;letter-spacing:.04em}
 .back:hover{text-decoration:underline}
+.fbar{display:flex;flex-wrap:wrap;align-items:center;gap:10px 18px;margin:0 0 14px}
+.fbar label{font:400 13px var(--mono);color:var(--muted);text-transform:none;letter-spacing:0;margin:0;display:flex;align-items:center;gap:8px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{background:none;border:1px solid var(--line);border-radius:999px;color:var(--muted);font:500 12px var(--mono);padding:5px 12px;cursor:pointer}
+.chip:hover{color:var(--text)}
+.chip.on{background:var(--gold);border-color:var(--gold);color:#0c1424}
 .pjbar{display:flex;flex-wrap:wrap;align-items:center;gap:10px 22px;margin:0 0 8px}
 .pjbar label{font:400 13px var(--mono);color:var(--muted);text-transform:none;letter-spacing:0;margin:0;display:flex;align-items:center;gap:8px}
 select.peer{background:var(--panel);border:1px solid var(--line);border-radius:6px;color:var(--text);font:500 14px var(--mono);padding:4px 6px;cursor:pointer}
@@ -296,6 +302,37 @@ function openMatch([, , home, away]){
 // played AT HOME against a club of the away group playing AWAY are used; the projection is the average score of each.
 const PEER_DEFAULT = 2;
 let pjAll = {h: PEER_DEFAULT, a: PEER_DEFAULT}, pjRow = {};      // global setting, per-fixture overrides by index
+const PJ_STAGES = ['Main', 'Second stage', 'First stage', 'Preliminary', 'Play Offs', 'Qualification'];
+const PJ_STAGE_LABEL = {'Main': 'Main · Group'};
+const ALL_SEASONS = [...new Set(matches.map(m => m[0]))].sort();
+// sample filters: how many of the latest seasons to use (0 = all) and which stages count; default = Main only
+let pjFilter = {seasons: 0, stages: new Set(['Main'])};
+function pjSample(){
+  const ok = pjFilter.seasons ? new Set(ALL_SEASONS.slice(-pjFilter.seasons)) : null;
+  return m => (!ok || ok.has(m[0])) && pjFilter.stages.has(m[1]);
+}
+const seasonLabel = x => x.slice(0, 4) + '–' + x.slice(-2);
+function sampleText(){
+  const ss = pjFilter.seasons ? ALL_SEASONS.slice(-pjFilter.seasons) : ALL_SEASONS;
+  const st = PJ_STAGES.filter(x => pjFilter.stages.has(x)).map(x => PJ_STAGE_LABEL[x] || x).join(', ');
+  return `${ss.length === 1 ? 'season ' + seasonLabel(ss[0]) : (pjFilter.seasons ? 'last ' + ss.length + ' seasons' : 'all ' + ss.length + ' seasons') + ' (' + seasonLabel(ss[0]) + ' to ' + seasonLabel(ss[ss.length - 1]) + ')'}; stages: ${st}`;
+}
+function filterBar(){
+  const opts = [...Array(ALL_SEASONS.length - 1)].map((_, k) => k + 1).concat([0]).map(k =>
+    `<option value="${k}"${k === pjFilter.seasons ? ' selected' : ''}>${k ? (k === 1 ? 'Last season' : 'Last ' + k + ' seasons') : 'All ' + ALL_SEASONS.length + ' seasons'}</option>`).join('');
+  const chips = PJ_STAGES.map(x => `<button type="button" class="chip${pjFilter.stages.has(x) ? ' on' : ''}" data-stage="${esc(x)}" aria-pressed="${pjFilter.stages.has(x)}">${esc(PJ_STAGE_LABEL[x] || x)}</button>`).join('');
+  return `<div class="fbar"><label>Sample <select id="pjSeasons" class="peer">${opts}</select></label><span class="chips">${chips}</span></div>`;
+}
+function bindFilters(box, rerender){
+  const sel = box.querySelector('#pjSeasons');
+  sel.onchange = () => { pjFilter.seasons = +sel.value; sync(); rerender(); };
+  box.querySelectorAll('.chip').forEach(b => b.onclick = () => {
+    const st = b.dataset.stage;
+    if (pjFilter.stages.has(st)){ if (pjFilter.stages.size > 1) pjFilter.stages.delete(st); }   // keep at least one stage
+    else pjFilter.stages.add(st);
+    sync(); rerender();
+  });
+}
 let pjDetail = null;                                             // fixture index whose games are open, or null for the list
 const rankOf = c => { RANK ||= computeRankings(); const r = RANK.findIndex(x => x.c === c); return r < 0 ? '' : ` #${r + 1}`; };
 function peers(c, n){
@@ -308,7 +345,8 @@ function peers(c, n){
 function pjGames(home, away, nh, na){
   const gh = peers(teams[home], nh), ga = peers(teams[away], na);
   if (!gh || !ga) return null;
-  const games = matches.filter(m => m[8] !== 'AWA.' && teams[m[4]] !== teams[m[5]] && gh.set.has(teams[m[4]]) && ga.set.has(teams[m[5]]));
+  const inSample = pjSample();
+  const games = matches.filter(m => m[8] !== 'AWA.' && inSample(m) && teams[m[4]] !== teams[m[5]] && gh.set.has(teams[m[4]]) && ga.set.has(teams[m[5]]));
   return {gh, ga, games};
 }
 function project(home, away, nh, na){
@@ -346,10 +384,11 @@ function renderProjectionDetail(i){
   let html = `<a class="back" href="#view=projections" id="pjBack">&larr; All projections</a>
     <h2 style="margin-top:10px"><b>${esc(home)}</b> <span class="tag">(${esc(code(ch))}${rankOf(ch)})</span> – <b>${esc(away)}</b> <span class="tag">(${esc(code(ca))}${rankOf(ca)})</span></h2>
     <div class="tag" style="margin-bottom:14px">${dayName(when.slice(0, 10))}, ${when.slice(11)} · ${esc(round)}</div>
+    ${filterBar()}
     <div class="pjbar"><span class="tag">Places either side in the power rankings:</span>
       <label>Home side ${peerSelect(i, 'h', nh)}</label><label>Away side ${peerSelect(i, 'a', na)}</label></div>`;
   if (!g || !g.games.length){
-    html += `<div class="empty">No comparable games for these windows.</div>`;
+    html += `<div class="empty">No comparable games for these windows and this sample.</div>`;
   } else {
     const n = g.games.length, hp = g.games.reduce((t, m) => t + m[6], 0) / n, ap = g.games.reduce((t, m) => t + m[7], 0) / n;
     const hr = Math.round(hp * 10) / 10, ar = Math.round(ap * 10) / 10, w = g.games.filter(m => m[6] > m[7]).length;
@@ -368,7 +407,8 @@ function renderProjectionDetail(i){
   }
   box.innerHTML = html;
   $('pjBack').onclick = e => { e.preventDefault(); pjDetail = null; sync(); renderProjections(); window.scrollTo({top: 0, behavior: 'smooth'}); };
-  box.querySelectorAll('select.peer').forEach(sel => sel.onchange = () => {
+  bindFilters(box, () => renderProjectionDetail(i));
+  box.querySelectorAll('select.peer:not(#pjSeasons)').forEach(sel => sel.onchange = () => {
     (pjRow[i] ||= {})[sel.dataset.side] = +sel.value;
     sync(); renderProjectionDetail(i);
   });
@@ -380,7 +420,7 @@ function renderProjections(){
   const list = nextRoundGames();
   if (!list.length){ box.innerHTML = '<div class="empty">No upcoming fixtures.</div>'; return; }
   RANK ||= computeRankings();
-  const head = `<div class="pjbar"><span class="tag">Places either side in the power rankings, all matches:</span>
+  const head = filterBar() + `<div class="pjbar"><span class="tag">Places either side in the power rankings, all matches:</span>
     <label>Home side ${peerSelect('all', 'h', pjAll.h)}</label><label>Away side ${peerSelect('all', 'a', pjAll.a)}</label>
     <span class="tag">Each match can be adjusted on its own row.</span></div>`;
   box.innerHTML = head + Object.entries(byDay(list)).map(([d, rows]) => `<h2>${dayName(d)} <span class="tag">${esc(rows[0][0][1])}</span></h2>
@@ -391,14 +431,15 @@ function renderProjections(){
       <th class="n" title="Projected home points">Home</th><th class="n" title="Projected away points">Away</th><th class="n" title="Projected total points">Total</th><th class="n" title="Projected handicap: home minus away">Hcp</th><th class="n" title="Home group wins–losses in the games used">W–L</th><th class="n" title="Games used: home-group clubs at home against away-group clubs away">Games</th></tr>
       ${rows.map(([f, i]) => projectionRow(f, i)).join('')}</table></div>`).join('') +
     `<div class="tag" style="margin-top:14px">How it works: each side is stood in for by the countries ranked within the chosen number of places of its own country in the power rankings
-     (the country itself included; at the top or bottom of the table the window is cut short). Only games since 2015–16 in which a club from the home group played at home
+     (the country itself included; at the top or bottom of the table the window is cut short). Only games in the chosen sample (see the filters at the top) in which a club from the home group played at home
      against a club from the away group playing away are counted; the projection is the average score of each side in those games, and Games is how many there were.
-     Click a match to see the games behind its projection.</div>`;
+     Sample now: ${esc(sampleText())}. Click a match to see the games behind its projection.</div>`;
   box.querySelectorAll('tr.click').forEach(tr => tr.onclick = e => {
     if (e.target.closest('select')) return;
     pjDetail = +tr.dataset.i; sync(); renderProjections(); window.scrollTo({top: 0, behavior: 'smooth'});
   });
-  box.querySelectorAll('select.peer').forEach(sel => sel.onchange = () => {
+  bindFilters(box, renderProjections);
+  box.querySelectorAll('select.peer:not(#pjSeasons)').forEach(sel => sel.onchange = () => {
     const v = +sel.value, side = sel.dataset.side;
     if (sel.dataset.i === 'all'){ pjAll[side] = v; pjRow = {}; }
     else (pjRow[sel.dataset.i] ||= {})[side] = v;
@@ -490,6 +531,10 @@ function sync(){
     if (r.h !== undefined && r.h !== PEER_DEFAULT) q.set('ph', r.h);   // places, kept apart from the head to head picks a / b
     if (r.a !== undefined && r.a !== PEER_DEFAULT) q.set('pa', r.a);
   }
+  if (view === 'projections'){
+    if (pjFilter.seasons) q.set('seasons', pjFilter.seasons);
+    if (!(pjFilter.stages.size === 1 && pjFilter.stages.has('Main'))) q.set('stages', PJ_STAGES.filter(x => pjFilter.stages.has(x)).join(','));
+  }
   history.replaceState(null, '', '#' + q.toString());
 }
 function setMode(m){
@@ -521,6 +566,12 @@ if (p.get('view') === 'projections' && p.get('home') && p.get('away')){
     const places = k => { const v = p.get(k); return v === null || isNaN(+v) ? PEER_DEFAULT : Math.min(3, Math.max(0, Math.round(+v))); };
     pjRow[i] = {h: places('ph'), a: places('pa')};
   }
+}
+if (p.get('view') === 'projections'){
+  const n = +p.get('seasons');
+  if (n >= 1 && n < ALL_SEASONS.length) pjFilter.seasons = Math.round(n);
+  const st = (p.get('stages') || '').split(',').filter(x => PJ_STAGES.includes(x));
+  if (st.length) pjFilter.stages = new Set(st);
 }
 setView(p.get('view'));
 </script>
