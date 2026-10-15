@@ -370,7 +370,8 @@
       "suntan",
       "unraveled",
       "calle-malaga",
-      "adam"
+      "adam",
+      "the-hummingbird"
     ],
     "log": [
       {
@@ -392,9 +393,15 @@
         "day": "2026-10-14",
         "slug": "adam",
         "id": "2110462829065113614"
+      },
+      {
+        "day": "2026-10-15",
+        "slot": "2026-10-15 20",
+        "slug": "the-hummingbird",
+        "id": "2110777858645962904"
       }
     ],
-    "last_day": "2026-10-14"
+    "last_day": "2026-10-15"
   },
-  "last_slot": "2026-10-15 14"
+  "last_slot": "2026-10-15 20"
 }
