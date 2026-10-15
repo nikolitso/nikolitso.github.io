@@ -68,6 +68,34 @@ def clean(text):
     return re.sub(r"\s+", " ", t).strip()
 
 
+def sentences(text):
+    return [x.strip() for x in re.findall(r"[^.!?]+[.!?]+(?:[\"'”’)]+)?", clean(text)) if len(x.strip()) > 2]
+
+
+def book_parts(body):
+    """(priority, sentence) in reading order: the review's opening claim, then its 'Worth it if' line."""
+    paras = [x for x in body.strip().split("\n\n") if clean(x) and "Worth it if" not in x and "Key ideas" not in x]
+    opening = (sentences(paras[0]) or [""])[0] if paras else ""
+    parts = [(2, opening)] if opening else []
+    w = worth_it(body)
+    parts.append((1, w) if w else (1, (sentences(paras[0])[1:2] or [""])[0] if paras else ""))
+    return [p for p in parts if p[1]]
+
+
+def film_parts(body):
+    """(priority, sentence) in reading order: the setup, then the closing verdict (last two sentences)."""
+    paras = [x for x in body.strip().split("\n\n") if clean(x)]
+    if not paras:
+        return []
+    setup = (sentences(paras[0]) or [""])[0]
+    last = sentences(paras[-1]) or [clean(paras[-1])]
+    parts = [(3, setup)] if len(paras) > 1 or len(last) > 2 else []
+    if len(last) > 1:
+        parts.append((2, last[-2]))
+    parts.append((1, last[-1]))
+    return [p for p in parts if p[1]]
+
+
 def worth_it(body):
     """The book review's own 'Worth it if: ...' line, as a sentence."""
     m = re.search(r"Worth it if:?\s*(?:</strong>)?\s*(.+?)(?:</p>|\n\n|$)", body, re.S)
@@ -107,7 +135,7 @@ def books():
         authors = authors if isinstance(authors, list) else [authors]
         items[p.stem] = dict(
             title=m.get("title") or p.stem, by=", ".join(a for a in authors if a),
-            hook=worth_it(body) or first_sentence(body),
+            hook=worth_it(body) or first_sentence(body), parts=book_parts(body),
             topic=str(m.get("topic") or ""),
             date=str(m.get("date") or ""), url=f"https://antonisnikolitsopoulos.com/the-edge/{p.stem}/")
     return items
@@ -120,7 +148,7 @@ def films():
         slug = slugify(m.get("slug") or p.stem)
         items[slug] = dict(
             title=m.get("title") or slug, year=m.get("year") or "", by=m.get("director") or "",
-            hook=verdict(body) or first_sentence(body), date=str(m.get("added") or ""),
+            hook=verdict(body) or first_sentence(body), parts=film_parts(body), date=str(m.get("added") or ""),
             country=str(m.get("country") or ""), rating=float(m.get("rating") or 0),
             url=f"https://whatalgomissed.com/films/{slug}/")
     return items
@@ -132,20 +160,20 @@ TOPIC_PHRASE = {
     "Work & leadership": "work and leadership",
 }
 
-# Several ways to say it, rotated day by day so the feed never reads like a bot.
-# {hook} is the reviewer's own line: "Worth it if ..." for books, the closing verdict for films.
+# Several ways to say it, rotated post by post so the feed never reads like a bot.
+# {hook} is built from the review's own sentences (see book_parts / film_parts).
 BOOK_VOICES = [
-    "Notes on {title} by {by}.\n\n{hook}",
-    "{title} by {by}.\n\n{hook}\n\nMy notes:",
-    "If you're into {topic}: {title} by {by}.\n\n{hook}",
-    "One from my shelf: {title} by {by}.\n\n{hook}",
-    "Recommended reading on {topic}: {title} by {by}.\n\n{hook}",
+    "My notes on {title} by {by}.\n\n{hook}",
+    "{title} by {by}.\n\n{hook}",
+    "A book I'd recommend on {topic}: {title} by {by}.\n\n{hook}",
+    "From my reading list: {title} by {by}.\n\n{hook}",
+    "If you're into {topic}, this one's for you: {title} by {by}.\n\n{hook}",
 ]
 FILM_VOICES = [
     "{title} ({year}), {by}.\n\n{hook}",
-    "Tonight's pick: {title} ({year}) from {country}.\n\n{hook}",
+    "One for the watchlist: {title} ({year}) by {by}, from {country}.\n\n{hook}",
     "A film the algorithm probably never showed you: {title} ({year}) by {by}.\n\n{hook}",
-    "{hook}\n\n{title} ({year}), {country}. {stars}",
+    "My notes on {title} ({year}), {country}. {stars}\n\n{hook}",
     "If you haven't seen {title} ({year}) by {by} yet:\n\n{hook}",
 ]
 
@@ -170,8 +198,13 @@ def compose(kind, it, variant=0):
         tpl = tpl.replace(" by {by}", "").replace(", {by}", "")
     fields = dict(it, topic=TOPIC_PHRASE.get(it.get("topic", ""), "this"), stars=stars(it.get("rating", 0)))
     hook = fields.pop("hook")
+    parts = fields.pop("parts", None) or [(1, hook)]
     shell = tpl.replace("{hook}", "\x00").format(**fields)
     room = 280 - URL_LEN - 1 - (len(shell) - 1)
+    keep = list(parts)
+    while len(keep) > 1 and len(" ".join(t for _, t in keep)) > room:
+        keep.remove(max(keep, key=lambda p: p[0]))      # drop the least important sentence
+    hook = " ".join(t for _, t in keep)
     if len(hook) > room:
         hook = shorten(hook, room)
     return shell.replace("\x00", hook) + "\n" + it["url"]
