@@ -7,6 +7,7 @@ year: 2014
 date: 2014-12-01
 topic: "Personal development"
 cover: "/the-edge/covers/empathy-a-handbook-for-revolution.jpeg"
+logline: "Empathy is a skill you can train, with real social and political consequences, in Roman Krznaric's bold handbook"
 ---
 <p>Roman Krznaric makes a bigger claim than most books that use the word “empathy” in the title: that it's a trainable skill with real social and political consequences, not just a nice personality trait some people happen to have more of.</p>
 

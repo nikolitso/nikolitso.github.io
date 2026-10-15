@@ -7,6 +7,7 @@ year: 2022
 date: 2022-07-01
 topic: "Football"
 cover: "/the-edge/covers/hypnotised-by-numbers.jpeg"
+logline: "More data doesn't automatically mean better bets, in a counterargument for psychology and logic in a numbers-obsessed field"
 ---
 <p>Part of a self-published trilogy on modern sports betting, this one pushes back on an assumption the rest of this shelf mostly takes for granted: that more data automatically means better decisions.</p>
 

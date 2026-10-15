@@ -7,6 +7,7 @@ year: 2020
 date: 2020-07-01
 topic: "Football"
 cover: "/the-edge/covers/against-the-elements-the-eruption.jpeg"
+logline: "A country smaller than a college town reaches the Euros and the World Cup, in a travelogue-meets-case-study of Iceland's football miracle"
 ---
 <p>Iceland has a population smaller than a mid-size American college town, and somehow qualified for Euro 2016 and the 2018 World Cup — McGinn's book is his attempt to explain how, part travelogue and part academic case study.</p>
 

@@ -7,6 +7,7 @@ year: 2022
 date: 2022-11-01
 topic: "Football"
 cover: "/the-edge/covers/expected-goals-the-story-of-how-data.jpeg"
+logline: "How xG went from a stats-Twitter argument to a number on live television, in Rory Smith's human history of football's data revolution"
 ---
 <p>Smith is the New York Times' chief soccer correspondent, and this is the definitive narrative history of how xG — and data more broadly — went from a stats-Twitter argument to a number broadcast live during matches.</p>
 

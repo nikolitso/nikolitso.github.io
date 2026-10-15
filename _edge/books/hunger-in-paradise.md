@@ -7,6 +7,7 @@ year: 2016
 date: 2016-07-01
 topic: "Football"
 cover: "/the-edge/covers/hunger-in-paradise.jpeg"
+logline: "Talent isn't found so much as built, by the future Brentford director who toured the world's hotbeds, in a sharp look at how elite players are made"
 ---
 <p>Ankersen, who later became co-owner and sporting director of Brentford FC, traveled the world studying the small clubs and academies that produce outsized numbers of elite footballers, asking what conditions actually manufacture talent.</p>
 

@@ -7,6 +7,7 @@ year: 2010
 date: 2010-05-01
 topic: "Thinking & decisions"
 cover: "/the-edge/covers/alexs-adventures-in-numberland.jpeg"
+logline: "Japanese abacus schools, an Amazonian tribe that counts to five and the birth of zero, in a delightful tour of how strange and human maths is"
 ---
 <p>Alex Bellos’s Adventures in Numberland is popular math done right: a genuinely globe-trotting tour of mathematics, visiting a Japanese abacus school, an Amazonian tribe with no words for numbers past five, and the origins of zero, all in service of showing that math is stranger and more human than the classroom version suggests.</p>
 

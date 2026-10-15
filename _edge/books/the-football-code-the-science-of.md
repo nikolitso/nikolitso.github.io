@@ -7,6 +7,7 @@ year: 2017
 date: 2017-10-01
 topic: "Football"
 cover: "/the-edge/covers/the-football-code-the-science-of.jpeg"
+logline: "Collect, analyse, judge, decide: how the analytics firm behind Brentford turns data into football decisions"
 ---
 <p>Tippett worked at Smartodds, the analytics consultancy tied to Brentford owner Matthew Benham, and this book is structured around that firm's actual process for turning data into decisions: collect, analyze, judge, decide.</p>
 

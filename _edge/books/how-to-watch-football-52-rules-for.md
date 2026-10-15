@@ -7,6 +7,7 @@ year: 2022
 date: 2022-07-01
 topic: "Football"
 cover: "/the-edge/covers/how-to-watch-football-52-rules-for.jpeg"
+logline: "Why a back three shifts, what a false nine solves, why subs aren't random, in Tifo's guide to seeing more in every match"
 ---
 <p>Tifo Football built a following on YouTube doing tactical breakdowns that assume you already like football but want to understand what you’re actually looking at — why a back three shifts the way it does, what a false nine is really solving for, why a manager’s substitution pattern isn’t random. How To Watch Football is that same instinct in book form: 52 bite-sized rules for watching more like a coach and less like a fan following the ball.</p>
 

@@ -7,6 +7,7 @@ year: 2025
 date: 2025-07-25
 topic: "Personal development"
 cover: "/the-edge/covers/games-people-play.jpg"
+logline: "Everyday conversations as scripted games with predictable, self-defeating payoffs, in Eric Berne's founding text of transactional analysis"
 ---
 <p>Berne's foundational claim is that much of everyday social interaction runs on scripted, often unconscious routines he calls "games" — repeated patterns of exchange that look like ordinary conversation but are really structured to produce a predictable, usually self-defeating payoff for at least one player.</p>
 

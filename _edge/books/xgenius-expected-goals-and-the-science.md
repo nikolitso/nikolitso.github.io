@@ -7,6 +7,7 @@ year: 2024
 date: 2024-07-01
 topic: "Football"
 cover: "/the-edge/covers/xgenius-expected-goals-and-the-science.jpeg"
+logline: "How expected goals are actually built and used by clubs, in a deeper second dive into the metric that changed football"
 ---
 <p>James Tippett's second book on expected goals picks up where his first one left off — less "what is xG" and more "how is it actually built, and how do clubs use it once they have it." If the first book was the pitch for the metric, this one is closer to the mechanics underneath it.</p>
 

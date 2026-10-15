@@ -7,6 +7,7 @@ year: 2013
 date: 2013-11-01
 topic: "Personal development"
 cover: "https://covers.openlibrary.org/b/isbn/9781477800676-L.jpg"
+logline: "Attention, not hours, decides what gets done, in a 99U collection of bite-sized essays on focus and routine"
 ---
 <p>Assembled from the 99U conference and its network of writers and researchers, this is a collection of short essays on protecting focus and building a sustainable creative routine — treating attention as the scarce resource that actually determines output, not raw hours worked.</p>
 

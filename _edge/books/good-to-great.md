@@ -7,6 +7,7 @@ year: 2001
 date: 2001-11-01
 topic: "Work & leadership"
 cover: "/the-edge/covers/good-to-great.jpeg"
+logline: "What separates companies that made the leap from those that never did, in the management classic that shaped a generation, limitations and all"
 ---
 <p>Collins and his research team studied companies that sustained a leap from merely good to exceptional long-term performance, comparing them against similar companies that never made the leap, to isolate what actually distinguished the two groups.</p>
 

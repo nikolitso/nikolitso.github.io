@@ -7,6 +7,7 @@ year: 1995
 date: 1995-01-01
 topic: "Football"
 cover: "/the-edge/covers/football-against-the-enemy.jpeg"
+logline: "Ukrainian ultras, Argentine dictators and Catalan pride across twenty countries, in Simon Kuper's classic of football and politics"
 ---
 <p>Simon Kuper wrote Football Against the Enemy in his twenties, traveling to more than twenty countries to report on how football reveals the politics underneath it — from Ukrainian ultras and Argentine military dictatorship-era football to Barcelona's identity as Catalan resistance in miniature.</p>
 

@@ -7,6 +7,7 @@ year: 2004
 date: 2004-11-01
 topic: "Betting & markets"
 cover: "/the-edge/covers/the-definitive-guide-to-betting-on.jpeg"
+logline: "Football, tennis and the rest of the betting calendar covered by the people who bet on them, in a broad Racing Post survey"
 ---
 <p>Edited by Bruce Millington, this entry in the Racing Post "Definitive Guide" series broadens out from horse racing to sports betting generally, with contributors covering how to approach markets across football, tennis, and other major sports.</p>
 

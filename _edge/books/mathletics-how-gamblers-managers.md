@@ -7,6 +7,7 @@ year: 2009
 date: 2009-03-01
 topic: "Sports analytics"
 cover: "/the-edge/covers/mathletics-how-gamblers-managers.jpeg"
+logline: "Park effects, draft picks and betting lines worked through with real statistics, in a rigorous university-press guide to sports maths"
 ---
 <p>This is one of the more academically credentialed books on the shelf — a Princeton University Press title that treats sports math with the same rigor you'd expect from an actual statistics course, not a pop-science gloss.</p>
 

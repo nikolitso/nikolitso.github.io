@@ -7,6 +7,7 @@ year: 2009
 date: 2009-04-01
 topic: "Betting & markets"
 cover: "/the-edge/covers/betting-on-football.jpeg"
+logline: "Probability and expected value instead of tips and hot takes, in Kevin Pullein's rigorous, data-driven guide to football betting"
 ---
 <p><strong>Kevin Pullein</strong> is a professional sports betting analyst and author, best known for his long-running work at Sporting Life and Racing Post, where he has written extensively on the mathematics of football betting markets.</p>
 

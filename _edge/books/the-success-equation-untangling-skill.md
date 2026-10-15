@@ -7,6 +7,7 @@ year: 2013
 date: 2013-01-01
 topic: "Thinking & decisions"
 cover: "/the-edge/covers/the-success-equation-untangling-skill.jpeg"
+logline: "If you can lose on purpose it's skill, if not it's luck, in a sharp framework for judging any track record"
 ---
 <p>Michael Mauboussin's core project in The Success Equation is separating skill from luck in outcomes that look identical from the outside — a winning trade, a championship season, a great quarter. His method: if you can't lose on purpose, it's mostly skill (chess); if a novice occasionally beats a pro, luck plays a real role (much of investing, some of sports).</p>
 

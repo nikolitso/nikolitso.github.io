@@ -7,6 +7,7 @@ year: 2026
 date: 2026-10-06
 topic: "Betting & markets"
 cover: "/the-edge/covers/fine-margins.jpg"
+logline: "Irish economist crunches millions of quoted odds to show where bookmakers really make their money, in a data-rich guide to sports betting"
 ---
 <p>Whelan is a Professor of Economics at University College Dublin, and this is the first book to apply economic analysis seriously to modern sports betting. It is built on original research covering millions of quoted odds across several sports and seasons, some of it developed with a professional bookmaker.</p>
 

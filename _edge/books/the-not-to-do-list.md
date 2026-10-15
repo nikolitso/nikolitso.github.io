@@ -7,6 +7,7 @@ year: 2025
 date: 2025-03-27
 topic: "Personal development"
 cover: "/the-edge/covers/the-not-to-do-list.jpg"
+logline: "Success comes less from what high performers do than from what they avoid, in a short catalogue of traps worth skipping"
 ---
 <p>Dobelli's premise, following his earlier work on cognitive bias, is that success is driven less by what high performers do than by what they systematically avoid — bad decisions, wasted effort, and predictable failure patterns that most success literature ignores in favor of positive habits to copy.</p>
 

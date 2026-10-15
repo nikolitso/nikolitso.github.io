@@ -8,6 +8,7 @@ year: 2023
 date: 2023-11-17
 topic: "Betting & markets"
 cover: "/the-edge/covers/interception-the-secrets-of-modern.jpeg"
+logline: "Syndicates, algorithms and the machinery that sets the lines, in a sobering inside look at who really wins in sports betting"
 ---
 <p>Miller, a professional poker player and betting theorist, and Davidow pull back the curtain on how the modern sports betting industry actually works — not from the bettor's side, but from inside the machinery of lines, syndicates, and the algorithms that set and move odds.</p>
 

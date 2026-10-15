@@ -8,6 +8,7 @@ year: 2011
 date: 2011-07-01
 topic: "Sports analytics"
 cover: "/the-edge/covers/the-hidden-mathematics-of-sport.jpeg"
+logline: "Penalty game theory, dartboard geometry and the best place to stand at the snooker table across seventeen sports, in a fun, equation-free tour"
 ---
 <p>Eastaway and Haigh's trick is keeping almost all the actual equations out of the main text — banished to an appendix — while still walking through genuinely rigorous ideas about probability and geometry across seventeen different sports.</p>
 

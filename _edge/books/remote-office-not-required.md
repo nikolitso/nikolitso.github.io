@@ -8,6 +8,7 @@ year: 2013
 date: 2013-06-01
 topic: "Work & leadership"
 cover: "/the-edge/covers/remote-office-not-required.jpeg"
+logline: "The case for remote work made years before 2020 proved it, in the Basecamp founders' opinionated operational playbook"
 ---
 <p>Jason Fried and David Heinemeier Hansson (Basecamp’s founders) made the case for remote work years before it was forced on the rest of the working world — opinionated, occasionally combative, and largely vindicated once 2020 made the argument for them whether companies wanted it or not.</p>
 

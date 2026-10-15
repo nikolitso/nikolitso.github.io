@@ -7,6 +7,7 @@ year: 2022
 date: 2022-02-01
 topic: "Football"
 cover: "https://covers.openlibrary.org/b/id/13792951-L.jpg"
+logline: "The people and ideas that moved analytics from the fringe to the centre of elite football, in a lively piece of narrative journalism"
 ---
 <p>O'Hanlon, a football journalist, traces how data analytics moved from a fringe curiosity to a central part of how top clubs recruit, coach, and play, told through the people and ideas that drove the shift rather than through the math itself.</p>
 

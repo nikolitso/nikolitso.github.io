@@ -7,6 +7,7 @@ year: 2024
 date: 2024-10-01
 topic: "Football"
 cover: "/the-edge/covers/how-to-win-the-premier-league.jpeg"
+logline: "Liverpool's former head of research explains how data built a title-winning team, in the closest thing to a first-hand account of analytics at the top"
 ---
 <p>Ian Graham ran Liverpool’s analytics department through the Klopp era — the actual research director behind the recruitment model that helped turn a mid-table-adjacent club into repeat title contenders. How to Win the Premier League is his account of doing the job from the inside, which makes it a rarer artifact than most books on this shelf: not a journalist or an academic explaining analytics from outside a club, but the person who built the model explaining what it actually took to get a boardroom, a manager, and a scouting department to trust it.</p>
 

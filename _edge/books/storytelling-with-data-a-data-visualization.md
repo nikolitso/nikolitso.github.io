@@ -7,6 +7,7 @@ year: 2015
 date: 2015-11-01
 topic: "Thinking & decisions"
 cover: "/the-edge/covers/storytelling-with-data-a-data-visualization.jpeg"
+logline: "Most charts fail because they decorate data instead of arguing a point, in the standard guide to making visuals that persuade"
 ---
 <p>Cole Nussbaumer Knaflic’s book has become the standard reference for a reason that’s obvious within the first chapter: most business charts fail not because the data is wrong, but because the chart is decorating the data instead of arguing a point with it. She walks through concrete before-and-after redesigns — the same numbers, radically clearer once the chart junk is stripped out and the point is made visually obvious rather than left for the reader to dig out.</p>
 

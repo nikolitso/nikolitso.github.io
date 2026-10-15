@@ -7,6 +7,7 @@ year: 2020
 date: 2020-09-01
 topic: "Personal development"
 cover: "/the-edge/covers/the-almanack-of-naval-ravikant.jpeg"
+logline: "Scattered tweets and podcasts on leverage, wealth and happiness gathered into one place, in a dense, quotable book to dip into for years"
 ---
 <p>Jorgenson compiles and organizes Naval Ravikant's scattered tweets, podcast appearances, and essays into a single coherent book on building wealth and finding happiness — not as separate goals, but as related outcomes of clear thinking about leverage, specific knowledge, and long-term games.</p>
 

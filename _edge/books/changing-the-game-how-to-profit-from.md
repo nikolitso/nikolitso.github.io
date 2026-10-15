@@ -7,6 +7,7 @@ year: 2012
 date: 2012-05-02
 topic: "Betting & markets"
 cover: "/the-edge/covers/changing-the-game-how-to-profit-from.jpeg"
+logline: "Wall Street investment principles applied to sports betting and fantasy sports, in a risk-management guide that is more useful than its sales pitch"
 ---
 <p>Hall pitches this as Wall Street investment principles applied to sports betting and fantasy sports, built around his own “Get In and Win” system, with Billy Beane and Mark Cuban invoked as the data-driven-sports-management touchstones.</p>
 

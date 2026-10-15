@@ -136,7 +136,7 @@ def books():
         items[p.stem] = dict(
             title=m.get("title") or p.stem, by=", ".join(a for a in authors if a),
             hook=worth_it(body) or first_sentence(body), parts=book_parts(body),
-            topic=str(m.get("topic") or ""),
+            topic=str(m.get("topic") or ""), logline=str(m.get("logline") or ""),
             date=str(m.get("date") or ""), url=f"https://antonisnikolitsopoulos.com/the-edge/{p.stem}/")
     return items
 
@@ -150,6 +150,7 @@ def films():
             title=m.get("title") or slug, year=m.get("year") or "", by=m.get("director") or "",
             hook=verdict(body) or first_sentence(body), parts=film_parts(body), date=str(m.get("added") or ""),
             country=str(m.get("country") or ""), rating=float(m.get("rating") or 0),
+            logline=str(m.get("logline") or ""),
             url=f"https://whatalgomissed.com/films/{slug}/")
     return items
 
@@ -192,6 +193,10 @@ def shorten(text, room):
 
 
 def compose(kind, it, variant=0):
+    if it.get("logline"):  # the hand-written one-line pitch, then the link
+        line = it["logline"]
+        room = 280 - URL_LEN - 1
+        return (line if len(line) <= room else shorten(line, room)) + "\n" + it["url"]
     voices = BOOK_VOICES if kind == "book" else FILM_VOICES
     tpl = voices[variant % len(voices)]
     if not it.get("by"):

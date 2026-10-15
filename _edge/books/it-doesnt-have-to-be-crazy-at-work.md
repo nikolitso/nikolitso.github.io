@@ -8,6 +8,7 @@ year: 2018
 date: 2018-11-01
 topic: "Work & leadership"
 cover: "/the-edge/covers/it-doesnt-have-to-be-crazy-at-work.jpeg"
+logline: "Calm as a competitive advantage, not a luxury, in the Basecamp founders' case against always-on work culture"
 ---
 <p>The Basecamp founders make the case against the grind culture and constant availability that many companies treat as inevitable, arguing instead for shorter workweeks, more focus time, and calm as a deliberate competitive advantage rather than a luxury.</p>
 

@@ -8,6 +8,7 @@ year: 2019
 date: 2019-06-01
 topic: "Betting & markets"
 cover: "/the-edge/covers/the-logic-of-sports-betting.jpeg"
+logline: "Only a few sportsbooks actually set the lines and everyone else copies them, in a sharp explanation of where the betting market's edges hide"
 ---
 <p>Miller is a genuinely credible gambling-strategy author — well-regarded in poker circles for The Course — and here he and Davidow focus less on picks and more on how sportsbooks actually set and move their lines in the first place.</p>
 

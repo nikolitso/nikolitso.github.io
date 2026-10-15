@@ -7,6 +7,7 @@ year: 2017
 date: 2017-12-01
 topic: "Personal development"
 cover: "/the-edge/covers/nine-things-successful-people-do.jpeg"
+logline: "Nine concrete habits from goal-achievement research, in a short, practical checklist for getting things done"
 ---
 <p>Heidi Grant Halvorson’s widely-cited short piece (this is the expanded book version) distills goal-achievement research into nine specific, concrete behaviors — get specific about your goal, seize the moment to act, know exactly how far you have left to go, be a realistic optimist, focus on getting better rather than being good, and a few more in that vein.</p>
 

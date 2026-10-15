@@ -7,6 +7,7 @@ year: 2014
 date: 2014-04-01
 topic: "Work & leadership"
 cover: "https://covers.openlibrary.org/b/isbn/9781477801239-L.jpg"
+logline: "Turning creative skill into a business with income and a team, in a 99U collection of first-hand advice for makers"
 ---
 <p>The third and final 99U book shifts from individual craft to actually building something — turning creative skill into a business with real income and a team, aimed at makers who are strong on the creative side but less sure how to build a sustainable venture around it.</p>
 

@@ -21,6 +21,10 @@ content:
       - name: subtitle
         label: One-line summary
         type: string
+      - name: logline
+        label: Logline for X
+        description: "One line, e.g. 'Ordinary people out-predict intelligence analysts..., in a tournament-tested guide to better judgment'. Posted on X with the link. Keep it under 250 characters."
+        type: text
       - name: authors
         label: Authors
         type: string

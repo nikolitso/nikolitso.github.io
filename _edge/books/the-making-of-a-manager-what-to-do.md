@@ -7,6 +7,7 @@ year: 2019
 date: 2019-04-01
 topic: "Work & leadership"
 cover: "/the-edge/covers/the-making-of-a-manager-what-to-do.jpeg"
+logline: "Facebook designer becomes a manager at 25 with no idea what she's doing, in an honest guide for anyone leading people for the first time"
 ---
 <p>Julie Zhuo became a manager at Facebook at 25, with no formal training and no idea what she was doing beyond the job title — and The Making of a Manager is the honest, memoir-adjacent account of learning the role from inside it, rather than a top-down framework written by someone who forgot what it felt like to be new at this.</p>
 

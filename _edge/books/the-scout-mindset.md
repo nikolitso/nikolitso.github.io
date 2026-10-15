@@ -7,6 +7,7 @@ year: 2021
 date: 2021-05-13
 topic: "Thinking & decisions"
 cover: "/the-edge/covers/the-scout-mindset.jpeg"
+logline: "Soldiers defend what they believe while scouts try to see what is true, in a clear, persuasive case for intellectual honesty as a skill"
 ---
 <p>Galef's central distinction is between "soldier mindset" — reasoning defensively to protect existing beliefs and identity — and "scout mindset" — reasoning to see things as accurately as possible, even when the truth is unflattering or inconvenient.</p>
 

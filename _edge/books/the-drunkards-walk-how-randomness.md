@@ -7,6 +7,7 @@ year: 2008
 date: 2008-06-01
 topic: "Thinking & decisions"
 cover: "/the-edge/covers/the-drunkards-walk-how-randomness.jpeg"
+logline: "Hot streaks, lucky breaks and “genius” careers turn out to be mostly chance, in an eye-opening study of how randomness rules our lives"
 ---
 <p>Leonard Mlodinow’s central argument in The Drunkard’s Walk is uncomfortable and hard to unsee once you’ve absorbed it: a huge amount of what we attribute to skill, intention, or destiny — a hot streak, a lucky break, a run of bad luck at exactly the wrong time — is much closer to pure randomness than the stories we tell about it afterward.</p>
 

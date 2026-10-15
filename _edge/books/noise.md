@@ -9,6 +9,7 @@ year: 2021
 date: 2021-06-01
 topic: "Thinking & decisions"
 cover: "/the-edge/covers/noise.jpeg"
+logline: "Same case, same experts, different verdict weeks later, in Daniel Kahneman's unsettling study of the randomness inside human judgment"
 ---
 <p>Daniel Kahneman's earlier work explored bias — the systematic ways judgment tilts in a predictable direction. Noise, co-written with Olivier Sibony and Cass Sunstein, is about bias's quieter, less-discussed sibling: unwanted variability in judgment, where the same case gets a different verdict depending on which judge, doctor, or underwriter happens to look at it, on no principled basis at all.</p>
 

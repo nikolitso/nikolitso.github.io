@@ -7,6 +7,7 @@ year: 2014
 date: 2014-11-01
 topic: "Betting & markets"
 cover: "/the-edge/covers/smart-sports-betting-advanced-stats.jpeg"
+logline: "From $100 to $8,000 and back to zero, in a betting writer's accessible guide to the psychology and fundamentals of beating the odds"
 ---
 <p>Rudnitsky opens with his own cautionary story — turning a $100 gift into roughly $8,000 before losing all of it — and the book is his attempt to distill what he learned studying successful bettors afterward.</p>
 

@@ -8,6 +8,7 @@ year: 2011
 date: 2011-02-01
 topic: "Sports analytics"
 cover: "/the-edge/covers/scorecasting.jpeg"
+logline: "Why home advantage exists and why referees favour the home team, in a sharp study of the hidden psychology of sport"
 ---
 <p>Wertheim and Moskowitz’s Scorecasting isn’t a football book specifically — it’s US-sports-heavy (NFL, NBA, MLB) — but it belongs on this shelf because the questions it asks translate directly: why does home advantage exist, and is it really about the crowd? Why do referees unconsciously favor the home team late in close games? Why do coaches make predictably conservative decisions even when the data says to be aggressive?</p>
 

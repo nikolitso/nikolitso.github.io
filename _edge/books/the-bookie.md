@@ -7,6 +7,7 @@ year: 2026
 date: 2026-02-15
 topic: "Betting & markets"
 cover: "/the-edge/covers/the-bookie.jpeg"
+logline: "Veteran Vegas oddsmaker opens the back office of the sportsbook, in a memoir told from the side of the house"
 ---
 <p>Manteris ran sportsbooks in Las Vegas for decades, and this book is his insider account of the job — how odds actually get set and moved, how bookmakers manage risk against sharp bettors and public money alike, and the pressure of running a book during major events.</p>
 

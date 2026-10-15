@@ -7,6 +7,7 @@ year: 2016
 date: 2016-04-10
 topic: "Work & leadership"
 cover: "/the-edge/covers/how-to-be-a-leader.jpeg"
+logline: "Leadership as psychological self-awareness rather than technique, in a short School of Life guide to being worth following"
 ---
 <p>Most leadership books are either war-story memoirs from famous executives or management-consultant frameworks. This one stays truer to The School of Life’s actual lane: leadership examined through psychological self-awareness rather than technique — what makes someone trustworthy to follow, why insecure leaders create insecure teams, and how much of “leadership” is really about managing your own anxiety well enough that it doesn’t leak onto everyone else.</p>
 

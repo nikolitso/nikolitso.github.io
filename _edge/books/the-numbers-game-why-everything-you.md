@@ -8,6 +8,7 @@ year: 2013
 date: 2013-03-01
 topic: "Football"
 cover: "/the-edge/covers/the-numbers-game-why-everything-you.jpeg"
+logline: "Corners aren't dangerous and the weakest link matters more than the star, in a data-driven demolition of football folklore"
 ---
 <p>Chris Anderson and David Sally’s The Numbers Game picks specific pieces of football folklore — corners are dangerous, red cards are decisive, star strikers win you the league — and tests them against the actual data. A lot of the folklore loses.</p>
 

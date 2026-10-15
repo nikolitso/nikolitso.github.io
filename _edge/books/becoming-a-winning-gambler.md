@@ -7,6 +7,7 @@ year: 2013
 date: 2013-07-01
 topic: "Betting & markets"
 cover: "/the-edge/covers/becoming-a-winning-gambler.jpeg"
+logline: "Blackjack, poker, horse racing and five sports leagues under one roof, in an all-round guide to gambling with discipline"
 ---
 <p>Moody's broader gambling book, expanding past sports into blackjack (card counting and basic strategy), poker, and horse racing, with separate sports-betting chapters split out by league — baseball, NBA, NFL, college football, college basketball.</p>
 

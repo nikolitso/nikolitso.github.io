@@ -7,6 +7,7 @@ year: 2018
 date: 2018-07-01
 topic: "Work & leadership"
 cover: "/the-edge/covers/measure-what-matters.jpeg"
+logline: "The goal-setting system that shaped Google, from the man who brought it there, in the origin story of OKRs"
 ---
 <p>Doerr, a venture capitalist who introduced Google to the OKR (Objectives and Key Results) framework early in its history, lays out the goal-setting system credited with shaping the discipline of some of the most successful companies in tech.</p>
 

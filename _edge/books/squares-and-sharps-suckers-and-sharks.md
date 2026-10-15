@@ -7,6 +7,7 @@ year: 2016
 date: 2016-06-26
 topic: "Betting & markets"
 cover: "/the-edge/covers/squares-and-sharps-suckers-and-sharks.jpeg"
+logline: "Why a small group of bettors keeps winning while most keep losing, in Joseph Buchdahl's psychology of the betting market"
 ---
 <p>Buchdahl's focus here isn't betting mechanics at all — it's psychology: why a small group of bettors (“sharps”) consistently win over time while the much larger group (“squares”) consistently don't, even when both have access to the same odds.</p>
 

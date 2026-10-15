@@ -7,6 +7,7 @@ year: 2004
 date: 2004-02-01
 topic: "Sports analytics"
 cover: "/the-edge/covers/basketball-on-paper-rules-and-tools.jpeg"
+logline: "Possessions, efficiency and the Four Factors written down for the first time, in the founding text of modern basketball analytics"
 ---
 <p>If Moneyball popularized the idea of finding value with data, Basketball on Paper is where a lot of the actual math behind modern basketball analytics — offensive and defensive rating, possession-based efficiency, the Four Factors — got written down for the first time.</p>
 

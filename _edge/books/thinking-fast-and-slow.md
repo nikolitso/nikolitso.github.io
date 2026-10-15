@@ -7,6 +7,7 @@ year: 2011
 date: 2011-11-01
 topic: "Thinking & decisions"
 cover: "https://covers.openlibrary.org/b/id/13290711-L.jpg"
+logline: "Two systems run your mind and the fast one quietly makes most decisions, in Daniel Kahneman's Nobel-winning source of behavioural economics"
 ---
 <p>Kahneman, a Nobel laureate psychologist, lays out the two-system model of thought that has shaped a generation of thinking about decision-making: System 1, fast and intuitive, and System 2, slow and deliberate — and the long catalogue of biases that emerge when System 1 quietly runs the show.</p>
 

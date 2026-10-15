@@ -7,6 +7,7 @@ year: 2005
 date: 2005-11-01
 topic: "Betting & markets"
 cover: "/the-edge/covers/the-definitive-guide-to-betting-exchanges.jpeg"
+logline: "How to back, lay and trade instead of just placing bets, in a structured Racing Post primer on exchange betting"
 ---
 <p>Edited by Paul Kealy, this Racing Post guide focuses specifically on exchange betting — how exchanges like Betfair actually function, how to place back and lay bets, and how trading strategies differ from traditional wagering.</p>
 

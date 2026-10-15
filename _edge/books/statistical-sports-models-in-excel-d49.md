@@ -7,6 +7,7 @@ year: 2019
 date: 2019-08-01
 topic: "Betting & markets"
 cover: "/the-edge/covers/statistical-sports-models-in-excel-d49.jpeg"
+logline: "Build your own prediction models for five leagues in the spreadsheet you already have open, in a hands-on crash course"
 ---
 <p>Most sports-analytics books ask you to trust the math; Mack's pitch is that you can build the models yourself, in software you probably already have open at work.</p>
 

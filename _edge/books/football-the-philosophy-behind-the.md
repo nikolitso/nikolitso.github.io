@@ -7,6 +7,7 @@ year: 2019
 date: 2019-04-01
 topic: "Football"
 cover: "/the-edge/covers/football-the-philosophy-behind-the.jpeg"
+logline: "Not how football is played but what it actually is, in a philosopher's slim, thought-provoking little book"
 ---
 <p>Stephen Mumford is a philosophy professor at Nottingham, and this slim entry in Polity's “Little Books That Make You Think” series does something most football writing doesn't bother with: asking what football actually is, philosophically, rather than just analyzing how it's played.</p>
 

@@ -7,6 +7,7 @@ year: 2024
 date: 2024-11-10
 topic: "Work & leadership"
 cover: "/the-edge/covers/kind.jpeg"
+logline: "Kindness at work as a driver of performance and trust, not a soft extra, in a research-backed management case from the Productivity Ninja"
 ---
 <p><strong>Graham Allcott</strong> is the bestselling author of How to Be a Productivity Ninja and the founder of Think Productive, one of the world's leading productivity training companies.</p>
 

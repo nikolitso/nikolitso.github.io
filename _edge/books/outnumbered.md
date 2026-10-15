@@ -7,6 +7,7 @@ year: 2018
 date: 2018-09-01
 topic: "Thinking & decisions"
 cover: "/the-edge/covers/outnumbered.jpeg"
+logline: "The real maths behind news feeds, search results and filter bubbles, in a mathematician's hype-free guide to the algorithms that shape us"
 ---
 <p>David Sumpter, a mathematician, wrote Outnumbered to demystify the algorithms actually running Facebook's feed, Google's search results, dating apps, and the fake-news and filter-bubble dynamics they produce — explaining the real math behind headlines about AI, rather than either hyping or dismissing it.</p>
 
