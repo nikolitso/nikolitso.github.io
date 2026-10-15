@@ -118,7 +118,8 @@
       "manage-your-day-to-day",
       "beyond-the-odds",
       "the-5-types-of-wealth",
-      "mathletics-how-gamblers-managers"
+      "mathletics-how-gamblers-managers",
+      "good-to-great"
     ],
     "log": [
       {
@@ -156,9 +157,15 @@
         "slot": "2026-10-15 14",
         "slug": "mathletics-how-gamblers-managers",
         "id": "2110717448173342950"
+      },
+      {
+        "day": "2026-10-16",
+        "slot": "2026-10-16 02",
+        "slug": "good-to-great",
+        "id": "2110868441150431476"
       }
     ],
-    "last_day": "2026-10-15"
+    "last_day": "2026-10-16"
   },
   "film": {
     "seen": [
@@ -403,5 +410,5 @@
     ],
     "last_day": "2026-10-15"
   },
-  "last_slot": "2026-10-15 20"
+  "last_slot": "2026-10-16 02"
 }
