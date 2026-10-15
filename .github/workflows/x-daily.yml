@@ -1,17 +1,15 @@
 name: Daily X posts
 
-# Book at 14:00 and film at 20:00 Athens time. GitHub's scheduler can run late or skip
-# runs, so this checks every hour through the afternoon and evening; on each run the
-# script posts a book and/or a film only if it's past that one's time and it hasn't
-# gone out yet today, so extra checks never cause duplicates. (UTC 11-21 covers
-# 14:00-24:00 Athens in both summer and winter time.)
+# Four posts a day, every 6 hours (Athens time): 02:00 book, 08:00 film, 14:00 book, 20:00 film.
+# A Cloudflare Worker triggers this every 30 minutes ("auto"); GitHub's own hourly schedule
+# is a backup. Each slot posts once; late runs still post the current slot, never a burst.
 on:
   schedule:
-    - cron: "7 11-21 * * *"
+    - cron: "7 * * * *"
   workflow_dispatch:
     inputs:
       kind:
-        description: "What to post (auto = the regular check: each kind only if due and not yet posted today)"
+        description: "What to post (auto = the regular check: the current slot, if not posted yet)"
         type: choice
         options: [book, film, auto]
         default: book
@@ -54,11 +52,8 @@ jobs:
             if [ "${{ inputs.dry_run }}" = "true" ]; then FLAGS="$FLAGS --dry-run"; fi
             python scripts/x_daily.py "$KIND" $FLAGS
           else
-            # scheduled check: try both; each posts only when due
-            status=0
-            python scripts/x_daily.py book || status=1
-            python scripts/x_daily.py film || status=1
-            exit $status
+            # scheduled check: post the current 6-hour slot if it hasn't gone out yet
+            python scripts/x_daily.py auto
           fi
       - name: Update the homepage's Today's picks card
         if: ${{ !cancelled() }}   # record a successful post even if the other kind failed

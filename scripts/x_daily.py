@@ -1,11 +1,12 @@
 """Post one book (The Edge) or one film (What Algo Missed) to X.
 
-Usage:  python scripts/x_daily.py book|film [--dry-run] [--force]
+Usage:  python scripts/x_daily.py auto [--dry-run]          (scheduled: post the current slot if not done)
+        python scripts/x_daily.py book|film --force [--dry-run]  (manual: post one now)
 
 - New additions go first, newest first; otherwise a random pick from what this
   round hasn't posted yet. When everything has been posted, a new round starts.
-- Posts at most once per kind per Athens calendar day, and only at or after the
-  target hour, so the twice-hourly cron covers summer and winter time.
+- Four slots a day (SLOTS, Athens time). Each slot posts once; a late run still posts the
+  current slot, but missed earlier slots are skipped rather than posted in a burst.
 - Credentials come from env: X_API_KEY, X_API_SECRET, X_ACCESS_TOKEN, X_ACCESS_TOKEN_SECRET.
   Without them (or with --dry-run) it only prints the post.
 - State lives in _x/state.json (committed by the workflow).
@@ -22,7 +23,7 @@ import sys
 import time
 import urllib.parse
 import urllib.request
-from datetime import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
@@ -31,7 +32,8 @@ STATE = ROOT / "_x" / "state.json"
 BOOKS = ROOT / "_edge" / "books"
 FILMS = Path(os.environ.get("WAM_DIR", ROOT.parent / "whatalgomissed")) / "content" / "films"
 ATHENS = ZoneInfo("Europe/Athens")
-TARGET_HOUR = {"book": 14, "film": 20}
+# Four slots a day, every 6 hours (Athens time), alternating book and film
+SLOTS = [(2, "book"), (8, "film"), (14, "book"), (20, "film")]
 URL_LEN = 23  # X counts every link as 23 characters
 
 
@@ -201,29 +203,13 @@ def post_to_x(text):
 
 
 # ---------------------------------------------------------------- scheduling
-def main():
-    args = sys.argv[1:]
-    kind = next((a for a in args if a in ("book", "film")), None)
-    if not kind:
-        sys.exit("usage: x_daily.py book|film [--dry-run] [--force]")
-    dry = "--dry-run" in args or not os.environ.get("X_API_KEY")
-    force = "--force" in args
-
+def pick_and_post(state, kind, dry, slot_key):
     catalogue = books() if kind == "book" else films()
     if not catalogue:
         sys.exit(f"No {kind}s found")
-    state = json.loads(STATE.read_text(encoding="utf-8")) if STATE.exists() else {}
     st = state.setdefault(kind, {})
     if "seen" not in st:  # first run: today's catalogue is the backlog, not "new"
         st.update(seen=sorted(catalogue), round=1, posted=[], log=[])
-
-    now = datetime.now(ATHENS)
-    today = now.date().isoformat()
-    if not force:
-        if st.get("last_day") == today:
-            print(f"{kind}: already posted today"); return
-        if now.hour < TARGET_HOUR[kind]:
-            print(f"{kind}: too early ({now:%H:%M} Athens, target {TARGET_HOUR[kind]}:00)"); return
 
     new = [s for s in catalogue if s not in st["seen"]]
     if new:
@@ -239,16 +225,54 @@ def main():
     text = compose(kind, catalogue[slug], len(st["log"]))
     print(f"--- {kind}: {slug} (round {st['round']}, {len(st['posted'])}/{len(catalogue)} posted)\n{text}\n---")
     if dry:
-        print("dry run: nothing posted, state unchanged"); return
-
+        print("dry run: nothing posted, state unchanged")
+        return False
     tweet_id = post_to_x(text)
+    today = datetime.now(ATHENS).date().isoformat()
     st["seen"] = sorted(set(st["seen"]) | {slug})
     st["posted"].append(slug)
     st["last_day"] = today
-    st["log"].append({"day": today, "slug": slug, "id": tweet_id})
-    STATE.parent.mkdir(exist_ok=True)
-    STATE.write_text(json.dumps(state, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    st["log"].append({"day": today, "slot": slot_key, "slug": slug, "id": tweet_id})
     print(f"posted: https://x.com/nikolitso/status/{tweet_id}")
+    return True
+
+
+def current_slot(now):
+    """The latest slot that has started (Athens time), as ("YYYY-MM-DD HH", kind)."""
+    for hour, kind in sorted(SLOTS, reverse=True):
+        if now.hour >= hour:
+            return f"{now.date().isoformat()} {hour:02d}", kind
+    hour, kind = max(SLOTS)                      # before the first slot: yesterday's last one
+    return f"{(now - timedelta(days=1)).date().isoformat()} {hour:02d}", kind
+
+
+def main():
+    args = sys.argv[1:]
+    mode = next((a for a in args if a in ("auto", "book", "film")), None)
+    if not mode:
+        sys.exit("usage: x_daily.py auto | book|film --force [--dry-run]")
+    dry = "--dry-run" in args or not os.environ.get("X_API_KEY")
+    state = json.loads(STATE.read_text(encoding="utf-8")) if STATE.exists() else {}
+    now = datetime.now(ATHENS)
+
+    if mode == "auto":
+        key, kind = current_slot(now)
+        if "last_slot" not in state:  # switching from once-a-day: don't repost a kind already out today
+            if (state.get(kind) or {}).get("last_day") == now.date().isoformat():
+                state["last_slot"] = key
+        if state.get("last_slot") == key:
+            print(f"slot {key} ({kind}): already posted"); return
+        if pick_and_post(state, kind, dry, key):
+            state["last_slot"] = key
+    else:
+        if "--force" not in args:
+            sys.exit("book/film posts immediately; add --force to confirm (scheduled posting uses: auto)")
+        if not pick_and_post(state, mode, dry, f"manual {now:%Y-%m-%d %H:%M}"):
+            return
+
+    if not dry:
+        STATE.parent.mkdir(exist_ok=True)
+        STATE.write_text(json.dumps(state, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
 
 
 if __name__ == "__main__":
