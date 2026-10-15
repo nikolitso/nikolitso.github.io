@@ -117,7 +117,8 @@
       "how-to-find-fulfilling-work",
       "manage-your-day-to-day",
       "beyond-the-odds",
-      "the-5-types-of-wealth"
+      "the-5-types-of-wealth",
+      "mathletics-how-gamblers-managers"
     ],
     "log": [
       {
@@ -149,9 +150,15 @@
         "day": "2026-10-14",
         "slug": "the-5-types-of-wealth",
         "id": "2110397170708881574"
+      },
+      {
+        "day": "2026-10-15",
+        "slot": "2026-10-15 14",
+        "slug": "mathletics-how-gamblers-managers",
+        "id": "2110717448173342950"
       }
     ],
-    "last_day": "2026-10-14"
+    "last_day": "2026-10-15"
   },
   "film": {
     "seen": [
@@ -388,5 +395,6 @@
       }
     ],
     "last_day": "2026-10-14"
-  }
+  },
+  "last_slot": "2026-10-15 14"
 }
