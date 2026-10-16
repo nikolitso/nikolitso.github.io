@@ -201,7 +201,7 @@ SOCIAL = """<ul class="social" aria-label="Social links">
 
 def site_menu(active=""):
     items = [("books", "/books/", "Books"), ("films", "https://whatalgomissed.com/", 'Films <span aria-hidden="true">↗</span>'),
-             ("paok", "/#paok", "PAOK"), ("about", "/about/", "About")]
+             ("projects", "/#projects", "Projects"), ("about", "/about/", "About")]
     return "".join(
         f'<a href="{h}"' + (' target="_blank" rel="noopener"' if h.startswith("http") else "")
         + (' class="on" aria-current="page"' if k == active else "") + f">{l}</a>" for k, h, l in items)
@@ -505,7 +505,7 @@ def page_404(by_date):
 
 def sitemap(books):
     """Pages linked from the site. Unlinked or unfinished sections (e.g. /wine/) stay out."""
-    paths = ["/", "/about/", BASE, BASE + "authors/"] + [b["url"] for b in books] + ["/paok-hub/", "/paok-basketball/"]
+    paths = ["/", "/about/", BASE, BASE + "authors/"] + [b["url"] for b in books] + ["/paok-hub/", "/paok-basketball/", "/fibaeuropecup/", "/copa-libertadores-women/"]
     urls = "".join(f"<url><loc>{SITE}{p}</loc></url>" for p in paths)
     (ROOT / "sitemap.xml").write_text(
         f'<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">{urls}</urlset>\n',
