@@ -279,7 +279,7 @@ function render() {
 document.getElementById('q').addEventListener('input', e => { state.q = e.target.value; state.grape = ''; render(); });
 document.addEventListener('click', e => {
   const vb = e.target.closest('.views button');
-  if (vb) { view = vb.dataset.view; try { history.replaceState(null, '', view === 'list' ? '#list' : location.pathname + location.search); } catch (x) {} render(); return; }
+  if (vb) { view = vb.dataset.view; state = {q: '', cat: '', tag: '', grape: '', region: '', colour: ''}; document.getElementById('q').value = ''; try { history.replaceState(null, '', view === 'list' ? '#list' : location.pathname + location.search); } catch (x) {} render(); return; }
   const lb = e.target.closest('.lang button');
   if (lb) { lang = lb.dataset.lang; try { localStorage.setItem('wine-lang', lang); } catch (x) {} render(); return; }
   const c = e.target.closest('.chip');
