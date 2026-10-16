@@ -119,7 +119,8 @@
       "beyond-the-odds",
       "the-5-types-of-wealth",
       "mathletics-how-gamblers-managers",
-      "good-to-great"
+      "good-to-great",
+      "smart-money-the-fall-and-rise-of"
     ],
     "log": [
       {
@@ -163,6 +164,12 @@
         "slot": "2026-10-16 02",
         "slug": "good-to-great",
         "id": "2110868441150431476"
+      },
+      {
+        "day": "2026-10-16",
+        "slot": "2026-10-16 14",
+        "slug": "smart-money-the-fall-and-rise-of",
+        "id": "2111106680247222709"
       }
     ],
     "last_day": "2026-10-16"
@@ -417,5 +424,5 @@
     ],
     "last_day": "2026-10-16"
   },
-  "last_slot": "2026-10-16 08"
+  "last_slot": "2026-10-16 14"
 }
