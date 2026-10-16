@@ -6,7 +6,7 @@ authors:
 year: 2017
 date: 2017-07-01
 topic: "Football"
-cover: "/the-edge/covers/man-vs-big-data.jpeg"
+cover: "/books/covers/man-vs-big-data.jpeg"
 logline: "Where algorithms improve decisions in sport, dating and justice, and where they quietly add new biases, in a balanced look at data versus judgment"
 ---
 <p>Man vs Big Data looks at how data and algorithms are reshaping decisions once made on pure human judgment — from sports and dating to hiring and criminal justice — and where that shift genuinely improves outcomes versus where it introduces new, less visible biases.</p>

@@ -6,7 +6,7 @@ authors:
 year: 2013
 date: 2013-06-01
 topic: "Thinking & decisions"
-cover: "/the-edge/covers/the-art-of-thinking-clearly.jpeg"
+cover: "/books/covers/the-art-of-thinking-clearly.jpeg"
 logline: "Confirmation bias, sunk cost and a hundred other ways smart people think badly, in a pocket field guide to your own mind's shortcuts"
 ---
 <p>Rolf Dobelli spent years collecting the ways smart people reliably think badly — confirmation bias, sunk cost, survivorship bias — and turned the list into what amounts to a field guide to your own mind's shortcuts.</p>

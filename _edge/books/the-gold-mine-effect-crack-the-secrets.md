@@ -6,7 +6,7 @@ authors:
 year: 2012
 date: 2012-04-01
 topic: "Sports analytics"
-cover: "/the-edge/covers/the-gold-mine-effect-crack-the-secrets.jpeg"
+cover: "/books/covers/the-gold-mine-effect-crack-the-secrets.jpeg"
 logline: "Kenyan runners, Brazilian footballers and Korean golfers studied at the source, in a reporter's search for where world-class talent comes from"
 ---
 <p>Rasmus Ankersen’s premise is a great one: instead of theorizing about talent development from a distance, go embed yourself in the places on Earth that produce a wildly disproportionate share of world-class performers — Kenyan and Ethiopian distance runners, Brazilian footballers, South Korean women’s golfers — and figure out what these “talent hotbeds” actually have in common.</p>

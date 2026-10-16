@@ -6,7 +6,7 @@ authors:
 year: 2025
 date: 2025-04-04
 topic: "Personal development"
-cover: "/the-edge/covers/tiny-experiments-how-to-live-freely.jpeg"
+cover: "/books/covers/tiny-experiments-how-to-live-freely.jpeg"
 logline: "Swap rigid goals for small, low-stakes experiments with a review date, in a gentler, neuroscience-informed alternative to goal-setting"
 ---
 <p>Anne-Laure Le Cunff — who writes the Ness Labs newsletter on neuroscience-informed productivity — makes a case in Tiny Experiments against the fixed, rigid goal-setting most self-help defaults to. Her alternative: treat life decisions as small, low-stakes experiments with a hypothesis and a review point, rather than as commitments you either heroically achieve or fail at.</p>

@@ -7,7 +7,7 @@ authors:
 year: 2008
 date: 2008-12-30
 topic: "Betting & markets"
-cover: "/the-edge/covers/the-definitive-guide-a-z-of-betting.jpeg"
+cover: "/books/covers/the-definitive-guide-a-z-of-betting.jpeg"
 logline: "Every bet type, market and piece of bookmaker jargon from A to Z, in a handy reference for newcomers"
 ---
 <p>As the title suggests, this is a reference book rather than a narrative one: an alphabetical rundown of betting terminology, markets, and mechanics aimed at making the language of bookmaking legible to newcomers.</p>

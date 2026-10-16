@@ -6,7 +6,7 @@ authors:
 year: 2025
 date: 2025-03-04
 topic: "Personal development"
-cover: "/the-edge/covers/the-5-types-of-wealth.jpeg"
+cover: "/books/covers/the-5-types-of-wealth.jpeg"
 logline: "Money is only one of five ways to be rich, in a warm, practical audit of time, friendships, mind and health"
 ---
 <p>Bloom argues that treating money as the only form of wealth is a category error, and lays out five distinct types — Time, Social, Mental, Physical, and Financial — that together determine whether a life actually feels rich, not just looks rich on paper.</p>

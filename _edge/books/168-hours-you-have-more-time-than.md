@@ -6,7 +6,7 @@ authors:
 year: 2010
 date: 2010-06-01
 topic: "Personal development"
-cover: "/the-edge/covers/168-hours-you-have-more-time-than.jpeg"
+cover: "/books/covers/168-hours-you-have-more-time-than.jpeg"
 logline: "Everyone gets the same 168 hours a week, and “I don't have time” rarely survives an honest audit, in Laura Vanderkam's useful guide to where the hours really go"
 ---
 <p>Laura Vanderkam’s core move is simple and genuinely useful: everyone has the same 168 hours in a week, so “I don’t have time” claims usually don’t survive an honest, hour-by-hour audit of where the time actually goes. Most people who complain about time scarcity are, once they actually track a week, surprised by how much of it disappears into low-value defaults rather than being genuinely, unavoidably spoken for.</p>

@@ -6,7 +6,7 @@ authors:
 year: 2014
 date: 2014-06-27
 topic: "Work & leadership"
-cover: "/the-edge/covers/the-culture-map.jpeg"
+cover: "/books/covers/the-culture-map.jpeg"
 logline: "Eight scales explain why the Dutch, the Japanese and the Americans keep misreading each other at work, in an essential guide for international teams"
 ---
 <p>Meyer's framework maps national business cultures across eight scales — communication, feedback, persuasion, leading, deciding, trusting, disagreeing, and scheduling — arguing that most cross-cultural friction at work comes from mismatched positions on these scales rather than differences in competence or intent.</p>

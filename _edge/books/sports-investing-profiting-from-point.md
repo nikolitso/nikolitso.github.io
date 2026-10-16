@@ -7,7 +7,7 @@ authors:
 year: 2010
 date: 2010-05-02
 topic: "Betting & markets"
-cover: "/the-edge/covers/sports-investing-profiting-from-point.jpeg"
+cover: "/books/covers/sports-investing-profiting-from-point.jpeg"
 logline: "Point-spread betting treated as an investing discipline, in a focused but less documented guide to sports wagering"
 ---
 <p>The title tells you the angle directly: this treats sports wagering as an investing discipline specifically focused on point-spread markets, rather than a broader gambling guide.</p>

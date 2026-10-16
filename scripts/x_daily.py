@@ -1,4 +1,4 @@
-"""Post one book (The Edge) or one film (What Algo Missed) to X.
+"""Post one book (antonisnikolitsopoulos.com/books) or one film (What Algo Missed) to X.
 
 Usage:  python scripts/x_daily.py auto [--dry-run]          (scheduled: post the current slot if not done)
         python scripts/x_daily.py book|film --force [--dry-run]  (manual: post one now)
@@ -137,7 +137,7 @@ def books():
             title=m.get("title") or p.stem, by=", ".join(a for a in authors if a),
             hook=worth_it(body) or first_sentence(body), parts=book_parts(body),
             topic=str(m.get("topic") or ""), logline=str(m.get("logline") or ""),
-            date=str(m.get("date") or ""), url=f"https://antonisnikolitsopoulos.com/the-edge/{p.stem}/")
+            date=str(m.get("date") or ""), url=f"https://antonisnikolitsopoulos.com/books/{p.stem}/")
     return items
 
 

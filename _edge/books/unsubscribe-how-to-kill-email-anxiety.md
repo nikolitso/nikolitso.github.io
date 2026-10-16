@@ -6,7 +6,7 @@ authors:
 year: 2016
 date: 2016-05-01
 topic: "Work & leadership"
-cover: "/the-edge/covers/unsubscribe-how-to-kill-email-anxiety.jpeg"
+cover: "/books/covers/unsubscribe-how-to-kill-email-anxiety.jpeg"
 logline: "The inbox that always refills and always feels urgent, finally tamed, in a short, targeted guide to getting your day back from email"
 ---
 <p>Jocelyn K. Glei (formerly of Behance's 99U) narrows in on one specific productivity killer rather than tackling attention and focus broadly: email, and the particular anxiety of an always-refilling inbox that feels urgent even when it mostly isn't.</p>

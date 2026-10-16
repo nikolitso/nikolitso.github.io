@@ -6,7 +6,7 @@ authors:
 year: 2016
 date: 2016-10-01
 topic: "Personal development"
-cover: "/the-edge/covers/the-subtle-art-of-not-giving-a-fck.jpeg"
+cover: "/books/covers/the-subtle-art-of-not-giving-a-fck.jpeg"
 logline: "The endless chase for positivity is the problem, not the cure, in a blunt, stoic antidote to self-help"
 ---
 <p>Mark Manson's central argument is a deliberate inversion of most self-help: the constant chase for more positivity and more things to care about is itself the problem, and the real skill is choosing — carefully and narrowly — what actually deserves your finite supply of caring, and ruthlessly not caring about the rest.</p>

@@ -6,7 +6,7 @@ authors:
 year: 2020
 date: 2020-03-29
 topic: "Betting & markets"
-cover: "/the-edge/covers/statistical-sports-models-in-excel.jpeg"
+cover: "/books/covers/statistical-sports-models-in-excel.jpeg"
 logline: "More spreadsheet prediction models for readers who finished the first volume, in a sequel that keeps building the same skills"
 ---
 <p>The sequel to Mack's original Excel-modeling crash course, extending the same accessible, spreadsheet-based approach that made the first volume well-liked by readers without a statistics background.</p>

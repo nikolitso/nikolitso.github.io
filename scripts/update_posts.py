@@ -3,7 +3,7 @@
 Rewrites everything between <!-- posts:start --> and <!-- posts:end -->.
 Run locally with `python scripts/update_posts.py`; a GitHub Action runs it daily.
 
-- The Edge: newest posts first.
+- Books: newest posts first.
 - What Algo Missed: newest releases first (2026, then 2025, ...), and within a year
   the most recently posted first, so a new film beats an older one posted the same week.
 - Each card uses the image of the item's own page (its og:image).
@@ -20,7 +20,7 @@ INDEX = ROOT / "index.html"
 SELF = "https://antonisnikolitsopoulos.com/"
 PER_FEED = 3
 FEEDS = [
-    dict(name="The Edge", kind="book", url=SELF + "the-edge/feed.xml", all_url="/the-edge/", all_label="All books"),
+    dict(name="Books", kind="book", url=SELF + "books/feed.xml", all_url="/books/", all_label="All books"),
     dict(name="What Algo Missed", kind="film", url="https://whatalgomissed.com/feed.xml",
          all_url="https://whatalgomissed.com/films/", all_label="All films"),
 ]

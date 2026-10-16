@@ -6,7 +6,7 @@ authors:
 year: 2019
 date: 2019-06-01
 topic: "Personal development"
-cover: "/the-edge/covers/range-how-generalists-triumph-in.jpeg"
+cover: "/books/covers/range-how-generalists-triumph-in.jpeg"
 logline: "In a messy, unpredictable world, breadth beats early specialisation, in a well-researched rebuttal to the 10,000-hours rule"
 ---
 <p>David Epstein wrote Range as a direct rebuttal to the “10,000 hours, start early, specialize hard” narrative that’s dominated talent-development thinking for the last decade. His case, built from research across sports, music, science, and business: in complex, unpredictable (“wicked”) domains, breadth of experience often beats narrow early specialization — the sampling period generalists go through builds transferable pattern-recognition that specialists miss.</p>

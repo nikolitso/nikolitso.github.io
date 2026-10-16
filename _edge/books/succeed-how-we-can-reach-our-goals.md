@@ -6,7 +6,7 @@ authors:
 year: 2011
 date: 2011-02-01
 topic: "Personal development"
-cover: "/the-edge/covers/succeed-how-we-can-reach-our-goals.jpeg"
+cover: "/books/covers/succeed-how-we-can-reach-our-goals.jpeg"
 logline: "Why some goals stick and others quietly die, and how the way you frame them decides which, in a motivation researcher's practical guide"
 ---
 <p>Heidi Grant Halvorson’s research background is in the psychology of motivation, and Succeed is her case for why some goals stick and others quietly die — not through willpower differences, but through the specific way a goal is framed and structured from the start. “Be-good” goals (proving your competence) behave very differently in the brain than “get-better” goals (improving a skill), and knowing which kind you’re setting changes how resilient it is under pressure.</p>

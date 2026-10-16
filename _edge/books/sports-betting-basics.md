@@ -6,7 +6,7 @@ authors:
 year: 2013
 date: 2013-07-01
 topic: "Betting & markets"
-cover: "/the-edge/covers/sports-betting-basics.jpeg"
+cover: "/books/covers/sports-betting-basics.jpeg"
 logline: "Team sports and horse racing wagering in one place, in a broad, beginner-friendly betting primer"
 ---
 <p>Moody spent years as About.com's “Sports Gambling Guide” columnist, and this book compiles and refines that material into a single beginner-oriented primer covering both team sports and horse racing.</p>

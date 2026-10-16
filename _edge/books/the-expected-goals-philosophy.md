@@ -6,7 +6,7 @@ authors:
 year: 2019
 date: 2019-12-01
 topic: "Football"
-cover: "/the-edge/covers/the-expected-goals-philosophy.jpeg"
+cover: "/books/covers/the-expected-goals-philosophy.jpeg"
 logline: "One number explains why the team that won didn't deserve to, in the book that brought xG to football fans before television did"
 ---
 <p>If you’ve watched football on television any time in the last five years, you’ve seen the number: xG, sitting quietly in the corner of the screen, telling you a team “deserved” to win even though they lost 2-1. James Tippett’s The Expected Goals Philosophy is the book that got there first — written back when xG was still a stats-Twitter argument, not a broadcast graphic.</p>

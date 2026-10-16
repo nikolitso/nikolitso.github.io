@@ -6,7 +6,7 @@ authors:
 year: 2021
 date: 2021-04-09
 topic: "Personal development"
-cover: "/the-edge/covers/how-to-find-the-right-words.jpg"
+cover: "/books/covers/how-to-find-the-right-words.jpg"
 logline: "Twenty hard messages rephrased with a diplomat's tact, in a School of Life guide you can use in your next difficult conversation"
 ---
 <p>The book's frame is diplomacy, borrowed straight from statecraft: two rival kings might be pounding the table in private, but the emissary sent between them learns to say “my master is slightly disconcerted…” instead. That's the skill this book applies to ordinary life — twenty specific hard messages, grouped into relationships, friendships, work, family and strangers, from turning down a friend's romantic interest to admitting an affair to firing someone — with real phrasing for each, not just advice about tone.</p>

@@ -6,7 +6,7 @@ authors:
 year: 2017
 date: 2017-03-01
 topic: "Work & leadership"
-cover: "/the-edge/covers/a-job-to-love.jpeg"
+cover: "/books/covers/a-job-to-love.jpeg"
 logline: "Your job doesn't have to be your passion, and expecting it to sets most people up for disappointment, in a philosophical rethink of work and meaning"
 ---
 <p>Another School of Life title, A Job to Love pushes back on the modern expectation that work should be a primary source of meaning and identity, arguing that this expectation — relatively new historically — sets most people up for disappointment, and that a more honest relationship with work starts with adjusting that expectation.</p>

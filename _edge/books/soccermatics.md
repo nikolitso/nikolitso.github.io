@@ -6,7 +6,7 @@ authors:
 year: 2016
 date: 2016-06-01
 topic: "Football"
-cover: "/the-edge/covers/soccermatics.jpeg"
+cover: "/books/covers/soccermatics.jpeg"
 logline: "Game theory, networks and chaos applied to passing and pressing, in a mathematician's case for why numbers belong in football"
 ---
 <p>Sumpter, a mathematician, applies pattern-finding tools — game theory, network analysis, chaos theory — to football, arguing that the sport's fluid unpredictability is exactly what makes mathematics useful for understanding it, not what makes math irrelevant.</p>

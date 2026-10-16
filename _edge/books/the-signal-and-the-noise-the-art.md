@@ -6,7 +6,7 @@ authors:
 year: 2012
 date: 2012-07-01
 topic: "Thinking & decisions"
-cover: "/the-edge/covers/the-signal-and-the-noise-the-art.jpeg"
+cover: "/books/covers/the-signal-and-the-noise-the-art.jpeg"
 logline: "Weather models, poker hands and election nights reveal why most forecasts fail, in Nate Silver's essential case for thinking in probabilities"
 ---
 <p>Nate Silver's breakout book is a tour through why most forecasts fail, built from weather models, earthquake prediction, poker, baseball, and his own work calling elections. The throughline is a case for thinking probabilistically — treating a forecast as a distribution of outcomes with different likelihoods, not a single confident guess that's either right or wrong.</p>

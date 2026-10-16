@@ -1,8 +1,8 @@
-"""Build The Edge (antonisnikolitsopoulos.com/the-edge/) from _edge/books/*.md
+"""Build the Books section (antonisnikolitsopoulos.com/books/) from _edge/books/*.md
 
 Run locally:  python scripts/build_edge.py
 A GitHub Action runs it on every change to _edge/ and commits the result.
-Covers: downloaded once into the-edge/covers/ (on GitHub's runner); falls back to the remote URL.
+Covers: downloaded once into books/covers/ (on GitHub's runner); falls back to the remote URL.
 """
 import html
 import json
@@ -18,10 +18,12 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 SRC = ROOT / "_edge" / "books"
-OUT = ROOT / "the-edge"
+OUT = ROOT / "books"
+OLD = ROOT / "the-edge"  # former address: forwarding pages only
 COVERS = OUT / "covers"
 SITE = "https://antonisnikolitsopoulos.com"
-BASE = "/the-edge/"
+BASE = "/books/"
+OLD_BASE = "/the-edge/"
 CF_BEACON = "b67bbb76d0e24af196b24ded3ab71ad0"  # Cloudflare Web Analytics (cookieless)
 
 TOPICS = [  # order shown on the site
@@ -141,7 +143,7 @@ def cover_for(slug, url):
         sources = [url, "https://images.weserv.nl/?url=" + urllib.parse.quote(url.split("://", 1)[-1], safe="")]
         for src in sources:
             try:
-                req = urllib.request.Request(src, headers={"User-Agent": "Mozilla/5.0 (the-edge build)"})
+                req = urllib.request.Request(src, headers={"User-Agent": "Mozilla/5.0 (books build)"})
                 with urllib.request.urlopen(req, timeout=25) as r:
                     data = r.read()
                 if len(data) > 1500 and data[:4] != b"<!DO" and data[:5] != b"<html":
@@ -198,7 +200,7 @@ SOCIAL = """<ul class="social" aria-label="Social links">
 
 
 def site_menu(active=""):
-    items = [("edge", "/the-edge/", "The Edge"), ("films", "https://whatalgomissed.com/", 'Films <span aria-hidden="true">↗</span>'),
+    items = [("books", "/books/", "Books"), ("films", "https://whatalgomissed.com/", 'Films <span aria-hidden="true">↗</span>'),
              ("paok", "/#paok", "PAOK"), ("about", "/about/", "About"), ("contact", "/#contact", "Contact")]
     return "".join(
         f'<a href="{h}"' + (' target="_blank" rel="noopener"' if h.startswith("http") else "")
@@ -233,10 +235,10 @@ def site_footer():
 
 
 def layout(title, body, path, desc, image=None, active="books"):
-    full = f"{title} — The Edge" if title != "The Edge" else "The Edge — Book takeaways by Antonis Nikolitsopoulos"
+    full = f"{title} — Antonis Nikolitsopoulos" if title != "Books" else "Books — Book takeaways by Antonis Nikolitsopoulos"
     img = image if (image or "").startswith("http") else SITE + (image or "/og.png")
     sub = lambda key, href, label: f'<a href="{href}"{" class=on" if active == key else ""}>{label}</a>'
-    subnav = (f'<nav class="subnav" aria-label="The Edge"><div class="wrap">{sub("books", BASE, "All books")}'
+    subnav = (f'<nav class="subnav" aria-label="Books"><div class="wrap">{sub("books", BASE, "All books")}'
               f'{sub("authors", BASE + "authors/", "Authors")}<a href="{BASE}feed.xml">RSS</a></div></nav>') if active else ""
     return f"""<!doctype html>
 <html lang="en">
@@ -257,7 +259,7 @@ def layout(title, body, path, desc, image=None, active="books"):
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/favicon.png" type="image/png" sizes="64x64">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-<link rel="alternate" type="application/rss+xml" title="The Edge" href="{SITE}{BASE}feed.xml">
+<link rel="alternate" type="application/rss+xml" title="Books — Antonis Nikolitsopoulos" href="{SITE}{BASE}feed.xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Hanken+Grotesk:ital,wght@0,300..700;1,400&display=swap">
@@ -265,7 +267,7 @@ def layout(title, body, path, desc, image=None, active="books"):
 </head>
 <body>
 {ICONS}
-{site_header("edge" if active else "")}
+{site_header("books" if active else "")}
 {subnav}
 <main>
 {body}
@@ -307,7 +309,7 @@ def page_index(books, n_authors):
     body = f"""<section class="hero">
   <div class="wrap">
     <p class="kicker">Book takeaways</p>
-    <h1>The <em>Edge</em></h1>
+    <h1>Books</h1>
     <p class="lede">Every good book leaves a few ideas worth keeping. These are the ones worth keeping from books on sports analytics, betting, decision-making and personal development: what each book argues, the key ideas, and who it is for.</p>
     <div class="stats"><span><b>{len(books)}</b> books</span><span><b>{n_authors}</b> authors</span><span><b>{len([1 for s,_,_ in TOPICS if counts[s]])}</b> topics</span></div>
   </div>
@@ -352,7 +354,7 @@ def page_index(books, n_authors):
   apply();
 }})();
 </script>"""
-    write(BASE, layout("The Edge", body, BASE,
+    write(BASE, layout("Books", body, BASE,
                        f"Practical takeaways from {len(books)} books on sports analytics, betting, decision-making and personal development, by Antonis Nikolitsopoulos."))
 
 
@@ -381,7 +383,7 @@ def page_book(b, books, by_date):
     <div class="wrap book-hero-in">
       <div class="book-hero-cover">{cover_img(b, eager=True)}</div>
       <div class="book-hero-text">
-        <nav class="crumbs"><a href="{BASE}">The Edge</a><span>/</span><a href="{BASE}#{b['tslug']}" style="--t:{b['tcol']}">{esc(b['topic'])}</a></nav>
+        <nav class="crumbs"><a href="{BASE}">Books</a><span>/</span><a href="{BASE}#{b['tslug']}" style="--t:{b['tcol']}">{esc(b['topic'])}</a></nav>
         <h1>{esc(b['title'])}</h1>
         {f'<p class="sub">{esc(b["subtitle"])}</p>' if b["subtitle"] else ''}
         <p class="by">{('by ' + authors_html) if authors_html else ''}{' · ' if authors_html and b['year'] else ''}{esc(b['year'])}</p>
@@ -445,7 +447,7 @@ def page_authors(books):
     grouped.append("</div></div>")
     body = f"""<section class="hero hero-sm">
   <div class="wrap">
-    <p class="kicker">The Edge</p>
+    <p class="kicker">Books</p>
     <h1>Authors</h1>
     <p class="lede">{len(names)} authors, from Kahneman to the people building football's data departments.</p>
   </div>
@@ -456,7 +458,7 @@ def page_authors(books):
     {''.join(grouped)}
   </div>
 </section>"""
-    write(BASE + "authors/", layout("Authors", body, BASE + "authors/", f"The {len(names)} authors behind the books on The Edge.", active="authors"))
+    write(BASE + "authors/", layout("Authors", body, BASE + "authors/", f"The {len(names)} authors behind the books on antonisnikolitsopoulos.com.", active="authors"))
     return len(names)
 
 
@@ -472,7 +474,7 @@ def feed(books):
         f"<pubDate>{rfc(b['date'])}</pubDate><description>{esc(b['subtitle'] or b['excerpt'])}</description></item>"
         for b in books[:20])
     (OUT / "feed.xml").write_text(
-        f'<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"><channel><title>The Edge</title>'
+        f'<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"><channel><title>Books — Antonis Nikolitsopoulos</title>'
         f"<link>{SITE}{BASE}</link><description>Book takeaways by Antonis Nikolitsopoulos</description>{items}</channel></rss>",
         encoding="utf-8")
 
@@ -486,7 +488,7 @@ def page_404(by_date):
     <p class="lede">Sorry, that link is broken or the page has moved. Search the books, or start from the <a href="/">homepage</a>.</p>
     <form class="tools nf-search" action="{BASE}" method="get" role="search">
       <input name="q" type="search" placeholder="Search title or author…" aria-label="Search books">
-      <button type="submit">Search The Edge</button>
+      <button type="submit">Search the books</button>
     </form>
   </div>
 </section>
@@ -509,6 +511,23 @@ def sitemap(books):
         f'<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">{urls}</urlset>\n',
         encoding="utf-8")
     (ROOT / "robots.txt").write_text(f"User-agent: *\nAllow: /\n\nSitemap: {SITE}/sitemap.xml\n", encoding="utf-8")
+
+
+def forward_old(books):
+    """/the-edge/... keeps working: each old page sends visitors (and search engines) to /books/..."""
+    if OLD.exists():
+        shutil.rmtree(OLD)
+    for new in [BASE, BASE + "authors/"] + [b["url"] for b in books]:
+        f = OLD / new[len(BASE):] / "index.html"
+        f.parent.mkdir(parents=True, exist_ok=True)
+        f.write_text(f"""<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Moved to {SITE}{new}</title>
+<link rel="canonical" href="{SITE}{new}"><meta name="robots" content="noindex">
+<script>location.replace("{new}" + location.search + location.hash);</script>
+<meta http-equiv="refresh" content="0; url={new}"></head>
+<body><p>This page has moved to <a href="{new}">{SITE}{new}</a>.</p></body></html>
+""", encoding="utf-8")
+    shutil.copyfile(OUT / "feed.xml", OLD / "feed.xml")  # RSS readers subscribed to the old feed
 
 
 def write(path, content):
@@ -542,9 +561,10 @@ def main():
         page_book(b, books, by_date)
     feed(by_date)
     page_404(by_date)
+    forward_old(by_date)
     sitemap(by_date)
     local = sum(1 for b in books if b["cover"].startswith(BASE))
-    print(f"The Edge: {len(books)} books, {n_auth} authors, covers local {local}/{len(books)} -> {OUT}")
+    print(f"Books: {len(books)} books, {n_auth} authors, covers local {local}/{len(books)} -> {OUT}")
 
 
 if __name__ == "__main__":

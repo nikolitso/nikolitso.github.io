@@ -6,7 +6,7 @@ authors:
 year: 2024
 date: 2024-09-01
 topic: "Betting & markets"
-cover: "/the-edge/covers/on-the-edge-the-art-of-risking-everything.jpeg"
+cover: "/books/covers/on-the-edge-the-art-of-risking-everything.jpeg"
 logline: "Poker players, VCs and quants versus the cautious establishment, in Nate Silver's tour of the people who think in probabilities"
 ---
 <p>Silver's framework splits the world into “The River” — poker players, VCs, quants, professional gamblers who think probabilistically for a living — and “The Village,” the more risk-averse academic and media establishment, and uses that lens to examine everything from Las Vegas to effective altruism.</p>

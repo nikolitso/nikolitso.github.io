@@ -6,7 +6,7 @@ authors:
 year: 2013
 date: 2013-05-01
 topic: "Work & leadership"
-cover: "/the-edge/covers/how-to-find-fulfilling-work.jpeg"
+cover: "/books/covers/how-to-find-fulfilling-work.jpeg"
 logline: "“Follow your passion” gets taken apart and rebuilt into something you can actually define, in a short, useful guide to meaningful work"
 ---
 <p>“Follow your passion” is famously bad career advice — vague, and it assumes you already know what your passion is. This entry pushes past that platitude into the harder, more useful question underneath it: what does “fulfilling” actually mean for you specifically, since it’s clearly not the same thing for everyone, and most people have never actually sat down and defined it before chasing it.</p>

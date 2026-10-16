@@ -6,7 +6,7 @@ authors:
 year: 2025
 date: 2025-02-21
 topic: "Work & leadership"
-cover: "/the-edge/covers/why-are-we-here.jpeg"
+cover: "/books/covers/why-are-we-here.jpeg"
 logline: "Purpose isn't a perk companies can bolt on, in a research-grounded look at burnout, quiet quitting and meaning at work"
 ---
 <p>Moss, a workplace culture researcher, examines the modern crisis of meaning at work — burnout, disengagement, quiet quitting — and argues that purpose isn't a perk companies can bolt on, but something that has to be built into how work is actually structured and led.</p>

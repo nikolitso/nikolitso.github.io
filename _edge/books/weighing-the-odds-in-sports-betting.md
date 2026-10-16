@@ -6,7 +6,7 @@ authors:
 year: 2007
 date: 2007-08-01
 topic: "Betting & markets"
-cover: "/the-edge/covers/weighing-the-odds-in-sports-betting.jpeg"
+cover: "/books/covers/weighing-the-odds-in-sports-betting.jpeg"
 logline: "Sharp bettors are traders and expected value is the only number that matters, in a betting guide written with trading-desk rigour"
 ---
 <p>Yao treats sportsbooks the way a trader treats a market — the whole book is built around expected value as the one concept that actually matters, with everything else in service of estimating it accurately.</p>

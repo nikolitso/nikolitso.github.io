@@ -12,7 +12,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from build_edge import parse  # noqa: E402
 
-SITE = "https://antonisnikolitsopoulos.com/the-edge/"
+SITE = "https://antonisnikolitsopoulos.com/books/"
 OWNER = os.environ.get("SHARE_ASSIGNEE", "nikolitso")
 
 
@@ -23,7 +23,7 @@ def post_text(meta):
         authors = [authors]
     by = f" by {', '.join(authors)}" if authors else ""
     sub = str(meta.get("subtitle") or "").strip()
-    text = f"New on The Edge: {title}{by}"
+    text = f"New book notes: {title}{by}"
     if sub:
         room = 280 - 24 - len(text) - 4          # 23 chars for the link + spacing
         if room > 20:
@@ -45,7 +45,7 @@ def main(paths):
         text = post_text(meta)
         intent = "https://x.com/intent/post?" + urllib.parse.urlencode({"text": text, "url": url})
         body = (
-            f"A new book is live on The Edge: **{meta.get('title')}**\n\n"
+            f"A new book is live on antonisnikolitsopoulos.com/books: **{meta.get('title')}**\n\n"
             f"### [👉 Post it on X]({intent})\n\n"
             f"Opens X with this post ready (edit anything before posting):\n\n> {text} {url}\n\n"
             f"Page: {url}\n\n_Close this issue once posted._"

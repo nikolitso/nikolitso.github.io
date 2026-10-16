@@ -6,7 +6,7 @@ authors:
 year: 2020
 date: 2020-07-01
 topic: "Work & leadership"
-cover: "/the-edge/covers/how-to-get-on-with-your-colleagues.jpeg"
+cover: "/books/covers/how-to-get-on-with-your-colleagues.jpeg"
 logline: "The hidden psychology that makes some colleagues easy and others draining, in a School of Life guide to working relationships"
 ---
 <p>Most workplace-relationship advice is either HR-department-generic (“communicate openly!”) or purely tactical (how to run a meeting). This one stays closer to the imprint’s actual strength: the psychological undercurrents that make some colleague relationships easy and others quietly draining, and why “just communicate better” is true but not very actionable on its own.</p>

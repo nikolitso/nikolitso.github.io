@@ -6,7 +6,7 @@ authors:
 year: 2010
 date: 2010-04-01
 topic: "Work & leadership"
-cover: "/the-edge/covers/making-ideas-happen-overcoming-the.jpeg"
+cover: "/books/covers/making-ideas-happen-overcoming-the.jpeg"
 logline: "Ideas are cheap and execution is scarce, in a Behance founder's practical guide to actually finishing things"
 ---
 <p>Behance founder Scott Belsky’s core argument cuts against a lot of creative-industry mythology: the scarce resource for most people isn’t ideas, it’s execution — the unglamorous organizational habits (project management, community, capturing momentum) that turn a good idea into a finished thing instead of another notebook entry.</p>

@@ -6,7 +6,7 @@ authors:
 year: 2017
 date: 2017-05-01
 topic: "Personal development"
-cover: "/the-edge/covers/the-art-of-the-good-life-52-surprising.jpeg"
+cover: "/books/covers/the-art-of-the-good-life-52-surprising.jpeg"
 logline: "Avoiding stupidity beats chasing brilliance, in 52 short chapters on what actually makes a life go well"
 ---
 <p>Dobelli's follow-up applies the same catalog approach to something harder to pin down than cognitive bias: what actually makes a life go well.</p>

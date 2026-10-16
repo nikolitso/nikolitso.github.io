@@ -7,7 +7,7 @@ authors:
 year: 2012
 date: 2012-01-01
 topic: "Sports analytics"
-cover: "/the-edge/covers/how-to-watch-the-olympics-2016.jpeg"
+cover: "/books/covers/how-to-watch-the-olympics-2016.jpeg"
 logline: "The rules and quirks of forty Olympic sports you only watch every four years, in a handy viewer's guide"
 ---
 <p>How to Watch the Olympics is a sport-by-sport viewer's guide, published ahead of the Rio 2016 Games, explaining the rules, scoring quirks, and things to actually watch for in the roughly 40 Olympic sports most casual viewers only tune into once every four years.</p>

@@ -6,7 +6,7 @@ authors:
 year: 2024
 date: 2024-07-01
 topic: "Football"
-cover: "/the-edge/covers/smart-money-the-fall-and-rise-of.jpeg"
+cover: "/books/covers/smart-money-the-fall-and-rise-of.jpeg"
 logline: "Small West London club uses data to climb from League One to the Premier League, in a well-told story of moneyball that actually worked"
 ---
 <p>Duff, a Bloomberg journalist, tells the story of how Brentford — a small, unglamorous West London club — used data-driven recruitment and an unconventional ownership philosophy to climb from League One obscurity to the Premier League, largely by finding undervalued players other clubs' scouting missed.</p>

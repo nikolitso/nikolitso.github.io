@@ -7,7 +7,7 @@ authors:
 year: 2009
 date: 2009-09-01
 topic: "Football"
-cover: "/the-edge/covers/soccernomics.webp"
+cover: "/books/covers/soccernomics.webp"
 logline: "Population, wealth and panic-buying explain more about winning than passion ever will, in the book that made “the data disagrees with the pundits” a genre"
 ---
 <p>Soccernomics is the book that made “the data disagrees with the pundits” a genre. Simon Kuper and Stefan Szymanski take a Freakonomics-style scalpel to football’s received wisdom — and a lot of it doesn’t survive.</p>

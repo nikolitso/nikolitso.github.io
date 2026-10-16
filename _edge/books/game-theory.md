@@ -6,7 +6,7 @@ authors:
 year: 2026
 date: 2026-08-13
 topic: "Football"
-cover: "/the-edge/covers/game-theory.jpg"
+cover: "/books/covers/game-theory.jpg"
 logline: "Football's obsession with tactics meets the bounces and refereeing calls that really decide seasons, in a sharp case for taking luck seriously"
 ---
 <p>Biermann's central claim is that football's obsession with tactics and talent evaluation understates the role of pure chance — a low-scoring sport where a handful of bounces and refereeing calls can swing a season, and the clubs that understand this variance make better decisions than the ones chasing narrative explanations for results.</p>

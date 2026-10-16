@@ -1,4 +1,4 @@
-name: Build The Edge
+name: Build Books
 
 on:
   push:
@@ -34,11 +34,11 @@ jobs:
         run: python scripts/update_posts.py || echo "posts update skipped"
       - name: Commit if changed
         run: |
-          git add -A the-edge index.html 404.html sitemap.xml robots.txt
+          git add -A books the-edge index.html 404.html sitemap.xml robots.txt
           if git diff --cached --quiet; then exit 0; fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git commit -m "Build The Edge"
+          git commit -m "Build Books"
           git pull --rebase
           git push
       - name: Email a one-tap "Post on X" link for each new book

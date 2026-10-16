@@ -6,7 +6,7 @@ authors:
 year: 2012
 date: 2012-07-01
 topic: "Thinking & decisions"
-cover: "/the-edge/covers/the-real-story-of-risk-adventures.jpeg"
+cover: "/books/covers/the-real-story-of-risk-adventures.jpeg"
 logline: "Stone-age instincts make us fear sharks and ignore our cars, in a biologist's explanation of why the gut is a terrible judge of risk"
 ---
 <p>Croston, a biologist by training, traces human risk-misjudgment back to evolutionary mismatch — instincts built for ancient survival threats that misfire badly on the specific shape of modern risks.</p>

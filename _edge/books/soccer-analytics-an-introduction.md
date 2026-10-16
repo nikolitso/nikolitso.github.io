@@ -6,7 +6,7 @@ authors:
 year: 2024
 date: 2024-07-01
 topic: "Football"
-cover: "/the-edge/covers/soccer-analytics-an-introduction.jpeg"
+cover: "/books/covers/soccer-analytics-an-introduction.jpeg"
 logline: "Real code, real data, real football models built in R, in a hands-on textbook for moving from reading about analytics to doing it"
 ---
 <p>Most of the books on this shelf are written for readers who want to understand football analytics. This one is written for readers who want to do it. Part of the Chapman &amp; Hall/CRC statistics series, it walks through building football models in R — actual code, actual data, actual output — rather than explaining metrics from the outside.</p>

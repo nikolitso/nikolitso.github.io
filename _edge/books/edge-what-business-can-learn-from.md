@@ -6,7 +6,7 @@ authors:
 year: 2017
 date: 2017-09-01
 topic: "Football"
-cover: "/the-edge/covers/edge-what-business-can-learn-from.jpeg"
+cover: "/books/covers/edge-what-business-can-learn-from.jpeg"
 logline: "Penalty takers, team cultures and decisions under pressure, in a tour of how elite football uses psychology to win"
 ---
 <p>Ben Lyttleton's Edge looks at how elite football clubs and organizations apply psychological research — decision-making under pressure, team culture, penalty-taking — to gain competitive advantage, treating the sport as a case study for broader lessons about high-performance environments.</p>

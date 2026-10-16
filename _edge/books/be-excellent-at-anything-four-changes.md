@@ -6,7 +6,7 @@ authors:
 year: 2011
 date: 2011-06-01
 topic: "Personal development"
-cover: "/the-edge/covers/be-excellent-at-anything-four-changes.jpeg"
+cover: "/books/covers/be-excellent-at-anything-four-changes.jpeg"
 logline: "The real limit on performance isn't time but energy, in a practical guide to managing body, mind and focus through the day"
 ---
 <p>Likely Tony Schwartz’s work (founder of The Energy Project), built around a genuinely useful reframe: the constraint on performance usually isn’t time, it’s energy — physical, emotional, mental, and spiritual — and managing energy well across a day matters more than squeezing more hours out of it.</p>

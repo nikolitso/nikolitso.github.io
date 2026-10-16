@@ -6,7 +6,7 @@ authors:
 year: 2024
 date: 2024-08-04
 topic: "Betting & markets"
-cover: "/the-edge/covers/beyond-the-odds.jpeg"
+cover: "/books/covers/beyond-the-odds.jpeg"
 logline: "Most bettors lose not because they can't predict but because they can't price, in a professional handicapper's statistical playbook"
 ---
 <p>Feustel is a professional handicapper best known for horse racing, and this book distills his statistical approach to finding genuine value against the market — the core argument being that most bettors lose not because they can't predict outcomes, but because they don't understand the gap between prediction and pricing.</p>

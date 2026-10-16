@@ -6,7 +6,7 @@ authors:
 year: 2026
 date: 2026-06-01
 topic: "Personal development"
-cover: "/the-edge/covers/inside-the-box-how-constraints-make.jpeg"
+cover: "/books/covers/inside-the-box-how-constraints-make.jpeg"
 logline: "Limits on time, money and options make for better thinking than endless choice, in a counterintuitive case for the discipline of constraints"
 ---
 <p>This book takes on a counterintuitive idea: that limitations — of time, resources, information, or freedom — often produce better thinking and better outcomes than having unlimited options, because constraints force real prioritization instead of endless optimization.</p>

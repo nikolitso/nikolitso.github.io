@@ -6,7 +6,7 @@ authors:
 year: 2025
 date: 2025-05-24
 topic: "Thinking & decisions"
-cover: "/the-edge/covers/everything-is-predictable.jpeg"
+cover: "/books/covers/everything-is-predictable.jpeg"
 logline: "An 18th-century formula for updating beliefs turns out to run courts, medicine and AI, in a lively case for thinking like Bayes"
 ---
 <p>Chivers's case is that Bayes' theorem — a simple 18th-century formula for updating beliefs in light of new evidence — is quietly one of the most consequential ideas in science, showing up everywhere from courtroom statistics and medical testing to how AI systems reason under uncertainty.</p>

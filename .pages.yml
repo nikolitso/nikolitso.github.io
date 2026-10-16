@@ -1,10 +1,10 @@
 media:
-  input: the-edge/covers
-  output: /the-edge/covers
+  input: books/covers
+  output: /books/covers
 
 content:
   - name: edge
-    label: The Edge — books
+    label: Books
     type: collection
     path: _edge/books
     filename: "{primary}.md"

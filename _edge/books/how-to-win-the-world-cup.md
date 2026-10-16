@@ -6,7 +6,7 @@ authors:
 year: 2026
 date: 2026-05-12
 topic: "Football"
-cover: "/the-edge/covers/how-to-win-the-world-cup.jpeg"
+cover: "/books/covers/how-to-win-the-world-cup.jpeg"
 logline: "Winning World Cup managers reveal what they do differently under pressure, in a book about leading teams through short, brutal tournaments"
 ---
 <p>Evans interviews the managers and coaches behind winning World Cup campaigns, distilling their approaches to squad building, tactics, and — especially — the human and psychological side of leading a team through a short, high-pressure tournament rather than a long league season.</p>

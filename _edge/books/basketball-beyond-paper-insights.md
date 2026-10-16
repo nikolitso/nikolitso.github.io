@@ -6,7 +6,7 @@ authors:
 year: 2025
 date: 2025-12-01
 topic: "Sports analytics"
-cover: "/the-edge/covers/basketball-beyond-paper-insights.jpeg"
+cover: "/books/covers/basketball-beyond-paper-insights.jpeg"
 logline: "Twenty years and a tracking-data revolution later, the father of the Four Factors checks what still holds, in Dean Oliver's honest sequel"
 ---
 <p>Dean Oliver's earlier work gave the sport a working vocabulary for measuring what actually wins games — possessions, four factors, individual efficiency. Twenty years and a full tracking-data revolution later, Oliver returns to ask how much of that original framework still holds, and what basketball analytics missed on the way from box scores to spatial tracking.</p>

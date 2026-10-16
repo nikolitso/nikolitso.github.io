@@ -6,7 +6,7 @@ authors:
 year: 2004
 date: 2004-04-01
 topic: "Betting & markets"
-cover: "/the-edge/covers/fixed-odds-sports-betting-statistical.jpeg"
+cover: "/books/covers/fixed-odds-sports-betting-statistical.jpeg"
 logline: "Disciplined betting as a low-risk investment rather than a gamble, in Joseph Buchdahl's foundational first book"
 ---
 <p>This is Buchdahl's earliest and most foundational book — the one where he first laid out the core idea running through his whole body of work: disciplined betting can function as a genuine form of low-risk investment, not just high-risk gambling.</p>

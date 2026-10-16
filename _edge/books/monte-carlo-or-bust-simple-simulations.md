@@ -6,7 +6,7 @@ authors:
 year: 2021
 date: 2021-07-01
 topic: "Betting & markets"
-cover: "/the-edge/covers/monte-carlo-or-bust-simple-simulations.jpeg"
+cover: "/books/covers/monte-carlo-or-bust-simple-simulations.jpeg"
 logline: "Turning randomness into something you can model instead of just accept, in a practical guide to simulation for bettors"
 ---
 <p>Buchdahl is one of the more genuinely credentialed writers in sports betting — he also runs the analytics site Football-Data.co.uk — and this book tackles a specific technical tool: Monte Carlo simulation, for turning randomness into something you can actually model rather than just accept.</p>

@@ -7,7 +7,7 @@ authors:
 year: 2013
 date: 2013-05-01
 topic: "Personal development"
-cover: "/the-edge/covers/focus-use-different-ways-of-seeing.jpeg"
+cover: "/books/covers/focus-use-different-ways-of-seeing.jpeg"
 logline: "Attention itself is the trainable skill behind creativity, self-control and leadership, in a clear study of how focus works"
 ---
 <p>This is very likely Daniel Goleman’s Focus — his follow-up to Emotional Intelligence, arguing that attention itself is a trainable skill underlying almost everything else people call talent or leadership, from creativity to self-control to reading a room. (You had this listed as an audiobook, which fits — it’s the kind of book that works well narrated.)</p>

@@ -7,7 +7,7 @@ authors:
 year: 2015
 date: 2015-09-01
 topic: "Thinking & decisions"
-cover: "/the-edge/covers/superforecasting-the-art-and-science.jpeg"
+cover: "/books/covers/superforecasting-the-art-and-science.jpeg"
 logline: "Ordinary people out-predict intelligence analysts by thinking in probabilities, in a tournament-tested guide to better judgment"
 ---
 <p>Drawing on Tetlock's Good Judgment Project, this book identifies what separates people who are actually good at predicting future events from the much larger group who merely sound confident — traits like updating beliefs incrementally, thinking in probabilities rather than certainties, and actively seeking disconfirming evidence.</p>
