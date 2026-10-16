@@ -222,7 +222,7 @@ function wineCard(w) {
   const also = L(w, 'also'), pairs = L(w, 'pairs');
   return `<article class="card wine">
     <h3>${esc(L(w, 'name'))}</h3>
-    <div class="meta"><span class="dot ${colourKey(w)}" style="display:inline-block"></span> ${esc(L(w, 'winery'))} · ${esc(L(w, 'region'))} · ${esc(L(w, 'colour'))}${L(w, 'grapes') ? ' · ' + esc(L(w, 'grapes')) : ''}${w.vintage ? ' · ' + esc(w.vintage) : ''}</div>
+    <div class="meta"><span class="dot ${colourKey(w)}" style="display:inline-block"></span> ${esc(L(w, 'winery'))} · ${esc(L(w, 'region'))} · ${esc(L(w, 'colour'))}${L(w, 'grapes') ? ' · ' + esc(L(w, 'grapes')) : ''}</div>
     ${(L(w, 'nose') + L(w, 'palate')).trim() ? `<p class="notes">${esc(L(w, 'nose'))} ${esc(L(w, 'palate'))}</p>` : ''}
     <dl>${pairs ? `<dt>${esc(t('pairs'))}</dt><dd>${esc(pairs)}</dd>` : ''}${also ? `<dt>${esc(t('also'))}</dt><dd class="also">${esc(also)}</dd>` : ''}${(dishesOf[w.id] || []).length ? `<dt>${esc(t('dishesFor'))}</dt><dd>${dishesOf[w.id].slice(0, 6).map(r => `<a class="wl rl" data-dish="${esc(r.name)}">${esc(L(r, 'name'))}</a>`).join(', ')}</dd>` : ''}</dl></article>`;
 }
@@ -239,7 +239,7 @@ const regions = [...new Set(W.map(w => w.region))], regionEl = Object.fromEntrie
 function listRow(w) {
   const pairs = L(w, 'pairs'), also = L(w, 'also');
   return `<div class="lrow"><div><h3><a class="wl" data-wine="${esc(w.id)}">${esc(L(w, 'name'))}</a></h3>
-    <div class="meta"><span class="dot ${colourKey(w)}" style="display:inline-block"></span> ${esc(L(w, 'region'))} · ${esc(L(w, 'colour'))}${L(w, 'grapes') ? ' · ' + esc(L(w, 'grapes')) : ''}${w.vintage ? ' · ' + esc(w.vintage) : ''}</div></div>
+    <div class="meta"><span class="dot ${colourKey(w)}" style="display:inline-block"></span> ${esc(L(w, 'region'))} · ${esc(L(w, 'colour'))}${L(w, 'grapes') ? ' · ' + esc(L(w, 'grapes')) : ''}</div></div>
     <div class="lcol">${pairs ? `<b>${esc(t('pairs'))}</b>${esc(pairs)}` : ''}</div>
     <div class="lcol also">${also ? `<b>${esc(t('also'))}</b>${esc(also)}` : ''}</div></div>`;
 }
