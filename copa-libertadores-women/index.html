@@ -32,7 +32,8 @@ h1 a:hover{color:var(--gold)}
 .seg button.on{background:var(--gold);color:#0c1424}
 label{font:400 11px var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.1em;display:block;margin-bottom:5px}
 input{width:100%;background:var(--panel);border:1px solid var(--line);border-radius:6px;color:var(--text);font:400 17px var(--body);padding:10px 12px}
-input:focus{outline:2px solid var(--gold);outline-offset:0}
+select.pick{width:100%;background:var(--panel);border:1px solid var(--line);border-radius:6px;color:var(--text);font:400 17px var(--body);padding:10px 12px;cursor:pointer}
+select.pick:focus{outline:2px solid var(--gold);outline-offset:0}
 .vs{font:600 22px var(--serif);color:var(--gold);padding-bottom:9px}
 .card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:22px;margin-bottom:24px}
 .score{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;text-align:center;align-items:center}
@@ -91,11 +92,10 @@ select.peer:focus{outline:2px solid var(--gold)}
         <button data-mode="team">Teams</button>
       </div>
     </div>
-    <div><label for="a" id="la">Country</label><input id="a" list="opts" autocomplete="off" placeholder="Start typing"></div>
+    <div><label for="a" id="la">Country</label><select id="a" class="pick"></select></div>
     <div class="vs">vs</div>
-    <div><label for="b" id="lb">Opponent (optional)</label><input id="b" list="opts" autocomplete="off" placeholder="Start typing"></div>
+    <div><label for="b" id="lb">Opponent (optional)</label><select id="b" class="pick"></select></div>
   </div>
-  <datalist id="opts"></datalist>
   <div id="out"></div>
   </div>
 </div>
@@ -231,7 +231,13 @@ function renderRankings(){
 
 // ---------- Head to head
 function names(){ return mode === 'team' ? Object.keys(teams).sort() : [...new Set(Object.values(teams))].sort(); }
-function fillOptions(){ $('opts').innerHTML = names().map(n => `<option value="${esc(n)}">`).join(''); }
+function fillOptions(){
+  const body = mode === 'team'
+    ? [...new Set(Object.values(teams))].sort().map(c => `<optgroup label="${esc(c)}">` + Object.keys(teams).filter(t => teams[t] === c).sort().map(t => `<option value="${esc(t)}">${esc(t)}</option>`).join('') + '</optgroup>').join('')
+    : names().map(n => `<option value="${esc(n)}">${esc(n)}</option>`).join('');
+  $('a').innerHTML = `<option value="">Select a ${mode}</option>` + body;
+  $('b').innerHTML = `<option value="">Any ${mode} (optional)</option>` + body;
+}
 const oddsCell = o => o ? `${o[0].toFixed(2)} · ${o[1].toFixed(2)} · ${o[2].toFixed(2)}` : '';
 function gameRow(g, withOdds){
   const [season, stage, date, h, a, hg, ag, pen, odds] = g.m;
@@ -300,7 +306,7 @@ function setView(v){
 function setMode(m){
   mode = m;
   document.querySelectorAll('#seg button').forEach(b => b.classList.toggle('on', b.dataset.mode === m));
-  $('la').textContent = m === 'team' ? 'Team' : 'Country';
+  $('la').textContent = m === 'team' ? 'Team' : 'Country'; $('lb').textContent = 'Opponent (optional)';
   fillOptions();
 }
 function sync(){
@@ -320,7 +326,7 @@ document.querySelectorAll('[data-home]').forEach(a => a.onclick = e => {
   setView('rankings'); history.replaceState(null, '', location.pathname); window.scrollTo({top: 0, behavior: 'smooth'});
 });
 document.querySelectorAll('#seg button').forEach(b => b.onclick = () => { setMode(b.dataset.mode); $('a').value = $('b').value = ''; sync(); renderH2H(); });
-['a', 'b'].forEach(id => { $(id).addEventListener('input', () => { sync(); renderH2H(); }); $(id).addEventListener('change', renderH2H); });
+['a', 'b'].forEach(id => $(id).addEventListener('change', () => { sync(); renderH2H(); }));
 
 const p = new URLSearchParams(location.hash.slice(1));
 setMode(p.get('mode') === 'team' ? 'team' : 'country');
