@@ -65,6 +65,9 @@ th.sort{cursor:pointer;user-select:none}th.sort:hover,th.sort.on{color:var(--gol
 .chip.on{background:var(--gold);border-color:var(--gold);color:#0c1424}
 select.peer{background:var(--panel);border:1px solid var(--line);border-radius:6px;color:var(--text);font:500 14px var(--mono);padding:4px 6px;cursor:pointer}
 select.peer:focus{outline:2px solid var(--gold)}
+.day{font:600 18px var(--serif);margin:26px 0 8px}
+.day:first-of-type{margin-top:6px}
+.fav{color:var(--gold);font-weight:500}
 @media(max-width:640px){
   .controls{grid-template-columns:1fr}
   .vs{display:none}
@@ -78,11 +81,13 @@ select.peer:focus{outline:2px solid var(--gold)}
   <div class="sub" id="sub"></div>
 
   <div class="tabs" id="tabs">
-    <a href="#view=rankings" data-view="rankings" class="on">Country Power Rankings</a>
+    <a href="#view=fixtures" data-view="fixtures" class="on">Fixtures</a>
+    <a href="#view=rankings" data-view="rankings">Country Power Rankings</a>
     <a href="#view=h2h" data-view="h2h">Head to Head</a>
   </div>
 
-  <div id="rkView"></div>
+  <div id="fxView"></div>
+  <div id="rkView" hidden></div>
 
   <div id="h2hView" hidden>
   <div class="controls">
@@ -113,7 +118,7 @@ const code = c => CODE[c] || c.slice(0, 3).toUpperCase();
 const f2 = v => v.toFixed(2);
 const sgn = v => (v > 0 ? '+' : v < 0 ? '−' : '') + Math.abs(v).toFixed(2);
 
-let view = 'rankings', mode = 'country';
+let view = 'fixtures', mode = 'country';
 let seasons = 0;                                // 0 = all editions
 let stages = new Set(STAGES);
 const keep = m => stages.has(m[1]) && (!seasons || ALL_SEASONS.indexOf(m[0]) >= ALL_SEASONS.length - seasons);
@@ -295,13 +300,69 @@ function renderH2H(){
   box.querySelectorAll('tr.click').forEach(tr => tr.onclick = () => { $('b').value = tr.dataset.o; sync(); renderH2H(); window.scrollTo({top: 0, behavior: 'smooth'}); });
 }
 
+// ---------- Fixtures: the games still to play, with the head to head of the two countries and the odds
+const FX = window.DATA.fixtures || [];
+// record of country x against country y over the sample, from x's side
+function countryH2H(x, y){
+  const r = tally();
+  for (const m of matches){
+    if (!keep(m)) continue;
+    const [, , , h, a, hg, ag] = m, ch = teams[h], ca = teams[a];
+    if (ch === x && ca === y) add(r, hg, ag);
+    else if (ch === y && ca === x) add(r, ag, hg);
+  }
+  return r;
+}
+function clubH2H(x, y){
+  const r = tally();
+  for (const m of matches){
+    if (!keep(m)) continue;
+    const [, , , h, a, hg, ag] = m;
+    if (h === x && a === y) add(r, hg, ag);
+    else if (h === y && a === x) add(r, ag, hg);
+  }
+  return r;
+}
+function oddsCells(o){
+  if (!o) return '<td class="n tag">–</td>';
+  const lo = Math.min(...o);
+  return '<td class="n">' + o.map(v => v === lo ? `<span class="fav">${v.toFixed(2)}</span>` : v.toFixed(2)).join(' · ') + '</td>';
+}
+function renderFixtures(){
+  const days = {};
+  for (const f of FX) (days[f[0] || 'TBC'] ||= []).push(f);
+  const keys = Object.keys(days).sort((x, y) => x === 'TBC' ? 1 : y === 'TBC' ? -1 : x.localeCompare(y));
+  const dayName = d => d === 'TBC' ? 'Date to be set' : new Date(d + 'T12:00:00').toLocaleDateString('en-GB', {weekday: 'long', day: 'numeric', month: 'long'});
+  const body = keys.map(d => `<div class="day">${esc(dayName(d))}</div><div class="scroll"><table><tr><th class="n">Time</th><th>Grp</th><th>Match</th>
+    <th class="n" title="Record of the home side's country against the away side's country in the sample: W–D–L from the home side's point of view">Country H2H</th>
+    <th class="n" title="Goals for–against, home side's country">Goals</th><th class="n" title="Average goals for–against per game">Avg goals</th>
+    <th class="n" title="Pre-match 1X2 odds, BetExplorer; the shortest price is in gold">Odds 1 · X · 2</th></tr>` +
+    days[d].map(([date, time, grp, h, a, hc, ac, odds]) => {
+      const same = hc === ac, r = same ? null : countryH2H(hc, ac), rc = clubH2H(h, a);
+      return `<tr class="click" data-a="${esc(hc)}" data-b="${esc(ac)}"><td class="n">${esc(time || '–')}</td><td class="tag">${esc(grp)}</td>
+        <td><b>${esc(h)}</b> – <b>${esc(a)}</b><br><span class="tag">${esc(code(hc))} v ${esc(code(ac))}${rc.n ? ` · clubs met ${rc.n}×: ${rc.w}–${rc.d}–${rc.l}` : ''}</span></td>
+        <td class="n">${same ? '<span class="tag">same country</span>' : r.n ? wdl(r) + ` <span class="tag">${r.n}</span>` : '<span class="tag">no games</span>'}</td>
+        <td class="n">${r && r.n ? r.gf + '–' + r.ga : '–'}</td><td class="n">${r && r.n ? avgPair(r) : '–'}</td>${oddsCells(odds)}</tr>`;
+    }).join('') + `</table></div>`).join('');
+  const box = $('fxView');
+  box.innerHTML = sampleBar('fxSeasons') + (FX.length ? body : '<div class="empty">No fixtures to show.</div>') +
+    `<div class="tag" style="margin-top:14px">${sampleText()} Country H2H is the record of the home side's country against the away side's country in the sample, W–D–L from the home side's point of view (extra-time draws, including penalty shootouts, count as draws). Times are Athens time. Odds are BetExplorer 1X2 prices, available only for the games coming up next. Bolívar v Olimpia is priced by a single bookmaker. Click a game for the full country head to head.</div>`;
+  bindBar(box, 'fxSeasons', renderFixtures);
+  box.querySelectorAll('tr.click').forEach(tr => tr.onclick = () => {
+    if (tr.dataset.a === tr.dataset.b) return;
+    setMode('country'); $('a').value = tr.dataset.a; $('b').value = tr.dataset.b;
+    setView('h2h'); sync(); renderH2H(); window.scrollTo({top: 0, behavior: 'smooth'});
+  });
+}
+
 // ---------- views, state in the URL hash
 function setView(v){
-  view = v === 'h2h' ? 'h2h' : 'rankings';
+  view = v === 'h2h' ? 'h2h' : v === 'rankings' ? 'rankings' : 'fixtures';
   document.querySelectorAll('#tabs a').forEach(b => b.classList.toggle('on', b.dataset.view === view));
+  $('fxView').hidden = view !== 'fixtures';
   $('rkView').hidden = view !== 'rankings';
   $('h2hView').hidden = view !== 'h2h';
-  if (view === 'rankings') renderRankings(); else renderH2H();
+  if (view === 'fixtures') renderFixtures(); else if (view === 'rankings') renderRankings(); else renderH2H();
 }
 function setMode(m){
   mode = m;
@@ -323,7 +384,7 @@ function sync(){
 document.querySelectorAll('#tabs a').forEach(b => b.onclick = e => { if (e.metaKey || e.ctrlKey || e.shiftKey || e.button) return; e.preventDefault(); setView(b.dataset.view); sync(); });
 document.querySelectorAll('[data-home]').forEach(a => a.onclick = e => {
   e.preventDefault(); setMode('country'); $('a').value = $('b').value = ''; seasons = 0; stages = new Set(STAGES);
-  setView('rankings'); history.replaceState(null, '', location.pathname); window.scrollTo({top: 0, behavior: 'smooth'});
+  setView('fixtures'); history.replaceState(null, '', location.pathname); window.scrollTo({top: 0, behavior: 'smooth'});
 });
 document.querySelectorAll('#seg button').forEach(b => b.onclick = () => { setMode(b.dataset.mode); $('a').value = $('b').value = ''; sync(); renderH2H(); });
 ['a', 'b'].forEach(id => $(id).addEventListener('change', () => { sync(); renderH2H(); }));
