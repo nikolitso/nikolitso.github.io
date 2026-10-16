@@ -378,7 +378,8 @@
       "unraveled",
       "calle-malaga",
       "adam",
-      "the-hummingbird"
+      "the-hummingbird",
+      "chevalier"
     ],
     "log": [
       {
@@ -406,9 +407,15 @@
         "slot": "2026-10-15 20",
         "slug": "the-hummingbird",
         "id": "2110777858645962904"
+      },
+      {
+        "day": "2026-10-16",
+        "slot": "2026-10-16 08",
+        "slug": "chevalier",
+        "id": "2111030007875146165"
       }
     ],
-    "last_day": "2026-10-15"
+    "last_day": "2026-10-16"
   },
-  "last_slot": "2026-10-16 02"
+  "last_slot": "2026-10-16 08"
 }
