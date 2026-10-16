@@ -210,6 +210,7 @@ function wineLink(w) {
 }
 const dishesOf = {};
 R.forEach(r => [...r.labels.filter(l => l.listed).map(l => l.name), ...r.more].forEach(id => { (dishesOf[id] = dishesOf[id] || []).includes(r) || dishesOf[id].push(r); }));
+const sortD = a => a.slice().sort((x, y) => L(x, 'name').localeCompare(L(y, 'name'), lang));
 function recipeCard(r) {
   const alt = L(r, 'alt');
   return `<article class="card"><h3>${esc(L(r, 'name'))}</h3>
@@ -311,18 +312,18 @@ function render() {
   let html = '';
   if (state.grape) {
     const g = gByKey[state.grape], gw = W.filter(w => w.grapes.includes(g.key)), gr = R.filter(r => r.grape.startsWith(g.key));
-    html = profileCard(g) + section(t('wines'), gw, wineCard, true) + section(t('bestFor'), gr, recipeCard, true);
+    html = profileCard(g) + section(t('wines'), gw, wineCard, true) + section(t('bestFor'), sortD(gr), recipeCard, true);
   } else if (!(state.q.trim() || state.cat || state.tag)) {
-    html = `<h2>${esc(t('begin'))}</h2><p class="lede">${esc(t('beginText')(R.length, W.length))}</p>` + section(t('allDishes'), R, recipeCard, true);
+    html = `<h2>${esc(t('begin'))}</h2><p class="lede">${esc(t('beginText')(R.length, W.length))}</p>` + section(t('allDishes'), sortD(R), recipeCard, true);
   } else {
     // a dish-type chip shows dishes only; a food chip shows wines only; free text shows both
-    if (!state.tag) html += section(t('dishes'), rs, recipeCard, true);
+    if (!state.tag) html += section(t('dishes'), sortD(rs), recipeCard, true);
     if (!state.cat) html += section(t('wines'), ws, wineCard, true);
     if (!html) html = `<p class="empty">${esc(t('none'))}</p>`;
   }
   document.getElementById('out').innerHTML = html;
-  chips(document.getElementById('cats'), cats, 'cat', c => lang === 'el' ? catEl[c] : c);
-  chips(document.getElementById('tags'), tags, 'tag', x => lang === 'el' ? tagEl[x] : x);
+  chips(document.getElementById('cats'), cats, 'cat', c => lang === 'el' ? catEl[c] : c, true);
+  chips(document.getElementById('tags'), tags, 'tag', x => lang === 'el' ? tagEl[x] : x, true);
   chips(document.getElementById('grapes'), G.map(g => g.key), 'grape', k => lang === 'el' ? gByKey[k].el_name : k, true);
 }
 
