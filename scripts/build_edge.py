@@ -26,12 +26,13 @@ CF_BEACON = "b67bbb76d0e24af196b24ded3ab71ad0"  # Cloudflare Web Analytics (cook
 
 TOPICS = [  # order shown on the site
     ("football", "Football", "#2f7d4f"),
-    ("betting", "Betting & markets", "#b5562a"),
+    ("betting-markets", "Betting & markets", "#b5562a"),
     ("sports-analytics", "Sports analytics", "#2b6cb0"),
-    ("thinking", "Thinking & decisions", "#6b4fbb"),
+    ("thinking-decisions", "Thinking & decisions", "#6b4fbb"),
     ("personal-development", "Personal development", "#b0476b"),
-    ("work", "Work & leadership", "#3d6bff"),
+    ("work-leadership", "Work & leadership", "#3d6bff"),
 ]
+OLD_TOPIC = {"betting": "betting-markets", "thinking": "thinking-decisions", "work": "work-leadership"}  # links shared before the rename
 TOPIC_BY_NAME = {n.lower(): (s, n, c) for s, n, c in TOPICS}
 
 esc = lambda s: html.escape(str(s or ""), quote=True)
@@ -183,14 +184,60 @@ def load():
 ICONS = """<svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <symbol id="i-x" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></symbol>
   <symbol id="i-in" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 1 1 0-4.125 2.062 2.062 0 0 1 0 4.125zM7.119 20.452H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0z"/></symbol>
-  <symbol id="i-lb" viewBox="0 0 24 24"><circle cx="4.6" cy="12" r="4.1"/><circle cx="12" cy="12" r="4.1" opacity=".75"/><circle cx="19.4" cy="12" r="4.1" opacity=".5"/></symbol>
+  <symbol id="i-mail" viewBox="0 0 24 24"><path d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 4-8 5-8-5V6l8 5 8-5v2z"/></symbol>
+  <symbol id="i-lb" viewBox="0 0 24 24"><circle cx="4.6" cy="12" r="4.1" fill="#ff8000"/><circle cx="12" cy="12" r="4.1" fill="#00e054"/><circle cx="19.4" cy="12" r="4.1" fill="#40bcf4"/></symbol>
 </svg>"""
+
+# One header and one footer for the whole site (home, About and the 404 page use the same markup).
+SOCIAL = """<ul class="social" aria-label="Social links">
+      <li><a href="https://www.linkedin.com/in/antonis-nikolitsopoulos/" target="_blank" rel="noopener" aria-label="LinkedIn" title="LinkedIn"><svg><use href="#i-in"/></svg></a></li>
+      <li><a href="https://x.com/nikolitso" target="_blank" rel="noopener" aria-label="X (Twitter)" title="X"><svg><use href="#i-x"/></svg></a></li>
+      <li><a href="https://letterboxd.com/nikolitso/" target="_blank" rel="noopener" aria-label="Letterboxd" title="Letterboxd"><svg><use href="#i-lb"/></svg></a></li>
+      <li><a href="mailto:contact@antonisnikolitsopoulos.com" aria-label="Email" title="Email"><svg><use href="#i-mail"/></svg></a></li>
+    </ul>"""
+
+
+def site_menu(active=""):
+    items = [("edge", "/the-edge/", "The Edge"), ("films", "https://whatalgomissed.com/", 'Films <span aria-hidden="true">↗</span>'),
+             ("paok", "/#paok", "PAOK"), ("about", "/about/", "About"), ("contact", "/#contact", "Contact")]
+    return "".join(
+        f'<a href="{h}"' + (' target="_blank" rel="noopener"' if h.startswith("http") else "")
+        + (' class="on" aria-current="page"' if k == active else "") + f">{l}</a>" for k, h, l in items)
+
+
+def site_header(active="", home="/"):
+    return f"""<header class="site-head">
+  <div class="wrap bar">
+    <a class="brand" href="{home}" aria-label="Antonis Nikolitsopoulos, home">
+      <span class="mono">A<i>N</i></span>
+      <span class="wordmark"><span>Antonis <em>Nikolitsopoulos</em></span><small>Trading · Sports Analytics · Books · Films</small></span>
+    </a>
+    <nav class="menu" aria-label="Main">{site_menu(active)}</nav>
+    {SOCIAL}
+  </div>
+</header>"""
+
+
+def site_footer():
+    return f"""<footer class="site-foot">
+  <div class="wrap">
+    <div class="foot-top">
+      {SOCIAL}
+    </div>
+    <div class="foot-in">
+      <nav class="menu" aria-label="Footer">{site_menu()}</nav>
+      <span class="copy">© {datetime.now().year} Antonis Nikolitsopoulos</span>
+    </div>
+  </div>
+</footer>"""
 
 
 def layout(title, body, path, desc, image=None, active="books"):
     full = f"{title} — The Edge" if title != "The Edge" else "The Edge — Book takeaways by Antonis Nikolitsopoulos"
     img = image if (image or "").startswith("http") else SITE + (image or "/og.png")
-    nav = lambda key, href, label: f'<a href="{href}"{" class=on" if active == key else ""}>{label}</a>'
+    sub = lambda key, href, label: f'<a href="{href}"{" class=on" if active == key else ""}>{label}</a>'
+    subnav = (f'<nav class="subnav" aria-label="The Edge"><div class="wrap">{sub("books", BASE, "All books")}'
+              f'{sub("authors", BASE + "authors/", "Authors")}<a href="{BASE}feed.xml">RSS</a></div></nav>') if active else ""
     return f"""<!doctype html>
 <html lang="en">
 <head>
@@ -218,32 +265,12 @@ def layout(title, body, path, desc, image=None, active="books"):
 </head>
 <body>
 {ICONS}
-<header class="site-head">
-  <div class="wrap bar">
-    <a class="brand" href="/" aria-label="Antonis Nikolitsopoulos, home">
-      <span class="mono">A<i>N</i></span>
-      <span class="wordmark"><span>Antonis <em>Nikolitsopoulos</em></span><small>Trading · Sports Analytics · Books · Films</small></span>
-    </a>
-    <nav class="menu" aria-label="The Edge">
-      {nav("books", BASE, "The Edge")}
-      {nav("authors", BASE + "authors/", "Authors")}
-    </nav>
-    <ul class="social" aria-label="Social links">
-      <li><a href="https://www.linkedin.com/in/antonis-nikolitsopoulos/" target="_blank" rel="noopener" aria-label="LinkedIn" title="LinkedIn"><svg><use href="#i-in"/></svg></a></li>
-      <li><a href="https://x.com/nikolitso" target="_blank" rel="noopener" aria-label="X (Twitter)" title="X"><svg><use href="#i-x"/></svg></a></li>
-      <li><a href="https://letterboxd.com/nikolitso/" target="_blank" rel="noopener" aria-label="Letterboxd" title="Letterboxd"><svg><use href="#i-lb"/></svg></a></li>
-    </ul>
-  </div>
-</header>
+{site_header("edge" if active else "")}
+{subnav}
 <main>
 {body}
 </main>
-<footer class="site-foot">
-  <div class="wrap foot-in">
-    <nav class="foot-menu" aria-label="Footer"><a href="/">Home</a><a href="{BASE}">The Edge</a><a href="{BASE}authors/">Authors</a><a href="{BASE}feed.xml">RSS</a></nav>
-    <span class="copy">© {datetime.now().year} Antonis Nikolitsopoulos</span>
-  </div>
-</footer>
+{site_footer()}
 </body>
 </html>
 """
@@ -319,8 +346,9 @@ def page_index(books, n_authors):
     cards.forEach(function(c){{grid.appendChild(c);}});
   }}
   chips.forEach(function(c){{c.addEventListener('click',function(){{topic=c.dataset.t;history.replaceState(null,'',topic?'#'+topic:location.pathname);apply();}});}});
-  q.addEventListener('input',apply);sort.addEventListener('change',function(){{order();apply();}});
-  var h=location.hash.slice(1);if(h&&chips.some(function(c){{return c.dataset.t===h;}}))topic=h;
+  q.addEventListener('input',function(){{if(q.value.trim()&&topic){{topic='';history.replaceState(null,'',location.pathname);}}apply();}});sort.addEventListener('change',function(){{order();apply();}});
+  var old={json.dumps(OLD_TOPIC)},h=location.hash.slice(1);h=old[h]||h;if(h&&chips.some(function(c){{return c.dataset.t===h;}}))topic=h;
+  var pq=new URLSearchParams(location.search).get('q');if(pq){{q.value=pq;topic='';}}
   apply();
 }})();
 </script>"""
@@ -449,6 +477,40 @@ def feed(books):
         encoding="utf-8")
 
 
+def page_404(by_date):
+    latest = "".join(card(b) for b in by_date[:4])
+    body = f"""<section class="hero hero-sm">
+  <div class="wrap">
+    <p class="kicker">404</p>
+    <h1>Page not found</h1>
+    <p class="lede">Sorry, that link is broken or the page has moved. Search the books, or start from the <a href="/">homepage</a>.</p>
+    <form class="tools nf-search" action="{BASE}" method="get" role="search">
+      <input name="q" type="search" placeholder="Search title or author…" aria-label="Search books">
+      <button type="submit">Search The Edge</button>
+    </form>
+  </div>
+</section>
+<section class="shelf">
+  <div class="wrap">
+    <div class="rel-head"><h2>Latest books</h2><a href="{BASE}">All books →</a></div>
+    <div class="books books-4">{latest}</div>
+  </div>
+</section>"""
+    out = layout("Page not found", body, "/404.html", "This page doesn't exist.", active="")
+    out = out.replace("<head>", '<head>\n<meta name="robots" content="noindex">', 1)
+    (ROOT / "404.html").write_text(out, encoding="utf-8")
+
+
+def sitemap(books):
+    """Pages linked from the site. Unlinked or unfinished sections (e.g. /wine/) stay out."""
+    paths = ["/", "/about/", BASE, BASE + "authors/"] + [b["url"] for b in books] + ["/paok-hub/", "/paok-basketball/"]
+    urls = "".join(f"<url><loc>{SITE}{p}</loc></url>" for p in paths)
+    (ROOT / "sitemap.xml").write_text(
+        f'<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">{urls}</urlset>\n',
+        encoding="utf-8")
+    (ROOT / "robots.txt").write_text(f"User-agent: *\nAllow: /\n\nSitemap: {SITE}/sitemap.xml\n", encoding="utf-8")
+
+
 def write(path, content):
     f = ROOT / path.strip("/") / "index.html"
     f.parent.mkdir(parents=True, exist_ok=True)
@@ -479,6 +541,8 @@ def main():
     for b in books:
         page_book(b, books, by_date)
     feed(by_date)
+    page_404(by_date)
+    sitemap(by_date)
     local = sum(1 for b in books if b["cover"].startswith(BASE))
     print(f"The Edge: {len(books)} books, {n_auth} authors, covers local {local}/{len(books)} -> {OUT}")
 
