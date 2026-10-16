@@ -83,11 +83,13 @@ select.peer:focus{outline:2px solid var(--gold)}
   <div class="tabs" id="tabs">
     <a href="#view=fixtures" data-view="fixtures" class="on">Fixtures</a>
     <a href="#view=rankings" data-view="rankings">Country Power Rankings</a>
+    <a href="#view=clubs" data-view="clubs">Club Power Rankings</a>
     <a href="#view=h2h" data-view="h2h">Head to Head</a>
   </div>
 
   <div id="fxView"></div>
   <div id="rkView" hidden></div>
+  <div id="clView" hidden></div>
 
   <div id="h2hView" hidden>
   <div class="controls">
@@ -165,14 +167,16 @@ function record(gs){ const r = tally(); gs.forEach(g => add(r, g.gf, g.ga)); ret
 const avgPair = r => r.n ? f2(r.gf / r.n) + '–' + f2(r.ga / r.n) : '–';
 const wdl = r => r.n ? `<b><span class="w">${r.w}</span>–<span class="d">${r.d}</span>–<span class="l">${r.l}</span></b>` : '<b>–</b>';
 
-// ---------- Power rankings: country Elo over all games in date order
+// ---------- Power rankings: Elo over all games in date order, for countries and for clubs
 // Start 1500; K 20; no home advantage (the finals tournament is played at one venue); goal-difference multiplier as in World Football Elo.
-// Draws (including shootouts) score 0.5. Same-country games are skipped. The sample only changes the record columns.
-let RANK = null;
-function computeRankings(){
+// Draws (including shootouts) score 0.5. Country ratings skip games between clubs of the same country; club ratings count every game.
+// The sample only changes the record columns; the rating always reflects today.
+const RANK = {};
+const entOf = (kind, t) => kind === 'club' ? t : teams[t];
+function computeRankings(kind){
   const K = 20, elo = {}, get = c => (elo[c] ??= 1500);
   for (const m of matches.slice().sort((x, y) => x[2].localeCompare(y[2]))){
-    const [, , , h, a, hg, ag] = m, ch = teams[h], ca = teams[a];
+    const [, , , h, a, hg, ag] = m, ch = entOf(kind, h), ca = entOf(kind, a);
     if (ch === ca) continue;
     const rh = get(ch), ra = get(ca), gd = Math.abs(hg - ag);
     const exp = 1 / (1 + 10 ** ((ra - rh) / 400)), s = hg > ag ? 1 : hg === ag ? .5 : 0;
@@ -182,23 +186,24 @@ function computeRankings(){
   }
   return Object.entries(elo).map(([c, e]) => ({c, elo: e})).sort((x, y) => y.elo - x.elo);
 }
-let rkSort = {k: 'place', dir: 1};
-function renderRankings(){
-  RANK ||= computeRankings();
+const rkSort = {country: {k: 'place', dir: 1}, club: {k: 'place', dir: 1}};
+function renderRankings(kind = 'country'){
+  RANK[kind] ||= computeRankings(kind);
+  const club = kind === 'club', sort = rkSort[kind], boxId = club ? 'clView' : 'rkView', barId = club ? 'clSeasons' : 'rkSeasons';
   const st = {};
   for (const m of matches){
     if (!keep(m)) continue;
-    const [, , , h, a, hg, ag] = m, ch = teams[h], ca = teams[a];
+    const [, , , h, a, hg, ag] = m, ch = entOf(kind, h), ca = entOf(kind, a);
     if (ch === ca) continue;
     add(st[ch] ??= tally(), hg, ag); add(st[ca] ??= tally(), ag, hg);
   }
-  const list = RANK.map((r, i) => {
+  const list = RANK[kind].map((r, i) => {
     const x = st[r.c] || tally();
     const gd = x.n ? (x.gf - x.ga) / x.n : null;
-    const keys = {place: i + 1, country: r.c, rating: r.elo, games: x.n, wdl: x.n ? x.w - x.l : null, pct: x.n ? x.w / x.n : null,
+    const keys = {place: i + 1, name: r.c, rating: r.elo, games: x.n, wdl: x.n ? x.w - x.l : null, pct: x.n ? x.w / x.n : null,
       goals: x.n ? x.gf - x.ga : null, avgf: x.n ? x.gf / x.n : null, avga: x.n ? x.ga / x.n : null, margin: gd};
     return {keys, html: `<tr class="click" data-c="${esc(r.c)}"><td class="n">${i + 1}</td>
-      <td><b>${esc(r.c)}</b> <span class="tag">(${esc(code(r.c))})</span></td>
+      <td><b>${esc(r.c)}</b> <span class="tag">(${esc(code(club ? teams[r.c] : r.c))})</span></td>
       <td class="n"><b class="hcp">${Math.round(r.elo)}</b></td>
       <td class="n">${x.n}</td>
       <td class="n">${x.n ? `<span class="w">${x.w}</span>–<span class="d">${x.d}</span>–<span class="l">${x.l}</span>` : '–'}</td>
@@ -208,7 +213,7 @@ function renderRankings(){
       <td class="n">${x.n ? f2(x.ga / x.n) : '–'}</td>
       <td class="n">${gd === null ? '–' : sgn(gd)}</td></tr>`};
   });
-  const {k, dir} = rkSort;
+  const {k, dir} = sort;
   list.sort((p, q) => {                                           // empty values always last
     const a = p.keys[k], b = q.keys[k];
     if (a === null || b === null) return (a === null) - (b === null) || p.keys.place - q.keys.place;
@@ -216,21 +221,21 @@ function renderRankings(){
   });
   const rows = list.filter(x => x.keys.games).map(x => x.html).join('');       // no games in the sample: not listed
   const th = (key, label, cls, title) => `<th class="${cls} sort${key === k ? ' on' : ''}" data-k="${key}"${title ? ` title="${title}"` : ''}>${label}${key === k ? (dir > 0 ? ' ▲' : ' ▼') : ''}</th>`;
-  const box = $('rkView');
-  box.innerHTML = sampleBar('rkSeasons') + `<div class="scroll"><table><tr>${th('place', '#', 'n')}${th('country', 'Country', '')}
+  const box = $(boxId);
+  box.innerHTML = sampleBar(barId) + `<div class="scroll"><table><tr>${th('place', '#', 'n')}${th('name', club ? 'Club' : 'Country', '')}
     ${th('rating', 'Rating', 'n', 'Elo rating today: starts at 1500, rises with wins (more for beating strong sides, and by more goals)')}
-    ${th('games', 'Games', 'n', 'Games against clubs from other countries, within the sample')}${th('wdl', 'W–D–L', 'n', 'Sorted by wins minus losses')}${th('pct', 'Win %', 'n')}
+    ${th('games', 'Games', 'n', club ? 'Games within the sample' : 'Games against clubs from other countries, within the sample')}${th('wdl', 'W–D–L', 'n', 'Sorted by wins minus losses')}${th('pct', 'Win %', 'n')}
     ${th('goals', 'Goals', 'n', 'Goals for–against; sorted by goal difference')}${th('avgf', 'Avg GF', 'n', 'Goals scored per game')}${th('avga', 'Avg GA', 'n', 'Goals conceded per game')}
     ${th('margin', 'Margin', 'n', 'Average goal difference per game')}</tr>${rows}</table></div>
-    <div class="tag" style="margin-top:14px">${sampleText()} Games, W–D–L, goals and margin cover the sample only. Rating is an Elo rating updated game by game since ${ALL_SEASONS[0]} and always reflects today. Games between clubs from the same country are not counted. Matches level after extra time count as draws, including those settled on penalties. Click a column heading to sort, a country for its full record.</div>`;
-  bindBar(box, 'rkSeasons', renderRankings);
+    <div class="tag" style="margin-top:14px">${sampleText()} Games, W–D–L, goals and margin cover the sample only. Rating is an Elo rating updated game by game since ${ALL_SEASONS[0]} and always reflects today. ${club ? 'Every game counts, including those between clubs of the same country.' : 'Games between clubs from the same country are not counted.'} Matches level after extra time count as draws, including those settled on penalties. Click a column heading to sort, a ${club ? 'club' : 'country'} for its full record.</div>`;
+  bindBar(box, barId, () => renderRankings(kind));
   box.querySelectorAll('th.sort').forEach(h => h.onclick = () => {              // first click: best first; again: reverse
     const key = h.dataset.k;
-    rkSort = key === k ? {k, dir: -dir} : {k: key, dir: key === 'place' || key === 'country' || key === 'avga' ? 1 : -1};
-    renderRankings();
+    rkSort[kind] = key === k ? {k, dir: -dir} : {k: key, dir: key === 'place' || key === 'name' || key === 'avga' ? 1 : -1};
+    renderRankings(kind);
   });
   box.querySelectorAll('tr.click').forEach(tr => tr.onclick = () => {
-    setMode('country'); $('a').value = tr.dataset.c; $('b').value = '';
+    setMode(club ? 'team' : 'country'); $('a').value = tr.dataset.c; $('b').value = '';
     setView('h2h'); sync(); renderH2H(); window.scrollTo({top: 0, behavior: 'smooth'});
   });
 }
@@ -358,12 +363,13 @@ function renderFixtures(){
 
 // ---------- views, state in the URL hash
 function setView(v){
-  view = v === 'h2h' ? 'h2h' : v === 'rankings' ? 'rankings' : 'fixtures';
+  view = ['h2h', 'rankings', 'clubs'].includes(v) ? v : 'fixtures';
   document.querySelectorAll('#tabs a').forEach(b => b.classList.toggle('on', b.dataset.view === view));
   $('fxView').hidden = view !== 'fixtures';
   $('rkView').hidden = view !== 'rankings';
+  $('clView').hidden = view !== 'clubs';
   $('h2hView').hidden = view !== 'h2h';
-  if (view === 'fixtures') renderFixtures(); else if (view === 'rankings') renderRankings(); else renderH2H();
+  if (view === 'fixtures') renderFixtures(); else if (view === 'rankings') renderRankings('country'); else if (view === 'clubs') renderRankings('club'); else renderH2H();
 }
 function setMode(m){
   mode = m;
