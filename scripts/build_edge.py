@@ -210,7 +210,7 @@ def site_header(active="", home="/"):
   <div class="wrap bar">
     <a class="brand" href="{home}" aria-label="Antonis Nikolitsopoulos, home">
       <span class="mono">A<i>N</i></span>
-      <span class="wordmark"><span>Antonis <em>Nikolitsopoulos</em></span><small>Trading · Sports Analytics · Books · Films</small></span>
+      <span class="wordmark"><span>Antonis <em>Nikolitsopoulos</em></span><small>Trading · Sports Analytics</small></span>
     </a>
     <nav class="menu" aria-label="Main">{site_menu(active)}</nav>
     {SOCIAL}
