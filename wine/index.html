@@ -184,7 +184,8 @@ const wineText = w => norm([w.wine, w.winery, w.el.name, w.el.winery, w.region, 
 const recipeText = r => norm([r.name, r.category, r.ingredients, r.grape, r.alt,
   r.el.name, r.el.category, r.el.ingredients, r.el.grape, r.el.alt].join(' '));
 
-function chips(el, items, key, label) {
+function chips(el, items, key, label, sorted) {
+  if (sorted) items = items.slice().sort((a, b) => label(a).localeCompare(label(b), lang));
   el.innerHTML = items.map(i => `<button class="chip${state[key] === i ? ' on' : ''}" data-k="${key}" data-v="${esc(i)}">${esc(label(i))}</button>`).join('');
 }
 function labelHtml(l) {
@@ -267,8 +268,8 @@ function render() {
 
   if (view === 'list') {
     document.getElementById('out').innerHTML = renderList();
-    chips(document.getElementById('varieties'), varieties, 'variety', v => lang === 'el' ? D.varietyEl[v] : v);
-    chips(document.getElementById('wineries'), regions, 'region', x => lang === 'el' ? regionEl[x] : x);
+    chips(document.getElementById('varieties'), varieties, 'variety', v => lang === 'el' ? D.varietyEl[v] : v, true);
+    chips(document.getElementById('wineries'), regions, 'region', x => lang === 'el' ? regionEl[x] : x, true);
     chips(document.getElementById('colours'), ['White', 'Rosé', 'Red'], 'colour', c => t('col')[c]);
     return;
   }
@@ -293,7 +294,7 @@ function render() {
   document.getElementById('out').innerHTML = html;
   chips(document.getElementById('cats'), cats, 'cat', c => lang === 'el' ? catEl[c] : c);
   chips(document.getElementById('tags'), tags, 'tag', x => lang === 'el' ? tagEl[x] : x);
-  chips(document.getElementById('grapes'), G.map(g => g.key), 'grape', k => lang === 'el' ? gByKey[k].el_name : k);
+  chips(document.getElementById('grapes'), G.map(g => g.key), 'grape', k => lang === 'el' ? gByKey[k].el_name : k, true);
 }
 
 document.getElementById('q').addEventListener('input', e => { state.q = e.target.value; state.grape = ''; render(); });
