@@ -100,7 +100,7 @@ footer{margin-top:60px;padding-top:18px;border-top:1px solid var(--line);color:v
       <button type="button" data-lang="en">EN</button><button type="button" data-lang="el">ΕΛ</button>
     </div>
   </div>
-  <nav class="views" role="tablist"><button type="button" data-view="finder"></button><button type="button" data-view="list"></button></nav>
+  <nav class="views" role="tablist"><button type="button" data-view="list"></button><button type="button" data-view="finder"></button></nav>
   <h1 id="title"></h1>
   <p class="lede" id="lede"></p>
   <div class="search"><input id="q" type="search" autocomplete="off"></div>
@@ -174,7 +174,7 @@ const catEl = Object.fromEntries(R.map(r => [r.category, r.el.category]));
 const tagCount = {}, tagEl = {};
 W.forEach(w => w.tags.forEach((x, i) => { tagCount[x] = (tagCount[x] || 0) + 1; tagEl[x] = w.el.tags[i]; }));
 const tags = Object.keys(tagCount).sort((a, b) => tagCount[b] - tagCount[a] || a.localeCompare(b));
-let view = location.hash === '#list' ? 'list' : 'finder';
+let view = location.hash === '#finder' ? 'finder' : 'list';
 let state = {q: '', cat: '', tag: '', grape: '', region: '', colour: '', variety: ''};
 const G = D.grapes, gByKey = Object.fromEntries(G.map(g => [g.key, g]));
 
@@ -300,7 +300,7 @@ function render() {
 document.getElementById('q').addEventListener('input', e => { state.q = e.target.value; state.grape = ''; render(); });
 document.addEventListener('click', e => {
   const vb = e.target.closest('.views button');
-  if (vb) { view = vb.dataset.view; state = {q: '', cat: '', tag: '', grape: '', region: '', colour: ''}; document.getElementById('q').value = ''; try { history.replaceState(null, '', view === 'list' ? '#list' : location.pathname + location.search); } catch (x) {} render(); return; }
+  if (vb) { view = vb.dataset.view; state = {q: '', cat: '', tag: '', grape: '', region: '', colour: ''}; document.getElementById('q').value = ''; try { history.replaceState(null, '', '#' + view); } catch (x) {} render(); return; }
   const lb = e.target.closest('.lang button');
   if (lb) { lang = lb.dataset.lang; try { localStorage.setItem('wine-lang', lang); } catch (x) {} render(); return; }
   const c = e.target.closest('.chip');
@@ -319,7 +319,7 @@ document.addEventListener('click', e => {
   const a = e.target.closest('a.wl');
   if (a) {
     const w = byId[a.dataset.wine];
-    view = 'finder'; try { history.replaceState(null, '', location.pathname + location.search); } catch (x) {}
+    view = 'finder'; try { history.replaceState(null, '', '#finder'); } catch (x) {}
     const nm = lang === 'el' ? w.el.name : w.wine;
     state = {q: nm, cat: '', tag: '', grape: '', region: '', colour: ''}; document.getElementById('q').value = nm; render();
     window.scrollTo({top: 0, behavior: 'smooth'});
