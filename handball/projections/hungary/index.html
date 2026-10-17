@@ -1,0 +1,254 @@
+<meta charset="utf-8">
+<title>Handball Value Signals</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@500;600;700&family=Source+Sans+3:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  --bg:#f1f3f6; --surface:#ffffff; --ink:#121826; --ink2:#46505f; --muted:#737d8c; --line:#dbe0e7; --grid:#e9edf2;
+  --accent:#c8203a; --accent-soft:#fbe9ec; --md:#1b7f4b; --md-soft:#e5f3eb;
+  --pos:#1b7f4b; --neg:#b3372f; --warn:#a86b00; --warn-bg:#fdf3dc;
+  --display:"Saira Condensed","Arial Narrow",system-ui,sans-serif;
+  --body:"Source Sans 3",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){color-scheme:dark;
+    --bg:#0f1319; --surface:#171c24; --ink:#eef1f5; --ink2:#b9c1cc; --muted:#8a94a3; --line:#2a313c; --grid:#212833;
+    --accent:#ff5c72; --accent-soft:#2c1a1f; --md:#4cc47a; --md-soft:#16271d;
+    --pos:#4cc47a; --neg:#ef7a70; --warn:#f0b84a; --warn-bg:#2d2512;}
+}
+:root[data-theme="dark"]{color-scheme:dark;
+  --bg:#0f1319; --surface:#171c24; --ink:#eef1f5; --ink2:#b9c1cc; --muted:#8a94a3; --line:#2a313c; --grid:#212833;
+  --accent:#ff5c72; --accent-soft:#2c1a1f; --md:#4cc47a; --md-soft:#16271d;
+  --pos:#4cc47a; --neg:#ef7a70; --warn:#f0b84a; --warn-bg:#2d2512;}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5;margin:0}
+.wrap{max-width:1040px;margin:0 auto;padding-inline:18px;padding-block:24px 56px;display:flex;flex-direction:column;gap:40px}
+h1,h2,h3{font-family:var(--display);font-weight:700;margin:0;text-wrap:balance;letter-spacing:.01em}
+h1{font-size:clamp(2.1rem,5.5vw,3rem);line-height:1}
+h2{font-size:1.65rem;line-height:1.1}
+h3{font-size:1.12rem}
+p{margin:0;max-width:72ch}
+.eyebrow{font-family:var(--display);font-weight:600;text-transform:uppercase;letter-spacing:.14em;font-size:.82rem;color:var(--accent)}
+.md .eyebrow{color:var(--md)}
+.muted{color:var(--muted)} .small{font-size:.86rem}
+header{display:flex;flex-direction:column;gap:10px}
+section{display:flex;flex-direction:column;gap:14px}
+.rule{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.rule>div{background:var(--surface);padding:16px 18px;display:flex;flex-direction:column;gap:6px}
+.rule .what{border-left:4px solid var(--accent)}
+.md .rule .what{border-left-color:var(--md)}
+.rule .big{font-family:var(--display);font-weight:700;font-size:1.55rem;line-height:1.15}
+.klabel{font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:700}
+.stat{font-family:var(--display);font-weight:700;font-size:2rem;line-height:1;font-variant-numeric:tabular-nums}
+.stat small{font-size:.95rem;color:var(--muted);font-weight:600;margin-left:4px}
+.seasons{display:flex;gap:6px;flex-wrap:wrap}
+.pill{font-size:.78rem;font-weight:700;padding:2px 9px;border-radius:99px;border:1px solid var(--line);font-variant-numeric:tabular-nums}
+.pill.pos{color:var(--pos);border-color:color-mix(in srgb,var(--pos) 40%,transparent);background:color-mix(in srgb,var(--pos) 10%,transparent)}
+.pill.neg{color:var(--neg);border-color:color-mix(in srgb,var(--neg) 40%,transparent);background:color-mix(in srgb,var(--neg) 9%,transparent)}
+.sig{display:inline-block;font-size:.76rem;font-weight:700;padding:1px 9px;border-radius:99px;border:1px solid var(--line);white-space:nowrap}
+.sig.go{color:var(--pos);border-color:color-mix(in srgb,var(--pos) 45%,transparent);background:color-mix(in srgb,var(--pos) 12%,transparent)}
+.sig.wait{color:var(--warn);border-color:color-mix(in srgb,var(--warn) 45%,transparent);background:var(--warn-bg)}
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:.9rem;font-variant-numeric:tabular-nums}
+th,td{padding:8px 11px;text-align:right;white-space:nowrap;border-bottom:1px solid var(--grid)}
+th{font-weight:600;color:var(--muted);font-size:.72rem;text-transform:uppercase;letter-spacing:.06em}
+td.l,th.l{text-align:left}
+tr:last-child td{border-bottom:0}
+#sgRules td,#sgRules th{white-space:normal;vertical-align:top}
+#sgRules .sig{white-space:normal;display:inline-block}
+tr.hot td{background:color-mix(in srgb,var(--pos) 8%,var(--surface))}
+tr.top td{background:var(--md-soft)}
+tr.tot td{border-top:2px solid var(--line)}
+tr.testrow td{font-weight:700}
+.pos{color:var(--pos)} .neg{color:var(--neg)}
+.empty{color:var(--muted);font-style:italic}
+.note{font-size:.86rem;color:var(--ink2);border-left:3px solid var(--line);padding-left:12px;max-width:80ch}
+footer{font-size:.82rem;color:var(--muted);border-top:1px solid var(--line);padding-top:14px;display:flex;flex-direction:column;gap:4px}
+
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.tile{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px;display:flex;flex-direction:column;gap:3px;min-width:0}
+header{padding-bottom:6px}
+header h1{display:flex;align-items:center;gap:12px}
+header h1::before{content:"";width:6px;height:.85em;background:var(--accent);border-radius:2px;flex:none}
+section>h3{display:flex;align-items:center;gap:10px;margin-top:10px}
+section>h3::after{content:"";flex:1;height:1px;background:var(--line)}
+.tbl{box-shadow:0 1px 2px color-mix(in srgb,var(--ink) 6%,transparent)}
+thead th{background:color-mix(in srgb,var(--ink) 3%,var(--surface));position:sticky;top:0}
+tbody tr:hover td{background:color-mix(in srgb,var(--accent) 5%,var(--surface))}
+section{padding-top:4px}
+.wrap{gap:44px}
+th.key{color:var(--ink)}
+td.key{font-weight:700;background:var(--md-soft)}
+
+tr.grp td{background:color-mix(in srgb,var(--ink) 5%,var(--surface));font-size:.95rem;padding-block:7px;border-top:1px solid var(--line)}
+.beat{display:flex;align-items:center;gap:8px;min-width:130px}
+.beat .bar{flex:1;height:7px;border-radius:4px;background:var(--grid);overflow:hidden;min-width:60px}
+.beat .bar i{display:block;height:100%;background:currentColor;border-radius:4px}
+.beat b{min-width:2.6em;text-align:right;font-variant-numeric:tabular-nums}
+#sgBeat th,#sgBeat td{padding:7px 9px}
+tr.testrow td{background:var(--md-soft)}
+a{color:var(--accent)}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;position:sticky;top:0;z-index:5;background:var(--bg);padding:10px 0;margin-block:-14px;border-bottom:1px solid var(--line)}
+.tabs a{font-family:var(--display);font-weight:600;font-size:1.02rem;letter-spacing:.03em;text-decoration:none;color:var(--ink);padding:5px 14px;border:1px solid var(--line);border-radius:99px;background:var(--surface)}
+.tabs a:hover{border-color:var(--accent);color:var(--accent)}
+a.tile{text-decoration:none;color:inherit}a.tile:hover{border-color:var(--accent)}
+.crumb{font-size:.9rem}
+.tabs a.on{background:var(--accent);border-color:var(--accent);color:#fff}
+html{scroll-behavior:smooth}section{scroll-margin-top:60px}
+@media (max-width:700px){.rule{grid-template-columns:1fr}}
+</style>
+
+<div class="wrap" data-page="hungary" data-base="/handball/">
+<header>
+  <div class="eyebrow">Handball · 2026-27</div>
+  <h1>Where the value is</h1>
+  <p class="muted">Out of everything tested on four seasons (2022-23 to 2025-26) across 24 men's and women's leagues, only these angles held up against the bookmakers. The page updates twice a day.</p>
+</header>
+
+<nav class="tabs" aria-label="Pages"><a data-id="projections" href="#projections">1 Projections</a><a data-id="backtesting" href="#backtesting">2 Backtesting</a><a data-id="done-by-the-break" href="#done-by-the-break">3 Done by the Break</a></nav>
+
+<section id="projections">
+  <div><div class="eyebrow">1 · Full time · Women's leagues</div><h2>Projections</h2><p class="muted">Where the under beats the bookies' line.</p></div>
+  <p class="note" id="sgSource" hidden></p>
+  <div class="tiles" id="sgTiles"></div>
+  <h3>Leagues</h3>
+  <p class="small muted">Open a league for its projections against the bookmaker.</p>
+  <div class="tiles" id="sgLeagues"></div>
+  <h3>Qualified bets</h3>
+  <p class="small muted" id="sgQNote"></p>
+  <div class="tbl"><table id="sgQ"></table></div>
+  <h3>Projections: next matches</h3>
+  <p class="small muted">Next 8 days, once both teams have played 6 games. “Model total” is our projected goals for the match; a bet qualifies when it is 2+ goals below the bookmaker's line.</p>
+  <div class="tbl"><table id="sgNext"></table></div>
+  <h3>Signals this season</h3>
+  <p class="small muted" id="sgRec"></p>
+  <div class="tbl"><table id="sgLog"></table></div>
+  <h3>The rules</h3>
+  <p class="muted small" id="sgIntro"></p>
+  <div class="tbl"><table id="sgRules"></table></div>
+  <p class="note" id="sgNote"></p>
+</section>
+
+<section id="backtesting">
+  <div><div class="eyebrow">2 · Full time · Women's leagues</div><h2>Backtesting</h2><p class="muted">How our bets beat the bookies' line.</p></div>
+  <p class="small muted">Averages over the signal bets only. “Beat the line by” = how many goals past the line the real total landed, in the direction we bet (positive = in our favour).</p>
+  <div class="tbl"><table id="sgBeat"></table></div>
+  <p class="small muted" id="sgBeatNote"></p>
+</section>
+
+<section id="league"></section>
+
+<section id="done-by-the-break" class="md">
+  <div><div class="eyebrow">3 · 1st half · Men's Bundesliga</div><h2>Done by the Break</h2><p class="muted">Magdeburg at home as a heavy favourite.</p></div>
+  <div class="rule">
+    <div class="what"><span class="klabel">The pattern</span><span class="big">At home at odds of 1.10 or shorter, Magdeburg do most of their damage before half-time, especially against bottom-table teams.</span><span class="small muted">The angle: Magdeburg on the 1st-half handicap. They have usually led by more than half of the full-match handicap line at the break.</span></div>
+    <div><span class="klabel">Home games at ≤ 1.10 since 2022-23</span><span class="stat" id="mdStat"></span><span class="small" id="mdStat2"></span></div>
+  </div>
+  <h3>Next Magdeburg home matches</h3>
+  <div class="tbl"><table id="mdNext"></table></div>
+  <h3>The evidence</h3>
+  <div class="tbl"><table id="mdEv"></table></div>
+  <p class="note" id="mdNote"></p>
+</section>
+
+<footer>
+  <span id="upd"></span>
+</footer>
+</div>
+
+<script>
+const D={"scraped": "2026-10-18 01:02", "source": {"source": "flashscore", "since": "2026-10-16 23:28", "checked": "2026-10-18 01:02", "changed": false}, "sig": {"leagues": [{"key": "w_es", "name": "Women · Spain · División de Honor", "side": "under", "gamesMin": 5, "start": 6, "gap": 2.0, "past": {"under": {"train": {"n": 70, "roi": 34.3, "won": 51, "lost": 19, "p": 0.0004}, "test": {"n": 23, "roi": 43.0, "won": 18, "lost": 5, "p": 0.007}}}, "tracking": false, "blind": null, "proj": [], "upcoming": [], "noLine": 0}, {"key": "w_pt", "name": "Women · Portugal · 1ª Divisão", "side": "under", "gamesMin": 6, "start": 6, "gap": 2.0, "past": {"under": {"train": {"n": 79, "roi": 11.8, "won": 47, "lost": 30, "p": 0.1204}, "test": {"n": 32, "roi": 31.9, "won": 23, "lost": 9, "p": 0.0198}}}, "tracking": false, "blind": null, "proj": [{"url": "fs:6VkbKsod", "date": "2026-10-18", "time": "16:00", "home": "Benfica W", "away": "CJ Almeida Garrett W", "gh": 6, "ga": 6, "ours": 56.1, "signal": false}], "upcoming": [], "noLine": 1}, {"key": "w_at", "name": "Women · Austria · WHA", "side": "under", "gamesMin": 4, "start": 6, "gap": 2.0, "past": {"under": {"train": {"n": 13, "roi": 43.2, "won": 10, "lost": 3, "p": 0.0404}, "test": {"n": 1, "roi": 71.4, "won": 1, "lost": 0, "p": null}}}, "tracking": true, "blind": null, "proj": [], "upcoming": [], "noLine": 0}, {"key": "w_ro", "name": "Women · Romania · Liga Națională", "side": "under", "gamesMin": 6, "start": 6, "gap": 2.0, "past": {"under": {"train": {"n": 64, "roi": 17.9, "won": 41, "lost": 23, "p": 0.0565}, "test": {"n": 20, "roi": 19.2, "won": 13, "lost": 7, "p": 0.1754}}}, "tracking": true, "blind": null, "proj": [{"url": "fs:Ye2IeZg5", "date": "2026-10-18", "time": "13:00", "home": "Stiinta Bucharest W", "away": "Zalau W", "gh": 6, "ga": 6, "ours": 57.0, "signal": false}, {"url": "fs:C63YiigU", "date": "2026-10-18", "time": "14:00", "home": "Targu Mures W", "away": "Corona Brasov W", "gh": 6, "ga": 6, "ours": 57.2, "signal": false}, {"url": "fs:2VrrCfvn", "date": "2026-10-18", "time": "14:30", "home": "Dunarea Braila W", "away": "Iasi W", "gh": 6, "ga": 6, "ours": 48.9, "signal": false}, {"url": "fs:hI02aHft", "date": "2026-10-18", "time": "15:00", "home": "SCM Craiova W", "away": "Baia Mare W", "gh": 6, "ga": 6, "ours": 59.8, "signal": false}, {"url": "fs:vg5QgDOH", "date": "2026-10-18", "time": "15:00", "home": "Targu Jiu W", "away": "Ramnicu Valcea W", "gh": 6, "ga": 6, "ours": 52.5, "signal": false}], "upcoming": [], "noLine": 5}, {"key": "w_hu", "name": "Women · Hungary · NB I", "side": "under", "gamesMin": 6, "start": 6, "gap": 2.0, "past": {"under": {"train": {"n": 14, "roi": 4.2, "won": 8, "lost": 6, "p": 0.4346}, "test": {"n": 21, "roi": 11.3, "won": 13, "lost": 8, "p": 0.2848}}}, "tracking": true, "blind": null, "proj": [], "upcoming": [], "noLine": 0}, {"key": "w_hr", "name": "Women · Croatia · 1. HRL", "side": "under", "gamesMin": 4, "start": 6, "gap": 2.0, "past": {"under": {"train": {"n": 21, "roi": 5.2, "won": 12, "lost": 9, "p": 0.401}, "test": {"n": 5, "roi": 10.7, "won": 3, "lost": 2, "p": 0.4122}}}, "tracking": true, "blind": null, "proj": [], "upcoming": [], "noLine": 0}], "signals": [], "summary": {"bl": {"backtest": {"seasons": "2022-25", "side": "over", "bets": 132, "won": 85, "lost": 47, "push": 0, "winPct": 64.4, "avgOdds": 1.85, "avgLine": 59.0, "avgOurs": 61.8, "avgActual": 60.5, "avgBeat": 1.6, "profit": 25.2, "roi": 19.1, "allLine": 58.7, "allActual": 59.1, "allMatches": 752}, "test": {"seasons": "2025-26", "side": "over", "bets": 55, "won": 37, "lost": 18, "push": 0, "winPct": 67.3, "avgOdds": 1.84, "avgLine": 59.9, "avgOurs": 62.7, "avgActual": 61.3, "avgBeat": 1.4, "profit": 13.0, "roi": 23.6, "allLine": 60.1, "allActual": 60.5, "allMatches": 251}, "2022-2023": {"seasons": "2022-23", "side": "over", "bets": 42, "won": 30, "lost": 12, "push": 0, "winPct": 71.4, "avgOdds": 1.83, "avgLine": 58.4, "avgOurs": 61.3, "avgActual": 60.6, "avgBeat": 2.1, "profit": 12.8, "roi": 30.5, "allLine": 58.2, "allActual": 59.1, "allMatches": 252}, "2023-2024": {"seasons": "2023-24", "side": "over", "bets": 48, "won": 24, "lost": 24, "push": 0, "winPct": 50.0, "avgOdds": 1.84, "avgLine": 59.4, "avgOurs": 62.1, "avgActual": 59.5, "avgBeat": 0.2, "profit": -3.9, "roi": -8.2, "allLine": 59.3, "allActual": 59.0, "allMatches": 250}, "2024-2025": {"seasons": "2024-25", "side": "over", "bets": 42, "won": 31, "lost": 11, "push": 0, "winPct": 73.8, "avgOdds": 1.88, "avgLine": 59.0, "avgOurs": 61.9, "avgActual": 61.6, "avgBeat": 2.6, "profit": 16.3, "roi": 38.8, "allLine": 58.4, "allActual": 59.2, "allMatches": 250}, "2025-2026": {"seasons": "2025-26", "side": "over", "bets": 55, "won": 37, "lost": 18, "push": 0, "winPct": 67.3, "avgOdds": 1.84, "avgLine": 59.9, "avgOurs": 62.7, "avgActual": 61.3, "avgBeat": 1.4, "profit": 13.0, "roi": 23.6, "allLine": 60.1, "allActual": 60.5, "allMatches": 251}}, "w_es": {"backtest": {"seasons": "2022-25", "side": "under", "bets": 70, "won": 51, "lost": 19, "push": 0, "winPct": 72.9, "avgOdds": 1.84, "avgLine": 51.5, "avgOurs": 48.1, "avgActual": 47.8, "avgBeat": 3.8, "profit": 24.0, "roi": 34.3, "allLine": 51.6, "allActual": 49.9, "allMatches": 207}, "test": {"seasons": "2025-26", "side": "under", "bets": 23, "won": 18, "lost": 5, "push": 0, "winPct": 78.3, "avgOdds": 1.83, "avgLine": 49.7, "avgOurs": 45.7, "avgActual": 46.3, "avgBeat": 3.4, "profit": 9.9, "roi": 43.0, "allLine": 48.8, "allActual": 46.0, "allMatches": 46}, "2022-2023": {"seasons": "2022-23", "side": "under", "bets": 16, "won": 11, "lost": 5, "push": 0, "winPct": 68.8, "avgOdds": 1.83, "avgLine": 52.4, "avgOurs": 49.6, "avgActual": 50.2, "avgBeat": 2.2, "profit": 4.2, "roi": 26.6, "allLine": 51.5, "allActual": 50.1, "allMatches": 80}, "2023-2024": {"seasons": "2023-24", "side": "under", "bets": 22, "won": 16, "lost": 6, "push": 0, "winPct": 72.7, "avgOdds": 1.86, "avgLine": 53.0, "avgOurs": 49.2, "avgActual": 49.5, "avgBeat": 3.5, "profit": 7.8, "roi": 35.6, "allLine": 53.3, "allActual": 51.9, "allMatches": 55}, "2024-2025": {"seasons": "2024-25", "side": "under", "bets": 32, "won": 24, "lost": 8, "push": 0, "winPct": 75.0, "avgOdds": 1.83, "avgLine": 50.1, "avgOurs": 46.6, "avgActual": 45.4, "avgBeat": 4.7, "profit": 11.9, "roi": 37.3, "allLine": 50.2, "allActual": 48.1, "allMatches": 72}, "2025-2026": {"seasons": "2025-26", "side": "under", "bets": 23, "won": 18, "lost": 5, "push": 0, "winPct": 78.3, "avgOdds": 1.83, "avgLine": 49.7, "avgOurs": 45.7, "avgActual": 46.3, "avgBeat": 3.4, "profit": 9.9, "roi": 43.0, "allLine": 48.8, "allActual": 46.0, "allMatches": 46}}, "w_pt": {"backtest": {"seasons": "2022-25", "side": "under", "bets": 79, "won": 47, "lost": 30, "push": 2, "winPct": 59.5, "avgOdds": 1.84, "avgLine": 53.0, "avgOurs": 49.3, "avgActual": 51.1, "avgBeat": 1.9, "profit": 9.4, "roi": 11.8, "allLine": 53.7, "allActual": 52.6, "allMatches": 191}, "test": {"seasons": "2025-26", "side": "under", "bets": 32, "won": 23, "lost": 9, "push": 0, "winPct": 71.9, "avgOdds": 1.84, "avgLine": 52.7, "avgOurs": 48.3, "avgActual": 49.2, "avgBeat": 3.6, "profit": 10.2, "roi": 31.9, "allLine": 52.2, "allActual": 50.1, "allMatches": 54}, "2022-2023": {"seasons": "2022-23", "side": "under", "bets": 24, "won": 12, "lost": 12, "push": 0, "winPct": 50.0, "avgOdds": 1.81, "avgLine": 51.7, "avgOurs": 48.2, "avgActual": 50.0, "avgBeat": 1.7, "profit": -2.2, "roi": -9.3, "allLine": 53.0, "allActual": 52.7, "allMatches": 78}, "2023-2024": {"seasons": "2023-24", "side": "under", "bets": 23, "won": 14, "lost": 7, "push": 2, "winPct": 60.9, "avgOdds": 1.85, "avgLine": 54.2, "avgOurs": 50.5, "avgActual": 52.1, "avgBeat": 2.1, "profit": 4.7, "roi": 20.5, "allLine": 55.6, "allActual": 53.6, "allMatches": 56}, "2024-2025": {"seasons": "2024-25", "side": "under", "bets": 32, "won": 21, "lost": 11, "push": 0, "winPct": 65.6, "avgOdds": 1.85, "avgLine": 53.0, "avgOurs": 49.3, "avgActual": 51.1, "avgBeat": 2.0, "profit": 6.9, "roi": 21.5, "allLine": 52.8, "allActual": 51.4, "allMatches": 57}, "2025-2026": {"seasons": "2025-26", "side": "under", "bets": 32, "won": 23, "lost": 9, "push": 0, "winPct": 71.9, "avgOdds": 1.84, "avgLine": 52.7, "avgOurs": 48.3, "avgActual": 49.2, "avgBeat": 3.6, "profit": 10.2, "roi": 31.9, "allLine": 52.2, "allActual": 50.1, "allMatches": 54}}, "w_at": {"backtest": {"seasons": "2022-25", "side": "under", "bets": 13, "won": 10, "lost": 3, "push": 0, "winPct": 76.9, "avgOdds": 1.86, "avgLine": 55.2, "avgOurs": 51.1, "avgActual": 51.2, "avgBeat": 3.9, "profit": 5.6, "roi": 43.2, "allLine": 54.2, "allActual": 54.0, "allMatches": 156}, "test": {"seasons": "2025-26", "side": "under", "bets": 1, "won": 1, "lost": 0, "push": 0, "winPct": 100.0, "avgOdds": 1.71, "avgLine": 55.5, "avgOurs": 52.9, "avgActual": 44.0, "avgBeat": 11.5, "profit": 0.7, "roi": 71.4, "allLine": 56.8, "allActual": 54.4, "allMatches": 18}, "2022-2023": {"seasons": "2022-23", "side": "under", "bets": 6, "won": 5, "lost": 1, "push": 0, "winPct": 83.3, "avgOdds": 1.83, "avgLine": 53.6, "avgOurs": 49.3, "avgActual": 48.7, "avgBeat": 4.9, "profit": 3.1, "roi": 51.9, "allLine": 53.9, "allActual": 52.6, "allMatches": 61}, "2023-2024": {"seasons": "2023-24", "side": "under", "bets": 4, "won": 3, "lost": 1, "push": 0, "winPct": 75.0, "avgOdds": 1.88, "avgLine": 58.5, "avgOurs": 53.9, "avgActual": 56.2, "avgBeat": 2.2, "profit": 1.7, "roi": 41.9, "allLine": 54.2, "allActual": 54.7, "allMatches": 72}, "2024-2025": {"seasons": "2024-25", "side": "under", "bets": 3, "won": 2, "lost": 1, "push": 0, "winPct": 66.7, "avgOdds": 1.89, "avgLine": 53.8, "avgOurs": 50.9, "avgActual": 49.7, "avgBeat": 4.2, "profit": 0.8, "roi": 27.7, "allLine": 54.9, "allActual": 55.8, "allMatches": 23}, "2025-2026": {"seasons": "2025-26", "side": "under", "bets": 1, "won": 1, "lost": 0, "push": 0, "winPct": 100.0, "avgOdds": 1.71, "avgLine": 55.5, "avgOurs": 52.9, "avgActual": 44.0, "avgBeat": 11.5, "profit": 0.7, "roi": 71.4, "allLine": 56.8, "allActual": 54.4, "allMatches": 18}}, "w_ro": {"backtest": {"seasons": "2022-25", "side": "under", "bets": 64, "won": 41, "lost": 23, "push": 0, "winPct": 64.1, "avgOdds": 1.84, "avgLine": 55.1, "avgOurs": 52.1, "avgActual": 53.5, "avgBeat": 1.7, "profit": 11.5, "roi": 17.9, "allLine": 55.9, "allActual": 56.2, "allMatches": 404}, "test": {"seasons": "2025-26", "side": "under", "bets": 20, "won": 13, "lost": 7, "push": 0, "winPct": 65.0, "avgOdds": 1.82, "avgLine": 58.5, "avgOurs": 55.4, "avgActual": 57.0, "avgBeat": 1.4, "profit": 3.8, "roi": 19.2, "allLine": 56.4, "allActual": 56.4, "allMatches": 94}, "2022-2023": {"seasons": "2022-23", "side": "under", "bets": 18, "won": 12, "lost": 6, "push": 0, "winPct": 66.7, "avgOdds": 1.81, "avgLine": 52.3, "avgOurs": 49.3, "avgActual": 51.0, "avgBeat": 1.3, "profit": 3.8, "roi": 20.9, "allLine": 54.8, "allActual": 55.1, "allMatches": 139}, "2023-2024": {"seasons": "2023-24", "side": "under", "bets": 15, "won": 10, "lost": 5, "push": 0, "winPct": 66.7, "avgOdds": 1.85, "avgLine": 55.1, "avgOurs": 52.2, "avgActual": 53.5, "avgBeat": 1.6, "profit": 3.6, "roi": 24.3, "allLine": 56.7, "allActual": 57.7, "allMatches": 140}, "2024-2025": {"seasons": "2024-25", "side": "under", "bets": 31, "won": 19, "lost": 12, "push": 0, "winPct": 61.3, "avgOdds": 1.85, "avgLine": 56.8, "avgOurs": 53.7, "avgActual": 54.9, "avgBeat": 2.0, "profit": 4.0, "roi": 13.1, "allLine": 56.2, "allActual": 55.6, "allMatches": 125}, "2025-2026": {"seasons": "2025-26", "side": "under", "bets": 20, "won": 13, "lost": 7, "push": 0, "winPct": 65.0, "avgOdds": 1.82, "avgLine": 58.5, "avgOurs": 55.4, "avgActual": 57.0, "avgBeat": 1.4, "profit": 3.8, "roi": 19.2, "allLine": 56.4, "allActual": 56.4, "allMatches": 94}}, "w_hu": {"backtest": {"seasons": "2022-25", "side": "under", "bets": 14, "won": 8, "lost": 6, "push": 0, "winPct": 57.1, "avgOdds": 1.82, "avgLine": 58.4, "avgOurs": 55.6, "avgActual": 56.5, "avgBeat": 1.9, "profit": 0.6, "roi": 4.2, "allLine": 56.7, "allActual": 57.5, "allMatches": 413}, "test": {"seasons": "2025-26", "side": "under", "bets": 21, "won": 13, "lost": 8, "push": 0, "winPct": 61.9, "avgOdds": 1.8, "avgLine": 57.7, "avgOurs": 54.3, "avgActual": 56.4, "avgBeat": 1.3, "profit": 2.4, "roi": 11.3, "allLine": 57.3, "allActual": 57.3, "allMatches": 137}, "2022-2023": {"seasons": "2022-23", "side": "under", "bets": 5, "won": 2, "lost": 3, "push": 0, "winPct": 40.0, "avgOdds": 1.78, "avgLine": 56.1, "avgOurs": 53.5, "avgActual": 58.0, "avgBeat": -1.9, "profit": -1.5, "roi": -29.4, "allLine": 54.5, "allActual": 54.6, "allMatches": 136}, "2023-2024": {"seasons": "2023-24", "side": "under", "bets": 2, "won": 1, "lost": 1, "push": 0, "winPct": 50.0, "avgOdds": 1.84, "avgLine": 56.0, "avgOurs": 53.5, "avgActual": 52.5, "avgBeat": 3.5, "profit": -0.1, "roi": -6.4, "allLine": 56.8, "allActual": 57.6, "allMatches": 138}, "2024-2025": {"seasons": "2024-25", "side": "under", "bets": 7, "won": 5, "lost": 2, "push": 0, "winPct": 71.4, "avgOdds": 1.84, "avgLine": 60.8, "avgOurs": 57.6, "avgActual": 56.6, "avgBeat": 4.2, "profit": 2.2, "roi": 31.2, "allLine": 58.8, "allActual": 60.1, "allMatches": 139}, "2025-2026": {"seasons": "2025-26", "side": "under", "bets": 21, "won": 13, "lost": 8, "push": 0, "winPct": 61.9, "avgOdds": 1.8, "avgLine": 57.7, "avgOurs": 54.3, "avgActual": 56.4, "avgBeat": 1.3, "profit": 2.4, "roi": 11.3, "allLine": 57.3, "allActual": 57.3, "allMatches": 137}}, "w_hr": {"backtest": {"seasons": "2022-25", "side": "under", "bets": 21, "won": 12, "lost": 9, "push": 0, "winPct": 57.1, "avgOdds": 1.82, "avgLine": 56.1, "avgOurs": 52.6, "avgActual": 54.7, "avgBeat": 1.4, "profit": 1.1, "roi": 5.2, "allLine": 54.3, "allActual": 55.2, "allMatches": 199}, "test": {"seasons": "2025-26", "side": "under", "bets": 5, "won": 3, "lost": 2, "push": 0, "winPct": 60.0, "avgOdds": 1.88, "avgLine": 61.3, "avgOurs": 57.7, "avgActual": 57.2, "avgBeat": 4.1, "profit": 0.5, "roi": 10.7, "allLine": 58.4, "allActual": 59.0, "allMatches": 28}, "2022-2023": {"seasons": "2022-23", "side": "under", "bets": 12, "won": 5, "lost": 7, "push": 0, "winPct": 41.7, "avgOdds": 1.81, "avgLine": 56.5, "avgOurs": 53.0, "avgActual": 55.8, "avgBeat": 0.6, "profit": -2.8, "roi": -23.7, "allLine": 54.1, "allActual": 54.8, "allMatches": 103}, "2023-2024": {"seasons": "2023-24", "side": "under", "bets": 7, "won": 5, "lost": 2, "push": 0, "winPct": 71.4, "avgOdds": 1.84, "avgLine": 55.4, "avgOurs": 52.6, "avgActual": 54.1, "avgBeat": 1.2, "profit": 2.2, "roi": 31.7, "allLine": 54.1, "allActual": 55.8, "allMatches": 41}, "2024-2025": {"seasons": "2024-25", "side": "under", "bets": 2, "won": 2, "lost": 0, "push": 0, "winPct": 100.0, "avgOdds": 1.85, "avgLine": 56.5, "avgOurs": 50.2, "avgActual": 50.0, "avgBeat": 6.5, "profit": 1.7, "roi": 85.4, "allLine": 54.6, "allActual": 55.4, "allMatches": 55}, "2025-2026": {"seasons": "2025-26", "side": "under", "bets": 5, "won": 3, "lost": 2, "push": 0, "winPct": 60.0, "avgOdds": 1.88, "avgLine": 61.3, "avgOurs": 57.7, "avgActual": 57.2, "avgBeat": 4.1, "profit": 0.5, "roi": 10.7, "allLine": 58.4, "allActual": 59.0, "allMatches": 28}}, "w_hu_over": {"backtest": {"seasons": "2022-25", "side": "over", "bets": 93, "won": 57, "lost": 36, "push": 0, "winPct": 61.3, "avgOdds": 1.82, "avgLine": 57.1, "avgOurs": 60.4, "avgActual": 59.0, "avgBeat": 1.9, "profit": 11.1, "roi": 12.0, "allLine": 56.7, "allActual": 57.5, "allMatches": 413}, "test": {"seasons": "2025-26", "side": "over", "bets": 19, "won": 10, "lost": 9, "push": 0, "winPct": 52.6, "avgOdds": 1.84, "avgLine": 57.5, "avgOurs": 60.7, "avgActual": 58.4, "avgBeat": 0.8, "profit": -0.6, "roi": -3.3, "allLine": 57.3, "allActual": 57.3, "allMatches": 137}, "2022-2023": {"seasons": "2022-23", "side": "over", "bets": 16, "won": 11, "lost": 5, "push": 0, "winPct": 68.8, "avgOdds": 1.79, "avgLine": 53.9, "avgOurs": 56.8, "avgActual": 55.7, "avgBeat": 1.8, "profit": 3.7, "roi": 22.9, "allLine": 54.5, "allActual": 54.6, "allMatches": 136}, "2023-2024": {"seasons": "2023-24", "side": "over", "bets": 43, "won": 24, "lost": 19, "push": 0, "winPct": 55.8, "avgOdds": 1.84, "avgLine": 57.7, "avgOurs": 60.9, "avgActual": 59.3, "avgBeat": 1.7, "profit": 1.3, "roi": 3.1, "allLine": 56.8, "allActual": 57.6, "allMatches": 138}, "2024-2025": {"seasons": "2024-25", "side": "over", "bets": 34, "won": 22, "lost": 12, "push": 0, "winPct": 64.7, "avgOdds": 1.82, "avgLine": 58.0, "avgOurs": 61.6, "avgActual": 60.2, "avgBeat": 2.2, "profit": 6.2, "roi": 18.1, "allLine": 58.8, "allActual": 60.1, "allMatches": 139}, "2025-2026": {"seasons": "2025-26", "side": "over", "bets": 19, "won": 10, "lost": 9, "push": 0, "winPct": 52.6, "avgOdds": 1.84, "avgLine": 57.5, "avgOurs": 60.7, "avgActual": 58.4, "avgBeat": 0.8, "profit": -0.6, "roi": -3.3, "allLine": 57.3, "allActual": 57.3, "allMatches": 137}}}}, "md": {"fixtures": [{"url": "fs:bR3D2QJt", "date": "2026-10-18", "time": "16:00", "opp": "Stuttgart", "o1": null, "pos": 8, "nTeams": 18, "fromBottom": 11, "promoted": false, "ah": null, "ph": 15.42, "pa": 13.59}, {"url": "fs:APFBTEuf", "date": "2026-11-15", "time": "14:00", "opp": "Flensburg-H.", "o1": null, "pos": 2, "nTeams": 18, "fromBottom": 17, "promoted": false, "ph": 17.38, "pa": 16.04}, {"url": "fs:Qgiw9sa3", "date": "2026-11-29", "time": "17:00", "opp": "Eisenach", "o1": null, "pos": 12, "nTeams": 18, "fromBottom": 7, "promoted": false, "ph": 16.14, "pa": 13.42}, {"url": "fs:vXg2FbvQ", "date": "2027-02-11", "time": "18:00", "opp": "MT Melsungen", "o1": null, "pos": 4, "nTeams": 18, "fromBottom": 15, "promoted": false, "ph": 15.21, "pa": 13.67}, {"url": "fs:bwUDR1Tk", "date": "2027-02-25", "time": "18:00", "opp": "Rhein-Neckar", "o1": null, "pos": 11, "nTeams": 18, "fromBottom": 8, "promoted": false, "ph": 15.75, "pa": 13.2}], "evidence": [{"label": "All home games at ≤ 1.10", "n": 32, "d1": 5.19, "d2": 2.53, "htLead": 93.8, "line": -7.56, "ht": 21, "htN": 32, "p": 0.0091}, {"label": "vs promoted teams", "n": 8, "d1": 6.62, "d2": 4.12, "htLead": 100.0, "line": -8.5, "ht": 7, "htN": 8, "p": 0.1064}, {"label": "vs bottom 2", "n": 8, "d1": 7.12, "d2": 3.0, "htLead": 100.0, "line": -9.0, "ht": 8, "htN": 8, "p": 0.0442}, {"label": "vs bottom 4", "n": 16, "d1": 6.06, "d2": 2.5, "htLead": 100.0, "line": -8.12, "ht": 12, "htN": 16, "p": 0.0198}, {"label": "vs bottom 6", "n": 22, "d1": 5.5, "d2": 2.32, "htLead": 100.0, "line": -8.0, "ht": 14, "htN": 22, "p": 0.011}, {"label": "vs everyone else", "n": 10, "d1": 4.5, "d2": 3.0, "htLead": 80.0, "line": -6.6, "ht": 7, "htN": 10, "p": 0.4207}], "evidenceTo": "2026-09-20"}, "wbl": {}};
+const $=s=>document.querySelector(s);
+const f=(v,d=2)=>v==null||isNaN(v)?'–':(+v).toFixed(d);
+const sg=(v,d=2)=>v==null||isNaN(v)?'–':(v>0?'+':'')+(+v).toFixed(d);
+const cls=v=>v>0?'pos':v<0?'neg':'';
+const pct=v=>v==null?'–':`${v>0?'+':''}${f(v,0)}%`;
+const day=d=>{if(!d)return '–';const [y,m,dd]=d.split('-');return new Date(+y,+m-1,+dd).toLocaleDateString('en-GB',{weekday:'short',day:'2-digit',month:'short'})};
+
+/* ---------- signal 1: over / under in three leagues ---------- */
+(function(){
+  const G=D.sig, L=G.leagues, byKey=Object.fromEntries(L.map(l=>[l.key,l]));
+  const SRC=D.source||{};
+  if(SRC.source==='flashscore'){const b=$('#sgSource');b.hidden=false;b.innerHTML=`<b>Bookmaker lines unavailable since ${day((SRC.since||'').slice(0,10))}.</b> BetExplorer, the source of the over/under lines, is not available from this location (it shows a “site unavailable in Greece” notice). Results and fixtures now come from Flashscore, so open signals still get settled, but <b>no new signals can appear</b> until a source of bookmaker lines is available again.`}
+  const side=s=>s==='over'?'Over':s==='under'?'Under':'Over or Under';
+  const sides=l=>l.side==='both'?['over','under']:[l.side];
+  const skey=(l,sd)=>l.side==='both'?`${l.key}_${sd}`:l.key;
+  const trk=l=>'';
+  const res=x=>x&&x.n?`${x.n} bets, <b class="${cls(x.roi)}">${pct(x.roi)}</b>`:'–';
+  $('#sgIntro').innerHTML=`Model total = projected goals of both teams from this season's results. A signal needs both teams to have played ${L[0].start} games. <b>Backtest (2022-25):</b> the seasons used to choose the settings, so the results look a little better than they should. <b>Independent test (2025-26):</b> a season the settings never saw, so it is the fairer check. A league is kept only if it beat the line by 1.5+ goals in the backtest and held up in the test: only Spain and Portugal pass. The other leagues are followed too, with their own record.`;
+  $('#sgRules').innerHTML=`<thead><tr><th class="l">League</th><th class="l">Bet</th><th>2022-25 backtest</th><th class="key">2025-26 independent test</th><th class="l">This season</th></tr></thead><tbody>${L.map(l=>`<tr><td class="l"><b>${l.name}</b>${trk(l)}</td><td class="l">${sides(l).map(sd=>`${side(sd)} when model is ${f(l.gap,0)}+ goals ${sd==='over'?'above':'below'} bookie`).join('<br>')}</td><td>${sides(l).map(sd=>res((l.past[sd]||{}).train)).join('<br>')}</td><td class="key">${sides(l).map(sd=>res((l.past[sd]||{}).test)).join('<br>')}</td><td class="l">${l.gamesMin>=l.start?'<span class="sig go">Signals on</span>':`<span class="sig wait">Starts after ${l.start} games</span> <span class="muted">(teams have ${l.gamesMin}+)</span>`}</td></tr>`).join('')}</tbody>`;
+  const SM=G.summary||{};
+  const PER=[['2022-2023','2022-23'],['2023-2024','2023-24'],['2024-2025','2024-25'],['backtest','2022-25 backtest'],['test','2025-26 independent test']];
+  const beatCell=v=>{const w=Math.max(0,Math.min(100,(v||0)/6*100));return `<div class="beat ${cls(v)}"><span class="bar"><i style="width:${w}%"></i></span><b>${sg(v,1)}</b></div>`};
+  $('#sgBeat').innerHTML=`<thead><tr><th class="l">Season</th><th>Bets</th><th>Won – lost</th><th>Avg line</th><th>Model avg</th><th>Real avg</th><th class="l">Beat the line by (goals)</th><th>Return</th></tr></thead>`+L.flatMap(l=>sides(l).map(sd=>({...l,side:sd,key:skey(l,sd)}))).map(l=>{
+    const rows=PER.map(([p,lab])=>{const x=(SM[l.key]||{})[p];if(!x||!x.bets)return '';return `<tr class="${p==='test'?'hot testrow':p==='backtest'?'tot':''}"><td class="l">${lab}</td><td>${x.bets}</td><td>${x.won} – ${x.lost} <span class="muted">(${f(x.winPct,0)}%)</span></td><td>${f(x.avgLine,1)}</td><td>${f(x.avgOurs,1)}</td><td><b>${f(x.avgActual,1)}</b></td><td class="l">${beatCell(x.avgBeat)}</td><td class="${cls(x.roi)}"><b>${pct(x.roi)}</b></td></tr>`}).join('');
+    const tst=(SM[l.key]||{}).test;
+    return `<tbody><tr class="grp"><td class="l" colspan="8"><b>${l.name.split(' · ').slice(0,2).join(' · ')}</b> <span class="muted">${side(l.side)}${tst&&tst.avgOdds?' · avg odds '+f(tst.avgOdds):''}</span></td></tr>${rows}</tbody>`}).join('');
+  $('#sgBeatNote').innerHTML='For comparison, across <em>all</em> matches (not only our bets): '+L.map(l=>{const k=skey(l,sides(l)[0]),a=(SM[k]||{}).backtest,b=(SM[k]||{}).test;return a?`${l.name.split(' · ')[0]} ${l.name.split(' · ')[1]}: line ${f(a.allLine,1)} vs real ${f(a.allActual,1)} (2022-25), ${f(b.allLine,1)} vs ${f(b.allActual,1)} (2025-26)`:''}).join(' · ')+'. In women\'s Spain and Portugal the lines were too high in general; in women\'s Austria they were close to right on average.';
+  const S=G.signals, done=S.filter(x=>x.status!=='open'), won=done.filter(x=>x.status==='won').length, lost=done.filter(x=>x.status==='lost').length, pr=done.reduce((a,x)=>a+x.profit,0);
+  const push=done.filter(x=>x.status==='push').length;
+  $('#sgRec').innerHTML=S.length?`<b>${S.length}</b> signal${S.length===1?'':'s'}: ${won} won, ${lost} lost${push?`, ${push} push (stake returned)`:''}, ${S.length-done.length} to play.${done.length?` Profit <b class="${cls(pr)}">${sg(pr,2)} units</b> from ${done.length} staked (${pct(pr/done.length*100)}).`:''} Each is logged with the line and odds at the moment it appeared.`:'No signals yet this season.';
+  const nUp=L.reduce((a,l)=>a+l.upcoming.length,0), nOpen=S.length-done.length;
+  $('#sgTiles').innerHTML=[['Open signals',nOpen,nOpen?'to play':'none right now'],['Record',`${won}–${lost}`,push?`${push} push`:'won – lost'],['Profit',`<span class="${cls(pr)}">${sg(pr,2)}</span>`,'units staked 1 each'],['Matches with a line',nUp,'next 8 days'],['Leagues',L.length,"women's leagues"]].map(([k,v,n])=>`<div class="tile"><span class="klabel">${k}</span><span class="stat">${v}</span><span class="small muted">${n}</span></div>`).join('');
+  const st={open:'<span class="sig wait">To play</span>',won:'<span class="sig go">Won</span>',lost:'<span class="sig">Lost</span>',push:'<span class="sig">Push</span>'};
+  $('#sgLog').innerHTML=S.length?`<thead><tr><th class="l">League</th><th class="l">Match</th><th class="l">Date</th><th>Bet</th><th>Odds</th><th>Model total</th><th>Real total</th><th class="l">Result</th><th>Profit</th></tr></thead><tbody>${S.map(x=>`<tr class="${x.status==='open'?'hot':''}"><td class="l muted">${(x.leagueName||'').replace(' · División de Honor','').replace(' · 1ª Divisão','')}</td><td class="l"><b>${x.home}</b> – ${x.away}</td><td class="l">${day(x.date)} <span class="muted">${x.time||''}</span></td><td><b>${side(x.side||'over')} ${f(x.line,1)}</b></td><td>${f(x.odds)}</td><td>${f(x.ours,1)}</td><td>${x.total??'–'}</td><td class="l">${st[x.status]}</td><td class="${cls(x.profit)}">${x.profit==null?'–':sg(x.profit,2)}</td></tr>`).join('')}</tbody>`:'<tbody><tr><td class="l empty">Nothing yet.</td></tr></tbody>';
+  const U=L.flatMap(l=>(l.proj||[]).map(x=>({...x,lg:l}))).sort((a,b)=>(a.date+(a.time||'')).localeCompare(b.date+(b.time||'')));
+  const nm=x=>x.lg.name.split(' · ').slice(0,2).join(' · ');
+  const LG={spain:'w_es',portugal:'w_pt',austria:'w_at',romania:'w_ro',hungary:'w_hu',croatia:'w_hr'}, SL=Object.fromEntries(Object.entries(LG).map(([a,b])=>[b,a]));
+  const BASE=document.querySelector('.wrap').dataset.base, lgHref=k=>BASE?`${BASE}projections/${SL[k]}/`:'#'+SL[k];
+  window.__LG=LG;
+  $('#sgNext').innerHTML=U.length?`<thead><tr><th class="l">League</th><th class="l">Match</th><th class="l">Date</th><th>Model total</th><th>Bookie line</th><th>Model − line</th><th>Games played</th><th class="l">Bet</th></tr></thead><tbody>${U.map(x=>`<tr class="${x.signal?'hot':''}"><td class="l"><a href="${lgHref(x.lg.key)}">${nm(x)}</a></td><td class="l"><b>${x.home}</b> – ${x.away}</td><td class="l">${day(x.date)} <span class="muted">${x.time||''}</span></td><td><b>${f(x.ours,1)}</b></td><td>${x.line!=null?f(x.line,1):'<span class="muted">not out</span>'}</td><td class="${x.line!=null?cls(x.gap):''}">${x.line!=null?sg(x.gap,1):'–'}</td><td>${x.gh} / ${x.ga}</td><td class="l">${x.signal?`<span class="sig go">Qualified: ${side(x.side)}</span>`:x.line!=null?'<span class="muted">no bet</span>':'<span class="muted">waiting for line</span>'}</td></tr>`).join('')}</tbody>`:`<tbody><tr><td class="l empty">No projections yet. They start once both teams have played ${L[0].start} games (so far: ${L.map(l=>nm({lg:l})+' '+l.gamesMin+'+').join(' · ')}).</td></tr></tbody>`;
+  const Q=S.filter(x=>x.status==='open');
+  $('#sgQNote').innerHTML=Q.length?`${Q.length} open bet${Q.length===1?'':'s'}. Each was logged with the line and odds at the moment it qualified.`:'No bet qualifies right now. Bets appear here when our total is 2+ goals below the bookmaker line.';
+  $('#sgQ').innerHTML=Q.length?`<thead><tr><th class="l">League</th><th class="l">Match</th><th class="l">Date</th><th>Bet</th><th>Odds</th><th>Model total</th><th>Model − line</th></tr></thead><tbody>${Q.map(x=>`<tr class="hot"><td class="l muted">${(x.leagueName||'').replace(' · División de Honor','').replace(' · 1ª Divisão','')}</td><td class="l"><b>${x.home}</b> – ${x.away}</td><td class="l">${day(x.date)} <span class="muted">${x.time||''}</span></td><td><b>${side(x.side||'under')} ${f(x.line,1)}</b></td><td>${f(x.odds)}</td><td>${f(x.ours,1)}</td><td class="${cls(x.gap)}">${sg(x.gap,1)}</td></tr>`).join('')}</tbody>`:'<tbody><tr><td class="l empty">None right now.</td></tr></tbody>';
+  const nl=L.reduce((a,l)=>a+l.noLine,0);
+  $('#sgNote').innerHTML=`${nl?`${nl} more match${nl===1?'':'es'} in the next 8 days have no line yet; bookies usually open them 1–3 days before. `:''}<b>Spain:</b> bookies' lines have been too high across the league, so the edge may fade once they adjust. <b>Portugal:</b> only 1–2 bookies, so lines are often missing and limits are low. <b>Austria, Romania, Hungary, Croatia:</b> too few bets so far to prove an edge, so treat them with more caution. Odds are BetExplorer averages; compare prices and stake small.`;
+  $('#sgLeagues').innerHTML=L.map(l=>{const open=S.filter(x=>x.league===l.key&&x.status==='open').length,n=(l.proj||[]).length;return `<a class="tile" href="${lgHref(l.key)}"><span class="stat" style="font-size:1.3rem">${l.name.split(' · ').slice(0,2).join(' · ')}</span><span class="small muted">${n} projection${n===1?'':'s'} · ${open} open bet${open===1?'':'s'} · ${l.gamesMin}+ games played</span></a>`}).join('');
+  window.__lg=function(key){
+    const l=L.find(x=>x.key===key), mine=S.filter(x=>x.league===key), dn=mine.filter(x=>x.status!=='open'), w=dn.filter(x=>x.status==='won').length, lo=dn.filter(x=>x.status==='lost').length, pf=dn.reduce((a,x)=>a+x.profit,0);
+    const sm=SM[key]||{}, tst=sm.test, P=l.proj||[], nmL=l.name.split(' · ').slice(0,2).join(' · ');
+    const projT=P.length?`<thead><tr><th class="l">Match</th><th class="l">Date</th><th>Model total</th><th>Bookie line</th><th>Model − line</th><th>Under odds</th><th>Games played</th><th class="l">Bet</th></tr></thead><tbody>${P.map(x=>`<tr class="${x.signal?'hot':''}"><td class="l"><b>${x.home}</b> – ${x.away}</td><td class="l">${day(x.date)} <span class="muted">${x.time||''}</span></td><td><b>${f(x.ours,1)}</b></td><td>${x.line!=null?f(x.line,1):'<span class="muted">not out</span>'}</td><td class="${x.line!=null?cls(x.gap):''}">${x.line!=null?sg(x.gap,1):'–'}</td><td>${x.under?f(x.under):'–'}</td><td>${x.gh} / ${x.ga}</td><td class="l">${x.signal?`<span class="sig go">Qualified: ${side(x.side)}</span>`:x.line!=null?'<span class="muted">no bet</span>':'<span class="muted">waiting for line</span>'}</td></tr>`).join('')}</tbody>`:`<tbody><tr><td class="l empty">No projections yet. They start once both teams have played ${l.start} games (this league: ${l.gamesMin}+ so far).</td></tr></tbody>`;
+    const logT=mine.length?`<thead><tr><th class="l">Match</th><th class="l">Date</th><th>Bet</th><th>Odds</th><th>Model total</th><th>Real total</th><th class="l">Result</th><th>Profit</th></tr></thead><tbody>${mine.map(x=>`<tr class="${x.status==='open'?'hot':''}"><td class="l"><b>${x.home}</b> – ${x.away}</td><td class="l">${day(x.date)} <span class="muted">${x.time||''}</span></td><td><b>${side(x.side||'under')} ${f(x.line,1)}</b></td><td>${f(x.odds)}</td><td>${f(x.ours,1)}</td><td>${x.total??'–'}</td><td class="l">${st[x.status]}</td><td class="${cls(x.profit)}">${x.profit==null?'–':sg(x.profit,2)}</td></tr>`).join('')}</tbody>`:'<tbody><tr><td class="l empty">No bets from this league yet.</td></tr></tbody>';
+    const btRows=PER.map(([p,lab])=>{const x=sm[p];if(!x||!x.bets)return '';return `<tr class="${p==='test'?'hot testrow':p==='backtest'?'tot':''}"><td class="l">${lab}</td><td>${x.bets}</td><td>${x.won} – ${x.lost} <span class="muted">(${f(x.winPct,0)}%)</span></td><td>${f(x.avgLine,1)}</td><td>${f(x.avgOurs,1)}</td><td><b>${f(x.avgActual,1)}</b></td><td class="l">${beatCell(x.avgBeat)}</td><td class="${cls(x.roi)}"><b>${pct(x.roi)}</b></td></tr>`}).join('');
+    const tiles=[['Games played',l.gamesMin+'+',l.gamesMin>=l.start?'signals on':`signals start after ${l.start}`],['Open bets',mine.filter(x=>x.status==='open').length,'to play'],['Record',`${w}–${lo}`,`${sg(pf,2)} units`],['2025-26 test',tst&&tst.bets?pct(tst.roi):'–',tst&&tst.bets?`${tst.bets} bets vs the line`:'no bets']];
+    $('#league').innerHTML=`<p class="crumb"><a href="${BASE?BASE+'projections/':'#projections'}">← Projections</a></p><div><div class="eyebrow">Full time · Under</div><h2>${nmL}</h2><p class="muted">Our projected total against the bookmaker's line. A bet qualifies when our total is ${f(l.gap,0)}+ goals below the line and both teams have played ${l.start} games.</p></div>
+    <div class="tiles">${tiles.map(([k,v,n])=>`<div class="tile"><span class="klabel">${k}</span><span class="stat">${v}</span><span class="small muted">${n}</span></div>`).join('')}</div>
+    <h3>Projections vs bookmaker</h3><div class="tbl"><table>${projT}</table></div>
+    <h3>Bets from this league</h3><div class="tbl"><table>${logT}</table></div>
+    <h3>Backtest vs bookmaker</h3><p class="small muted">Averages over this league's signal bets. “Beat the line by” = goals past the line in our favour.</p>
+    <div class="tbl"><table><thead><tr><th class="l">Season</th><th>Bets</th><th>Won – lost</th><th>Avg line</th><th>Model avg</th><th>Real avg</th><th class="l">Beat the line by (goals)</th><th>Return</th></tr></thead><tbody>${btRows||'<tr><td class="l empty" colspan="8">No bets in the backtest.</td></tr>'}</tbody></table></div>`;
+  };
+})();
+
+/* ---------- signal 2: Magdeburg 1st half ---------- */
+(function(){
+  const M=D.md, E=M.evidence, all=E.find(e=>e.label.startsWith('All'))||{};
+  $('#mdStat').innerHTML=`${sg(all.d1,1)}<small>1st half</small> ${sg(all.d2,1)}<small>2nd half</small>`;
+  $('#mdStat2').innerHTML=`Average goal margin in each half over ${all.n} games. Led at half-time in <b>${f(all.htLead,0)}%</b>.`;
+  const F=M.fixtures;
+  $('#mdNext').innerHTML=F.length?`<thead><tr><th class="l">Opponent</th><th class="l">Date</th><th>Table now</th><th>Magdeburg odds</th><th>Handicap line</th><th>Half-time target</th><th>Our 1H projection</th><th class="l">Spot</th></tr></thead><tbody>${F.map(x=>{
+    const heavy=x.o1!=null&&x.o1<=1.105, weak=(x.fromBottom!=null&&x.fromBottom<=6)||x.promoted;
+    const spot=x.o1==null?'<span class="muted">odds not out</span>':heavy&&weak?'<span class="sig go">Strong spot</span>':heavy?'<span class="sig wait">Spot</span>':'<span class="muted">odds too long</span>';
+    const tgt=x.ah?x.ah.line/2:null, pm=x.ph!=null?x.ph-x.pa:null;
+    return `<tr class="${heavy&&weak?'top':''}"><td class="l"><b>${x.opp}</b>${x.promoted?' <span class="sig">promoted</span>':''}</td><td class="l">${day(x.date)} <span class="muted">${x.time||''}</span></td><td>${x.pos?`${x.pos}. <span class="muted">of ${x.nTeams}</span>`:'–'}${x.fromBottom!=null&&x.fromBottom<=6?' <span class="sig">bottom 6</span>':''}</td><td>${x.o1?f(x.o1):'–'}</td><td>${x.ah?sg(x.ah.line,1):'–'}</td><td>${tgt!=null?`lead by ${f(-tgt,2)}+`:'–'}</td><td>${pm!=null?`${f(x.ph,1)}–${f(x.pa,1)} <span class="${cls(pm)}">(${sg(pm,1)})</span>`:'–'}</td><td class="l">${spot}</td></tr>`}).join('')}</tbody>`:'<tbody><tr><td class="l empty">No home matches listed.</td></tr></tbody>';
+  $('#mdEv').innerHTML=`<thead><tr><th class="l">Magdeburg at home, odds ≤ 1.10</th><th>Games</th><th>1st-half margin</th><th>2nd-half margin</th><th>Led at half-time</th><th>Beat ½ of the handicap at HT</th></tr></thead><tbody>${E.map(e=>`<tr class="${/bottom 2|bottom 4/.test(e.label)?'top':''}"><td class="l">${e.label}</td><td>${e.n}</td><td><b>${sg(e.d1,1)}</b></td><td>${sg(e.d2,1)}</td><td>${f(e.htLead,0)}%</td><td>${e.htN?`${e.ht} of ${e.htN}`:'–'}</td></tr>`).join('')}</tbody>`;
+  $('#mdNote').innerHTML=`How to use it: when Magdeburg are 1.10 or shorter at home, look at your bookmaker's <b>1st-half handicap</b> for Magdeburg. If it asks for less than the half-time target above (half of the full-match line), that is the value this pattern points to. Positions “Table now” are this season's table so far (early in the season they move a lot). Caution: this could not be tested against real 1st-half odds (BetExplorer has none), and the samples are small (8–32 games). Evidence up to ${M.evidenceTo?day(M.evidenceTo):'–'}.`;
+})();
+
+/* ---------- pages: one section per page (site: real pages; artifact: #hash) ---------- */
+(function(){
+  const main=['projections','backtesting','done-by-the-break'], LG=window.__LG, names={projections:'Projections','backtesting':'Backtesting','done-by-the-break':'Done by the Break'};
+  const ids=main.concat(Object.keys(LG));
+  const wrap=document.querySelector('.wrap'), fixed=wrap.dataset.page, base=wrap.dataset.base;
+  if(base) document.querySelectorAll('.tabs a').forEach(a=>{a.href=base+a.dataset.id+'/'});
+  const cur=()=>fixed||(ids.includes(location.hash.slice(1))?location.hash.slice(1):'projections');
+  function show(){const c=cur(), lg=LG[c], tab=lg?'projections':c, sec=lg?'league':c;
+    ['projections','backtesting','done-by-the-break','league'].forEach(i=>{document.getElementById(i).style.display=i===sec?'':'none'});
+    if(lg&&window.__lg) window.__lg(lg);
+    document.querySelectorAll('.tabs a').forEach(a=>{const on=a.dataset.id===tab;a.classList.toggle('on',on);if(on)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current')});
+    document.title='Handball · '+(names[c]||c.charAt(0).toUpperCase()+c.slice(1)+' (projections)');}
+  addEventListener('hashchange',()=>{show();scrollTo(0,0)});show();
+})();
+
+$('#upd').textContent=`Updated ${D.scraped}.`;
+</script>
