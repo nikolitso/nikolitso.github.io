@@ -91,18 +91,19 @@ a{color:var(--accent)}
 .tabs{display:flex;gap:8px;flex-wrap:wrap;position:sticky;top:0;z-index:5;background:var(--bg);padding:10px 0;margin-block:-14px;border-bottom:1px solid var(--line)}
 .tabs a{font-family:var(--display);font-weight:600;font-size:1.02rem;letter-spacing:.03em;text-decoration:none;color:var(--ink);padding:5px 14px;border:1px solid var(--line);border-radius:99px;background:var(--surface)}
 .tabs a:hover{border-color:var(--accent);color:var(--accent)}
+.tabs a.on{background:var(--accent);border-color:var(--accent);color:#fff}
 html{scroll-behavior:smooth}section{scroll-margin-top:60px}
 @media (max-width:700px){.rule{grid-template-columns:1fr}}
 </style>
 
-<div class="wrap">
+<div class="wrap" data-page="projections" data-base="/handball/">
 <header>
   <div class="eyebrow">Handball · 2026-27</div>
   <h1>Where the value is</h1>
   <p class="muted">Out of everything tested on four seasons (2022-23 to 2025-26) across 24 men's and women's leagues, only these angles held up against the bookmakers. The page updates twice a day.</p>
 </header>
 
-<nav class="tabs" aria-label="Sections"><a href="#projections">1 Projections</a><a href="#backtesting">2 Backtesting</a><a href="#done-by-the-break">3 Done by the Break</a></nav>
+<nav class="tabs" aria-label="Pages"><a data-id="projections" href="#projections">1 Projections</a><a data-id="backtesting" href="#backtesting">2 Backtesting</a><a data-id="done-by-the-break" href="#done-by-the-break">3 Done by the Break</a></nav>
 
 <section id="projections">
   <div><div class="eyebrow">1 · Full time · Women's leagues</div><h2>Projections</h2><p class="muted">Where the under beats the bookies' line.</p></div>
@@ -199,6 +200,19 @@ const day=d=>{if(!d)return '–';const [y,m,dd]=d.split('-');return new Date(+y,
     return `<tr class="${heavy&&weak?'top':''}"><td class="l"><b>${x.opp}</b>${x.promoted?' <span class="sig">promoted</span>':''}</td><td class="l">${day(x.date)} <span class="muted">${x.time||''}</span></td><td>${x.pos?`${x.pos}. <span class="muted">of ${x.nTeams}</span>`:'–'}${x.fromBottom!=null&&x.fromBottom<=6?' <span class="sig">bottom 6</span>':''}</td><td>${x.o1?f(x.o1):'–'}</td><td>${x.ah?sg(x.ah.line,1):'–'}</td><td>${tgt!=null?`lead by ${f(-tgt,2)}+`:'–'}</td><td>${pm!=null?`${f(x.ph,1)}–${f(x.pa,1)} <span class="${cls(pm)}">(${sg(pm,1)})</span>`:'–'}</td><td class="l">${spot}</td></tr>`}).join('')}</tbody>`:'<tbody><tr><td class="l empty">No home matches listed.</td></tr></tbody>';
   $('#mdEv').innerHTML=`<thead><tr><th class="l">Magdeburg at home, odds ≤ 1.10</th><th>Games</th><th>1st-half margin</th><th>2nd-half margin</th><th>Led at half-time</th><th>Beat ½ of the handicap at HT</th></tr></thead><tbody>${E.map(e=>`<tr class="${/bottom 2|bottom 4/.test(e.label)?'top':''}"><td class="l">${e.label}</td><td>${e.n}</td><td><b>${sg(e.d1,1)}</b></td><td>${sg(e.d2,1)}</td><td>${f(e.htLead,0)}%</td><td>${e.htN?`${e.ht} of ${e.htN}`:'–'}</td></tr>`).join('')}</tbody>`;
   $('#mdNote').innerHTML=`How to use it: when Magdeburg are 1.10 or shorter at home, look at your bookmaker's <b>1st-half handicap</b> for Magdeburg. If it asks for less than the half-time target above (half of the full-match line), that is the value this pattern points to. Positions “Table now” are this season's table so far (early in the season they move a lot). Caution: this could not be tested against real 1st-half odds (BetExplorer has none), and the samples are small (8–32 games). Evidence up to ${M.evidenceTo?day(M.evidenceTo):'–'}.`;
+})();
+
+/* ---------- pages: one section per page (site: three real pages; artifact: #hash) ---------- */
+(function(){
+  const ids=['projections','backtesting','done-by-the-break'], names={projections:'Projections','backtesting':'Backtesting','done-by-the-break':'Done by the Break'};
+  const wrap=document.querySelector('.wrap'), fixed=wrap.dataset.page, base=wrap.dataset.base;
+  if(base) document.querySelectorAll('.tabs a').forEach(a=>{const i=a.dataset.id;a.href=i==='projections'?base:base+i+'/'});
+  const cur=()=>fixed||(ids.includes(location.hash.slice(1))?location.hash.slice(1):'projections');
+  function show(){const c=cur();
+    ids.forEach(i=>{document.getElementById(i).style.display=i===c?'':'none'});
+    document.querySelectorAll('.tabs a').forEach(a=>{const on=a.dataset.id===c;a.classList.toggle('on',on);if(on)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current')});
+    document.title='Handball · '+names[c];}
+  addEventListener('hashchange',()=>{show();scrollTo(0,0)});show();
 })();
 
 $('#upd').textContent=`Updated ${D.scraped}.`;
