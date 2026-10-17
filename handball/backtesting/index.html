@@ -206,7 +206,7 @@ const day=d=>{if(!d)return '–';const [y,m,dd]=d.split('-');return new Date(+y,
 (function(){
   const ids=['projections','backtesting','done-by-the-break'], names={projections:'Projections','backtesting':'Backtesting','done-by-the-break':'Done by the Break'};
   const wrap=document.querySelector('.wrap'), fixed=wrap.dataset.page, base=wrap.dataset.base;
-  if(base) document.querySelectorAll('.tabs a').forEach(a=>{const i=a.dataset.id;a.href=i==='projections'?base:base+i+'/'});
+  if(base) document.querySelectorAll('.tabs a').forEach(a=>{const i=a.dataset.id;a.href=base+i+'/'});
   const cur=()=>fixed||(ids.includes(location.hash.slice(1))?location.hash.slice(1):'projections');
   function show(){const c=cur();
     ids.forEach(i=>{document.getElementById(i).style.display=i===c?'':'none'});
