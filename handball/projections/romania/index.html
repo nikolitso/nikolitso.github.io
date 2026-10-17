@@ -93,6 +93,8 @@ a{color:var(--accent)}
 .tabs a:hover{border-color:var(--accent);color:var(--accent)}
 a.tile{text-decoration:none;color:inherit}a.tile:hover{border-color:var(--accent)}
 .crumb{font-size:.9rem}
+th.srt{cursor:pointer;user-select:none}th.srt:hover{color:var(--ink)}
+th[aria-sort=ascending]::after{content:" \25B2";font-size:.7em}th[aria-sort=descending]::after{content:" \25BC";font-size:.7em}
 .tabs a.on{background:var(--accent);border-color:var(--accent);color:#fff}
 html{scroll-behavior:smooth}section{scroll-margin-top:60px}
 @media (max-width:700px){.rule{grid-template-columns:1fr}}
@@ -212,7 +214,7 @@ const day=d=>{if(!d)return '–';const [y,m,dd]=d.split('-');return new Date(+y,
     <div class="tiles"><div class="tile"><span class="klabel">League average · home team</span><span class="stat">${f(H.muH,1)}</span><span class="small muted">goals per match</span></div><div class="tile"><span class="klabel">League average · away team</span><span class="stat">${f(H.muA,1)}</span><span class="small muted">goals per match</span></div><div class="tile"><span class="klabel">League average · total</span><span class="stat">${f(H.total,1)}</span><span class="small muted">goals per match</span></div><div class="tile"><span class="klabel">Correction</span><span class="stat">${sg(H.shift,1)}</span><span class="small muted">${H.shift>0.05?'goals added to every projection':H.shift<-0.05?'goals taken off every projection':'no change needed'}</span></div></div>
     <p class="note">${corr}</p>
     <p class="small muted">Early in the season a team's numbers are pulled toward the league average by the equivalent of ${H.k} made-up average game${H.k===1?'':'s'}, so one big result does not swing the projection; this fades as games are played.</p>
-    <div class="tbl"><table><thead><tr><th class="l">Team</th><th>Games</th><th>Scored per game</th><th>Conceded per game</th><th>Attack</th><th>Defence</th></tr></thead><tbody>${H.teams.map(t=>`<tr><td class="l"><b>${t.team}</b></td><td>${t.g}</td><td>${f(t.gf,1)}</td><td>${f(t.ga,1)}</td><td class="${t.att>1?'pos':t.att<1?'neg':''}"><b>${f(t.att,2)}</b></td><td class="${t.de<1?'pos':t.de>1?'neg':''}"><b>${f(t.de,2)}</b></td></tr>`).join('')}</tbody></table></div>
+    <div class="tbl"><table><thead><tr><th class="l">Team</th><th>Games</th><th>Scored per game</th><th>Conceded per game</th><th>Total goals per game</th><th>Attack</th><th>Defence</th></tr></thead><tbody>${H.teams.map(t=>`<tr><td class="l"><b>${t.team}</b></td><td>${t.g}</td><td>${f(t.gf,1)}</td><td>${f(t.ga,1)}</td><td><b>${f(t.gf+t.ga,1)}</b></td><td class="${t.att>1?'pos':t.att<1?'neg':''}"><b>${f(t.att,2)}</b></td><td class="${t.de<1?'pos':t.de>1?'neg':''}"><b>${f(t.de,2)}</b></td></tr>`).join('')}</tbody></table></div>
     <p class="small muted">Attack above 1.00 = scores more than average. Defence below 1.00 = concedes less than average (green is better in both columns).</p>
     <h3>The workings, match by match</h3>
     <div class="tbl"><table>${P.length?`<thead><tr><th class="l">Match</th><th>Home goals expected<br><span class="muted">${f(H.muH,1)} × attack × defence</span></th><th>Away goals expected<br><span class="muted">${f(H.muA,1)} × attack × defence</span></th><th>Sum</th><th>Correction</th><th>Model total</th><th>Bookie line</th></tr></thead><tbody>${P.map(x=>`<tr class="${x.signal?'hot':''}"><td class="l"><b>${x.home}</b> – ${x.away}</td><td>${f(H.muH,1)} × ${f(x.ah,2)} × ${f(x.da,2)} = <b>${f(x.ph,1)}</b></td><td>${f(H.muA,1)} × ${f(x.aa,2)} × ${f(x.dh,2)} = <b>${f(x.pa,1)}</b></td><td>${f(x.ph+x.pa,1)}</td><td>${sg(H.shift,1)}</td><td><b>${f(x.ours,1)}</b></td><td>${x.line!=null?f(x.line,1):'–'}</td></tr>`).join('')}</tbody>`:'<tbody><tr><td class="l empty">The workings appear here once matches qualify for a projection.</td></tr></tbody>'}</table></div>`:'';
@@ -242,6 +244,30 @@ const day=d=>{if(!d)return '–';const [y,m,dd]=d.split('-');return new Date(+y,
   $('#mdNote').innerHTML=`How to use it: when Magdeburg are 1.10 or shorter at home, look at your bookmaker's <b>1st-half handicap</b> for Magdeburg. If it asks for less than the half-time target above (half of the full-match line), that is the value this pattern points to. Positions “Table now” are this season's table so far (early in the season they move a lot). Caution: this could not be tested against real 1st-half odds (BetExplorer has none), and the samples are small (8–32 games). Evidence up to ${M.evidenceTo?day(M.evidenceTo):'–'}.`;
 })();
 
+
+/* ---------- click a column heading to sort a table ---------- */
+function makeSortable(){
+  document.querySelectorAll('.tbl table').forEach(t=>{
+    if(t.dataset.srt||!t.tHead||t.tBodies.length!==1||t.id==='sgRules'||t.id==='mdEv'||t.querySelector('tr.tot,tr.testrow,tr.grp,td[colspan]')) return;
+    t.dataset.srt='1';
+    const body=t.tBodies[0], rows=[...body.rows]; rows.forEach((r,i)=>r.dataset.i=i);
+    [...t.tHead.rows[0].cells].forEach((th,c)=>{
+      th.classList.add('srt');
+      th.addEventListener('click',()=>{
+        const dir=th.getAttribute('aria-sort')==='ascending'?-1:1;
+        t.querySelectorAll('th').forEach(x=>x.removeAttribute('aria-sort'));
+        th.setAttribute('aria-sort',dir===1?'ascending':'descending');
+        const txt=r=>(r.cells[c]?r.cells[c].textContent:'').trim().replace(/−/g,'-');
+        const vals=[...body.rows].map(txt).filter(v=>v&&v!=='–');
+        const num=vals.length>0&&vals.every(v=>/^[-+]?\d/.test(v));
+        const isDate=/^date$/i.test(th.textContent.trim());
+        const key=r=>isDate?+r.dataset.i:num?(()=>{const v=txt(r);return /^[-+]?\d/.test(v)?parseFloat(v):-Infinity})():txt(r).toLowerCase();
+        [...body.rows].sort((a,b)=>{const x=key(a),y=key(b);return (x<y?-1:x>y?1:0)*dir||(a.dataset.i-b.dataset.i)}).forEach(r=>body.appendChild(r));
+      });
+    });
+  });
+}
+
 /* ---------- pages: one section per page (site: real pages; artifact: #hash) ---------- */
 (function(){
   const main=['projections','backtesting','done-by-the-break'], LG=window.__LG, names={projections:'Projections','backtesting':'Backtesting','done-by-the-break':'Done by the Break'};
@@ -253,7 +279,7 @@ const day=d=>{if(!d)return '–';const [y,m,dd]=d.split('-');return new Date(+y,
     ['projections','backtesting','done-by-the-break','league'].forEach(i=>{document.getElementById(i).style.display=i===sec?'':'none'});
     if(lg&&window.__lg) window.__lg(lg);
     document.querySelectorAll('.tabs a').forEach(a=>{const on=a.dataset.id===tab;a.classList.toggle('on',on);if(on)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current')});
-    document.title='Handball · '+(names[c]||c.charAt(0).toUpperCase()+c.slice(1)+' (projections)');}
+    document.title='Handball · '+(names[c]||c.charAt(0).toUpperCase()+c.slice(1)+' (projections)');makeSortable();}
   addEventListener('hashchange',()=>{show();scrollTo(0,0)});show();
 })();
 
