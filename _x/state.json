@@ -402,7 +402,8 @@
       "the-hummingbird",
       "chevalier",
       "the-traitor",
-      "along-the-ridge"
+      "along-the-ridge",
+      "under-the-tree"
     ],
     "log": [
       {
@@ -448,9 +449,15 @@
         "slot": "2026-10-17 08",
         "slug": "along-the-ridge",
         "id": "2111329467763130877"
+      },
+      {
+        "day": "2026-10-17",
+        "slot": "2026-10-17 20",
+        "slug": "under-the-tree",
+        "id": "2111515368095109301"
       }
     ],
     "last_day": "2026-10-17"
   },
-  "last_slot": "2026-10-17 14"
+  "last_slot": "2026-10-17 20"
 }
