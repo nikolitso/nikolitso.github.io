@@ -122,7 +122,8 @@
       "good-to-great",
       "smart-money-the-fall-and-rise-of",
       "on-the-edge-the-art-of-risking-everything",
-      "the-not-to-do-list"
+      "the-not-to-do-list",
+      "basketball-on-paper-rules-and-tools"
     ],
     "log": [
       {
@@ -184,9 +185,15 @@
         "slot": "2026-10-17 14",
         "slug": "the-not-to-do-list",
         "id": "2111459934185623988"
+      },
+      {
+        "day": "2026-10-18",
+        "slot": "2026-10-18 02",
+        "slug": "basketball-on-paper-rules-and-tools",
+        "id": "2111594114773057651"
       }
     ],
-    "last_day": "2026-10-17"
+    "last_day": "2026-10-18"
   },
   "film": {
     "seen": [
@@ -459,5 +466,5 @@
     ],
     "last_day": "2026-10-17"
   },
-  "last_slot": "2026-10-17 20"
+  "last_slot": "2026-10-18 02"
 }
