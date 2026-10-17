@@ -95,12 +95,15 @@ a.tile{text-decoration:none;color:inherit}a.tile:hover{border-color:var(--accent
 .crumb{font-size:.9rem}
 th.srt{cursor:pointer;user-select:none}th.srt:hover{color:var(--ink)}
 th[aria-sort=ascending]::after{content:" \25B2";font-size:.7em}th[aria-sort=descending]::after{content:" \25BC";font-size:.7em}
+header.brand h1{display:flex;align-items:center;gap:12px;font-size:clamp(1.9rem,5vw,2.5rem)}header.brand h1::before{display:none}header.brand{padding-bottom:0}.ball{flex:none}
 .tabs a.on{background:var(--accent);border-color:var(--accent);color:#fff}
 html{scroll-behavior:smooth}section{scroll-margin-top:60px}
 @media (max-width:700px){.rule{grid-template-columns:1fr}}
 </style>
 
 <div class="wrap" data-page="projections" data-base="/handball/">
+
+<header class="brand"><h1><svg class="ball" viewBox="0 0 48 48" width="44" height="44" role="img" aria-label="Handball" xmlns="http://www.w3.org/2000/svg"><circle cx="24" cy="24" r="21.5" fill="var(--surface)" stroke="var(--accent)" stroke-width="3"/><g fill="none" stroke="var(--accent)" stroke-width="2.4" stroke-linecap="round"><path d="M24 24C21 17 22 9 28 3"/><path d="M24 24C28 20 35 19 43 22"/><g transform="rotate(120 24 24)"><path d="M24 24C21 17 22 9 28 3"/><path d="M24 24C28 20 35 19 43 22"/></g><g transform="rotate(240 24 24)"><path d="M24 24C21 17 22 9 28 3"/><path d="M24 24C28 20 35 19 43 22"/></g></g></svg><span>Handball</span></h1></header>
 
 <nav class="tabs" aria-label="Pages"><a data-id="projections" href="#projections">1 Projections</a><a data-id="backtesting" href="#backtesting">2 Backtesting</a><a data-id="done-by-the-break" href="#done-by-the-break">3 Done by the Break</a></nav>
 
