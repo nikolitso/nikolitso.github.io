@@ -122,9 +122,6 @@ html{scroll-behavior:smooth}section{scroll-margin-top:60px}
   <h3>Signals this season</h3>
   <p class="small muted" id="sgRec"></p>
   <div class="tbl"><table id="sgLog"></table></div>
-  <h3>The rules</h3>
-  <p class="muted small" id="sgIntro"></p>
-  <div class="tbl"><table id="sgRules"></table></div>
 </section>
 
 <section id="backtesting">
@@ -172,8 +169,6 @@ const day=d=>{if(!d)return '–';const [y,m,dd]=d.split('-');return new Date(+y,
   const skey=(l,sd)=>l.side==='both'?`${l.key}_${sd}`:l.key;
   const trk=l=>'';
   const res=x=>x&&x.n?`${x.n} bets, <b class="${cls(x.roi)}">${pct(x.roi)}</b>`:'–';
-  $('#sgIntro').innerHTML=`Model total = projected goals of both teams from this season's results. A signal needs both teams to have played ${L[0].start} games. <b>Backtest (2022-25):</b> the seasons used to choose the settings, so the results look a little better than they should. <b>Independent test (2025-26):</b> a season the settings never saw, so it is the fairer check. A league is kept only if it beat the line by 1.5+ goals in the backtest and held up in the test: only Spain and Portugal pass. The other leagues are followed too, with their own record.`;
-  $('#sgRules').innerHTML=`<thead><tr><th class="l">League</th><th class="l">Bet</th><th>2022-25 backtest</th><th class="key">2025-26 independent test</th><th class="l">This season</th></tr></thead><tbody>${L.map(l=>`<tr><td class="l"><b>${l.name}</b>${trk(l)}</td><td class="l">${sides(l).map(sd=>`${side(sd)} when model is ${f(l.gap,0)}+ goals ${sd==='over'?'above':'below'} bookie`).join('<br>')}</td><td>${sides(l).map(sd=>res((l.past[sd]||{}).train)).join('<br>')}</td><td class="key">${sides(l).map(sd=>res((l.past[sd]||{}).test)).join('<br>')}</td><td class="l">${l.gamesMin>=l.start?'<span class="sig go">Signals on</span>':`<span class="sig wait">Starts after ${l.start} games</span> <span class="muted">(teams have ${l.gamesMin}+)</span>`}</td></tr>`).join('')}</tbody>`;
   const SM=G.summary||{};
   const PER=[['2022-2023','2022-23'],['2023-2024','2023-24'],['2024-2025','2024-25'],['backtest','2022-25 backtest'],['test','2025-26 independent test']];
   const beatCell=v=>{const w=Math.max(0,Math.min(100,(v||0)/6*100));return `<div class="beat ${cls(v)}"><span class="bar"><i style="width:${w}%"></i></span><b>${sg(v,1)}</b></div>`};
