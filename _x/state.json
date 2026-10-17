@@ -394,7 +394,8 @@
       "adam",
       "the-hummingbird",
       "chevalier",
-      "the-traitor"
+      "the-traitor",
+      "along-the-ridge"
     ],
     "log": [
       {
@@ -434,9 +435,15 @@
         "slot": "2026-10-16 20",
         "slug": "the-traitor",
         "id": "2111166867901731138"
+      },
+      {
+        "day": "2026-10-17",
+        "slot": "2026-10-17 08",
+        "slug": "along-the-ridge",
+        "id": "2111329467763130877"
       }
     ],
-    "last_day": "2026-10-16"
+    "last_day": "2026-10-17"
   },
-  "last_slot": "2026-10-17 02"
+  "last_slot": "2026-10-17 08"
 }
