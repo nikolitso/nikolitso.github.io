@@ -1,5 +1,5 @@
 <meta charset="utf-8">
-<title>Handball Value Signals</title>
+<title>Handball</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@500;600;700&family=Source+Sans+3:wght@400;500;600;700&display=swap">
 <style>
@@ -49,8 +49,9 @@ section{display:flex;flex-direction:column;gap:14px}
 .sig.go{color:var(--pos);border-color:color-mix(in srgb,var(--pos) 45%,transparent);background:color-mix(in srgb,var(--pos) 12%,transparent)}
 .sig.wait{color:var(--warn);border-color:color-mix(in srgb,var(--warn) 45%,transparent);background:var(--warn-bg)}
 .tbl{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
-table{border-collapse:collapse;width:100%;font-size:.9rem;font-variant-numeric:tabular-nums}
-th,td{padding:8px 11px;text-align:right;white-space:nowrap;border-bottom:1px solid var(--grid)}
+table{border-collapse:collapse;width:100%;font-size:.86rem;font-variant-numeric:tabular-nums}
+th,td{padding:7px 8px;text-align:right;white-space:nowrap;border-bottom:1px solid var(--grid)}
+th{white-space:normal;vertical-align:bottom;line-height:1.25}td.m{white-space:normal;min-width:9rem}
 th{font-weight:600;color:var(--muted);font-size:.72rem;text-transform:uppercase;letter-spacing:.06em}
 td.l,th.l{text-align:left}
 tr:last-child td{border-bottom:0}
@@ -96,7 +97,7 @@ a.tile{text-decoration:none;color:inherit}a.tile:hover{border-color:var(--accent
 th.srt{cursor:pointer;user-select:none}th.srt:hover{color:var(--ink)}
 th[aria-sort=ascending]::after{content:" \25B2";font-size:.7em}th[aria-sort=descending]::after{content:" \25BC";font-size:.7em}
 header.brand{padding-bottom:0}header.brand h1{display:flex;align-items:center;gap:18px;font-size:clamp(2.2rem,6vw,3.2rem);letter-spacing:.2em;text-transform:uppercase;font-weight:700;line-height:1}header.brand h1::before{display:none}.ball{flex:none;filter:drop-shadow(0 4px 6px color-mix(in srgb,var(--accent) 22%,transparent))}
-.chips{display:flex;gap:6px;flex-wrap:wrap}.chip{border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:3px 13px;border-radius:99px;font:inherit;font-size:.86rem;cursor:pointer}.chip:hover{border-color:var(--accent)}.chip.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.chips{display:flex;gap:6px;flex-wrap:wrap}.chip{border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:3px 13px;border-radius:99px;font:inherit;font-size:.86rem;cursor:pointer}a.chip{text-decoration:none;display:inline-block}.chip:hover{border-color:var(--accent)}.chip.on{background:var(--accent);border-color:var(--accent);color:#fff}
 .tabs a.on{background:var(--accent);border-color:var(--accent);color:#fff}
 html{scroll-behavior:smooth}section{scroll-margin-top:60px}
 @media (max-width:700px){.rule{grid-template-columns:1fr}}
@@ -114,25 +115,25 @@ html{scroll-behavior:smooth}section{scroll-margin-top:60px}
   <h3>Leagues</h3>
   <p class="small muted">Open a league for its projections against the bookmaker.</p>
   <div class="tiles" id="sgLeagues"></div>
-  <h3>Qualified bets</h3>
+  <h3>Flagged now</h3>
   <p class="small muted" id="sgQNote"></p>
   <div class="tbl"><table id="sgQ"></table></div>
   <h3>Projections: next matches</h3>
-  <p class="small muted">Next 8 days, once both teams have played 6 games. “Model total” is our projected goals for the match; a bet qualifies when it is 2+ goals below the bookmaker's line.</p>
+  <p class="small muted">Next 8 days, once both teams have played 6 games. “Model total” is our projected goals for the match; a match is flagged when it is 2+ goals below the bookmaker's line.</p>
   <div class="tbl"><table id="sgNext"></table></div>
-  <h3>Signals this season</h3>
+  <h3>Season record</h3>
   <p class="small muted" id="sgRec"></p>
   <div class="tbl"><table id="sgLog"></table></div>
 </section>
 
 <section id="backtesting">
-  <div><div class="eyebrow">Full time</div><h2>Backtesting</h2><p class="muted">How our bets beat the bookies' line.</p></div>
-  <p class="small muted">Averages over the signal bets only. “Beat the line by” = how many goals past the line the real total landed, in the direction we bet (positive = in our favour).</p>
+  <div><div class="eyebrow">Full time</div><h2>Backtesting</h2><p class="muted">Our projections against the bookmakers' lines, season by season.</p></div>
+  <p class="small muted">Matches where our total was 2+ goals below the bookmaker's line. “Beat the line by” is how many goals the real total landed below that line (positive = our projection was right).</p>
   <div class="chips" id="arLeague"></div>
   <div class="tbl"><table id="sgBeat"></table></div>
   <p class="small muted" id="sgBeatNote"></p>
-  <h3>Archive: every bet we would have placed</h3>
-  <p class="small muted">Each bet below is a match where, using only the games played before it that season, our total was 2+ goals below the bookmaker's average line. Odds and lines are the bookmakers' average at the time. 1 unit staked on each. 2022-25 is the backtest and 2025-26 the independent test.</p>
+  <h3>Archive: every flagged match</h3>
+  <p class="small muted">Each match below is one where, using only the games played before it that season, our total was 2+ goals below the bookmakers' average line. Lines and odds are the bookmakers' average at the time. 2022-25 is the backtest and 2025-26 the independent test.</p>
   <div class="chips" id="arPeriod"></div>
   <p id="arSum"></p>
   <div class="tbl" id="arTbl"></div>
@@ -175,54 +176,56 @@ const day=d=>{if(!d)return '–';const [y,m,dd]=d.split('-');return new Date(+y,
   const sides=l=>l.side==='both'?['over','under']:[l.side];
   const skey=(l,sd)=>l.side==='both'?`${l.key}_${sd}`:l.key;
   const trk=l=>'';
-  const res=x=>x&&x.n?`${x.n} bets, <b class="${cls(x.roi)}">${pct(x.roi)}</b>`:'–';
+  const res=x=>x&&x.n?`${x.n} flagged, <b class="${cls(x.roi)}">${pct(x.roi)}</b>`:'–';
   const SM=G.summary||{};
   const PER=[['2022-2023','2022-23'],['2023-2024','2023-24'],['2024-2025','2024-25'],['backtest','2022-25 backtest'],['test','2025-26 independent test']];
   const beatCell=v=>{const w=Math.max(0,Math.min(100,(v||0)/6*100));return `<div class="beat ${cls(v)}"><span class="bar"><i style="width:${w}%"></i></span><b>${sg(v,1)}</b></div>`};
-  $('#sgBeat').innerHTML=`<thead><tr><th class="l">Season</th><th>Bets</th><th>Won – lost</th><th>Avg line</th><th>Model avg</th><th>Real avg</th><th class="l">Beat the line by (goals)</th><th>Return</th></tr></thead>`+L.flatMap(l=>sides(l).map(sd=>({...l,side:sd,key:skey(l,sd)}))).map(l=>{
+  $('#sgBeat').innerHTML=`<thead><tr><th class="l">Season</th><th>Matches</th><th>Right – wrong</th><th>Avg line</th><th>Model avg</th><th>Real avg</th><th class="l">Beat the line by (goals)</th><th>Return</th></tr></thead>`+L.flatMap(l=>sides(l).map(sd=>({...l,side:sd,key:skey(l,sd)}))).map(l=>{
     const rows=PER.map(([p,lab])=>{const x=(SM[l.key]||{})[p];if(!x||!x.bets)return '';return `<tr class="${p==='test'?'hot testrow':p==='backtest'?'tot':''}"><td class="l">${lab}</td><td>${x.bets}</td><td>${x.won} – ${x.lost} <span class="muted">(${f(x.winPct,0)}%)</span></td><td>${f(x.avgLine,1)}</td><td>${f(x.avgOurs,1)}</td><td><b>${f(x.avgActual,1)}</b></td><td class="l">${beatCell(x.avgBeat)}</td><td class="${cls(x.roi)}"><b>${pct(x.roi)}</b></td></tr>`}).join('');
     const tst=(SM[l.key]||{}).test;
     return `<tbody><tr class="grp"><td class="l" colspan="8"><b>${l.name.split(' · ').slice(0,1).join(' · ')}</b> <span class="muted">${side(l.side)}${tst&&tst.avgOdds?' · avg odds '+f(tst.avgOdds):''}</span></td></tr>${rows}</tbody>`}).join('');
-  $('#sgBeatNote').innerHTML='For comparison, across <em>all</em> matches (not only our bets): '+L.map(l=>{const k=skey(l,sides(l)[0]),a=(SM[k]||{}).backtest,b=(SM[k]||{}).test;return a?`${l.name.split(' · ')[0]}: line ${f(a.allLine,1)} vs real ${f(a.allActual,1)} (2022-25), ${f(b.allLine,1)} vs ${f(b.allActual,1)} (2025-26)`:''}).join(' · ')+'. In Spain and Portugal the lines were too high in general; in Austria they were close to right on average.';
+  $('#sgBeatNote').innerHTML='For comparison, across <em>all</em> matches (not only the flagged ones): '+L.map(l=>{const k=skey(l,sides(l)[0]),a=(SM[k]||{}).backtest,b=(SM[k]||{}).test;return a?`${l.name.split(' · ')[0]}: line ${f(a.allLine,1)} vs real ${f(a.allActual,1)} (2022-25), ${f(b.allLine,1)} vs ${f(b.allActual,1)} (2025-26)`:''}).join(' · ')+'. In Spain and Portugal the lines were too high in general; in Austria they were close to right on average.';
   const S=G.signals, done=S.filter(x=>x.status!=='open'), won=done.filter(x=>x.status==='won').length, lost=done.filter(x=>x.status==='lost').length, pr=done.reduce((a,x)=>a+x.profit,0);
   const push=done.filter(x=>x.status==='push').length;
-  $('#sgRec').innerHTML=S.length?`<b>${S.length}</b> signal${S.length===1?'':'s'}: ${won} won, ${lost} lost${push?`, ${push} push (stake returned)`:''}, ${S.length-done.length} to play.${done.length?` Profit <b class="${cls(pr)}">${sg(pr,2)} units</b> from ${done.length} staked (${pct(pr/done.length*100)}).`:''} Each is logged with the line and odds at the moment it appeared.`:'No signals yet this season.';
+  $('#sgRec').innerHTML=S.length?`<b>${S.length}</b> flagged match${S.length===1?'':'es'}: ${won} right, ${lost} wrong${push?`, ${push} level`:''}, ${S.length-done.length} to play.${done.length?` Return <b class="${cls(pr)}">${sg(pr,2)} units</b> at 1 unit per match (${pct(pr/done.length*100)}).`:''} Each is logged with the line and odds at the moment it was flagged.`:'Nothing flagged yet this season.';
   const nUp=L.reduce((a,l)=>a+l.upcoming.length,0), nOpen=S.length-done.length;
-  $('#sgTiles').innerHTML=[['Open signals',nOpen,nOpen?'to play':'none right now'],['Record',`${won}–${lost}`,push?`${push} push`:'won – lost'],['Profit',`<span class="${cls(pr)}">${sg(pr,2)}</span>`,'units staked 1 each'],['Matches with a line',nUp,'next 8 days'],['Leagues',L.length,'leagues']].map(([k,v,n])=>`<div class="tile"><span class="klabel">${k}</span><span class="stat">${v}</span><span class="small muted">${n}</span></div>`).join('');
-  const st={open:'<span class="sig wait">To play</span>',won:'<span class="sig go">Won</span>',lost:'<span class="sig">Lost</span>',push:'<span class="sig">Push</span>'};
-  $('#sgLog').innerHTML=S.length?`<thead><tr><th class="l">League</th><th class="l">Match</th><th class="l">Date</th><th>Bet</th><th>Odds</th><th>Model total</th><th>Real total</th><th class="l">Result</th><th>Profit</th></tr></thead><tbody>${S.map(x=>`<tr class="${x.status==='open'?'hot':''}"><td class="l muted">${(x.leagueName||'').split(' · ')[0]}</td><td class="l"><b>${x.home}</b> – ${x.away}</td><td class="l">${day(x.date)} <span class="muted">${x.time||''}</span></td><td><b>${side(x.side||'over')} ${f(x.line,1)}</b></td><td>${f(x.odds)}</td><td>${f(x.ours,1)}</td><td>${x.total??'–'}</td><td class="l">${st[x.status]}</td><td class="${cls(x.profit)}">${x.profit==null?'–':sg(x.profit,2)}</td></tr>`).join('')}</tbody>`:'<tbody><tr><td class="l empty">Nothing yet.</td></tr></tbody>';
+  $('#sgTiles').innerHTML=[['Flagged now',nOpen,nOpen?'to play':'none right now'],['Record',`${won}–${lost}`,push?`${push} level`:'right – wrong'],['Return',`<span class="${cls(pr)}">${sg(pr,2)}</span>`,'units, 1 per match'],['Matches with a line',nUp,'next 8 days'],['Leagues',L.length,'leagues']].map(([k,v,n])=>`<div class="tile"><span class="klabel">${k}</span><span class="stat">${v}</span><span class="small muted">${n}</span></div>`).join('');
+  const st={open:'<span class="sig wait">To play</span>',won:'<span class="sig go">Right</span>',lost:'<span class="sig">Wrong</span>',push:'<span class="sig">Level</span>'};
+  $('#sgLog').innerHTML=S.length?`<thead><tr><th class="l">League</th><th class="l">Match</th><th class="l">Date</th><th>Call</th><th>Odds</th><th>Model total</th><th>Real total</th><th class="l">Result</th><th>Return</th></tr></thead><tbody>${S.map(x=>`<tr class="${x.status==='open'?'hot':''}"><td class="l muted">${(x.leagueName||'').split(' · ')[0]}</td><td class="l m"><b>${x.home}</b> – ${x.away}</td><td class="l">${day(x.date)} <span class="muted">${x.time||''}</span></td><td><b>${side(x.side||'over')} ${f(x.line,1)}</b></td><td>${f(x.odds)}</td><td>${f(x.ours,1)}</td><td>${x.total??'–'}</td><td class="l">${st[x.status]}</td><td class="${cls(x.profit)}">${x.profit==null?'–':sg(x.profit,2)}</td></tr>`).join('')}</tbody>`:'<tbody><tr><td class="l empty">Nothing yet.</td></tr></tbody>';
   const U=L.flatMap(l=>(l.proj||[]).map(x=>({...x,lg:l}))).sort((a,b)=>(a.date+(a.time||'')).localeCompare(b.date+(b.time||'')));
   const nm=x=>x.lg.name.split(' · ').slice(0,1).join(' · ');
   const LG={spain:'w_es',portugal:'w_pt',austria:'w_at',romania:'w_ro',hungary:'w_hu',croatia:'w_hr'}, SL=Object.fromEntries(Object.entries(LG).map(([a,b])=>[b,a]));
   const BASE=document.querySelector('.wrap').dataset.base, lgHref=k=>BASE?`${BASE}projections/${SL[k]}/`:'#'+SL[k];
   window.__LG=LG;
-  $('#sgNext').innerHTML=U.length?`<thead><tr><th class="l">League</th><th class="l">Match</th><th class="l">Date</th><th>Model total</th><th>Bookie line</th><th>Model − line</th><th class="l">Bet</th></tr></thead><tbody>${U.map(x=>`<tr class="${x.signal?'hot':''}"><td class="l"><a href="${lgHref(x.lg.key)}">${nm(x)}</a></td><td class="l"><b>${x.home}</b> – ${x.away}</td><td class="l">${day(x.date)} <span class="muted">${x.time||''}</span></td><td><b>${f(x.ours,1)}</b></td><td>${x.line!=null?f(x.line,1):'<span class="muted">not out</span>'}</td><td class="${x.line!=null?cls(-x.gap):''}">${x.line!=null?sg(x.gap,1):'–'}</td><td class="l">${x.signal?`<span class="sig go">Qualified: ${side(x.side)}</span>`:x.line!=null?'<span class="muted">no bet</span>':'<span class="muted">waiting for line</span>'}</td></tr>`).join('')}</tbody>`:`<tbody><tr><td class="l empty">No projections yet. They start once both teams have played ${L[0].start} games (so far: ${L.map(l=>nm({lg:l})+' '+l.gamesMin+'+').join(' · ')}).</td></tr></tbody>`;
+  $('#sgNext').innerHTML=U.length?`<thead><tr><th class="l">League</th><th class="l">Match</th><th class="l">Date</th><th>Model total</th><th>Bookie line</th><th>Model − line</th><th class="l">Call</th></tr></thead><tbody>${U.map(x=>`<tr class="${x.signal?'hot':''}"><td class="l"><a href="${lgHref(x.lg.key)}">${nm(x)}</a></td><td class="l m"><b>${x.home}</b> – ${x.away}</td><td class="l">${day(x.date)} <span class="muted">${x.time||''}</span></td><td><b>${f(x.ours,1)}</b></td><td>${x.line!=null?f(x.line,1):'<span class="muted">not out</span>'}</td><td class="${x.line!=null?cls(-x.gap):''}">${x.line!=null?sg(x.gap,1):'–'}</td><td class="l">${x.signal?`<span class="sig go">Flagged: ${side(x.side)}</span>`:x.line!=null?'<span class="muted">not flagged</span>':'<span class="muted">waiting for line</span>'}</td></tr>`).join('')}</tbody>`:`<tbody><tr><td class="l empty">No projections yet. They start once both teams have played ${L[0].start} games (so far: ${L.map(l=>nm({lg:l})+' '+l.gamesMin+'+').join(' · ')}).</td></tr></tbody>`;
   const Q=S.filter(x=>x.status==='open');
-  $('#sgQNote').innerHTML=Q.length?`${Q.length} open bet${Q.length===1?'':'s'}. Each was logged with the line and odds at the moment it qualified.`:'No bet qualifies right now. Bets appear here when our total is 2+ goals below the bookmaker line.';
-  $('#sgQ').innerHTML=Q.length?`<thead><tr><th class="l">League</th><th class="l">Match</th><th class="l">Date</th><th>Bet</th><th>Odds</th><th>Model total</th><th>Model − line</th></tr></thead><tbody>${Q.map(x=>`<tr class="hot"><td class="l muted">${(x.leagueName||'').split(' · ')[0]}</td><td class="l"><b>${x.home}</b> – ${x.away}</td><td class="l">${day(x.date)} <span class="muted">${x.time||''}</span></td><td><b>${side(x.side||'under')} ${f(x.line,1)}</b></td><td>${f(x.odds)}</td><td>${f(x.ours,1)}</td><td class="${cls(-x.gap)}">${sg(x.gap,1)}</td></tr>`).join('')}</tbody>`:'<tbody><tr><td class="l empty">None right now.</td></tr></tbody>';
-  $('#sgLeagues').innerHTML=L.map(l=>{const open=S.filter(x=>x.league===l.key&&x.status==='open').length,n=(l.proj||[]).length;return `<a class="tile" href="${lgHref(l.key)}"><span class="stat" style="font-size:1.3rem">${l.name.split(' · ').slice(0,1).join(' · ')}</span><span class="small muted">${n} projection${n===1?'':'s'} · ${open} open bet${open===1?'':'s'} · ${l.gamesMin}+ games played</span></a>`}).join('');
+  $('#sgQNote').innerHTML=Q.length?`${Q.length} flagged match${Q.length===1?'':'es'} to play. Each was logged with the line and odds at the moment it was flagged.`:'Nothing is flagged right now. A match appears here when our total is 2+ goals below the bookmaker line.';
+  $('#sgQ').innerHTML=Q.length?`<thead><tr><th class="l">League</th><th class="l">Match</th><th class="l">Date</th><th>Call</th><th>Odds</th><th>Model total</th><th>Model − line</th></tr></thead><tbody>${Q.map(x=>`<tr class="hot"><td class="l muted">${(x.leagueName||'').split(' · ')[0]}</td><td class="l m"><b>${x.home}</b> – ${x.away}</td><td class="l">${day(x.date)} <span class="muted">${x.time||''}</span></td><td><b>${side(x.side||'under')} ${f(x.line,1)}</b></td><td>${f(x.odds)}</td><td>${f(x.ours,1)}</td><td class="${cls(-x.gap)}">${sg(x.gap,1)}</td></tr>`).join('')}</tbody>`:'<tbody><tr><td class="l empty">None right now.</td></tr></tbody>';
+  $('#sgLeagues').innerHTML=L.map(l=>{const open=S.filter(x=>x.league===l.key&&x.status==='open').length,n=(l.proj||[]).length;return `<a class="tile" href="${lgHref(l.key)}"><span class="stat" style="font-size:1.3rem">${l.name.split(' · ').slice(0,1).join(' · ')}</span><span class="small muted">${n} projection${n===1?'':'s'} · ${open} flagged now · ${l.gamesMin}+ games played</span></a>`}).join('');
   const AR=G.archive||[], arName=k=>(L.find(l=>l.key===k)||{name:k}).name.split(' · ')[0];
   const arDay=d=>{const [y,m,dd]=d.split('-');return new Date(+y,+m-1,+dd).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'})};
-  const arState={lg:L[0].key,pd:'all'};
+  const arState={lg:'all',pd:'all'};
+  const arHref=v=>{const sl=v==='all'?'':SL[v];return BASE?BASE+'backtesting/'+(sl?sl+'/':''):'#'+(sl?'bt-'+sl:'backtesting')};
   const arLg=[['all','All leagues'],...L.map(l=>[l.key,l.name.split(' · ')[0]])], arPd=[['all','Backtest and test'],['backtest','Backtest 2022-25'],['test','Independent test 2025-26']];
   function arRender(){
     const rows=AR.filter(a=>(arState.lg==='all'||a.league===arState.lg)&&(arState.pd==='all'||a.period===arState.pd));
     const chips=(id,list,key)=>{$(id).innerHTML=list.map(([v,t])=>`<button type="button" class="chip${arState[key]===v?' on':''}" data-v="${v}">${t}</button>`).join('');$(id).querySelectorAll('button').forEach(b=>b.onclick=()=>{arState[key]=b.dataset.v;arRender()})};
-    chips('#arLeague',arLg,'lg');chips('#arPeriod',arPd,'pd');
-    [...$('#sgBeat').tBodies].forEach((tb,i)=>{tb.style.display=(arState.lg==='all'||(L[i]&&L[i].key===arState.lg))?'':'none'});
+    $('#arLeague').innerHTML=arLg.map(([v,t])=>`<a class="chip${arState.lg===v?' on':''}" href="${arHref(v)}">${t}</a>`).join('');chips('#arPeriod',arPd,'pd');
+    [...$('#sgBeat').tBodies].forEach((tb,i)=>{tb.style.display=(arState.lg==='all'||(L[i]&&L[i].key===arState.lg))?'':'none';tb.querySelectorAll('tr:not(.grp):not(.tot):not(.testrow)').forEach(r=>{r.style.display=arState.lg==='all'?'none':''})});
     const w=rows.filter(a=>a.status==='won').length,lo=rows.filter(a=>a.status==='lost').length,pu=rows.filter(a=>a.status==='push').length,pr=rows.reduce((t,a)=>t+a.profit,0);
     const beat=rows.length?rows.reduce((t,a)=>t+a.beat,0)/rows.length:null, od=rows.length?rows.reduce((t,a)=>t+a.odds,0)/rows.length:null;
-    $('#arSum').innerHTML=rows.length?`<b>${rows.length}</b> bets · <b>${w}</b> won, <b>${lo}</b> lost${pu?`, ${pu} push`:''} (${f(w/rows.length*100,0)}% won) · profit <b class="${cls(pr)}">${sg(pr,1)} units</b> (<b class="${cls(pr)}">${pct(pr/rows.length*100)}</b>) · average odds ${f(od)} · beat the line by <b>${sg(beat,1)}</b> goals on average`:'No bets in this selection.';
-    let run=0;
-    $('#arTbl').innerHTML=rows.length?`<table><thead><tr><th class="l">Date</th><th class="l">League</th><th class="l">Match</th><th>Bet</th><th>Odds</th><th>Model total</th><th>Real total</th><th>Beat the line by</th><th class="l">Result</th><th>Profit</th><th>Running total</th></tr></thead><tbody>${rows.map(a=>{run+=a.profit;return `<tr><td class="l">${arDay(a.date)}</td><td class="l muted">${arName(a.league)}</td><td class="l"><b>${a.home}</b> – ${a.away}</td><td><b>Under ${f(a.line,1)}</b></td><td>${f(a.odds)}</td><td>${f(a.ours,1)}</td><td>${a.act}</td><td class="${cls(a.beat)}">${sg(a.beat,1)}</td><td class="l">${st[a.status]}</td><td class="${cls(a.profit)}">${sg(a.profit,2)}</td><td class="${cls(run)}">${sg(run,2)}</td></tr>`}).join('')}</tbody></table>`:'';
+    $('#arSum').innerHTML=rows.length?`<b>${rows.length}</b> flagged matches · <b>${w}</b> right, <b>${lo}</b> wrong${pu?`, ${pu} level`:''} (${f(w/rows.length*100,0)}% right) · return <b class="${cls(pr)}">${sg(pr,1)} units</b> (<b class="${cls(pr)}">${pct(pr/rows.length*100)}</b>) · average odds ${f(od)} · beat the line by <b>${sg(beat,1)}</b> goals on average`:'Nothing flagged in this selection.';
+    let run=0;const one=arState.lg!=='all';
+    $('#arTbl').innerHTML=rows.length?`<table><thead><tr><th class="l">Date</th>${one?'':'<th class="l">League</th>'}<th class="l">Match</th><th>Call</th><th>Odds</th><th>Model total</th><th>Real total</th><th>Beat the line by</th><th class="l">Result</th><th>Return</th><th>Running total</th></tr></thead><tbody>${rows.map(a=>{run+=a.profit;return `<tr><td class="l">${arDay(a.date)}</td>${one?'':`<td class="l muted">${arName(a.league)}</td>`}<td class="l m"><b>${a.home}</b> – ${a.away}</td><td><b>Under ${f(a.line,1)}</b></td><td>${f(a.odds)}</td><td>${f(a.ours,1)}</td><td>${a.act}</td><td class="${cls(a.beat)}">${sg(a.beat,1)}</td><td class="l">${st[a.status]}</td><td class="${cls(a.profit)}">${sg(a.profit,2)}</td><td class="${cls(run)}">${sg(run,2)}</td></tr>`}).join('')}</tbody></table>`:'';
     makeSortable();
   }
   arRender();
+  window.__ar=function(key){arState.lg=key;arRender()};
   window.__lg=function(key){
     const l=L.find(x=>x.key===key), mine=S.filter(x=>x.league===key), dn=mine.filter(x=>x.status!=='open'), w=dn.filter(x=>x.status==='won').length, lo=dn.filter(x=>x.status==='lost').length, pf=dn.reduce((a,x)=>a+x.profit,0);
     const sm=SM[key]||{}, tst=sm.test, P=l.proj||[], nmL=l.name.split(' · ').slice(0,1).join(' · ');
-    const projT=P.length?`<thead><tr><th class="l">Match</th><th class="l">Date</th><th>Model total</th><th>Bookie line</th><th>Model − line</th><th>Under odds</th><th class="l">Bet</th></tr></thead><tbody>${P.map(x=>`<tr class="${x.signal?'hot':''}"><td class="l"><b>${x.home}</b> – ${x.away}</td><td class="l">${day(x.date)} <span class="muted">${x.time||''}</span></td><td><b>${f(x.ours,1)}</b></td><td>${x.line!=null?f(x.line,1):'<span class="muted">not out</span>'}</td><td class="${x.line!=null?cls(-x.gap):''}">${x.line!=null?sg(x.gap,1):'–'}</td><td>${x.under?f(x.under):'–'}</td><td class="l">${x.signal?`<span class="sig go">Qualified: ${side(x.side)}</span>`:x.line!=null?'<span class="muted">no bet</span>':'<span class="muted">waiting for line</span>'}</td></tr>`).join('')}</tbody>`:`<tbody><tr><td class="l empty">No projections yet. They start once both teams have played ${l.start} games (this league: ${l.gamesMin}+ so far).</td></tr></tbody>`;
-    const logT=mine.length?`<thead><tr><th class="l">Match</th><th class="l">Date</th><th>Bet</th><th>Odds</th><th>Model total</th><th>Real total</th><th class="l">Result</th><th>Profit</th></tr></thead><tbody>${mine.map(x=>`<tr class="${x.status==='open'?'hot':''}"><td class="l"><b>${x.home}</b> – ${x.away}</td><td class="l">${day(x.date)} <span class="muted">${x.time||''}</span></td><td><b>${side(x.side||'under')} ${f(x.line,1)}</b></td><td>${f(x.odds)}</td><td>${f(x.ours,1)}</td><td>${x.total??'–'}</td><td class="l">${st[x.status]}</td><td class="${cls(x.profit)}">${x.profit==null?'–':sg(x.profit,2)}</td></tr>`).join('')}</tbody>`:'<tbody><tr><td class="l empty">No bets from this league yet.</td></tr></tbody>';
+    const projT=P.length?`<thead><tr><th class="l">Match</th><th class="l">Date</th><th>Model total</th><th>Bookie line</th><th>Model − line</th><th>Under odds</th><th class="l">Call</th></tr></thead><tbody>${P.map(x=>`<tr class="${x.signal?'hot':''}"><td class="l m"><b>${x.home}</b> – ${x.away}</td><td class="l">${day(x.date)} <span class="muted">${x.time||''}</span></td><td><b>${f(x.ours,1)}</b></td><td>${x.line!=null?f(x.line,1):'<span class="muted">not out</span>'}</td><td class="${x.line!=null?cls(-x.gap):''}">${x.line!=null?sg(x.gap,1):'–'}</td><td>${x.under?f(x.under):'–'}</td><td class="l">${x.signal?`<span class="sig go">Flagged: ${side(x.side)}</span>`:x.line!=null?'<span class="muted">not flagged</span>':'<span class="muted">waiting for line</span>'}</td></tr>`).join('')}</tbody>`:`<tbody><tr><td class="l empty">No projections yet. They start once both teams have played ${l.start} games (this league: ${l.gamesMin}+ so far).</td></tr></tbody>`;
+    const logT=mine.length?`<thead><tr><th class="l">Match</th><th class="l">Date</th><th>Call</th><th>Odds</th><th>Model total</th><th>Real total</th><th class="l">Result</th><th>Return</th></tr></thead><tbody>${mine.map(x=>`<tr class="${x.status==='open'?'hot':''}"><td class="l m"><b>${x.home}</b> – ${x.away}</td><td class="l">${day(x.date)} <span class="muted">${x.time||''}</span></td><td><b>${side(x.side||'under')} ${f(x.line,1)}</b></td><td>${f(x.odds)}</td><td>${f(x.ours,1)}</td><td>${x.total??'–'}</td><td class="l">${st[x.status]}</td><td class="${cls(x.profit)}">${x.profit==null?'–':sg(x.profit,2)}</td></tr>`).join('')}</tbody>`:'<tbody><tr><td class="l empty">Nothing flagged in this league yet.</td></tr></tbody>';
     const btRows=PER.map(([p,lab])=>{const x=sm[p];if(!x||!x.bets)return '';return `<tr class="${p==='test'?'hot testrow':p==='backtest'?'tot':''}"><td class="l">${lab}</td><td>${x.bets}</td><td>${x.won} – ${x.lost} <span class="muted">(${f(x.winPct,0)}%)</span></td><td>${f(x.avgLine,1)}</td><td>${f(x.avgOurs,1)}</td><td><b>${f(x.avgActual,1)}</b></td><td class="l">${beatCell(x.avgBeat)}</td><td class="${cls(x.roi)}"><b>${pct(x.roi)}</b></td></tr>`}).join('');
     const H=l.how;
     const corr=H?`<b>What the correction is.</b> Before using the model, we tested it on the past seasons we have for this league (2022-23 to 2024-25) and compared its projected totals with the real ones. ${H.shift>0.05?`It was too low on average, by about ${f(H.shift,1)} goals per match, so we add ${f(H.shift,1)} goals to every projection to make up for it.`:H.shift<-0.05?`It was too high on average, by about ${f(-H.shift,1)} goals per match, so we take ${f(-H.shift,1)} goals off every projection to make up for it.`:`It was about right on average (within 0.05 of a goal), so no change is needed.`} The number is set by those past results only. It is never adjusted to match the bookmaker's line.`:'';
@@ -234,15 +237,15 @@ const day=d=>{if(!d)return '–';const [y,m,dd]=d.split('-');return new Date(+y,
     <div class="tbl"><table><thead><tr><th class="l">Team</th><th>Games</th><th>Scored per game</th><th>Conceded per game</th><th>Total goals per game</th><th>Attack</th><th>Defence</th></tr></thead><tbody>${H.teams.map(t=>`<tr><td class="l"><b>${t.team}</b></td><td>${t.g}</td><td>${f(t.gf,1)}</td><td>${f(t.ga,1)}</td><td><b>${f(t.gf+t.ga,1)}</b></td><td class="${t.att>1?'pos':t.att<1?'neg':''}"><b>${f(t.att,2)}</b></td><td class="${t.de<1?'pos':t.de>1?'neg':''}"><b>${f(t.de,2)}</b></td></tr>`).join('')}</tbody></table></div>
     <p class="small muted">Attack above 1.00 = scores more than average. Defence below 1.00 = concedes less than average (green is better in both columns).</p>
     <h3>The workings, match by match</h3>
-    <div class="tbl"><table>${P.length?`<thead><tr><th class="l">Match</th><th>Home goals expected<br><span class="muted">${f(H.muH,1)} × attack × defence</span></th><th>Away goals expected<br><span class="muted">${f(H.muA,1)} × attack × defence</span></th><th>Sum</th><th>Correction</th><th>Model total</th><th>Bookie line</th></tr></thead><tbody>${P.map(x=>`<tr class="${x.signal?'hot':''}"><td class="l"><b>${x.home}</b> – ${x.away}</td><td>${f(H.muH,1)} × ${f(x.ah,2)} × ${f(x.da,2)} = <b>${f(x.ph,1)}</b></td><td>${f(H.muA,1)} × ${f(x.aa,2)} × ${f(x.dh,2)} = <b>${f(x.pa,1)}</b></td><td>${f(x.ph+x.pa,1)}</td><td>${sg(H.shift,1)}</td><td><b>${f(x.ours,1)}</b></td><td>${x.line!=null?f(x.line,1):'–'}</td></tr>`).join('')}</tbody>`:'<tbody><tr><td class="l empty">The workings appear here once matches qualify for a projection.</td></tr></tbody>'}</table></div>`:'';
-    const tiles=[['Games played',l.gamesMin+'+',l.gamesMin>=l.start?'signals on':`signals start after ${l.start}`],['Open bets',mine.filter(x=>x.status==='open').length,'to play'],['2026-27 record',`${w}–${lo}`,dn.length?`${sg(pf,2)} units · ${pct(pf/dn.length*100)} return`:'no settled bets yet']];
-    $('#league').innerHTML=`<p class="crumb"><a href="${BASE?BASE+'projections/':'#projections'}">← Projections</a></p><div><div class="eyebrow">Full time · Under</div><h2>${nmL}</h2><p class="muted">Our projected total against the bookmaker's line. A bet qualifies when our total is ${f(l.gap,0)}+ goals below the line and both teams have played ${l.start} games.</p></div>
+    <div class="tbl"><table>${P.length?`<thead><tr><th class="l">Match</th><th>Home goals expected<br><span class="muted">${f(H.muH,1)} × attack × defence</span></th><th>Away goals expected<br><span class="muted">${f(H.muA,1)} × attack × defence</span></th><th>Sum</th><th>Correction</th><th>Model total</th><th>Bookie line</th></tr></thead><tbody>${P.map(x=>`<tr class="${x.signal?'hot':''}"><td class="l m"><b>${x.home}</b> – ${x.away}</td><td>${f(H.muH,1)} × ${f(x.ah,2)} × ${f(x.da,2)} = <b>${f(x.ph,1)}</b></td><td>${f(H.muA,1)} × ${f(x.aa,2)} × ${f(x.dh,2)} = <b>${f(x.pa,1)}</b></td><td>${f(x.ph+x.pa,1)}</td><td>${sg(H.shift,1)}</td><td><b>${f(x.ours,1)}</b></td><td>${x.line!=null?f(x.line,1):'–'}</td></tr>`).join('')}</tbody>`:'<tbody><tr><td class="l empty">The workings appear here once matches qualify for a projection.</td></tr></tbody>'}</table></div>`:'';
+    const tiles=[['Games played',l.gamesMin+'+',l.gamesMin>=l.start?'live':`starts after ${l.start}`],['Flagged now',mine.filter(x=>x.status==='open').length,'to play'],['2026-27 record',`${w}–${lo}`,dn.length?`${sg(pf,2)} units · ${pct(pf/dn.length*100)} return`:'nothing settled yet']];
+    $('#league').innerHTML=`<p class="crumb"><a href="${BASE?BASE+'projections/':'#projections'}">← Projections</a></p><div><div class="eyebrow">Full time · Under</div><h2>${nmL}</h2><p class="muted">Our projected total against the bookmaker's line. A match is flagged when our total is ${f(l.gap,0)}+ goals below the line and both teams have played ${l.start} games.</p></div>
     <div class="tiles">${tiles.map(([k,v,n])=>`<div class="tile"><span class="klabel">${k}</span><span class="stat">${v}</span><span class="small muted">${n}</span></div>`).join('')}</div>
     <h3>Projections vs bookmaker</h3><div class="tbl"><table>${projT}</table></div>
     ${howHtml}
-    <h3>Bets from this league</h3><div class="tbl"><table>${logT}</table></div>
-    <h3>Backtest vs bookmaker</h3><p class="small muted">Averages over this league's signal bets. “Beat the line by” = goals past the line in our favour.</p>
-    <div class="tbl"><table><thead><tr><th class="l">Season</th><th>Bets</th><th>Won – lost</th><th>Avg line</th><th>Model avg</th><th>Real avg</th><th class="l">Beat the line by (goals)</th><th>Return</th></tr></thead><tbody>${btRows||'<tr><td class="l empty" colspan="8">No bets in the backtest.</td></tr>'}</tbody></table></div>`;
+    <h3>Season record</h3><div class="tbl"><table>${logT}</table></div>
+    <h3>Backtest vs bookmaker</h3><p class="small muted">Averages over this league's flagged matches. “Beat the line by” = goals past the line in our favour.</p>
+    <div class="tbl"><table><thead><tr><th class="l">Season</th><th>Matches</th><th>Right – wrong</th><th>Avg line</th><th>Model avg</th><th>Real avg</th><th class="l">Beat the line by (goals)</th><th>Return</th></tr></thead><tbody>${btRows||'<tr><td class="l empty" colspan="8">Nothing flagged in the backtest.</td></tr>'}</tbody></table></div>`;
   };
 })();
 
@@ -252,13 +255,13 @@ const day=d=>{if(!d)return '–';const [y,m,dd]=d.split('-');return new Date(+y,
   $('#mdStat').innerHTML=`${sg(all.d1,1)}<small>1st half</small> ${sg(all.d2,1)}<small>2nd half</small>`;
   $('#mdStat2').innerHTML=`Average goal margin in each half over ${all.n} games. Led at half-time in <b>${f(all.htLead,0)}%</b>.`;
   const F=M.fixtures;
-  $('#mdNext').innerHTML=F.length?`<thead><tr><th class="l">Opponent</th><th class="l">Date</th><th>Table now</th><th>Magdeburg odds</th><th>Handicap line</th><th>Half-time target</th><th>Bookie 1st-half handicap</th><th>Our 1H projection</th><th class="l">Spot</th></tr></thead><tbody>${F.map(x=>{
+  $('#mdNext').innerHTML=F.length?`<thead><tr><th class="l">Opponent</th><th class="l">Date</th><th>Table now</th><th>Magdeburg odds</th><th>Handicap line</th><th>Half-time target</th><th>Bookie 1st-half handicap</th><th>Our 1H projection</th><th class="l">Setup</th></tr></thead><tbody>${F.map(x=>{
     const heavy=x.o1!=null&&x.o1<=1.105, weak=(x.fromBottom!=null&&x.fromBottom<=6)||x.promoted;
-    const spot=x.o1==null?'<span class="muted">odds not out</span>':heavy&&weak?'<span class="sig go">Strong spot</span>':heavy?'<span class="sig wait">Spot</span>':'<span class="muted">odds too long</span>';
+    const spot=x.o1==null?'<span class="muted">odds not out</span>':heavy&&weak?'<span class="sig go">Strongest setup</span>':heavy?'<span class="sig wait">Setup</span>':'<span class="muted">odds too long</span>';
     const tgt=x.ah?x.ah.line/2:null, pm=x.ph!=null?x.ph-x.pa:null;
     return `<tr class="${heavy&&weak?'top':''}"><td class="l"><b>${x.opp}</b>${x.promoted?' <span class="sig">promoted</span>':''}</td><td class="l">${day(x.date)} <span class="muted">${x.time||''}</span></td><td>${x.pos?`${x.pos}. <span class="muted">of ${x.nTeams}</span>`:'–'}${x.fromBottom!=null&&x.fromBottom<=6?' <span class="sig">bottom 6</span>':''}</td><td>${x.o1?f(x.o1):'–'}</td><td>${x.ah?sg(x.ah.line,1):'–'}</td><td>${tgt!=null?`lead by ${f(-tgt,2)}+`:'–'}</td><td>${x.h1?`<b>${sg(x.h1.line,0)}</b> @ ${f(x.h1.odds)}${tgt!=null&&Math.abs(x.h1.line)<-tgt?' <span class="sig go">below target</span>':''}`:'–'}</td><td>${pm!=null?`${f(x.ph,1)}–${f(x.pa,1)} <span class="${cls(pm)}">(${sg(pm,1)})</span>`:'–'}</td><td class="l">${spot}</td></tr>`}).join('')}</tbody>`:'<tbody><tr><td class="l empty">No home matches listed.</td></tr></tbody>';
   $('#mdEv').innerHTML=`<thead><tr><th class="l">Magdeburg at home, odds ≤ 1.10</th><th>Games</th><th>1st-half margin</th><th>2nd-half margin</th><th>Led at half-time</th><th>Beat ½ of the handicap at HT</th><th>Led by 4+ at half-time</th></tr></thead><tbody>${E.map(e=>`<tr class="${/bottom 2|bottom 4/.test(e.label)?'top':''}"><td class="l">${e.label}</td><td>${e.n}</td><td><b>${sg(e.d1,1)}</b></td><td>${sg(e.d2,1)}</td><td>${f(e.htLead,0)}%</td><td>${e.htN?`${e.ht} of ${e.htN}`:'–'}</td><td>${e.hn?`<b>${e.h4} of ${e.hn}</b> <span class="muted">(${f(e.h4/e.hn*100,0)}%)</span>`:'–'}</td></tr>`).join('')}</tbody>`;
-  $('#mdNote').innerHTML=`“Led by 4+ at half-time” is what a 1st-half handicap of −3 needs (a lead of exactly 3 is a tie, which loses the −3 bet). At 1.85 a −3 bet breaks even when it wins 54% of the time. How to use it: when Magdeburg are 1.10 or shorter at home, look at your bookmaker's <b>1st-half handicap</b> for Magdeburg. If it asks for less than the half-time target above (half of the full-match line), that is the value this pattern points to. Positions “Table now” are this season's table so far (early in the season they move a lot). Caution: this could not be tested against real 1st-half odds (BetExplorer has none), and the samples are small (8–32 games). Evidence up to ${M.evidenceTo?day(M.evidenceTo):'–'}.`;
+  $('#mdNote').innerHTML=`“Led by 4+ at half-time” is what a 1st-half handicap of −3 needs (a lead of exactly 3 is a tie, which does not cover a −3 line). A price of 1.85 on −3 implies about a 54% chance. How to read it: when Magdeburg are 1.10 or shorter at home, compare the bookmakers' <b>1st-half handicap</b> with the half-time target above (half of the full-match line). A 1st-half line below that target is where the pattern and the market disagree. Positions “Table now” are this season's table so far (early in the season they move a lot). Caution: this could not be tested against real 1st-half odds (BetExplorer has none), and the samples are small (8–32 games). Evidence up to ${M.evidenceTo?day(M.evidenceTo):'–'}.`;
 })();
 
 
@@ -287,16 +290,18 @@ function makeSortable(){
 
 /* ---------- pages: one section per page (site: real pages; artifact: #hash) ---------- */
 (function(){
-  const main=['projections','backtesting','done-by-the-break'], LG=window.__LG, names={projections:'Projections','backtesting':'Backtesting','done-by-the-break':'Done by the Break'};
-  const ids=main.concat(Object.keys(LG));
+  const main=['projections','backtesting','done-by-the-break'], LG=window.__LG, slugs=Object.keys(LG), names={projections:'Projections','backtesting':'Backtesting','done-by-the-break':'Done by the Break'};
+  const ids=main.concat(slugs, slugs.map(x=>'bt-'+x));
   const wrap=document.querySelector('.wrap'), fixed=wrap.dataset.page, base=wrap.dataset.base;
   if(base) document.querySelectorAll('.tabs a').forEach(a=>{a.href=base+a.dataset.id+'/'});
+  const cap=x=>x.charAt(0).toUpperCase()+x.slice(1);
   const cur=()=>fixed||(ids.includes(location.hash.slice(1))?location.hash.slice(1):'projections');
-  function show(){const c=cur(), lg=LG[c], tab=lg?'projections':c, sec=lg?'league':c;
+  function show(){const c=cur(), bt=c.startsWith('bt-'), lg=LG[c], tab=lg?'projections':bt?'backtesting':c, sec=lg?'league':bt?'backtesting':c;
     ['projections','backtesting','done-by-the-break','league'].forEach(i=>{document.getElementById(i).style.display=i===sec?'':'none'});
     if(lg&&window.__lg) window.__lg(lg);
+    if(window.__ar&&tab==='backtesting') window.__ar(bt?LG[c.slice(3)]:'all');
     document.querySelectorAll('.tabs a').forEach(a=>{const on=a.dataset.id===tab;a.classList.toggle('on',on);if(on)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current')});
-    document.title='Handball · '+(names[c]||c.charAt(0).toUpperCase()+c.slice(1)+' (projections)');makeSortable();}
+    document.title='Handball · '+(names[c]||(bt?'Backtesting · '+cap(c.slice(3)):cap(c)+' (projections)'));makeSortable();}
   addEventListener('hashchange',()=>{show();scrollTo(0,0)});show();
 })();
 
