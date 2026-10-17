@@ -120,7 +120,8 @@
       "the-5-types-of-wealth",
       "mathletics-how-gamblers-managers",
       "good-to-great",
-      "smart-money-the-fall-and-rise-of"
+      "smart-money-the-fall-and-rise-of",
+      "on-the-edge-the-art-of-risking-everything"
     ],
     "log": [
       {
@@ -170,9 +171,15 @@
         "slot": "2026-10-16 14",
         "slug": "smart-money-the-fall-and-rise-of",
         "id": "2111106680247222709"
+      },
+      {
+        "day": "2026-10-17",
+        "slot": "2026-10-17 02",
+        "slug": "on-the-edge-the-art-of-risking-everything",
+        "id": "2111251836799713773"
       }
     ],
-    "last_day": "2026-10-16"
+    "last_day": "2026-10-17"
   },
   "film": {
     "seen": [
@@ -431,5 +438,5 @@
     ],
     "last_day": "2026-10-16"
   },
-  "last_slot": "2026-10-16 20"
+  "last_slot": "2026-10-17 02"
 }
