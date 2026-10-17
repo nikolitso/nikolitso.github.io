@@ -371,7 +371,7 @@ function renderFixtures(){
     }).join('') + `</table></div>`).join('');
   const box = $('fxView');
   box.innerHTML = sampleBar('fxSeasons') + (FX.length ? body : '<div class="empty">No fixtures to show.</div>') +
-    `<div class="tag" style="margin-top:14px">${sampleText()} Country H2H is the record of the home side's country against the away side's country in the sample, W–D–L from the home side's point of view (extra-time draws, including penalty shootouts, count as draws). Times are Athens time. Odds are BetExplorer 1X2 prices, available only for the games coming up next. Bolívar v Olimpia is priced by a single bookmaker. Click a game for the full country head to head.</div>`;
+    `<div class="tag" style="margin-top:14px">${sampleText()} Country H2H is the record of the home side's country against the away side's country in the sample, W–D–L from the home side's point of view (extra-time draws, including penalty shootouts, count as draws). Times are Athens time. Odds are BetExplorer 1X2 prices, shown when listed; none are held for these games yet. Click a game for the full country head to head.</div>`;
   bindBar(box, 'fxSeasons', renderFixtures);
   box.querySelectorAll('tr.click').forEach(tr => tr.onclick = () => {
     if (tr.dataset.a === tr.dataset.b) return;
