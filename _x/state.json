@@ -121,7 +121,8 @@
       "mathletics-how-gamblers-managers",
       "good-to-great",
       "smart-money-the-fall-and-rise-of",
-      "on-the-edge-the-art-of-risking-everything"
+      "on-the-edge-the-art-of-risking-everything",
+      "the-not-to-do-list"
     ],
     "log": [
       {
@@ -177,6 +178,12 @@
         "slot": "2026-10-17 02",
         "slug": "on-the-edge-the-art-of-risking-everything",
         "id": "2111251836799713773"
+      },
+      {
+        "day": "2026-10-17",
+        "slot": "2026-10-17 14",
+        "slug": "the-not-to-do-list",
+        "id": "2111459934185623988"
       }
     ],
     "last_day": "2026-10-17"
@@ -445,5 +452,5 @@
     ],
     "last_day": "2026-10-17"
   },
-  "last_slot": "2026-10-17 08"
+  "last_slot": "2026-10-17 14"
 }
