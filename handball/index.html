@@ -88,6 +88,10 @@ tr.grp td{background:color-mix(in srgb,var(--ink) 5%,var(--surface));font-size:.
 #sgBeat th,#sgBeat td{padding:7px 9px}
 tr.testrow td{background:var(--md-soft)}
 a{color:var(--accent)}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;position:sticky;top:0;z-index:5;background:var(--bg);padding:10px 0;margin-block:-14px;border-bottom:1px solid var(--line)}
+.tabs a{font-family:var(--display);font-weight:600;font-size:1.02rem;letter-spacing:.03em;text-decoration:none;color:var(--ink);padding:5px 14px;border:1px solid var(--line);border-radius:99px;background:var(--surface)}
+.tabs a:hover{border-color:var(--accent);color:var(--accent)}
+html{scroll-behavior:smooth}section{scroll-margin-top:60px}
 @media (max-width:700px){.rule{grid-template-columns:1fr}}
 </style>
 
@@ -98,8 +102,10 @@ a{color:var(--accent)}
   <p class="muted">Out of everything tested on four seasons (2022-23 to 2025-26) across 24 men's and women's leagues, only these angles held up against the bookmakers. The page updates twice a day.</p>
 </header>
 
-<section id="sig">
-  <div><div class="eyebrow">Signal 1 · Full time · Women's leagues</div><h2>Projections: where the under beats the bookies' line</h2></div>
+<nav class="tabs" aria-label="Sections"><a href="#projections">1 Projections</a><a href="#backtesting">2 Backtesting</a><a href="#done-by-the-break">3 Done by the Break</a></nav>
+
+<section id="projections">
+  <div><div class="eyebrow">1 · Full time · Women's leagues</div><h2>Projections</h2><p class="muted">Where the under beats the bookies' line.</p></div>
   <p class="note" id="sgSource" hidden></p>
   <div class="tiles" id="sgTiles"></div>
   <h3>Signals this season</h3>
@@ -110,15 +116,18 @@ a{color:var(--accent)}
   <h3>The rules</h3>
   <p class="muted small" id="sgIntro"></p>
   <div class="tbl"><table id="sgRules"></table></div>
-  <h3>Backtesting: how our bets beat the bookies' line</h3>
-  <p class="small muted">Averages over the signal bets only. “Beat the line by” = how many goals past the line the real total landed, in the direction we bet (positive = in our favour).</p>
-  <div class="tbl"><table id="sgBeat"></table></div>
-  <p class="small muted" id="sgBeatNote"></p>
   <p class="note" id="sgNote"></p>
 </section>
 
-<section id="md" class="md">
-  <div><div class="eyebrow">Signal 2 · 1st half</div><h2>Done by the Break: Magdeburg at home as a heavy favourite</h2></div>
+<section id="backtesting">
+  <div><div class="eyebrow">2 · Full time · Women's leagues</div><h2>Backtesting</h2><p class="muted">How our bets beat the bookies' line.</p></div>
+  <p class="small muted">Averages over the signal bets only. “Beat the line by” = how many goals past the line the real total landed, in the direction we bet (positive = in our favour).</p>
+  <div class="tbl"><table id="sgBeat"></table></div>
+  <p class="small muted" id="sgBeatNote"></p>
+</section>
+
+<section id="done-by-the-break" class="md">
+  <div><div class="eyebrow">3 · 1st half · Men's Bundesliga</div><h2>Done by the Break</h2><p class="muted">Magdeburg at home as a heavy favourite.</p></div>
   <div class="rule">
     <div class="what"><span class="klabel">The pattern</span><span class="big">At home at odds of 1.10 or shorter, Magdeburg do most of their damage before half-time, especially against bottom-table teams.</span><span class="small muted">The angle: Magdeburg on the 1st-half handicap. They have usually led by more than half of the full-match handicap line at the break.</span></div>
     <div><span class="klabel">Home games at ≤ 1.10 since 2022-23</span><span class="stat" id="mdStat"></span><span class="small" id="mdStat2"></span></div>
