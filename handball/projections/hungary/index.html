@@ -128,11 +128,11 @@ html{scroll-behavior:smooth}section{scroll-margin-top:60px}
 <section id="backtesting">
   <div><div class="eyebrow">Full time</div><h2>Backtesting</h2><p class="muted">How our bets beat the bookies' line.</p></div>
   <p class="small muted">Averages over the signal bets only. “Beat the line by” = how many goals past the line the real total landed, in the direction we bet (positive = in our favour).</p>
+  <div class="chips" id="arLeague"></div>
   <div class="tbl"><table id="sgBeat"></table></div>
   <p class="small muted" id="sgBeatNote"></p>
   <h3>Archive: every bet we would have placed</h3>
   <p class="small muted">Each bet below is a match where, using only the games played before it that season, our total was 2+ goals below the bookmaker's average line. Odds and lines are the bookmakers' average at the time. 1 unit staked on each. 2022-25 is the backtest and 2025-26 the independent test.</p>
-  <div class="chips" id="arLeague"></div>
   <div class="chips" id="arPeriod"></div>
   <p id="arSum"></p>
   <div class="tbl" id="arTbl"></div>
@@ -203,12 +203,13 @@ const day=d=>{if(!d)return '–';const [y,m,dd]=d.split('-');return new Date(+y,
   $('#sgLeagues').innerHTML=L.map(l=>{const open=S.filter(x=>x.league===l.key&&x.status==='open').length,n=(l.proj||[]).length;return `<a class="tile" href="${lgHref(l.key)}"><span class="stat" style="font-size:1.3rem">${l.name.split(' · ').slice(0,1).join(' · ')}</span><span class="small muted">${n} projection${n===1?'':'s'} · ${open} open bet${open===1?'':'s'} · ${l.gamesMin}+ games played</span></a>`}).join('');
   const AR=G.archive||[], arName=k=>(L.find(l=>l.key===k)||{name:k}).name.split(' · ')[0];
   const arDay=d=>{const [y,m,dd]=d.split('-');return new Date(+y,+m-1,+dd).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'})};
-  const arState={lg:'all',pd:'all'};
+  const arState={lg:L[0].key,pd:'all'};
   const arLg=[['all','All leagues'],...L.map(l=>[l.key,l.name.split(' · ')[0]])], arPd=[['all','Backtest and test'],['backtest','Backtest 2022-25'],['test','Independent test 2025-26']];
   function arRender(){
     const rows=AR.filter(a=>(arState.lg==='all'||a.league===arState.lg)&&(arState.pd==='all'||a.period===arState.pd));
     const chips=(id,list,key)=>{$(id).innerHTML=list.map(([v,t])=>`<button type="button" class="chip${arState[key]===v?' on':''}" data-v="${v}">${t}</button>`).join('');$(id).querySelectorAll('button').forEach(b=>b.onclick=()=>{arState[key]=b.dataset.v;arRender()})};
     chips('#arLeague',arLg,'lg');chips('#arPeriod',arPd,'pd');
+    [...$('#sgBeat').tBodies].forEach((tb,i)=>{tb.style.display=(arState.lg==='all'||(L[i]&&L[i].key===arState.lg))?'':'none'});
     const w=rows.filter(a=>a.status==='won').length,lo=rows.filter(a=>a.status==='lost').length,pu=rows.filter(a=>a.status==='push').length,pr=rows.reduce((t,a)=>t+a.profit,0);
     const beat=rows.length?rows.reduce((t,a)=>t+a.beat,0)/rows.length:null, od=rows.length?rows.reduce((t,a)=>t+a.odds,0)/rows.length:null;
     $('#arSum').innerHTML=rows.length?`<b>${rows.length}</b> bets · <b>${w}</b> won, <b>${lo}</b> lost${pu?`, ${pu} push`:''} (${f(w/rows.length*100,0)}% won) · profit <b class="${cls(pr)}">${sg(pr,1)} units</b> (<b class="${cls(pr)}">${pct(pr/rows.length*100)}</b>) · average odds ${f(od)} · beat the line by <b>${sg(beat,1)}</b> goals on average`:'No bets in this selection.';
