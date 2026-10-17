@@ -139,22 +139,8 @@ html{scroll-behavior:smooth}section{scroll-margin-top:60px}
   <p class="note" id="mdNote"></p>
 </section>
 
-<section id="bl" class="md">
-  <div><div class="eyebrow">Also watching · Women's Bundesliga · 1st half</div><h2 id="wbHead"></h2></div>
-  <div class="rule">
-    <div class="what"><span class="klabel">The check</span><span class="big" id="wbVerdict"></span><span class="small muted" id="wbVerdict2"></span></div>
-    <div><span class="klabel" id="wbStatL"></span><span class="stat" id="wbStat"></span><span class="small" id="wbStat2"></span></div>
-  </div>
-  <h3>Next Blomberg-Lippe home matches</h3>
-  <div class="tbl"><table id="wbNext"></table></div>
-  <h3>The evidence</h3>
-  <div class="tbl"><table id="wbEv"></table></div>
-  <p class="note" id="wbNote"></p>
-</section>
-
 <footer>
   <span id="upd"></span>
-  <span>Data: BetExplorer (results, half-time scores, average bookmaker odds and lines). Full Magdeburg study: <a href="https://claude.ai/artifact/HNGABxyKuin4PKjzG9pZfp" target="_blank" rel="noopener">Magdeburg First-Half Test</a>.</span>
 </footer>
 </div>
 
@@ -213,27 +199,6 @@ const day=d=>{if(!d)return '–';const [y,m,dd]=d.split('-');return new Date(+y,
     return `<tr class="${heavy&&weak?'top':''}"><td class="l"><b>${x.opp}</b>${x.promoted?' <span class="sig">promoted</span>':''}</td><td class="l">${day(x.date)} <span class="muted">${x.time||''}</span></td><td>${x.pos?`${x.pos}. <span class="muted">of ${x.nTeams}</span>`:'–'}${x.fromBottom!=null&&x.fromBottom<=6?' <span class="sig">bottom 6</span>':''}</td><td>${x.o1?f(x.o1):'–'}</td><td>${x.ah?sg(x.ah.line,1):'–'}</td><td>${tgt!=null?`lead by ${f(-tgt,2)}+`:'–'}</td><td>${pm!=null?`${f(x.ph,1)}–${f(x.pa,1)} <span class="${cls(pm)}">(${sg(pm,1)})</span>`:'–'}</td><td class="l">${spot}</td></tr>`}).join('')}</tbody>`:'<tbody><tr><td class="l empty">No home matches listed.</td></tr></tbody>';
   $('#mdEv').innerHTML=`<thead><tr><th class="l">Magdeburg at home, odds ≤ 1.10</th><th>Games</th><th>1st-half margin</th><th>2nd-half margin</th><th>Led at half-time</th><th>Beat ½ of the handicap at HT</th></tr></thead><tbody>${E.map(e=>`<tr class="${/bottom 2|bottom 4/.test(e.label)?'top':''}"><td class="l">${e.label}</td><td>${e.n}</td><td><b>${sg(e.d1,1)}</b></td><td>${sg(e.d2,1)}</td><td>${f(e.htLead,0)}%</td><td>${e.htN?`${e.ht} of ${e.htN}`:'–'}</td></tr>`).join('')}</tbody>`;
   $('#mdNote').innerHTML=`How to use it: when Magdeburg are 1.10 or shorter at home, look at your bookmaker's <b>1st-half handicap</b> for Magdeburg. If it asks for less than the half-time target above (half of the full-match line), that is the value this pattern points to. Positions “Table now” are this season's table so far (early in the season they move a lot). Caution: this could not be tested against real 1st-half odds (BetExplorer has none), and the samples are small (8–32 games). Evidence up to ${M.evidenceTo?day(M.evidenceTo):'–'}.`;
-})();
-
-/* ---------- women's Bundesliga: Blomberg-Lippe at home ---------- */
-(function(){
-  const W=D.wbl;
-  if(!W||!W.evidence){$('#bl').hidden=true;return}
-  const E=W.evidence, h=E.find(e=>e.label.startsWith('Odds 1.10'))||{n:0}, lg=E.find(e=>e.label.startsWith('Other home favourites, odds 1.10'))||{}, all=E.find(e=>e.label==='All home games')||{};
-  const holds=h.n>=5&&h.gap>0&&h.p<0.05;
-  $('#wbHead').textContent=holds?'Blomberg-Lippe at home: the 1st-half pattern holds':'Blomberg-Lippe at home: no Magdeburg-style 1st half';
-  $('#wbVerdict').textContent=holds?`At home at odds of 1.10 or shorter, Blomberg-Lippe build most of their lead in the 1st half.`
-    :`At home at odds of 1.10 or shorter, Blomberg-Lippe keep their lead steady through the match: ${sg(h.d1,1)} in the 1st half, ${sg(h.d2,1)} in the 2nd.`;
-  $('#wbVerdict2').innerHTML=holds?'':`That is not the Magdeburg pattern (a big 1st half, then a fade). The gap between the halves is ${sg(h.gap,2)} goals (p = ${f(h.p,2)}), nothing to bet on. Other women's Bundesliga home favourites do fade after the break (1st half ${sg(lg.d1,1)}, 2nd ${sg(lg.d2,1)} over ${lg.n} games, gap ${sg(lg.gap,2)}, p = ${f(lg.p,2)}); Blomberg-Lippe do not.`;
-  $('#wbStatL').textContent=`Home games at ≤ 1.10 since ${W.since}`;
-  $('#wbStat').innerHTML=`${sg(h.d1,1)}<small>1st half</small> ${sg(h.d2,1)}<small>2nd half</small>`;
-  $('#wbStat2').innerHTML=`Average goal margin in each half over ${h.n} games. Led at half-time in <b>${f(h.htLead,0)}%</b>. All ${all.n} home games: ${sg(all.d1,1)} / ${sg(all.d2,1)}.`;
-  const F=W.next||[];
-  $('#wbNext').innerHTML=F.length?`<thead><tr><th class="l">Opponent</th><th class="l">Date</th><th>Table now</th><th>Blomberg-Lippe odds</th><th>Handicap line</th><th>Half-time target</th></tr></thead><tbody>${F.map(x=>{const tgt=x.ah?x.ah.line/2:null;return `<tr><td class="l"><b>${x.opp.replace(' W','')}</b></td><td class="l">${day(x.date)} <span class="muted">${x.time||''}</span></td><td>${x.pos?`${x.pos}. <span class="muted">of ${x.nTeams}</span>`:'–'}${x.fromBottom!=null&&x.fromBottom<=6?' <span class="sig">bottom 6</span>':''}</td><td>${x.o1?f(x.o1):'–'}</td><td>${x.ah?sg(x.ah.line,1):'–'}</td><td>${tgt!=null?`lead by ${f(-tgt,2)}+`:'–'}</td></tr>`}).join('')}</tbody>`:'<tbody><tr><td class="l empty">No home matches listed.</td></tr></tbody>';
-  const hcs=a=>a.hc&&a.hc.n?`${a.hc.half} of ${a.hc.n}`:'–', cov=a=>a.hc&&a.hc.n?`${a.hc.cover} of ${a.hc.n}`:'–';
-  $('#wbEv').innerHTML=`<thead><tr><th class="l">Blomberg-Lippe at home</th><th>Games</th><th>1st-half margin</th><th>2nd-half margin</th><th>Gap</th><th>Led at half-time</th><th>Beat ½ handicap at HT</th><th>Covered full handicap</th></tr></thead><tbody>${E.map(e=>`<tr class="${e.label.startsWith('Other')?'':e.label.startsWith('Odds 1.10')?'top':''}"><td class="l">${e.label}</td><td>${e.n}</td><td><b>${sg(e.d1,1)}</b></td><td>${sg(e.d2,1)}</td><td class="${cls(e.gap)}">${sg(e.gap,2)}</td><td>${f(e.htLead,0)}%</td><td>${hcs(e)}</td><td>${cov(e)}</td></tr>`).join('')}</tbody>`;
-  const a=all.hc||{};
-  $('#wbNote').innerHTML=`Women's Bundesliga, ${W.since} to now, home games only. ${a.n?`The one thing that stands out is the <b>full-match handicap</b>: Blomberg-Lippe covered it in ${a.cover} of ${a.n} home games with a line (lines exist since 2025-26), but beat half of it at half-time only ${a.half} of ${a.n} times. That points to the full match, not the 1st half, and the sample is small, so treat it as a lead to watch.`:''} Positions are this season's table so far. Samples are small (5–24 games).`;
 })();
 
 $('#upd').textContent=`Updated ${D.scraped}.`;
