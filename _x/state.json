@@ -123,7 +123,8 @@
       "smart-money-the-fall-and-rise-of",
       "on-the-edge-the-art-of-risking-everything",
       "the-not-to-do-list",
-      "basketball-on-paper-rules-and-tools"
+      "basketball-on-paper-rules-and-tools",
+      "focus-use-different-ways-of-seeing"
     ],
     "log": [
       {
@@ -191,6 +192,12 @@
         "slot": "2026-10-18 02",
         "slug": "basketball-on-paper-rules-and-tools",
         "id": "2111594114773057651"
+      },
+      {
+        "day": "2026-10-18",
+        "slot": "2026-10-18 14",
+        "slug": "focus-use-different-ways-of-seeing",
+        "id": "2111827667959816690"
       }
     ],
     "last_day": "2026-10-18"
@@ -473,5 +480,5 @@
     ],
     "last_day": "2026-10-18"
   },
-  "last_slot": "2026-10-18 08"
+  "last_slot": "2026-10-18 14"
 }
