@@ -418,7 +418,8 @@
       "the-traitor",
       "along-the-ridge",
       "under-the-tree",
-      "gomorrah"
+      "gomorrah",
+      "the-kindergarten-teacher"
     ],
     "log": [
       {
@@ -476,9 +477,15 @@
         "slot": "2026-10-18 08",
         "slug": "gomorrah",
         "id": "2111695926603530635"
+      },
+      {
+        "day": "2026-10-18",
+        "slot": "2026-10-18 20",
+        "slug": "the-kindergarten-teacher",
+        "id": "2111880699414458622"
       }
     ],
     "last_day": "2026-10-18"
   },
-  "last_slot": "2026-10-18 14"
+  "last_slot": "2026-10-18 20"
 }
