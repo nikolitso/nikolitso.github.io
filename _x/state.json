@@ -410,7 +410,8 @@
       "chevalier",
       "the-traitor",
       "along-the-ridge",
-      "under-the-tree"
+      "under-the-tree",
+      "gomorrah"
     ],
     "log": [
       {
@@ -462,9 +463,15 @@
         "slot": "2026-10-17 20",
         "slug": "under-the-tree",
         "id": "2111515368095109301"
+      },
+      {
+        "day": "2026-10-18",
+        "slot": "2026-10-18 08",
+        "slug": "gomorrah",
+        "id": "2111695926603530635"
       }
     ],
-    "last_day": "2026-10-17"
+    "last_day": "2026-10-18"
   },
-  "last_slot": "2026-10-18 02"
+  "last_slot": "2026-10-18 08"
 }
