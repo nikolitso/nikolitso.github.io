@@ -1,0 +1,221 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Basketball</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@500;600;700&family=Source+Sans+3:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  --bg:#f1f3f6; --surface:#ffffff; --ink:#121826; --ink2:#46505f; --muted:#737d8c; --line:#dbe0e7; --grid:#e9edf2;
+  --accent:#d9631e; --accent-soft:#fdeee4; --md:#1b7f4b; --md-soft:#e5f3eb;
+  --pos:#1b7f4b; --neg:#b3372f; --warn:#a86b00; --warn-bg:#fdf3dc;
+  --display:"Saira Condensed","Arial Narrow",system-ui,sans-serif;
+  --body:"Source Sans 3",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){color-scheme:dark;
+    --bg:#0f1319; --surface:#171c24; --ink:#eef1f5; --ink2:#b9c1cc; --muted:#8a94a3; --line:#2a313c; --grid:#212833;
+    --accent:#ff8a4c; --accent-soft:#2e2016; --md:#4cc47a; --md-soft:#16271d;
+    --pos:#4cc47a; --neg:#ef7a70; --warn:#f0b84a; --warn-bg:#2d2512;}
+}
+:root[data-theme="dark"]{color-scheme:dark;
+  --bg:#0f1319; --surface:#171c24; --ink:#eef1f5; --ink2:#b9c1cc; --muted:#8a94a3; --line:#2a313c; --grid:#212833;
+  --accent:#ff8a4c; --accent-soft:#2e2016; --md:#4cc47a; --md-soft:#16271d;
+  --pos:#4cc47a; --neg:#ef7a70; --warn:#f0b84a; --warn-bg:#2d2512;}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5;margin:0}
+.wrap{max-width:1040px;margin:0 auto;padding-inline:18px;padding-block:24px 56px;display:flex;flex-direction:column;gap:40px}
+h1,h2,h3{font-family:var(--display);font-weight:700;margin:0;text-wrap:balance;letter-spacing:.01em}
+h1{font-size:clamp(2.1rem,5.5vw,3rem);line-height:1}
+h2{font-size:1.65rem;line-height:1.1}
+h3{font-size:1.12rem}
+p{margin:0;max-width:72ch}
+.eyebrow{font-family:var(--display);font-weight:600;text-transform:uppercase;letter-spacing:.14em;font-size:.82rem;color:var(--accent)}
+.md .eyebrow{color:var(--md)}
+.muted{color:var(--muted)} .small{font-size:.86rem}
+header{display:flex;flex-direction:column;gap:10px}
+section{display:flex;flex-direction:column;gap:14px}
+.rule{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.rule>div{background:var(--surface);padding:16px 18px;display:flex;flex-direction:column;gap:6px}
+.rule .what{border-left:4px solid var(--accent)}
+.md .rule .what{border-left-color:var(--md)}
+.rule .big{font-family:var(--display);font-weight:700;font-size:1.55rem;line-height:1.15}
+.klabel{font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:700}
+.stat{font-family:var(--display);font-weight:700;font-size:2rem;line-height:1;font-variant-numeric:tabular-nums}
+.stat small{font-size:.95rem;color:var(--muted);font-weight:600;margin-left:4px}
+.seasons{display:flex;gap:6px;flex-wrap:wrap}
+.pill{font-size:.78rem;font-weight:700;padding:2px 9px;border-radius:99px;border:1px solid var(--line);font-variant-numeric:tabular-nums}
+.pill.pos{color:var(--pos);border-color:color-mix(in srgb,var(--pos) 40%,transparent);background:color-mix(in srgb,var(--pos) 10%,transparent)}
+.pill.neg{color:var(--neg);border-color:color-mix(in srgb,var(--neg) 40%,transparent);background:color-mix(in srgb,var(--neg) 9%,transparent)}
+.sig{display:inline-block;font-size:.76rem;font-weight:700;padding:1px 9px;border-radius:99px;border:1px solid var(--line);white-space:nowrap}
+.sig.go{color:var(--pos);border-color:color-mix(in srgb,var(--pos) 45%,transparent);background:color-mix(in srgb,var(--pos) 12%,transparent)}
+.sig.wait{color:var(--warn);border-color:color-mix(in srgb,var(--warn) 45%,transparent);background:var(--warn-bg)}
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:.86rem;font-variant-numeric:tabular-nums}
+th,td{padding:7px 8px;text-align:right;white-space:nowrap;border-bottom:1px solid var(--grid)}
+th{white-space:normal;vertical-align:bottom;line-height:1.25}td.m{white-space:normal;min-width:9rem}
+th{font-weight:600;color:var(--muted);font-size:.72rem;text-transform:uppercase;letter-spacing:.06em}
+td.l,th.l{text-align:left}
+tr:last-child td{border-bottom:0}
+#sgRules td,#sgRules th{white-space:normal;vertical-align:top}
+#sgRules .sig{white-space:normal;display:inline-block}
+tr.hot td{background:color-mix(in srgb,var(--pos) 8%,var(--surface))}
+tr.top td{background:var(--md-soft)}
+tr.tot td{border-top:2px solid var(--line)}
+tr.testrow td{font-weight:700}
+.pos{color:var(--pos)} .neg{color:var(--neg)}
+.empty{color:var(--muted);font-style:italic}
+.note{font-size:.86rem;color:var(--ink2);border-left:3px solid var(--line);padding-left:12px;max-width:80ch}
+footer{font-size:.82rem;color:var(--muted);border-top:1px solid var(--line);padding-top:14px;display:flex;flex-direction:column;gap:4px}
+
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.tile{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px;display:flex;flex-direction:column;gap:3px;min-width:0}
+header{padding-bottom:6px}
+header h1{display:flex;align-items:center;gap:12px}
+header h1::before{content:"";width:6px;height:.85em;background:var(--accent);border-radius:2px;flex:none}
+section>h3{display:flex;align-items:center;gap:10px;margin-top:10px}
+section>h3::after{content:"";flex:1;height:1px;background:var(--line)}
+.tbl{box-shadow:0 1px 2px color-mix(in srgb,var(--ink) 6%,transparent)}
+thead th{background:color-mix(in srgb,var(--ink) 3%,var(--surface));position:sticky;top:0}
+tbody tr:hover td{background:color-mix(in srgb,var(--accent) 5%,var(--surface))}
+section{padding-top:4px}
+.wrap{gap:44px}
+th.key{color:var(--ink)}
+td.key{font-weight:700;background:var(--md-soft)}
+
+tr.grp td{background:color-mix(in srgb,var(--ink) 5%,var(--surface));font-size:.95rem;padding-block:7px;border-top:1px solid var(--line)}
+.beat{display:flex;align-items:center;gap:8px;min-width:130px}
+.beat .bar{flex:1;height:7px;border-radius:4px;background:var(--grid);overflow:hidden;min-width:60px}
+.beat .bar i{display:block;height:100%;background:currentColor;border-radius:4px}
+.beat b{min-width:2.6em;text-align:right;font-variant-numeric:tabular-nums}
+#sgBeat th,#sgBeat td{padding:7px 9px}
+tr.testrow td{background:var(--md-soft)}
+a{color:var(--accent)}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;position:sticky;top:0;z-index:5;background:var(--bg);padding:10px 0;margin-block:-14px;border-bottom:1px solid var(--line)}
+.tabs a{font-family:var(--display);font-weight:600;font-size:1.02rem;letter-spacing:.03em;text-decoration:none;color:var(--ink);padding:5px 14px;border:1px solid var(--line);border-radius:99px;background:var(--surface)}
+.tabs a:hover{border-color:var(--accent);color:var(--accent)}
+a.tile{text-decoration:none;color:inherit}a.tile:hover{border-color:var(--accent)}
+.crumb{font-size:.9rem}
+th.srt{cursor:pointer;user-select:none}th.srt:hover{color:var(--ink)}
+th[aria-sort=ascending]::after{content:" \25B2";font-size:.7em}th[aria-sort=descending]::after{content:" \25BC";font-size:.7em}
+header.brand{padding-bottom:0}header.brand h1{display:flex;align-items:center;gap:18px;font-size:clamp(2.2rem,6vw,3.2rem);letter-spacing:.2em;text-transform:uppercase;font-weight:700;line-height:1}header.brand h1::before{display:none}header.brand a.home{display:flex;align-items:center;gap:18px;color:inherit;text-decoration:none}header.brand a.home:hover span{color:var(--accent)}.ball{flex:none;filter:drop-shadow(0 4px 6px color-mix(in srgb,var(--accent) 22%,transparent))}
+.chips{display:flex;gap:6px;flex-wrap:wrap}.chip{border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:3px 13px;border-radius:99px;font:inherit;font-size:.86rem;cursor:pointer}a.chip{text-decoration:none;display:inline-block}.chip:hover{border-color:var(--accent)}.chip.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.how3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.hcard{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px;font-size:.86rem;line-height:1.5;color:var(--ink2)}.hcard b.t{display:block;font-family:var(--display);font-size:1.05rem;color:var(--ink);margin-bottom:4px}@media (max-width:820px){.how3{grid-template-columns:1fr}}
+.tabs a.on{background:var(--accent);border-color:var(--accent);color:#fff}
+html{scroll-behavior:smooth}section{scroll-margin-top:60px}
+@media (max-width:700px){.rule{grid-template-columns:1fr}}
+</style>
+<style>[hidden]{display:none!important}</style>
+<div class="wrap" data-page="cyprus" data-base="/basketball/">
+
+<header class="brand"><h1><a class="home" href="/basketball/" aria-label="Basketball home"><svg class="ball" viewBox="0 0 64 66" width="68" height="70" role="img" aria-label="Basketball" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="bbg" cx="34%" cy="28%" r="78%"><stop offset="0" stop-color="#ffd9bd"/><stop offset=".5" stop-color="#f08a3e"/><stop offset="1" stop-color="#b8480f"/></radialGradient></defs><ellipse cx="32" cy="62.500" rx="19" ry="2.600" fill="#000" opacity=".13"/><circle cx="32" cy="31" r="28" fill="url(#bbg)"/><g fill="none" stroke="#5a2306" stroke-opacity=".6" stroke-width="1.6" stroke-linecap="round"><path d="M4 31H60"/><path d="M32 3V59"/><path d="M12 11C22 20 22 42 12 51"/><path d="M52 11C42 20 42 42 52 51"/></g><ellipse cx="22" cy="17" rx="9" ry="4.800" fill="#fff" opacity=".35" transform="rotate(-32 22 17)"/><circle cx="32" cy="31" r="28" fill="none" stroke="#5a2306" stroke-opacity=".5" stroke-width="1.2"/></svg><span>Basketball</span></a></h1></header>
+
+<nav class="tabs" aria-label="Pages"><a class="on" data-id="projections" href="/basketball/projections/">Projections</a></nav>
+
+<section id="projections" hidden>
+  <div><div class="eyebrow">Handicap</div><h2>Projections</h2><p class="muted">Where the model beats the bookmakers' handicap. Open a league for its match projections.</p></div>
+  <h3>Leagues</h3>
+  <p class="small muted">Open a league for its projections against the bookmaker.</p>
+  <div class="tiles" id="bLeagues"></div>
+  <h3>Flagged now</h3>
+  <p class="small muted">Every bet where the model is 5 or more points away from the bookmakers' line, on either side, once both teams have played 6 games.</p>
+  <div class="tbl"><table id="bFlag"></table></div>
+  <h3>Season record</h3>
+  <div class="tbl" id="bRec"></div>
+  <div class="tbl"><table id="bLog"></table></div>
+</section>
+
+<section id="league" hidden>
+  <p class="crumb"><a href="/basketball/projections/">← Projections</a></p>
+  <div><div class="eyebrow">Handicap</div><h2 id="lName"></h2><p class="muted" id="lNote"></p></div>
+  <div class="tiles" id="lTiles"></div>
+  <h3>Next matches</h3>
+  <div class="tbl"><table id="lNext"></table></div>
+  <h3>Workings, match by match</h3>
+  <p class="small muted" id="lWorkNote"></p>
+  <div class="tbl"><table id="lWork"></table></div>
+  <h3>Record</h3>
+  <div class="tbl"><table id="lLog"></table></div>
+  <h3>Team ratings</h3>
+  <p class="small muted">Points scored and conceded per game this season, and the attack and defence ratings the model uses (1.00 = league average; for defence, lower is better). Click a column to sort.</p>
+  <div class="tbl"><table id="lTeams"></table></div>
+  <div class="how3">
+    <div class="hcard"><b class="t">How it is built</b>Only this season's played matches are used. <b>1.</b> The league average points for home and away sides. <b>2.</b> Each team's attack and defence against that average (1.00 = average, 1.10 = 10% more). <b>3.</b> For each match: league average × the home team's attack × the away team's defence, and the same the other way round. <b>4.</b> The difference of the two numbers, plus a small correction, is the projected margin.</div>
+    <div class="hcard"><b class="t">Winner and handicap</b>The team with the higher projected score is the projected winner. Its win chance comes from how far past margins in the league missed the projection. The edge on a handicap is the projected margin plus the home line: if the model has the home team winning by 9 and the line is −3.5, the home team covers by 5.5.</div>
+    <div class="hcard"><b class="t">Early in the season</b>Matches are projected once both teams have played 3 games, but early numbers are rough: treat them with care. A handicap is flagged only once both teams have played 6 games and the edge is 5 points or more.</div>
+  </div>
+</section>
+
+<footer id="foot"></footer>
+</div>
+
+<script>
+const D={"scraped": "2026-10-18 15:41", "leagues": [{"key": "tr_tbl", "name": "Turkey · TBL", "page": "turkey", "status": "live", "reason": null, "side": "both", "gap": 5, "k": 0, "opp": 3, "shift": -0.24, "sd": 12.92, "backtest": null, "nResults": 54, "upcoming": [{"id": "IDeIpGTG", "date": "2026-10-18", "time": "13:00", "home": "Mersin", "away": "Darussafaka", "gh": 5, "ga": 6, "ah": 1.08, "dh": 0.95, "aa": 0.88, "da": 1.0, "rawH": 87.9, "rawA": 65.1, "ours": 22.6, "sH": 87.8, "sA": 65.2, "winner": "Mersin", "pWin": 0.96, "line": -15.5, "oddsH": 1.83, "oddsA": 1.83, "books": null, "source": "manual", "flagged": false, "edge": 7.1, "side": null}, {"id": "nmxr1yEc", "date": "2026-10-18", "time": "13:30", "home": "Final Spor", "away": "Balikesir", "gh": 6, "ga": 6, "ah": 1.03, "dh": 1.03, "aa": 0.96, "da": 0.99, "rawH": 82.9, "rawA": 77.7, "ours": 5.0, "sH": 82.8, "sA": 77.8, "winner": "Final Spor", "pWin": 0.65, "line": -7.5, "oddsH": 1.83, "oddsA": 1.83, "books": null, "source": "manual", "flagged": false, "edge": -2.5, "side": null}, {"id": "2swKKsSp", "date": "2026-10-23", "time": "15:00", "home": "Fenerbahce 2", "away": "Ormanspor", "gh": 7, "ga": 6, "ah": 0.93, "dh": 0.97, "aa": 1.04, "da": 1.04, "rawH": 78.5, "rawA": 79.5, "ours": -1.2, "sH": 78.4, "sA": 79.6, "winner": "Ormanspor", "pWin": 0.538, "flagged": false}, {"id": "fku5roKi", "date": "2026-10-24", "time": "12:30", "home": "iLab Basketbol", "away": "MKE Ankaragucu", "gh": 6, "ga": 6, "ah": 1.07, "dh": 1.02, "aa": 1.04, "da": 1.15, "rawH": 100.2, "rawA": 83.5, "ours": 16.4, "sH": 100.0, "sA": 83.6, "winner": "iLab Basketbol", "pWin": 0.898, "flagged": false}, {"id": "nPB0KYX1", "date": "2026-10-24", "time": "13:30", "home": "Ankara Kolejliler", "away": "Harem Spor", "gh": 7, "ga": 7, "ah": 0.98, "dh": 1.0, "aa": 1.01, "da": 0.85, "rawH": 67.8, "rawA": 79.3, "ours": -11.8, "sH": 67.6, "sA": 79.5, "winner": "Harem Spor", "pWin": 0.82, "flagged": false}, {"id": "boltSPZA", "date": "2026-10-24", "time": "15:00", "home": "Kipas Istiklal", "away": "Mersin", "gh": 7, "ga": 5, "ah": 1.08, "dh": 0.92, "aa": 1.08, "da": 0.95, "rawH": 83.1, "rawA": 77.6, "ours": 5.2, "sH": 83.0, "sA": 77.8, "winner": "Kipas Istiklal", "pWin": 0.656, "flagged": false}, {"id": "zTtLv3JG", "date": "2026-10-24", "time": "16:00", "home": "Kecioren Baglum", "away": "Final Spor", "gh": 7, "ga": 6, "ah": 1.09, "dh": 1.14, "aa": 1.03, "da": 1.03, "rawH": 91.5, "rawA": 91.9, "ours": -0.6, "sH": 91.3, "sA": 92.0, "winner": "Final Spor", "pWin": 0.52, "flagged": false}, {"id": "tS8hMf3k", "date": "2026-10-25", "time": "13:00", "home": "Balikesir", "away": "CO Basket", "gh": 6, "ga": 7, "ah": 0.96, "dh": 0.99, "aa": 0.91, "da": 1.07, "rawH": 83.2, "rawA": 70.6, "ours": 12.4, "sH": 83.1, "sA": 70.7, "winner": "Balikesir", "pWin": 0.831, "flagged": false}, {"id": "2FrDtPl4", "date": "2026-10-25", "time": "13:30", "home": "Konya BBSK", "away": "Goztepe", "gh": 6, "ga": 6, "ah": 0.96, "dh": 1.02, "aa": 1.02, "da": 0.91, "rawH": 71.1, "rawA": 81.5, "ours": -10.7, "sH": 70.9, "sA": 81.6, "winner": "Goztepe", "pWin": 0.796, "flagged": false}, {"id": "6BilQ34N", "date": "2026-10-25", "time": "15:00", "home": "Darussafaka", "away": "Buyukcekmece", "gh": 6, "ga": 6, "ah": 0.88, "dh": 1.0, "aa": 0.97, "da": 0.97, "rawH": 69.1, "rawA": 76.6, "ours": -7.8, "sH": 69.0, "sA": 76.8, "winner": "Buyukcekmece", "pWin": 0.726, "flagged": false}], "teams": [{"team": "Harem Spor", "gp": 7, "pf": 82.1, "pa": 66.6, "att": 1.01, "de": 0.85}, {"team": "Kipas Istiklal", "gp": 7, "pf": 85.4, "pa": 73.6, "att": 1.08, "de": 0.92}, {"team": "Mersin", "gp": 5, "pf": 89.0, "pa": 75.4, "att": 1.08, "de": 0.95}, {"team": "Goztepe", "gp": 6, "pf": 85.0, "pa": 74.7, "att": 1.02, "de": 0.91}, {"team": "iLab Basketbol", "gp": 6, "pf": 84.2, "pa": 82.3, "att": 1.07, "de": 1.02}, {"team": "Gaziantep", "gp": 7, "pf": 79.7, "pa": 78.7, "att": 1.0, "de": 0.96}, {"team": "Final Spor", "gp": 6, "pf": 80.3, "pa": 81.7, "att": 1.03, "de": 1.03}, {"team": "Buyukcekmece", "gp": 6, "pf": 81.3, "pa": 77.2, "att": 0.97, "de": 0.97}, {"team": "Ormanspor", "gp": 6, "pf": 84.2, "pa": 84.0, "att": 1.04, "de": 1.04}, {"team": "Ankara Kolejliler", "gp": 7, "pf": 78.7, "pa": 79.7, "att": 0.98, "de": 1.0}, {"team": "Balikesir", "gp": 6, "pf": 75.8, "pa": 78.5, "att": 0.96, "de": 0.99}, {"team": "Fenerbahce 2", "gp": 7, "pf": 73.3, "pa": 79.0, "att": 0.93, "de": 0.97}, {"team": "Kecioren Baglum", "gp": 7, "pf": 83.9, "pa": 88.9, "att": 1.09, "de": 1.14}, {"team": "Konya BBSK", "gp": 6, "pf": 76.0, "pa": 83.5, "att": 0.96, "de": 1.02}, {"team": "MKE Ankaragucu", "gp": 6, "pf": 80.2, "pa": 93.3, "att": 1.04, "de": 1.15}, {"team": "Darussafaka", "gp": 6, "pf": 70.3, "pa": 79.8, "att": 0.88, "de": 1.0}, {"team": "CO Basket", "gp": 7, "pf": 72.1, "pa": 83.4, "att": 0.91, "de": 1.07}], "gamesMin": 5, "gamesMax": 7, "avg": {"muH": 81.4, "muA": 78.5, "total": 159.9}, "source": "flashscore"}, {"key": "cz_nbl", "name": "Czech Republic · NBL", "page": "czech-republic", "status": "live", "reason": null, "side": "both", "gap": 5, "k": 4, "opp": 0, "shift": 0.85, "sd": 13.62, "backtest": null, "nResults": 41, "upcoming": [{"id": "ELvfVjef", "date": "2026-10-18", "time": "16:00", "home": "Brno", "away": "USK Prague", "gh": 6, "ga": 6, "ah": 0.97, "dh": 1.0, "aa": 0.98, "da": 1.01, "rawH": 84.6, "rawA": 82.2, "ours": 3.2, "sH": 85.1, "sA": 81.8, "winner": "Brno", "pWin": 0.594, "line": -4.5, "oddsH": 1.83, "oddsA": 1.83, "books": null, "source": "manual", "flagged": false, "edge": -1.3, "side": null}, {"id": "A7jcrbjt", "date": "2026-10-23", "time": "16:00", "home": "Srsni Pisek", "away": "Slavia Prague", "gh": 6, "ga": 7, "ah": 1.04, "dh": 1.01, "aa": 1.1, "da": 0.95, "rawH": 84.4, "rawA": 92.8, "ours": -7.5, "sH": 84.8, "sA": 92.3, "winner": "Slavia Prague", "pWin": 0.709, "flagged": false}, {"id": "CILst89C", "date": "2026-10-24", "time": "15:30", "home": "USK Prague", "away": "Olomoucko", "gh": 6, "ga": 8, "ah": 0.98, "dh": 1.01, "aa": 0.85, "da": 1.03, "rawH": 86.6, "rawA": 71.8, "ours": 15.6, "sH": 87.0, "sA": 71.4, "winner": "USK Prague", "pWin": 0.874, "flagged": false}, {"id": "v5NZsUv0", "date": "2026-10-24", "time": "16:00", "home": "Decin", "away": "NH Ostrava", "gh": 7, "ga": 6, "ah": 1.01, "dh": 0.92, "aa": 1.02, "da": 0.99, "rawH": 85.7, "rawA": 79.1, "ours": 7.5, "sH": 86.1, "sA": 78.6, "winner": "Decin", "pWin": 0.709, "flagged": false}, {"id": "KrPkvnvP", "date": "2026-10-24", "time": "16:00", "home": "Opava", "away": "Brno", "gh": 7, "ga": 6, "ah": 0.99, "dh": 1.03, "aa": 0.97, "da": 1.0, "rawH": 85.1, "rawA": 83.9, "ours": 2.1, "sH": 85.6, "sA": 83.5, "winner": "Opava", "pWin": 0.56, "flagged": false}, {"id": "johDvGk5", "date": "2026-10-25", "time": "16:00", "home": "Plzen", "away": "Hradec Kralove", "gh": 7, "ga": 7, "ah": 0.95, "dh": 1.05, "aa": 1.02, "da": 1.09, "rawH": 88.7, "rawA": 89.6, "ours": 0.0, "sH": 89.1, "sA": 89.1, "winner": "Plzen", "pWin": 0.5, "flagged": false}, {"id": "rLl5txLh", "date": "2026-10-25", "time": "17:00", "home": "Usti n. Labem", "away": "Pardubice", "gh": 7, "ga": 8, "ah": 1.07, "dh": 0.95, "aa": 1.02, "da": 0.96, "rawH": 88.6, "rawA": 80.9, "ours": 8.5, "sH": 89.0, "sA": 80.5, "winner": "Usti n. Labem", "pWin": 0.734, "flagged": false}], "teams": [{"team": "Slavia Prague", "gp": 7, "pf": 97.6, "pa": 77.9, "att": 1.1, "de": 0.95}, {"team": "Usti n. Labem", "gp": 7, "pf": 94.9, "pa": 77.0, "att": 1.07, "de": 0.95}, {"team": "Decin", "gp": 7, "pf": 85.1, "pa": 75.1, "att": 1.01, "de": 0.92}, {"team": "Pardubice", "gp": 8, "pf": 87.8, "pa": 79.9, "att": 1.02, "de": 0.96}, {"team": "NH Ostrava", "gp": 6, "pf": 88.0, "pa": 83.5, "att": 1.02, "de": 0.99}, {"team": "Srsni Pisek", "gp": 6, "pf": 89.7, "pa": 86.7, "att": 1.04, "de": 1.01}, {"team": "USK Prague", "gp": 6, "pf": 82.3, "pa": 86.3, "att": 0.98, "de": 1.01}, {"team": "Brno", "gp": 6, "pf": 80.0, "pa": 86.0, "att": 0.97, "de": 1.0}, {"team": "Opava", "gp": 7, "pf": 83.3, "pa": 89.0, "att": 0.99, "de": 1.03}, {"team": "Hradec Kralove", "gp": 7, "pf": 87.0, "pa": 96.3, "att": 1.02, "de": 1.09}, {"team": "Plzen", "gp": 7, "pf": 78.1, "pa": 91.9, "att": 0.95, "de": 1.05}, {"team": "Olomoucko", "gp": 8, "pf": 65.5, "pa": 88.0, "att": 0.85, "de": 1.03}], "gamesMin": 6, "gamesMax": 8, "avg": {"muH": 85.9, "muA": 83.6, "total": 169.5}, "source": "flashscore"}, {"key": "cy_a", "name": "Cyprus · Division A", "page": "cyprus", "status": "live", "reason": null, "side": "both", "gap": 5, "k": 0, "opp": 3, "shift": -1.26, "sd": 15.05, "backtest": null, "nResults": 7, "upcoming": [], "teams": [{"team": "AEK Larnaca", "gp": 1, "pf": 90.0, "pa": 56.0, "att": 0.99, "de": 0.74}, {"team": "Keravnos", "gp": 1, "pf": 95.0, "pa": 62.0, "att": 1.03, "de": 0.79}, {"team": "Apoel BC", "gp": 1, "pf": 80.0, "pa": 73.0, "att": 1.06, "de": 0.85}, {"team": "AEL", "gp": 2, "pf": 81.0, "pa": 78.5, "att": 1.06, "de": 0.93}, {"team": "ETHA Engomi", "gp": 1, "pf": 76.0, "pa": 65.0, "att": 1.0, "de": 1.0}, {"team": "Morphou", "gp": 1, "pf": 65.0, "pa": 76.0, "att": 1.0, "de": 1.0}, {"team": "Achilleas K.", "gp": 2, "pf": 75.0, "pa": 92.5, "att": 1.01, "de": 1.11}, {"team": "Paralimni", "gp": 2, "pf": 84.5, "pa": 84.0, "att": 0.98, "de": 1.08}, {"team": "Apollon", "gp": 2, "pf": 73.0, "pa": 89.0, "att": 0.98, "de": 1.1}, {"team": "Anorthosis", "gp": 1, "pf": 79.0, "pa": 92.0, "att": 0.9, "de": 1.14}], "gamesMin": 1, "gamesMax": 2, "avg": {"muH": 77.6, "muA": 81.3, "total": 158.9}, "source": "flashscore"}], "signals": [], "record": {"cy_a": {"open": 0, "won": 0, "lost": 0, "push": 0, "units": 0}, "cz_nbl": {"open": 0, "won": 0, "lost": 0, "push": 0, "units": 0}, "tr_tbl": {"open": 0, "won": 0, "lost": 0, "push": 0, "units": 0}}};
+const $=s=>document.querySelector(s);
+const f=(v,d=1)=>v==null||isNaN(v)?'–':(+v).toFixed(d);
+const sg=(v,d=1)=>v==null||isNaN(v)?'–':(v>0?'+':v<0?'−':'')+Math.abs(+v).toFixed(d);
+const cls=v=>v>0?'pos':v<0?'neg':'';
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const day=d=>{if(!d)return '–';const [y,m,dd]=d.split('-');return new Date(+y,+m-1,+dd).toLocaleDateString('en-GB',{weekday:'short',day:'2-digit',month:'short'})};
+/* kick-off times are stored in UTC; show them in the visitor's local time */
+const when=(d,tm)=>{if(!d)return '–';if(!tm)return day(d);const x=new Date(d+'T'+tm+':00Z');return x.toLocaleDateString('en-GB',{weekday:'short',day:'2-digit',month:'short'})+' '+x.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})};
+const W=$('.wrap'), PAGE=W.dataset.page, BASE=W.dataset.base||'/basketball/';
+const LG=D.leagues, byPage=Object.fromEntries(LG.map(l=>[l.page,l])), byLeague=Object.fromEntries(LG.map(l=>[l.key,l]));
+const href=l=>`${BASE}projections/${l.page}/`;
+const up=LG.flatMap(l=>l.upcoming.map(u=>({...u,lg:l}))).sort((a,b)=>(a.date+(a.time||'')).localeCompare(b.date+(b.time||'')));
+const lname=l=>l.name.split(' · ')[0];
+/* the bet as a team and its handicap: home keeps the line, away takes the opposite */
+const call=x=>x.side==='home'?`${esc(x.home)} ${sg(x.line)}`:`${esc(x.away)} ${sg(-x.line)}`;
+
+function nextTable(el,rows,showLeague){
+  const head=`<thead><tr>${showLeague?'<th class="l">League</th>':''}<th class="l">Match</th><th class="l">Date</th><th>Games</th><th>Projected</th><th class="l">Winner</th><th>Home line</th><th class="l">Edge</th><th class="l">Signal</th></tr></thead>`;
+  const body=rows.map(u=>{
+    const mg=Math.abs(u.ours);
+    const edge=u.edge==null?'<span class="muted small">–</span>':`<b>${esc(u.edge>=0?u.home:u.away)}</b> <span class="${u.flagged?'pos':''}">+${f(Math.abs(u.edge))}</span>`;
+    const sig=u.flagged?`<span class="sig go">${call(u)}</span>`:(u.line==null?'<span class="muted small">no line yet</span>':'<span class="muted small">–</span>');
+    return `<tr class="${u.flagged?'hot':''}">${showLeague?`<td class="l muted">${esc(lname(u.lg))}</td>`:''}<td class="l m"><b>${esc(u.home)}</b> – ${esc(u.away)}</td><td class="l">${when(u.date,u.time)}</td><td>${u.gh}/${u.ga}</td><td>${f(u.sH,0)}–${f(u.sA,0)}</td><td class="l m"><b>${esc(u.winner)}</b> by ${f(mg)} <span class="muted small">${f(u.pWin*100,0)}%</span></td><td>${u.line==null?'–':sg(u.line)}</td><td class="l">${edge}</td><td class="l">${sig}</td></tr>`}).join('');
+  el.innerHTML=head+`<tbody>${body||`<tr><td class="l empty" colspan="${showLeague?9:8}">No matches in the next 8 days where both teams have played 3 games.</td></tr>`}</tbody>`;
+}
+function logTable(el,S){
+  const st={open:'<span class="sig wait">To play</span>',won:'<span class="sig go">Win</span>',lost:'<span class="sig">Loss</span>',push:'<span class="sig">Push</span>'};
+  el.innerHTML=S.length?`<thead><tr><th class="l">League</th><th class="l">Match</th><th class="l">Date</th><th class="l">Bet</th><th>Odds</th><th>Model margin</th><th>Real margin</th><th class="l">Result</th><th>Return</th></tr></thead><tbody>${S.map(x=>`<tr><td class="l muted">${esc(lname(byLeague[x.league]||{name:x.league}))}</td><td class="l m"><b>${esc(x.home)}</b> – ${esc(x.away)}</td><td class="l">${day(x.date)}</td><td class="l"><b>${call(x)}</b></td><td>${f(x.odds,2)}</td><td>${sg(x.ours)}</td><td>${x.margin==null?'–':sg(x.margin,0)}</td><td class="l">${st[x.status]}</td><td class="${cls(x.profit)}">${x.profit==null?'–':sg(x.profit,2)}</td></tr>`).join('')}</tbody>`:'<tbody><tr><td class="l empty">Nothing flagged yet. Handicaps are logged here the first time they qualify.</td></tr></tbody>';
+}
+function recTable(el,rec){
+  const R=Object.values(rec), sum=k=>R.reduce((a,x)=>a+x[k],0), n=sum('won')+sum('lost')+sum('push'), u=sum('units');
+  el.innerHTML=`<table><thead><tr><th>Flagged</th><th>Wins</th><th>Losses</th><th>Pushes</th><th>To play</th><th>Return (units)</th><th>Return %</th></tr></thead><tbody><tr><td><b>${n+sum('open')}</b></td><td>${sum('won')}</td><td>${sum('lost')}</td><td>${sum('push')}</td><td>${sum('open')}</td><td class="${cls(u)}"><b>${sg(u,2)}</b></td><td class="${cls(u)}">${n?sg(u/n*100,0)+'%':'–'}</td></tr></tbody></table>`;
+}
+function tiles(el,items){el.innerHTML=items.map(([k,v,n])=>`<div class="tile"><span class="klabel">${k}</span><span class="stat">${v}</span><span class="small muted">${n}</span></div>`).join('')}
+
+function overview(){
+  const flagged=up.filter(u=>u.flagged), R=Object.values(D.record), won=R.reduce((a,x)=>a+x.won,0), lost=R.reduce((a,x)=>a+x.lost,0), push=R.reduce((a,x)=>a+x.push,0), u=R.reduce((a,x)=>a+x.units,0);
+  $('#bLeagues').innerHTML=LG.map(l=>`<a class="tile" href="${href(l)}"><span class="klabel">${esc(l.name)}</span><span class="stat">${l.upcoming.length}<small>next 8 days</small></span><span class="small muted">${l.gamesMin===l.gamesMax?l.gamesMin:l.gamesMin+'–'+l.gamesMax} games played</span></a>`).join('');
+  $('#bFlag').innerHTML=flagged.length?`<thead><tr><th class="l">League</th><th class="l">Match</th><th class="l">Date</th><th class="l">Bet</th><th>Home line</th><th>Model margin</th><th>Edge</th></tr></thead><tbody>${flagged.map(x=>`<tr class="hot"><td class="l muted">${esc(lname(x.lg))}</td><td class="l m"><b>${esc(x.home)}</b> – ${esc(x.away)}</td><td class="l">${when(x.date,x.time)}</td><td class="l"><span class="sig go">${call(x)}</span></td><td>${sg(x.line)}</td><td>${sg(x.ours)}</td><td class="pos">+${f(Math.abs(x.edge))}</td></tr>`).join('')}</tbody>`:'<tbody><tr><td class="l empty">Nothing flagged right now.</td></tr></tbody>';
+  recTable($('#bRec'),D.record); logTable($('#bLog'),D.signals);
+}
+function workings(l){
+  const A=l.avg||{muH:0,muA:0};
+  $('#lWorkNote').innerHTML=`Home points = league home average (<b>${f(A.muH)}</b>) × home attack × away defence. Away points = league away average (<b>${f(A.muA)}</b>) × away attack × home defence. Margin = home points − away points + the league correction (<b>${sg(l.shift,2)}</b>). Win chance: the margin against the league's typical miss (±${f(l.sd)} points). Edge = margin + home line.`;
+  $('#lWork').innerHTML=`<thead><tr><th class="l">Match</th><th>Home attack</th><th>Away defence</th><th>Home pts</th><th>Away attack</th><th>Home defence</th><th>Away pts</th><th>Correction</th><th>Margin</th><th>Win chance</th><th>Home line</th><th>Edge</th></tr></thead><tbody>${l.upcoming.map(u=>`<tr><td class="l m"><b>${esc(u.home)}</b> – ${esc(u.away)}</td><td>${f(u.ah,2)}</td><td>${f(u.da,2)}</td><td><b>${f(u.rawH)}</b></td><td>${f(u.aa,2)}</td><td>${f(u.dh,2)}</td><td><b>${f(u.rawA)}</b></td><td>${sg(l.shift,2)}</td><td><b>${sg(u.ours)}</b></td><td>${esc(u.winner)} ${f(u.pWin*100,0)}%</td><td>${u.line==null?'–':sg(u.line)}</td><td>${u.edge==null?'–':sg(u.edge)}</td></tr>`).join('')||'<tr><td class="l empty" colspan="12">No matches to show.</td></tr>'}</tbody>`;
+}
+function leaguePage(l){
+  document.title=l.name+' · Basketball';
+  $('#lName').textContent=l.name;
+  $('#lNote').textContent='Flagged when the model is 5 or more points away from the bookmakers\' handicap, on either side, once both teams have played 6 games.';
+  const bt=l.backtest, ru=x=>x&&x.n?`${x.won}–${x.lost}${x.push?' ('+x.push+' push)':''}, ${sg(x.units,1)} u`:'–';
+  const items=[['Games played',l.gamesMin===l.gamesMax?l.gamesMin:l.gamesMin+'–'+l.gamesMax,'per team'],['League average',l.avg?`${f(l.avg.muH,0)}–${f(l.avg.muA,0)}`:'–','home – away points'],['Next 8 days',l.upcoming.length,'matches projected'],['Margin error',`±${f(l.sd,0)}`,'typical miss, points']];
+  if(bt&&bt.lines)items.push(['Same rule, 2022-26',ru({n:bt.train.n+bt.test.n,won:bt.train.won+bt.test.won,lost:bt.train.lost+bt.test.lost,push:bt.train.push+bt.test.push,units:bt.train.units+bt.test.units}),(bt.train.n+bt.test.n)+' past bets']);
+  tiles($('#lTiles'),items);
+  nextTable($('#lNext'),l.upcoming.map(u=>({...u,lg:l})),false);
+  workings(l);
+  logTable($('#lLog'),D.signals.filter(s=>s.league===l.key));
+  const T=l.teams, cols=[['team','Team',1],['gp','GP'],['pf','Scored'],['pa','Conceded'],['att','Attack'],['de','Defence']];
+  let sort=['att',-1];
+  const draw=()=>{const rows=[...T].sort((a,b)=>sort[1]*((a[sort[0]]>b[sort[0]])-(a[sort[0]]<b[sort[0]])));
+    $('#lTeams').innerHTML=`<thead><tr>${cols.map(([k,n,left])=>`<th class="srt ${left?'l':''}" data-k="${k}" ${sort[0]===k?`aria-sort="${sort[1]>0?'ascending':'descending'}"`:''}>${n}</th>`).join('')}</tr></thead><tbody>${rows.map(r=>`<tr><td class="l"><b>${esc(r.team)}</b></td><td>${r.gp}</td><td>${f(r.pf)}</td><td>${f(r.pa)}</td><td>${f(r.att,2)}</td><td>${f(r.de,2)}</td></tr>`).join('')}</tbody>`;
+    $('#lTeams').querySelectorAll('th.srt').forEach(th=>th.onclick=()=>{const k=th.dataset.k;sort=[k,sort[0]===k?-sort[1]:(k==='team'?1:-1)];draw()})};
+  draw();
+}
+if(PAGE==='projections'){$('#projections').hidden=false;overview()}
+else if(byPage[PAGE]){$('#league').hidden=false;leaguePage(byPage[PAGE])}
+else{$('#projections').hidden=false;overview()}
+$('#foot').innerHTML=`<span>Updated ${esc(D.scraped)}</span>`;
+</script>
