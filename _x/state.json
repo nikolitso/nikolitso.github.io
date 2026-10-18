@@ -124,7 +124,8 @@
       "on-the-edge-the-art-of-risking-everything",
       "the-not-to-do-list",
       "basketball-on-paper-rules-and-tools",
-      "focus-use-different-ways-of-seeing"
+      "focus-use-different-ways-of-seeing",
+      "fine-margins"
     ],
     "log": [
       {
@@ -198,9 +199,15 @@
         "slot": "2026-10-18 14",
         "slug": "focus-use-different-ways-of-seeing",
         "id": "2111827667959816690"
+      },
+      {
+        "day": "2026-10-19",
+        "slot": "2026-10-19 02",
+        "slug": "fine-margins",
+        "id": "2111956617671393561"
       }
     ],
-    "last_day": "2026-10-18"
+    "last_day": "2026-10-19"
   },
   "film": {
     "seen": [
@@ -487,5 +494,5 @@
     ],
     "last_day": "2026-10-18"
   },
-  "last_slot": "2026-10-18 20"
+  "last_slot": "2026-10-19 02"
 }
