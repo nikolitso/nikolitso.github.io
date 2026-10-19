@@ -125,7 +125,8 @@
       "the-not-to-do-list",
       "basketball-on-paper-rules-and-tools",
       "focus-use-different-ways-of-seeing",
-      "fine-margins"
+      "fine-margins",
+      "football-against-the-enemy"
     ],
     "log": [
       {
@@ -205,6 +206,12 @@
         "slot": "2026-10-19 02",
         "slug": "fine-margins",
         "id": "2111956617671393561"
+      },
+      {
+        "day": "2026-10-19",
+        "slot": "2026-10-19 14",
+        "slug": "football-against-the-enemy",
+        "id": "2112205287822086257"
       }
     ],
     "last_day": "2026-10-19"
@@ -501,5 +508,5 @@
     ],
     "last_day": "2026-10-19"
   },
-  "last_slot": "2026-10-19 08"
+  "last_slot": "2026-10-19 14"
 }
