@@ -426,7 +426,8 @@
       "along-the-ridge",
       "under-the-tree",
       "gomorrah",
-      "the-kindergarten-teacher"
+      "the-kindergarten-teacher",
+      "blue-is-the-warmest-colour"
     ],
     "log": [
       {
@@ -490,9 +491,15 @@
         "slot": "2026-10-18 20",
         "slug": "the-kindergarten-teacher",
         "id": "2111880699414458622"
+      },
+      {
+        "day": "2026-10-19",
+        "slot": "2026-10-19 08",
+        "slug": "blue-is-the-warmest-colour",
+        "id": "2112086895442182287"
       }
     ],
-    "last_day": "2026-10-18"
+    "last_day": "2026-10-19"
   },
-  "last_slot": "2026-10-19 02"
+  "last_slot": "2026-10-19 08"
 }
