@@ -1,4 +1,5 @@
 <meta charset="utf-8">
+<script>document.documentElement.lang="en"</script>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Basketball</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -54,7 +55,8 @@ section{display:flex;flex-direction:column;gap:14px}
 .tbl{background:linear-gradient(to right,var(--surface) 30%,transparent) left center/40px 100% no-repeat local,linear-gradient(to left,var(--surface) 30%,transparent) right center/40px 100% no-repeat local,radial-gradient(farthest-side at 0 50%,rgba(0,0,0,.22),transparent) left center/12px 100% no-repeat scroll,radial-gradient(farthest-side at 100% 50%,rgba(0,0,0,.22),transparent) right center/12px 100% no-repeat scroll,var(--surface)}
 table{border-collapse:collapse;width:100%;font-size:.86rem;font-variant-numeric:tabular-nums}
 th,td{padding:7px 8px;text-align:right;white-space:nowrap;border-bottom:1px solid var(--grid)}
-th{white-space:normal;vertical-align:bottom;line-height:1.25}th:not(.l){white-space:nowrap}td.m{white-space:normal;min-width:9rem}
+th{white-space:normal;vertical-align:bottom;line-height:1.25}th:not(.l){white-space:nowrap}
+@media(max-width:640px){.chip{padding:8px 14px}.boxlist a{display:inline-block;padding:8px 3px}}td.m{white-space:normal;min-width:9rem}
 th{font-weight:600;color:var(--muted);font-size:.72rem;text-transform:uppercase;letter-spacing:.06em}
 td.l,th.l{text-align:left}
 tr:last-child td{border-bottom:0}
@@ -276,7 +278,7 @@ const flagOf=l=>FLAGS[String(l.key).split('_')[0]];
 const flag=(l,cls='flag')=>{const F=flagOf(l);return F?`<span class="${cls}">${F.svg}</span>`:''};
 function overview(){
   const flagged=up.filter(u=>u.flagged), R=Object.values(D.record), won=R.reduce((a,x)=>a+x.won,0), lost=R.reduce((a,x)=>a+x.lost,0), push=R.reduce((a,x)=>a+x.push,0), u=R.reduce((a,x)=>a+x.units,0);
-  $('#bLeagues').innerHTML=LG.map(l=>`<a class="tile lg" href="${href(l)}" style="--fc:${(flagOf(l)||{}).c||'var(--accent)'}"><span class="lgtop">${flag(l)}<span class="klabel">${esc(l.name)}</span></span><span class="stat">${D.showProjections===false?l.nResults+'<small>results</small>':l.upcoming.length+'<small>next 8 days</small>'}</span><span class="small muted">${l.gamesMin===l.gamesMax?l.gamesMin:l.gamesMin+'–'+l.gamesMax} games played</span></a>`).join('');
+  $('#bLeagues').innerHTML=LG.map(l=>`<a class="tile lg" href="${href(l)}" style="--fc:${(flagOf(l)||{}).c||'var(--accent)'}"><span class="lgtop">${flag(l)}<span class="klabel">${esc(l.name)}</span></span><span class="stat">${D.showProjections===false?l.nResults+'<small>games played</small>':l.upcoming.length+'<small>next 8 days</small>'}</span><span class="small muted">${l.gamesMin===l.gamesMax?l.gamesMin:l.gamesMin+'–'+l.gamesMax} per team so far</span></a>`).join('');
   $('#bFlag').innerHTML=flagged.length?`<thead><tr><th class="l">League</th><th class="l">Match</th><th class="l">Date</th><th class="l">Bet</th><th>Book Line</th><th>Model margin</th><th>Edge</th></tr></thead><tbody>${flagged.map(x=>`<tr class="hot"><td class="l muted">${esc(lname(x.lg))}</td><td class="l m"><b>${esc(x.home)}</b> – ${esc(x.away)}</td><td class="l">${when(x.date,x.time)}</td><td class="l"><span class="sig go">${call(x)}</span></td><td>${sg(-x.line)}</td><td>${sg(x.ours)}</td><td class="pos">+${f(Math.abs(x.edge))}</td></tr>`).join('')}</tbody>`:'<tbody><tr><td class="l empty">Nothing flagged right now.</td></tr></tbody>';
   recTable($('#bRec'),D.record); logTable($('#bLog'),D.signals);
 }
@@ -289,7 +291,7 @@ function workings(l){
 function sortTable(el,cols,rows,row,start){
   let s=start;
   const draw=()=>{const R=[...rows].sort((a,b)=>{const x=a[s[0]],y=b[s[0]];return s[1]*((x>y)-(x<y))});
-    el.innerHTML=`<thead><tr>${cols.map(([k,n,left])=>`<th class="srt ${left?'l':''}" data-k="${k}" ${s[0]===k?`aria-sort="${s[1]>0?'ascending':'descending'}"`:''}>${n}</th>`).join('')}</tr></thead><tbody>${R.map(row).join('')}</tbody>`;
+    el.innerHTML=`<thead><tr>${cols.map(([k,n,left])=>`<th class="srt ${left?'l':''}" data-k="${k}" ${TIP[k]?`title="${TIP[k]}"`:''} ${s[0]===k?`aria-sort="${s[1]>0?'ascending':'descending'}"`:''}>${n}</th>`).join('')}</tr></thead><tbody>${R.map(row).join('')}</tbody>`;
     el.querySelectorAll('th.srt').forEach(th=>th.onclick=()=>{const k=th.dataset.k;s=[k,s[0]===k?-s[1]:(cols.find(c=>c[0]===k)[2]?1:-1)];draw()})};
   draw();
 }
@@ -323,8 +325,11 @@ function newsList(l){
   ['newsHead','newsNote','lNews'].forEach(i=>$('#'+i).hidden=false);
   $('#lNews').innerHTML=N.map(x=>`<li><span class="muted">${day(x.date)}</span> · <b>${esc(x.match)}</b> — ${esc(x.headline)} <a href="${esc(x.url)}" target="_blank" rel="noopener noreferrer">Report ↗</a></li>`).join('');
 }
+const TEAM_NAME={'Vikos Falcons':'Vikos','Karditsa':'AS Karditsas','Kolossos':'Kolossos Rhodes','AEK':'AEK Athens','Doxa Lefkadas':'Lefkadas'};   /* one name per team across all tabs */
+const TIP={sosPlayed:'Average Power of the opponents already played (above 0 = tougher schedule)',sosLeft:'Average Power of the opponents still to play',luck:'Wins above or below what the margins say (Exp. W)',expW:'Wins the point margins say the team deserves'};
 function greekBlock(l){
   const G=l.greek; if(!G)return;
+  [G.power,G.official,(G.league||{}).teams||[]].forEach(a=>a.forEach(t=>{t.team=TEAM_NAME[t.team]||t.team}));
   ['stdHead','pwBox','pwKey','offHead','offBox','offKey','lgHead','lgNote','lgBox','lgKey'].forEach(i=>$('#'+i).hidden=false);
   const pm=v=>v==null?'–':`<span class="${cls(v)}">${sg(v)}</span>`;
   $('#pwPace').textContent=G.league&&G.league.avg&&G.league.avg.pace!=null?f(G.league.avg.pace):'–';
@@ -388,7 +393,7 @@ function marketBlock(l){
   $('#mkCount').textContent='· '+M.games.length;
   $('#lMkGames').innerHTML=`<thead><tr><th class="l">Date</th><th class="l">Match</th><th>Book Line</th><th>Margin</th><th class="l">Covered</th><th>Total line</th><th>Points</th><th class="l">Over/Under</th></tr></thead><tbody>${M.games.map(g=>`<tr><td class="l">${day(g.date)}</td><td class="l m"><b>${esc(g.home)}</b> ${g.hp}-${g.ap} ${esc(g.away)}</td><td>${g.line==null?'–':sg(-g.line)}</td><td>${sg(g.hp-g.ap,0)}</td><td class="l">${!g.covered?'–':g.covered==='push'?'Push':esc(g.covered)}</td><td>${g.total==null?'–':g.total.toFixed(1)}</td><td>${g.hp+g.ap}</td><td class="l">${g.ou?g.ou[0].toUpperCase()+g.ou.slice(1):'–'}</td></tr>`).join('')}</tbody>`;
 }
-/* one section at a time: a pill per section with content, Vs Market first and outside links last;
+/* one section at a time: a pill per section with content, the opening section first and outside links last;
    Standings (or Team ratings when a league has no standings) opens first */
 const PANE_ORDER=['mk','str','std','rat','rd','lg','off','ros'], OLD_ANCHOR={stdHead:'std',lgHead:'lg',mkHead:'mk',rosHead:'ros',fgHead:'ros',rdHead:'rd',offHead:'off'};
 function panes(){
@@ -396,7 +401,8 @@ function panes(){
   if(!live.length)return;
   if(!$('#lLinks .chips'))$('#lLinks').innerHTML='<div class="chips"></div><div class="hcard" id="lPanel" hidden style="margin-top:10px"></div>';
   const box=$('#lLinks .chips'); $('#lLinks').hidden=false;
-  const home=(live.find(p=>p.dataset.pane==='std')||live.find(p=>p.dataset.pane==='rat')||live[0]).dataset.pane, first=box.firstChild;
+  const hp=live.find(p=>p.dataset.pane==='std')||live.find(p=>p.dataset.pane==='rat')||live[0], home=hp.dataset.pane, first=box.firstChild;
+  live.splice(live.indexOf(hp),1); live.unshift(hp);   /* the section that opens first is also the first pill */
   const show=k=>{live.forEach(p=>p.hidden=p.dataset.pane!==k);box.querySelectorAll('button[data-pane]').forEach(b=>b.classList.toggle('on',b.dataset.pane===k))};
   live.forEach(p=>{const b=document.createElement('button');b.type='button';b.className='chip';b.dataset.pane=p.dataset.pane;b.textContent=p.dataset.name;
     b.onclick=()=>{show(p.dataset.pane);const u=p.dataset.pane===home?location.pathname:'#'+p.dataset.pane;if(u!==location.hash&&!(u===location.pathname&&!location.hash))history.pushState(null,'',u)};box.insertBefore(b,first)});
