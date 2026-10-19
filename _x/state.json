@@ -434,7 +434,8 @@
       "under-the-tree",
       "gomorrah",
       "the-kindergarten-teacher",
-      "blue-is-the-warmest-colour"
+      "blue-is-the-warmest-colour",
+      "the-boy-with-pink-pants"
     ],
     "log": [
       {
@@ -504,9 +505,15 @@
         "slot": "2026-10-19 08",
         "slug": "blue-is-the-warmest-colour",
         "id": "2112086895442182287"
+      },
+      {
+        "day": "2026-10-20",
+        "slot": "2026-10-19 20",
+        "slug": "the-boy-with-pink-pants",
+        "id": "2112287828499628305"
       }
     ],
-    "last_day": "2026-10-19"
+    "last_day": "2026-10-20"
   },
-  "last_slot": "2026-10-19 14"
+  "last_slot": "2026-10-19 20"
 }
