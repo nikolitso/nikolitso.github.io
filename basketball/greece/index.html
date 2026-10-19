@@ -50,9 +50,11 @@ section{display:flex;flex-direction:column;gap:14px}
 .sig.go{color:var(--pos);border-color:color-mix(in srgb,var(--pos) 45%,transparent);background:color-mix(in srgb,var(--pos) 12%,transparent)}
 .sig.wait{color:var(--warn);border-color:color-mix(in srgb,var(--warn) 45%,transparent);background:var(--warn-bg)}
 .tbl{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+/* edge shadows show there are more columns to scroll to */
+.tbl{background:linear-gradient(to right,var(--surface) 30%,transparent) left center/40px 100% no-repeat local,linear-gradient(to left,var(--surface) 30%,transparent) right center/40px 100% no-repeat local,radial-gradient(farthest-side at 0 50%,rgba(0,0,0,.22),transparent) left center/12px 100% no-repeat scroll,radial-gradient(farthest-side at 100% 50%,rgba(0,0,0,.22),transparent) right center/12px 100% no-repeat scroll,var(--surface)}
 table{border-collapse:collapse;width:100%;font-size:.86rem;font-variant-numeric:tabular-nums}
 th,td{padding:7px 8px;text-align:right;white-space:nowrap;border-bottom:1px solid var(--grid)}
-th{white-space:normal;vertical-align:bottom;line-height:1.25}td.m{white-space:normal;min-width:9rem}
+th{white-space:normal;vertical-align:bottom;line-height:1.25}th:not(.l){white-space:nowrap}td.m{white-space:normal;min-width:9rem}
 th{font-weight:600;color:var(--muted);font-size:.72rem;text-transform:uppercase;letter-spacing:.06em}
 td.l,th.l{text-align:left}
 tr:last-child td{border-bottom:0}
@@ -362,10 +364,10 @@ function roundsBlock(l){
   ['rdHead','rdPills'].forEach(i=>$('#'+i).hidden=false);
   const label=r=>r.round==null?'Other games':'Round '+r.round;
   const ext=(u,t)=>`<a href="${esc(u)}" target="_blank" rel="noopener noreferrer">${t} ↗</a>`;
-  let open=null;
+  let open=0;   /* latest round open at once, so the tab never looks empty */
   const draw=()=>{
     $('#rdPills').innerHTML=R.map((r,i)=>`<button type="button" class="chip${open===i?' on':''}" data-i="${i}">${label(r)}</button>`).join('');
-    $('#rdPills').querySelectorAll('button').forEach(b=>b.onclick=()=>{const i=+b.dataset.i;open=open===i?null:i;draw()});
+    $('#rdPills').querySelectorAll('button').forEach(b=>b.onclick=()=>{const i=+b.dataset.i;open=i;draw()});
     const P=$('#rdPanel');
     if(open===null){P.hidden=true;P.innerHTML='';return}
     P.hidden=false;
@@ -397,9 +399,11 @@ function panes(){
   const home=(live.find(p=>p.dataset.pane==='std')||live.find(p=>p.dataset.pane==='rat')||live[0]).dataset.pane, first=box.firstChild;
   const show=k=>{live.forEach(p=>p.hidden=p.dataset.pane!==k);box.querySelectorAll('button[data-pane]').forEach(b=>b.classList.toggle('on',b.dataset.pane===k))};
   live.forEach(p=>{const b=document.createElement('button');b.type='button';b.className='chip';b.dataset.pane=p.dataset.pane;b.textContent=p.dataset.name;
-    b.onclick=()=>{show(p.dataset.pane);history.replaceState(null,'',p.dataset.pane===home?location.pathname:'#'+p.dataset.pane)};box.insertBefore(b,first)});
-  const h=location.hash.slice(1), want=OLD_ANCHOR[h]||h;
-  show(live.some(p=>p.dataset.pane===want)?want:home);
+    b.onclick=()=>{show(p.dataset.pane);const u=p.dataset.pane===home?location.pathname:'#'+p.dataset.pane;if(u!==location.hash&&!(u===location.pathname&&!location.hash))history.pushState(null,'',u)};box.insertBefore(b,first)});
+  const fromHash=()=>{const h=location.hash.slice(1), want=OLD_ANCHOR[h]||h;
+    show(live.some(p=>p.dataset.pane===want)?want:home)};
+  fromHash();
+  addEventListener('hashchange',fromHash);   /* back/forward and edited addresses switch the section too */
 }
 function strengthBlock(l){
   const S=l.strength; if(!S||!S.teams.length)return;
