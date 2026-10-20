@@ -450,7 +450,8 @@
       "the-kindergarten-teacher",
       "blue-is-the-warmest-colour",
       "the-boy-with-pink-pants",
-      "what-will-people-say"
+      "what-will-people-say",
+      "prague"
     ],
     "log": [
       {
@@ -532,9 +533,15 @@
         "slot": "2026-10-20 08",
         "slug": "what-will-people-say",
         "id": "2112422977753035090"
+      },
+      {
+        "day": "2026-10-20",
+        "slot": "2026-10-20 20",
+        "slug": "prague",
+        "id": "2112643009699582024"
       }
     ],
     "last_day": "2026-10-20"
   },
-  "last_slot": "2026-10-20 14"
+  "last_slot": "2026-10-20 20"
 }
