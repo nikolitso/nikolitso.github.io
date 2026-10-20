@@ -442,7 +442,8 @@
       "gomorrah",
       "the-kindergarten-teacher",
       "blue-is-the-warmest-colour",
-      "the-boy-with-pink-pants"
+      "the-boy-with-pink-pants",
+      "what-will-people-say"
     ],
     "log": [
       {
@@ -518,9 +519,15 @@
         "slot": "2026-10-19 20",
         "slug": "the-boy-with-pink-pants",
         "id": "2112287828499628305"
+      },
+      {
+        "day": "2026-10-20",
+        "slot": "2026-10-20 08",
+        "slug": "what-will-people-say",
+        "id": "2112422977753035090"
       }
     ],
     "last_day": "2026-10-20"
   },
-  "last_slot": "2026-10-20 02"
+  "last_slot": "2026-10-20 08"
 }
