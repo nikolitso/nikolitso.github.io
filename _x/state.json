@@ -128,7 +128,8 @@
       "fine-margins",
       "football-against-the-enemy",
       "fixed-odds-sports-betting-statistical",
-      "sports-betting-basics"
+      "sports-betting-basics",
+      "kind"
     ],
     "log": [
       {
@@ -226,9 +227,15 @@
         "slot": "2026-10-20 14",
         "slug": "sports-betting-basics",
         "id": "2112505880247722218"
+      },
+      {
+        "day": "2026-10-21",
+        "slot": "2026-10-21 02",
+        "slug": "kind",
+        "id": "2112692664214651025"
       }
     ],
-    "last_day": "2026-10-20"
+    "last_day": "2026-10-21"
   },
   "film": {
     "seen": [
@@ -543,5 +550,5 @@
     ],
     "last_day": "2026-10-20"
   },
-  "last_slot": "2026-10-20 20"
+  "last_slot": "2026-10-21 02"
 }
