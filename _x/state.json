@@ -127,7 +127,8 @@
       "focus-use-different-ways-of-seeing",
       "fine-margins",
       "football-against-the-enemy",
-      "fixed-odds-sports-betting-statistical"
+      "fixed-odds-sports-betting-statistical",
+      "sports-betting-basics"
     ],
     "log": [
       {
@@ -219,6 +220,12 @@
         "slot": "2026-10-20 02",
         "slug": "fixed-odds-sports-betting-statistical",
         "id": "2112337237035642967"
+      },
+      {
+        "day": "2026-10-20",
+        "slot": "2026-10-20 14",
+        "slug": "sports-betting-basics",
+        "id": "2112505880247722218"
       }
     ],
     "last_day": "2026-10-20"
@@ -529,5 +536,5 @@
     ],
     "last_day": "2026-10-20"
   },
-  "last_slot": "2026-10-20 08"
+  "last_slot": "2026-10-20 14"
 }
