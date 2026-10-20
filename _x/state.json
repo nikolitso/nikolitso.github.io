@@ -126,7 +126,8 @@
       "basketball-on-paper-rules-and-tools",
       "focus-use-different-ways-of-seeing",
       "fine-margins",
-      "football-against-the-enemy"
+      "football-against-the-enemy",
+      "fixed-odds-sports-betting-statistical"
     ],
     "log": [
       {
@@ -212,9 +213,15 @@
         "slot": "2026-10-19 14",
         "slug": "football-against-the-enemy",
         "id": "2112205287822086257"
+      },
+      {
+        "day": "2026-10-20",
+        "slot": "2026-10-20 02",
+        "slug": "fixed-odds-sports-betting-statistical",
+        "id": "2112337237035642967"
       }
     ],
-    "last_day": "2026-10-19"
+    "last_day": "2026-10-20"
   },
   "film": {
     "seen": [
@@ -515,5 +522,5 @@
     ],
     "last_day": "2026-10-20"
   },
-  "last_slot": "2026-10-19 20"
+  "last_slot": "2026-10-20 02"
 }
