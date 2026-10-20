@@ -506,7 +506,14 @@ def page_404(by_date):
 def sitemap(books):
     """Pages linked from the site. Unlinked or unfinished sections (e.g. /wine/) stay out."""
     paths = ["/", "/about/", BASE, BASE + "authors/"] + [b["url"] for b in books] + ["/paok-hub/", "/paok-basketball/", "/fibaeuropecup/"]
-    urls = "".join(f"<url><loc>{SITE}{p}</loc></url>" for p in paths)
+    for section in ("basketball", "handball"):        # model sections built elsewhere: every real page in them (redirects excluded)
+        base = ROOT / section
+        if base.exists():
+            for f in sorted(base.rglob("index.html")):
+                if "http-equiv=\"refresh\"" in f.read_text(encoding="utf-8", errors="ignore")[:1500]:
+                    continue
+                paths.append("/" + f.parent.relative_to(ROOT).as_posix() + "/")
+    urls = "".join(f"<url><loc>{SITE}{p}</loc></url>" for p in dict.fromkeys(paths))
     (ROOT / "sitemap.xml").write_text(
         f'<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">{urls}</urlset>\n',
         encoding="utf-8")
