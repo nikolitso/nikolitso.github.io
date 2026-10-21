@@ -21,6 +21,9 @@
   ];
   var ORDER = CHAPTERS.map(function (c) { return c[0]; });
   function rank(c) { var i = ORDER.indexOf(c); return i < 0 ? 99 : i; }
+  // Colour tones (see the CSS): chapters by position, people by a stable hash of the name.
+  function tone(c) { var r = rank(c); return r < 99 ? r % 10 : 6; }
+  function personTone(n) { var h = 0; for (var i = 0; i < n.length; i++) h = (h * 31 + n.charCodeAt(i)) >>> 0; return h % 10; }
 
   function who(q) { return String(q.author || "").trim(); }
   function slug(s) { return s.toLowerCase().replace(/&/g, "and").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, ""); }
@@ -55,6 +58,7 @@
   function card(q) {
     var art = el("article", "q");
     art.id = "q-" + q.id;
+    art.dataset.tone = tone(q.category);
     var short = !q.title && String(q.text || "").length <= 220 && !/\n/.test(q.text || "");
     if (short) art.classList.add("short");
     var top = el("div", "q-top");
@@ -71,6 +75,7 @@
     if (q.author) {
       var pill = el("button", "q-author", q.author);
       pill.type = "button";
+      pill.dataset.tone = personTone(q.author);
       pill.setAttribute("aria-label", "Show all quotes by " + q.author);
       pill.addEventListener("click", function () { onAuthor(slug(q.author)); });
       art.appendChild(el("div", "q-foot")).appendChild(pill);
@@ -104,6 +109,7 @@
     cats.forEach(function (c) {
       var sec = list.appendChild(el("section", "q-chapter"));
       sec.id = slug(c);
+      sec.dataset.tone = tone(c);
       var r = rank(c);
       var h = sec.appendChild(el("h2", null, c));
       if (r < 99) {
@@ -122,6 +128,7 @@
       b.type = "button";
       b.appendChild(el("span", null, String(c[2])));
       b.setAttribute("aria-pressed", String(c[0] === active));
+      if (c[3] != null) b.dataset.tone = c[3];
       if (!c[2] && c[0] !== active) b.disabled = true;
       b.addEventListener("click", function () { onPick(c[0]); });
       li.appendChild(b);
@@ -138,12 +145,12 @@
       if (inCat) { if (who(q)) names[who(q)]++; byTotal++; }
     });
     pills(filter, Object.keys(cats).sort(function (a, b) { return rank(a) - rank(b) || a.localeCompare(b); })
-      .map(function (c) { return [slug(c), c, cats[c]]; }), catTotal, active, onChapter);
+      .map(function (c) { return [slug(c), c, cats[c], tone(c)]; }), catTotal, active, onChapter);
     if (!byFilter) return;
     // Most-quoted first, then A-Z. Quotes without an author have no pill.
     pills(byFilter, Object.keys(names).sort(function (a, b) {
       return names[b] - names[a] || a.localeCompare(b);
-    }).map(function (n) { return [slug(n), n, names[n]]; }), byTotal, by, onBy);
+    }).map(function (n) { return [slug(n), n, names[n], personTone(n)]; }), byTotal, by, onBy);
   }
 
   fetch("/quotes/quotes.json", { cache: "no-cache" })
