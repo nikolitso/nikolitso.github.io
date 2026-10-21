@@ -201,6 +201,7 @@ SOCIAL = """<ul class="social" aria-label="Social links">
 
 def site_menu(active=""):
     items = [("books", "/books/", "Books"), ("films", "https://whatalgomissed.com/", 'Films <span aria-hidden="true">↗</span>'),
+             ("wine", "/wine/", "Wine"), ("quotes", "/quotes/", "Quotes"),
              ("projects", "/#projects", "Projects"), ("about", "/about/", "About")]
     return "".join(
         f'<a href="{h}"' + (' target="_blank" rel="noopener"' if h.startswith("http") else "")
@@ -505,7 +506,7 @@ def page_404(by_date):
 
 def sitemap(books):
     """Pages linked from the site. Unlinked or unfinished sections (e.g. /wine/) stay out."""
-    paths = ["/", "/about/", BASE, BASE + "authors/"] + [b["url"] for b in books] + ["/paok-hub/", "/paok-basketball/", "/fibaeuropecup/"]
+    paths = ["/", "/about/", BASE, BASE + "authors/"] + [b["url"] for b in books] + ["/quotes/", "/paok-hub/", "/paok-basketball/", "/fibaeuropecup/"]
     for section in ("basketball", "handball"):        # model sections built elsewhere: every real page in them (redirects excluded)
         base = ROOT / section
         if base.exists():

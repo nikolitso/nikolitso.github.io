@@ -51,3 +51,45 @@ content:
         label: Takeaways
         description: Write the review. For the special boxes, use a bold line "Key ideas:" followed by a bullet list, and a paragraph starting with bold "Worth it if:".
         type: rich-text
+  - name: quotes
+    label: Quotes
+    type: file
+    path: quotes/quotes.json
+    format: json
+    list: true
+    fields:
+      - name: id
+        label: Number
+        description: Next number in line (shown as #N and used in links). Leave empty and it is filled from the position in the list.
+        type: number
+      - name: date
+        label: Date added (newest appear first)
+        type: date
+        required: true
+      - name: category
+        label: Category
+        type: select
+        required: true
+        options:
+          values: ["Action & discipline", "Growth", "Being real", "People", "Perspective"]
+      - name: title
+        label: Core message (optional heading)
+        type: string
+      - name: text
+        label: Quote
+        description: Plain text. Leave an empty line between paragraphs. Lines starting with "- " become a bullet list.
+        type: text
+        required: true
+      - name: context
+        label: Context (optional)
+        type: string
+      - name: source
+        label: Source (optional)
+        description: e.g. "The Psychology of Money by Morgan Housel" or "Attributed to Carl Jung"
+        type: string
+      - name: note
+        label: Note (optional)
+        type: string
+      - name: draft
+        label: Draft (hide from the site)
+        type: boolean

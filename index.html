@@ -200,6 +200,12 @@ section.alt .card .meta span { background: var(--paper-2); }
 .card-shot { margin: calc(-1 * clamp(1.5rem, 3vw, 2.25rem)) calc(-1 * clamp(1.5rem, 3vw, 2.25rem)) 1.5rem; aspect-ratio: 16 / 9; overflow: hidden; border-radius: 18px 18px 0 0; border-bottom: 1px solid var(--rule); background: var(--paper-2); }
 .card-shot img { width: 100%; height: 100%; object-fit: cover; object-position: top center; display: block; transition: transform .5s ease; }
 .card:hover .card-shot img { transform: scale(1.03); }
+.card-shot.quote-shot { display: flex; flex-direction: column; justify-content: center; gap: .9rem; padding: clamp(1.5rem, 4vw, 2.75rem);
+  background: radial-gradient(40rem 20rem at 85% 0%, rgba(61,107,255,.22), transparent 60%), var(--night); color: var(--on-dark); }
+.quote-shot blockquote { margin: 0; font-family: var(--display); font-size: clamp(1.35rem, 2.6vw, 2rem); line-height: 1.2; transition: transform .5s ease; }
+.quote-shot blockquote::before { content: "“"; display: block; font-size: 3.2em; line-height: .6; color: #8fa9ff; margin-bottom: .1em; }
+.quote-shot cite { font-style: normal; font-size: .78rem; letter-spacing: .12em; text-transform: uppercase; color: var(--on-dark-muted); }
+.card:hover .quote-shot blockquote { transform: scale(1.02); }
 /* Latest */
 .feeds { display: grid; gap: 2.5rem; margin-top: 2.5rem; }
 .feed-head { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; margin-bottom: 1rem; }
@@ -269,7 +275,7 @@ body { overflow-x: clip; }  /* safety net */
       <span class="mono">A<i>N</i></span>
       <span class="wordmark"><span>Antonis <em>Nikolitsopoulos</em></span><small>Trading · Sports Analytics</small></span>
     </a>
-    <nav class="menu" aria-label="Main"><a href="/books/">Books</a><a href="https://whatalgomissed.com/" target="_blank" rel="noopener">Films <span aria-hidden="true">↗</span></a><a href="/wine/">Wine</a><a href="/#projects">Projects</a><a href="/about/">About</a></nav>
+    <nav class="menu" aria-label="Main"><a href="/books/">Books</a><a href="https://whatalgomissed.com/" target="_blank" rel="noopener">Films <span aria-hidden="true">↗</span></a><a href="/wine/">Wine</a><a href="/quotes/">Quotes</a><a href="/#projects">Projects</a><a href="/about/">About</a></nav>
     <ul class="social" aria-label="Social links">
       <li><a href="https://www.linkedin.com/in/antonis-nikolitsopoulos/" target="_blank" rel="noopener" aria-label="LinkedIn" title="LinkedIn"><svg><use href="#i-in"/></svg></a></li>
       <li><a href="https://x.com/nikolitso" target="_blank" rel="noopener" aria-label="X (Twitter)" title="X"><svg><use href="#i-x"/></svg></a></li>
@@ -332,7 +338,7 @@ body { overflow-x: clip; }  /* safety net */
     <div class="wrap">
       <p class="kicker">Publications</p>
       <h2 id="h-writing">Books &amp; Films</h2>
-      <p class="sec-intro">Three side projects that began as personal notes: one for the books that change how we think, one for the films that change how we see, one for the wines that belong at the table.</p>
+      <p class="sec-intro">Four side projects that began as personal notes: one for the books that change how we think, one for the films that change how we see, one for the wines that belong at the table, and one for the lines worth living by.</p>
       <div class="cards">
         <a class="card" href="/books/">
           <div class="card-shot"><img src="books.jpg" width="1200" height="675" loading="lazy" alt="Antonis's shelf of books on sports analytics, betting and decision-making"></div>
@@ -357,6 +363,14 @@ body { overflow-x: clip; }  /* safety net */
           <p>Greek wine, matched to the table. Choose a dish, an ingredient or a grape and see which of more than 160 bottles suit it, in English and Greek.</p>
           <div class="meta"><span>Pairing finder</span><span>By grape</span><span>Wine list</span></div>
           <span class="go">Open the finder <i aria-hidden="true">→</i></span>
+        </a>
+        <a class="card" href="/quotes/">
+          <div class="card-shot quote-shot" aria-hidden="true"><blockquote>Do not use your energy to worry. Use your energy to believe, to create, to learn, to think and to grow.</blockquote><cite>Attributed to Richard Feynman</cite></div>
+          <span class="tag">Collection</span>
+          <h3>Quotes to live by</h3>
+          <p>Lines worth keeping, collected one at a time from books, articles and people worth listening to, on action, growth, being real, people and perspective. A new one lands most days.</p>
+          <div class="meta"><span>Action &amp; discipline</span><span>Growth</span><span>Perspective</span></div>
+          <span class="go">Read the quotes <i aria-hidden="true">→</i></span>
         </a>
       </div>
     </div>
@@ -431,7 +445,7 @@ body { overflow-x: clip; }  /* safety net */
     </ul>
     </div>
     <div class="foot-in">
-      <nav class="menu" aria-label="Footer"><a href="/books/">Books</a><a href="https://whatalgomissed.com/" target="_blank" rel="noopener">Films <span aria-hidden="true">↗</span></a><a href="/wine/">Wine</a><a href="/#projects">Projects</a><a href="/about/">About</a></nav>
+      <nav class="menu" aria-label="Footer"><a href="/books/">Books</a><a href="https://whatalgomissed.com/" target="_blank" rel="noopener">Films <span aria-hidden="true">↗</span></a><a href="/wine/">Wine</a><a href="/quotes/">Quotes</a><a href="/#projects">Projects</a><a href="/about/">About</a></nav>
       <span class="copy">© 2026 Antonis Nikolitsopoulos</span>
     </div>
   </div>
