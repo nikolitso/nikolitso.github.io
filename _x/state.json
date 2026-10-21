@@ -465,7 +465,8 @@
       "blue-is-the-warmest-colour",
       "the-boy-with-pink-pants",
       "what-will-people-say",
-      "prague"
+      "prague",
+      "karaoke"
     ],
     "log": [
       {
@@ -553,11 +554,17 @@
         "slot": "2026-10-20 20",
         "slug": "prague",
         "id": "2112643009699582024"
+      },
+      {
+        "day": "2026-10-21",
+        "slot": "2026-10-21 20",
+        "slug": "karaoke",
+        "id": "2112998750683603318"
       }
     ],
-    "last_day": "2026-10-20"
+    "last_day": "2026-10-21"
   },
-  "last_slot": "2026-10-21 14",
+  "last_slot": "2026-10-21 20",
   "quote": {
     "seen": [
       "1",
