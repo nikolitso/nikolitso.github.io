@@ -4,7 +4,6 @@
   var list = document.getElementById("q-list");
   var filter = document.getElementById("q-filter");
   var byFilter = document.getElementById("q-by");
-  var NOBODY = "Unattributed";
   var onAuthor = function () {};
   var wide = window.matchMedia("(min-width: 861px)");
   // Chapters in reading order, each with its one-line summary. Unknown categories go last.
@@ -23,7 +22,7 @@
   var ORDER = CHAPTERS.map(function (c) { return c[0]; });
   function rank(c) { var i = ORDER.indexOf(c); return i < 0 ? 99 : i; }
 
-  function who(q) { return String(q.author || "").trim() || NOBODY; }
+  function who(q) { return String(q.author || "").trim(); }
   function slug(s) { return s.toLowerCase().replace(/&/g, "and").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, ""); }
   function el(tag, cls, text) {
     var n = document.createElement(tag);
@@ -133,18 +132,18 @@
 
   function buttons(quotes, active, by, onChapter, onBy) {
     var cats = {}, names = {}, catTotal = 0, byTotal = 0;
-    quotes.forEach(function (q) { cats[q.category] = 0; names[who(q)] = 0; });
+    quotes.forEach(function (q) { cats[q.category] = 0; if (who(q)) names[who(q)] = 0; });
     quotes.forEach(function (q) {
       var inCat = !active || slug(q.category || "") === active, inBy = !by || slug(who(q)) === by;
       if (inBy) { cats[q.category]++; catTotal++; }
-      if (inCat) { names[who(q)]++; byTotal++; }
+      if (inCat) { if (who(q)) names[who(q)]++; byTotal++; }
     });
     pills(filter, Object.keys(cats).sort(function (a, b) { return rank(a) - rank(b) || a.localeCompare(b); })
       .map(function (c) { return [slug(c), c, cats[c]]; }), catTotal, active, onChapter);
     if (!byFilter) return;
-    // Most-quoted first, then A-Z; unattributed quotes last.
+    // Most-quoted first, then A-Z. Quotes without an author have no pill.
     pills(byFilter, Object.keys(names).sort(function (a, b) {
-      return (a === NOBODY) - (b === NOBODY) || names[b] - names[a] || a.localeCompare(b);
+      return names[b] - names[a] || a.localeCompare(b);
     }).map(function (n) { return [slug(n), n, names[n]]; }), byTotal, by, onBy);
   }
 
@@ -158,7 +157,7 @@
       var params = new URLSearchParams(location.search);
       var active = params.get("topic") || "", by = params.get("by") || "";
       if (active && !quotes.some(function (q) { return slug(q.category || "") === active; })) active = "";
-      if (by && !quotes.some(function (q) { return slug(who(q)) === by; })) by = "";
+      if (by && !quotes.some(function (q) { return who(q) && slug(who(q)) === by; })) by = "";
       function update() {
         var u = new URL(location.href);
         if (active) u.searchParams.set("topic", active); else u.searchParams.delete("topic");
