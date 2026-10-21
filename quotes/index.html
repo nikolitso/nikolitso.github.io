@@ -136,7 +136,7 @@ h2 { font-family: var(--display); font-weight: 400; font-size: clamp(2.2rem, 4.6
 .q-page h1 { font-family: var(--display); font-weight: 400; font-size: clamp(2.6rem, 6vw, 4.2rem); line-height: 1; letter-spacing: -.01em; margin: 0; }
 .q-page h1 em { color: var(--accent); }
 .q-lede { color: var(--muted); max-width: 56ch; margin: 1rem 0 0; }
-.q-filter { display: flex; flex-wrap: wrap; gap: .5rem; margin: 2rem 0 0; padding: 0; list-style: none; }
+.q-filter { display: flex; flex-wrap: wrap; gap: .5rem; margin: .6rem 0 0; scroll-margin-top: 140px; padding: 0; list-style: none; }
 .q-filter button {
   font: inherit; font-size: .8rem; font-weight: 600; letter-spacing: .04em; cursor: pointer;
   border: 1px solid var(--rule); background: var(--paper); color: var(--ink);
@@ -147,6 +147,17 @@ h2 { font-family: var(--display); font-weight: 400; font-size: clamp(2.2rem, 4.6
 .q-filter button[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--paper); }
 .q-filter button[aria-pressed="true"] span { color: inherit; opacity: .7; }
 .q-filter button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.q-filter button:disabled { opacity: .4; cursor: default; }
+.q-filter button:disabled:hover { border-color: var(--rule); }
+.q-label { font-size: .7rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin: 1.6rem 0 0; }
+.q-label + .q-filter { margin-top: .6rem; }
+.q-author {
+  font: inherit; font-size: .78rem; font-weight: 600; letter-spacing: .03em; cursor: pointer;
+  border: 1px solid var(--rule); background: var(--paper); color: var(--ink);
+  border-radius: 999px; padding: .35rem .8rem; margin-top: .9rem; transition: border-color .2s, color .2s;
+}
+.q-author:hover { border-color: var(--accent); color: var(--accent); }
+.q-author:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .q-list { margin-top: 1rem; }
 .q-chapter { padding: 0; margin-top: clamp(2.5rem, 5vw, 3.5rem); scroll-margin-top: 110px; }
 .q-chapter > h2 { font-family: var(--display); font-weight: 400; font-size: clamp(1.9rem, 3.6vw, 2.6rem); line-height: 1.1; margin: 0; display: flex; align-items: baseline; gap: .75rem; }
@@ -245,7 +256,10 @@ body { overflow-x: clip; }  /* safety net */
       <p class="kicker">Collection</p>
       <h1>Quotes to <em>live by</em></h1>
       <p class="q-lede">Lines worth keeping, collected one at a time from books, articles and people worth listening to. A life manual in ten chapters, growing most days.</p>
-      <ul class="q-filter" id="q-filter" aria-label="Filter by chapter"></ul>
+      <p class="q-label" id="q-filter-label">Chapter</p>
+      <ul class="q-filter" id="q-filter" aria-labelledby="q-filter-label"></ul>
+      <p class="q-label" id="q-by-label">Who said it</p>
+      <ul class="q-filter" id="q-by" aria-labelledby="q-by-label"></ul>
       <div class="q-list" id="q-list" aria-live="polite">
         <noscript><p class="q-empty">Turn on JavaScript to read the quotes.</p></noscript>
       </div>
@@ -270,7 +284,7 @@ body { overflow-x: clip; }  /* safety net */
     </div>
   </div>
 </footer>
-<script src="/quotes/quotes.js?v=3" defer></script>
+<script src="/quotes/quotes.js?v=4" defer></script>
 <!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "b67bbb76d0e24af196b24ded3ab71ad0"}'></script><!-- End Cloudflare Web Analytics -->
 </body>
 </html>

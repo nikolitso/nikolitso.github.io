@@ -1,8 +1,11 @@
-// Quotes to live by: renders quotes.json (edited in Pages CMS) as chapters, with a chapter filter.
+// Quotes to live by: renders quotes.json (edited in Pages CMS) as chapters, with chapter and author filters.
 (function () {
   "use strict";
   var list = document.getElementById("q-list");
   var filter = document.getElementById("q-filter");
+  var byFilter = document.getElementById("q-by");
+  var NOBODY = "Unattributed";
+  var onAuthor = function () {};
   var wide = window.matchMedia("(min-width: 861px)");
   // Chapters in reading order, each with its one-line summary. Unknown categories go last.
   var CHAPTERS = [
@@ -20,6 +23,7 @@
   var ORDER = CHAPTERS.map(function (c) { return c[0]; });
   function rank(c) { var i = ORDER.indexOf(c); return i < 0 ? 99 : i; }
 
+  function who(q) { return String(q.author || "").trim() || NOBODY; }
   function slug(s) { return s.toLowerCase().replace(/&/g, "and").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, ""); }
   function el(tag, cls, text) {
     var n = document.createElement(tag);
@@ -66,6 +70,13 @@
     if (q.context) art.appendChild(el("p", "q-context", q.context));
     if (q.note) art.appendChild(el("p", "q-note", q.note));
     if (q.source) art.appendChild(el("p", "q-source", q.source));
+    if (q.author) {
+      var pill = el("button", "q-author", q.author);
+      pill.type = "button";
+      pill.setAttribute("aria-label", "Show all quotes by " + q.author);
+      pill.addEventListener("click", function () { onAuthor(slug(q.author)); });
+      art.appendChild(pill);
+    }
     return art;
   }
 
@@ -82,15 +93,16 @@
     });
   }
 
-  function render(quotes, active) {
+  function render(quotes, active, by) {
     list.textContent = "";
     var groups = {};
     quotes.forEach(function (q) {
       if (active && slug(q.category || "") !== active) return;
+      if (by && slug(who(q)) !== by) return;
       (groups[q.category] = groups[q.category] || []).push(q);
     });
     var cats = Object.keys(groups).sort(function (a, b) { return rank(a) - rank(b) || a.localeCompare(b); });
-    if (!cats.length) { list.appendChild(el("p", "q-empty", "No quotes in this chapter yet.")); return; }
+    if (!cats.length) { list.appendChild(el("p", "q-empty", "No quotes match this chapter and author yet.")); return; }
     cats.forEach(function (c) {
       var sec = list.appendChild(el("section", "q-chapter"));
       sec.id = slug(c);
@@ -104,20 +116,36 @@
     });
   }
 
-  function buttons(quotes, active, onPick) {
-    var counts = {};
-    quotes.forEach(function (q) { counts[q.category] = (counts[q.category] || 0) + 1; });
-    var cats = Object.keys(counts).sort(function (a, b) { return rank(a) - rank(b) || a.localeCompare(b); });
-    filter.textContent = "";
-    [["", "All", quotes.length]].concat(cats.map(function (c) { return [slug(c), c, counts[c]]; })).forEach(function (c) {
+  // One row of pills. Counts follow the other filter, so a pill with 0 is greyed out.
+  function pills(ul, rows, total, active, onPick) {
+    ul.textContent = "";
+    [["", "All", total]].concat(rows).forEach(function (c) {
       var li = el("li"), b = el("button", null, c[1]);
       b.type = "button";
       b.appendChild(el("span", null, String(c[2])));
       b.setAttribute("aria-pressed", String(c[0] === active));
+      if (!c[2] && c[0] !== active) b.disabled = true;
       b.addEventListener("click", function () { onPick(c[0]); });
       li.appendChild(b);
-      filter.appendChild(li);
+      ul.appendChild(li);
     });
+  }
+
+  function buttons(quotes, active, by, onChapter, onBy) {
+    var cats = {}, names = {}, catTotal = 0, byTotal = 0;
+    quotes.forEach(function (q) { cats[q.category] = 0; names[who(q)] = 0; });
+    quotes.forEach(function (q) {
+      var inCat = !active || slug(q.category || "") === active, inBy = !by || slug(who(q)) === by;
+      if (inBy) { cats[q.category]++; catTotal++; }
+      if (inCat) { names[who(q)]++; byTotal++; }
+    });
+    pills(filter, Object.keys(cats).sort(function (a, b) { return rank(a) - rank(b) || a.localeCompare(b); })
+      .map(function (c) { return [slug(c), c, cats[c]]; }), catTotal, active, onChapter);
+    if (!byFilter) return;
+    // Most-quoted first, then A-Z; unattributed quotes last.
+    pills(byFilter, Object.keys(names).sort(function (a, b) {
+      return (a === NOBODY) - (b === NOBODY) || names[b] - names[a] || a.localeCompare(b);
+    }).map(function (n) { return [slug(n), n, names[n]]; }), byTotal, by, onBy);
   }
 
   fetch("/quotes/quotes.json", { cache: "no-cache" })
@@ -128,20 +156,24 @@
         .map(function (q, i) { if (q.id == null) q.id = i + 1; return q; })
         .sort(function (a, b) { return a.id - b.id; });
       var params = new URLSearchParams(location.search);
-      var active = params.get("topic") || "";
+      var active = params.get("topic") || "", by = params.get("by") || "";
       if (active && !quotes.some(function (q) { return slug(q.category || "") === active; })) active = "";
-      function pick(s) {
-        active = s;
+      if (by && !quotes.some(function (q) { return slug(who(q)) === by; })) by = "";
+      function update() {
         var u = new URL(location.href);
-        if (s) u.searchParams.set("topic", s); else u.searchParams.delete("topic");
+        if (active) u.searchParams.set("topic", active); else u.searchParams.delete("topic");
+        if (by) u.searchParams.set("by", by); else u.searchParams.delete("by");
         u.hash = "";
         history.replaceState(null, "", u);
-        buttons(quotes, active, pick);
-        render(quotes, active);
+        draw();
       }
-      buttons(quotes, active, pick);
-      render(quotes, active);
-      wide.addEventListener("change", function () { render(quotes, active); });
+      function pickChapter(s) { active = s; update(); }
+      function pickBy(s) { by = s; update(); }
+      // An author pill on a card shows everything by that person, across all chapters.
+      onAuthor = function (s) { by = s; active = ""; update(); filter.scrollIntoView({ behavior: "smooth", block: "start" }); };
+      function draw() { buttons(quotes, active, by, pickChapter, pickBy); render(quotes, active, by); }
+      draw();
+      wide.addEventListener("change", function () { render(quotes, active, by); });
       if (location.hash) { var t = document.getElementById(location.hash.slice(1)); if (t) t.scrollIntoView(); }
     })
     .catch(function () {
