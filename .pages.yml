@@ -63,15 +63,15 @@ content:
         description: Next number in line (shown as #N and used in links). Leave empty and it is filled from the position in the list.
         type: number
       - name: date
-        label: Date added (newest appear first)
+        label: Date added
         type: date
         required: true
       - name: category
-        label: Category
+        label: Chapter
         type: select
         required: true
         options:
-          values: ["Action & discipline", "Growth", "Being real", "People", "Perspective"]
+          values: ["Action & initiative", "Discipline & consistency", "Health & daily habits", "Excellence & work ethic", "Resilience & inner growth", "Happiness & gratitude", "Relationships & character", "Authenticity & independence", "Time & money", "Rules for life"]
       - name: title
         label: Core message (optional heading)
         type: string

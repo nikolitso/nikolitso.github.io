@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta property="og:title" content="Quotes to live by · Antonis Nikolitsopoulos">
-<meta property="og:description" content="A growing collection of quotes worth living by: on action and discipline, growth, being real, people and perspective.">
+<meta property="og:description" content="A growing collection of quotes worth living by: in ten chapters, from action and discipline to happiness, character and time.">
 <meta property="og:url" content="https://antonisnikolitsopoulos.com/quotes/">
 <meta property="og:type" content="website">
 <meta property="og:image" content="https://antonisnikolitsopoulos.com/og.png?v=6">
@@ -17,7 +17,7 @@
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="canonical" href="https://antonisnikolitsopoulos.com/quotes/">
 <title>Quotes to live by · Antonis Nikolitsopoulos</title>
-<meta name="description" content="Quotes to live by: a growing personal collection of lines on action and discipline, growth, being real, people and perspective, collected by Antonis Nikolitsopoulos.">
+<meta name="description" content="Quotes to live by: a growing personal collection of lines in ten chapters, from action and discipline to happiness, character and time, collected by Antonis Nikolitsopoulos.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Hanken+Grotesk:ital,wght@0,300..700;1,400&display=swap">
@@ -147,7 +147,12 @@ h2 { font-family: var(--display); font-weight: 400; font-size: clamp(2.2rem, 4.6
 .q-filter button[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--paper); }
 .q-filter button[aria-pressed="true"] span { color: inherit; opacity: .7; }
 .q-filter button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-.q-list { display: grid; grid-template-columns: repeat(var(--cols, 1), minmax(0, 1fr)); gap: 1.25rem; align-items: start; margin-top: 2.25rem; }
+.q-list { margin-top: 1rem; }
+.q-chapter { padding: 0; margin-top: clamp(2.5rem, 5vw, 3.5rem); scroll-margin-top: 110px; }
+.q-chapter > h2 { font-family: var(--display); font-weight: 400; font-size: clamp(1.9rem, 3.6vw, 2.6rem); line-height: 1.1; margin: 0; display: flex; align-items: baseline; gap: .75rem; }
+.q-num { font-family: var(--body); font-size: .8rem; font-weight: 700; letter-spacing: .14em; color: var(--accent); }
+.q-sum { color: var(--muted); margin: .4rem 0 0; max-width: 60ch; }
+.q-grid { display: grid; grid-template-columns: repeat(var(--cols, 1), minmax(0, 1fr)); gap: 1.25rem; align-items: start; margin-top: 1.25rem; }
 .q-col { display: flex; flex-direction: column; gap: 1.25rem; min-width: 0; }
 .tag { font-size: .68rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); }
 .q {
@@ -158,11 +163,11 @@ h2 { font-family: var(--display); font-weight: 400; font-size: clamp(2.2rem, 4.6
 .q-top { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; }
 .q-link { font-size: .78rem; color: var(--muted); text-decoration: none; opacity: .6; transition: opacity .2s, color .2s; }
 .q-link:hover, .q-link:focus-visible { opacity: 1; color: var(--accent); }
-.q h2 { font-family: var(--display); font-weight: 400; font-size: clamp(1.5rem, 2.4vw, 1.8rem); line-height: 1.2; letter-spacing: 0; margin: .55rem 0 0; }
+.q h3 { font-family: var(--display); font-weight: 400; font-size: clamp(1.5rem, 2.4vw, 1.8rem); line-height: 1.2; letter-spacing: 0; margin: .55rem 0 0; }
 .q-text { margin-top: .75rem; }
 .q-text p { margin: 0 0 .85rem; line-height: 1.7; }
 .q-text p:last-child { margin-bottom: 0; }
-.q-text ul { margin: 0 0 .85rem; padding-left: 1.2rem; }
+.q-text ul, .q-text ol { margin: 0 0 .85rem; padding-left: 1.2rem; }
 .q-text li { margin: .15rem 0; }
 .q.short .q-text p { font-family: var(--display); font-size: clamp(1.45rem, 2.4vw, 1.75rem); line-height: 1.3; }
 .q-context { font-size: .9rem; color: var(--muted); font-style: italic; margin: .75rem 0 0; }
@@ -239,8 +244,8 @@ body { overflow-x: clip; }  /* safety net */
     <div class="wrap">
       <p class="kicker">Collection</p>
       <h1>Quotes to <em>live by</em></h1>
-      <p class="q-lede">Lines worth keeping, collected one at a time from books, articles and people worth listening to. A new one lands most days.</p>
-      <ul class="q-filter" id="q-filter" aria-label="Filter by category"></ul>
+      <p class="q-lede">Lines worth keeping, collected one at a time from books, articles and people worth listening to. A life manual in ten chapters, growing most days.</p>
+      <ul class="q-filter" id="q-filter" aria-label="Filter by chapter"></ul>
       <div class="q-list" id="q-list" aria-live="polite">
         <noscript><p class="q-empty">Turn on JavaScript to read the quotes.</p></noscript>
       </div>
@@ -265,7 +270,7 @@ body { overflow-x: clip; }  /* safety net */
     </div>
   </div>
 </footer>
-<script src="/quotes/quotes.js?v=2" defer></script>
+<script src="/quotes/quotes.js?v=3" defer></script>
 <!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "b67bbb76d0e24af196b24ded3ab71ad0"}'></script><!-- End Cloudflare Web Analytics -->
 </body>
 </html>
