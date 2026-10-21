@@ -284,5 +284,20 @@
     "category": "Resilience & inner growth",
     "title": "Calm Mind",
     "text": "The calmer you are, the clearer you think. Let your decisions come from a place of peace, not from reaction."
+  },
+  {
+    "id": 41,
+    "date": "2026-10-22",
+    "category": "Relationships & character",
+    "title": "Surround Yourself with Compounders",
+    "text": "Compounders are people who focus on compounding knowledge, health, wealth, and deep relationships over decades.\n\nThese friends are hard to find, but invaluable when you do.\n\nThey will force you to level up your game. Conversations with these individuals are higher quality. Their success will inspire you to accomplish more. And you will get the added benefit of learning from your successful friends’ wins and losses along the way."
+  },
+  {
+    "id": 42,
+    "date": "2026-10-22",
+    "category": "Authenticity & independence",
+    "title": "Freedom from Expectations",
+    "text": "Don’t spend your time making other people happy. Other people being happy is their problem. It’s not your problem.\n\nIf you are happy, it makes other people happy.",
+    "source": "The Almanack of Naval Ravikant"
   }
 ]
