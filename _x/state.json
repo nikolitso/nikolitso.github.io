@@ -130,7 +130,8 @@
       "fixed-odds-sports-betting-statistical",
       "sports-betting-basics",
       "kind",
-      "how-to-watch-football-52-rules-for"
+      "how-to-watch-football-52-rules-for",
+      "becoming-a-winning-gambler"
     ],
     "log": [
       {
@@ -240,9 +241,15 @@
         "slot": "2026-10-21 14",
         "slug": "how-to-watch-football-52-rules-for",
         "id": "2112924641694203983"
+      },
+      {
+        "day": "2026-10-22",
+        "slot": "2026-10-22 02",
+        "slug": "becoming-a-winning-gambler",
+        "id": "2113046714777223664"
       }
     ],
-    "last_day": "2026-10-21"
+    "last_day": "2026-10-22"
   },
   "film": {
     "seen": [
@@ -564,7 +571,7 @@
     ],
     "last_day": "2026-10-21"
   },
-  "last_slot": "2026-10-21 20",
+  "last_slot": "2026-10-22 02",
   "quote": {
     "seen": [
       "1",
