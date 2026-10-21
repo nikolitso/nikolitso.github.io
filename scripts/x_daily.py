@@ -168,8 +168,7 @@ def quotes():
             continue
         n = q.get("id") or i
         src = (q.get("source") or "").strip()
-        if src.lower().startswith("attributed to "):
-            src = src[len("attributed to "):].strip() + " (attributed)"
+        src = re.sub(r"^(un|non[- ]?)?attributed( to)?:?\s*", "", src, flags=re.I)   # just the name, never "attributed"
         src = re.sub(r'^["“].*?["”]\s+by\s+', "", src)    # '"Article title" by Author' -> 'Author'
         items[str(n)] = dict(text=q["text"].strip(), source=src, date=str(q.get("date") or ""),
                              url=f"https://antonisnikolitsopoulos.com/quotes/#q-{n}")
