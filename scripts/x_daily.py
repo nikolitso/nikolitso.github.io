@@ -1,11 +1,13 @@
-"""Post one book (antonisnikolitsopoulos.com/books) or one film (What Algo Missed) to X.
+"""Post one book (antonisnikolitsopoulos.com/books), one film (What Algo Missed) or one quote
+(antonisnikolitsopoulos.com/quotes) to X.
 
-Usage:  python scripts/x_daily.py auto [--dry-run]          (scheduled: post the current slot if not done)
-        python scripts/x_daily.py book|film --force [--dry-run]  (manual: post one now)
+Usage:  python scripts/x_daily.py auto [--dry-run]                (scheduled: post the current slot if not done)
+        python scripts/x_daily.py book|film|quote --force [--dry-run]  (manual: post one now)
 
 - New additions go first, newest first; otherwise a random pick from what this
   round hasn't posted yet. When everything has been posted, a new round starts.
-- Four slots a day (SLOTS, Athens time). Each slot posts once; a late run still posts the
+- Quotes too long for one post go out as a short thread; the source and the link close it.
+- Five slots a day (SLOTS, Athens time). Each slot posts once; a late run still posts the
   current slot, but missed earlier slots are skipped rather than posted in a burst.
 - Credentials come from env: X_API_KEY, X_API_SECRET, X_ACCESS_TOKEN, X_ACCESS_TOKEN_SECRET.
   Without them (or with --dry-run) it only prints the post.
@@ -32,8 +34,9 @@ STATE = ROOT / "_x" / "state.json"
 BOOKS = ROOT / "_edge" / "books"
 FILMS = Path(os.environ.get("WAM_DIR", ROOT.parent / "whatalgomissed")) / "content" / "films"
 ATHENS = ZoneInfo("Europe/Athens")
-# Four slots a day, every 6 hours (Athens time), alternating book and film
-SLOTS = [(2, "book"), (8, "film"), (14, "book"), (20, "film")]
+# Five slots a day (Athens time): book and film every 6 hours, plus one quote a day
+SLOTS = [(2, "book"), (8, "film"), (11, "quote"), (14, "book"), (20, "film")]
+QUOTES = ROOT / "quotes" / "quotes.json"
 URL_LEN = 23  # X counts every link as 23 characters
 
 
@@ -155,6 +158,62 @@ def films():
     return items
 
 
+def quotes():
+    """The quotes page (quotes/quotes.json, edited in Pages CMS), keyed by quote number."""
+    if not QUOTES.exists():
+        return {}
+    items = {}
+    for i, q in enumerate(json.loads(QUOTES.read_text(encoding="utf-8")), 1):
+        if not q or not q.get("text") or q.get("draft"):
+            continue
+        n = q.get("id") or i
+        src = (q.get("source") or "").strip()
+        if src.lower().startswith("attributed to "):
+            src = src[len("attributed to "):].strip() + " (attributed)"
+        src = re.sub(r'^["“].*?["”]\s+by\s+', "", src)    # '"Article title" by Author' -> 'Author'
+        items[str(n)] = dict(text=q["text"].strip(), source=src, date=str(q.get("date") or ""),
+                             url=f"https://antonisnikolitsopoulos.com/quotes/#q-{n}")
+    return items
+
+
+def split_text(text, limit):
+    """Cut text into pieces of at most `limit` characters, at paragraph and sentence breaks where possible."""
+    units = []                                            # (joiner before it, piece of text)
+    for para in [x.strip() for x in text.split("\n\n") if x.strip()]:
+        for j, line in enumerate(x.strip() for x in para.split("\n") if x.strip()):   # list lines stay lines
+            for i, sent in enumerate(re.split(r"(?<=[.!?…])\s+", line)):
+                units.append(("\n\n" if j == 0 and i == 0 else "\n" if i == 0 else " ", sent))
+    pieces, cur = [], ""
+    for sep, sent in units:
+        while len(sent) > limit:                          # a single very long sentence: cut at a word
+            cut = sent[:limit].rsplit(" ", 1)[0] or sent[:limit]
+            if cur:
+                pieces.append(cur); cur = ""
+            pieces.append(cut); sent = sent[len(cut):].strip()
+        sep = sep if cur else ""
+        if len(cur) + len(sep) + len(sent) <= limit:
+            cur += sep + sent
+        else:
+            pieces.append(cur); cur = sent
+    if cur:
+        pieces.append(cur)
+    return pieces
+
+
+def compose_quote(it):
+    """One post if it fits (quote, source, link); otherwise a thread whose last post carries the source and link."""
+    tail = (f"\n\n— {it['source']}" if it["source"] else "") + "\n" + it["url"]
+    tail_len = len(tail) - len(it["url"]) + URL_LEN
+    if len(it["text"]) + tail_len <= 280:
+        return [it["text"] + tail]
+    posts = split_text(it["text"], 275)
+    if len(posts[-1]) + tail_len <= 280:
+        posts[-1] += tail
+    else:
+        posts.append(tail.strip())
+    return posts
+
+
 TOPIC_PHRASE = {
     "Betting & markets": "betting and markets", "Football": "football", "Sports analytics": "sports analytics",
     "Thinking & decisions": "decision-making", "Personal development": "personal growth",
@@ -216,7 +275,7 @@ def compose(kind, it, variant=0):
 
 
 # ---------------------------------------------------------------- X API (OAuth 1.0a, user context)
-def post_to_x(text):
+def post_to_x(text, reply_to=None):
     key, sec = os.environ["X_API_KEY"], os.environ["X_API_KEY_SECRET"]
     tok, tsec = os.environ["X_ACCESS_TOKEN"], os.environ["X_ACCESS_TOKEN_SECRET"]
     url = "https://api.x.com/2/tweets"
@@ -231,7 +290,10 @@ def post_to_x(text):
     sig = base64.b64encode(hmac.new(f"{q(sec)}&{q(tsec)}".encode(), base.encode(), hashlib.sha1).digest()).decode()
     oauth["oauth_signature"] = sig
     header = "OAuth " + ", ".join(f'{q(k)}="{q(v)}"' for k, v in sorted(oauth.items()))
-    req = urllib.request.Request(url, data=json.dumps({"text": text}).encode(), method="POST",
+    body = {"text": text}
+    if reply_to:
+        body["reply"] = {"in_reply_to_tweet_id": reply_to}
+    req = urllib.request.Request(url, data=json.dumps(body).encode(), method="POST",
                                  headers={"Authorization": header, "Content-Type": "application/json"})
     try:
         with urllib.request.urlopen(req, timeout=30) as r:
@@ -242,7 +304,7 @@ def post_to_x(text):
 
 # ---------------------------------------------------------------- scheduling
 def pick_and_post(state, kind, dry, slot_key):
-    catalogue = books() if kind == "book" else films()
+    catalogue = {"book": books, "film": films, "quote": quotes}[kind]()
     if not catalogue:
         sys.exit(f"No {kind}s found")
     st = state.setdefault(kind, {})
@@ -260,12 +322,15 @@ def pick_and_post(state, kind, dry, slot_key):
             left = list(catalogue)
         slug = random.choice(left)
 
-    text = compose(kind, catalogue[slug], len(st["log"]))
-    print(f"--- {kind}: {slug} (round {st['round']}, {len(st['posted'])}/{len(catalogue)} posted)\n{text}\n---")
+    posts = compose_quote(catalogue[slug]) if kind == "quote" else [compose(kind, catalogue[slug], len(st["log"]))]
+    print(f"--- {kind}: {slug} (round {st['round']}, {len(st['posted'])}/{len(catalogue)} posted)\n" + "\n--- reply:\n".join(posts) + "\n---")
     if dry:
         print("dry run: nothing posted, state unchanged")
         return False
-    tweet_id = post_to_x(text)
+    tweet_id = post_to_x(posts[0])
+    reply = tweet_id
+    for extra in posts[1:]:                         # long quotes: the rest as a thread under the first post
+        reply = post_to_x(extra, reply_to=reply)
     today = datetime.now(ATHENS).date().isoformat()
     st["seen"] = sorted(set(st["seen"]) | {slug})
     st["posted"].append(slug)
@@ -286,9 +351,9 @@ def current_slot(now):
 
 def main():
     args = sys.argv[1:]
-    mode = next((a for a in args if a in ("auto", "book", "film")), None)
+    mode = next((a for a in args if a in ("auto", "book", "film", "quote")), None)
     if not mode:
-        sys.exit("usage: x_daily.py auto | book|film --force [--dry-run]")
+        sys.exit("usage: x_daily.py auto | book|film|quote --force [--dry-run]")
     dry = "--dry-run" in args or not os.environ.get("X_API_KEY")
     state = json.loads(STATE.read_text(encoding="utf-8")) if STATE.exists() else {}
     now = datetime.now(ATHENS)
@@ -304,7 +369,7 @@ def main():
             state["last_slot"] = key
     else:
         if "--force" not in args:
-            sys.exit("book/film posts immediately; add --force to confirm (scheduled posting uses: auto)")
+            sys.exit("book/film/quote posts immediately; add --force to confirm (scheduled posting uses: auto)")
         if not pick_and_post(state, mode, dry, f"manual {now:%Y-%m-%d %H:%M}"):
             return
 
