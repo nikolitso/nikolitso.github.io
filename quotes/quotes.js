@@ -68,13 +68,12 @@
     art.appendChild(body(q.text));
     if (q.context) art.appendChild(el("p", "q-context", q.context));
     if (q.note) art.appendChild(el("p", "q-note", q.note));
-    if (q.source) art.appendChild(el("p", "q-source", q.source));
     if (q.author) {
       var pill = el("button", "q-author", q.author);
       pill.type = "button";
       pill.setAttribute("aria-label", "Show all quotes by " + q.author);
       pill.addEventListener("click", function () { onAuthor(slug(q.author)); });
-      art.appendChild(pill);
+      art.appendChild(el("div", "q-foot")).appendChild(pill);
     }
     return art;
   }

@@ -87,10 +87,6 @@ content:
         label: Who said it (optional)
         description: Just the person's name, e.g. "Carl Jung". Becomes a filter pill on the site; leave empty if unknown.
         type: string
-      - name: source
-        label: Source (optional)
-        description: e.g. "The Psychology of Money by Morgan Housel" or "Attributed to Carl Jung"
-        type: string
       - name: note
         label: Note (optional)
         type: string
