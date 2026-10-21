@@ -343,8 +343,12 @@ function nextRoundGames(){
                      .sort((x, y) => x[0][0].localeCompare(y[0][0]));
   if (!upcoming.length) return [];
   const nextRound = upcoming[0][0][1];
-  return nextRound ? upcoming.filter(([f]) => f[1] === nextRound)
-                   : upcoming.filter(([f]) => f[0].slice(0, 10) === upcoming[0][0][0].slice(0, 10));
+  if (!nextRound) return upcoming.filter(([f]) => f[0].slice(0, 10) === upcoming[0][0][0].slice(0, 10));
+  const list = upcoming.filter(([f]) => f[1] === nextRound);
+  if (list.length >= 12) return list;
+  // only the tail of a round is left (late games): show the round after it as well
+  const after = upcoming.find(([f]) => f[1] && f[1] !== nextRound);
+  return after ? list.concat(upcoming.filter(([f]) => f[1] === after[0][1])) : list;
 }
 const dayName = d => new Date(d + 'T12:00').toLocaleDateString('en-GB', {weekday:'long', day:'numeric', month:'long'});
 function byDay(list){
