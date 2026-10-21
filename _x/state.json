@@ -129,7 +129,8 @@
       "football-against-the-enemy",
       "fixed-odds-sports-betting-statistical",
       "sports-betting-basics",
-      "kind"
+      "kind",
+      "how-to-watch-football-52-rules-for"
     ],
     "log": [
       {
@@ -233,6 +234,12 @@
         "slot": "2026-10-21 02",
         "slug": "kind",
         "id": "2112692664214651025"
+      },
+      {
+        "day": "2026-10-21",
+        "slot": "2026-10-21 14",
+        "slug": "how-to-watch-football-52-rules-for",
+        "id": "2112924641694203983"
       }
     ],
     "last_day": "2026-10-21"
@@ -550,7 +557,7 @@
     ],
     "last_day": "2026-10-20"
   },
-  "last_slot": "2026-10-21 11",
+  "last_slot": "2026-10-21 14",
   "quote": {
     "seen": [
       "1",
