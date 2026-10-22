@@ -572,11 +572,11 @@ function render() {
   document.getElementById('season').innerHTML = view === 'list' && !(state.q.trim() || state.colour || state.variety || state.region) ? seasonHtml() : '';
   document.getElementById('finderChips').hidden = view !== 'finder';
   document.getElementById('listChips').hidden = view === 'finder';
-  ['colourLabel', 'colours', 'varietyLabel', 'varieties'].forEach(id => { document.getElementById(id).hidden = view === 'wineries'; });
+  ['colourLabel', 'colours', 'varietyLabel', 'varieties', 'wineryLabel', 'wineries'].forEach(id => { document.getElementById(id).hidden = view === 'wineries'; });
   document.getElementById('wineryLabel').textContent = t('winery');
   document.getElementById('varietyLabel').textContent = t('grapes');
   document.getElementById('colourLabel').textContent = t('colour');
-  document.getElementById('q').placeholder = window.matchMedia('(max-width:560px)').matches ? (lang === 'el' ? 'Αναζήτηση πιάτου ή κρασιού' : 'Search a dish or wine') : t('placeholder');
+  document.getElementById('q').placeholder = view === 'wineries' ? (lang === 'el' ? 'Αναζήτηση κτήματος ή κρασιού' : 'Search an estate or a wine') : window.matchMedia('(max-width:560px)').matches ? (lang === 'el' ? 'Αναζήτηση πιάτου ή κρασιού' : 'Search a dish or wine') : t('placeholder');
   document.getElementById('catsLabel').textContent = t('cats');
   document.getElementById('tagsLabel').textContent = t('tags');
   document.getElementById('grapesLabel').textContent = t('grapes');
