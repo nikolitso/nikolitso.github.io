@@ -172,7 +172,7 @@ footer{margin-top:72px;padding-top:22px;border-top:1px solid var(--line);color:v
 @media(max-width:560px){.hero svg{max-height:120px}}
 
 /* seasonal opening */
-.season{margin:6px 0 34px;border:1px solid var(--line2);border-radius:20px;padding:30px 30px 26px;background:linear-gradient(135deg,rgba(125,34,54,.34),rgba(255,246,232,.04) 60%);box-shadow:0 24px 60px -34px #000}
+.season{position:relative;margin:6px 0 34px;border:1px solid var(--line2);border-radius:20px;padding:30px 30px 26px;background:linear-gradient(135deg,rgba(125,34,54,.34),rgba(255,246,232,.04) 60%);box-shadow:0 24px 60px -34px #000}
 .season .skick{display:flex;align-items:center;gap:10px;font:var(--label);letter-spacing:.22em;text-transform:uppercase;color:var(--gold)}
 .season .skick svg{width:22px;height:22px;stroke:var(--gold);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
 .season h2{font:700 clamp(28px,5vw,40px)/1.15 var(--display);color:var(--cream);margin:10px 0 8px}
@@ -212,6 +212,12 @@ footer{margin-top:72px;padding-top:22px;border-top:1px solid var(--line);color:v
 .modal-box .card{border:0;background:transparent}
 .modal-x{position:absolute;top:10px;right:12px;width:36px;height:36px;border-radius:50%;border:1px solid var(--line2);background:rgba(0,0,0,.3);color:var(--cream);font:400 22px/1 var(--body);cursor:pointer}
 .modal-x:hover{background:var(--wine)}
+
+.season .snav{position:absolute;top:22px;right:24px;display:flex;gap:8px}
+.season .snav button{font:var(--label);letter-spacing:.1em;text-transform:uppercase;color:var(--cream);background:rgba(0,0,0,.3);border:1px solid var(--line2);border-radius:999px;padding:9px 16px;cursor:pointer;transition:background .2s}
+.season .snav button:hover{background:var(--wine)}
+.season .snav .prev{padding:9px 13px}
+@media(max-width:640px){.season .snav{position:static;margin:0 0 14px}.season .skick{flex-wrap:wrap}}
 @media(max-width:560px){.views{width:100%;overflow:visible}.views button{flex:1;white-space:normal;text-align:center;padding:10px 6px;font-size:10px;letter-spacing:.08em;line-height:1.3}body{font-size:17px}.wrap{padding:0 16px 80px}.card{padding:20px}.pill summary{padding:18px 20px}.pill-body{padding:4px 20px 22px}}
 </style>
 </head>
@@ -273,7 +279,7 @@ const UI = {
     col: {White: 'White', 'Rosé': 'Rosé', Red: 'Red'}, wine: 'wine', winesN: 'wines',
     bestFor: 'Dishes where it is the first choice', more: 'More wines that fit', dishesFor: 'Dishes',
     begin: 'Where to begin', beginText: (r, w) => `Pick a chip above, or type a dish. ${r} dishes and ${w} wines are loaded.`,
-    inSeason: 'In season', top10Wines: 'Top 10 wines of the month', top10Pairs: 'Top 10 of the month: dish and wine', onTable: 'On the table', allDishes: 'All dishes', cheeses: 'Cheeses: what pairs with each', dishes: 'Dishes', wines: 'Wines', result: 'result', results: 'results',
+    inSeason: 'In season', nextMonth: 'Next month', prevMonth: 'Previous month', top10Wines: 'Top 10 wines of the month', top10Pairs: 'Top 10 of the month: dish and wine', onTable: 'On the table', allDishes: 'All dishes', cheeses: 'Cheeses: what pairs with each', dishes: 'Dishes', wines: 'Wines', result: 'result', results: 'results',
     none: 'No match yet. Try a simpler word, such as the main ingredient.',
     bestGrape: 'Best grape', alt: 'alternative',
     pairs: 'Pairs with', also: 'Also try',
@@ -290,7 +296,7 @@ const UI = {
     col: {White: 'Λευκό', 'Rosé': 'Ροζέ', Red: 'Ερυθρό'}, wine: 'κρασί', winesN: 'κρασιά',
     bestFor: 'Πιάτα όπου είναι η πρώτη επιλογή', more: 'Περισσότερα κρασιά που ταιριάζουν', dishesFor: 'Πιάτα',
     begin: 'Από πού να ξεκινήσετε', beginText: (r, w) => `Επιλέξτε ένα κουμπί παραπάνω ή γράψτε ένα πιάτο. Φορτώθηκαν ${r} πιάτα και ${w} κρασιά.`,
-    inSeason: 'Της εποχής', top10Wines: 'Τα 10 κορυφαία κρασιά του μήνα', top10Pairs: 'Top 10 του μήνα: πιάτο και κρασί', onTable: 'Στο τραπέζι', allDishes: 'Όλα τα πιάτα', cheeses: 'Τυριά: με τι ταιριάζει το καθένα', dishes: 'Πιάτα', wines: 'Κρασιά', result: 'αποτέλεσμα', results: 'αποτελέσματα',
+    inSeason: 'Της εποχής', nextMonth: 'Επόμενος μήνας', prevMonth: 'Προηγούμενος μήνας', top10Wines: 'Τα 10 κορυφαία κρασιά του μήνα', top10Pairs: 'Top 10 του μήνα: πιάτο και κρασί', onTable: 'Στο τραπέζι', allDishes: 'Όλα τα πιάτα', cheeses: 'Τυριά: με τι ταιριάζει το καθένα', dishes: 'Πιάτα', wines: 'Κρασιά', result: 'αποτέλεσμα', results: 'αποτελέσματα',
     none: 'Δεν βρέθηκε αντιστοιχία. Δοκιμάστε μια απλούστερη λέξη, όπως το κύριο υλικό.',
     bestGrape: 'Καλύτερη ποικιλία', alt: 'εναλλακτικά',
     pairs: 'Ταιριάζει με', also: 'Δοκιμάστε επίσης',
@@ -569,7 +575,9 @@ const SEASON_ICONS = {
   sun: '<circle cx="12" cy="12" r="4"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1"/>',
   leaf: '<path d="M12 21c-5-3-8-8-6-15 4 0 8 1 10 5 2 4 0 8-4 10zM12 21c0-5 1-8 4-11"/>',
 };
+let monthOverride = null;
 function monthIndex() {
+  if (monthOverride !== null) return monthOverride;
   const q = parseInt(new URLSearchParams(location.search).get('month'), 10);
   return q >= 1 && q <= 12 ? q - 1 : new Date().getMonth();
 }
@@ -713,7 +721,8 @@ function seasonHtml() {
   const mi = monthIndex(), S = MONTHS[mi], pairs = yearPlan()[mi + 1];
   const row = ([r, w], i) => `<li><span class="rank">${i + 1}</span><div class="pr"><a class="wl rl dish" data-dish="${esc(r.name)}">${esc(L(r, 'name'))}</a>
       <div class="pw">${bottle(w)}<span><a class="wl" data-wine="${esc(w.id)}">${esc(L(w, 'name'))}</a><small>${esc(L(w, 'winery'))} · ${esc(L(w, 'region'))}${L(w, 'grapes') ? ' · ' + esc(L(w, 'grapes')) : ''}</small></span></div></div></li>`;
-  return `<section class="season"><div class="skick"><svg viewBox="0 0 24 24" aria-hidden="true">${SEASON_ICONS[S.icon]}</svg>${esc(t('inSeason'))} · ${esc(S[lang])}</div>
+  const nm = MONTHS[(mi + 1) % 12][lang];
+  return `<section class="season"><div class="snav"><button type="button" class="prev" data-month="-1" aria-label="${esc(t('prevMonth'))}">←</button><button type="button" data-month="1">${esc(t('nextMonth'))}: ${esc(nm)} →</button></div><div class="skick"><svg viewBox="0 0 24 24" aria-hidden="true">${SEASON_ICONS[S.icon]}</svg>${esc(t('inSeason'))} · ${esc(S[lang])}</div>
     <h2>${esc(S.title[lang])}</h2><p class="slede">${esc(S.lede[lang])}</p>
     <h3 class="stitle">${esc(t('top10Pairs'))}</h3>
     <ol class="slist big">${pairs.map(row).join('')}</ol></section>`;
@@ -808,6 +817,8 @@ function closeModal() { document.getElementById('modal').hidden = true; document
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 document.addEventListener('click', e => {
   if (e.target.closest('[data-close]') || e.target.id === 'modal') { closeModal(); return; }
+  const mb = e.target.closest('[data-month]');
+  if (mb) { monthOverride = (monthIndex() + parseInt(mb.dataset.month, 10) + 12) % 12; render(); return; }
   const pop = e.target.closest('.season a.wl, .modal a.wl');
   if (pop) {
     e.preventDefault();
@@ -816,7 +827,7 @@ document.addEventListener('click', e => {
     return;
   }
   const lg = e.target.closest('.logo');
-  if (lg) { e.preventDefault(); view = 'home'; state = {q: '', cat: '', tag: '', grape: '', region: '', colour: '', variety: ''}; document.getElementById('q').value = ''; try { history.replaceState(null, '', '/wine/'); } catch (x) {} render(); window.scrollTo({top: 0, behavior: 'smooth'}); return; }
+  if (lg) { e.preventDefault(); view = 'home'; monthOverride = null; state = {q: '', cat: '', tag: '', grape: '', region: '', colour: '', variety: ''}; document.getElementById('q').value = ''; try { history.replaceState(null, '', '/wine/'); } catch (x) {} render(); window.scrollTo({top: 0, behavior: 'smooth'}); return; }
   const vb = e.target.closest('.views button');
   if (vb) { view = vb.dataset.view; state = {q: '', cat: '', tag: '', grape: '', region: '', colour: ''}; document.getElementById('q').value = ''; try { history.replaceState(null, '', HASH[view]); } catch (x) {} render(); return; }
   const pt = e.target.closest('.gmap .pt:not(.empty)');
