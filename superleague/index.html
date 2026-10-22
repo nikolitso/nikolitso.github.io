@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Greek Super League</title>
+<meta name="description" content="Greek Super League projections for every game: goals, xG, shots, shots on target, corners, cards, fouls, goal kicks, throw-ins, possession, goalkeeper saves and woodwork.">
+<link rel="canonical" href="https://antonisnikolitsopoulos.com/superleague/">
+<meta property="og:title" content="Greek Super League">
+<meta property="og:description" content="Greek Super League projections for every game: goals, xG, shots, corners, cards, fouls, goal kicks, throw-ins, possession, saves and woodwork.">
+<meta property="og:url" content="https://antonisnikolitsopoulos.com/superleague/">
+<meta property="og:image" content="https://antonisnikolitsopoulos.com/superleague.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.png" type="image/png" sizes="64x64">
+<!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "b67bbb76d0e24af196b24ded3ab71ad0"}'></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Playfair+Display:wght@600;700&family=Source+Serif+4:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0c1424; --panel:#131d33; --line:#26334f; --text:#f1ead9; --muted:#9aa4ba;
+  --gold:#d4af37; --win:#6fcf97; --loss:#eb7a6c;
+  --serif:'Playfair Display',Georgia,serif; --body:'Source Serif 4',Georgia,serif; --mono:'IBM Plex Mono',ui-monospace,monospace;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:17px/1.5 var(--body)}
+.wrap{max-width:1180px;margin:0 auto;padding:40px 16px 80px}
+h1{font:700 clamp(30px,5vw,46px)/1.1 var(--serif);margin:0 0 6px}
+h1 a{color:inherit;text-decoration:none}
+h1 a:hover{color:var(--gold)}
+.home-link{display:inline-block;margin-bottom:14px;font:500 12px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-decoration:none}
+.home-link:hover{color:var(--gold)}
+.sub{font:400 13px var(--mono);color:var(--muted);letter-spacing:.04em;margin-bottom:32px}
+.tabs{display:flex;flex-wrap:wrap;gap:10px 28px;border-bottom:1px solid var(--line);margin:0 0 26px}
+.tabs a{border-bottom:2px solid transparent;color:var(--muted);font:600 18px var(--serif);padding:0 0 10px;margin-bottom:-1px;cursor:pointer;text-decoration:none}
+.tabs a.on{color:var(--text);border-color:var(--gold)}
+.tabs a:hover{color:var(--text)}
+.bar{display:flex;flex-wrap:wrap;align-items:center;gap:10px 18px;margin:0 0 18px}
+.seg{display:flex;border:1px solid var(--line);border-radius:6px;overflow:hidden;width:max-content}
+.seg button{background:none;border:0;color:var(--muted);font:500 13px var(--mono);padding:8px 16px;cursor:pointer;letter-spacing:.06em;text-transform:uppercase}
+.seg button.on{background:var(--gold);color:#0c1424}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{background:none;border:1px solid var(--line);border-radius:999px;color:var(--muted);font:500 12px var(--mono);padding:5px 12px;cursor:pointer}
+.chip:hover{color:var(--text)}
+.chip.on{background:var(--gold);border-color:var(--gold);color:#0c1424}
+h2{font:600 22px var(--serif);margin:30px 0 12px}
+h2.day{font-size:20px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(520px,100%),1fr));gap:18px}
+.grid>.card{min-width:0}
+.card td:first-child{white-space:normal}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px 18px 10px}
+.card h3{font:600 21px var(--serif);margin:0}
+.card .ko{font:400 12px var(--mono);color:var(--muted);letter-spacing:.06em}
+.wdl{display:flex;height:8px;border-radius:4px;overflow:hidden;margin:12px 0 6px;background:var(--line)}
+.wdl i{display:block} .wdl i:nth-child(1){background:var(--gold)} .wdl i:nth-child(2){background:#59657f} .wdl i:nth-child(3){background:#5b7bd5}
+.wdlt{display:flex;justify-content:space-between;font:400 12px var(--mono);color:var(--muted)}
+.wdlt b{color:var(--text);font-weight:500}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+th{font:400 11px var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.08em;text-align:left;padding:8px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:7px 8px;border-bottom:1px solid color-mix(in srgb,var(--line) 60%,transparent);font-size:15px;white-space:nowrap}
+td.n,th.n{text-align:right;font-family:var(--mono);font-size:13.5px}
+td.tot{color:var(--gold);font-weight:500}
+.card table{margin-top:10px}
+.card tr:last-child td{border-bottom:0}
+.ln{font:400 12px var(--mono);color:var(--muted);text-align:right}
+.ln span{display:inline-block;min-width:92px}
+.ln b{color:var(--text);font-weight:500}
+.ln .hi{color:var(--win)} .ln .lo{color:var(--loss)}
+th.sort{cursor:pointer;user-select:none} th.sort:hover,th.sort.on{color:var(--gold)}
+.w{color:var(--win)} .l{color:var(--loss)}
+.muted{color:var(--muted)}
+.empty{color:var(--muted);padding:30px 0;text-align:center}
+.note{font:400 15px/1.55 var(--body);color:var(--muted);border-left:2px solid var(--gold);padding:2px 0 2px 14px;margin:0 0 14px;max-width:820px}
+.note b{color:var(--text);font-weight:600}
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin:0 0 18px}
+.metric{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.metric .lbl{font:400 11px var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}
+.metric .big{font:500 24px var(--mono);color:var(--gold)}
+.scroll{overflow-x:auto}
+.abbr{display:none}
+@media(max-width:600px){.grid{grid-template-columns:1fr}.ln span{min-width:0;margin-left:8px}.card{padding:14px 10px 8px}td,th{padding:6px 4px}
+  .card td{font-size:14px}.card td.n{font-size:12.5px}.full{display:none}.abbr{display:inline}.wdlt{flex-wrap:wrap;gap:2px 12px}}
+</style>
+</head>
+<body>
+<!-- sitebar:start (link back to antonisnikolitsopoulos.com; keep on every page) -->
+<style>
+.an-sitebar{background:#0d1220;border-bottom:1px solid rgba(255,255,255,.09);font:500 13px/1.2 "Segoe UI",system-ui,-apple-system,sans-serif;letter-spacing:.02em}
+.an-sitebar>div{max-width:72rem;margin:0 auto;padding:6px 16px;display:flex;justify-content:flex-end;align-items:center;gap:18px}
+.an-sitebar a{color:#9aa1b2;text-decoration:none;display:inline-flex;align-items:center;min-height:24px}.an-sitebar a:hover{color:#fff}
+.an-sitebar svg{width:17px;height:17px;fill:currentColor}
+.an-sitebar a[href="/"]{padding:6px 8px;margin:-6px -8px -6px -4px;border-radius:6px}.an-sitebar a[href="/"]:hover{background:rgba(255,255,255,.08)}
+</style>
+<nav class="an-sitebar" aria-label="Main site"><div><a href="/books/">Books</a><a href="/#projects">Projects</a><a href="/about/">About</a><a href="/" title="Main site: antonisnikolitsopoulos.com" aria-label="Main site"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 2 11.5h3V21h5.5v-6h3v6H19v-9.5h3z"/></svg></a></div></nav>
+<!-- sitebar:end -->
+<div class="wrap">
+  <a class="home-link" href="/superleague/">&#8962; Home</a>
+  <h1><a href="/superleague/">Greek Super League</a></h1>
+  <div class="sub" id="sub"></div>
+
+  <div class="tabs" id="tabs">
+    <a href="#view=projections" data-view="projections" class="on">Projections</a>
+    <a href="#view=results" data-view="results">Results</a>
+    <a href="#view=teams" data-view="teams">Teams</a>
+    <a href="#view=method" data-view="method">How it works</a>
+  </div>
+  <div id="out"></div>
+</div>
+<script src="data.js"></script>
+<script>
+const D = window.SL, $ = id => document.getElementById(id);
+const L = D.labels, ORDER = D.order;
+const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const dayName = s => { const d = new Date(s.slice(0,10)+'T12:00'); return `${DAYS[d.getDay()]} ${d.getDate()} ${MON[d.getMonth()]}`; };
+const pct = x => Math.round(x*100) + '%';
+const dec = s => ['xg','goals','woodwork'].includes(s) ? 2 : 1;
+const f = (x, s) => x == null ? '–' : (+x).toFixed(s === 'possession' ? 0 : dec(s));
+let view = 'projections', pjMode = 'match', pjStat = 'corners', rsStat = 'goals', tmStat = 'goals', tmSort = ['for', -1];
+
+$('sub').textContent = `${D.season.replace('-','–')} · updated ${D.updated} (Athens) · model built on ${D.history.games} games since ${D.history.from.slice(0,4)}`;
+
+function linesHtml(lines){
+  if (!lines) return '';
+  return lines.map(([ln, p]) => `<span>O ${ln} <b class="${p >= .6 ? 'hi' : p <= .4 ? 'lo' : ''}">${pct(p)}</b></span>`).join('');
+}
+
+// the line closest to a coin flip; all three show in the By stat view
+const mainLine = lines => lines && [lines.reduce((a, b) => Math.abs(b[1] - .5) < Math.abs(a[1] - .5) ? b : a)];
+
+function matchCard(g){
+  const r = g.result, t = g.kickoff.slice(11);
+  const rows = ORDER.map(s => {
+    const x = g.stats[s];
+    return `<tr><td>${L[s]}</td><td class="n">${f(x.home, s)}</td><td class="n">${f(x.away, s)}</td>`+
+      `<td class="n tot">${x.total == null ? '' : f(x.total, s)}</td><td class="ln">${linesHtml(mainLine(x.lines))}</td></tr>`;
+  }).join('');
+  return `<div class="card"><div class="ko">${t}</div><h3>${g.home} <span class="muted">–</span> ${g.away}</h3>
+    <div class="wdl"><i style="width:${r.home*100}%"></i><i style="width:${r.draw*100}%"></i><i style="width:${r.away*100}%"></i></div>
+    <div class="wdlt"><span>Home <b>${pct(r.home)}</b></span><span>Draw <b>${pct(r.draw)}</b></span><span>Away <b>${pct(r.away)}</b></span><span>Both score <b>${pct(r.btts)}</b></span></div>
+    <table><thead><tr><th>Stat</th><th class="n"><span class="full">${g.home}</span><span class="abbr">Home</span></th><th class="n"><span class="full">${g.away}</span><span class="abbr">Away</span></th><th class="n">Total</th><th class="n">Over</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+}
+
+function chipsHtml(id, cur, list){
+  return `<div class="chips" id="${id}">` + list.map(s => `<button class="chip${s === cur ? ' on' : ''}" data-s="${s}">${L[s]}</button>`).join('') + '</div>';
+}
+
+function renderProjections(){
+  if (!D.fixtures.length) return '<p class="empty">No fixtures scheduled in the next two weeks.</p>';
+  let h = `<div class="bar"><div class="seg" id="pjmode"><button data-m="match" class="${pjMode==='match'?'on':''}">By match</button><button data-m="stat" class="${pjMode==='stat'?'on':''}">By stat</button></div>`;
+  if (pjMode === 'stat') h += chipsHtml('pjstat', pjStat, ORDER);
+  h += '</div>';
+  const byDay = {};
+  D.fixtures.forEach(g => (byDay[g.kickoff.slice(0,10)] ||= []).push(g));
+  if (pjMode === 'match'){
+    for (const [d, gs] of Object.entries(byDay)) h += `<h2 class="day">${dayName(d)}</h2><div class="grid">${gs.map(matchCard).join('')}</div>`;
+    return h;
+  }
+  const s = pjStat;
+  h += `<div class="scroll"><table><thead><tr><th>Kick-off</th><th>Match</th><th class="n">Home</th><th class="n">Away</th>${s==='possession'?'':'<th class="n">Total</th>'}<th class="n">${s==='possession'||s==='xg'?'':'Over line · chance'}</th></tr></thead><tbody>`;
+  for (const g of D.fixtures){
+    const x = g.stats[s];
+    h += `<tr><td class="muted">${dayName(g.kickoff)} ${g.kickoff.slice(11)}</td><td>${g.home} – ${g.away}</td><td class="n">${f(x.home,s)}</td><td class="n">${f(x.away,s)}</td>${s==='possession'?'':`<td class="n tot">${f(x.total,s)}</td>`}<td class="ln">${linesHtml(x.lines)}</td></tr>`;
+  }
+  return h + '</tbody></table></div>';
+}
+
+function renderResults(){
+  const s = rsStat, poss = s === 'possession';
+  let h = `<p class="note">Every game this season, with the projection the model would have made the day before it (only earlier games used) next to what happened.</p>
+    <div class="bar">${chipsHtml('rsstat', s, ORDER)}</div>`;
+  const rows = D.results.filter(g => g.stats[s][2] != null);
+  let err = 0;
+  rows.forEach(g => { const [ph, pa, ah, aa] = g.stats[s]; err += poss ? Math.abs(ph - ah) : Math.abs(ph + pa - ah - aa); });
+  h += `<div class="metrics"><div class="metric"><div class="lbl">Games</div><div class="big">${rows.length}</div></div>
+    <div class="metric"><div class="lbl">Avg miss, ${poss ? 'home share' : 'match total'}</div><div class="big">${rows.length ? (err/rows.length).toFixed(2) : '–'}</div></div></div>`;
+  h += `<div class="scroll"><table><thead><tr><th>Date</th><th>Match</th><th class="n">Projected</th><th class="n">Actual</th>${poss ? '' : '<th class="n">Proj. total</th><th class="n">Actual total</th>'}<th class="n">Miss</th></tr></thead><tbody>`;
+  for (const g of rows){
+    const [ph, pa, ah, aa] = g.stats[s];
+    const miss = poss ? ah - ph : ah + aa - ph - pa;
+    h += `<tr><td class="muted">${dayName(g.date)}</td><td>${g.home} – ${g.away}</td><td class="n">${f(ph,s)} – ${f(pa,s)}</td><td class="n">${f(ah,s)} – ${f(aa,s)}</td>`+
+      (poss ? '' : `<td class="n">${f(ph+pa,s)}</td><td class="n tot">${f(ah+aa,s)}</td>`)+
+      `<td class="n muted">${miss > 0 ? '+' : ''}${f(miss,s)}</td></tr>`;
+  }
+  return h + '</tbody></table></div>';
+}
+
+function renderTeams(){
+  const s = tmStat;
+  let h = `<p class="note">Per-game averages this season. <b>For</b> is what the team produced, <b>against</b> is what its opponents produced.</p>
+    <div class="bar">${chipsHtml('tmstat', s, ORDER)}</div>`;
+  const [key, dir] = tmSort;
+  const rows = D.teams.slice().sort((a, b) => key === 'team' ? dir * a.team.localeCompare(b.team) : dir * ((a[key][s] ?? -1) - (b[key][s] ?? -1)));
+  const th = (k, lbl, n) => `<th class="sort${n ? ' n' : ''}${k === key ? ' on' : ''}" data-k="${k}">${lbl}${k === key ? (dir > 0 ? ' ▲' : ' ▼') : ''}</th>`;
+  h += `<div class="scroll"><table style="max-width:640px"><thead><tr>${th('team','Team')}<th class="n">Games</th>${th('for','For',1)}${th('against','Against',1)}</tr></thead><tbody>`;
+  for (const t of rows) h += `<tr><td>${t.team}</td><td class="n muted">${t.games}</td><td class="n tot">${f(t.for[s],s)}</td><td class="n">${f(t.against[s],s)}</td></tr>`;
+  return h + '</tbody></table></div>';
+}
+
+function renderMethod(){
+  const A = D.accuracy;
+  let h = `<p class="note">Each team gets two ratings per stat: how much it <b>produces</b> and how much it <b>allows</b>, relative to the league. A projection is the league's home (or away) average × the team's rating for × the opponent's rating against. Ratings come from every Super League game since ${D.history.from.slice(0,4)}, with recent games counting more. How fast old games fade, and how hard small samples are pulled back to average, was chosen per stat by testing on 2023–24 onwards using only games played before each date.</p>
+  <p class="note">Possession is a split, so it is fitted differently: each team gets one possession strength and the home side gets a small edge. Promoted teams start from how promoted sides have typically done. Over chances use the projected total and how widely real totals have spread around projections in testing. Big chances are not in the data, so they are not projected yet.</p>
+  <h2>How accurate is it?</h2>
+  <p class="note">Backtest from 2023–24: average miss on each team's number, compared with guessing the league average every time.</p>
+  <div class="scroll"><table style="max-width:760px"><thead><tr><th>Stat</th><th class="n">Model miss / team</th><th class="n">League avg miss</th><th class="n">Better by</th><th class="n">Miss on match total</th></tr></thead><tbody>`;
+  for (const s of ORDER){
+    const a = A[s];
+    if (s === 'possession'){ h += `<tr><td>${L[s]}</td><td class="n">${a.mae.toFixed(2)}</td><td class="n muted">–</td><td class="n muted">–</td><td class="n muted">–</td></tr>`; continue; }
+    const gain = 1 - a.team_mae / a.baseline;
+    h += `<tr><td>${L[s]}</td><td class="n">${a.team_mae.toFixed(2)}</td><td class="n muted">${a.baseline.toFixed(2)}</td><td class="n ${gain > .05 ? 'w' : ''}">${pct(gain)}</td><td class="n">${a.mae.toFixed(2)}</td></tr>`;
+  }
+  return h + '</tbody></table></div>';
+}
+
+function render(){
+  $('out').innerHTML = {projections: renderProjections, results: renderResults, teams: renderTeams, method: renderMethod}[view]();
+  document.querySelectorAll('#pjmode button').forEach(b => b.onclick = () => { pjMode = b.dataset.m; render(); });
+  const chips = (id, set) => document.querySelectorAll(`#${id} .chip`).forEach(b => b.onclick = () => { set(b.dataset.s); render(); });
+  chips('pjstat', s => pjStat = s); chips('rsstat', s => rsStat = s); chips('tmstat', s => tmStat = s);
+  document.querySelectorAll('th.sort').forEach(t => t.onclick = () => { const k = t.dataset.k; tmSort = [k, tmSort[0] === k ? -tmSort[1] : (k === 'team' ? 1 : -1)]; render(); });
+}
+function setView(v){
+  view = ['projections','results','teams','method'].includes(v) ? v : 'projections';
+  document.querySelectorAll('#tabs a').forEach(a => a.classList.toggle('on', a.dataset.view === view));
+  render();
+}
+document.querySelectorAll('#tabs a').forEach(a => a.onclick = e => { e.preventDefault(); history.replaceState(null, '', a.getAttribute('href')); setView(a.dataset.view); });
+setView(new URLSearchParams(location.hash.slice(1)).get('view'));
+</script>
+</body>
+</html>
