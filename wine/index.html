@@ -682,12 +682,14 @@ const SEASONAL = {
 };
 // slow, fiddly or special-occasion dishes: the monthly Top 10 holds at most one of them (Antonis: everyday, quick and easy)
 const HARD = new Set(['Kokoretsi', 'Roast Suckling Pig', 'Stuffed Turkey', 'Magiritsa', 'Lamb Kleftiko', 'Roast Lamb with Potatoes', 'Antikristo', 'Kontosouvli', 'Pastitsio', 'Moussaka', 'Gemista', 'Stuffed Leaves with Mince', 'Stuffed Squid', 'Stuffed Courgettes', 'Stuffed Courgette Flowers', 'Dolmadakia', 'Papoutsakia', 'Boubari', 'Vine Leaves Stuffed with Goat', 'Roe Deer with Walnuts', 'Wild Boar with Leeks', 'Wild Boar in Wine Sauce', 'Tzoumleka', 'Sout Makalo', 'Mutton with Gigantes', 'Rooster Stifado', 'Rabbit Stifado', 'Rolled Meatloaf', 'Lobster Spaghetti', 'Lamb Fricassee', 'Cabbage Rolls Avgolemono', 'Kreatopita', 'Spanakopita', 'Cheese Pie', 'Wild Greens Pie', 'Courgette Pie', 'Skopelos Cheese Pie', 'Metsovo Kasiata', 'Vlach Leek Pie', 'Nettle Pie', 'Pispilita', 'Metsovo Cabbage Pie', 'Batzina', 'Pumpkin Pie with Pasta', 'Petropita', 'Leek and Mince Pie', 'Giouvarlakia Avgolemono', 'Pastitsada', 'Sofrito', 'Pappardelle with Ragout']);
+// regional dishes that stay in the Finder but never in the monthly Top 10 (Antonis: the everyday table)
+const RARE = new Set(['Kaskoutigan', 'Boubari', 'Sout Makalo', 'Tzoumleka', 'Pispilita', 'Batzina', 'Gourgoulopita', 'Petropita', 'Vine Leaves Stuffed with Goat', 'Metsovo Kasiata', 'Metsovo Cabbage Pie', 'Cabbage with Milk', 'Roe Deer with Walnuts', 'Wild Boar with Leeks', 'Wild Boar in Wine Sauce', 'Mutton with Gigantes', 'Vlach Leek Pie', 'Nettle Pie', 'Pumpkin Pie with Pasta', 'Leek and Mince Pie', 'Samarina Meatballs with Onions', 'Pelion Goat Meatballs', 'Fried Bread of Agrafa', 'Plum Stifado', 'Trahana with Cheese and Paprika']);
 const inSeason = (r, m) => !SEASONAL[r.name] || SEASONAL[r.name].includes(m);
 function seasonHtml() {
   const mi = monthIndex(), S = MONTHS[mi], now = new Date(), week = Math.floor((now - new Date(now.getFullYear(), 0, 1)) / 6048e5);
   const hash = id => { let h = week * 31 + mi * 101; for (const c of id) h = (h * 33 + c.charCodeAt(0)) % 9973; return h; };
   // one Top 10: dishes that belong to the month, each with the wine that suits it best
-  const dishPool = ALLR.filter(r => inSeason(r, mi + 1))
+  const dishPool = ALLR.filter(r => inSeason(r, mi + 1) && !RARE.has(r.name))
     .sort((a, b) => (SEASONAL[a.name] ? 0 : 1) - (SEASONAL[b.name] ? 0 : 1) || (hash(a.name) % 11) - (hash(b.name) % 11) || a.name.localeCompare(b.name));
   const easy = dishPool.filter(r => !HARD.has(r.name)), hard = dishPool.filter(r => HARD.has(r.name));
   const ordered = easy.length >= 9 ? [...easy.slice(0, 9), ...hard.slice(0, 1), ...easy.slice(9)] : [...easy, ...hard];
