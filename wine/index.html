@@ -569,6 +569,7 @@ function render() {
   document.getElementById('lede').textContent = t({list: 'listLede', wineries: 'estatesLede', finder: 'lede'}[view]);
   document.querySelectorAll('.views button').forEach(b => { b.textContent = t({list: 'viewList', wineries: 'viewEstates', finder: 'viewFinder'}[b.dataset.view]); b.classList.toggle('on', b.dataset.view === view); });
   document.getElementById('hero').innerHTML = heroSvg(view);
+  document.querySelector('.search').hidden = view === 'wineries';
   document.getElementById('season').innerHTML = view === 'list' && !(state.q.trim() || state.colour || state.variety || state.region) ? seasonHtml() : '';
   document.getElementById('finderChips').hidden = view !== 'finder';
   document.getElementById('listChips').hidden = view === 'finder';
