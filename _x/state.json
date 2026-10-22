@@ -131,7 +131,8 @@
       "sports-betting-basics",
       "kind",
       "how-to-watch-football-52-rules-for",
-      "becoming-a-winning-gambler"
+      "becoming-a-winning-gambler",
+      "the-subtle-art-of-not-giving-a-fck"
     ],
     "log": [
       {
@@ -247,6 +248,12 @@
         "slot": "2026-10-22 02",
         "slug": "becoming-a-winning-gambler",
         "id": "2113046714777223664"
+      },
+      {
+        "day": "2026-10-22",
+        "slot": "2026-10-22 14",
+        "slug": "the-subtle-art-of-not-giving-a-fck",
+        "id": "2113287680473825524"
       }
     ],
     "last_day": "2026-10-22"
@@ -571,7 +578,7 @@
     ],
     "last_day": "2026-10-21"
   },
-  "last_slot": "2026-10-22 11",
+  "last_slot": "2026-10-22 14",
   "quote": {
     "seen": [
       "1",
