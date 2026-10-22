@@ -480,7 +480,8 @@
       "the-boy-with-pink-pants",
       "what-will-people-say",
       "prague",
-      "karaoke"
+      "karaoke",
+      "romanzo-criminale"
     ],
     "log": [
       {
@@ -574,11 +575,17 @@
         "slot": "2026-10-21 20",
         "slug": "karaoke",
         "id": "2112998750683603318"
+      },
+      {
+        "day": "2026-10-22",
+        "slot": "2026-10-22 20",
+        "slug": "romanzo-criminale",
+        "id": "2113359887992328274"
       }
     ],
-    "last_day": "2026-10-21"
+    "last_day": "2026-10-22"
   },
-  "last_slot": "2026-10-22 14",
+  "last_slot": "2026-10-22 20",
   "quote": {
     "seen": [
       "1",
