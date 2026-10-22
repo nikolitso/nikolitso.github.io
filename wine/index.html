@@ -201,7 +201,10 @@ footer{margin-top:72px;padding-top:22px;border-top:1px solid var(--line);color:v
 .season .slist.big li{padding:14px 0}
 .season .slist .dish{font:700 19px/1.3 var(--display);color:var(--cream)}
 .season .pw{display:flex;gap:10px;align-items:center;margin-top:5px}
-.season .pw .bt{width:11px;height:26px}
+.season .pw .bt{width:17px;height:40px}
+.season .pw{--c:#f3e27a}.season .pw.c-Rosé{--c:#f48fa8}.season .pw.c-Red{--c:#d8294f}
+.season .pw .cw{display:inline-block;font:var(--label);letter-spacing:.14em;text-transform:uppercase;color:var(--c);margin-right:6px}
+.season .pw{border-left:3px solid var(--c);padding-left:12px;margin-left:-2px;border-radius:2px}
 .season .pw a{font-size:16.5px}
 .season .pr{flex:1;min-width:0}
 
@@ -356,8 +359,8 @@ function wineLink(w) {
 }
 
 const tidy = x => x.replace(/\(([^()]*)\(([^()]*)\)\)/g, '($1, $2)');
-const BOTTLE = {White: '#e9d98d', Rosé: '#e79aa6', Red: '#8d2540', Skin: '#d6954a'};
-const bottle = w => `<svg class="bt" viewBox="0 0 20 46" aria-hidden="true"><path d="M8 1.5h4V11c0 3.4 4 5.2 4 11v21a2.5 2.5 0 0 1-2.5 2.5h-7A2.5 2.5 0 0 1 4 43V22c0-5.800 4-7.600 4-11z" fill="${w.colour.indexOf('skin') > -1 ? BOTTLE.Skin : BOTTLE[colourKey(w)]}" fill-opacity=".85" stroke="#d6b066" stroke-opacity=".7" stroke-width="1.2"/><rect x="5.5" y="27" width="9" height="11" rx="1" fill="#f6ecdb" fill-opacity=".85"/><path d="M8 1.5h4" stroke="#d6b066" stroke-width="2"/></svg>`;
+const BOTTLE = {White: '#f3e27a', Rosé: '#f48fa8', Red: '#b4163a', Skin: '#e39b4a'};
+const bottle = w => `<svg class="bt" viewBox="0 0 20 46" aria-hidden="true"><path d="M8 1.5h4V11c0 3.4 4 5.2 4 11v21a2.5 2.5 0 0 1-2.5 2.5h-7A2.5 2.5 0 0 1 4 43V22c0-5.800 4-7.600 4-11z" fill="${w.colour.indexOf('skin') > -1 ? BOTTLE.Skin : BOTTLE[colourKey(w)]}" fill-opacity="1" stroke="#f6ecdb" stroke-opacity=".55" stroke-width="1.1"/><rect x="5.5" y="27" width="9" height="11" rx="1" fill="#f6ecdb" fill-opacity=".85"/><path d="M8 1.5h4" stroke="#d6b066" stroke-width="2"/></svg>`;
 const ICONS = {
   'Fish & seafood': '<path d="M2.5 12c3-5 8.500-6.500 12.500-3l5.500-3.500v13L15 15c-4 3.500-9.500 2-12.500-3z"/><circle cx="8" cy="11" r=".9"/>',
   'Meat & poultry': '<circle cx="15" cy="9" r="5.500"/><path d="M11.200 12.800 4 20M2.800 16.500l4.700 4.700"/>',
@@ -727,7 +730,7 @@ function yearPlan() {
 function seasonHtml() {
   const mi = monthIndex(), S = MONTHS[mi], pairs = yearPlan()[mi + 1];
   const row = ([r, w], i) => `<li><span class="rank">${i + 1}</span><div class="pr"><a class="wl rl dish" data-dish="${esc(r.name)}">${esc(L(r, 'name'))}</a>
-      <div class="pw">${bottle(w)}<span><a class="wl" data-wine="${esc(w.id)}">${esc(L(w, 'name'))}</a><small>${esc(L(w, 'winery'))} · ${esc(L(w, 'region'))}${L(w, 'grapes') ? ' · ' + esc(L(w, 'grapes')) : ''}</small></span></div></div></li>`;
+      <div class="pw c-${colourKey(w)}">${bottle(w)}<span><a class="wl" data-wine="${esc(w.id)}">${esc(L(w, 'name'))}</a><small><b class="cw">${esc(t('col')[colourKey(w)])}</b>${esc(L(w, 'winery'))} · ${esc(L(w, 'region'))}${L(w, 'grapes') ? ' · ' + esc(L(w, 'grapes')) : ''}</small></span></div></div></li>`;
   const nm = MONTHS[(mi + 1) % 12][lang];
   return `<section class="season"><div class="snav"><button type="button" class="prev" data-month="-1" aria-label="${esc(t('prevMonth'))}">←</button><button type="button" data-month="1">${esc(t('nextMonth'))}: ${esc(nm)} →</button></div><div class="skick"><svg viewBox="0 0 24 24" aria-hidden="true">${SEASON_ICONS[S.icon]}</svg>${esc(t('inSeason'))}</div>
     <h2>${esc(S.title[lang])}</h2><p class="slede">${esc(S.lede[lang])}</p>
