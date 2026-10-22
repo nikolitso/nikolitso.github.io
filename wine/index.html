@@ -204,6 +204,14 @@ footer{margin-top:72px;padding-top:22px;border-top:1px solid var(--line);color:v
 .season .pw .bt{width:11px;height:26px}
 .season .pw a{font-size:16.5px}
 .season .pr{flex:1;min-width:0}
+
+/* dish and wine pop-up on the start page */
+.modal{position:fixed;inset:0;z-index:50;display:flex;align-items:flex-start;justify-content:center;padding:5vh 16px;background:rgba(8,3,5,.78);overflow-y:auto;backdrop-filter:blur(3px)}
+.modal[hidden]{display:none}
+.modal-box{position:relative;width:100%;max-width:680px;background:var(--bg2);border:1px solid var(--line2);border-radius:20px;padding:34px 8px 8px;box-shadow:0 30px 80px -20px #000}
+.modal-box .card{border:0;background:transparent}
+.modal-x{position:absolute;top:10px;right:12px;width:36px;height:36px;border-radius:50%;border:1px solid var(--line2);background:rgba(0,0,0,.3);color:var(--cream);font:400 22px/1 var(--body);cursor:pointer}
+.modal-x:hover{background:var(--wine)}
 @media(max-width:560px){.views{width:100%;overflow:visible}.views button{flex:1;white-space:normal;text-align:center;padding:10px 6px;font-size:10px;letter-spacing:.08em;line-height:1.3}body{font-size:17px}.wrap{padding:0 16px 80px}.card{padding:20px}.pill summary{padding:18px 20px}.pill-body{padding:4px 20px 22px}}
 </style>
 </head>
@@ -244,6 +252,7 @@ footer{margin-top:72px;padding-top:22px;border-top:1px solid var(--line);color:v
   </div>
 </header>
 <main id="out"></main>
+<div class="modal" id="modal" hidden role="dialog" aria-modal="true"><div class="modal-box"><button type="button" class="modal-x" data-close aria-label="Close">×</button><div id="modalBody"></div></div></div>
 <footer><span id="foot"></span> · <a class="wl" href="/">antonisnikolitsopoulos.com</a></footer>
 <noscript><p style="padding:16px;color:#a79d8a">Greek wine and food pairing: this page needs JavaScript to show the Pairing Finder and the wine list.</p></noscript>
 </div>
@@ -790,7 +799,22 @@ function render() {
 
 document.addEventListener('toggle', e => { const d = e.target.closest && e.target.closest('details.pill'); if (d) { d.open ? openEstates.add(d.dataset.w) : openEstates.delete(d.dataset.w); } }, true);
 document.getElementById('q').addEventListener('input', e => { state.q = e.target.value; state.grape = ''; render(); });
+function openModal(html) {
+  const m = document.getElementById('modal');
+  document.getElementById('modalBody').innerHTML = html;
+  m.hidden = false; m.scrollTop = 0; document.body.style.overflow = 'hidden';
+}
+function closeModal() { document.getElementById('modal').hidden = true; document.body.style.overflow = ''; }
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 document.addEventListener('click', e => {
+  if (e.target.closest('[data-close]') || e.target.id === 'modal') { closeModal(); return; }
+  const pop = e.target.closest('.season a.wl, .modal a.wl');
+  if (pop) {
+    e.preventDefault();
+    const dish = pop.dataset.dish ? ALLR.find(x => x.name === pop.dataset.dish) : null, wine = pop.dataset.wine ? byId[pop.dataset.wine] : null;
+    if (dish) openModal(recipeCard(dish)); else if (wine) openModal(wineCard(wine));
+    return;
+  }
   const lg = e.target.closest('.logo');
   if (lg) { e.preventDefault(); view = 'home'; state = {q: '', cat: '', tag: '', grape: '', region: '', colour: '', variety: ''}; document.getElementById('q').value = ''; try { history.replaceState(null, '', '/wine/'); } catch (x) {} render(); window.scrollTo({top: 0, behavior: 'smooth'}); return; }
   const vb = e.target.closest('.views button');
