@@ -132,7 +132,8 @@
       "kind",
       "how-to-watch-football-52-rules-for",
       "becoming-a-winning-gambler",
-      "the-subtle-art-of-not-giving-a-fck"
+      "the-subtle-art-of-not-giving-a-fck",
+      "money-and-soccer-a-soccernomics-guide"
     ],
     "log": [
       {
@@ -254,9 +255,15 @@
         "slot": "2026-10-22 14",
         "slug": "the-subtle-art-of-not-giving-a-fck",
         "id": "2113287680473825524"
+      },
+      {
+        "day": "2026-10-23",
+        "slot": "2026-10-23 02",
+        "slug": "money-and-soccer-a-soccernomics-guide",
+        "id": "2113409478208917828"
       }
     ],
-    "last_day": "2026-10-22"
+    "last_day": "2026-10-23"
   },
   "film": {
     "seen": [
@@ -585,7 +592,7 @@
     ],
     "last_day": "2026-10-22"
   },
-  "last_slot": "2026-10-22 20",
+  "last_slot": "2026-10-23 02",
   "quote": {
     "seen": [
       "1",
