@@ -196,6 +196,7 @@ footer{margin-top:72px;padding-top:22px;border-top:1px solid var(--line);color:v
 .season .slist small{display:block;color:var(--muted);font-size:14.5px;line-height:1.4}
 .season .stwo > div:first-child .slist{margin-top:0}
 
+.flist{padding-top:26px}.flist .rank{display:none}.flist .count{margin:-4px 0 12px}
 .season .slist.big{display:grid;grid-template-columns:1fr 1fr;gap:0 44px}
 @media(max-width:760px){.season .slist.big{grid-template-columns:1fr}}
 .season .slist.big li{padding:14px 0}
@@ -273,7 +274,7 @@ const ALLR = D.recipes, R = ALLR.filter(r => r.category !== 'Cheeses'), C = ALLR
 const UI = {
   en: {
     docTitle: 'Greek Wine & Food Pairing Finder', kicker: 'Greek wine · Food pairing', title: 'The Pairing Finder',
-    lede: 'Choose a dish, an ingredient or a type of food. The page returns the grape that suits it best, and the bottles that fit.',
+    lede: 'Every dish with the wine that suits it best. Select a dish to see the grape, the reason and more wines.',
     placeholder: 'Try moussaka, octopus, lamb, feta, tomato…', cats: 'Dish type', tags: 'Food or occasion', grapes: 'Grape',
     showAll: 'Show all', showLess: 'Show fewer', viewFinder: 'Pairing Finder', viewList: 'Wine list', viewEstates: 'Estates', estatesTitle: 'The Estates',
     estatesLede: 'Every estate on the list, with all of its labels. Select a label to see its tasting notes and pairings.',
@@ -290,7 +291,7 @@ const UI = {
   },
   el: {
     docTitle: 'Οδηγός Ταιριάσματος Ελληνικού Κρασιού και Φαγητού', kicker: 'Ελληνικό κρασί · Κρασί και φαγητό', title: 'Ο Οδηγός Ταιριάσματος',
-    lede: 'Επιλέξτε ένα πιάτο, ένα υλικό ή ένα είδος φαγητού. Η σελίδα προτείνει την ποικιλία που ταιριάζει καλύτερα και τα μπουκάλια που της πάνε.',
+    lede: 'Κάθε πιάτο με το κρασί που του ταιριάζει καλύτερα. Επιλέξτε ένα πιάτο για να δείτε την ποικιλία, το γιατί και περισσότερα κρασιά.',
     placeholder: 'Δοκιμάστε μουσακά, χταπόδι, αρνί, φέτα, ντομάτα…', cats: 'Είδος πιάτου', tags: 'Φαγητό / περίσταση', grapes: 'Ποικιλία',
     showAll: 'Εμφάνιση όλων', showLess: 'Λιγότερα', viewFinder: 'Οδηγός Ταιριάσματος', viewList: 'Λίστα κρασιών', viewEstates: 'Κτήματα', estatesTitle: 'Τα Κτήματα',
     estatesLede: 'Όλα τα κτήματα της λίστας, με όλες τις ετικέτες τους. Επιλέξτε μια ετικέτα για να δείτε τις γευστικές σημειώσεις και τα ταιριάσματά της.',
@@ -743,6 +744,20 @@ function yearPlan() {
   YEAR_PLAN = out;
   return out;
 }
+const dishOptions = r => [...r.labels.filter(l => l.listed && byId[l.name]).map(l => l.name), ...r.more].filter(x => byId[x]);
+const bestWine = r => { const o = dishOptions(r); return byId[o.find(x => colourKey(byId[x]) !== 'Red') || o[0]]; };
+const dishRow = ([r, w], i) => `<li><span class="rank">${i + 1}</span><div class="pr"><a class="wl rl dish" data-dish="${esc(r.name)}">${esc(L(r, 'name'))}</a>
+      <div class="pw c-${colourKey(w)}">${bottle(w)}<span><a class="wl" data-wine="${esc(w.id)}">${esc(L(w, 'name'))}</a><small><b class="cw">${esc(t('col')[colourKey(w)])}</b>${esc(L(w, 'winery'))} · ${esc(L(w, 'region'))}${L(w, 'grapes') ? ' · ' + esc(L(w, 'grapes')) : ''}</small></span></div></div></li>`;
+const CAT_ORDER = ['Fish & seafood', 'Meat & poultry', 'Salads & vegetables', 'Soups & stews', 'Pies', 'Other savoury', 'Dips & small dishes', 'Breads', 'Cheeses'];
+function finderList() {
+  const list = state.cat ? [state.cat] : CAT_ORDER.filter(c => cats.includes(c)).concat(cats.filter(c => !CAT_ORDER.includes(c)));
+  return list.map(c => {
+    const rs = sortD(ALLR.filter(r => r.category === c && dishOptions(r).length));
+    if (!rs.length) return '';
+    return `<section class="season flist"><h2>${esc(lang === 'el' ? catEl[c] : c)}</h2><div class="count">${rs.length} ${rs.length === 1 ? t('result') : t('results')}</div>
+      <ol class="slist big">${rs.map(r => dishRow([r, bestWine(r)], rs.indexOf(r))).join('')}</ol></section>`;
+  }).join('');
+}
 function seasonHtml() {
   const mi = monthIndex(), S = MONTHS[mi], pairs = yearPlan()[mi + 1];
   const row = ([r, w], i) => `<li><span class="rank">${i + 1}</span><div class="pr"><a class="wl rl dish" data-dish="${esc(r.name)}">${esc(L(r, 'name'))}</a>
@@ -784,7 +799,8 @@ function render() {
   }
   document.querySelectorAll('.views button').forEach(b => { b.textContent = t({list: 'viewList', wineries: 'viewEstates', finder: 'viewFinder'}[b.dataset.view]); b.classList.toggle('on', b.dataset.view === view); });
   document.getElementById('hero').innerHTML = heroSvg(home ? 'list' : view);
-  document.querySelector('.search').hidden = view === 'wineries' || home;
+  document.querySelector('.search').hidden = view !== 'list';
+  ['tagsLabel', 'tags', 'grapesLabel', 'grapes'].forEach(id => { document.getElementById(id).hidden = view === 'finder'; });
   document.getElementById('season').innerHTML = home ? seasonHtml() : '';
   document.getElementById('finderChips').hidden = view !== 'finder';
   document.getElementById('listChips').hidden = view === 'finder' || home;
@@ -818,7 +834,9 @@ function render() {
   if (state.grape) {
     const g = gByKey[state.grape], gw = W.filter(w => w.grapes.includes(g.key)), gr = ALLR.filter(r => r.grape.startsWith(g.key));
     html = profileCard(g) + section(t('wines'), gw, wineCard, true) + section(t('bestFor'), sortD(gr), recipeCard, true);
-  } else if (!(state.q.trim() || state.cat || state.tag)) {
+  } else if (!(state.q.trim() || state.tag)) {
+    html = finderList();
+  } else if (false) {
     html = `<h2>${esc(t('begin'))}</h2><p class="lede">${esc(t('beginText')(R.length, W.length))}</p>` + section(t('allDishes'), sortD(R), recipeCard, true) + section(t('cheeses'), sortD(C), recipeCard, true);
   } else {
     // a dish-type chip shows dishes only; a food chip shows wines only; free text shows both
@@ -827,7 +845,7 @@ function render() {
     if (!html) html = `<p class="empty">${esc(t('none'))}</p>`;
   }
   document.getElementById('out').innerHTML = html;
-  chips(document.getElementById('cats'), cats, 'cat', c => lang === 'el' ? catEl[c] : c, true);
+  chips(document.getElementById('cats'), CAT_ORDER.filter(c => cats.includes(c)).concat(cats.filter(c => !CAT_ORDER.includes(c))), 'cat', c => lang === 'el' ? catEl[c] : c, false);
   chips(document.getElementById('tags'), tags, 'tag', x => lang === 'el' ? tagEl[x] : x, true, true);
   chips(document.getElementById('grapes'), G.map(g => g.key), 'grape', k => lang === 'el' ? gByKey[k].el_name : k, true, true);
 }
@@ -845,7 +863,7 @@ document.addEventListener('click', e => {
   if (e.target.closest('[data-close]') || e.target.id === 'modal') { closeModal(); return; }
   const mb = e.target.closest('[data-month]');
   if (mb) { monthOverride = (monthIndex() + parseInt(mb.dataset.month, 10) + 12) % 12; render(); return; }
-  const pop = e.target.closest('.season a.wl, .modal a.wl');
+  const pop = e.target.closest('.season a.wl, .modal a.wl, .flist a.wl');
   if (pop) {
     e.preventDefault();
     const dish = pop.dataset.dish ? ALLR.find(x => x.name === pop.dataset.dish) : null, wine = pop.dataset.wine ? byId[pop.dataset.wine] : null;
