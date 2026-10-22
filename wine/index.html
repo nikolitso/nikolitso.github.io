@@ -612,18 +612,31 @@ function monthIndex() {
   return q >= 1 && q <= 12 ? q - 1 : new Date().getMonth();
 }
 const SEASONAL = {
-  'Kokoretsi': [4], 'Roast Suckling Pig': [12, 1, 4], 'Roast Lamb with Potatoes': [3, 4, 5], 'Lamb Kleftiko': [3, 4, 5, 10, 11],
-  'Lamb Chops': [4, 5, 6, 7, 8, 9], 'Kontosouvli': [2, 6, 7, 8, 9], 'Antikristo': [4, 5, 9, 10, 11], 'Apaki': [11, 12, 1, 2],
-  'Rooster Stifado': [10, 11, 12, 1, 2], 'Rabbit Stifado': [10, 11, 12, 1, 2, 3], 'Moussaka': [5, 6, 7, 8, 9, 10], 'Gemista': [5, 6, 7, 8, 9],
-  'Stuffed Courgette Flowers': [5, 6, 7], 'Fried Courgettes': [6, 7, 8, 9], 'Briam': [6, 7, 8, 9], 'Greek Salad': [5, 6, 7, 8, 9],
-  'Tomato Fritters': [6, 7, 8], 'Dakos': [5, 6, 7, 8, 9], 'Melitzanosalata': [6, 7, 8, 9, 10], 'Smoked Peppers and Aubergines': [7, 8, 9, 10],
-  'Warm Potato Salad': [10, 11, 12, 1, 2, 3], 'Gigantes': [10, 11, 12, 1, 2, 3], 'Yiahni': [6, 7, 8, 9], 'Lentil Soup': [10, 11, 12, 1, 2, 3],
-  'Mushroom Soup with Tahini': [10, 11, 12, 1, 2], 'Trahana with Country Sausage': [11, 12, 1, 2, 3], 'Kotosoupa Avgolemono': [10, 11, 12, 1, 2, 3, 4],
-  'Giouvarlakia Avgolemono': [10, 11, 12, 1, 2, 3, 4], 'Fish Soup': [10, 11, 12, 1, 2, 3, 4, 5], 'Spetsofai': [9, 10, 11, 12], 'Kokkinisto': [10, 11, 12, 1, 2, 3, 4],
-  'Strapatsada': [6, 7, 8, 9], 'Dolmadakia': [3, 4, 5, 6], 'Stuffed Leaves with Mince': [10, 11, 12, 1, 2], 'Orzo with Baked Tomatoes': [6, 7, 8, 9],
-  'Grilled Octopus': [5, 6, 7, 8, 9], 'Marinated Anchovies': [3, 4, 5, 6, 7, 8, 9], 'Fried Picarel': [5, 6, 7, 8, 9], 'Lobster Spaghetti': [6, 7, 8, 9],
-  'Symi Shrimp': [5, 6, 7, 8, 9], 'Fried Cod with Skordalia': [3, 4], 'Wild Greens Pie': [2, 3, 4, 5], 'Courgette Pie': [5, 6, 7, 8, 9], 'Kreatopita': [10, 11, 12, 1, 2, 3],
+  // checked against Antonis's list of Greek seasonal produce (2026-10-22); dishes not listed are available all year
+  // dips and meze
+  'Melitzanosalata': [6, 7, 8, 9, 10], 'Tzatziki': [5, 6, 7, 8, 9, 10], 'Tomato Fritters': [6, 7, 8, 9, 10], 'Dakos': [6, 7, 8, 9, 10],
+  // cheeses
   'Katiki Domokou': [3, 4, 5, 6, 7, 8], 'Anthotyro': [3, 4, 5, 6, 7, 8], 'Mizithra': [3, 4, 5, 6, 7, 8],
+  // salads and vegetables
+  'Greek Salad': [6, 7, 8, 9, 10], 'Warm Potato Salad': [10, 11, 12, 1, 2, 3], 'Briam': [6, 7, 8, 9, 10], 'Smoked Peppers and Aubergines': [6, 7, 8, 9, 10],
+  'Gemista': [6, 7, 8, 9, 10], 'Gigantes': [10, 11, 12, 1, 2, 3], 'Yiahni': [6, 7, 8, 9, 10], 'Fried Courgettes': [4, 5, 6, 7, 8, 9, 10],
+  'Stuffed Courgette Flowers': [5, 6, 7],
+  // pies and breads
+  'Wild Greens Pie': [11, 12, 1, 2, 3, 4, 5], 'Courgette Pie': [4, 5, 6, 7, 8, 9, 10], 'Kreatopita': [10, 11, 12, 1, 2, 3],
+  'Ladenia': [6, 7, 8, 9, 10], 'Flatbread with Tomato and Olives': [6, 7, 8, 9, 10],
+  // soups and stews (lemons are in season November to April)
+  'Kotosoupa Avgolemono': [11, 12, 1, 2, 3, 4], 'Giouvarlakia Avgolemono': [11, 12, 1, 2, 3, 4], 'Fish Soup': [10, 11, 12, 1, 2, 3, 4, 5],
+  'Lentil Soup': [10, 11, 12, 1, 2, 3], 'Mushroom Soup with Tahini': [10, 11, 12, 1, 2, 3], 'Trahana with Country Sausage': [11, 12, 1, 2, 3],
+  // meat and poultry
+  'Moussaka': [6, 7, 8, 9, 10], 'Kokkinisto': [10, 11, 12, 1, 2, 3, 4], 'Roast Chicken with Lemon Potatoes': [11, 12, 1, 2, 3, 4], 'Pork with Wine and Lemon': [11, 12, 1, 2, 3, 4],
+  'Lamb Kleftiko': [3, 4, 5, 10, 11], 'Roast Lamb with Potatoes': [3, 4, 5], 'Lamb Chops': [4, 5, 6, 7, 8, 9], 'Kontosouvli': [2, 6, 7, 8, 9],
+  'Antikristo': [4, 5, 9, 10, 11], 'Kokoretsi': [4], 'Roast Suckling Pig': [12, 1, 4], 'Spetsofai': [7, 8, 9, 10], 'Rooster Stifado': [10, 11, 12, 1, 2],
+  'Rabbit Stifado': [10, 11, 12, 1, 2, 3], 'Apaki': [11, 12, 1, 2], 'Stuffed Leaves with Mince': [10, 11, 12, 1, 2, 3],
+  // fish and seafood
+  'Grilled Octopus': [5, 6, 7, 8, 9], 'Baked Fish with Tomatoes': [6, 7, 8, 9, 10], 'Shrimp Saganaki': [6, 7, 8, 9, 10], 'Marinated Anchovies': [3, 4, 5, 6, 7, 8, 9],
+  'Fried Picarel': [5, 6, 7, 8, 9], 'Lobster Spaghetti': [6, 7, 8, 9], 'Symi Shrimp': [5, 6, 7, 8, 9], 'Fried Cod with Skordalia': [3, 4],
+  // other
+  'Dolmadakia': [4, 5, 6], 'Orzo with Baked Tomatoes': [6, 7, 8, 9, 10], 'Strapatsada': [6, 7, 8, 9, 10],
 };
 const inSeason = (r, m) => !SEASONAL[r.name] || SEASONAL[r.name].includes(m);
 function seasonHtml() {
