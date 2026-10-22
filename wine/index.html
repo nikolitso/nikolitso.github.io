@@ -455,7 +455,7 @@ function mapHtml() {
   const sel = state.region ? nameOf(state.region) : '';
   const cnt = state.region ? n[state.region].size : 0;
   return `<div class="mapwrap"><svg class="gmap" viewBox="${M.viewBox}" role="group" aria-label="${esc(t('mapAria'))}">${M.paths.map(p => `<path class="land" d="${p}"/>`).join('')}${dots}</svg>
-    <div class="mapinfo"><h3>${esc(sel || t('mapTitle'))}</h3><p>${sel ? cnt + ' ' + (cnt === 1 ? t('est1') : t('estN')) : esc(t('mapHint'))}</p>${sel ? `<button type="button" data-mapclear>${esc(t('mapAll'))}</button>` : ''}<p class="legend">${esc(t('mapLegend'))}</p></div></div>`;
+    ${sel ? `<div class="mapinfo"><h3>${esc(sel)}</h3><p>${cnt} ${cnt === 1 ? t('est1') : t('estN')}</p><button type="button" data-mapclear>${esc(t('mapAll'))}</button></div>` : ''}</div>`;
 }
 function renderWineries() {
   const terms = norm(state.q.trim()).split(/\s+/).filter(Boolean);
