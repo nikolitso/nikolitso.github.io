@@ -195,6 +195,15 @@ footer{margin-top:72px;padding-top:22px;border-top:1px solid var(--line);color:v
 .season .slist li:last-child{border-bottom:0}
 .season .slist small{display:block;color:var(--muted);font-size:14.5px;line-height:1.4}
 .season .stwo > div:first-child .slist{margin-top:0}
+
+.season .slist.big{display:grid;grid-template-columns:1fr 1fr;gap:0 44px}
+@media(max-width:760px){.season .slist.big{grid-template-columns:1fr}}
+.season .slist.big li{padding:14px 0}
+.season .slist .dish{font:700 19px/1.3 var(--display);color:var(--cream)}
+.season .pw{display:flex;gap:10px;align-items:center;margin-top:5px}
+.season .pw .bt{width:11px;height:26px}
+.season .pw a{font-size:16.5px}
+.season .pr{flex:1;min-width:0}
 @media(max-width:560px){.views{width:100%;overflow:visible}.views button{flex:1;white-space:normal;text-align:center;padding:10px 6px;font-size:10px;letter-spacing:.08em;line-height:1.3}body{font-size:17px}.wrap{padding:0 16px 80px}.card{padding:20px}.pill summary{padding:18px 20px}.pill-body{padding:4px 20px 22px}}
 </style>
 </head>
@@ -255,7 +264,7 @@ const UI = {
     col: {White: 'White', 'Rosé': 'Rosé', Red: 'Red'}, wine: 'wine', winesN: 'wines',
     bestFor: 'Dishes where it is the first choice', more: 'More wines that fit', dishesFor: 'Dishes',
     begin: 'Where to begin', beginText: (r, w) => `Pick a chip above, or type a dish. ${r} dishes and ${w} wines are loaded.`,
-    inSeason: 'In season', top10Wines: 'Top 10 wines of the month', top10Pairs: 'Top 10 pairings', onTable: 'On the table', allDishes: 'All dishes', cheeses: 'Cheeses: what pairs with each', dishes: 'Dishes', wines: 'Wines', result: 'result', results: 'results',
+    inSeason: 'In season', top10Wines: 'Top 10 wines of the month', top10Pairs: 'Top 10 of the month: dish and wine', onTable: 'On the table', allDishes: 'All dishes', cheeses: 'Cheeses: what pairs with each', dishes: 'Dishes', wines: 'Wines', result: 'result', results: 'results',
     none: 'No match yet. Try a simpler word, such as the main ingredient.',
     bestGrape: 'Best grape', alt: 'alternative',
     pairs: 'Pairs with', also: 'Also try',
@@ -272,7 +281,7 @@ const UI = {
     col: {White: 'Λευκό', 'Rosé': 'Ροζέ', Red: 'Ερυθρό'}, wine: 'κρασί', winesN: 'κρασιά',
     bestFor: 'Πιάτα όπου είναι η πρώτη επιλογή', more: 'Περισσότερα κρασιά που ταιριάζουν', dishesFor: 'Πιάτα',
     begin: 'Από πού να ξεκινήσετε', beginText: (r, w) => `Επιλέξτε ένα κουμπί παραπάνω ή γράψτε ένα πιάτο. Φορτώθηκαν ${r} πιάτα και ${w} κρασιά.`,
-    inSeason: 'Της εποχής', top10Wines: 'Τα 10 κορυφαία κρασιά του μήνα', top10Pairs: 'Οι 10 κορυφαίοι συνδυασμοί', onTable: 'Στο τραπέζι', allDishes: 'Όλα τα πιάτα', cheeses: 'Τυριά: με τι ταιριάζει το καθένα', dishes: 'Πιάτα', wines: 'Κρασιά', result: 'αποτέλεσμα', results: 'αποτελέσματα',
+    inSeason: 'Της εποχής', top10Wines: 'Τα 10 κορυφαία κρασιά του μήνα', top10Pairs: 'Top 10 του μήνα: πιάτο και κρασί', onTable: 'Στο τραπέζι', allDishes: 'Όλα τα πιάτα', cheeses: 'Τυριά: με τι ταιριάζει το καθένα', dishes: 'Πιάτα', wines: 'Κρασιά', result: 'αποτέλεσμα', results: 'αποτελέσματα',
     none: 'Δεν βρέθηκε αντιστοιχία. Δοκιμάστε μια απλούστερη λέξη, όπως το κύριο υλικό.',
     bestGrape: 'Καλύτερη ποικιλία', alt: 'εναλλακτικά',
     pairs: 'Ταιριάζει με', also: 'Δοκιμάστε επίσης',
@@ -602,23 +611,27 @@ function monthIndex() {
   const q = parseInt(new URLSearchParams(location.search).get('month'), 10);
   return q >= 1 && q <= 12 ? q - 1 : new Date().getMonth();
 }
+const SEASONAL = {
+  'Kokoretsi': [4], 'Roast Suckling Pig': [12, 1, 4], 'Roast Lamb with Potatoes': [3, 4, 5], 'Lamb Kleftiko': [3, 4, 5, 10, 11],
+  'Lamb Chops': [4, 5, 6, 7, 8, 9], 'Kontosouvli': [2, 6, 7, 8, 9], 'Antikristo': [4, 5, 9, 10, 11], 'Apaki': [11, 12, 1, 2],
+  'Rooster Stifado': [10, 11, 12, 1, 2], 'Rabbit Stifado': [10, 11, 12, 1, 2, 3], 'Moussaka': [5, 6, 7, 8, 9, 10], 'Gemista': [5, 6, 7, 8, 9],
+  'Stuffed Courgette Flowers': [5, 6, 7], 'Fried Courgettes': [6, 7, 8, 9], 'Briam': [6, 7, 8, 9], 'Greek Salad': [5, 6, 7, 8, 9],
+  'Tomato Fritters': [6, 7, 8], 'Dakos': [5, 6, 7, 8, 9], 'Melitzanosalata': [6, 7, 8, 9, 10], 'Smoked Peppers and Aubergines': [7, 8, 9, 10],
+  'Warm Potato Salad': [10, 11, 12, 1, 2, 3], 'Gigantes': [10, 11, 12, 1, 2, 3], 'Yiahni': [6, 7, 8, 9], 'Lentil Soup': [10, 11, 12, 1, 2, 3],
+  'Mushroom Soup with Tahini': [10, 11, 12, 1, 2], 'Trahana with Country Sausage': [11, 12, 1, 2, 3], 'Kotosoupa Avgolemono': [10, 11, 12, 1, 2, 3, 4],
+  'Giouvarlakia Avgolemono': [10, 11, 12, 1, 2, 3, 4], 'Fish Soup': [10, 11, 12, 1, 2, 3, 4, 5], 'Spetsofai': [9, 10, 11, 12], 'Kokkinisto': [10, 11, 12, 1, 2, 3, 4],
+  'Strapatsada': [6, 7, 8, 9], 'Dolmadakia': [3, 4, 5, 6], 'Stuffed Leaves with Mince': [10, 11, 12, 1, 2], 'Orzo with Baked Tomatoes': [6, 7, 8, 9],
+  'Grilled Octopus': [5, 6, 7, 8, 9], 'Marinated Anchovies': [3, 4, 5, 6, 7, 8, 9], 'Fried Picarel': [5, 6, 7, 8, 9], 'Lobster Spaghetti': [6, 7, 8, 9],
+  'Symi Shrimp': [5, 6, 7, 8, 9], 'Fried Cod with Skordalia': [3, 4], 'Wild Greens Pie': [2, 3, 4, 5], 'Courgette Pie': [5, 6, 7, 8, 9], 'Kreatopita': [10, 11, 12, 1, 2, 3],
+  'Katiki Domokou': [3, 4, 5, 6, 7, 8], 'Anthotyro': [3, 4, 5, 6, 7, 8], 'Mizithra': [3, 4, 5, 6, 7, 8],
+};
+const inSeason = (r, m) => !SEASONAL[r.name] || SEASONAL[r.name].includes(m);
 function seasonHtml() {
   const mi = monthIndex(), S = MONTHS[mi], now = new Date(), week = Math.floor((now - new Date(now.getFullYear(), 0, 1)) / 6048e5);
-  const hash = id => { let h = week * 31 + mi * 101; for (const c of id) h = (h * 33 + c.charCodeAt(0)) % 9973; return h % 7; };
-  const isSparkling = w => /(^|[^-\w])sparkling|brut/i.test(w.palate + ' ' + w.nose + ' ' + w.wine) && !/semi-sparkling/i.test(w.palate);
-  const score = w => (D.favs.includes(w.winery) ? 3 : 0) + (w.pairs ? 2 : 0) + (Object.values(D.tops).includes(w.id) ? 1 : 0) + hash(w.id);
-  // Top 10 wines: the month's three slots take turns, at most two labels per estate
-  const pools = S.slots.map(sl => W.filter(w => colourKey(w) === sl.col && (!sl.g.length || sl.g.some(g => w.vars.includes(g))) && (sl.txt === 'sparkling' ? isSparkling(w) : !isSparkling(w))).sort((a, b) => score(b) - score(a)));
-  const perEstate = {}, top = [], seen = new Set();
-  for (let round = 0; top.length < 10 && round < 40; round++) {
-    pools.forEach((pool, si) => {
-      if (top.length >= 10) return;
-      const w = pool.find(x => !seen.has(x.id) && (perEstate[x.winery] || 0) < (round < 1 ? 1 : 2));
-      if (w) { seen.add(w.id); perEstate[w.winery] = (perEstate[w.winery] || 0) + 1; top.push([w, S.slots[si]]); }
-    });
-  }
-  // Top 10 pairings: dishes of the month's categories, each with the first listed wine that suits it
-  const dishPool = ALLR.filter(r => S.cats.includes(r.category)).sort((a, b) => hash(a.name) - hash(b.name) || a.name.localeCompare(b.name));
+  const hash = id => { let h = week * 31 + mi * 101; for (const c of id) h = (h * 33 + c.charCodeAt(0)) % 9973; return h; };
+  // one Top 10: dishes that belong to the month, each with the wine that suits it best
+  const dishPool = ALLR.filter(r => S.cats.includes(r.category) && inSeason(r, mi + 1))
+    .sort((a, b) => (hash(a.name) % 11) - (hash(b.name) % 11) || a.name.localeCompare(b.name));
   const usedW = new Set(), pairs = [];
   dishPool.forEach(r => {
     if (pairs.length >= 10) return;
@@ -626,16 +639,12 @@ function seasonHtml() {
     const id = ids.find(x => !usedW.has(x)) || ids[0];
     if (id && byId[id]) { usedW.add(id); pairs.push([r, byId[id]]); }
   });
-  const card = ([w, sl], i) => `<div class="spick"><div class="sw"><span class="rank">${i + 1}</span>${esc(sl.why[lang])}</div><h3>${bottle(w)}<a class="wl" data-wine="${esc(w.id)}">${esc(L(w, 'name'))}</a></h3>
-      <div class="meta">${esc(L(w, 'winery'))} · ${esc(L(w, 'region'))}${L(w, 'grapes') ? ' · ' + esc(L(w, 'grapes')) : ''}</div></div>`;
-  const row = ([w, sl], i) => `<li><span class="rank">${i + 4}</span><span><a class="wl" data-wine="${esc(w.id)}">${esc(L(w, 'name'))}</a><small>${esc(L(w, 'winery'))} · ${esc(sl.why[lang].split(',')[0])}</small></span></li>`;
-  const prow = ([r, w], i) => `<li><span class="rank">${i + 1}</span><span><a class="wl rl" data-dish="${esc(r.name)}">${esc(L(r, 'name'))}</a><small>${esc(tidy(L(w, 'name') + ' (' + L(w, 'winery') + ')'))} · ${esc(L(r, 'grape'))}</small></span></li>`;
+  const row = ([r, w], i) => `<li><span class="rank">${i + 1}</span><div class="pr"><a class="wl rl dish" data-dish="${esc(r.name)}">${esc(L(r, 'name'))}</a>
+      <div class="pw">${bottle(w)}<span><a class="wl" data-wine="${esc(w.id)}">${esc(L(w, 'name'))}</a><small>${esc(L(w, 'winery'))} · ${esc(L(w, 'region'))}${L(w, 'grapes') ? ' · ' + esc(L(w, 'grapes')) : ''}</small></span></div></div></li>`;
   return `<section class="season"><div class="skick"><svg viewBox="0 0 24 24" aria-hidden="true">${SEASON_ICONS[S.icon]}</svg>${esc(t('inSeason'))} · ${esc(S[lang])}</div>
     <h2>${esc(S.title[lang])}</h2><p class="slede">${esc(S.lede[lang])}</p>
-    <h3 class="stitle">${esc(t('top10Wines'))}</h3>
-    <div class="spicks">${top.slice(0, 3).map(card).join('')}</div>
-    <div class="stwo"><div><ol class="slist">${top.slice(3).map(row).join('')}</ol></div>
-    <div><h3 class="stitle">${esc(t('top10Pairs'))}</h3><ol class="slist">${pairs.map(prow).join('')}</ol></div></div></section>`;
+    <h3 class="stitle">${esc(t('top10Pairs'))}</h3>
+    <ol class="slist big">${pairs.map(row).join('')}</ol></section>`;
 }
 function renderList() {
   const terms = norm(state.q.trim()).split(/\s+/).filter(Boolean);
