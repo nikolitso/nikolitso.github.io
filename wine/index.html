@@ -694,9 +694,13 @@ function yearPlan() {
   const pool = m => ALLR.filter(r => r.category !== 'Cheeses' && inSeason(r, m) && !RARE.has(r.name));
   const plan = {}, used = new Set();
   for (let m = 1; m <= 12; m++) plan[m] = [];
+  // Antonis: about 80% of the wines are white or rosé, so at most two dishes per month may offer only red wines
+  const options = r => [...r.labels.filter(l => l.listed && byId[l.name]).map(l => l.name), ...r.more].filter(x => byId[x]);
+  const lightOpt = r => options(r).some(x => colourKey(byId[x]) !== 'Red');
+  const redOnly = {};
   const take = (m, hard) => {
-    const c = pool(m).filter(r => !used.has(r.name) && HARD.has(r.name) === hard && (r.labels.some(l => l.listed && byId[l.name]) || r.more.length)).sort((a, b) => fit(a, m) - fit(b, m))[0];
-    if (c) { used.add(c.name); plan[m].push(c); }
+    const c = pool(m).filter(r => !used.has(r.name) && HARD.has(r.name) === hard && options(r).length && (lightOpt(r) || (redOnly[m] || 0) < 2)).sort((a, b) => fit(a, m) - fit(b, m))[0];
+    if (c) { used.add(c.name); plan[m].push(c); if (!lightOpt(c)) redOnly[m] = (redOnly[m] || 0) + 1; }
   };
   for (let round = 0; round < 9; round++) {
     // the month with the fewest dishes left picks first
@@ -708,7 +712,7 @@ function yearPlan() {
   for (let m = 1; m <= 12; m++) {
     const usedW = new Set();
     out[m] = plan[m].map(r => {
-      const ids = [...r.labels.filter(l => l.listed && byId[l.name]).map(l => l.name), ...r.more].filter(x => byId[x]);
+      const ids = options(r).sort((a, b) => (colourKey(byId[a]) === 'Red') - (colourKey(byId[b]) === 'Red'));
       const id = ids.find(x => !usedW.has(x)) || ids[0];
       usedW.add(id);
       return [r, byId[id]];
