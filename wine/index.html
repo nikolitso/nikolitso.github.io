@@ -561,7 +561,7 @@ const MONTHS = [
     lede: {en: 'The last flavours of summer: picarel and anchovies, figs with cheese, dakos, okra and a moussaka: whites with acidity, rosé, and a Xinomavro for the oven dish.', el: 'Οι τελευταίες γεύσεις του καλοκαιριού: μαρίδες και γαύρος, σύκα με τυρί, ντάκος, μπάμιες και ένας μουσακάς: λευκά με οξύτητα, ροζέ και ένα Ξινόμαυρο για το φούρνο.'}},
   {en: 'October', el: 'Οκτώβριος', icon: 'leaf',
     title: {en: 'October: autumn fish and the first soups', el: 'Οκτώβριος: ψάρια του φθινοπώρου και οι πρώτες σούπες'},
-    lede: {en: 'October brings sole, red mullet and fresh cod, and the first lentil soup, giant beans and red stews: whites with texture for the fish, reds with structure for the pot.', el: 'Ο Οκτώβριος φέρνει γλώσσα, μπαρμπούνια και φρέσκο μπακαλιάρο, και τις πρώτες φακές, γίγαντες και κοκκινιστά: λευκά με υφή για τα ψάρια, κόκκινα με δομή για τα μαγειρευτά.'}},
+    lede: {en: 'Sole, red mullet and fresh cod, and the first lentil soup, giant beans and red stews: whites with texture for the fish, reds with structure for the pot.', el: 'Γλώσσα, μπαρμπούνια και φρέσκος μπακαλιάρος, και οι πρώτες φακές, γίγαντες και κοκκινιστά: λευκά με υφή για τα ψάρια, κόκκινα με δομή για τα μαγειρευτά.'}},
   {en: 'November', el: 'Νοέμβριος', icon: 'leaf',
     title: {en: 'November: mushrooms, chestnuts and pomegranate', el: 'Νοέμβριος: μανιτάρια, κάστανα και ρόδι'},
     lede: {en: 'Mushrooms, chestnuts, pomegranate and pumpkin, with apaki and stifado: Xinomavro and Agiorgitiko for the meat, a white with body for the soups and salads.', el: 'Μανιτάρια, κάστανα, ρόδι και κολοκύθα, με απάκι και στιφάδο: Ξινόμαυρο και Αγιωργίτικο για το κρέας, ένα λευκό με σώμα για τις σούπες και τις σαλάτες.'}},
@@ -726,7 +726,7 @@ function seasonHtml() {
   const row = ([r, w], i) => `<li><span class="rank">${i + 1}</span><div class="pr"><a class="wl rl dish" data-dish="${esc(r.name)}">${esc(L(r, 'name'))}</a>
       <div class="pw">${bottle(w)}<span><a class="wl" data-wine="${esc(w.id)}">${esc(L(w, 'name'))}</a><small>${esc(L(w, 'winery'))} · ${esc(L(w, 'region'))}${L(w, 'grapes') ? ' · ' + esc(L(w, 'grapes')) : ''}</small></span></div></div></li>`;
   const nm = MONTHS[(mi + 1) % 12][lang];
-  return `<section class="season"><div class="snav"><button type="button" class="prev" data-month="-1" aria-label="${esc(t('prevMonth'))}">←</button><button type="button" data-month="1">${esc(t('nextMonth'))}: ${esc(nm)} →</button></div><div class="skick"><svg viewBox="0 0 24 24" aria-hidden="true">${SEASON_ICONS[S.icon]}</svg>${esc(t('inSeason'))} · ${esc(S[lang])}</div>
+  return `<section class="season"><div class="snav"><button type="button" class="prev" data-month="-1" aria-label="${esc(t('prevMonth'))}">←</button><button type="button" data-month="1">${esc(t('nextMonth'))}: ${esc(nm)} →</button></div><div class="skick"><svg viewBox="0 0 24 24" aria-hidden="true">${SEASON_ICONS[S.icon]}</svg>${esc(t('inSeason'))}</div>
     <h2>${esc(S.title[lang])}</h2><p class="slede">${esc(S.lede[lang])}</p>
     <h3 class="stitle">${esc(t('top10Pairs'))}</h3>
     <ol class="slist big">${pairs.map(row).join('')}</ol></section>`;
