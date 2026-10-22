@@ -73,6 +73,7 @@ tr.click{cursor:pointer} tr.click:hover td{background:rgba(212,175,55,.08)}
 .scroll{overflow-x:auto}
 .note{font:400 14px/1.5 var(--body);color:var(--muted);border-left:2px solid var(--gold);padding:2px 0 2px 14px;margin:0 0 6px}
 .note b{color:var(--text);font-weight:600}
+table.pjt{table-layout:fixed;width:100%;min-width:1180px}table.pjt td{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}table.pjt th{white-space:nowrap;overflow:visible}table.pjt td:last-child{white-space:normal}
 td.big{color:var(--bg);background:var(--gold);font-weight:700}
 /* Vs Market group tables */
 h2.mkh{font:600 21px var(--serif);margin:38px 0 10px;padding-bottom:8px;border-bottom:1px solid var(--line)}
@@ -504,6 +505,8 @@ for (const o of (window.ODDS && window.ODDS.list) || []) BOOK[o.h + '|' + o.a] =
 const outText = list => list.map(([p, imp, note]) => `${p} <span class="tag">${imp.toFixed(1)}${note ? ' · ' + esc(note) : ''}</span>`).join(', ');
 const gapCell = (v, cls = '') => v === null ? `<td class="n tag${cls}">–</td>` :
   Math.abs(v) >= gapMin ? `<td class="n big${cls}">${sgn(v)}</td>` : `<td class="n tag${cls}">${sgn(v)}</td>`;
+// one set of column widths for every day's table, so the columns line up down the page
+const PJ_COLS = '<colgroup><col style="width:64px"><col style="width:400px">' + '<col style="width:84px">'.repeat(7) + '<col></colgroup>';
 function renderProjections(){
   const box = $('pjView');
   const P = window.PROJ;
@@ -528,7 +531,7 @@ function renderProjections(){
       It never looks at the bookmaker: <b>Model − book</b> is where the two disagree. Backtested on 2023-24 to 2025-26 (451 games with a line): the book was more accurate on average (miss 10.4 points against 10.8), and games 5+ points apart went 54–44 for the model's side, too few to prove an edge. The <a class="back" href="#view=archive" data-go="archive">Archive</a> keeps every projection made before tip-off.</div>
     <div class="pjbar">${gapSelect()}<span class="tag">Model − book gaps from this size are highlighted.</span></div>` +
     Object.entries(days).map(([d, list]) => `<h2>${dayName(d)} <span class="tag">${esc(list[0].round)}</span></h2>
-      <div class="scroll"><table class="fx">${head}${list.map(row).join('')}</table></div>`).join('') +
+      <div class="scroll"><table class="fx pjt">${PJ_COLS}${head}${list.map(row).join('')}</table></div>`).join('') +
     `<h2>Club ratings</h2><div class="tag" style="margin-bottom:8px">Points better (+) or worse (−) than an average club on a neutral court, after ${P.games} games this season. Prior = the starting point from last season; continuity = share of last season's minutes played by players still at the club.</div>
     <div class="scroll"><table class="fx" style="width:auto;min-width:560px"><tr><th class="n">#</th><th>Club</th><th class="n">Rating</th><th class="n">Games</th><th class="n">Prior</th><th class="n" title="Share of last season's minutes played by players still at the club">Continuity</th></tr>${ratings}</table></div>
     <div class="tag" style="margin-top:14px">Projections updated ${esc(P.updated)}; win chance = the handicap on a normal curve with the backtest's spread of misses (${P.spread} points).</div>`;
