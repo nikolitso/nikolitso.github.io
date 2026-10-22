@@ -614,35 +614,35 @@ function monthIndex() {
 const SEASONAL = {
   // checked against Antonis's list of Greek seasonal produce (2026-10-22); dishes not listed are available all year
   // dips and meze
-  'Melitzanosalata': [6, 7, 8, 9, 10], 'Tzatziki': [5, 6, 7, 8, 9, 10], 'Tomato Fritters': [6, 7, 8, 9], 'Dakos': [6, 7, 8, 9],
+  'Melitzanosalata': [6, 7, 8, 9], 'Tzatziki': [5, 6, 7, 8, 9], 'Tomato Fritters': [6, 7, 8, 9], 'Dakos': [6, 7, 8, 9],
   // cheeses
   'Katiki Domokou': [3, 4, 5, 6, 7, 8], 'Anthotyro': [3, 4, 5, 6, 7, 8], 'Mizithra': [3, 4, 5, 6, 7, 8],
   // salads and vegetables
-  'Greek Salad': [6, 7, 8, 9], 'Warm Potato Salad': [10, 11, 12, 1, 2, 3], 'Briam': [6, 7, 8, 9, 10], 'Smoked Peppers and Aubergines': [6, 7, 8, 9, 10],
-  'Gemista': [6, 7, 8, 9, 10], 'Gigantes': [10, 11, 12, 1, 2, 3], 'Yiahni': [6, 7, 8, 9, 10], 'Fried Courgettes': [4, 5, 6, 7, 8, 9, 10],
+  'Greek Salad': [6, 7, 8, 9], 'Warm Potato Salad': [10, 11, 12, 1, 2, 3], 'Briam': [6, 7, 8, 9], 'Smoked Peppers and Aubergines': [6, 7, 8, 9],
+  'Gemista': [6, 7, 8, 9], 'Gigantes': [10, 11, 12, 1, 2, 3], 'Yiahni': [6, 7, 8, 9], 'Fried Courgettes': [4, 5, 6, 7, 8, 9],
   'Stuffed Courgette Flowers': [5, 6, 7],
   // pies and breads
-  'Wild Greens Pie': [11, 12, 1, 2, 3, 4, 5], 'Courgette Pie': [4, 5, 6, 7, 8, 9, 10], 'Kreatopita': [10, 11, 12, 1, 2, 3],
+  'Wild Greens Pie': [11, 12, 1, 2, 3, 4, 5], 'Courgette Pie': [4, 5, 6, 7, 8, 9], 'Kreatopita': [10, 11, 12, 1, 2, 3],
   'Ladenia': [6, 7, 8, 9], 'Flatbread with Tomato and Olives': [6, 7, 8, 9],
   // soups and stews (lemons are in season November to April)
   'Kotosoupa Avgolemono': [11, 12, 1, 2, 3, 4], 'Giouvarlakia Avgolemono': [11, 12, 1, 2, 3, 4], 'Fish Soup': [10, 11, 12, 1, 2, 3, 4, 5],
   'Lentil Soup': [10, 11, 12, 1, 2, 3], 'Mushroom Soup with Tahini': [10, 11, 12, 1, 2, 3], 'Trahana with Country Sausage': [11, 12, 1, 2, 3],
   // meat and poultry
-  'Moussaka': [6, 7, 8, 9, 10], 'Kokkinisto': [10, 11, 12, 1, 2, 3, 4], 'Roast Chicken with Lemon Potatoes': [11, 12, 1, 2, 3, 4], 'Pork with Wine and Lemon': [11, 12, 1, 2, 3, 4],
+  'Moussaka': [6, 7, 8, 9], 'Kokkinisto': [10, 11, 12, 1, 2, 3, 4], 'Roast Chicken with Lemon Potatoes': [11, 12, 1, 2, 3, 4], 'Pork with Wine and Lemon': [11, 12, 1, 2, 3, 4],
   'Lamb Kleftiko': [3, 4, 5, 10, 11], 'Roast Lamb with Potatoes': [3, 4, 5], 'Lamb Chops': [4, 5, 6, 7, 8, 9], 'Kontosouvli': [2, 6, 7, 8, 9],
-  'Antikristo': [4, 5, 9, 10, 11], 'Kokoretsi': [4], 'Roast Suckling Pig': [12, 1, 4], 'Spetsofai': [7, 8, 9, 10], 'Rooster Stifado': [10, 11, 12, 1, 2],
+  'Antikristo': [4, 5, 9, 10, 11], 'Kokoretsi': [4], 'Roast Suckling Pig': [12, 1, 4], 'Spetsofai': [7, 8, 9], 'Rooster Stifado': [10, 11, 12, 1, 2],
   'Rabbit Stifado': [10, 11, 12, 1, 2, 3], 'Apaki': [11, 12, 1, 2], 'Stuffed Leaves with Mince': [10, 11, 12, 1, 2, 3],
   // fish and seafood
-  'Grilled Octopus': [5, 6, 7, 8, 9], 'Baked Fish with Tomatoes': [6, 7, 8, 9, 10], 'Shrimp Saganaki': [6, 7, 8, 9, 10], 'Marinated Anchovies': [4, 8, 9, 11],
+  'Grilled Octopus': [5, 6, 7, 8, 9], 'Baked Fish with Tomatoes': [6, 7, 8, 9], 'Shrimp Saganaki': [6, 7, 8, 9], 'Marinated Anchovies': [4, 8, 9, 11],
   'Fried Picarel': [8, 9, 10], 'Lobster Spaghetti': [6, 7, 8, 9], 'Symi Shrimp': [5, 6, 7, 8, 9], 'Fried Cod with Skordalia': [3, 4],
   // seasonal dishes added from the month's produce
   'Leek and Rice': [11, 12, 1, 2, 3], 'Spinach and Rice': [10, 11, 12, 1, 2, 3, 4], 'Pork with Cabbage': [11, 12, 1, 2], 'Pork with Celery': [12, 1, 2, 3],
   'Chickpea Soup': [11, 12, 1, 2, 3], 'Artichokes a la Polita': [2, 3, 4], 'Broad Beans Yiahni': [2, 3, 4], 'Asparagus with Eggs': [3, 4, 5],
   'Peas with Artichokes': [3, 4, 5], 'Lamb Fricassee': [3, 4, 5], 'Magiritsa': [4], 'Peas Stewed in Olive Oil': [4, 5, 6], 'Lettuce and Dill Salad': [3, 4, 5, 6],
-  'Green Beans in Tomato': [5, 6, 7, 8, 9], 'Boiled Vlita': [5, 6, 7, 8, 9, 10], 'Stuffed Courgettes': [4, 5, 6, 7, 8, 9], 'Beetroot with Skordalia': [11, 12, 1, 2, 3, 4],
-  'Okra in Tomato': [6, 7, 8, 9, 10], 'Stuffed Squid': [5, 6, 7, 8, 9], 'Grilled Sardines': [3, 4, 5, 6, 7, 8, 9, 10], 'Courgette Fritters': [5, 6, 7, 8, 9],
-  'Imam Baildi': [7, 8, 9, 10], 'Papoutsakia': [7, 8, 9, 10], 'Grilled Sea Bream': [12, 1, 2, 3, 4, 5, 6, 7, 8, 9], 'Watermelon and Feta Salad': [6, 7, 8],
-  'Roasted Peppers with Feta': [8, 9, 10], 'Fig and Cheese Salad': [8, 9, 10], 'Pomegranate and Lettuce Salad': [10, 11, 12], 'Grilled Mushrooms': [10, 11, 12],
+  'Green Beans in Tomato': [5, 6, 7, 8, 9], 'Boiled Vlita': [5, 6, 7, 8, 9], 'Stuffed Courgettes': [4, 5, 6, 7, 8, 9], 'Beetroot with Skordalia': [11, 12, 1, 2, 3, 4],
+  'Okra in Tomato': [6, 7, 8, 9], 'Stuffed Squid': [5, 6, 7, 8, 9], 'Grilled Sardines': [3, 4, 5, 6, 7, 8, 9, 10], 'Courgette Fritters': [5, 6, 7, 8, 9],
+  'Imam Baildi': [7, 8, 9], 'Papoutsakia': [7, 8, 9], 'Grilled Sea Bream': [12, 1, 2, 3, 4, 5, 6, 7, 8, 9], 'Watermelon and Feta Salad': [6, 7, 8],
+  'Roasted Peppers with Feta': [8, 9], 'Fig and Cheese Salad': [8, 9], 'Pomegranate and Lettuce Salad': [10, 11, 12], 'Grilled Mushrooms': [10, 11, 12],
   'Pumpkin Soup': [10, 11, 12, 1], 'Cauliflower in Tomato': [10, 11, 12, 1, 2], 'Pork with Chestnuts': [11, 12], 'Beetroot Salad': [10, 11, 12, 1, 2, 3, 4],
   'Boiled Broccoli': [11, 12, 1, 2, 3, 4], 'Cabbage Salad': [11, 12, 1, 2, 3], 'Stuffed Turkey': [12], 'Fennel and Orange Salad': [11, 12, 1, 2, 3],
   // mountain dishes (Gastronomos article)
@@ -688,7 +688,7 @@ const SEASONAL = {
   'Baked Fresh Cod': [10, 11, 12, 1],
   'Boiled Fish with Lemon Oil': [11, 12, 1, 2, 3, 4, 5],
   // other
-  'Dolmadakia': [4, 5, 6], 'Orzo with Baked Tomatoes': [6, 7, 8, 9, 10], 'Strapatsada': [6, 7, 8, 9, 10],
+  'Dolmadakia': [4, 5, 6], 'Orzo with Baked Tomatoes': [6, 7, 8, 9], 'Strapatsada': [6, 7, 8, 9],
 };
 // slow, fiddly or special-occasion dishes: the monthly Top 10 holds at most one of them (Antonis: everyday, quick and easy)
 const HARD = new Set(['Kokoretsi', 'Roast Suckling Pig', 'Stuffed Turkey', 'Magiritsa', 'Lamb Kleftiko', 'Roast Lamb with Potatoes', 'Antikristo', 'Kontosouvli', 'Pastitsio', 'Moussaka', 'Gemista', 'Stuffed Leaves with Mince', 'Stuffed Squid', 'Stuffed Courgettes', 'Stuffed Courgette Flowers', 'Dolmadakia', 'Papoutsakia', 'Boubari', 'Vine Leaves Stuffed with Goat', 'Roe Deer with Walnuts', 'Wild Boar with Leeks', 'Wild Boar in Wine Sauce', 'Tzoumleka', 'Sout Makalo', 'Mutton with Gigantes', 'Rooster Stifado', 'Rabbit Stifado', 'Rolled Meatloaf', 'Lobster Spaghetti', 'Lamb Fricassee', 'Cabbage Rolls Avgolemono', 'Kreatopita', 'Spanakopita', 'Cheese Pie', 'Wild Greens Pie', 'Courgette Pie', 'Skopelos Cheese Pie', 'Metsovo Kasiata', 'Vlach Leek Pie', 'Nettle Pie', 'Pispilita', 'Metsovo Cabbage Pie', 'Batzina', 'Pumpkin Pie with Pasta', 'Petropita', 'Leek and Mince Pie', 'Giouvarlakia Avgolemono', 'Pastitsada', 'Sofrito', 'Pappardelle with Ragout']);
