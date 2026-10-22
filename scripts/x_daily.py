@@ -167,7 +167,7 @@ def quotes():
         if not q or not q.get("text") or q.get("draft"):
             continue
         n = q.get("id") or i
-        src = (q.get("source") or "").strip()
+        src = (q.get("author") or q.get("source") or "").strip()   # Pages CMS field is "author"
         src = re.sub(r"^(un|non[- ]?)?attributed( to)?:?\s*", "", src, flags=re.I)   # just the name, never "attributed"
         src = re.sub(r'^["“].*?["”]\s+by\s+', "", src)    # '"Article title" by Author' -> 'Author'
         items[str(n)] = dict(text=q["text"].strip(), source=src, date=str(q.get("date") or ""),
