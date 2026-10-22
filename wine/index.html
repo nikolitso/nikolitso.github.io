@@ -164,6 +164,20 @@ footer{margin-top:72px;padding-top:22px;border-top:1px solid var(--line);color:v
 .chead h3{margin-top:0}
 .chead .ic{margin-top:2px}
 @media(max-width:560px){.hero svg{max-height:120px}}
+
+/* seasonal opening */
+.season{margin:6px 0 34px;border:1px solid var(--line2);border-radius:20px;padding:30px 30px 26px;background:linear-gradient(135deg,rgba(125,34,54,.34),rgba(255,246,232,.04) 60%);box-shadow:0 24px 60px -34px #000}
+.season .skick{display:flex;align-items:center;gap:10px;font:var(--label);letter-spacing:.22em;text-transform:uppercase;color:var(--gold)}
+.season .skick svg{width:22px;height:22px;stroke:var(--gold);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.season h2{font:700 clamp(28px,5vw,40px)/1.15 var(--display);color:var(--cream);margin:10px 0 8px}
+.season .slede{max-width:62ch;color:var(--text);margin:0 0 22px}
+.season .spicks{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}
+.season .spick{background:rgba(10,4,6,.35);border:1px solid var(--line);border-radius:14px;padding:16px 18px}
+.season .spick .sw{font:var(--label);letter-spacing:.16em;text-transform:uppercase;color:var(--gold);margin-bottom:8px}
+.season .spick h3{display:flex;gap:10px;align-items:center;font:700 19px/1.3 var(--display);color:var(--cream);margin:0 0 4px}
+.season .spick .meta{font-size:15px}
+.season .sdishes{margin-top:18px;font-size:16px;color:var(--muted)}
+.season .sdishes b{font:var(--label);letter-spacing:.16em;text-transform:uppercase;color:var(--gold);margin-right:8px}
 @media(max-width:560px){.views{width:100%;overflow:visible}.views button{flex:1;white-space:normal;text-align:center;padding:10px 6px;font-size:10px;letter-spacing:.08em;line-height:1.3}body{font-size:17px}.wrap{padding:0 16px 80px}.card{padding:20px}.pill summary{padding:18px 20px}.pill-body{padding:4px 20px 22px}}
 </style>
 </head>
@@ -187,6 +201,7 @@ footer{margin-top:72px;padding-top:22px;border-top:1px solid var(--line);color:v
     </div>
   </div>
   <div class="hero" id="hero" aria-hidden="true"></div>
+  <div id="season"></div>
   <nav class="views" role="tablist"><button type="button" data-view="list"></button><button type="button" data-view="wineries"></button><button type="button" data-view="finder"></button></nav>
   <h1 id="title"></h1>
   <p class="lede" id="lede"></p>
@@ -223,7 +238,7 @@ const UI = {
     col: {White: 'White', 'Rosé': 'Rosé', Red: 'Red'}, wine: 'wine', winesN: 'wines',
     bestFor: 'Dishes where it is the first choice', more: 'More wines that fit', dishesFor: 'Dishes',
     begin: 'Where to begin', beginText: (r, w) => `Pick a chip above, or type a dish. ${r} dishes and ${w} wines are loaded.`,
-    allDishes: 'All dishes', cheeses: 'Cheeses: what pairs with each', dishes: 'Dishes', wines: 'Wines', result: 'result', results: 'results',
+    inSeason: 'In season', onTable: 'On the table', allDishes: 'All dishes', cheeses: 'Cheeses: what pairs with each', dishes: 'Dishes', wines: 'Wines', result: 'result', results: 'results',
     none: 'No match yet. Try a simpler word, such as the main ingredient.',
     bestGrape: 'Best grape', alt: 'alternative',
     pairs: 'Pairs with', also: 'Also try',
@@ -240,7 +255,7 @@ const UI = {
     col: {White: 'Λευκό', 'Rosé': 'Ροζέ', Red: 'Ερυθρό'}, wine: 'κρασί', winesN: 'κρασιά',
     bestFor: 'Πιάτα όπου είναι η πρώτη επιλογή', more: 'Περισσότερα κρασιά που ταιριάζουν', dishesFor: 'Πιάτα',
     begin: 'Από πού να ξεκινήσετε', beginText: (r, w) => `Επιλέξτε ένα κουμπί παραπάνω ή γράψτε ένα πιάτο. Φορτώθηκαν ${r} πιάτα και ${w} κρασιά.`,
-    allDishes: 'Όλα τα πιάτα', cheeses: 'Τυριά: με τι ταιριάζει το καθένα', dishes: 'Πιάτα', wines: 'Κρασιά', result: 'αποτέλεσμα', results: 'αποτελέσματα',
+    inSeason: 'Της εποχής', onTable: 'Στο τραπέζι', allDishes: 'Όλα τα πιάτα', cheeses: 'Τυριά: με τι ταιριάζει το καθένα', dishes: 'Πιάτα', wines: 'Κρασιά', result: 'αποτέλεσμα', results: 'αποτελέσματα',
     none: 'Δεν βρέθηκε αντιστοιχία. Δοκιμάστε μια απλούστερη λέξη, όπως το κύριο υλικό.',
     bestGrape: 'Καλύτερη ποικιλία', alt: 'εναλλακτικά',
     pairs: 'Ταιριάζει με', also: 'Δοκιμάστε επίσης',
@@ -473,6 +488,60 @@ function renderWineries() {
     <h2>${esc(t('allEstates'))}</h2><div class="count">${rest.length} ${lang === 'el' ? 'κτήματα' : 'estates'}</div><div class="pills">${restHtml}</div>`;
 }
 const openEstates = new Set();
+
+const SEASONS = {
+  autumn: {en: 'Autumn', el: 'Φθινόπωρο', icon: '<path d="M12 21c-5-3-8-8-6-15 4 0 8 1 10 5 2 4 0 8-4 10zM12 21c0-5 1-8 4-11"/>',
+    title: {en: 'Autumn, in the glass', el: 'Το φθινόπωρο στο ποτήρι'},
+    lede: {en: 'Cooler evenings call for structure: savoury reds for mushrooms, game and slow-cooked meat, and a round white for roast chicken and pies.', el: 'Οι δροσερές βραδιές ζητούν δομή: γευστικά κόκκινα για μανιτάρια, κυνήγι και αργομαγειρεμένο κρέας, και ένα στρογγυλό λευκό για ψητό κοτόπουλο και πίτες.'},
+    slots: [{col: 'Red', g: ['Xinomavro'], why: {en: 'Wild mushrooms, game, aged cheese', el: 'Άγρια μανιτάρια, κυνήγι, παλαιωμένο τυρί'}},
+            {col: 'Red', g: ['Agiorgitiko', 'Mavrodaphne', 'Mavrotragano'], why: {en: 'Slow-cooked beef, lamb, first chestnuts', el: 'Αργομαγειρεμένο μοσχάρι, αρνί, τα πρώτα κάστανα'}},
+            {col: 'White', g: ['Vidiano', 'Chardonnay', 'Roditis', 'Assyrtiko'], why: {en: 'Roast chicken, pumpkin, pies', el: 'Ψητό κοτόπουλο, κολοκύθα, πίτες'}}],
+    cats: ['Meat & poultry', 'Soups & stews', 'Pies']},
+  winter: {en: 'Winter', el: 'Χειμώνας', icon: '<path d="M12 3v18M4.5 7.5l15 9M19.5 7.5l-15 9M9.5 4.5 12 7l2.5-2.5M9.5 19.5 12 17l2.5 2.5"/>',
+    title: {en: 'Winter, by the table', el: 'Ο χειμώνας στο τραπέζι'},
+    lede: {en: 'Deep, warming reds for stews and the Sunday roast, and a textured white for the fish and the pies of the cold months.', el: 'Βαθιά, ζεστά κόκκινα για μαγειρευτά και κυριακάτικο ψητό, και ένα λευκό με υφή για τα ψάρια και τις πίτες του χειμώνα.'},
+    slots: [{col: 'Red', g: ['Agiorgitiko', 'Xinomavro'], why: {en: 'Stews, roast pork, hearty pasta', el: 'Μαγειρευτά, ψητό χοιρινό, χορταστικά ζυμαρικά'}},
+            {col: 'Red', g: ['Mavrodaphne', 'Mavrotragano', 'Kotsifali', 'Mandilaria'], why: {en: 'Lamb, game, strong cheese', el: 'Αρνί, κυνήγι, δυνατά τυριά'}},
+            {col: 'White', g: ['Vidiano', 'Robola', 'Chardonnay', 'Assyrtiko'], why: {en: 'Baked fish, leek pies, soups', el: 'Ψάρι στο φούρνο, πίτες με πράσο, σούπες'}}],
+    cats: ['Soups & stews', 'Meat & poultry', 'Pies']},
+  spring: {en: 'Spring', el: 'Άνοιξη', icon: '<circle cx="12" cy="12" r="2.5"/><path d="M12 9.5C12 6 10.5 4 12 3c1.5 1 0 3 0 6.5zM14.5 12c3.5 0 5.5-1.5 6.5 0-1 1.5-3 0-6.5 0zM12 14.5c0 3.5 1.5 5.5 0 6.5-1.5-1 0-3 0-6.5zM9.5 12C6 12 4 13.5 3 12c1-1.5 3 0 6.5 0z"/>',
+    title: {en: 'Spring, fresh and green', el: 'Άνοιξη, φρέσκια και πράσινη'},
+    lede: {en: 'Green salads, young vegetables and the first pies of the year want aromatic, lively whites and a pale rosé.', el: 'Πράσινες σαλάτες, τρυφερά λαχανικά και οι πρώτες πίτες της χρονιάς ζητούν αρωματικά, ζωηρά λευκά και ένα ανοιχτό ροζέ.'},
+    slots: [{col: 'White', g: ['Malagousia', 'Sauvignon Blanc'], why: {en: 'Green salads, asparagus, herb pies', el: 'Πράσινες σαλάτες, σπαράγγια, πίτες με χόρτα'}},
+            {col: 'White', g: ['Moschofilero', 'Vidiano', 'Roditis', 'Athiri'], why: {en: 'Fresh cheeses, light pasta, meze', el: 'Φρέσκα τυριά, ελαφριά ζυμαρικά, μεζέδες'}},
+            {col: 'Rosé', g: [], why: {en: 'Easter table, grilled lamb chops', el: 'Πασχαλινό τραπέζι, αρνίσια παϊδάκια'}}],
+    cats: ['Salads & vegetables', 'Pies', 'Dips & small dishes']},
+  summer: {en: 'Summer', el: 'Καλοκαίρι', icon: '<circle cx="12" cy="12" r="4"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1"/>',
+    title: {en: 'Summer, well chilled', el: 'Καλοκαίρι, καλά παγωμένο'},
+    lede: {en: 'Sea, salt and sun: crisp Assyrtiko for the grill and the fish, a mineral white for meze, and a dry rosé for the long evenings.', el: 'Θάλασσα, αλάτι και ήλιος: δροσερό Ασύρτικο για τη σχάρα και τα ψάρια, ένα ορυκτό λευκό για μεζέδες και ένα ξηρό ροζέ για τα μακριά βράδια.'},
+    slots: [{col: 'White', g: ['Assyrtiko'], why: {en: 'Grilled fish, calamari, shellfish', el: 'Ψητό ψάρι, καλαμαράκια, οστρακοειδή'}},
+            {col: 'White', g: ['Moschofilero', 'Malagousia', 'Athiri', 'Vidiano'], why: {en: 'Salads, meze, feta', el: 'Σαλάτες, μεζέδες, φέτα'}},
+            {col: 'Rosé', g: [], why: {en: 'Tomato dishes, grilled chicken, aperitif', el: 'Πιάτα με ντομάτα, ψητό κοτόπουλο, απεριτίφ'}}],
+    cats: ['Fish & seafood', 'Salads & vegetables', 'Dips & small dishes']},
+};
+function seasonKey() {
+  const q = new URLSearchParams(location.search).get('season');
+  if (q && SEASONS[q]) return q;
+  const m = new Date().getMonth() + 1;
+  return m >= 9 && m <= 11 ? 'autumn' : m === 12 || m <= 2 ? 'winter' : m <= 5 ? 'spring' : 'summer';
+}
+function seasonHtml() {
+  const k = seasonKey(), S = SEASONS[k], now = new Date(), week = Math.floor((now - new Date(now.getFullYear(), 0, 1)) / 6048e5);
+  const hash = id => { let h = week * 31; for (const c of id) h = (h * 33 + c.charCodeAt(0)) % 9973; return h % 4; };
+  const used = new Set(), picks = [];
+  S.slots.forEach(sl => {
+    const pool = W.filter(w => colourKey(w) === sl.col && !used.has(w.winery) && (!sl.g.length || sl.g.some(g => w.vars.includes(g))));
+    const score = w => (D.favs.includes(w.winery) ? 4 : 0) + (w.pairs ? 2 : 0) + (Object.values(D.tops).includes(w.id) ? 2 : 0) + hash(w.id);
+    const best = pool.sort((a, b) => score(b) - score(a))[0];
+    if (best) { used.add(best.winery); picks.push([best, sl]); }
+  });
+  const dishes = S.cats.map((c, i) => { const pool = R.filter(r => r.category === c); return pool.length ? pool[(week + i * 3) % pool.length] : null; }).filter(Boolean);
+  return `<section class="season"><div class="skick"><svg viewBox="0 0 24 24" aria-hidden="true">${S.icon}</svg>${esc(t('inSeason'))} · ${esc(S[lang])}</div>
+    <h2>${esc(S.title[lang])}</h2><p class="slede">${esc(S.lede[lang])}</p>
+    <div class="spicks">${picks.map(([w, sl]) => `<div class="spick"><div class="sw">${esc(sl.why[lang])}</div><h3>${bottle(w)}<a class="wl" data-wine="${esc(w.id)}">${esc(L(w, 'name'))}</a></h3>
+      <div class="meta">${esc(L(w, 'winery'))} · ${esc(L(w, 'region'))}${L(w, 'grapes') ? ' · ' + esc(L(w, 'grapes')) : ''}</div></div>`).join('')}</div>
+    <div class="sdishes"><b>${esc(t('onTable'))}</b>${dishes.map(r => `<a class="wl rl" data-dish="${esc(r.name)}">${esc(L(r, 'name'))}</a>`).join(', ')}</div></section>`;
+}
 function renderList() {
   const terms = norm(state.q.trim()).split(/\s+/).filter(Boolean);
   const ws = W.filter(w => (!state.region || w.region === state.region) && (!state.colour || colourKey(w) === state.colour) && (!state.variety || w.vars.includes(state.variety))
@@ -500,6 +569,7 @@ function render() {
   document.getElementById('lede').textContent = t({list: 'listLede', wineries: 'estatesLede', finder: 'lede'}[view]);
   document.querySelectorAll('.views button').forEach(b => { b.textContent = t({list: 'viewList', wineries: 'viewEstates', finder: 'viewFinder'}[b.dataset.view]); b.classList.toggle('on', b.dataset.view === view); });
   document.getElementById('hero').innerHTML = heroSvg(view);
+  document.getElementById('season').innerHTML = view === 'list' && !(state.q.trim() || state.colour || state.variety || state.region) ? seasonHtml() : '';
   document.getElementById('finderChips').hidden = view !== 'finder';
   document.getElementById('listChips').hidden = view === 'finder';
   ['colourLabel', 'colours', 'varietyLabel', 'varieties'].forEach(id => { document.getElementById(id).hidden = view === 'wineries'; });
