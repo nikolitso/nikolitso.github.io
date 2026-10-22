@@ -154,7 +154,7 @@ footer{margin-top:72px;padding-top:22px;border-top:1px solid var(--line);color:v
 
 /* illustrations: hero landscape, bottle icons, dish icons */
 .hero{margin:18px 0 22px;border-radius:18px;overflow:hidden;border:1px solid var(--line);box-shadow:0 18px 50px -28px #000;line-height:0}
-.hero svg{display:block;width:100%;height:auto;max-height:190px}
+.hero svg{display:block;width:100%;height:auto;max-height:240px}
 .hero.sm svg{max-height:120px}
 .bt{flex:none;width:14px;height:32px}
 .lrow h3,.card.wine h3{display:flex;align-items:center;gap:10px}
@@ -316,16 +316,47 @@ const ICONS = {
 const icon = c => `<svg class="ic" viewBox="0 0 24 24" aria-hidden="true">${ICONS[c] || ICONS['Other savoury']}</svg>`;
 const GRAPE_IC = '<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="8" cy="10" r="2.700"/><circle cx="14" cy="10" r="2.700"/><circle cx="11" cy="15" r="2.700"/><circle cx="17" cy="15" r="2.700"/><circle cx="14" cy="20" r="2.200"/><path d="M12 7V3c2 0 4 .5 5 2"/></svg>';
 function heroSvg(v) {
-  const P = {list: ['#2a0f19', '#4a1424', '#7a1f34', '#c9a24b', '#3a1220', '#2a0e18'], wineries: ['#0e2438', '#17405a', '#2b7a91', '#e8cb8f', '#133248', '#0d2233'], finder: ['#241a0c', '#4a3a14', '#8a6a1f', '#e8cb8f', '#3a2d10', '#2a200b']}[v];
-  const [a, b, c, sun, hill1, hill2] = P;
-  const rows = Array.from({length: 11}, (_, i) => `<path d="M${-40 + i * 100} 190 Q ${380 + i * 24} 120 ${470 + i * 8} 100" stroke="#e8cb8f" stroke-opacity=".16" stroke-width="2" fill="none"/>`).join('');
-  const sea = v === 'wineries' ? `<g stroke="#e8cb8f" stroke-opacity=".28" fill="none" stroke-width="1.4">${[0, 1, 2, 3].map(i => `<path d="M${40 + i * 60} ${118 + i * 11}q20-8 40 0t40 0t40 0M${560 + i * 70} ${112 + i * 12}q20-8 40 0t40 0t40 0"/>`).join('')}</g>` : '';
-  const isl = `<path d="M120 150 C150 120 190 112 230 124 C260 132 280 142 300 150Z" fill="#0a1a28" fill-opacity=".8"/><path d="M610 150 C650 112 700 100 760 118 C810 132 850 144 880 150Z" fill="#0a1a28" fill-opacity=".8"/><g stroke="#e8cb8f" stroke-opacity=".35" fill="none" stroke-width="1.5">${[0,1,2,3,4].map(i => `<path d="M${i * 210 - 40} ${160 + (i % 2) * 8}q25-9 50 0t50 0t50 0t50 0"/>`).join('')}</g>`;
-  const cyp = [[130, 74], [158, 82], [860, 70], [888, 78]].map(([x, y]) => `<path d="M${x} ${y + 62} C${x - 11} ${y + 30} ${x - 5} ${y + 8} ${x} ${y - 8} C${x + 5} ${y + 8} ${x + 11} ${y + 30} ${x} ${y + 62}Z" fill="#0b0508" fill-opacity=".75"/>`).join('');
-  return `<svg viewBox="0 0 1000 190" preserveAspectRatio="xMidYMid slice" role="presentation"><defs><linearGradient id="hs" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${a}"/><stop offset=".6" stop-color="${b}"/><stop offset="1" stop-color="${c}"/></linearGradient><radialGradient id="hg"><stop offset="0" stop-color="${sun}" stop-opacity=".9"/><stop offset=".35" stop-color="${sun}" stop-opacity=".25"/><stop offset="1" stop-color="${sun}" stop-opacity="0"/></radialGradient></defs>
-    <rect width="1000" height="190" fill="url(#hs)"/><circle cx="740" cy="86" r="120" fill="url(#hg)"/><circle cx="740" cy="86" r="26" fill="${sun}" fill-opacity=".92"/>
-    <path d="M0 118 C120 88 230 96 350 112 C470 128 560 92 690 96 C800 100 900 118 1000 104 V190 H0Z" fill="${hill1}" fill-opacity=".85"/>${sea}
-    <path d="M0 150 C150 124 300 134 440 146 C580 158 700 130 840 138 C920 142 960 148 1000 146 V190 H0Z" fill="${hill2}"/>${v === 'wineries' ? '' : rows}${v === 'wineries' ? isl : cyp}</svg>`;
+  const T = {
+    list:     {sky: ['#2a0f19', '#5a1a2c', '#a8503f'], sun: '#f0c46a', far: '#4a1a2a', mid: '#2e1a1c', grape: ['#5b1d44', '#7a2a5a'], sea: false},
+    wineries: {sky: ['#0e2438', '#1c5470', '#7fb4c0'], sun: '#f6e2a6', far: '#1d4a62', mid: '#1b3a35', grape: ['#4a2a6a', '#6a3d8a'], sea: true},
+    finder:   {sky: ['#2c2410', '#6b5420', '#d6a84a'], sun: '#fff0b8', far: '#5a4a1e', mid: '#2c3318', grape: ['#a8b84a', '#c9d466'], sea: false},
+  }[v];
+  const VX = 500, VY = 112, BY = 236, f = n => n.toFixed(1);
+  // a vine row: leafy band narrowing toward the vanishing point, with posts, wire, leaves and grape bunches
+  const row = cx => {
+    const P = t => [cx + (VX - cx) * t, BY + (VY - BY) * t], W = t => 46 * (1 - t) + 1.2;
+    const [x0, y0] = P(0), [x1, y1] = P(0.97), w0 = W(0), w1 = W(0.97);
+    let o = `<path d="M${f(x0 - w0)} ${y0} L${f(x1 - w1)} ${f(y1)} L${f(x1 + w1)} ${f(y1)} L${f(x0 + w0)} ${y0}Z" fill="url(#vg)"/>`;
+    o += `<path d="M${f(x0 - w0 * 1.5)} ${y0} L${f(x1)} ${f(y1)} L${f(x0 + w0 * 1.5)} ${y0}Z" fill="#120a08" fill-opacity=".35"/>`;
+    for (let k = 0; k < 26; k++) {
+      const t = 0.03 + k * 0.036, [x, y] = P(t), w = W(t), s = 1 - t;
+      const side = k % 2 ? 1 : -1;
+      o += `<ellipse cx="${f(x + side * w * 0.55)}" cy="${f(y - 13 * s)}" rx="${f(11 * s + 1)}" ry="${f(7 * s + .8)}" fill="${k % 3 ? '#3f7a34' : '#5c9a42'}" fill-opacity=".9" transform="rotate(${side * 28} ${f(x)} ${f(y)})"/>`;
+    }
+    for (const t of [0.1, 0.3, 0.47, 0.62, 0.74, 0.84]) {
+      const [x, y] = P(t), s = 1 - t, h = 50 * s;
+      o += `<path d="M${f(x)} ${f(y)}V${f(y - h)}" stroke="#d6b066" stroke-opacity=".55" stroke-width="${f(2.2 * s + .4)}"/>`;
+    }
+    for (const t of [0.06, 0.16, 0.27, 0.38, 0.5, 0.62, 0.72, 0.82]) {
+      const [x, y] = P(t), s = 1 - t, w = W(t), r = 4.6 * s + .7;
+      for (const side of [-1, 1]) {
+        const bx = x + side * w * 0.8, by = y - 3 * s;
+        o += `<g fill="${T.grape[0]}"><circle cx="${f(bx)}" cy="${f(by)}" r="${f(r)}"/><circle cx="${f(bx + r * 1.5)}" cy="${f(by)}" r="${f(r)}"/><circle cx="${f(bx + r * .75)}" cy="${f(by + r * 1.4)}" r="${f(r)}" fill="${T.grape[1]}"/><circle cx="${f(bx - r * .6)}" cy="${f(by + r * 1.4)}" r="${f(r)}"/><circle cx="${f(bx + r * 2.2)}" cy="${f(by + r * 1.4)}" r="${f(r)}"/><circle cx="${f(bx + r * .75)}" cy="${f(by + r * 2.8)}" r="${f(r)}"/></g>`;
+      }
+    }
+    return o;
+  };
+  const rows = [-5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5].map(i => 500 + i * 150).sort((a, b) => Math.abs(b - 500) - Math.abs(a - 500)).map(row).join('');
+  const sea = T.sea ? `<rect x="0" y="108" width="1000" height="22" fill="#2f7f95" fill-opacity=".55"/><g stroke="#f6e2a6" stroke-opacity=".35" fill="none" stroke-width="1.2">${[0, 1, 2, 3, 4, 5].map(i => `<path d="M${i * 170 - 20} ${116 + (i % 3) * 5}q16-6 32 0t32 0t32 0"/>`).join('')}</g><path d="M650 112 C690 84 740 78 800 96 C840 108 870 112 900 112Z" fill="#16324a"/>` : '';
+  const cyp = [[96, 118], [124, 124], [878, 116], [906, 122]].map(([x, y]) => `<path d="M${x} ${y + 40} C${x - 9} ${y + 14} ${x - 4} ${y - 10} ${x} ${y - 26} C${x + 4} ${y - 10} ${x + 9} ${y + 14} ${x} ${y + 40}Z" fill="#0a0d08" fill-opacity=".85"/>`).join('');
+  return `<svg viewBox="0 0 1000 236" preserveAspectRatio="xMidYMid slice" role="presentation"><defs>
+    <linearGradient id="hs" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${T.sky[0]}"/><stop offset=".55" stop-color="${T.sky[1]}"/><stop offset="1" stop-color="${T.sky[2]}"/></linearGradient>
+    <radialGradient id="hg"><stop offset="0" stop-color="${T.sun}" stop-opacity=".95"/><stop offset=".3" stop-color="${T.sun}" stop-opacity=".3"/><stop offset="1" stop-color="${T.sun}" stop-opacity="0"/></radialGradient>
+    <linearGradient id="vg" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#1f4a22"/><stop offset="1" stop-color="#4f8a3a"/></linearGradient></defs>
+    <rect width="1000" height="236" fill="url(#hs)"/><circle cx="745" cy="78" r="140" fill="url(#hg)"/><circle cx="745" cy="78" r="24" fill="${T.sun}"/>
+    <path d="M0 112 C110 78 220 86 340 100 C460 114 560 80 690 84 C800 88 900 104 1000 92 V150 H0Z" fill="${T.far}"/>${sea}
+    <path d="M0 126 C140 104 300 112 440 122 C580 132 700 108 840 114 C920 118 960 124 1000 122 V236 H0Z" fill="${T.mid}"/>
+    ${cyp}${rows}</svg>`;
 }
 const dishesOf = {};
 ALLR.forEach(r => [...r.labels.filter(l => l.listed).map(l => l.name), ...r.more].forEach(id => { (dishesOf[id] = dishesOf[id] || []).includes(r) || dishesOf[id].push(r); }));
