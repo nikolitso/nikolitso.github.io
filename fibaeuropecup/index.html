@@ -76,21 +76,27 @@ tr.click{cursor:pointer} tr.click:hover td{background:rgba(212,175,55,.08)}
 td.big{color:var(--bg);background:var(--gold);font-weight:700}
 /* Vs Market group tables */
 h2.mkh{font:600 21px var(--serif);margin:38px 0 10px;padding-bottom:8px;border-bottom:1px solid var(--line)}
-table.mkt{table-layout:fixed;width:100%;min-width:1500px;border-collapse:separate;border-spacing:0;font-variant-numeric:tabular-nums}
-table.mkt th{font:500 10.5px var(--mono);letter-spacing:.09em;color:var(--muted);text-transform:uppercase;vertical-align:bottom;padding:6px 12px 9px;border-bottom:1px solid var(--line);white-space:nowrap;overflow:visible}
+table.mkt{table-layout:fixed;width:100%;border-collapse:separate;border-spacing:0;font-variant-numeric:tabular-nums}
+table.mkt th{font:500 10.5px var(--mono);letter-spacing:.04em;color:var(--muted);text-transform:uppercase;vertical-align:bottom;padding:6px 8px 9px;border-bottom:1px solid var(--line);white-space:nowrap;overflow:visible}
 table.mkt tr.mkgrp th{border-bottom:0;padding:0 12px 2px;height:16px}
-table.mkt th.grp{color:var(--gold);text-align:center;font-size:10px;letter-spacing:.14em}
+table.mkt th.grp{color:var(--gold);text-align:center;font-size:10px;letter-spacing:.08em}
 table.mkt th.grp span{display:block;border-bottom:1px solid color-mix(in srgb,var(--gold) 45%,transparent);padding-bottom:4px}
-table.mkt td{padding:11px 12px;border-bottom:1px solid color-mix(in srgb,var(--line) 55%,transparent);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+table.mkt td{padding:11px 8px;border-bottom:1px solid color-mix(in srgb,var(--line) 55%,transparent);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 table.mkt td.n,table.mkt th.n{text-align:right;font-family:var(--mono);font-size:13.5px}
 table.mkt td.n b{font-weight:600}
+/* sort arrow: after the label on Team, just under the label on number columns (adds no width) */
+table.mkt th .ar{font-style:normal;font-size:9px;margin-left:5px}
+table.mkt th.n.sort{position:relative}
+table.mkt th.n .ar{position:absolute;right:8px;bottom:-1px;margin:0;font-size:8px;line-height:1}
 table.mkt .tl{text-align:left}
-table.mkt .sec0{border-left:1px solid color-mix(in srgb,var(--line) 80%,transparent);padding-left:16px}
+table.mkt .sec0{border-left:1px solid color-mix(in srgb,var(--line) 80%,transparent);padding-left:10px}
 table.mkt tr.click td{transition:background .12s}
 table.mkt tr.click:hover td{background:color-mix(in srgb,var(--gold) 6%,transparent)}
 table.mkt td.tl b{font-weight:600}
 table.mkt .caret{display:inline-block;width:14px;color:var(--muted);font-size:11px}
-table.mkt td.rd{white-space:normal;padding-top:8px;padding-bottom:8px}
+table.mkt td.rd{white-space:normal;padding-top:8px;padding-bottom:8px;padding-right:2px}
+body.wide table.mkt .pill{padding:2px 7px;margin-right:4px}
+@media (min-width:1100px){body.wide .wrap{padding-left:16px;padding-right:16px}}   /* Vs Market: room for every column at 1200px */
 table.mkt th.rd{padding-left:16px}
 .pill{display:inline-block;margin:2px 6px 2px 0;padding:2px 9px;border-radius:999px;font:500 12px var(--body);line-height:1.5;border:1px solid transparent;white-space:nowrap}
 .pill b{font:600 11.5px var(--mono);margin-left:2px}
@@ -99,6 +105,10 @@ table.mkt th.rd{padding-left:16px}
 .pill.o{color:var(--gold);background:color-mix(in srgb,var(--gold) 10%,transparent);border-color:color-mix(in srgb,var(--gold) 26%,transparent)}
 table.mkt tr.mkgames td{white-space:normal;background:color-mix(in srgb,var(--panel) 70%,transparent)}
 table.mkt tr.mkgames table{table-layout:auto;width:auto;min-width:0}
+table.mkt tr.mkgames table td{white-space:nowrap;overflow:visible;padding:8px 6px}
+table.mkt tr.mkgames table td.n{font-size:12.5px}
+table.mkt tr.mkgames table th{padding:6px 6px 8px}
+table.mkt tr.mkgames table td:nth-child(3){white-space:normal;min-width:150px}   /* only the opponent may wrap */
 td.better{color:var(--win)!important;font-weight:700}td.worse{color:var(--loss)!important}
 th.sort{cursor:pointer;user-select:none}th.sort:hover,th.sort.on{color:var(--gold)}
 .rogrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px;margin-top:16px}
@@ -949,14 +959,14 @@ function mkGames(x){
       <td class="n">${g.bt === null ? '–' : g.bt.toFixed(1)}</td><td class="n">${tot}</td><td class="n gap">${ou} ${g.bt === null ? '' : `<span class="tag">${one(tot - g.bt)}</span>`}</td>
       <td class="n tag" title="Points the lines implied for the club and its opponent">${eo === null ? '–' : `${eo.toFixed(1)}–${ep.toFixed(1)}`}</td>${pv(eo === null ? null : own - eo, true)}${pv(ep === null ? null : them - ep, false)}</tr>`;
   }).join('');
-  return `<tr class="mkgames"><td colspan="13" style="padding:4px 0 14px 22px;background:var(--panel)">
+  return `<tr class="mkgames"><td colspan="14" style="padding:4px 0 14px 10px;background:var(--panel)">
     <table class="fx" style="margin:0"><tr><th class="n">Date</th><th>Round</th><th>Opponent</th><th class="n">Score</th>
       <th class="n gap" title="The club's handicap: + = favourite by that many">Book hcp</th><th class="n" title="The club's margin">Result</th><th class="n gap" title="Against the handicap, with the difference">Handicap</th>
       <th class="n">Book total</th><th class="n">Total</th><th class="n gap" title="Against the total line, with the difference">Over / under</th>
       <th class="n" title="Points the two lines implied: own = (total + handicap) / 2, opponent = (total − handicap) / 2">Lines said</th><th class="n" title="Own points minus what the lines implied">Own</th><th class="n" title="Opponent points minus what the lines implied">Opp</th></tr>${rows}</table></td></tr>`;
 }
 // one set of column widths for every group table, so the columns line up down the page
-const MK_COLS = '<colgroup><col style="width:240px"><col style="width:52px"><col style="width:92px">' + ['88', '88', '88', '108', '88', '88', '80', '108', '80', '80'].map(w => `<col style="width:${w}px">`).join('') + '<col></colgroup>';
+const MK_COLS = '<colgroup><col style="width:218px"><col style="width:38px"><col style="width:68px">' + ['62', '60', '68', '80', '62', '60', '56', '80', '60', '58'].map(w => `<col style="width:${w}px">`).join('') + '<col></colgroup>';
 // market rating: line = r[home] - r[away] + home advantage over every game with a line, ridge-shrunk toward 0
 // (lambda 1, home advantage not shrunk), centred on the average club; solved by Gaussian elimination
 function mkRatings(games){
@@ -1010,7 +1020,7 @@ function renderMarket(){
   const col = (v, lim) => v === null ? '' : v >= lim ? 'w' : v <= -lim ? 'l' : 'tag';
   const {k, dir} = mkSort;
   const val = (x, c) => c === 'team' ? x.team : c === 'cov' ? (x.n ? x.w / x.n : 0) : c === 'ou' ? (x.tn ? x.o / x.tn : 0) : c === 'vs' ? x.vsS : (x[c] ?? -999);
-  const th = (c, label, cls, title, extra = '') => `<th class="${cls} sort${c === k ? ' on' : ''}" data-k="${c}"${extra}${title ? ` title="${title}"` : ''}>${label}${c === k ? (dir > 0 ? ' ▲' : ' ▼') : ''}</th>`;
+  const th = (c, label, cls, title, extra = '') => `<th class="${cls} sort${c === k ? ' on' : ''}" data-k="${c}"${extra}${title ? ` title="${title}"` : ''}>${label}${c === k ? `<i class="ar">${dir > 0 ? '▲' : '▼'}</i>` : ''}</th>`;
   const head = `<tr class="mkgrp"><th></th><th></th><th></th><th colspan="4" class="grp sec"><span>Handicap</span></th><th colspan="4" class="grp sec"><span>Total</span></th><th colspan="2" class="grp sec" title="How far the club's own points and its opponents' points were from what the two lines implied"><span>Points vs line</span></th><th></th></tr>
     <tr>${th('team', 'Team', 'tl')}${th('n', 'GP', 'n', 'Games with a line')}${th('mr', 'Market', 'n sec0', 'Market rating: points better (+) or worse (−) than an average club on a neutral court, as the bookmaker lines rate it')}
       ${th('bh', 'Book', 'n sec0', 'Average bookmaker handicap for the club, per game (+ = favourite)')}${th('rm', 'Result', 'n', 'Average real margin for the club, per game')}${th('cov', 'Covered', 'n', 'Beat the handicap – did not (pushes after)')}${th('vs', 'Vs line', 'n', 'Real margin minus the margin the handicap expected, per game: above 0 = underrated')}
