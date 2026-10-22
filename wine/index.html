@@ -495,54 +495,115 @@ function renderWineries() {
 }
 const openEstates = new Set();
 
-const SEASONS = {
-  autumn: {en: 'Autumn', el: 'Φθινόπωρο', icon: '<path d="M12 21c-5-3-8-8-6-15 4 0 8 1 10 5 2 4 0 8-4 10zM12 21c0-5 1-8 4-11"/>',
-    title: {en: 'Autumn, in the glass', el: 'Το φθινόπωρο στο ποτήρι'},
-    lede: {en: 'Cooler evenings call for structure: savoury reds for mushrooms, game and slow-cooked meat, and a round white for roast chicken and pies.', el: 'Οι δροσερές βραδιές ζητούν δομή: γευστικά κόκκινα για μανιτάρια, κυνήγι και αργομαγειρεμένο κρέας, και ένα στρογγυλό λευκό για ψητό κοτόπουλο και πίτες.'},
+const MONTHS = [
+  {en: 'January', el: 'Ιανουάριος', icon: 'snow',
+    title: {en: 'January, soup and slow cooking', el: 'Ιανουάριος, σούπες και αργό μαγείρεμα'},
+    lede: {en: 'After the feasts, the table turns to legumes, soups and pork with celery: wines with warmth and a little structure.', el: 'Μετά τις γιορτές, το τραπέζι γυρίζει σε όσπρια, σούπες και χοιρινό με σέλινο: κρασιά με ζεστασιά και λίγη δομή.'},
+    slots: [{col: 'Red', g: ['Agiorgitiko'], why: {en: 'Pork with celery, stews, hearty pasta', el: 'Χοιρινό με σέλινο, μαγειρευτά, χορταστικά ζυμαρικά'}},
+            {col: 'Red', g: ['Xinomavro', 'Mavrodaphne', 'Kotsifali'], why: {en: 'Beef stew, braised meat, aged cheese', el: 'Μοσχάρι κοκκινιστό, κρέας στην κατσαρόλα, παλαιωμένο τυρί'}},
+            {col: 'White', g: ['Vidiano', 'Robola', 'Chardonnay'], why: {en: 'Fish soup, baked fish, leek pies', el: 'Ψαρόσουπα, ψάρι στο φούρνο, πρασόπιτα'}}],
+    cats: ['Soups & stews', 'Meat & poultry', 'Pies']},
+  {en: 'February', el: 'Φεβρουάριος', icon: 'snow',
+    title: {en: 'February, the Carnival table', el: 'Φεβρουάριος, το τραπέζι της Αποκριάς'},
+    lede: {en: 'Grilled meats, sausages and cheese: generous reds, and a rosé that keeps up with the smoke.', el: 'Ψητά, λουκάνικα και τυριά: γενναιόδωρα κόκκινα και ένα ροζέ που αντέχει τον καπνό.'},
+    slots: [{col: 'Red', g: ['Agiorgitiko', 'Syrah', 'Mavrodaphne'], why: {en: 'Grilled pork, sausages, souvlaki', el: 'Ψητό χοιρινό, λουκάνικα, σουβλάκι'}},
+            {col: 'Red', g: ['Xinomavro', 'Limniona', 'Kotsifali'], why: {en: 'Grilled lamb, aged graviera', el: 'Ψητό αρνί, παλαιωμένη γραβιέρα'}},
+            {col: 'Rosé', g: [], why: {en: 'Cheese, cold cuts, grilled chicken', el: 'Τυριά, αλλαντικά, ψητό κοτόπουλο'}}],
+    cats: ['Meat & poultry', 'Cheeses', 'Pies']},
+  {en: 'March', el: 'Μάρτιος', icon: 'flower',
+    title: {en: 'March, Clean Monday and the first green', el: 'Μάρτιος, Καθαρά Δευτέρα και τα πρώτα χόρτα'},
+    lede: {en: 'Taramasalata, seafood, wild greens and lenten dishes: the moment for crisp, mineral whites.', el: 'Ταραμοσαλάτα, θαλασσινά, χόρτα και νηστίσιμα: η στιγμή για δροσερά, ορυκτά λευκά.'},
+    slots: [{col: 'White', g: ['Assyrtiko'], why: {en: 'Seafood, taramasalata, octopus', el: 'Θαλασσινά, ταραμοσαλάτα, χταπόδι'}},
+            {col: 'White', g: ['Malagousia', 'Moschofilero', 'Roditis', 'Athiri'], why: {en: 'Wild greens, pies, lenten dishes', el: 'Χόρτα, πίτες, νηστίσιμα πιάτα'}},
+            {col: 'Rosé', g: [], why: {en: 'Meze, tomato dishes, olives', el: 'Μεζέδες, πιάτα με ντομάτα, ελιές'}}],
+    cats: ['Fish & seafood', 'Dips & small dishes', 'Salads & vegetables']},
+  {en: 'April', el: 'Απρίλιος', icon: 'flower',
+    title: {en: 'April, lamb and Easter', el: 'Απρίλιος, αρνί και Πάσχα'},
+    lede: {en: 'The Easter table: roast and spit-roasted lamb, magiritsa, cheese pies. Supple reds, fresh whites and a dry rosé all find their place.', el: 'Το πασχαλινό τραπέζι: αρνί στο φούρνο και στη σούβλα, μαγειρίτσα, τυρόπιτες. Εύπλαστα κόκκινα, φρέσκα λευκά και ένα ξηρό ροζέ βρίσκουν όλα τη θέση τους.'},
+    slots: [{col: 'Red', g: ['Agiorgitiko', 'Xinomavro', 'Mavrodaphne'], why: {en: 'Roast lamb, spit-roast, kokoretsi', el: 'Αρνί ψητό, στη σούβλα, κοκορέτσι'}},
+            {col: 'White', g: ['Malagousia', 'Assyrtiko', 'Vidiano', 'Moschofilero'], why: {en: 'Cheese pies, salads, magiritsa', el: 'Τυρόπιτες, σαλάτες, μαγειρίτσα'}},
+            {col: 'Rosé', g: [], why: {en: 'The long Easter lunch', el: 'Το μακρύ πασχαλινό τραπέζι'}}],
+    cats: ['Meat & poultry', 'Pies', 'Salads & vegetables']},
+  {en: 'May', el: 'Μάιος', icon: 'flower',
+    title: {en: 'May, fresh and green', el: 'Μάιος, φρέσκος και πράσινος'},
+    lede: {en: 'Artichokes, asparagus, fresh cheeses and herb pies: aromatic whites with lively acidity.', el: 'Αγκινάρες, σπαράγγια, φρέσκα τυριά και πίτες με χόρτα: αρωματικά λευκά με ζωηρή οξύτητα.'},
+    slots: [{col: 'White', g: ['Malagousia', 'Sauvignon Blanc'], why: {en: 'Artichokes, asparagus, green salads', el: 'Αγκινάρες, σπαράγγια, πράσινες σαλάτες'}},
+            {col: 'White', g: ['Moschofilero', 'Vidiano', 'Roditis', 'Athiri'], why: {en: 'Fresh cheeses, herb pies, light pasta', el: 'Φρέσκα τυριά, χορτόπιτες, ελαφριά ζυμαρικά'}},
+            {col: 'Rosé', g: [], why: {en: 'Grilled chicken, spring vegetables', el: 'Ψητό κοτόπουλο, ανοιξιάτικα λαχανικά'}}],
+    cats: ['Salads & vegetables', 'Pies', 'Dips & small dishes']},
+  {en: 'June', el: 'Ιούνιος', icon: 'sun',
+    title: {en: 'June, the first tomatoes', el: 'Ιούνιος, οι πρώτες ντομάτες'},
+    lede: {en: 'Tomato salad, feta, grilled fish and the first cold evenings on the terrace: white and rosé, well chilled.', el: 'Ντοματοσαλάτα, φέτα, ψητά ψάρια και τα πρώτα βράδια στη βεράντα: λευκά και ροζέ, καλά παγωμένα.'},
+    slots: [{col: 'White', g: ['Assyrtiko'], why: {en: 'Grilled fish, shrimp, calamari', el: 'Ψητά ψάρια, γαρίδες, καλαμαράκια'}},
+            {col: 'White', g: ['Malagousia', 'Moschofilero', 'Athiri', 'Vidiano'], why: {en: 'Greek salad, feta, meze', el: 'Χωριάτικη, φέτα, μεζέδες'}},
+            {col: 'Rosé', g: [], why: {en: 'Tomato dishes, gemista, aperitif', el: 'Πιάτα με ντομάτα, γεμιστά, απεριτίφ'}}],
+    cats: ['Salads & vegetables', 'Fish & seafood', 'Dips & small dishes']},
+  {en: 'July', el: 'Ιούλιος', icon: 'sun',
+    title: {en: 'July, in the heat', el: 'Ιούλιος, στον καύσωνα'},
+    lede: {en: 'When it is hot, the wine is light, cold and salty: sea-driven whites, sparkling for the aperitif and a pale rosé.', el: 'Όταν ζεσταίνει, το κρασί θέλει να είναι ελαφρύ, κρύο και αλμυρό: λευκά της θάλασσας, αφρώδες για απεριτίφ και ένα ανοιχτό ροζέ.'},
+    slots: [{col: 'White', g: ['Assyrtiko', 'Athiri', 'Aidani'], why: {en: 'Grilled octopus, seafood, raw fish', el: 'Χταπόδι ψητό, θαλασσινά, ωμά ψάρια'}},
+            {col: 'White', g: [], txt: 'sparkling', why: {en: 'Aperitif, oysters, fried small fish', el: 'Απεριτίφ, στρείδια, τηγανητά ψαράκια'}},
+            {col: 'Rosé', g: [], why: {en: 'Watermelon and feta, salads, meze', el: 'Καρπούζι με φέτα, σαλάτες, μεζέδες'}}],
+    cats: ['Fish & seafood', 'Salads & vegetables', 'Dips & small dishes']},
+  {en: 'August', el: 'Αύγουστος', icon: 'sun',
+    title: {en: 'August, fish on the grill', el: 'Αύγουστος, ψάρια στη σχάρα'},
+    lede: {en: 'Island evenings, grilled fish and shared plates: Assyrtiko for the sea, a rosé for everything else.', el: 'Βράδια στο νησί, ψητά ψάρια και πιάτα για τρεις: Ασύρτικο για τη θάλασσα, ροζέ για όλα τα υπόλοιπα.'},
+    slots: [{col: 'White', g: ['Assyrtiko'], why: {en: 'Grilled sea bream, shellfish, lobster pasta', el: 'Τσιπούρα στη σχάρα, οστρακοειδή, αστακομακαρονάδα'}},
+            {col: 'White', g: ['Vidiano', 'Malagousia', 'Moschofilero', 'Roditis'], why: {en: 'Stuffed vegetables, salads, kakavia', el: 'Γεμιστά, σαλάτες, κακαβιά'}},
+            {col: 'Rosé', g: [], why: {en: 'Grilled chicken, tomato dishes, cheese', el: 'Ψητό κοτόπουλο, πιάτα με ντομάτα, τυριά'}}],
+    cats: ['Fish & seafood', 'Salads & vegetables', 'Meat & poultry']},
+  {en: 'September', el: 'Σεπτέμβριος', icon: 'leaf',
+    title: {en: 'September, the harvest', el: 'Σεπτέμβριος, ο τρύγος'},
+    lede: {en: 'The vintage begins and the evenings cool: a fresh white for the last warm days, then the first light reds with figs, grapes and grilled meat.', el: 'Ο τρύγος ξεκινά και τα βράδια δροσίζουν: ένα φρέσκο λευκό για τις τελευταίες ζεστές μέρες και τα πρώτα ελαφριά κόκκινα με σύκα, σταφύλια και ψητά.'},
+    slots: [{col: 'White', g: ['Assyrtiko', 'Moschofilero', 'Malagousia'], why: {en: 'Late-summer fish, salads, figs and cheese', el: 'Ψάρι του φθινοπώρου, σαλάτες, σύκα με τυρί'}},
+            {col: 'Rosé', g: [], why: {en: 'Grilled chicken, pasta with tomato', el: 'Ψητό κοτόπουλο, ζυμαρικά με ντομάτα'}},
+            {col: 'Red', g: ['Agiorgitiko', 'Limniona', 'Kotsifali'], why: {en: 'Grilled meat, aubergine dishes, sausages', el: 'Ψητά κρέατα, μελιτζανοφαγητά, λουκάνικα'}}],
+    cats: ['Meat & poultry', 'Salads & vegetables', 'Fish & seafood']},
+  {en: 'October', el: 'Οκτώβριος', icon: 'leaf',
+    title: {en: 'October, mushrooms and the new wine', el: 'Οκτώβριος, μανιτάρια και νέο κρασί'},
+    lede: {en: 'Mushrooms, the first game and roast chicken: structured reds for the cooler evenings, and a round white for pies and poultry.', el: 'Μανιτάρια, τα πρώτα κυνήγια και ψητό κοτόπουλο: δομημένα κόκκινα για τις δροσερές βραδιές και ένα στρογγυλό λευκό για πίτες και πουλερικά.'},
     slots: [{col: 'Red', g: ['Xinomavro'], why: {en: 'Wild mushrooms, game, aged cheese', el: 'Άγρια μανιτάρια, κυνήγι, παλαιωμένο τυρί'}},
-            {col: 'Red', g: ['Agiorgitiko', 'Mavrodaphne', 'Mavrotragano'], why: {en: 'Slow-cooked beef, lamb, first chestnuts', el: 'Αργομαγειρεμένο μοσχάρι, αρνί, τα πρώτα κάστανα'}},
+            {col: 'Red', g: ['Agiorgitiko', 'Mavrodaphne', 'Mavrotragano'], why: {en: 'Slow-cooked beef and lamb', el: 'Αργομαγειρεμένο μοσχάρι και αρνί'}},
             {col: 'White', g: ['Vidiano', 'Chardonnay', 'Roditis', 'Assyrtiko'], why: {en: 'Roast chicken, pumpkin, pies', el: 'Ψητό κοτόπουλο, κολοκύθα, πίτες'}}],
     cats: ['Meat & poultry', 'Soups & stews', 'Pies']},
-  winter: {en: 'Winter', el: 'Χειμώνας', icon: '<path d="M12 3v18M4.5 7.5l15 9M19.5 7.5l-15 9M9.5 4.5 12 7l2.5-2.5M9.5 19.5 12 17l2.5 2.5"/>',
-    title: {en: 'Winter, by the table', el: 'Ο χειμώνας στο τραπέζι'},
-    lede: {en: 'Deep, warming reds for stews and the Sunday roast, and a textured white for the fish and the pies of the cold months.', el: 'Βαθιά, ζεστά κόκκινα για μαγειρευτά και κυριακάτικο ψητό, και ένα λευκό με υφή για τα ψάρια και τις πίτες του χειμώνα.'},
-    slots: [{col: 'Red', g: ['Agiorgitiko', 'Xinomavro'], why: {en: 'Stews, roast pork, hearty pasta', el: 'Μαγειρευτά, ψητό χοιρινό, χορταστικά ζυμαρικά'}},
-            {col: 'Red', g: ['Mavrodaphne', 'Mavrotragano', 'Kotsifali', 'Mandilaria'], why: {en: 'Lamb, game, strong cheese', el: 'Αρνί, κυνήγι, δυνατά τυριά'}},
-            {col: 'White', g: ['Vidiano', 'Robola', 'Chardonnay', 'Assyrtiko'], why: {en: 'Baked fish, leek pies, soups', el: 'Ψάρι στο φούρνο, πίτες με πράσο, σούπες'}}],
-    cats: ['Soups & stews', 'Meat & poultry', 'Pies']},
-  spring: {en: 'Spring', el: 'Άνοιξη', icon: '<circle cx="12" cy="12" r="2.5"/><path d="M12 9.5C12 6 10.5 4 12 3c1.5 1 0 3 0 6.5zM14.5 12c3.5 0 5.5-1.5 6.5 0-1 1.5-3 0-6.5 0zM12 14.5c0 3.5 1.5 5.5 0 6.5-1.5-1 0-3 0-6.5zM9.5 12C6 12 4 13.5 3 12c1-1.5 3 0 6.5 0z"/>',
-    title: {en: 'Spring, fresh and green', el: 'Άνοιξη, φρέσκια και πράσινη'},
-    lede: {en: 'Green salads, young vegetables and the first pies of the year want aromatic, lively whites and a pale rosé.', el: 'Πράσινες σαλάτες, τρυφερά λαχανικά και οι πρώτες πίτες της χρονιάς ζητούν αρωματικά, ζωηρά λευκά και ένα ανοιχτό ροζέ.'},
-    slots: [{col: 'White', g: ['Malagousia', 'Sauvignon Blanc'], why: {en: 'Green salads, asparagus, herb pies', el: 'Πράσινες σαλάτες, σπαράγγια, πίτες με χόρτα'}},
-            {col: 'White', g: ['Moschofilero', 'Vidiano', 'Roditis', 'Athiri'], why: {en: 'Fresh cheeses, light pasta, meze', el: 'Φρέσκα τυριά, ελαφριά ζυμαρικά, μεζέδες'}},
-            {col: 'Rosé', g: [], why: {en: 'Easter table, grilled lamb chops', el: 'Πασχαλινό τραπέζι, αρνίσια παϊδάκια'}}],
-    cats: ['Salads & vegetables', 'Pies', 'Dips & small dishes']},
-  summer: {en: 'Summer', el: 'Καλοκαίρι', icon: '<circle cx="12" cy="12" r="4"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1"/>',
-    title: {en: 'Summer, well chilled', el: 'Καλοκαίρι, καλά παγωμένο'},
-    lede: {en: 'Sea, salt and sun: crisp Assyrtiko for the grill and the fish, a mineral white for meze, and a dry rosé for the long evenings.', el: 'Θάλασσα, αλάτι και ήλιος: δροσερό Ασύρτικο για τη σχάρα και τα ψάρια, ένα ορυκτό λευκό για μεζέδες και ένα ξηρό ροζέ για τα μακριά βράδια.'},
-    slots: [{col: 'White', g: ['Assyrtiko'], why: {en: 'Grilled fish, calamari, shellfish', el: 'Ψητό ψάρι, καλαμαράκια, οστρακοειδή'}},
-            {col: 'White', g: ['Moschofilero', 'Malagousia', 'Athiri', 'Vidiano'], why: {en: 'Salads, meze, feta', el: 'Σαλάτες, μεζέδες, φέτα'}},
-            {col: 'Rosé', g: [], why: {en: 'Tomato dishes, grilled chicken, aperitif', el: 'Πιάτα με ντομάτα, ψητό κοτόπουλο, απεριτίφ'}}],
-    cats: ['Fish & seafood', 'Salads & vegetables', 'Dips & small dishes']},
+  {en: 'November', el: 'Νοέμβριος', icon: 'leaf',
+    title: {en: 'November, chestnuts and game', el: 'Νοέμβριος, κάστανα και κυνήγι'},
+    lede: {en: 'New olive oil, chestnuts, game and the first stews: deep reds with tannin and spice, and a white with body.', el: 'Νέο λάδι, κάστανα, κυνήγι και τα πρώτα μαγειρευτά: βαθιά κόκκινα με τανίνη και μπαχαρικά και ένα λευκό με σώμα.'},
+    slots: [{col: 'Red', g: ['Mavrotragano', 'Xinomavro', 'Mavrodaphne'], why: {en: 'Game, wild boar, chestnuts', el: 'Κυνήγι, αγριογούρουνο, κάστανα'}},
+            {col: 'Red', g: ['Agiorgitiko', 'Kotsifali', 'Syrah', 'Cabernet Sauvignon'], why: {en: 'Beef stew, lamb kleftiko, hard cheese', el: 'Μοσχάρι κοκκινιστό, αρνί κλέφτικο, σκληρά τυριά'}},
+            {col: 'White', g: ['Chardonnay', 'Vidiano', 'Roditis', 'Assyrtiko'], why: {en: 'Baked fish, pies, mushrooms', el: 'Ψάρι στο φούρνο, πίτες, μανιτάρια'}}],
+    cats: ['Meat & poultry', 'Soups & stews', 'Pies']},
+  {en: 'December', el: 'Δεκέμβριος', icon: 'snow',
+    title: {en: 'December, the festive table', el: 'Δεκέμβριος, το γιορτινό τραπέζι'},
+    lede: {en: 'Roast pork and turkey, cheeses and a toast at midnight: a sparkling glass to open, then reds with generous fruit.', el: 'Ψητό χοιρινό και γαλοπούλα, τυριά και ένα τσούγκρισμα τα μεσάνυχτα: ένα αφρώδες για να ανοίξει το τραπέζι και μετά κόκκινα με γενναιόδωρο φρούτο.'},
+    slots: [{col: 'White', g: [], txt: 'sparkling', why: {en: 'To open the table, cheese, aperitif', el: 'Για να ανοίξει το τραπέζι, τυριά, απεριτίφ'}},
+            {col: 'Red', g: ['Agiorgitiko', 'Xinomavro', 'Mavrodaphne'], why: {en: 'Roast pork, turkey, stuffed meats', el: 'Χοιρινό ψητό, γαλοπούλα, γεμιστά κρεατικά'}},
+            {col: 'White', g: ['Vidiano', 'Chardonnay', 'Robola', 'Assyrtiko'], why: {en: 'Baked fish, cheese pies', el: 'Ψάρι στο φούρνο, τυρόπιτες'}}],
+    cats: ['Meat & poultry', 'Pies', 'Soups & stews']},
+];
+const SEASON_ICONS = {
+  snow: '<path d="M12 3v18M4.5 7.5l15 9M19.5 7.5l-15 9M9.5 4.5 12 7l2.5-2.5M9.5 19.5 12 17l2.5 2.5"/>',
+  flower: '<circle cx="12" cy="12" r="2.5"/><path d="M12 9.5C12 6 10.5 4 12 3c1.5 1 0 3 0 6.5zM14.5 12c3.5 0 5.5-1.5 6.5 0-1 1.5-3 0-6.5 0zM12 14.5c0 3.5 1.5 5.5 0 6.5-1.5-1 0-3 0-6.5zM9.5 12C6 12 4 13.5 3 12c1-1.5 3 0 6.5 0z"/>',
+  sun: '<circle cx="12" cy="12" r="4"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1"/>',
+  leaf: '<path d="M12 21c-5-3-8-8-6-15 4 0 8 1 10 5 2 4 0 8-4 10zM12 21c0-5 1-8 4-11"/>',
 };
-function seasonKey() {
-  const q = new URLSearchParams(location.search).get('season');
-  if (q && SEASONS[q]) return q;
-  const m = new Date().getMonth() + 1;
-  return m >= 9 && m <= 11 ? 'autumn' : m === 12 || m <= 2 ? 'winter' : m <= 5 ? 'spring' : 'summer';
+function monthIndex() {
+  const q = parseInt(new URLSearchParams(location.search).get('month'), 10);
+  return q >= 1 && q <= 12 ? q - 1 : new Date().getMonth();
 }
 function seasonHtml() {
-  const k = seasonKey(), S = SEASONS[k], now = new Date(), week = Math.floor((now - new Date(now.getFullYear(), 0, 1)) / 6048e5);
-  const hash = id => { let h = week * 31; for (const c of id) h = (h * 33 + c.charCodeAt(0)) % 9973; return h % 4; };
+  const mi = monthIndex(), S = MONTHS[mi], now = new Date(), week = Math.floor((now - new Date(now.getFullYear(), 0, 1)) / 6048e5);
+  const hash = id => { let h = week * 31 + mi * 101; for (const c of id) h = (h * 33 + c.charCodeAt(0)) % 9973; return h % 7; };
   const used = new Set(), picks = [];
+  const isSparkling = w => /(^|[^-\w])sparkling|brut/i.test(w.palate + ' ' + w.nose + ' ' + w.wine) && !/semi-sparkling/i.test(w.palate);
   S.slots.forEach(sl => {
-    const pool = W.filter(w => colourKey(w) === sl.col && !used.has(w.winery) && (!sl.g.length || sl.g.some(g => w.vars.includes(g))));
-    const score = w => (D.favs.includes(w.winery) ? 4 : 0) + (w.pairs ? 2 : 0) + (Object.values(D.tops).includes(w.id) ? 2 : 0) + hash(w.id);
+    const pool = W.filter(w => colourKey(w) === sl.col && !used.has(w.winery) && (!sl.g.length || sl.g.some(g => w.vars.includes(g))) && (sl.txt === 'sparkling' ? isSparkling(w) : !isSparkling(w)));
+    const score = w => (D.favs.includes(w.winery) ? 3 : 0) + (w.pairs ? 2 : 0) + (Object.values(D.tops).includes(w.id) ? 1 : 0) + hash(w.id);
     const best = pool.sort((a, b) => score(b) - score(a))[0];
     if (best) { used.add(best.winery); picks.push([best, sl]); }
   });
-  const dishes = S.cats.map((c, i) => { const pool = R.filter(r => r.category === c); return pool.length ? pool[(week + i * 3) % pool.length] : null; }).filter(Boolean);
-  return `<section class="season"><div class="skick"><svg viewBox="0 0 24 24" aria-hidden="true">${S.icon}</svg>${esc(t('inSeason'))} · ${esc(S[lang])}</div>
+  const dishes = S.cats.map((c, i) => { const pool = ALLR.filter(r => r.category === c); return pool.length ? pool[(week + i * 3) % pool.length] : null; }).filter(Boolean);
+  return `<section class="season"><div class="skick"><svg viewBox="0 0 24 24" aria-hidden="true">${SEASON_ICONS[S.icon]}</svg>${esc(t('inSeason'))} · ${esc(S[lang])}</div>
     <h2>${esc(S.title[lang])}</h2><p class="slede">${esc(S.lede[lang])}</p>
     <div class="spicks">${picks.map(([w, sl]) => `<div class="spick"><div class="sw">${esc(sl.why[lang])}</div><h3>${bottle(w)}<a class="wl" data-wine="${esc(w.id)}">${esc(L(w, 'name'))}</a></h3>
       <div class="meta">${esc(L(w, 'winery'))} · ${esc(L(w, 'region'))}${L(w, 'grapes') ? ' · ' + esc(L(w, 'grapes')) : ''}</div></div>`).join('')}</div>
