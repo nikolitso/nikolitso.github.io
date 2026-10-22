@@ -96,11 +96,11 @@ h2{font:500 clamp(26px,4vw,32px)/1.2 var(--display);color:var(--cream);margin:52
 .profile li b{font:var(--label);letter-spacing:.14em;text-transform:uppercase;color:var(--gold);padding-top:6px}
 @media(max-width:560px){.profile li{grid-template-columns:1fr}}
 [hidden]{display:none!important}
-.mapwrap{position:relative;max-width:860px;margin:28px auto 0}
+.mapwrap{position:relative;width:min(1240px,calc(100vw - 56px));left:50%;transform:translateX(-50%);margin:28px 0 0}
 .gmap{width:100%;height:auto;display:block;filter:drop-shadow(0 12px 30px rgba(0,0,0,.35))}
-.gmap .lbl{fill:var(--cream);font:600 14px var(--body);paint-order:stroke;stroke:#1a0d0f;stroke-width:4px;stroke-linejoin:round;pointer-events:none}
+.gmap .lbl{fill:var(--cream);font:600 10.5px var(--body);paint-order:stroke;stroke:#1a0d0f;stroke-width:3px;stroke-linejoin:round;pointer-events:none}
 .gmap .pt.on + .lbl{fill:var(--gold2)}
-@media(max-width:640px){.gmap .lbl{display:none}}
+@media(max-width:640px){.gmap .lbl{display:none}.gmap .pt text{font-size:12px}}
 .gmap .land{fill:rgba(255,246,232,.07);stroke:rgba(226,196,150,.38);stroke-width:1.4;stroke-linejoin:round}
 .gmap .pt{cursor:pointer}
 .gmap .empty circle{fill:transparent;stroke:rgba(226,196,150,.5);stroke-width:1.2;stroke-dasharray:3 2}
@@ -109,7 +109,7 @@ h2{font:500 clamp(26px,4vw,32px)/1.2 var(--display);color:var(--cream);margin:52
 .gmap .pt circle{fill:var(--wine);stroke:var(--gold);stroke-width:1.6;transition:fill .2s,r .2s}
 .gmap .pt:hover circle,.gmap .pt:focus circle{fill:#a23048}
 .gmap .pt.on circle{fill:var(--gold);stroke:var(--cream)}
-.gmap .pt text{fill:var(--cream);font:600 13px var(--body);text-anchor:middle;pointer-events:none}
+.gmap .pt text{fill:var(--cream);font:600 10px var(--body);text-anchor:middle;pointer-events:none}
 .gmap .pt.on text{fill:#1a0d0f}
 @media(min-width:900px){.mapinfo{position:absolute;left:0;bottom:0;max-width:34%}}
 @media(max-width:899px){.mapinfo{margin-top:18px}}
@@ -394,15 +394,48 @@ function listRow(w, rank) {
     <div class="lcol">${pairs ? `<b>${esc(t('pairs'))}</b>${esc(pairs)}` : ''}</div>
     <div class="lcol also">${also ? `<b>${esc(t('also'))}</b>${esc(also)}` : ''}</div></div>`;
 }
+function placeLabels(items, vb) {
+  // greedy label placement: try eight positions around each marker and keep the one that overlaps least
+  const FS = 10.5, H = FS + 3, placed = [], out = {};
+  const hit = (a, b) => Math.max(0, Math.min(a.x2, b.x2) - Math.max(a.x1, b.x1)) * Math.max(0, Math.min(a.y2, b.y2) - Math.max(a.y1, b.y1));
+  const circ = items.map(o => ({x1: o.x - o.rad - 1, y1: o.y - o.rad - 1, x2: o.x + o.rad + 1, y2: o.y + o.rad + 1}));
+  const order = items.map((o, k) => [k, items.filter(q => q !== o && Math.hypot(q.x - o.x, q.y - o.y) < 70).length]).sort((a, b) => b[1] - a[1]);
+  order.forEach(([k]) => {
+    const o = items[k], w = o.text.length * 5.9 + 4, g = o.rad + 3;
+    const cands = [
+      {a: 'start', x: o.x + g, y: o.y + 4, box: [o.x + g, o.y - H / 2 + 1]},
+      {a: 'end', x: o.x - g, y: o.y + 4, box: [o.x - g - w, o.y - H / 2 + 1]},
+      {a: 'middle', x: o.x, y: o.y - g - 2, box: [o.x - w / 2, o.y - g - H + 1]},
+      {a: 'middle', x: o.x, y: o.y + g + 9, box: [o.x - w / 2, o.y + g]},
+      {a: 'start', x: o.x + g * .8, y: o.y - g * .8, box: [o.x + g * .8, o.y - g * .8 - H + 2]},
+      {a: 'end', x: o.x - g * .8, y: o.y - g * .8, box: [o.x - g * .8 - w, o.y - g * .8 - H + 2]},
+      {a: 'start', x: o.x + g * .8, y: o.y + g * .8 + 8, box: [o.x + g * .8, o.y + g * .8]},
+      {a: 'end', x: o.x - g * .8, y: o.y + g * .8 + 8, box: [o.x - g * .8 - w, o.y + g * .8]},
+    ].map((c, idx) => {
+      const b = {x1: c.box[0], y1: c.box[1], x2: c.box[0] + w, y2: c.box[1] + H};
+      let cost = idx * 2;
+      circ.forEach((q, qi) => { if (qi !== k) cost += hit(b, q) * 6; else cost += hit(b, q) * 40; });
+      placed.forEach(q => { cost += hit(b, q) * 8; });
+      if (b.x1 < 2 || b.x2 > vb[0] - 2 || b.y1 < 2 || b.y2 > vb[1] - 2) cost += 4000;
+      return {c, b, cost};
+    }).sort((p, q) => p.cost - q.cost)[0];
+    placed.push(cands.b);
+    out[o.r] = cands.c;
+  });
+  return out;
+}
 function mapHtml() {
   const M = D.map, n = {};
   W.forEach(w => { (n[w.region] = n[w.region] || new Set()).add(w.winery); });
   const nameOf = r => lang === 'el' ? (regionEl[r] || M.el[r] || r) : r;
-  const hollow = Object.keys(M.pts).filter(r => !n[r]).map(r => `<g class="pt empty" data-empty="1"><title>${esc(nameOf(r))}</title><circle cx="${M.pts[r][0]}" cy="${M.pts[r][1]}" r="5.5"/></g>`).join('');
-  const dots = hollow + Object.keys(n).map(r => {
-    const [x, y] = M.pts[r], c = n[r].size, rad = Math.round(8 + Math.sqrt(c) * 2.6), name = nameOf(r);
+  const vb = M.viewBox.split(' ').slice(2).map(Number);
+  const act = Object.keys(n).map(r => ({r, x: M.pts[r][0], y: M.pts[r][1], rad: Math.round(6.5 + Math.sqrt(n[r].size) * 2.1), text: nameOf(r)}));
+  const pos = placeLabels(act, vb);
+  const hollow = Object.keys(M.pts).filter(r => !n[r]).map(r => `<g class="pt empty" data-empty="1"><title>${esc(nameOf(r))}</title><circle cx="${M.pts[r][0]}" cy="${M.pts[r][1]}" r="4.5"/></g>`).join('');
+  const dots = hollow + act.map(o => {
+    const r = o.r, c = n[r].size, name = o.text, l = pos[r];
     return `<g class="pt${state.region === r ? ' on' : ''}" data-region="${esc(r)}" tabindex="0" role="button" aria-label="${esc(name)}, ${c} ${c === 1 ? t('est1') : t('estN')}">
-      <title>${esc(name)} · ${c} ${c === 1 ? t('est1') : t('estN')}</title><circle cx="${x}" cy="${y}" r="${rad}"/><text x="${x}" y="${y + 4.5}">${c}</text></g>${(() => { const l = M.lab[r] || ['start', 14, 4]; return `<text class="lbl" x="${x + l[1]}" y="${y + l[2]}" text-anchor="${l[0]}">${esc(name)}</text>`; })()}`;
+      <title>${esc(name)} · ${c} ${c === 1 ? t('est1') : t('estN')}</title><circle cx="${o.x}" cy="${o.y}" r="${o.rad}"/><text x="${o.x}" y="${o.y + 3.6}">${c}</text></g><text class="lbl" x="${l.x.toFixed(1)}" y="${l.y.toFixed(1)}" text-anchor="${l.a}">${esc(name)}</text>`;
   }).join('');
   const sel = state.region ? nameOf(state.region) : '';
   const cnt = state.region ? n[state.region].size : 0;
