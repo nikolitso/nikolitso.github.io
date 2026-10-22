@@ -286,8 +286,8 @@ const catEl = Object.fromEntries(ALLR.map(r => [r.category, r.el.category]));
 const tagCount = {}, tagEl = {};
 W.forEach(w => w.tags.forEach((x, i) => { tagCount[x] = (tagCount[x] || 0) + 1; tagEl[x] = w.el.tags[i]; }));
 const tags = Object.keys(tagCount).sort((a, b) => tagCount[b] - tagCount[a] || a.localeCompare(b));
-const HASH = {list: '#list', wineries: '#estates', finder: '#finder'};
-let view = location.hash === '#finder' ? 'finder' : location.hash === '#estates' ? 'wineries' : 'list';
+const HASH = {home: '/wine/', list: '#list', wineries: '#estates', finder: '#finder'};
+let view = location.hash === '#finder' ? 'finder' : location.hash === '#estates' ? 'wineries' : location.hash === '#list' ? 'list' : 'home';
 let state = {q: '', cat: '', tag: '', grape: '', region: '', colour: '', variety: ''};
 const G = D.grapes, gByKey = Object.fromEntries(G.map(g => [g.key, g]));
 
@@ -632,14 +632,18 @@ function render() {
   document.documentElement.lang = lang;
   document.title = t('docTitle');
   document.getElementById('kicker').textContent = t('kicker');
-  document.getElementById('title').textContent = t({list: 'listTitle', wineries: 'estatesTitle', finder: 'title'}[view]);
-  document.getElementById('lede').textContent = t({list: 'listLede', wineries: 'estatesLede', finder: 'lede'}[view]);
+  const home = view === 'home';
+  ['title', 'lede'].forEach(id => { document.getElementById(id).hidden = home; });
+  if (!home) {
+    document.getElementById('title').textContent = t({list: 'listTitle', wineries: 'estatesTitle', finder: 'title'}[view]);
+    document.getElementById('lede').textContent = t({list: 'listLede', wineries: 'estatesLede', finder: 'lede'}[view]);
+  }
   document.querySelectorAll('.views button').forEach(b => { b.textContent = t({list: 'viewList', wineries: 'viewEstates', finder: 'viewFinder'}[b.dataset.view]); b.classList.toggle('on', b.dataset.view === view); });
-  document.getElementById('hero').innerHTML = heroSvg(view);
-  document.querySelector('.search').hidden = view === 'wineries';
-  document.getElementById('season').innerHTML = view === 'list' && !(state.q.trim() || state.colour || state.variety || state.region) ? seasonHtml() : '';
+  document.getElementById('hero').innerHTML = heroSvg(home ? 'list' : view);
+  document.querySelector('.search').hidden = view === 'wineries' || home;
+  document.getElementById('season').innerHTML = home ? seasonHtml() : '';
   document.getElementById('finderChips').hidden = view !== 'finder';
-  document.getElementById('listChips').hidden = view === 'finder';
+  document.getElementById('listChips').hidden = view === 'finder' || home;
   ['colourLabel', 'colours', 'varietyLabel', 'varieties', 'wineryLabel', 'wineries'].forEach(id => { document.getElementById(id).hidden = view === 'wineries'; });
   document.getElementById('wineryLabel').textContent = t('winery');
   document.getElementById('varietyLabel').textContent = t('grapes');
@@ -651,6 +655,8 @@ function render() {
   document.getElementById('foot').textContent = t('foot')(W.length, R.length, tags.length);
   document.querySelectorAll('.lang button').forEach(b => b.classList.toggle('on', b.dataset.lang === lang));
 
+  document.querySelector('footer').hidden = home;
+  if (home) { document.getElementById('out').innerHTML = ''; return; }
   if (view !== 'finder') {
     document.getElementById('out').innerHTML = view === 'list' ? renderList() : renderWineries();
     chips(document.getElementById('varieties'), varieties, 'variety', v => lang === 'el' ? D.varietyEl[v] : v, true, true);
@@ -686,7 +692,7 @@ document.addEventListener('toggle', e => { const d = e.target.closest && e.targe
 document.getElementById('q').addEventListener('input', e => { state.q = e.target.value; state.grape = ''; render(); });
 document.addEventListener('click', e => {
   const lg = e.target.closest('.logo');
-  if (lg) { e.preventDefault(); view = 'list'; state = {q: '', cat: '', tag: '', grape: '', region: '', colour: '', variety: ''}; document.getElementById('q').value = ''; try { history.replaceState(null, '', '/wine/'); } catch (x) {} render(); window.scrollTo({top: 0, behavior: 'smooth'}); return; }
+  if (lg) { e.preventDefault(); view = 'home'; state = {q: '', cat: '', tag: '', grape: '', region: '', colour: '', variety: ''}; document.getElementById('q').value = ''; try { history.replaceState(null, '', '/wine/'); } catch (x) {} render(); window.scrollTo({top: 0, behavior: 'smooth'}); return; }
   const vb = e.target.closest('.views button');
   if (vb) { view = vb.dataset.view; state = {q: '', cat: '', tag: '', grape: '', region: '', colour: ''}; document.getElementById('q').value = ''; try { history.replaceState(null, '', HASH[view]); } catch (x) {} render(); return; }
   const pt = e.target.closest('.gmap .pt:not(.empty)');
