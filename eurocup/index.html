@@ -156,12 +156,16 @@ select.peer:focus{outline:2px solid var(--gold)}
 
   <div class="tabs" id="tabs">
     <a href="#view=market" data-view="market" class="on">Vs Market</a>
+    <a href="#view=projections" data-view="projections">Projections</a>
+    <a href="#view=archive" data-view="archive">Archive</a>
     <a href="#view=h2h" data-view="h2h">Head to Head</a>
     <a href="#view=rosters" data-view="rosters">Rosters</a>
     <a href="#view=rankings" data-view="rankings">Country Power Rankings</a>
   </div>
 
   <div id="rkView" hidden></div>
+  <div id="pjView" hidden></div>
+  <div id="arView" hidden></div>
   <div id="mkView"></div>
   <div id="roView" hidden></div>
 
@@ -189,7 +193,7 @@ select.peer:focus{outline:2px solid var(--gold)}
 <script>
 // data files change after every update; a per-minute stamp keeps browsers from showing a cached copy for up to 10 minutes
 (() => { const v = Math.floor(Date.now() / 60000);
-  for (const f of ['data', 'market', 'rosters', 'injuries']) document.write(`<script src="${f}.js?v=${v}"><\/script>`); })();
+  for (const f of ['data', 'market', 'rosters', 'injuries', 'projections', 'odds', 'archive']) document.write(`<script src="${f}.js?v=${v}"><\/script>`); })();
 </script>
 <script>
 const {matches, teams} = window.DATA;
@@ -484,6 +488,103 @@ function renderRosters(){
   $('roSearch').oninput = e => { roQuery = e.target.value; draw(); };
   draw();
 }
+// ---------- Projections: the club-rating model (predict.py) for the next games, against the bookmaker
+// Model: each club's rating from this season's margins (older games fade, half-life 120 days), pulled toward a prior
+// from last season and roster continuity; past margins corrected for missing players; tonight's absences from the
+// injury list. Backtested on 2023-24 to 2025-26 (backtest.py). Independent of the bookmaker lines.
+const sgn = v => (v > 0 ? '+' : v < 0 ? '−' : '') + Math.abs(v).toFixed(1);
+const dayName = d => new Date(d + 'T12:00').toLocaleDateString('en-GB', {weekday:'long', day:'numeric', month:'long'});
+let gapMin = 5;                                                // model-vs-book gaps from this many points are highlighted and judged
+const GAP_DEFAULT = 5;
+const gapSelect = () => `<label>Highlight gaps from <select class="peer gapsel" aria-label="Gap threshold">` +
+  [3, 4, 5, 6, 7, 8, 9].map(k => `<option value="${k}"${k === gapMin ? ' selected' : ''}>${k} pts</option>`).join('') + `</select></label>`;
+const bindGap = (box, rerender) => box.querySelectorAll('select.gapsel').forEach(sel => sel.onchange = () => { gapMin = +sel.value; sync(); rerender(); });
+const BOOK = {};                                               // upcoming lines (odds.js) by "home|away"
+for (const o of (window.ODDS && window.ODDS.list) || []) BOOK[o.h + '|' + o.a] = o;
+const outText = list => list.map(([p, imp, note]) => `${p} <span class="tag">${imp.toFixed(1)}${note ? ' · ' + esc(note) : ''}</span>`).join(', ');
+const gapCell = (v, cls = '') => v === null ? `<td class="n tag${cls}">–</td>` :
+  Math.abs(v) >= gapMin ? `<td class="n big${cls}">${sgn(v)}</td>` : `<td class="n tag${cls}">${sgn(v)}</td>`;
+function renderProjections(){
+  const box = $('pjView');
+  const P = window.PROJ;
+  if (!P || !P.list.length){ box.innerHTML = '<div class="empty">No games in the next days.</div>'; return; }
+  const days = {};
+  for (const g of P.list) (days[g.when.slice(0, 10)] ||= []).push(g);
+  const head = `<tr><th rowspan="2" class="n">Time</th><th rowspan="2">Match</th><th colspan="3" class="grp gap">Model</th><th colspan="2" class="grp gap">Bookmaker</th><th colspan="2" class="grp gap" title="Model minus bookmaker">Model − book</th><th rowspan="2">Out</th></tr>
+    <tr><th class="n" title="Handicap, home minus away">Hcp</th><th class="n">Total</th><th class="n gap" title="Home win chance">Home %</th><th class="n" title="Handicap, home minus away">Hcp</th><th class="n gap">Total</th><th class="n" title="Model handicap minus bookmaker handicap: above 0 = the model likes the home side more">Hcp</th><th class="n gap" title="Model total minus bookmaker total">Total</th></tr>`;
+  const row = g => {
+    const o = BOOK[g.h + '|' + g.a];
+    const out = [...g.outH, ...g.outA];
+    return `<tr><td class="n">${g.when.slice(11)}</td>
+      <td><b>${esc(g.h)}</b> <span class="tag">${esc(code(teams[g.h]))}</span> – <b>${esc(g.a)}</b> <span class="tag">${esc(code(teams[g.a]))}</span></td>
+      <td class="n hcp"><b>${sgn(g.mh)}</b></td><td class="n">${g.mt.toFixed(1)}</td><td class="n gap">${Math.round(g.ph * 100)}%</td>
+      ${o ? `<td class="n" title="${esc(o.src)}">${sgn(o.bh)}</td><td class="n gap">${o.bt === null ? '–' : o.bt.toFixed(1)}</td>` : '<td class="n tag" colspan="2" title="Lines appear a few days before the game">no line yet</td>'}
+      ${o ? gapCell(g.mh - o.bh) + gapCell(o.bt === null ? null : g.mt - o.bt, ' gap') : '<td class="n tag">–</td><td class="n tag gap">–</td>'}
+      <td class="tag">${out.length ? (g.outH.length ? `${esc(g.h)}: ${outText(g.outH)}` : '') + (g.outH.length && g.outA.length ? '; ' : '') + (g.outA.length ? `${esc(g.a)}: ${outText(g.outA)}` : '') : '–'}</td></tr>`;
+  };
+  const ratings = P.ratings.map((x, i) => `<tr><td class="n">${i + 1}</td><td><b>${esc(x.c)}</b> <span class="tag">${esc(code(teams[x.c]))}</span></td>
+    <td class="n hcp"><b>${sgn(x.r)}</b></td><td class="n">${x.g}</td><td class="n">${sgn(x.prior)}</td><td class="n">${Math.round(x.cont * 100)}%</td></tr>`).join('');
+  box.innerHTML = `<div class="note" style="margin-bottom:14px"><b>The model rates every club from this season's results</b>, with older games counting less, starting from last season's rating scaled by how much of the roster stayed (new clubs start a little below average). Past results are corrected for the players each side was missing, and tonight's absences come off the club (the <b>Out</b> column, from the injury list, impact as on the Rosters tab). Home advantage ${sgn(P.hca)}.
+      It never looks at the bookmaker: <b>Model − book</b> is where the two disagree. Backtested on 2023-24 to 2025-26 (451 games with a line): the book was more accurate on average (miss 10.4 points against 10.8), and games 5+ points apart went 54–44 for the model's side, too few to prove an edge. The <a class="back" href="#view=archive" data-go="archive">Archive</a> keeps every projection made before tip-off.</div>
+    <div class="pjbar">${gapSelect()}<span class="tag">Model − book gaps from this size are highlighted.</span></div>` +
+    Object.entries(days).map(([d, list]) => `<h2>${dayName(d)} <span class="tag">${esc(list[0].round)}</span></h2>
+      <div class="scroll"><table class="fx">${head}${list.map(row).join('')}</table></div>`).join('') +
+    `<h2>Club ratings</h2><div class="tag" style="margin-bottom:8px">Points better (+) or worse (−) than an average club on a neutral court, after ${P.games} games this season. Prior = the starting point from last season; continuity = share of last season's minutes played by players still at the club.</div>
+    <div class="scroll"><table class="fx" style="width:auto;min-width:560px"><tr><th class="n">#</th><th>Club</th><th class="n">Rating</th><th class="n">Games</th><th class="n">Prior</th><th class="n" title="Share of last season's minutes played by players still at the club">Continuity</th></tr>${ratings}</table></div>
+    <div class="tag" style="margin-top:14px">Projections updated ${esc(P.updated)}; win chance = the handicap on a normal curve with the backtest's spread of misses (${P.spread} points).</div>`;
+  bindGap(box, renderProjections);
+  box.querySelectorAll('[data-go]').forEach(a => a.onclick = e => { e.preventDefault(); setView(a.dataset.go); sync(); window.scrollTo({top: 0}); });
+}
+// ---------- Archive: every projection as it stood before tip-off, with the result once it is in
+function renderArchive(){
+  const box = $('arView');
+  const list = (window.ARCHIVE && ARCHIVE.list) || [];
+  if (!list.length){ box.innerHTML = '<div class="empty">Nothing archived yet.</div>'; return; }
+  const S = {n: list.length, res: 0, em: 0, eb: 0, tm: 0, tb: 0, tn: 0, w: 0, l: 0, big: 0, cm: 0, cb: 0};
+  const rows = list.map(g => {
+    const r = arResult(g.when.slice(0, 10), g.h, g.a);
+    const gap = g.mh - g.bh, big = Math.abs(gap) >= gapMin;
+    let res = '<td class="n tag gap" colspan="2">pending</td><td class="n tag">–</td><td class="n tag gap">–</td><td class="n tag">–</td>';
+    if (r){
+      S.res++;
+      const m = r[6] - r[7], t = r[6] + r[7], em = Math.abs(m - g.mh), eb = Math.abs(m - g.bh);
+      S.em += em; S.eb += eb;
+      if (g.bt !== null){ S.tn++; S.tm += Math.abs(t - g.mt); S.tb += Math.abs(t - g.bt); }
+      let side = '<td class="n tag">–</td>';
+      if (big){                                                  // the model's side of the line: home covers when gap > 0
+        S.big++;
+        const cov = Math.sign(gap) * (m - g.bh);
+        if (cov > 0) S.w++; else if (cov < 0) S.l++;
+        side = `<td class="n ${cov > 0 ? 'w' : cov < 0 ? 'l' : 'tag'}"><b>${cov > 0 ? 'Covered' : cov < 0 ? 'Missed' : 'Push'}</b></td>`;
+      }
+      const near = em < eb ? 'Model' : em > eb ? 'Book' : 'Tie';
+      if (near === 'Model') S.cm++; else if (near === 'Book') S.cb++;
+      res = `<td class="n gap"><b>${r[6]}–${r[7]}</b>${r[8] === 'AET' ? ' <span class="tag">OT</span>' : ''}</td><td class="n">${sgn(m)}</td>${side}
+        <td class="n gap ${near === 'Model' ? 'w' : near === 'Book' ? 'l' : 'tag'}" title="Model off by ${em.toFixed(1)}, book off by ${eb.toFixed(1)}">${near}</td><td class="n">${t}</td>`;
+    }
+    return {round: g.round, html: `<tr><td class="n">${fmtDate(g.when.slice(0, 10))} <span class="tag">${g.when.slice(11)}</span></td>
+      <td><b>${esc(g.h)}</b> – <b>${esc(g.a)}</b>${g.outH.length || g.outA.length ? ` <span class="tag" title="${esc([...g.outH, ...g.outA].map(x => x[0] + ' (' + x[1] + ')').join(', '))}">· out ${g.outH.length + g.outA.length}</span>` : ''}</td>
+      <td class="n hcp">${sgn(g.mh)}</td><td class="n">${sgn(g.bh)}</td>${gapCell(gap, ' gap')}
+      <td class="n">${g.mt.toFixed(1)}</td><td class="n gap">${g.bt === null ? '–' : g.bt.toFixed(1)}</td>${res}</tr>`};
+  });
+  const rounds = [...new Set(list.map(g => g.round))].sort((x, y) => parseInt(y.replace(/\D/g, '')) - parseInt(x.replace(/\D/g, '')));
+  const card = (t, v, sub) => `<div class="metric"><div class="lbl">${t}</div><div class="big2">${v}</div><div class="tag">${sub}</div></div>`;
+  const vs = (m, b) => `<span class="${m < b ? 'w' : m > b ? 'l' : ''}">${m.toFixed(1)}</span> <span class="tag">vs</span> <span class="${b < m ? 'w' : b > m ? 'l' : ''}">${b.toFixed(1)}</span>`;
+  const summary = `<div class="metrics">
+    ${card('Results in', `${S.res} of ${S.n}`, 'games frozen before tip-off')}
+    ${card('Handicap miss (avg)', S.res ? vs(S.em / S.res, S.eb / S.res) : '–', 'model vs book, points from the real margin; lower is better')}
+    ${card(`Model's side, gaps ${gapMin}+`, S.w + S.l ? `<span class="${S.w * 1.87 > S.w + S.l ? 'w' : 'l'}">${S.w}–${S.l}</span>` : '–', S.w + S.l ? `${Math.round(S.w / (S.w + S.l) * 100)}% (break-even at odds 1.87: 53.5%)` : `no finished game ${gapMin}+ points apart yet`)}
+    ${card('Nearer the margin', S.res ? `${S.cm}–${S.cb}` : '–', 'model – book, every finished game')}
+    ${card('Total miss (avg)', S.tn ? vs(S.tm / S.tn, S.tb / S.tn) : '–', 'model vs book')}
+  </div>`;
+  const head = `<tr><th rowspan="2" class="n">Date</th><th rowspan="2">Match</th><th colspan="3" class="grp gap">Handicap</th><th colspan="2" class="grp gap">Total</th><th colspan="5" class="grp">Result</th></tr>
+    <tr><th class="n">Model</th><th class="n">Book</th><th class="n gap" title="Model minus book">Gap</th><th class="n">Model</th><th class="n gap">Book</th>
+    <th class="n gap">Score</th><th class="n" title="Home minus away">Margin</th><th class="n" title="Only for gaps of ${gapMin}+ points: did the model's side of the line cover?">Model's side</th><th class="n gap" title="Whose handicap was nearer the real margin">Nearer</th><th class="n">Total</th></tr>`;
+  box.innerHTML = `<div class="pjbar">${gapSelect()}<span class="tag">Games further apart than this are highlighted and judged in the cards.</span></div>` + summary +
+    rounds.map(rd => `<h2>${esc(rd)}</h2><div class="scroll"><table class="fx">${head}${rows.filter(x => x.round === rd).map(x => x.html).join('')}</table></div>`).join('') +
+    `<div class="tag" style="margin-top:14px">Every projection is written before tip-off with the bookmaker's line of that moment (Bwin.gr, else Stoiximan.gr, from Flashscore) and the injury list of that moment, then never changed. Hcp is home minus away. The result fills in by itself once the game is in the data.</div>`;
+  bindGap(box, renderArchive);
+}
 // ---------- Vs Market: every Regular Season game's bookmaker line against what happened, by group and club
 let mkSort = {k: 'vs', dir: -1};
 const mkOpen = new Set();                                      // clubs whose games are shown
@@ -553,7 +654,7 @@ function mkRatings(games){
 }
 function renderMarket(){
   const box = $('mkView');
-  // lines from the archive (frozen with a projection) plus market.js (games never archived)
+  // lines from market.js: every played game's line, read from its Flashscore match page
   const games = [], seen = new Set();
   const add = (date, g) => {
     const r = arResult(date, g.h, g.a);
@@ -563,7 +664,6 @@ function renderMarket(){
     games.push({date: r[3], grp: (r[2].match(/^Group (\w)/) || [])[1] || '?', stage: r[2].replace(/^Group (\w) - (\d+)\. Round$/, 'Round $2 · $1'),
       h: g.h, a: g.a, hp: r[6], ap: r[7], ot: r[8] === 'AET', bh: g.bh, bt: g.bt ?? null});
   };
-  for (const sn of (window.ARCHIVE && ARCHIVE.list) || []) for (const g of sn.games) add(sn.date, g);
   for (const g of (window.MARKET && MARKET.list) || []) add(g.date, g);
   if (!games.length){ box.innerHTML = '<div class="empty">No game with a line and a result yet.</div>'; return; }
   const club = {};
@@ -642,10 +742,14 @@ function renderMarket(){
   });
 }
 function setView(v){
-  view = ['market', 'h2h', 'rosters', 'rankings'].includes(v) ? v : 'market';
+  view = ['market', 'projections', 'archive', 'h2h', 'rosters', 'rankings'].includes(v) ? v : 'market';
   document.querySelectorAll('#tabs a').forEach(b => b.classList.toggle('on', b.dataset.view === view));
-  document.body.classList.toggle('wide', view === 'market');
+  document.body.classList.toggle('wide', view === 'market' || view === 'projections' || view === 'archive');
   $('rkView').hidden = view !== 'rankings';
+  $('pjView').hidden = view !== 'projections';
+  $('arView').hidden = view !== 'archive';
+  if (view === 'projections') renderProjections();
+  if (view === 'archive') renderArchive();
   $('mkView').hidden = view !== 'market';
   $('h2hView').hidden = view !== 'h2h';
   $('roView').hidden = view !== 'rosters';
@@ -674,6 +778,7 @@ function sync(){
     if (hSeasons !== PJ_DEFAULT_SEASONS) q.set('seasons', hSeasons || 'all');
     if (!(hStages.size === 1 && hStages.has('Main'))) q.set('stages', PJ_STAGES.filter(x => hStages.has(x)).join(','));
   }
+  if ((view === 'projections' || view === 'archive') && gapMin !== GAP_DEFAULT) q.set('gap', gapMin);
   if (view === 'rankings' && rkSeasons !== PJ_DEFAULT_SEASONS) q.set('seasons', rkSeasons || 'all');
   if (view === 'rankings' && !(rkStages.size === 1 && rkStages.has('Main'))) q.set('stages', PJ_STAGES.filter(x => rkStages.has(x)).join(','));
   history.replaceState(null, '', '#' + q.toString());
@@ -709,6 +814,7 @@ if (p.get('view') === 'rankings'){
   if (hashStages().length) rkStages = new Set(hashStages());
   if (hashSeasons() !== null) rkSeasons = hashSeasons();
 }
+{ const g = +p.get('gap'); if (g >= 3 && g <= 9) gapMin = Math.round(g); }
 render();
 setView(p.get('view'));
 </script>
