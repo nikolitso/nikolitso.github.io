@@ -1,0 +1,716 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EuroCup</title>
+<meta name="description" content="EuroCup by the numbers: every club against the bookmaker lines, head-to-heads by country and club, key players and Elo power rankings, 2015-16 to today.">
+<link rel="canonical" href="https://antonisnikolitsopoulos.com/eurocup/">
+<meta property="og:title" content="EuroCup">
+<meta property="og:description" content="EuroCup by the numbers: every club against the bookmaker lines, head-to-heads by country and club, key players and Elo power rankings, 2015-16 to today.">
+<meta property="og:url" content="https://antonisnikolitsopoulos.com/eurocup/">
+<meta property="og:image" content="https://antonisnikolitsopoulos.com/eurocup.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.png" type="image/png" sizes="64x64">
+<!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "b67bbb76d0e24af196b24ded3ab71ad0"}'></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Playfair+Display:wght@600;700&family=Source+Serif+4:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0c1424; --panel:#131d33; --line:#26334f; --text:#f1ead9; --muted:#9aa4ba;
+  --gold:#d4af37; --win:#6fcf97; --loss:#eb7a6c;
+  --serif:'Playfair Display',Georgia,serif; --body:'Source Serif 4',Georgia,serif; --mono:'IBM Plex Mono',ui-monospace,monospace;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:17px/1.5 var(--body)}
+.wrap{max-width:980px;margin:0 auto;padding:40px 16px 80px}
+body.wide .wrap{max-width:none;padding-left:24px;padding-right:24px}   /* Projections: use the whole window so every column fits */
+h1{font:700 clamp(30px,5vw,46px)/1.1 var(--serif);margin:0 0 6px}
+h1 span{color:var(--gold)}
+h1 a{color:inherit;text-decoration:none}
+h1 a:hover{color:var(--gold)}
+.home-link{display:inline-block;margin-bottom:14px;font:500 12px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-decoration:none}
+.home-link:hover{color:var(--gold)}
+.sub{font:400 13px var(--mono);color:var(--muted);letter-spacing:.04em;margin-bottom:32px}
+.controls{display:grid;grid-template-columns:auto 1fr auto 1fr;gap:12px;align-items:end;margin-bottom:28px}
+.tabs{display:flex;flex-wrap:wrap;gap:10px 28px;border-bottom:1px solid var(--line);margin:0 0 26px}
+.tabs a{background:none;border:0;border-bottom:2px solid transparent;color:var(--muted);font:600 18px var(--serif);padding:0 0 10px;margin-bottom:-1px;cursor:pointer;text-decoration:none}
+.tabs a.on{color:var(--text);border-color:var(--gold)}
+.tabs a:hover{color:var(--text)}
+.segs{display:flex;flex-wrap:wrap;gap:12px;grid-column:1/-1}
+.seg{display:flex;border:1px solid var(--line);border-radius:6px;overflow:hidden;width:max-content}
+.seg button{background:none;border:0;color:var(--muted);font:500 13px var(--mono);padding:9px 18px;cursor:pointer;letter-spacing:.06em;text-transform:uppercase}
+.seg button.on{background:var(--gold);color:#0c1424}
+label{font:400 11px var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.1em;display:block;margin-bottom:5px}
+input{width:100%;background:var(--panel);border:1px solid var(--line);border-radius:6px;color:var(--text);font:400 17px var(--body);padding:10px 12px}
+input:focus{outline:2px solid var(--gold);outline-offset:0}
+.swap{background:none;border:1px solid var(--line);color:var(--gold);border-radius:6px;font:500 18px var(--mono);height:46px;width:46px;cursor:pointer}
+.vs{font:600 22px var(--serif);color:var(--gold);padding-bottom:9px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:22px;margin-bottom:24px}
+.score{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;text-align:center;align-items:center}
+.score .name{font:600 clamp(18px,3vw,26px) var(--serif)}
+.score .ctry{font:400 11px var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.1em}
+.score .big{font:500 clamp(40px,8vw,68px) var(--mono);color:var(--gold);line-height:1}
+.score .lbl{font:400 11px var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.1em}
+.bar{display:flex;height:8px;border-radius:4px;overflow:hidden;margin:18px 0 14px;background:var(--line)}
+.bar i{display:block;background:var(--gold)} .bar i+i{background:#5b7bd5}
+.facts{display:flex;flex-wrap:wrap;gap:8px 28px;font:400 13px var(--mono);color:var(--muted);justify-content:center}
+.facts b{color:var(--text);font-weight:500}
+h2{font:600 22px var(--serif);margin:34px 0 12px}
+table{width:100%;border-collapse:collapse;font-size:15px}
+th{font:400 11px var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.1em;text-align:left;padding:8px 10px;border-bottom:1px solid var(--line)}
+td{padding:9px 10px;border-bottom:1px solid var(--line)}
+td.n,th.n{text-align:right;font-family:var(--mono);font-size:14px;white-space:nowrap}
+.fx th.grp{text-align:center;color:var(--gold);border-bottom:1px solid var(--line)}
+.fx .gap{border-right:1px solid var(--line);padding-right:14px}
+.fx td.n{padding-left:6px;padding-right:8px}
+.fx .hcp{color:var(--gold)}
+tr.click{cursor:pointer} tr.click:hover td{background:rgba(212,175,55,.08)}
+.w{color:var(--win)} .l{color:var(--loss)}
+.tag{font:400 11px var(--mono);color:var(--muted)}
+.empty{color:var(--muted);padding:30px 0;text-align:center}
+.scroll{overflow-x:auto}
+.note{font:400 14px/1.5 var(--body);color:var(--muted);border-left:2px solid var(--gold);padding:2px 0 2px 14px;margin:0 0 6px}
+.note b{color:var(--text);font-weight:600}
+td.big{color:var(--bg);background:var(--gold);font-weight:700}
+/* Vs Market group tables */
+h2.mkh{font:600 21px var(--serif);margin:38px 0 10px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+table.mkt{table-layout:fixed;width:100%;border-collapse:separate;border-spacing:0;font-variant-numeric:tabular-nums}
+table.mkt th{font:500 10.5px var(--mono);letter-spacing:.04em;color:var(--muted);text-transform:uppercase;vertical-align:bottom;padding:6px 8px 9px;border-bottom:1px solid var(--line);white-space:nowrap;overflow:visible}
+table.mkt tr.mkgrp th{border-bottom:0;padding:0 12px 2px;height:16px}
+table.mkt th.grp{color:var(--gold);text-align:center;font-size:10px;letter-spacing:.08em}
+table.mkt th.grp span{display:block;border-bottom:1px solid color-mix(in srgb,var(--gold) 45%,transparent);padding-bottom:4px}
+table.mkt td{padding:11px 8px;border-bottom:1px solid color-mix(in srgb,var(--line) 55%,transparent);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+table.mkt td.n,table.mkt th.n{text-align:right;font-family:var(--mono);font-size:13.5px}
+table.mkt td.n b{font-weight:600}
+/* sort arrow: after the label on Team, just under the label on number columns (adds no width) */
+table.mkt th .ar{font-style:normal;font-size:9px;margin-left:5px}
+table.mkt th.n.sort{position:relative}
+table.mkt th.n .ar{position:absolute;right:8px;bottom:-1px;margin:0;font-size:8px;line-height:1}
+table.mkt .tl{text-align:left}
+table.mkt .sec0{border-left:1px solid color-mix(in srgb,var(--line) 80%,transparent);padding-left:10px}
+table.mkt tr.click td{transition:background .12s}
+table.mkt tr.click:hover td{background:color-mix(in srgb,var(--gold) 6%,transparent)}
+table.mkt td.tl b{font-weight:600}
+table.mkt .caret{display:inline-block;width:14px;color:var(--muted);font-size:11px}
+table.mkt td.rd{white-space:normal;padding-top:8px;padding-bottom:8px}
+table.mkt th.rd{padding-left:16px}
+.pill{display:inline-block;margin:2px 6px 2px 0;padding:2px 9px;border-radius:999px;font:500 12px var(--body);line-height:1.5;border:1px solid transparent;white-space:nowrap}
+.pill b{font:600 11.5px var(--mono);margin-left:2px}
+.pill.w{color:var(--win);background:color-mix(in srgb,var(--win) 11%,transparent);border-color:color-mix(in srgb,var(--win) 28%,transparent)}
+.pill.l{color:var(--loss);background:color-mix(in srgb,var(--loss) 11%,transparent);border-color:color-mix(in srgb,var(--loss) 28%,transparent)}
+.pill.o{color:var(--gold);background:color-mix(in srgb,var(--gold) 10%,transparent);border-color:color-mix(in srgb,var(--gold) 26%,transparent)}
+table.mkt tr.mkgames td{white-space:normal;background:color-mix(in srgb,var(--panel) 70%,transparent)}
+table.mkt tr.mkgames table{table-layout:auto;width:auto;min-width:0}
+table.mkt tr.mkgames table td{white-space:nowrap;overflow:visible;padding:8px 6px}
+table.mkt tr.mkgames table td.n{font-size:12.5px}
+table.mkt tr.mkgames table th{padding:6px 6px 8px}
+table.mkt tr.mkgames table td:nth-child(3){white-space:normal;min-width:150px}   /* only the opponent may wrap */
+td.better{color:var(--win)!important;font-weight:700}td.worse{color:var(--loss)!important}
+th.sort{cursor:pointer;user-select:none}th.sort:hover,th.sort.on{color:var(--gold)}
+.rogrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px;margin-top:16px}
+.rogrid .card{padding:16px;margin:0}.rogrid h3{font:600 18px var(--serif);margin:0 0 2px;cursor:pointer}.rogrid h3:hover{color:var(--gold)}
+.rogrid table{width:100%;border-collapse:collapse;margin-top:8px}.rogrid td,.rogrid th{padding:4px 4px;border-top:1px solid var(--line);font-size:14px}
+.rogrid th{font:400 11px var(--mono);color:var(--muted);text-align:left;border-top:0}.rogrid .n{text-align:right}
+.rogrid tr.out td{color:var(--loss)}.rogrid tr.out .pl{text-decoration:line-through}
+@media (max-width:420px){.rogrid{grid-template-columns:1fr}}
+.back{font:500 13px var(--mono);color:var(--gold);text-decoration:none;letter-spacing:.04em}
+.back:hover{text-decoration:underline}
+.fbar{display:flex;flex-wrap:wrap;align-items:center;gap:10px 18px;margin:0 0 14px}
+.fbar label{font:400 13px var(--mono);color:var(--muted);text-transform:none;letter-spacing:0;margin:0;display:flex;align-items:center;gap:8px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{background:none;border:1px solid var(--line);border-radius:999px;color:var(--muted);font:500 12px var(--mono);padding:5px 12px;cursor:pointer}
+.chip:hover{color:var(--text)}
+.chip.on{background:var(--gold);border-color:var(--gold);color:#0c1424}
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px;margin:0 0 8px}
+.metric{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.metric .lbl{font:400 11px var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}
+.metric .big2{font:500 24px var(--mono);color:var(--gold)}
+.pjbar{display:flex;flex-wrap:wrap;align-items:center;gap:10px 22px;margin:0 0 8px}
+.pjbar label{font:400 13px var(--mono);color:var(--muted);text-transform:none;letter-spacing:0;margin:0;display:flex;align-items:center;gap:8px}
+select.peer{background:var(--panel);border:1px solid var(--line);border-radius:6px;color:var(--text);font:500 14px var(--mono);padding:4px 6px;cursor:pointer}
+select.peer:focus{outline:2px solid var(--gold)}
+@media(max-width:640px){
+  .controls{grid-template-columns:1fr auto 1fr}
+  .vs{display:none} .swap{grid-column:2;grid-row:2}
+  .controls>div:nth-of-type(1){grid-column:1/-1;grid-row:2}
+}
+</style>
+</head>
+<body>
+<!-- sitebar:start (link back to antonisnikolitsopoulos.com; keep on every page) -->
+<style>
+.an-sitebar{background:#0d1220;border-bottom:1px solid rgba(255,255,255,.09);font:500 13px/1.2 "Segoe UI",system-ui,-apple-system,sans-serif;letter-spacing:.02em}
+.an-sitebar>div{max-width:72rem;margin:0 auto;padding:6px 16px;display:flex;justify-content:flex-end;align-items:center;gap:18px}
+.an-sitebar a{color:#9aa1b2;text-decoration:none;display:inline-flex;align-items:center;min-height:24px}.an-sitebar a:hover{color:#fff}
+.an-sitebar svg{width:17px;height:17px;fill:currentColor}
+.an-sitebar a[href="/"]{padding:6px 8px;margin:-6px -8px -6px -4px;border-radius:6px}.an-sitebar a[href="/"]:hover{background:rgba(255,255,255,.08)}
+</style>
+<nav class="an-sitebar" aria-label="Main site"><div><a href="/books/">Books</a><a href="/#projects">Projects</a><a href="/about/">About</a><a href="/" title="Main site: antonisnikolitsopoulos.com" aria-label="Main site"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 2 11.5h3V21h5.5v-6h3v6H19v-9.5h3z"/></svg></a></div></nav>
+<!-- sitebar:end -->
+<div class="wrap">
+  <a class="home-link" href="/eurocup/" data-home>&#8962; Home</a>
+  <h1><a href="/eurocup/" data-home>EuroCup</a></h1>
+  <div class="sub" id="sub"></div>
+
+  <div class="tabs" id="tabs">
+    <a href="#view=market" data-view="market" class="on">Vs Market</a>
+    <a href="#view=h2h" data-view="h2h">Head to Head</a>
+    <a href="#view=rosters" data-view="rosters">Rosters</a>
+    <a href="#view=rankings" data-view="rankings">Country Power Rankings</a>
+  </div>
+
+  <div id="rkView" hidden></div>
+  <div id="mkView"></div>
+  <div id="roView" hidden></div>
+
+  <div id="h2hView" hidden>
+  <div class="controls">
+    <div class="segs">
+      <div class="seg" id="seg">
+        <button data-mode="country" class="on">Countries</button>
+        <button data-mode="team">Teams</button>
+      </div>
+      <div class="seg" id="venue" aria-label="Venue">
+        <button data-venue="all" class="on">All</button>
+        <button data-venue="home">Home</button>
+        <button data-venue="away">Away</button>
+      </div>
+    </div>
+    <div><label for="a" id="la">Team</label><input id="a" list="opts" autocomplete="off" placeholder="Start typing"></div>
+    <div class="vs">vs</div>
+    <div><label for="b" id="lb">Opponent (optional)</label><input id="b" list="opts" autocomplete="off" placeholder="Start typing"></div>
+  </div>
+  <datalist id="opts"></datalist>
+  <div id="out"></div>
+  </div>
+</div>
+<script>
+// data files change after every update; a per-minute stamp keeps browsers from showing a cached copy for up to 10 minutes
+(() => { const v = Math.floor(Date.now() / 60000);
+  for (const f of ['data', 'market', 'rosters', 'injuries']) document.write(`<script src="${f}.js?v=${v}"><\/script>`); })();
+</script>
+<script>
+const {matches, teams} = window.DATA;
+let mode = 'country';
+let venue = 'all';   // all | home | away, from the first pick's point of view
+const $ = id => document.getElementById(id);
+const ent = t => mode === 'team' ? t : teams[t];
+const fmtDate = d => d.split('-').reverse().join('.');
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+$('sub').textContent = `${matches.length} games · seasons ${matches[0][0].slice(0,4)}–${matches[matches.length-1][0].slice(-4)} · ${Object.keys(teams).length} teams · ${new Set(Object.values(teams)).size} countries`;
+
+function names(){ return mode === 'team' ? Object.keys(teams).sort() : [...new Set(Object.values(teams))].sort(); }
+function fillOptions(){ $('opts').innerHTML = names().map(n => `<option value="${esc(n)}">`).join(''); }
+
+// Re-orient every game so that `x` is first. Returns {opp, own, oppPts, ownPts, ...}
+function gamesFor(x){
+  const out = [];
+  for (const m of matches){
+    const [season, stage, round, date, h, a, hp, ap, status] = m;
+    const eh = ent(h), ea = ent(a);
+    if (eh === ea) continue;
+    if (eh === x) out.push({m, own:h, opp:a, oppE:ea, ownPts:hp, oppPts:ap, home:true});
+    else if (ea === x) out.push({m, own:a, opp:h, oppE:eh, ownPts:ap, oppPts:hp, home:false});
+  }
+  return out;
+}
+function record(gs){
+  let w=0,l=0,pf=0,pa=0,pg=0;
+  for (const g of gs){
+    g.ownPts > g.oppPts ? w++ : l++;
+    if (g.m[8] !== 'AWA.'){ pf += g.ownPts; pa += g.oppPts; pg++; }
+  }
+  return {w,l,pf,pa,pg,n:gs.length};
+}
+const gameRow = g => {
+  const [season, stage, round, date,,,,, status] = g.m;
+  const win = g.ownPts > g.oppPts;
+  const score = status === 'AWA.' ? 'awarded' : `${g.home ? g.ownPts : g.oppPts}–${g.home ? g.oppPts : g.ownPts}${status === 'AET' ? ' <span class="tag">OT</span>' : ''}`;
+  const venue = g.home ? `<b>${esc(g.own)}</b> – ${esc(g.opp)}` : `${esc(g.opp)} – <b>${esc(g.own)}</b>`;
+  return `<tr><td class="n">${fmtDate(date)}</td><td>${venue}</td><td class="n ${win?'w':'l'}">${score}</td><td class="tag">${esc(season)} · ${esc(stage)} · ${esc(round.replace(/ - /,' · '))}</td></tr>`;
+};
+
+// sample of the head to head pages and the fixtures (shared): stages and how many of the latest seasons (0 = all);
+// same defaults as the rankings and projections
+let hStages = new Set(['Main']), hSeasons = 5;
+const hKeep = m => hStages.has(m[1]) && (!hSeasons || ALL_SEASONS.indexOf(m[0]) >= ALL_SEASONS.length - hSeasons);
+function hBind(box, rerender){
+  box.querySelector('#hSeasons').onchange = e => { hSeasons = +e.target.value; sync(); rerender(); };
+  box.querySelectorAll('.fbar .chip').forEach(b => b.onclick = () => {
+    const st = b.dataset.stage;
+    if (hStages.has(st)){ if (hStages.size > 1) hStages.delete(st); }   // keep at least one stage
+    else hStages.add(st);
+    sync(); rerender();
+  });
+}
+function hChips(){
+  const opts = [...Array(ALL_SEASONS.length - 1)].map((_, k) => k + 1).concat([0]).map(k =>
+    `<option value="${k}"${k === hSeasons ? ' selected' : ''}>${k ? (k === 1 ? 'Last season' : 'Last ' + k + ' seasons') : 'All ' + ALL_SEASONS.length + ' seasons'}</option>`).join('');
+  return `<div class="fbar"><label>Sample <select id="hSeasons" class="peer">${opts}</select></label><span class="chips">` + PJ_STAGES.map(x => `<button type="button" class="chip${hStages.has(x) ? ' on' : ''}" data-stage="${esc(x)}" aria-pressed="${hStages.has(x)}">${esc(PJ_STAGE_LABEL[x] || x)}</button>`).join('') + `</span></div>`;
+}
+function render(){
+  const box = $('out');
+  const out = {set innerHTML(h){
+    box.innerHTML = hChips() + h;
+    hBind(box, render);
+  }, querySelectorAll: q => box.querySelectorAll(q)};
+  const A = $('a').value.trim(), B = $('b').value.trim();
+  const ok = n => names().includes(n);
+  if (!A){ box.innerHTML = `<div class="empty">Pick a ${mode} to see its record against everyone, or two to see their head to head.</div>`; return; }
+  if (!ok(A)){ out.innerHTML = `<div class="empty">No ${mode} called “${esc(A)}”. Choose from the suggestions.</div>`; return; }
+  const gs = gamesFor(A).filter(g => (venue === 'all' || (venue === 'home') === g.home) && hKeep(g.m));
+  const where = venue === 'all' ? '' : (venue === 'home' ? ' at home' : ' away');
+
+  if (B && ok(B)){
+    if (A === B){ out.innerHTML = `<div class="empty">Pick two different ${mode === 'team' ? 'teams' : 'countries'}.</div>`; return; }
+    const h = gs.filter(g => g.oppE === B).sort((x,y) => y.m[3].localeCompare(x.m[3]));
+    if (!h.length){ out.innerHTML = `<div class="empty">${esc(A)} and ${esc(B)} have not met${venue === 'all' ? ' in this competition' : ` with ${esc(A)} playing${where}`}.</div>`; return; }
+    const r = record(h);
+    const sub = x => mode === 'team' ? teams[x] : '';
+    let html = `<div class="card"><div class="score">
+      <div><div class="name">${esc(A)}</div><div class="ctry">${esc(sub(A))}</div></div>
+      <div><div class="big">${r.w}–${r.l}</div><div class="lbl">${r.n} game${r.n>1?'s':''}${where ? ` · ${esc(A)}${where}` : ''}</div></div>
+      <div><div class="name">${esc(B)}</div><div class="ctry">${esc(sub(B))}</div></div></div>
+      <div class="bar"><i style="width:${r.w/r.n*100}%"></i><i style="width:${r.l/r.n*100}%"></i></div>
+      <div class="facts"><span>Avg points <b>${r.pg ? (r.pf/r.pg).toFixed(1) + '–' + (r.pa/r.pg).toFixed(1) : '–'}</b></span><span>Avg margin <b>${r.pg?((r.pf-r.pa)/r.pg>0?'+':'')+((r.pf-r.pa)/r.pg).toFixed(1):'–'}</b> for ${esc(A)}</span><span>First meeting <b>${fmtDate(h[h.length-1].m[3])}</b></span></div></div>`;
+    if (mode === 'country'){
+      const by = {};
+      for (const g of h){ const k = g.own+'|'+g.opp; (by[k] ||= []).push(g); }
+      const rows = Object.entries(by).map(([k,v]) => ({k, r:record(v)})).sort((x,y)=>y.r.n-x.r.n);
+      html += `<h2>By club</h2><div class="scroll"><table><tr><th>${esc(A)} club</th><th>${esc(B)} club</th><th class="n">P</th><th class="n">W–L</th></tr>` +
+        rows.map(({k,r}) => { const [o,p] = k.split('|'); return `<tr><td>${esc(o)}</td><td>${esc(p)}</td><td class="n">${r.n}</td><td class="n">${r.w}–${r.l}</td></tr>`; }).join('') + `</table></div>`;
+    }
+    html += `<h2>Games</h2><div class="scroll"><table><tr><th class="n">Date</th><th>Match</th><th class="n">Score</th><th>Competition</th></tr>${h.map(gameRow).join('')}</table></div>`;
+    out.innerHTML = html;
+    return;
+  }
+
+  // Single selection: record vs every opponent
+  if (!gs.length){ out.innerHTML = `<div class="empty">No games found for ${esc(A)}${where}.</div>`; return; }
+  const by = {};
+  for (const g of gs) (by[g.oppE] ||= []).push(g);
+  const rows = Object.entries(by).map(([o,v]) => ({o, r:record(v), last:v.reduce((a,g)=>g.m[3]>a?g.m[3]:a,'')}))
+    .sort((x,y) => y.r.n - x.r.n || x.o.localeCompare(y.o));
+  const tot = record(gs);
+  const avg = r => r.pg ? (r.pf / r.pg).toFixed(1) + '–' + (r.pa / r.pg).toFixed(1) : '–';
+  const wl = r => r.n ? `<b><span class="w">${r.w}</span>–<span class="l">${r.l}</span></b>` : '<b>–</b>';
+  const split = ['home', 'away'].filter(v => venue === 'all' || venue === v).map(v => {
+    const r = record(gs.filter(g => g.home === (v === 'home')));
+    return `<span>${v === 'home' ? 'Home' : 'Away'} ${wl(r)} <span class="tag">avg ${avg(r)}</span></span>`;
+  }).join('');
+  out.innerHTML = `<div class="card"><div class="score"><div></div><div><div class="name">${esc(A)}</div><div class="ctry">${mode==='team'?esc(teams[A]):''}</div><div class="big" style="margin-top:12px">${tot.w}–${tot.l}</div><div class="lbl">${tot.n} games${where} · ${rows.length} opponents</div></div><div></div></div>
+    <div class="facts">${split}<span>Avg points <b>${avg(tot)}</b></span></div></div>
+    <div class="tag" style="margin-bottom:8px">Click an opponent for the full head to head.</div>
+    <div class="scroll"><table><tr><th>Opponent</th><th class="n">P</th><th class="n">W</th><th class="n">L</th><th class="n" title="Average points for–against per game (awarded games left out)">Avg pts</th></tr>` +
+    rows.map(({o,r,last}) => `<tr class="click" data-o="${esc(o)}"><td>${esc(o)}${mode==='team'?` <span class="tag">${esc(teams[o])}</span>`:''}</td><td class="n">${r.n}</td><td class="n w">${r.w}</td><td class="n l">${r.l}</td><td class="n">${avg(r)}</td></tr>`).join('') + `</table></div>`;
+  out.querySelectorAll('tr.click').forEach(tr => tr.onclick = () => { $('b').value = tr.dataset.o; sync(); render(); window.scrollTo({top:0,behavior:'smooth'}); });
+}
+
+
+// ---------- Shared: country codes, stages and seasons of the sample
+let view = 'market';
+// FIBA / IOC three-letter country codes
+const CODE = {'Andorra':'AND','Belgium':'BEL','Bosnia and Herzegovina':'BIH','Bulgaria':'BUL','Croatia':'CRO','France':'FRA',
+  'Germany':'GER','Greece':'GRE','Hungary':'HUN','Israel':'ISR','Italy':'ITA','Latvia':'LAT','Lithuania':'LTU','Monaco':'MON',
+  'Montenegro':'MNE','North Macedonia':'MKD','Poland':'POL','Romania':'ROU','Russia':'RUS','Serbia':'SRB','Slovenia':'SLO',
+  'Spain':'ESP','Turkey':'TUR','Ukraine':'UKR','United Kingdom':'GBR'};
+const code = c => CODE[c] || (c || '').slice(0, 3).toUpperCase();
+const PJ_STAGES = ['Main', 'Top 16', 'Top 32', 'Play Offs'];
+const PJ_STAGE_LABEL = {'Main': 'Regular Season'};
+const ALL_SEASONS = [...new Set(matches.map(m => m[0]))].sort();
+const PJ_DEFAULT_SEASONS = 5;
+const seasonLabel = x => x.slice(0, 4) + '–' + x.slice(-2);
+const rankOf = c => { RANK ||= computeRankings(); const r = RANK.findIndex(x => x.c === c); return r < 0 ? '' : ` #${r + 1}`; };
+// the played game behind a bookmaker line (same home and away, within a day and a half)
+function arResult(date, h, a){
+  const t = Date.parse(date + 'T12:00:00Z');
+  return matches.find(m => m[4] === h && m[5] === a && m[8] !== 'AWA.' && Math.abs(Date.parse(m[3] + 'T12:00:00Z') - t) <= 36 * 3600e3);
+}
+
+// ---------- Power rankings: country Elo over all games in date order
+// Start 1500; K 20; home advantage 75 Elo points; margin-of-victory multiplier as in
+// FiveThirtyEight's NBA Elo. Same-country games are skipped; awarded games count without margin.
+// The table is always ordered by today's rating; the season sample only changes the record columns.
+// Hidden countries still count in the ratings of the countries they played, but take no place in the table:
+// Russia (out of the EuroCup since 2022) and any country without a game in the last
+// PJ_DEFAULT_SEASONS seasons.
+const RANK_HIDDEN = new Set(['Russia', 'Belarus']);
+let RANK = null;
+function computeRankings(){
+  const K = 20, HCA = 75, elo = {}, st = {}, snaps = {};
+  const get = c => (elo[c] ??= 1500);
+  const s = c => (st[c] ??= {g: 0, w: 0, l: 0, pf: 0, pa: 0, pg: 0, last: ''});
+  const snap = season => {          // place of every rated country after this season's games
+    const o = {};
+    Object.entries(elo).filter(([c]) => !RANK_HIDDEN.has(c)).sort((x, y) => y[1] - x[1]).forEach(([c], i) => o[c] = i + 1);
+    snaps[season] = o;
+  };
+  const games = matches.slice().sort((x, y) => x[3].localeCompare(y[3]));
+  let prev = null;
+  for (const [season, , , date, h, a, hp, ap, status] of games){
+    if (prev !== null && season !== prev && season > prev) snap(prev);
+    if (prev === null || season > prev) prev = season;
+    const ch = teams[h], ca = teams[a];
+    if (!ch || !ca || ch === ca) continue;
+    const rh = get(ch), ra = get(ca);
+    const exp = 1 / (1 + 10 ** ((ra - (rh + HCA)) / 400));
+    const homeWon = hp > ap ? 1 : 0;
+    const margin = Math.abs(hp - ap);
+    const winDiff = homeWon ? (rh + HCA - ra) : (ra - rh - HCA);
+    const mult = status === 'AWA.' ? 1 : ((margin + 3) ** 0.8) / (7.5 + 0.006 * winDiff);
+    const d = K * mult * (homeWon - exp);
+    elo[ch] = rh + d; elo[ca] = ra - d;
+    for (const [c, own, opp] of [[ch, hp, ap], [ca, ap, hp]]){
+      const x = s(c); x.g++; own > opp ? x.w++ : x.l++; x.last = date; x.season = season;
+      if (status !== 'AWA.'){ x.pf += own; x.pa += opp; x.pg++; }
+    }
+  }
+  if (prev !== null) snap(prev);
+  const active = ALL_SEASONS[Math.max(0, ALL_SEASONS.length - PJ_DEFAULT_SEASONS)];
+  const rows = Object.keys(st).filter(c => !RANK_HIDDEN.has(c) && st[c].season >= active).map(c => ({c, elo: elo[c], ...st[c]})).sort((x, y) => y.elo - x.elo);
+  rows.snaps = snaps;
+  return rows;
+}
+// record columns over the last n seasons only (0 = all), in the chosen stages only
+function rankWindow(n){
+  const seasons = [...new Set(matches.map(m => m[0]))].sort();
+  const ok = n ? new Set(seasons.slice(-n)) : null;
+  const st = {};
+  for (const [season, stage, , , h, a, hp, ap, status] of matches){
+    if ((ok && !ok.has(season)) || !rkStages.has(stage)) continue;
+    const ch = teams[h], ca = teams[a];
+    if (!ch || !ca || ch === ca) continue;
+    for (const [c, own, opp] of [[ch, hp, ap], [ca, ap, hp]]){
+      const x = (st[c] ??= {g: 0, w: 0, l: 0, pf: 0, pa: 0, pg: 0});
+      x.g++; own > opp ? x.w++ : x.l++;
+      if (status !== 'AWA.'){ x.pf += own; x.pa += opp; x.pg++; }
+    }
+  }
+  return {st, seasons, base: n ? seasons[seasons.length - n - 1] : null};
+}
+let rkSort = {k: 'place', dir: 1};
+let rkStages = new Set(['Main']);                              // same default as the projections
+let rkSeasons = PJ_DEFAULT_SEASONS;                            // same sample as the projections; 0 = all seasons
+function renderRankings(){
+  RANK ||= computeRankings();
+  const {st, seasons, base} = rankWindow(rkSeasons);
+  const sel = [...Array(seasons.length - 1)].map((_, k) => k + 1).concat([0]).map(k =>
+    `<option value="${k}"${k === rkSeasons ? ' selected' : ''}>${k ? (k === 1 ? 'Last season' : 'Last ' + k + ' seasons') : 'All ' + seasons.length + ' seasons'}</option>`).join('');
+  const list = RANK.map((r, i) => {
+    const x = st[r.c] || {g: 0, w: 0, l: 0, pf: 0, pa: 0, pg: 0};
+    const m = x.pg ? (x.pf - x.pa) / x.pg : 0;
+    const keys = {place: i + 1, country: r.c, rating: r.elo, games: x.g,
+      wl: x.g ? x.w - x.l : null, pct: x.g ? x.w / x.g : null, margin: x.pg ? m : null};
+    return {keys, html: `<tr class="click" data-c="${esc(r.c)}"><td class="n">${i + 1}</td>
+      <td><b>${esc(r.c)}</b> <span class="tag">(${esc(code(r.c))})</span></td>
+      <td class="n"><b class="hcp">${Math.round(r.elo)}</b></td>
+      <td class="n">${x.g}</td>
+      <td class="n">${x.g ? `<span class="w">${x.w}</span>–<span class="l">${x.l}</span>` : '–'}</td>
+      <td class="n">${x.g ? (x.w / x.g * 100).toFixed(0) + '%' : '–'}</td>
+      <td class="n">${x.pg ? (m > 0 ? '+' : m < 0 ? '−' : '') + Math.abs(m).toFixed(1) : '–'}</td></tr>`};
+  });
+  const {k, dir} = rkSort;
+  list.sort((p, q) => {                                         // empty values always last
+    const a = p.keys[k], b = q.keys[k];
+    if (a === null || b === null) return (a === null) - (b === null) || p.keys.place - q.keys.place;
+    return (typeof a === 'string' ? a.localeCompare(b) : a - b) * dir || p.keys.place - q.keys.place;
+  });
+  const rows = list.filter(x => x.keys.games).map(x => x.html).join('');   // no games in the sample: not listed
+  const th = (key, label, cls, title) => `<th class="${cls} sort${key === k ? ' on' : ''}" data-k="${key}"${title ? ` title="${title}"` : ''}>${label}${key === k ? (dir > 0 ? ' ▲' : ' ▼') : ''}</th>`;
+  const stTxt = PJ_STAGES.filter(x => rkStages.has(x)).map(x => PJ_STAGE_LABEL[x] || x).join(', ');
+  const note = (rkSeasons
+    ? `Sample: the ${rkSeasons === 1 ? 'last season' : 'last ' + rkSeasons + ' seasons'} (${esc(seasonLabel(seasons[seasons.length - rkSeasons]))} to ${esc(seasonLabel(seasons[seasons.length - 1]))})`
+    : `Sample: all ${seasons.length} seasons`) + `; stages: ${esc(stTxt)}. Games, W–L, win % and margin cover the sample only.`;
+  const chips = PJ_STAGES.map(x => `<button type="button" class="chip${rkStages.has(x) ? ' on' : ''}" data-stage="${esc(x)}" aria-pressed="${rkStages.has(x)}">${esc(PJ_STAGE_LABEL[x] || x)}</button>`).join('');
+  $('rkView').innerHTML = `<div class="fbar"><label>Sample <select id="rkSeasons" class="peer">${sel}</select></label><span class="chips">${chips}</span></div>
+    <div class="scroll"><table class="fx"><tr>${th('place', '#', 'n')}${th('country', 'Country', '')}
+    ${th('rating', 'Rating', 'n', 'Elo rating today: starts at 1500, rises with wins (more for beating strong sides, by more, away)')}
+    ${th('games', 'Games', 'n', 'Games against clubs from other countries, within the sample')}${th('wl', 'W–L', 'n', 'Sorted by wins minus losses')}${th('pct', 'Win %', 'n')}
+    ${th('margin', 'Margin', 'n', 'Average points margin per game')}</tr>${rows}</table></div>
+    <div class="tag" style="margin-top:14px">${note} Rating is an Elo rating updated game by game since 2015–16 (EuroCup games only) and always reflects today. Games between clubs from the same country are not counted. Countries without a game in the last ${PJ_DEFAULT_SEASONS} seasons are not ranked, nor is Russia, whose clubs have been out of the EuroCup since 2022. Click a column heading to sort, a country for its full record.</div>`;
+  $('rkSeasons').onchange = e => { rkSeasons = +e.target.value; sync(); renderRankings(); };
+  $('rkView').querySelectorAll('.chip').forEach(b => b.onclick = () => {
+    const st = b.dataset.stage;
+    if (rkStages.has(st)){ if (rkStages.size > 1) rkStages.delete(st); }   // keep at least one stage
+    else rkStages.add(st);
+    sync(); renderRankings();
+  });
+  $('rkView').querySelectorAll('th.sort').forEach(h => h.onclick = () => {   // first click: best first; again: reverse
+    const key = h.dataset.k;
+    rkSort = key === k ? {k, dir: -dir} : {k: key, dir: key === 'place' || key === 'country' ? 1 : -1};
+    renderRankings();
+  });
+  $('rkView').querySelectorAll('tr.click').forEach(tr => tr.onclick = () => {
+    setMode('country'); $('a').value = tr.dataset.c; $('b').value = ''; setVenue('all'); hStages = new Set(rkStages); hSeasons = rkSeasons;
+    setView('h2h'); sync(); render(); window.scrollTo({top: 0, behavior: 'smooth'});
+  });
+}
+// ---------- Rosters: each club's key players this season and who is out
+let roQuery = '';
+function renderRosters(){
+  const box = $('roView');
+  if (!window.ROSTERS){ box.innerHTML = '<div class="empty">No rosters yet.</div>'; return; }
+  const out = (window.INJURIES && INJURIES.out) || [];
+  const clubs = Object.keys(ROSTERS.teams).sort((x, y) => (teams[x] || '').localeCompare(teams[y] || '') || x.localeCompare(y));
+  const nOut = out.length;
+  box.innerHTML = `<div class="note" style="margin-bottom:14px">Key players of the ${clubs.length} clubs in this season's EuroCup, from ${esc(ROSTERS.source.replace(/^EuroCup box scores, /, ''))} of official EuroCup box scores (updated ${fmtDate(ROSTERS.updated)}).
+      <b>Impact</b> is roughly how many points weaker a side is without the player: efficiency per minute above a bench level, times minutes per team game, halved, and trimmed for players with few games.
+      Players listed as out (${nOut ? nOut + ', updated ' + fmtDate(INJURIES.updated) : 'none at the moment'}) are struck through.</div>
+    <input id="roSearch" placeholder="Search a club, country or player" value="${esc(roQuery)}" aria-label="Search rosters">
+    <div class="rogrid" id="roGrid"></div>`;
+  const draw = () => {
+    const q = roQuery.trim().toLowerCase();
+    const cards = clubs.filter(c => !q || c.toLowerCase().includes(q) || (teams[c] || '').toLowerCase().includes(q) ||
+      ROSTERS.teams[c].some(p => p[0].toLowerCase().includes(q))).map(c => {
+      const gone = new Map(out.filter(x => x.team === c).map(x => [x.player, x]));
+      const extra = [...gone.values()].filter(x => !ROSTERS.teams[c].some(p => p[0] === x.player));
+      return `<div class="card"><h3 data-club="${esc(c)}">${esc(c)}</h3><div class="tag">${esc(teams[c] || '')}${rankOf(teams[c])}</div>
+        <table><tr><th>Player</th><th class="n" title="Points the side loses without the player">Impact</th><th class="n" title="Minutes per team game">Min</th><th class="n" title="Efficiency per game played">Eff</th><th class="n" title="Games played">G</th></tr>` +
+        ROSTERS.teams[c].map(p => { const o = gone.get(p[0]);
+          return `<tr${o ? ` class="out" title="Out${o.note ? ': ' + esc(o.note) : ''}"` : ''}><td><span class="pl">${esc(p[0])}</span>${o ? ' <span class="tag">out' + (o.note ? ' · ' + esc(o.note) : '') + '</span>' : ''}</td>
+            <td class="n"><b>${p[1].toFixed(1)}</b></td><td class="n">${p[2].toFixed(1)}</td><td class="n">${p[3].toFixed(1)}</td><td class="n">${p[4]}</td></tr>`; }).join('') +
+        extra.map(o => `<tr class="out"><td><span class="pl">${esc(o.player)}</span> <span class="tag">out${o.note ? ' · ' + esc(o.note) : ''}</span></td><td class="n"><b>${(o.impact || 0).toFixed(1)}</b></td><td class="n">–</td><td class="n">–</td><td class="n">–</td></tr>`).join('') +
+        `</table></div>`;
+    });
+    $('roGrid').innerHTML = cards.join('') || '<div class="empty">No club or player matches.</div>';
+    $('roGrid').querySelectorAll('h3[data-club]').forEach(h => h.onclick = () => {
+      setMode('team'); $('a').value = h.dataset.club; $('b').value = ''; setVenue('all');
+      setView('h2h'); sync(); render(); window.scrollTo({top: 0, behavior: 'smooth'});
+    });
+  };
+  $('roSearch').oninput = e => { roQuery = e.target.value; draw(); };
+  draw();
+}
+// ---------- Vs Market: every Regular Season game's bookmaker line against what happened, by group and club
+let mkSort = {k: 'vs', dir: -1};
+const mkOpen = new Set();                                      // clubs whose games are shown
+const MK_FROM = '2026-09-29';                                  // Vs Market counts the Regular Season from Round 1 on
+// A club's average against the line is noise until it beats the book's typical miss / sqrt(games):
+// the book misses the handicap by about 12.5 points and the total by about 17.5 (2025-27 lines), and the own / opponent
+// split (half the sum of the two) by about 10.75.
+const MK_SD = {hcp: 12.5, tot: 17.5, pts: 10.75};
+const MK_MIN = 3;                                              // no comment before a club has this many games with a line
+const mkLim = (sd, n) => n >= MK_MIN ? sd / Math.sqrt(n) : Infinity;
+function mkRead(x){
+  // each of the four numbers is judged on its own noise bar; every one that clears it becomes a tag
+  const one = v => (v > 0 ? '+' : '−') + Math.abs(v).toFixed(1);
+  const nS = mkLim(MK_SD.hcp, x.n), nT = mkLim(MK_SD.tot, x.tn), nP = mkLim(MK_SD.pts, x.tn);
+  const tags = [];
+  const tag = (cls, label, v, title) => tags.push(`<span class="pill ${cls}" title="${title}">${label} <b>${one(v)}</b></span>`);
+  if (Math.abs(x.vsS) >= nS) tag(x.vsS > 0 ? 'w' : 'l', x.vsS > 0 ? 'Underrated' : 'Overrated', x.vsS, `Handicap: ${x.vsS > 0 ? 'beats' : 'falls short of'} the line by ${Math.abs(x.vsS).toFixed(1)} a game`);
+  if (x.vsT !== null && Math.abs(x.vsT) >= nT) tag('o', x.vsT > 0 ? 'Over' : 'Under', x.vsT, `Total: games go ${x.vsT > 0 ? 'over' : 'under'} the line by ${Math.abs(x.vsT).toFixed(1)}`);
+  if (x.own !== null && Math.abs(x.own) >= nP) tag(x.own > 0 ? 'w' : 'l', x.own > 0 ? 'Attack underrated' : 'Attack overrated', x.own, `Scores ${Math.abs(x.own).toFixed(1)} ${x.own > 0 ? 'more' : 'fewer'} than priced`);
+  if (x.opp !== null && Math.abs(x.opp) >= nP) tag(x.opp < 0 ? 'w' : 'l', x.opp < 0 ? 'Defence underrated' : 'Defence overrated', x.opp, `Concedes ${Math.abs(x.opp).toFixed(1)} ${x.opp < 0 ? 'fewer' : 'more'} than priced`);
+  return tags.join('');
+}
+// one club's games, from its own side: its handicap and margin, the total, and how each went against the line
+function mkGames(x){
+  const one = v => (v > 0 ? '+' : v < 0 ? '−' : '') + Math.abs(v).toFixed(1);
+  const rows = x.games.slice().sort((a, b) => a.date.localeCompare(b.date)).map(g => {
+    const home = g.h === x.team, opp = home ? g.a : g.h;
+    const own = home ? g.hp : g.ap, them = home ? g.ap : g.hp;
+    const exp = home ? g.bh : -g.bh, m = own - them, tot = g.hp + g.ap;
+    const cov = m > exp ? '<span class="w">Covered</span>' : m < exp ? '<span class="l">Not covered</span>' : '<span class="tag">Push</span>';
+    const ou = g.bt === null ? '–' : tot > g.bt ? 'Over' : tot < g.bt ? 'Under' : 'Push';
+    // points the two lines implied: own = (total + handicap) / 2, opponent = (total - handicap) / 2
+    const eo = g.bt === null ? null : (g.bt + exp) / 2, ep = g.bt === null ? null : (g.bt - exp) / 2;
+    const pv = (v, good) => v === null ? '<td class="n">–</td>' : `<td class="n"><span class="${v === 0 ? 'tag' : (good ? v > 0 : v < 0) ? 'w' : 'l'}">${one(v)}</span></td>`;
+    return `<tr><td class="n">${fmtDate(g.date)}</td><td class="tag">${esc(g.stage.split(' · ')[0])}</td>
+      <td>${home ? 'vs' : 'at'} <b>${esc(opp)}</b> <span class="tag">(${esc(code(teams[opp]))})</span></td>
+      <td class="n"><b class="${m > 0 ? 'w' : 'l'}">${own}–${them}</b>${g.ot ? ' <span class="tag">OT</span>' : ''}</td>
+      <td class="n gap">${one(exp)}</td><td class="n">${one(m)}</td><td class="n gap">${cov} <span class="tag">${one(m - exp)}</span></td>
+      <td class="n">${g.bt === null ? '–' : g.bt.toFixed(1)}</td><td class="n">${tot}</td><td class="n gap">${ou} ${g.bt === null ? '' : `<span class="tag">${one(tot - g.bt)}</span>`}</td>
+      <td class="n tag" title="Points the lines implied for the club and its opponent">${eo === null ? '–' : `${eo.toFixed(1)}–${ep.toFixed(1)}`}</td>${pv(eo === null ? null : own - eo, true)}${pv(ep === null ? null : them - ep, false)}</tr>`;
+  }).join('');
+  return `<tr class="mkgames"><td colspan="13" style="padding:4px 0 14px 10px;background:var(--panel)">
+    <table class="fx" style="margin:0"><tr><th class="n">Date</th><th>Round</th><th>Opponent</th><th class="n">Score</th>
+      <th class="n gap" title="The club's handicap: + = favourite by that many">Book hcp</th><th class="n" title="The club's margin">Result</th><th class="n gap" title="Against the handicap, with the difference">Handicap</th>
+      <th class="n">Book total</th><th class="n">Total</th><th class="n gap" title="Against the total line, with the difference">Over / under</th>
+      <th class="n" title="Points the two lines implied: own = (total + handicap) / 2, opponent = (total − handicap) / 2">Lines said</th><th class="n" title="Own points minus what the lines implied">Own</th><th class="n" title="Opponent points minus what the lines implied">Opp</th></tr>${rows}</table></td></tr>`;
+}
+// one set of column widths for every group table, so the columns line up down the page
+const MK_COLS = '<colgroup><col style="width:200px"><col style="width:40px"><col style="width:68px">' + ['62', '60', '68', '80', '62', '60', '58', '80', '60', '60'].map(w => `<col style="width:${w}px">`).join('') + '<col></colgroup>';
+// market rating: line = r[home] - r[away] + home advantage over every game with a line, ridge-shrunk toward 0
+// (lambda 1, home advantage not shrunk), centred on the average club; solved by Gaussian elimination
+function mkRatings(games){
+  const clubs = [...new Set(games.flatMap(g => [g.h, g.a]))], k = clubs.length + 1, ix = new Map(clubs.map((c, i) => [c, i]));
+  const A = Array.from({length: k}, () => new Array(k).fill(0)), b = new Array(k).fill(0);
+  for (const g of games){
+    const v = [[ix.get(g.h), 1], [ix.get(g.a), -1], [k - 1, 1]];
+    for (const [i, xi] of v){ b[i] += xi * g.bh; for (const [j, xj] of v) A[i][j] += xi * xj; }
+  }
+  for (let i = 0; i < k - 1; i++) A[i][i] += 1;
+  for (let c = 0; c < k; c++){                                  // elimination with partial pivoting
+    let p = c; for (let r = c + 1; r < k; r++) if (Math.abs(A[r][c]) > Math.abs(A[p][c])) p = r;
+    [A[c], A[p]] = [A[p], A[c]]; [b[c], b[p]] = [b[p], b[c]];
+    for (let r = 0; r < k; r++) if (r !== c && A[r][c]){ const f = A[r][c] / A[c][c]; for (let j = c; j < k; j++) A[r][j] -= f * A[c][j]; b[r] -= f * b[c]; }
+  }
+  const x = b.map((v, i) => v / A[i][i]), mean = clubs.reduce((t, c, i) => t + x[i], 0) / clubs.length;
+  return {r: new Map(clubs.map((c, i) => [c, x[i] - mean])), hca: x[k - 1]};
+}
+function renderMarket(){
+  const box = $('mkView');
+  // lines from the archive (frozen with a projection) plus market.js (games never archived)
+  const games = [], seen = new Set();
+  const add = (date, g) => {
+    const r = arResult(date, g.h, g.a);
+    const key = g.h + '|' + g.a + '|' + (r ? r[3] : date);
+    if (!r || r[8] === 'AWA.' || r[1] !== 'Main' || r[3] < MK_FROM || seen.has(key)) return;
+    seen.add(key);
+    games.push({date: r[3], grp: (r[2].match(/^Group (\w)/) || [])[1] || '?', stage: r[2].replace(/^Group (\w) - (\d+)\. Round$/, 'Round $2 · $1'),
+      h: g.h, a: g.a, hp: r[6], ap: r[7], ot: r[8] === 'AET', bh: g.bh, bt: g.bt ?? null});
+  };
+  for (const sn of (window.ARCHIVE && ARCHIVE.list) || []) for (const g of sn.games) add(sn.date, g);
+  for (const g of (window.MARKET && MARKET.list) || []) add(g.date, g);
+  if (!games.length){ box.innerHTML = '<div class="empty">No game with a line and a result yet.</div>'; return; }
+  const club = {};
+  for (const g of games){
+    const m = g.hp - g.ap, tot = g.hp + g.ap;
+    for (const [t, exp, real] of [[g.h, g.bh, m], [g.a, -g.bh, -m]]){
+      const x = (club[t] ??= {team: t, grp: g.grp, n: 0, w: 0, l: 0, p: 0, exp: 0, real: 0, tn: 0, o: 0, u: 0, tp: 0, texp: 0, treal: 0, games: []});
+      x.games.push(g);
+      x.n++; x.exp += exp; x.real += real; real > exp ? x.w++ : real < exp ? x.l++ : x.p++;
+      if (g.bt !== null){ x.tn++; x.texp += g.bt; x.treal += tot; tot > g.bt ? x.o++ : tot < g.bt ? x.u++ : x.tp++; }
+    }
+  }
+  const MR = mkRatings(games);
+  const rows = Object.values(club).map(x => {
+    const vsS = (x.real - x.exp) / x.n, vsT = x.tn ? (x.treal - x.texp) / x.tn : null;
+    return {...x, mr: MR.r.get(x.team) ?? null, vsS, vsT, bh: x.exp / x.n, rm: x.real / x.n, bt: x.tn ? x.texp / x.tn : null, rt: x.tn ? x.treal / x.tn : null,
+      own: vsT === null ? null : (vsT + vsS) / 2, opp: vsT === null ? null : (vsT - vsS) / 2};
+  });
+  const one = v => v === null ? '–' : (v > 0 ? '+' : v < 0 ? '−' : '') + Math.abs(v).toFixed(1);
+  const col = (v, lim) => v === null ? '' : v >= lim ? 'w' : v <= -lim ? 'l' : 'tag';
+  const {k, dir} = mkSort;
+  const val = (x, c) => c === 'team' ? x.team : c === 'cov' ? (x.n ? x.w / x.n : 0) : c === 'ou' ? (x.tn ? x.o / x.tn : 0) : c === 'vs' ? x.vsS : (x[c] ?? -999);
+  const th = (c, label, cls, title, extra = '') => `<th class="${cls} sort${c === k ? ' on' : ''}" data-k="${c}"${extra}${title ? ` title="${title}"` : ''}>${label}${c === k ? `<i class="ar">${dir > 0 ? '▲' : '▼'}</i>` : ''}</th>`;
+  const head = `<tr class="mkgrp"><th></th><th></th><th></th><th colspan="4" class="grp sec"><span>Handicap</span></th><th colspan="4" class="grp sec"><span>Total</span></th><th colspan="2" class="grp sec" title="How far the club's own points and its opponents' points were from what the two lines implied"><span>Points vs line</span></th><th></th></tr>
+    <tr>${th('team', 'Team', 'tl')}${th('n', 'GP', 'n', 'Games with a line')}${th('mr', 'Market', 'n sec0', 'Market rating: points better (+) or worse (−) than an average club on a neutral court, as the bookmaker lines rate it')}
+      ${th('bh', 'Book', 'n sec0', 'Average bookmaker handicap for the club, per game (+ = favourite)')}${th('rm', 'Result', 'n', 'Average real margin for the club, per game')}${th('cov', 'Covered', 'n', 'Beat the handicap – did not (pushes after)')}${th('vs', 'Vs line', 'n', 'Real margin minus the margin the handicap expected, per game: above 0 = underrated')}
+      ${th('bt', 'Book', 'n sec0', 'Average total line in the club games')}${th('rt', 'Result', 'n', 'Average points scored in the club games')}${th('ou', 'O–U', 'n', 'Overs – unders')}${th('vsT', 'Vs line', 'n', 'Points in the game minus the total line, per game: above 0 = over')}
+      ${th('own', 'Own', 'n sec0', 'Own points minus what the lines implied, per game: (total vs line + handicap vs line) / 2')}${th('opp', 'Opp', 'n', 'Opponents points minus what the lines implied, per game: (total vs line − handicap vs line) / 2')}<th class="tl rd sec0">Read</th></tr>`;
+  const groups = [...new Set(rows.map(x => x.grp))].sort();
+  const sections = groups.map(gr => {
+    const list = rows.filter(x => x.grp === gr).sort((p, q) => {
+      const a = val(p, k), b = val(q, k);
+      return (typeof a === 'string' ? a.localeCompare(b) : a - b) * dir || p.team.localeCompare(q.team);
+    });
+    return `<h2 class="mkh">Group ${esc(gr)}</h2><div class="scroll"><table class="mkt">${MK_COLS}${head}` + list.map(x => {
+      const hs = `Line said ${one(x.exp / x.n)}, real margin ${one(x.real / x.n)}`;
+      const ts = x.tn ? `Total line ${(x.texp / x.tn).toFixed(1)}, real total ${(x.treal / x.tn).toFixed(1)}` : '';
+      const open = mkOpen.has(x.team);
+      return `<tr class="click" data-club="${esc(x.team)}" title="Click for the club's games">
+        <td class="tl"><span class="caret">${open ? '▾' : '▸'}</span><b>${esc(x.team)}</b> <span class="tag">${esc(code(teams[x.team]))}</span></td><td class="n">${x.n}</td><td class="n sec0"><b class="hcp">${x.mr === null ? '–' : one(x.mr)}</b></td>
+        <td class="n sec0">${one(x.bh)}</td><td class="n">${one(x.rm)}</td>
+        <td class="n" title="${hs}">${x.w}–${x.l}${x.p ? `<span class="tag">–${x.p}</span>` : ''}</td>
+        <td class="n" title="${hs}; counts from ±${mkLim(MK_SD.hcp, x.n).toFixed(1)} after ${x.n} games"><b class="${col(x.vsS, mkLim(MK_SD.hcp, x.n))}">${one(x.vsS)}</b></td>
+        <td class="n sec0">${x.bt === null ? '–' : x.bt.toFixed(1)}</td><td class="n">${x.rt === null ? '–' : x.rt.toFixed(1)}</td>
+        <td class="n" title="${ts}">${x.tn ? `${x.o}–${x.u}${x.tp ? `<span class="tag">–${x.tp}</span>` : ''}` : '–'}</td>
+        <td class="n" title="${ts}${x.tn ? `; counts from ±${mkLim(MK_SD.tot, x.tn).toFixed(1)} after ${x.tn} games` : ''}"><b class="${Math.abs(x.vsT ?? 0) >= mkLim(MK_SD.tot, x.tn) ? 'hcp' : 'tag'}">${one(x.vsT)}</b></td>
+        <td class="n sec0"><span class="${col(x.own, mkLim(MK_SD.pts, x.tn))}">${one(x.own)}</span></td><td class="n"><span class="${col(x.opp === null ? null : -x.opp, mkLim(MK_SD.pts, x.tn))}">${one(x.opp)}</span></td>
+        <td class="rd sec0">${mkRead(x)}</td></tr>` + (open ? mkGames(x) : '');
+    }).join('') + `</table></div>`;
+  }).join('');
+  const all = games.slice().sort((x, y) => y.date.localeCompare(x.date) || x.h.localeCompare(y.h)).map(g => {
+    const m = g.hp - g.ap, tot = g.hp + g.ap;
+    const cov = m > g.bh ? g.h : m < g.bh ? g.a : 'push';
+    const ou = g.bt === null ? '' : tot > g.bt ? 'Over' : tot < g.bt ? 'Under' : 'push';
+    return `<tr><td class="n">${fmtDate(g.date)}</td><td class="tag">${esc(g.stage)}</td><td><b>${esc(g.h)}</b> – <b>${esc(g.a)}</b></td>
+      <td class="n"><b>${g.hp}–${g.ap}</b>${g.ot ? ' <span class="tag">OT</span>' : ''}</td>
+      <td class="n gap">${one(g.bh)}</td><td class="n">${one(m)}</td><td class="n gap">${esc(cov)}</td>
+      <td class="n">${g.bt === null ? '–' : g.bt.toFixed(1)}</td><td class="n">${tot}</td><td class="n">${ou}</td></tr>`;
+  }).join('');
+  box.innerHTML = `<div class="note" style="margin-bottom:14px">The bookmaker's pre-game line for every Regular Season game from Round 1 (${fmtDate(MK_FROM)}) against what happened: ${games.length} games so far, by group. Each club appears in every game it played, home or away.
+      <b>Handicap vs line</b> above 0 = the club did better than priced (underrated); <b>Total vs line</b> above 0 = its games went over.
+      <b>Market</b> = the club's rating in the bookmaker's eyes: points better (+) or worse (−) than an average club on a neutral court, fitted from every line so far (home advantage in the lines: ${one(MR.hca)}).
+      <b>Points vs line</b> splits the two: <b>Own</b> = its own points against what the lines implied, <b>Opp</b> = its opponents' points.
+      Each of the four is judged on its own, and only after ${MK_MIN} completed games: the Read names every one that is off by more than its sample's noise (own points and defence included, even when the total alone is not off).
+      A club's average only counts once it is larger than the noise of its sample: the book's typical miss divided by √games, about ${MK_SD.hcp} ÷ √games on the handicap and ${MK_SD.tot} ÷ √games on the total (±${mkLim(MK_SD.hcp, 3).toFixed(1)} and ±${mkLim(MK_SD.tot, 3).toFixed(1)} after 3 games, ±${mkLim(MK_SD.hcp, 10).toFixed(1)} and ±${mkLim(MK_SD.tot, 10).toFixed(1)} after 10). Smaller differences are greyed out and left out of the Read; green = better for the club than priced, red = worse. Click a club for its games one by one.</div>
+    ${sections}
+    <details class="ros" style="margin-top:18px"><summary><b>Every game</b> <span class="tag">${games.length}</span></summary>
+      <div class="scroll"><table class="fx"><tr><th class="n">Date</th><th>Round</th><th>Match</th><th class="n">Score</th><th class="n gap" title="Bookmaker handicap, home minus away">Hcp line</th><th class="n" title="Home minus away">Margin</th><th class="n gap">Covered</th><th class="n">Total line</th><th class="n">Total</th><th class="n">O/U</th></tr>${all}</table></div></details>`;
+  box.querySelectorAll('tr.click[data-club]').forEach(tr => tr.onclick = () => {
+    const c = tr.dataset.club; mkOpen.has(c) ? mkOpen.delete(c) : mkOpen.add(c); renderMarket();
+  });
+  box.querySelectorAll('th.sort').forEach(h => h.onclick = () => {
+    const c = h.dataset.k;
+    mkSort = mkSort.k === c ? {k: c, dir: -mkSort.dir} : {k: c, dir: c === 'team' ? 1 : -1};
+    renderMarket();
+  });
+}
+function setView(v){
+  view = ['market', 'h2h', 'rosters', 'rankings'].includes(v) ? v : 'market';
+  document.querySelectorAll('#tabs a').forEach(b => b.classList.toggle('on', b.dataset.view === view));
+  document.body.classList.toggle('wide', view === 'market');
+  $('rkView').hidden = view !== 'rankings';
+  $('mkView').hidden = view !== 'market';
+  $('h2hView').hidden = view !== 'h2h';
+  $('roView').hidden = view !== 'rosters';
+  if (view === 'rankings') renderRankings();
+  if (view === 'market') renderMarket();
+  if (view === 'rosters') renderRosters();
+}
+document.querySelectorAll('#tabs a').forEach(b => b.onclick = e => { if (e.metaKey || e.ctrlKey || e.shiftKey || e.button) return; e.preventDefault(); setView(b.dataset.view); sync(); });
+// Home: back to the start (countries, all venues, nothing selected, Vs Market tab)
+document.querySelectorAll('[data-home]').forEach(a => a.onclick = e => {
+  e.preventDefault();
+  setMode('country'); setVenue('all'); $('a').value = $('b').value = '';
+  setView('market'); render();
+  history.replaceState(null, '', location.pathname);
+  window.scrollTo({top: 0, behavior: 'smooth'});
+});
+
+function sync(){
+  // only the head to head page carries its picks; defaults and empty fields stay out of the link
+  const q = new URLSearchParams({view});
+  if (view === 'h2h'){
+    if (mode !== 'country') q.set('mode', mode);
+    if (venue !== 'all') q.set('venue', venue);
+    if ($('a').value) q.set('a', $('a').value);
+    if ($('b').value) q.set('b', $('b').value);
+    if (hSeasons !== PJ_DEFAULT_SEASONS) q.set('seasons', hSeasons || 'all');
+    if (!(hStages.size === 1 && hStages.has('Main'))) q.set('stages', PJ_STAGES.filter(x => hStages.has(x)).join(','));
+  }
+  if (view === 'rankings' && rkSeasons !== PJ_DEFAULT_SEASONS) q.set('seasons', rkSeasons || 'all');
+  if (view === 'rankings' && !(rkStages.size === 1 && rkStages.has('Main'))) q.set('stages', PJ_STAGES.filter(x => rkStages.has(x)).join(','));
+  history.replaceState(null, '', '#' + q.toString());
+}
+function setMode(m){
+  mode = m;
+  document.querySelectorAll('#seg button').forEach(b => b.classList.toggle('on', b.dataset.mode === m));
+  $('la').textContent = m === 'team' ? 'Team' : 'Country';
+  $('lb').textContent = 'Opponent (optional)';
+  fillOptions();
+}
+document.querySelectorAll('#seg button').forEach(b => b.onclick = () => { setMode(b.dataset.mode); $('a').value = $('b').value = ''; sync(); render(); });
+function setVenue(v){
+  venue = ['home','away'].includes(v) ? v : 'all';
+  document.querySelectorAll('#venue button').forEach(b => b.classList.toggle('on', b.dataset.venue === venue));
+}
+document.querySelectorAll('#venue button').forEach(b => b.onclick = () => { setVenue(b.dataset.venue); sync(); render(); });
+['a','b'].forEach(id => $(id).addEventListener('input', () => { sync(); render(); }));
+$('a').addEventListener('change', render); $('b').addEventListener('change', render);
+
+// restore from URL hash
+const p = new URLSearchParams(location.hash.slice(1));
+setMode(p.get('mode') === 'team' ? 'team' : 'country');
+setVenue(p.get('venue'));
+const hashStages = () => (p.get('stages') || '').split(',').filter(x => PJ_STAGES.includes(x));
+const hashSeasons = () => { const v = p.get('seasons'), n = +v; return v === 'all' ? 0 : n >= 1 && n < ALL_SEASONS.length ? Math.round(n) : null; };
+if (p.get('view') === 'h2h'){
+  if (hashStages().length) hStages = new Set(hashStages());
+  if (hashSeasons() !== null) hSeasons = hashSeasons();
+  $('a').value = p.get('a') || ''; $('b').value = p.get('b') || '';
+}
+if (p.get('view') === 'rankings'){
+  if (hashStages().length) rkStages = new Set(hashStages());
+  if (hashSeasons() !== null) rkSeasons = hashSeasons();
+}
+render();
+setView(p.get('view'));
+</script>
+</body>
+</html>
