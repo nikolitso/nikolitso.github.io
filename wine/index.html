@@ -36,6 +36,10 @@ body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
 .wrap{position:relative;max-width:1000px;margin:0 auto;padding:0 20px 96px}
 header{padding:44px 0 30px}
 .top{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.brand{display:flex;align-items:center;gap:14px}
+.logo{display:block;line-height:0;flex:none;transition:transform .2s}
+.logo:hover{transform:translateY(-2px)}
+.logo svg{width:38px;height:44px}
 .kicker{font:var(--label);letter-spacing:.22em;text-transform:uppercase;color:var(--gold)}
 .lang{display:flex;border:1px solid var(--line2);border-radius:999px;overflow:hidden;background:rgba(0,0,0,.18)}
 .lang button{font:var(--label);letter-spacing:.12em;color:var(--muted);background:transparent;border:0;padding:8px 14px;cursor:pointer;transition:color .2s}
@@ -195,7 +199,7 @@ footer{margin-top:72px;padding-top:22px;border-top:1px solid var(--line);color:v
 <div class="wrap">
 <header>
   <div class="top">
-    <div class="kicker" id="kicker"></div>
+    <div class="brand"><a class="logo" href="/wine/" aria-label="Greek Wine &amp; Food Pairing: start page"><svg viewBox="0 0 44 50" aria-hidden="true"><path d="M22 3c0 5 1 8 0 12" stroke="#d6b066" stroke-width="2.4" fill="none" stroke-linecap="round"/><path d="M23 9c5-6 12-6 17-2-4 6-11 7-17 2z" fill="#6f8f3c" stroke="#d6b066" stroke-width="1"/><g fill="#7d2236" stroke="#d6b066" stroke-width="1.2"><circle cx="11" cy="19" r="5.2"/><circle cx="22" cy="19" r="5.2"/><circle cx="33" cy="19" r="5.2"/><circle cx="16.500" cy="28" r="5.2"/><circle cx="27.500" cy="28" r="5.2"/><circle cx="22" cy="37" r="5.2"/></g><circle cx="22" cy="44" r="3.600" fill="#7d2236" stroke="#d6b066" stroke-width="1.200"/><g fill="#fff" fill-opacity=".28"><circle cx="9.500" cy="17" r="1.400"/><circle cx="20.500" cy="17" r="1.400"/><circle cx="31.500" cy="17" r="1.400"/><circle cx="15" cy="26" r="1.400"/><circle cx="26" cy="26" r="1.400"/><circle cx="20.500" cy="35" r="1.400"/></g></svg></a><div class="kicker" id="kicker"></div></div>
     <div class="lang" role="group" aria-label="Language">
       <button type="button" data-lang="en">EN</button><button type="button" data-lang="el">ΕΛ</button>
     </div>
@@ -618,6 +622,8 @@ function render() {
 document.addEventListener('toggle', e => { const d = e.target.closest && e.target.closest('details.pill'); if (d) { d.open ? openEstates.add(d.dataset.w) : openEstates.delete(d.dataset.w); } }, true);
 document.getElementById('q').addEventListener('input', e => { state.q = e.target.value; state.grape = ''; render(); });
 document.addEventListener('click', e => {
+  const lg = e.target.closest('.logo');
+  if (lg) { e.preventDefault(); view = 'list'; state = {q: '', cat: '', tag: '', grape: '', region: '', colour: '', variety: ''}; document.getElementById('q').value = ''; try { history.replaceState(null, '', '/wine/'); } catch (x) {} render(); window.scrollTo({top: 0, behavior: 'smooth'}); return; }
   const vb = e.target.closest('.views button');
   if (vb) { view = vb.dataset.view; state = {q: '', cat: '', tag: '', grape: '', region: '', colour: ''}; document.getElementById('q').value = ''; try { history.replaceState(null, '', HASH[view]); } catch (x) {} render(); return; }
   const pt = e.target.closest('.gmap .pt:not(.empty)');
