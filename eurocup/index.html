@@ -525,7 +525,7 @@ function mkGames(x){
       <td class="n">${g.bt === null ? '–' : g.bt.toFixed(1)}</td><td class="n">${tot}</td><td class="n gap">${ou} ${g.bt === null ? '' : `<span class="tag">${one(tot - g.bt)}</span>`}</td>
       <td class="n tag" title="Points the lines implied for the club and its opponent">${eo === null ? '–' : `${eo.toFixed(1)}–${ep.toFixed(1)}`}</td>${pv(eo === null ? null : own - eo, true)}${pv(ep === null ? null : them - ep, false)}</tr>`;
   }).join('');
-  return `<tr class="mkgames"><td colspan="13" style="padding:4px 0 14px 10px;background:var(--panel)">
+  return `<tr class="mkgames"><td colspan="14" style="padding:4px 0 14px 10px;background:var(--panel)">
     <table class="fx" style="margin:0"><tr><th class="n">Date</th><th>Round</th><th>Opponent</th><th class="n">Score</th>
       <th class="n gap" title="The club's handicap: + = favourite by that many">Book hcp</th><th class="n" title="The club's margin">Result</th><th class="n gap" title="Against the handicap, with the difference">Handicap</th>
       <th class="n">Book total</th><th class="n">Total</th><th class="n gap" title="Against the total line, with the difference">Over / under</th>
