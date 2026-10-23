@@ -133,7 +133,8 @@
       "how-to-watch-football-52-rules-for",
       "becoming-a-winning-gambler",
       "the-subtle-art-of-not-giving-a-fck",
-      "money-and-soccer-a-soccernomics-guide"
+      "money-and-soccer-a-soccernomics-guide",
+      "mindset"
     ],
     "log": [
       {
@@ -261,6 +262,12 @@
         "slot": "2026-10-23 02",
         "slug": "money-and-soccer-a-soccernomics-guide",
         "id": "2113409478208917828"
+      },
+      {
+        "day": "2026-10-23",
+        "slot": "2026-10-23 14",
+        "slug": "mindset",
+        "id": "2113646322553069627"
       }
     ],
     "last_day": "2026-10-23"
@@ -592,7 +599,7 @@
     ],
     "last_day": "2026-10-22"
   },
-  "last_slot": "2026-10-23 11",
+  "last_slot": "2026-10-23 14",
   "quote": {
     "seen": [
       "1",
