@@ -151,7 +151,7 @@ td.wr{white-space:normal}
   </div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=e17cf016"></script>
+<script src="data.js?v=2a85cc7a"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -180,7 +180,7 @@ function card(g){
 
 function renderProjections(){
   const L = LG();
-  if (!L.fixtures.length) return '<p class="note">No fixtures scheduled in the next two weeks.</p>';
+  if (!L.fixtures.length) return '<p class="note">The next round is not scheduled yet.</p>';
   const byDay = {};
   L.fixtures.forEach(g => (byDay[g.dt.slice(0,10)] ||= []).push(g));
   let h = '';
