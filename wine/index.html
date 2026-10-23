@@ -884,13 +884,52 @@ function occasionHtml(mi) {
   }).join('');
 }
 // Tonight: one dish and its wine from this month's Top 10, a different one each day
-// the pick for a given day from that month's Top 10; Saturday and Sunday always meat or fish (Antonis)
-function pickFor(d) {
-  const all = yearPlan()[d.getMonth() + 1], weekend = d.getDay() === 0 || d.getDay() === 6;
-  const meatFish = all.filter(([r]) => r.category === 'Meat & poultry' || r.category === 'Fish & seafood');
-  const pool = weekend && meatFish.length ? meatFish : all;
-  return pool[(d.getDate() - 1) % pool.length];
+// A dish for every day of the month (Antonis): never the same dish twice in a month, Saturday and Sunday always meat or fish,
+// weekdays easy dishes; the month's Top 10 first, then other dishes in season. Fried dishes at most 3 a month, slow dishes only at weekends (2 at most).
+const CAL = {};
+function monthCalendar(y, m) {
+  const key = y + '-' + m;
+  if (CAL[key]) return CAL[key];
+  const hash = s => { let h = 7; for (const c of s) h = (h * 31 + c.charCodeAt(0)) % 100003; return h; };
+  const isMF = r => r.category === 'Meat & poultry' || r.category === 'Fish & seafood';
+  const top = yearPlan()[m], topWine = new Map(top.map(([r, w]) => [r.name, w]));
+  const fit = r => { const w = SEASONAL[r.name]; return w ? Math.abs(w.indexOf(m) - (w.length - 1) / 2) / w.length : 0.6 + (hash(r.name + m) % 100) / 250; };
+  const pool = ALLR.filter(r => topWine.has(r.name) || (!['Cheeses', 'Breads', 'Dips & small dishes'].includes(r.category) && !RARE.has(r.name) && inSeason(r, m) && dishOptions(r).length))
+    .sort((a, b) => (topWine.has(b.name) - topWine.has(a.name)) || (fit(a) - fit(b)));
+  const n = new Date(y, m, 0).getDate(), days = [...Array(n).keys()].map(i => new Date(y, m - 1, i + 1));
+  const used = new Set(), out = [];
+  let fried = 0, hard = 0;
+  // the month's Top 10 (already approved) always make it in; the limits apply to the extra dishes
+  const ok = (r, weekend) => {
+    if (used.has(r.name)) return false;
+    if (weekend) return isMF(r) && (topWine.has(r.name) || !(FRIED.has(r.name) && fried >= 3) && !(HARD.has(r.name) && hard >= 2));
+    return topWine.has(r.name) || (!HARD.has(r.name) && !(FRIED.has(r.name) && fried >= 3));
+  };
+  // weekends first so they get the meat and fish; days in a shuffled order so the Top 10 spreads over the month
+  const order = days.map((d, i) => i).sort((a, b) => {
+    const wa = days[a].getDay() % 6 === 0, wb = days[b].getDay() % 6 === 0;
+    return (wb - wa) || (hash(key + a) - hash(key + b));
+  });
+  for (const i of order) {
+    const weekend = days[i].getDay() % 6 === 0;
+    const r = pool.find(x => ok(x, weekend)) || pool.find(x => !used.has(x.name) && (!weekend || isMF(x))) || pool.find(x => !used.has(x.name)) || pool[i % pool.length];
+    used.add(r.name); if (FRIED.has(r.name)) fried++; if (HARD.has(r.name)) hard++;
+    out[i] = r;
+  }
+  // wines: the Top 10 keep their wine; others take a white or rosé not yet used this month when there is one
+  const usedW = new Set(top.map(([, w]) => w.id));
+  CAL[key] = out.map(r => {
+    let w = topWine.get(r.name);
+    if (!w) {
+      const o = dishOptions(r).sort((a, b) => (colourKey(byId[a]) === 'Red') - (colourKey(byId[b]) === 'Red'));
+      w = byId[o.find(x => !usedW.has(x) && colourKey(byId[x]) !== 'Red') || o.find(x => colourKey(byId[x]) !== 'Red') || o[0]];
+      usedW.add(w.id);
+    }
+    return [r, w];
+  });
+  return CAL[key];
 }
+const pickFor = d => monthCalendar(d.getFullYear(), d.getMonth() + 1)[d.getDate() - 1];
 function tonightHtml(pairs) {
   const now = new Date();
   if (monthIndex() !== now.getMonth() || !pairs.length) return '';
