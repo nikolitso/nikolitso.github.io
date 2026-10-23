@@ -134,7 +134,7 @@ table.mini{margin:0 0 16px}
   </div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=e6c6ba95"></script>
+<script src="data.js?v=077a7c40"></script>
 <script>
 const D = window.SL, $ = id => document.getElementById(id);
 const L = D.labels, ORDER = D.order;
@@ -279,7 +279,7 @@ function renderMethod(){
       <tr><td>${H}</td><td class="n tot">${c.home_for.toFixed(2)}</td><td class="muted">wins ${vsAvg(c.home_for,'more','fewer')}</td><td class="n tot">${c.home_against.toFixed(2)}</td><td class="muted">concedes ${vsAvg(c.home_against,'more','fewer')}</td></tr>
       <tr><td>${W}</td><td class="n tot">${c.away_for.toFixed(2)}</td><td class="muted">wins ${vsAvg(c.away_for,'more','fewer')}</td><td class="n tot">${c.away_against.toFixed(2)}</td><td class="muted">concedes ${vsAvg(c.away_against,'more','fewer')}</td></tr>
     </tbody></table></div>
-    <p>These ratings are not just this season's averages. This season ${H} win ${f(tH.for.corners,'corners')} and concede ${f(tH.against.corners,'corners')} corners a game, and ${W} win ${f(tW.for.corners,'corners')} and concede ${f(tW.against.corners,'corners')}, but that is only ${tH.games} and ${tW.games} games. The ratings use the games since ${D.history.from}–${String(+D.history.from + 1).slice(2)} (this season and the two before). For corners, a game from ${ago(c.half_life)} ago counts half as much as last week's. They also adjust for opponents: winning 6 corners against a side that rarely concedes them is worth more than winning 6 against one that concedes plenty.</p>
+    <p>These ratings are not just this season's averages. This season ${H} win ${f(tH.for.corners,'corners')} and concede ${f(tH.against.corners,'corners')} corners a game, and ${W} win ${f(tW.for.corners,'corners')} and concede ${f(tW.against.corners,'corners')}, but that is only ${tH.games} and ${tW.games} games. The ratings use the games since ${D.history.from}–${String(+D.history.from + 1).slice(2)} (this season and the two before), with this season counting most: for corners, a game from ${ago(c.half_life)} ago counts half as much as last week's, and a game from an earlier season counts half again. They also adjust for opponents: winning 6 corners against a side that rarely concedes them is worth more than winning 6 against one that concedes plenty.</p>
 
     <h3><span class="num">3</span>Multiply</h3>
     <div class="calc">
@@ -342,7 +342,8 @@ function renderMethod(){
   if (E) for (const s of ORDER) h += `<tr><td>${L[s]}</td><td class="muted">${ago(E.half_lives[s])}</td></tr>`;
   h += `</tbody></table></div>
   <ul>
-    <li><b>Small samples are pulled toward average.</b> After four games a team isn't really a corner machine because it won 9 in one of them, so each team is treated as if it also played a few perfectly average games.</li>
+    <li><b>Small samples are pulled toward the club's usual level.</b> After four games a team isn't really a corner machine because it won 9 in one of them. In Greece the Big 4 stay big and the small clubs stay small, so a team is pulled toward its own long-run level (every season since 2019), not toward the league average: Olympiakos toward Olympiakos, a promoted side toward a typical promoted side. Before this, the model under-rated the Big 4: they scored 9% more goals than it projected. Fouls and throw-ins follow the coach more than the club, so they are still pulled toward the league average.</li>
+    <li><b>The Big 4 against the small clubs.</b> Even with that, a small club facing Olympiakos, PAOK, AEK or Panathinaikos has scored 15–20% fewer goals than projected in every season since 2019. So in those games the small club's goals are multiplied by ×${D.matchup['small v big'].toFixed(2)} and the big club's by ×${D.matchup['big v small'].toFixed(2)} (half of the gap seen so far, which tested best season by season). This feeds the goals line and the 1X2 chances.</li>
     <li><b>Promoted teams</b> start from how promoted sides have usually done. For corners that's ${E ? Math.round((1 - E.newcomer[0])*100) : 15}% fewer won and ${E ? Math.round((E.newcomer[1] - 1)*100) : 12}% more conceded than average. Their own results take over as games come in.</li>
     <li><b>None of these settings are guesses.</b> For each stat I tried several combinations on every game since 2023–24, each time using only games played before that date, and kept the one that missed least.</li>
   </ul>
