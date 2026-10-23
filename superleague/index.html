@@ -80,6 +80,15 @@ th.sort{cursor:pointer;user-select:none} th.sort:hover,th.sort.on{color:var(--go
 .metric .lbl{font:400 11px var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}
 .metric .big{font:500 24px var(--mono);color:var(--gold)}
 .scroll{overflow-x:auto}
+.doc{max-width:860px}
+.doc p,.doc li{font-size:16.5px;line-height:1.65;margin:0 0 14px}
+.doc ul{padding-left:20px;margin:0 0 14px}
+.doc h3{font:600 18px var(--serif);margin:28px 0 8px;display:flex;align-items:center;gap:10px}
+.doc .num{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--gold);color:#0c1424;font:600 13px var(--mono);flex:none}
+.calc{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:8px;padding:12px 16px;margin:0 0 14px;font:400 14px/2 var(--mono);overflow-x:auto}
+.calc i{font-style:normal;color:var(--muted);font-size:12px}
+.calc b{color:var(--gold);font-weight:500}
+table.mini{margin:0 0 16px}
 .abbr{display:none}
 @media(max-width:600px){.grid{grid-template-columns:1fr}.ln span{min-width:0;margin-left:8px}.card{padding:14px 10px 8px}td,th{padding:6px 4px}
   .card td{font-size:14px}.card td.n{font-size:12.5px}.full{display:none}.abbr{display:inline}.wdlt{flex-wrap:wrap;gap:2px 12px}}
@@ -207,21 +216,108 @@ function renderTeams(){
   return h + '</tbody></table></div>';
 }
 
+const sgn = x => (x >= 0 ? '+ ' : '− ') + Math.abs(x).toFixed(1);
+const vsAvg = (x, more, less) => Math.abs(x - 1) < .02 ? 'about average' : x > 1 ? `${Math.round((x-1)*100)}% ${more} than average` : `${Math.round((1-x)*100)}% ${less} than average`;
+const ago = d => d < 300 ? `${Math.round(d/30)} months` : d < 500 ? '1 year' : `${Math.round(d/365)} years`;
+function poisson(mu){ const p = [Math.exp(-mu)]; for (let i = 1; i <= 10; i++) p.push(p[i-1] * mu / i); return p; }
+
 function renderMethod(){
-  const A = D.accuracy;
-  let h = `<p class="note">Each team gets two ratings per stat: how much it <b>produces</b> and how much it <b>allows</b>, relative to the league. A projection is the league's home (or away) average × the team's rating for × the opponent's rating against. Ratings come from every Super League game since ${D.history.from.slice(0,4)}, with recent games counting more. How fast old games fade, and how hard small samples are pulled back to average, was chosen per stat by testing on 2023–24 onwards using only games played before each date.</p>
-  <p class="note">Possession is a split, so it is fitted differently: each team gets one possession strength and the home side gets a small edge. Promoted teams start from how promoted sides have typically done. Over chances use the projected total and how widely real totals have spread around projections in testing. Big chances are not in the data, so they are not projected yet.</p>
-  <p class="note"><b>Referees</b> adjust cards and fouls once the week's appointments are out. A referee's factor is how his past games compared with what the teams alone projected, pulled toward neutral (×1.00) because history says little: in testing, games with the "strictest" referees had no more cards than games with the most lenient. The adjustment cut the average miss on match cards from ${A.cards.mae.toFixed(2)} to ${A.cards.ref_mae.toFixed(2)} and on fouls from ${A.fouls.mae.toFixed(2)} to ${A.fouls.ref_mae.toFixed(2)}. The Results tab shows the teams-only projection.</p>
+  const A = D.accuracy, E = D.example;
+  let h = '<div class="doc">';
+  h += `<h2 style="margin-top:0">The idea</h2>
+  <p>Every number on the Projections tab is built the same way. Start from what an average Super League game produces, then adjust it for how good or bad each team is at that stat, and finally for the referee (cards and fouls only).</p>`;
+  if (E){
+    const H = E.home, W = E.away, c = E.stats.corners, k = E.stats.cards, g = E.stats.goals, P = E.possession;
+    const tH = D.teams.find(t => t.team === H), tW = D.teams.find(t => t.team === W);
+    const x = (a, b, d) => (a * b * d).toFixed(2);
+    const lines = ls => ls.map(([ln, p]) => `over ${ln}: <b>${pct(p)}</b>`).join(' · ');
+    h += `<h2>Worked example: ${H} – ${W}</h2>
+    <p>Here is every step for this round's <b>${H} – ${W}</b>, starting with corners. All the figures are the real ones behind the match card.</p>
+
+    <h3><span class="num">1</span>Start from the league</h3>
+    <p>In the Super League an average home team wins <b>${c.mu_home.toFixed(2)}</b> corners per game, and an average away team <b>${c.mu_away.toFixed(2)}</b>. Home advantage is already in these two numbers, which is why every stat has a home and an away average.</p>
+
+    <h3><span class="num">2</span>Rate each team</h3>
+    <p>Every team gets two ratings per stat. <b>For</b> is how much it produces and <b>against</b> is how much it lets opponents produce. 1.00 means league average.</p>
+    <div class="scroll"><table class="mini"><thead><tr><th>Corners</th><th class="n">For</th><th>In words</th><th class="n">Against</th><th>In words</th></tr></thead><tbody>
+      <tr><td>${H}</td><td class="n tot">${c.home_for.toFixed(2)}</td><td class="muted">wins ${vsAvg(c.home_for,'more','fewer')}</td><td class="n tot">${c.home_against.toFixed(2)}</td><td class="muted">concedes ${vsAvg(c.home_against,'more','fewer')}</td></tr>
+      <tr><td>${W}</td><td class="n tot">${c.away_for.toFixed(2)}</td><td class="muted">wins ${vsAvg(c.away_for,'more','fewer')}</td><td class="n tot">${c.away_against.toFixed(2)}</td><td class="muted">concedes ${vsAvg(c.away_against,'more','fewer')}</td></tr>
+    </tbody></table></div>
+    <p>These ratings are not just this season's averages. This season ${H} win ${f(tH.for.corners,'corners')} and concede ${f(tH.against.corners,'corners')} corners a game, and ${W} win ${f(tW.for.corners,'corners')} and concede ${f(tW.against.corners,'corners')}, but that is only ${tH.games} and ${tW.games} games. The ratings use every game since ${D.history.from.slice(0,4)}. For corners, a game from ${ago(c.half_life)} ago counts half as much as last week's. They also adjust for opponents: winning 6 corners against a side that rarely concedes them is worth more than winning 6 against one that concedes plenty.</p>
+
+    <h3><span class="num">3</span>Multiply</h3>
+    <div class="calc">
+      ${H} corners = ${c.mu_home.toFixed(2)} <i>home average</i> × ${c.home_for.toFixed(2)} <i>${H} for</i> × ${c.away_against.toFixed(2)} <i>${W} against</i> = <b>${x(c.mu_home,c.home_for,c.away_against)}</b><br>
+      ${W} corners = ${c.mu_away.toFixed(2)} <i>away average</i> × ${c.away_for.toFixed(2)} <i>${W} for</i> × ${c.home_against.toFixed(2)} <i>${H} against</i> = <b>${x(c.mu_away,c.away_for,c.home_against)}</b><br>
+      Match total = <b>${c.proj.total.toFixed(1)}</b> corners
+    </div>
+    <p>${W} ${c.away_for > 1 ? 'win more corners than most teams' : 'win fewer corners than most teams'}, and ${H} ${c.home_against > 1 ? 'concede more than most' : 'concede fewer than most'}. ${H} ${c.home_for < 1 ? 'win fewer than most' : 'win more than most'}, against a side that ${c.away_against < 1 ? 'rarely concedes them' : 'concedes plenty'}.</p>
+
+    <h3><span class="num">4</span>Turn the projection into an over chance</h3>
+    <p>${c.proj.total.toFixed(1)} is what this game would average if it could be played many times over. Any single game lands above or below. I measured how widely real totals have spread around their projections in more than 1,000 past games, and used that spread to get the chance of each line:</p>
+    <div class="calc">${lines(c.proj.lines)}</div>
+    <p>The match card shows the line closest to 50/50. The By stat view shows all three.</p>
+
+    <h3><span class="num">5</span>Add the referee (cards and fouls)</h3>
+    <p>Cards are worked out the same way. Without the referee:</p>
+    <div class="calc">
+      ${H} cards = ${k.mu_home.toFixed(2)} × ${k.home_for.toFixed(2)} × ${k.away_against.toFixed(2)} = ${x(k.mu_home,k.home_for,k.away_against)}<br>
+      ${W} cards = ${k.mu_away.toFixed(2)} × ${k.away_for.toFixed(2)} × ${k.home_against.toFixed(2)} = ${x(k.mu_away,k.away_for,k.home_against)}
+    </div>`;
+    if (E.ref && E.ref.games){
+      h += `<p>The referee is <b>${E.ref.name}</b>. In his ${E.ref.games} Super League games in the data, cards came out ${E.ref.cards >= 1 ? 'above' : 'below'} what the two teams alone would project. That gives him a factor of <b>${mult(E.ref.cards)}</b>, so both teams' cards are multiplied by it:</p>
+      <div class="calc">${H} ${x(k.mu_home,k.home_for,k.away_against)} × ${E.ref.cards.toFixed(2)} = <b>${(+x(k.mu_home,k.home_for,k.away_against) * +E.ref.cards.toFixed(2)).toFixed(2)}</b> · ${W} ${x(k.mu_away,k.away_for,k.home_against)} × ${E.ref.cards.toFixed(2)} = <b>${(+x(k.mu_away,k.away_for,k.home_against) * +E.ref.cards.toFixed(2)).toFixed(2)}</b> · total <b>${k.proj.total.toFixed(1)}</b><br>${lines(k.proj.lines)}</div>`;
+    } else {
+      h += `<p>${E.ref ? `The referee, ${E.ref.name}, has no Super League games in the data` : 'The referee has not been announced yet'}, so there is no adjustment and the total stays at <b>${k.proj.total.toFixed(1)}</b>.</p>`;
+    }
+    h += `<p>A referee's factor is pulled hard toward ×1.00, because a referee's past is a weak guide here. In testing, games with the referees who looked strictest had no more cards than games with the most lenient. Adding referees cut the average miss on match cards only from ${A.cards.mae.toFixed(2)} to ${A.cards.ref_mae.toFixed(2)}, and on fouls from ${A.fouls.mae.toFixed(2)} to ${A.fouls.ref_mae.toFixed(2)}.</p>`;
+
+    const ph = poisson(g.proj.home), pa = poisson(g.proj.away);
+    let best = [0, 0, 0];
+    ph.forEach((p, i) => pa.forEach((q, j) => { if (p*q > best[2]) best = [i, j, p*q]; }));
+    h += `<h3><span class="num">6</span>Who wins</h3>
+    <p>Goals are projected exactly like corners:</p>
+    <div class="calc">
+      ${H} goals = ${g.mu_home.toFixed(2)} × ${g.home_for.toFixed(2)} × ${g.away_against.toFixed(2)} = <b>${g.proj.home.toFixed(2)}</b><br>
+      ${W} goals = ${g.mu_away.toFixed(2)} × ${g.away_for.toFixed(2)} × ${g.home_against.toFixed(2)} = <b>${g.proj.away.toFixed(2)}</b>
+    </div>
+    <p>Goals are rare, random events. A team expected to score ${g.proj.home.toFixed(2)} scores 0 in ${pct(ph[0])} of games, 1 in ${pct(ph[1])} and 2 in ${pct(ph[2])}. Doing this for both teams gives a chance for every score, and the most likely is <b>${best[0]}–${best[1]}</b> (${pct(best[2])}). Adding up all the scores: <b>${H} win ${pct(E.result.home)}</b>, <b>draw ${pct(E.result.draw)}</b>, <b>${W} win ${pct(E.result.away)}</b>.</p>
+
+    <h3><span class="num">7</span>Possession</h3>
+    <p>Possession is a split that always adds to 100%, so it can't be multiplied like the counts. Each team has one possession strength (points above or below an even split), and the home side gets a small edge:</p>
+    <div class="calc">${H} possession = 50 ${sgn(P.edge)} <i>home edge</i> ${sgn(P.home)} <i>${H}</i> ${sgn(-P.away)} <i>${W}</i> = <b>${P.proj.toFixed(1)}%</b> · ${W} ${(100 - P.proj).toFixed(1)}%</div>
+    <p>Shots, shots on target, xG, fouls, goal kicks, throw-ins, saves and woodwork all work like corners, each with its own averages and ratings.</p>`;
+  }
+  h += `<h2>Where the ratings come from</h2>
+  <ul>
+    <li><b>Data:</b> ${D.history.games} Super League games since ${D.history.from.slice(0,4)}–${D.history.from.slice(7,9)}. Goalkeeper saves before 2025 are worked out as the opponent's shots on target minus goals. Big chances aren't in the data, so they aren't projected.</li>
+    <li><b>Recent games count more.</b> How fast old games fade depends on the stat. The ones that change quickly with a team's coach and style fade fastest; mostly random ones need a long history to read:</li>
+  </ul>
+  <div class="scroll"><table class="mini" style="max-width:520px"><thead><tr><th>Stat</th><th>A game this old counts half</th></tr></thead><tbody>`;
+  if (E) for (const s of ORDER) h += `<tr><td>${L[s]}</td><td class="muted">${ago(E.half_lives[s])}</td></tr>`;
+  h += `</tbody></table></div>
+  <ul>
+    <li><b>Small samples are pulled toward average.</b> After four games a team isn't really a corner machine because it won 9 in one of them, so each team is treated as if it also played a few perfectly average games.</li>
+    <li><b>Promoted teams</b> start from how promoted sides have usually done. For corners that's ${E ? Math.round((1 - E.newcomer[0])*100) : 15}% fewer won and ${E ? Math.round((E.newcomer[1] - 1)*100) : 12}% more conceded than average. Their own results take over as games come in.</li>
+    <li><b>None of these settings are guesses.</b> For each stat I tried several combinations on every game since 2023–24, each time using only games played before that date, and kept the one that missed least.</li>
+  </ul>
+
   <h2>How accurate is it?</h2>
-  <p class="note">Backtest from 2023–24: average miss on each team's number, compared with guessing the league average every time.</p>
-  <div class="scroll"><table style="max-width:760px"><thead><tr><th>Stat</th><th class="n">Model miss / team</th><th class="n">League avg miss</th><th class="n">Better by</th><th class="n">Miss on match total</th></tr></thead><tbody>`;
+  <p>The same test, game by game since 2023–24. <b>Model miss</b> is how far each team's projected number was from what it actually did, on average. <b>League-average miss</b> is the same thing if you had just used the league average for every team. <b>Better by</b> is the difference, and that's the value the model adds. <b>Miss on match total</b> is both teams together.</p>
+  <div class="scroll"><table class="mini" style="max-width:760px"><thead><tr><th>Stat</th><th class="n">Model miss / team</th><th class="n">League-average miss</th><th class="n">Better by</th><th class="n">Miss on match total</th></tr></thead><tbody>`;
   for (const s of ORDER){
     const a = A[s];
-    if (s === 'possession'){ h += `<tr><td>${L[s]}</td><td class="n">${a.mae.toFixed(2)}</td><td class="n muted">–</td><td class="n muted">–</td><td class="n muted">–</td></tr>`; continue; }
+    if (s === 'possession'){ h += `<tr><td>${L[s]}</td><td class="n">${a.mae.toFixed(2)} pts</td><td class="n muted">–</td><td class="n muted">–</td><td class="n muted">–</td></tr>`; continue; }
     const gain = 1 - a.team_mae / a.baseline;
     h += `<tr><td>${L[s]}</td><td class="n">${a.team_mae.toFixed(2)}</td><td class="n muted">${a.baseline.toFixed(2)}</td><td class="n ${gain > .05 ? 'w' : ''}">${pct(gain)}</td><td class="n">${a.mae.toFixed(2)}</td></tr>`;
   }
-  return h + '</tbody></table></div>';
+  h += `</tbody></table></div>
+  <p>Over chances have held up: when the page said 60%, it happened about 60% of the time. Cards went over a few points more often than shown.</p>
+
+  <h2>What it doesn't know</h2>
+  <p>The model only sees past match stats. It doesn't know about injuries, suspensions, rotation, a new coach, the weather, or how much a game matters (derbies, cup weeks, the end of the season). Factor those in yourself, especially for cards and fouls, where the model barely beats the league average.</p>
+  </div>`;
+  return h;
 }
 
 function render(){
