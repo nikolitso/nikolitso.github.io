@@ -131,7 +131,7 @@ const f = (x, s) => x == null ? '–' : (+x).toFixed(s === 'possession' ? 0 : de
 const fa = (x, s) => s === 'xg' ? f(x, s) : x == null ? '–' : String(Math.round(x));
 let view = 'projections', pjMode = 'match', pjStat = 'goals', rsStat = 'goals', tmStat = 'goals', tmSort = ['for', -1];
 
-$('sub').textContent = `${D.season.replace('-','–')} · updated ${D.updated} (Athens) · model built on ${D.history.games} games since ${D.history.from.slice(0,4)}`;
+$('sub').textContent = `${D.season.replace('-','–')} · updated ${D.updated} (Athens) · ratings from the ${D.history.games} games since ${D.history.from}–${String(+D.history.from + 1).slice(2)}`;
 
 function linesHtml(lines){
   if (!lines) return '';
@@ -148,7 +148,7 @@ function refHtml(r){
   return `<div class="ref">Referee <b>${r.name}</b><br>${refWindow(r)} · cards ${mult(r.cards)} · fouls ${mult(r.fouls)}</div>`;
 }
 
-// each stat has one fixed line (update.py LINES)
+// one line per stat: goals 2.5 and woodwork 0.5 always, others the half-point next to the projection
 const mainLine = lines => lines && [lines.reduce((a, b) => Math.abs(b[1] - .5) < Math.abs(a[1] - .5) ? b : a)];
 
 function matchCard(g){
@@ -249,7 +249,7 @@ function renderMethod(){
       <tr><td>${H}</td><td class="n tot">${c.home_for.toFixed(2)}</td><td class="muted">wins ${vsAvg(c.home_for,'more','fewer')}</td><td class="n tot">${c.home_against.toFixed(2)}</td><td class="muted">concedes ${vsAvg(c.home_against,'more','fewer')}</td></tr>
       <tr><td>${W}</td><td class="n tot">${c.away_for.toFixed(2)}</td><td class="muted">wins ${vsAvg(c.away_for,'more','fewer')}</td><td class="n tot">${c.away_against.toFixed(2)}</td><td class="muted">concedes ${vsAvg(c.away_against,'more','fewer')}</td></tr>
     </tbody></table></div>
-    <p>These ratings are not just this season's averages. This season ${H} win ${f(tH.for.corners,'corners')} and concede ${f(tH.against.corners,'corners')} corners a game, and ${W} win ${f(tW.for.corners,'corners')} and concede ${f(tW.against.corners,'corners')}, but that is only ${tH.games} and ${tW.games} games. The ratings use every game since ${D.history.from.slice(0,4)}. For corners, a game from ${ago(c.half_life)} ago counts half as much as last week's. They also adjust for opponents: winning 6 corners against a side that rarely concedes them is worth more than winning 6 against one that concedes plenty.</p>
+    <p>These ratings are not just this season's averages. This season ${H} win ${f(tH.for.corners,'corners')} and concede ${f(tH.against.corners,'corners')} corners a game, and ${W} win ${f(tW.for.corners,'corners')} and concede ${f(tW.against.corners,'corners')}, but that is only ${tH.games} and ${tW.games} games. The ratings use the games since ${D.history.from}–${String(+D.history.from + 1).slice(2)} (this season and the two before). For corners, a game from ${ago(c.half_life)} ago counts half as much as last week's. They also adjust for opponents: winning 6 corners against a side that rarely concedes them is worth more than winning 6 against one that concedes plenty.</p>
 
     <h3><span class="num">3</span>Multiply</h3>
     <div class="calc">
@@ -262,7 +262,7 @@ function renderMethod(){
     <h3><span class="num">4</span>Turn the projection into an over chance</h3>
     <p>${c.proj.total.toFixed(1)} is what this game would average if it could be played many times over. Any single game lands above or below. I measured how widely real totals have spread around their projections in more than 1,000 past games, and used that spread to get the chance of going over the line:</p>
     <div class="calc">${lines(c.proj.lines)}</div>
-    <p>Each stat has one line, the same in every match (corners 9.5, goals 2.5, cards 5.5...), so you can compare games directly. A total projected below the line gives an over chance under 50%, and above it over 50%.</p>
+    <p>The line is the half-point next to the projected total: ${c.proj.total.toFixed(1)} corners gives over ${Math.floor(c.proj.total) + .5}, and 25.1 shots would give over 25.5. Goals always use 2.5 and woodwork 0.5, in every match.</p>
 
     <h3><span class="num">5</span>Cards: who is the favourite</h3>
     <p>Cards start the same way, from each team's ratings:</p>
@@ -304,7 +304,7 @@ function renderMethod(){
   }
   h += `<h2>Where the ratings come from</h2>
   <ul>
-    <li><b>Data:</b> ${D.history.games} Super League games since ${D.history.from.slice(0,4)}–${D.history.from.slice(7,9)}. Goalkeeper saves before 2025 are worked out as the opponent's SoT minus goals.</li>
+    <li><b>Data:</b> the ${D.history.games} Super League games since ${D.history.from}–${String(+D.history.from + 1).slice(2)}, this season and the two before. Older seasons are left out because teams change too much; in testing, going further back made almost no difference. Goalkeeper saves before 2025 are worked out as the opponent's SoT minus goals.</li>
     <li><b>Recent games count more.</b> How fast old games fade depends on the stat. The ones that change quickly with a team's coach and style fade fastest; mostly random ones need a long history to read:</li>
   </ul>
   <div class="scroll"><table class="mini" style="max-width:520px"><thead><tr><th>Stat</th><th>A game this old counts half</th></tr></thead><tbody>`;
