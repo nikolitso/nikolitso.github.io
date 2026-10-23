@@ -49,11 +49,11 @@ h2.day{font-size:20px;padding-bottom:8px;border-bottom:1px solid var(--line)}
 .grid>.card{min-width:0}
 .card td:first-child{white-space:normal}
 .card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px 18px 10px}
-.card h3{font:600 21px var(--serif);margin:0}
-.card .ko{font:400 12px var(--mono);color:var(--muted);letter-spacing:.06em}
+.card h3{font:600 24px var(--serif);margin:0}
+.card .ko{font:500 14px var(--mono);color:var(--text);letter-spacing:.06em}
 .wdl{display:flex;height:8px;border-radius:4px;overflow:hidden;margin:12px 0 6px;background:var(--line)}
 .wdl i{display:block} .wdl i:nth-child(1){background:var(--gold)} .wdl i:nth-child(2){background:#59657f} .wdl i:nth-child(3){background:#5b7bd5}
-.wdlt{display:flex;justify-content:space-between;font:400 12px var(--mono);color:var(--muted)}
+.wdlt{display:flex;justify-content:space-between;font:400 14px var(--mono);color:var(--muted)}
 .wdlt b{color:var(--text);font-weight:500}
 table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
 th{font:400 11px var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.08em;text-align:left;padding:8px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
@@ -62,12 +62,12 @@ td.n,th.n{text-align:right;font-family:var(--mono);font-size:13.5px}
 td.tot{color:var(--gold);font-weight:500}
 .card table{margin-top:6px}
 table.mk{margin-bottom:6px}table.mk td,table.mk th{padding:6px 7px}
-.coach{font:400 11.5px/1.5 var(--mono);color:var(--muted);margin-top:2px}
+.coach{font:400 13.5px/1.55 var(--mono);color:var(--muted);margin-top:2px}
 .coach b{color:var(--text);font-weight:500}
 table.tm{max-width:1000px}table.tm .gl{border-left:1px solid var(--line);padding-left:12px}
 table.tm tr.grp th{color:var(--gold);border-bottom:0;padding-bottom:0}
 .head{display:flex;justify-content:space-between;align-items:flex-start;gap:6px 14px;flex-wrap:wrap}
-.ref{font:400 11.5px/1.5 var(--mono);color:var(--muted);text-align:right;margin-left:auto}
+.ref{font:400 13.5px/1.55 var(--mono);color:var(--muted);text-align:right;margin-left:auto}
 .ref b{color:var(--text);font-weight:500}
 .card tr:last-child td{border-bottom:0}
 .ln{font:400 12px var(--mono);color:var(--muted);text-align:right}
@@ -117,6 +117,7 @@ table.mini{margin:0 0 16px}
 
   <div class="tabs" id="tabs">
     <a href="#view=projections" data-view="projections" class="on">Projections</a>
+    <a href="#view=value" data-view="value">Value bets</a>
     <a href="#view=market" data-view="market">Vs Superbet</a>
     <a href="#view=results" data-view="results">Results</a>
     <a href="#view=teams" data-view="teams">Teams</a>
@@ -247,7 +248,7 @@ function renderMethod(){
   const A = D.accuracy, E = D.example, MD = D.market_drive;
   let h = '<div class="doc">';
   h += `<h2 style="margin-top:0">The idea</h2>
-  <p>Every number on the Projections tab is built the same way. Start from what an average Super League game produces, then adjust it for how good or bad each team is at that stat. Goals and the result come from Superbet's match odds when they're out, because in testing the odds were more accurate than our own ratings; the odds also nudge shots, SoT and saves. Cards also take into account who is the favourite (again from the odds), and cards and fouls take into account the referee.</p>`;
+  <p>Every number on the Projections tab is built the same way. Start from what an average Super League game produces, then adjust it for how good or bad each team is at that stat. Goals and the result are our own, independent of the bookmakers, so they can be compared with the odds. The match odds are only used as an input for other stats: who is the favourite for cards, and a small adjustment to shots, SoT and saves. Cards also take into account who is the favourite (again from the odds), and cards and fouls take into account the referee.</p>`;
   if (E){
     const H = E.home, W = E.away, c = E.stats.corners, k = E.stats.cards, g = E.stats.goals, P = E.possession;
     const tH = D.teams.find(t => t.team === H), tW = D.teams.find(t => t.team === W);
@@ -307,13 +308,12 @@ function renderMethod(){
     let best = [0, 0, 0];
     ph.forEach((p, i) => pa.forEach((q, j) => { if (p*q > best[2]) best = [i, j, p*q]; }));
     h += `<h3><span class="num">7</span>Who wins</h3>
-    <p>Our own ratings project goals exactly like corners:</p>
+    <p>Goals are projected exactly like corners:</p>
     <div class="calc">
-      ${H} goals = ${g.mu_home.toFixed(2)} × ${g.home_for.toFixed(2)} × ${g.away_against.toFixed(2)} = ${E.model_goals[0].toFixed(2)}<br>
-      ${W} goals = ${g.mu_away.toFixed(2)} × ${g.away_for.toFixed(2)} × ${g.home_against.toFixed(2)} = ${E.model_goals[1].toFixed(2)}
+      ${H} goals = ${g.mu_home.toFixed(2)} × ${g.home_for.toFixed(2)} × ${g.away_against.toFixed(2)} = <b>${E.model_goals[0].toFixed(2)}</b><br>
+      ${W} goals = ${g.mu_away.toFixed(2)} × ${g.away_for.toFixed(2)} × ${g.home_against.toFixed(2)} = <b>${E.model_goals[1].toFixed(2)}</b>
     </div>
-    ${E.goals_from === 'market' ? `<p>But the betting market knows things our ratings don't (injuries, form, team news), and on goals it has been more accurate: over ${MD.games_goals} games since 2024–25 the goals implied by the closing odds missed each team's goals by ${MD.goals['1'].mae.toFixed(3)} on average, against ${MD.goals['0'].mae.toFixed(3)} for our ratings, and every mix of the two did worse than the odds alone. So when Superbet's odds are out, the goals come from them: we find the scoring rates that reproduce its home/draw/away and over/under 2.5 prices.</p>
-    <div class="calc">From Superbet's odds: ${H} <b>${g.proj.home.toFixed(2)}</b> goals · ${W} <b>${g.proj.away.toFixed(2)}</b> goals</div>` : `<p>Superbet's odds for this game aren't out yet, so these are the goals used. Once the odds appear, they replace them (they have been more accurate in testing).</p>`}
+    ${E.market_goals ? `<p>For comparison, Superbet's odds imply ${H} <b>${E.market_goals[0].toFixed(2)}</b> and ${W} <b>${E.market_goals[1].toFixed(2)}</b> goals. We keep our own numbers so they can be compared with the market (see Value bets), but on goals the market has been the more accurate of the two in testing, so treat goal and result differences with caution.</p>` : ''}
     <p>Goals are rare, random events. A team expected to score ${g.proj.home.toFixed(2)} scores 0 in ${pct(ph[0])} of games, 1 in ${pct(ph[1])} and 2 in ${pct(ph[2])}. Doing this for both teams gives a chance for every score, and the most likely is <b>${best[0]}–${best[1]}</b> (${pct(best[2])}). Adding up all the scores: <b>${H} win ${pct(E.result.home)}</b>, <b>draw ${pct(E.result.draw)}</b>, <b>${W} win ${pct(E.result.away)}</b>.</p>
 
     <h3><span class="num">8</span>Possession</h3>
@@ -374,7 +374,7 @@ function renderMarket(){
   if (!games.length) return '<p class="empty">No Superbet odds for this round yet.</p>';
   const T = D.market_test;
   let h = `<p class="note">Superbet's odds for this round next to our projections. For each stat the line is Superbet's main one (closest to 50/50). <b>Superbet %</b> is its chance of over with the bookmaker's margin taken out; <b>ours</b> is our chance on the same line. Differences of 10 points or more are highlighted.</p>
-  <p class="note"><b>Result and goals now come from the odds</b>, so on those we match Superbet closely (small gaps come from the over/under 2.5 price). They used to come from our own ratings, and the market was sharper: over ${T.games} games since ${T.since}, its closing odds predicted results better than we did (log loss ${T.ll_market.toFixed(3)} vs ${T.ll_ours.toFixed(3)}), and backing our disagreements lost ${Math.round(-T.roi_1x2 * 100)}% per bet on 1X2 and ${Math.round(-T.roi_ou * 100 * 10) / 10}% on over/under 2.5. For the other stats, read the differences with care. Superbet's shots lines run about 2 shots above ours in every game, which looks like a different way of counting shots rather than value. For corners, cards and the other stats there are no past odds to test against yet; every pull of Superbet's odds is now saved so this can be checked after a few rounds.</p>`;
+  <p class="note"><b>On result and goals the market has been sharper than our model:</b> over ${T.games} games since ${T.since}, its closing odds predicted results better than we did (log loss ${T.ll_market.toFixed(3)} vs ${T.ll_ours.toFixed(3)}), and backing our disagreements lost ${Math.round(-T.roi_1x2 * 100)}% per bet on 1X2 and ${Math.round(-T.roi_ou * 100 * 10) / 10}% on over/under 2.5. For the other stats, read the differences with care. Superbet's shots lines run about 2 shots above ours in every game, which looks like a different way of counting shots rather than value. For corners, cards and the other stats there are no past odds to test against yet; every pull of Superbet's odds is now saved so this can be checked after a few rounds.</p>`;
   const all = [];
   games.forEach(g => marketRows(g).forEach(r => all.push({...r, g})));
   const big = all.filter(r => Math.abs(r.diff) >= .1 && r.s !== 'shots').sort((a, b) => Math.abs(b.diff) - Math.abs(a.diff)).slice(0, 8);
@@ -406,15 +406,48 @@ function renderMarket(){
   return h;
 }
 
+// Value bets: Superbet prices where our chance x the odds is at least 1 + min_ev
+const lc = s => ({sot: 'SoT', saves: 'GK saves', xg: 'xG', result: 'match result'})[s] || L[s].toLowerCase();
+const betName = b => b.stat === 'result' ? ({1: 'Home win', X: 'Draw', 2: 'Away win'})[b.side] : `${b.side === 'over' ? 'Over' : 'Under'} ${b.line} ${lc(b.stat)}`;
+const evPct = x => `${x >= 0 ? '+' : ''}${Math.round(x * 100)}%`;
+
+function renderValue(){
+  const V = D.value, R = V.record;
+  let h = `<p class="note">A bet is <b>value</b> when our chance of it winning, times Superbet's odds, comes to more than 1: on average it would return more than the stake. <b>EV</b> is that expected return per 1 staked (EV +20% = 1.20 back per 1, on average). Listed are bets with EV of at least ${Math.round(V.min_ev * 100)}%, one per game and stat (the best line), on lines where Superbet's own chance is between ${Math.round(V.fair_range[0] * 100)}% and ${Math.round(V.fair_range[1] * 100)}%.</p>
+  <p class="note"><b>Not listed:</b> ${Object.entries(V.skip).map(([s, why]) => `<b>${lc(s)}</b>: ${why}`).join('; ')}. A very large EV usually means the model is missing something (a new coach, injuries, a change of style) rather than a gift, so check those first. Every bet listed is recorded with its last odds before kick-off and settled when the results come in: the record below is the honest test of whether this finds value.</p>`;
+  h += `<div class="metrics">
+    <div class="metric"><div class="lbl">Value bets this round</div><div class="big">${V.bets.length}</div></div>
+    <div class="metric"><div class="lbl">Settled so far</div><div class="big">${R.all.bets}</div></div>
+    <div class="metric"><div class="lbl">Won</div><div class="big">${R.all.bets ? R.all.won : '–'}</div></div>
+    <div class="metric"><div class="lbl">Profit (1 unit each)</div><div class="big">${R.all.bets ? (R.all.profit > 0 ? '+' : '') + R.all.profit.toFixed(2) : '–'}</div></div>
+    <div class="metric"><div class="lbl">Return per bet</div><div class="big">${R.all.roi != null ? evPct(R.all.roi) : '–'}</div></div></div>`;
+  if (!V.bets.length) h += '<p class="empty">No value bets for the coming games.</p>';
+  else {
+    h += `<h2>Coming games</h2><div class="scroll"><table class="mk"><thead><tr><th>Kick-off</th><th>Match</th><th>Bet</th><th class="n">Odds</th><th class="n">Superbet %</th><th class="n">Ours</th><th class="n">EV</th></tr></thead><tbody>`;
+    for (const b of V.bets) h += `<tr><td class="muted">${dayName(b.kickoff)} ${b.kickoff.slice(11)}</td><td>${b.home} – ${b.away}</td><td><b>${betName(b)}</b></td><td class="n">${b.odds.toFixed(2)}</td><td class="n">${pct(b.fair)}</td><td class="n tot">${pct(b.ours)}</td><td class="n ${b.ev >= .15 ? 'w' : ''}">${evPct(b.ev)}</td></tr>`;
+    h += '</tbody></table></div>';
+  }
+  const by = Object.entries(R.by_stat);
+  if (by.length){
+    h += `<h2>Record by market</h2><div class="scroll"><table class="mk" style="max-width:640px"><thead><tr><th>Market</th><th class="n">Bets</th><th class="n">Won</th><th class="n">Profit</th><th class="n">Per bet</th></tr></thead><tbody>`;
+    for (const [s, r] of by.sort((a, b) => b[1].bets - a[1].bets)) h += `<tr><td>${s === 'result' ? 'Result' : L[s]}</td><td class="n">${r.bets}</td><td class="n">${r.won}</td><td class="n ${r.profit >= 0 ? 'w' : 'l'}">${r.profit > 0 ? '+' : ''}${r.profit.toFixed(2)}</td><td class="n">${evPct(r.roi)}</td></tr>`;
+    h += '</tbody></table></div>';
+    h += `<h2>Settled bets</h2><div class="scroll"><table class="mk"><thead><tr><th>Date</th><th>Match</th><th>Bet</th><th class="n">Odds</th><th class="n">EV</th><th class="n">Result</th></tr></thead><tbody>`;
+    for (const b of R.settled) h += `<tr><td class="muted">${dayName(b.date)}</td><td>${b.home} – ${b.away}</td><td>${betName(b)}</td><td class="n">${b.odds.toFixed(2)}</td><td class="n">${evPct(b.ev)}</td><td class="n ${b.result === 'won' ? 'w' : 'l'}">${b.result === 'won' ? 'Won +' + (b.odds - 1).toFixed(2) : 'Lost −1'}</td></tr>`;
+    h += '</tbody></table></div>';
+  } else h += `<p class="muted" style="margin-top:18px">No settled bets yet: the record starts once this round's results are in the data.</p>`;
+  return h;
+}
+
 function render(){
-  $('out').innerHTML = {projections: renderProjections, market: renderMarket, results: renderResults, teams: renderTeams, method: renderMethod}[view]();
+  $('out').innerHTML = {projections: renderProjections, value: renderValue, market: renderMarket, results: renderResults, teams: renderTeams, method: renderMethod}[view]();
   document.querySelectorAll('#pjmode button').forEach(b => b.onclick = () => { pjMode = b.dataset.m; render(); });
   const chips = (id, set) => document.querySelectorAll(`#${id} .chip`).forEach(b => b.onclick = () => { set(b.dataset.s); render(); });
   chips('pjstat', s => pjStat = s); chips('rsstat', s => rsStat = s); chips('tmstat', s => tmStat = s);
   document.querySelectorAll('th.sort').forEach(t => t.onclick = () => { const k = t.dataset.k; tmSort = [k, tmSort[0] === k ? -tmSort[1] : (k === 'team' ? 1 : -1)]; render(); });
 }
 function setView(v){
-  view = ['projections','market','results','teams','method'].includes(v) ? v : 'projections';
+  view = ['projections','value','market','results','teams','method'].includes(v) ? v : 'projections';
   document.querySelectorAll('#tabs a').forEach(a => a.classList.toggle('on', a.dataset.view === view));
   render();
 }
