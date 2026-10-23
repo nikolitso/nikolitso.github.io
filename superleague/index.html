@@ -61,7 +61,8 @@ td{padding:7px 8px;border-bottom:1px solid color-mix(in srgb,var(--line) 60%,tra
 td.n,th.n{text-align:right;font-family:var(--mono);font-size:13.5px}
 td.tot{color:var(--gold);font-weight:500}
 .card table{margin-top:6px}
-.ref{font:400 12px var(--mono);color:var(--muted);margin-top:8px}
+.head{display:flex;justify-content:space-between;align-items:flex-start;gap:6px 14px;flex-wrap:wrap}
+.ref{font:400 11.5px/1.5 var(--mono);color:var(--muted);text-align:right;margin-left:auto}
 .ref b{color:var(--text);font-weight:500}
 .card tr:last-child td{border-bottom:0}
 .ln{font:400 12px var(--mono);color:var(--muted);text-align:right}
@@ -128,9 +129,9 @@ function linesHtml(lines){
 
 const mult = x => `×${x.toFixed(2)}`;
 function refHtml(r){
-  if (!r) return '<div class="ref">Referee not announced yet</div>';
-  if (!r.games) return `<div class="ref">Referee <b>${r.name}</b> · no Super League games in the data, no adjustment</div>`;
-  return `<div class="ref">Referee <b>${r.name}</b> · ${r.games} game${r.games === 1 ? '' : 's'} · cards <b>${mult(r.cards)}</b> · fouls <b>${mult(r.fouls)}</b></div>`;
+  if (!r) return '<div class="ref">Referee <b>not announced</b></div>';
+  if (!r.games) return `<div class="ref">Referee <b>${r.name}</b><br>no league games yet · no adjustment</div>`;
+  return `<div class="ref">Referee <b>${r.name}</b><br>${r.games} game${r.games === 1 ? '' : 's'} · cards ${mult(r.cards)} · fouls ${mult(r.fouls)}</div>`;
 }
 
 // the line closest to a coin flip; all three show in the By stat view
@@ -143,10 +144,9 @@ function matchCard(g){
     return `<tr><td>${L[s]}</td><td class="n">${f(x.home, s)}</td><td class="n">${f(x.away, s)}</td>`+
       `<td class="n tot">${x.total == null ? '' : f(x.total, s)}</td><td class="ln">${linesHtml(mainLine(x.lines))}</td></tr>`;
   }).join('');
-  return `<div class="card"><div class="ko">${t}</div><h3>${g.home} <span class="muted">–</span> ${g.away}</h3>
+  return `<div class="card"><div class="ko">${t}</div><div class="head"><h3>${g.home} <span class="muted">–</span> ${g.away}</h3>${refHtml(g.ref)}</div>
     <div class="wdl"><i style="width:${r.home*100}%"></i><i style="width:${r.draw*100}%"></i><i style="width:${r.away*100}%"></i></div>
-    <div class="wdlt"><span>Home <b>${pct(r.home)}</b></span><span>Draw <b>${pct(r.draw)}</b></span><span>Away <b>${pct(r.away)}</b></span><span>Both score <b>${pct(r.btts)}</b></span></div>
-    ${refHtml(g.ref)}
+    <div class="wdlt"><span>Home <b>${pct(r.home)}</b></span><span>Draw <b>${pct(r.draw)}</b></span><span>Away <b>${pct(r.away)}</b></span></div>
     <table><thead><tr><th>Stat</th><th class="n"><span class="full">${g.home}</span><span class="abbr">Home</span></th><th class="n"><span class="full">${g.away}</span><span class="abbr">Away</span></th><th class="n">Total</th><th class="n">Over</th></tr></thead><tbody>${rows}</tbody></table></div>`;
 }
 
