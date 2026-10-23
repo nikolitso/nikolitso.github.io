@@ -129,7 +129,7 @@ const dec = s => ['xg','goals','woodwork'].includes(s) ? 2 : 1;
 const f = (x, s) => x == null ? '–' : (+x).toFixed(s === 'possession' ? 0 : dec(s));
 // actual counts are whole numbers; only xG has decimals
 const fa = (x, s) => s === 'xg' ? f(x, s) : x == null ? '–' : String(Math.round(x));
-let view = 'projections', pjMode = 'match', pjStat = 'corners', rsStat = 'goals', tmStat = 'goals', tmSort = ['for', -1];
+let view = 'projections', pjMode = 'match', pjStat = 'goals', rsStat = 'goals', tmStat = 'goals', tmSort = ['for', -1];
 
 $('sub').textContent = `${D.season.replace('-','–')} · updated ${D.updated} (Athens) · model built on ${D.history.games} games since ${D.history.from.slice(0,4)}`;
 
@@ -305,15 +305,15 @@ function renderMethod(){
   </ul>
 
   <h2>How accurate is it?</h2>
-  <p>The same test, game by game since 2023–24. <b>Model miss</b> is how far each team's projected number was from what it actually did, on average. <b>League-average miss</b> is the same thing if you had just used the league average for every team. <b>Better by</b> is the difference, and that's the value the model adds. <b>Miss on match total</b> is both teams together.</p>
-  <div class="scroll"><table class="mini" style="max-width:760px"><thead><tr><th>Stat</th><th class="n">Model miss / team</th><th class="n">League-average miss</th><th class="n">Better by</th><th class="n">Miss on match total</th></tr></thead><tbody>`;
+  <p>Every game since 2023–24 was replayed, each time projecting with only the games played before it. <b>Average miss</b> is how far a team's projected number ended up from what it really did. If OFI were projected 3.2 corners and got 5, that's a miss of 1.8; this column is the average over every team in every game.</p>
+  <p><b>Better than guessing the average</b> compares that with the simplest possible guess: give every team the league average (4.9 corners at home, 3.9 away), whoever they are. Above 10% means the model really knows something about the teams. Around 5% or less means it's close to a guess, so don't lean on it.</p>
+  <div class="scroll"><table class="mini" style="max-width:600px"><thead><tr><th>Stat</th><th class="n">Average miss</th><th class="n">Better than guessing the average</th></tr></thead><tbody>`;
   for (const s of ORDER){
-    const a = A[s];
-    if (s === 'possession'){ h += `<tr><td>${L[s]}</td><td class="n">${a.mae.toFixed(2)} pts</td><td class="n muted">–</td><td class="n muted">–</td><td class="n muted">–</td></tr>`; continue; }
-    const gain = 1 - a.team_mae / a.baseline;
-    h += `<tr><td>${L[s]}</td><td class="n">${a.team_mae.toFixed(2)}</td><td class="n muted">${a.baseline.toFixed(2)}</td><td class="n ${gain > .05 ? 'w' : ''}">${pct(gain)}</td><td class="n">${a.mae.toFixed(2)}</td></tr>`;
+    const a = A[s], gain = 1 - a.team_mae / a.baseline;
+    h += `<tr><td>${L[s]}</td><td class="n">${a.team_mae.toFixed(2)}${s === 'possession' ? ' pts' : ''}</td><td class="n ${gain >= .1 ? 'w' : gain < .06 ? 'muted' : ''}">${pct(gain)}</td></tr>`;
   }
   h += `</tbody></table></div>
+  <p>A single game is mostly luck, so no model gets near zero. Even knowing a team's true average exactly, its corners would still miss by about 1.7 a game.</p>
   <p>Over chances have held up: when the page said 60%, it happened about 60% of the time. Cards went over a few points more often than shown.</p>
 
   <h2>What it doesn't know</h2>
