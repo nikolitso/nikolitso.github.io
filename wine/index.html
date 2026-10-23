@@ -221,6 +221,23 @@ footer{margin-top:72px;padding-top:22px;border-top:1px solid var(--line);color:v
 .modal-x{position:absolute;top:10px;right:12px;width:36px;height:36px;border-radius:50%;border:1px solid var(--line2);background:rgba(0,0,0,.3);color:var(--cream);font:400 22px/1 var(--body);cursor:pointer}
 .modal-x:hover{background:var(--wine)}
 
+.tonight,.occasion{border:1px solid var(--line2);border-radius:20px;background:rgba(10,4,6,.35)}
+.tonight{margin:6px 0 22px;padding:24px 30px;background:linear-gradient(135deg,rgba(214,176,102,.12),rgba(125,34,54,.22) 70%)}
+.okick{font:var(--label);letter-spacing:.2em;text-transform:uppercase;color:var(--gold)}
+.tonight .tn{display:flex;flex-wrap:wrap;align-items:center;gap:10px 18px;margin-top:12px}
+.tonight .dish{font:700 clamp(24px,4vw,32px)/1.2 var(--display);color:var(--cream)}
+.tonight .amp{font:italic 400 26px var(--display);color:var(--gold)}
+.tonight .pw{display:flex;gap:10px;align-items:center;border-left:3px solid var(--c);padding-left:12px;--c:#f3e27a}
+.tonight .pw.c-Rosé{--c:#f48fa8}.tonight .pw.c-Red{--c:#d8294f}
+.tonight .pw .bt{width:17px;height:40px}.tonight .pw a{font-size:18px}
+.tonight .pw small{display:block;color:var(--muted);font-size:14.5px}
+.tonight .pw .cw{font:var(--label);letter-spacing:.14em;text-transform:uppercase;color:var(--c);margin-right:6px}
+.tonight .why{margin:12px 0 0;color:var(--text);max-width:70ch;font-size:16px}
+.occasion{margin:4px 0 8px;padding:18px 22px}
+.occasion h3{font:700 24px/1.2 var(--display);color:var(--cream);margin:6px 0 4px}
+.occasion p{margin:0 0 8px;color:var(--text)}
+.occasion .dish{font:700 17px/1.3 var(--display);color:var(--cream)}
+.occasion .og{margin-top:4px;color:var(--gold2);font-size:15.5px}
 .season .snav{position:absolute;top:22px;right:24px;display:flex;gap:8px}
 .season .snav button{font:var(--label);letter-spacing:.1em;text-transform:uppercase;color:var(--cream);background:rgba(0,0,0,.3);border:1px solid var(--line2);border-radius:999px;padding:9px 16px;cursor:pointer;transition:background .2s}
 .season .snav button:hover{background:var(--wine)}
@@ -296,7 +313,7 @@ const UI = {
     estatesLede: 'Every estate on the list, with all of its labels. Select a label to see its tasting notes and pairings.',
     label1: 'label', labelsN: 'labels', favTitle: 'Top 10 favourites', allEstates: 'All estates', mapTitle: 'Choose a region', mapHint: 'Select a region on the map to see its estates.', mapAll: 'Show all regions', mapAria: 'Map of Greece with wine regions', mapLegend: 'Filled markers are regions with estates on the list. Hollow markers are wine regions still to come.', estN: 'estates', est1: 'estate', topWhite: 'Top 10 White', topRose: 'Top 10 Rosé', topRed: 'Top 10 Red', allWines: 'All wines', winery: 'Region', colour: 'Colour', listTitle: 'The Wine List',
     listLede: 'Every wine on the list with the food it suits. Select a wine to see its full tasting notes.',
-    exploreTitle: 'Browse by colour, grape and region', filter: 'Showing', clearFilter: 'Clear',
+    exploreTitle: 'Browse by colour, grape and region', filter: 'Showing', clearFilter: 'Clear', tonight: 'Tonight', feast: 'Feast of the month',
     col: {White: 'White', 'Rosé': 'Rosé', Red: 'Red'}, wine: 'wine', winesN: 'wines',
     bestFor: 'Dishes where it is the first choice', more: 'More wines that fit', dishesFor: 'Dishes',
     begin: 'Where to begin', beginText: (r, w) => `Pick a chip above, or type a dish. ${r} dishes and ${w} wines are loaded.`,
@@ -314,7 +331,7 @@ const UI = {
     estatesLede: 'Όλα τα κτήματα της λίστας, με όλες τις ετικέτες τους. Επιλέξτε μια ετικέτα για να δείτε τις γευστικές σημειώσεις και τα ταιριάσματά της.',
     label1: 'ετικέτα', labelsN: 'ετικέτες', favTitle: 'Τα 10 αγαπημένα', allEstates: 'Όλα τα κτήματα', mapTitle: 'Επιλέξτε περιοχή', mapHint: 'Επιλέξτε μια περιοχή στον χάρτη για να δείτε τα κτήματά της.', mapAll: 'Όλες οι περιοχές', mapAria: 'Χάρτης της Ελλάδας με τις οινικές περιοχές', mapLegend: 'Τα γεμάτα σημάδια είναι περιοχές με κτήματα στη λίστα. Τα κενά είναι οινικές περιοχές που θα προστεθούν.', estN: 'κτήματα', est1: 'κτήμα', topWhite: 'Τα 10 κορυφαία λευκά', topRose: 'Τα 10 κορυφαία ροζέ', topRed: 'Τα 10 κορυφαία ερυθρά', allWines: 'Όλα τα κρασιά', winery: 'Περιοχή', colour: 'Χρώμα', listTitle: 'Η Λίστα Κρασιών',
     listLede: 'Όλα τα κρασιά της λίστας με τα φαγητά που τους ταιριάζουν. Επιλέξτε ένα κρασί για να δείτε τις πλήρεις γευστικές σημειώσεις.',
-    exploreTitle: 'Ανά χρώμα, ποικιλία και περιοχή', filter: 'Εμφανίζονται', clearFilter: 'Καθαρισμός',
+    exploreTitle: 'Ανά χρώμα, ποικιλία και περιοχή', filter: 'Εμφανίζονται', clearFilter: 'Καθαρισμός', tonight: 'Απόψε', feast: 'Γιορτή του μήνα',
     col: {White: 'Λευκό', 'Rosé': 'Ροζέ', Red: 'Ερυθρό'}, wine: 'κρασί', winesN: 'κρασιά',
     bestFor: 'Πιάτα όπου είναι η πρώτη επιλογή', more: 'Περισσότερα κρασιά που ταιριάζουν', dishesFor: 'Πιάτα',
     begin: 'Από πού να ξεκινήσετε', beginText: (r, w) => `Επιλέξτε ένα κουμπί παραπάνω ή γράψτε ένα πιάτο. Φορτώθηκαν ${r} πιάτα και ${w} κρασιά.`,
@@ -798,13 +815,82 @@ function finderList() {
       <ol class="slist big">${rs.map(r => dishRow([r, bestWine(r)], rs.indexOf(r))).join('')}</ol></section>`;
   }).join('');
 }
+// Feasts of the Greek year, with Grape magazine's pairings (Oct 2026). wine = a label on the site; grape = a style when the article names no label.
+// Movable feasts hang off Orthodox Easter: Tsiknopempti 59 days before, Clean Monday 48 days before, Holy Week the 6 days before.
+function orthodoxEaster(y) {
+  const a = y % 4, b = y % 7, c = y % 19, d = (19 * c + 15) % 30, e = (2 * a + 4 * b - d + 34) % 7;
+  const m = Math.floor((d + e + 114) / 31), day = ((d + e + 114) % 31) + 1;
+  return new Date(y, m - 1, day + 13);  // Julian to Gregorian (1900-2099)
+}
+const daysBeforeEaster = (y, n) => { const d = orthodoxEaster(y); d.setDate(d.getDate() - n); return d; };  // calendar days, safe across the clock change
+const OCCASIONS = [
+  {key: 'tsikno', at: y => daysBeforeEaster(y, 59), name: {en: 'Tsiknopempti', el: 'Τσικνοπέμπτη'},
+    lede: {en: 'The grill is lit all over Greece. Whites, rosé and orange wine cut through the smoke as well as a red.', el: 'Η ψησταριά ανάβει σε όλη την Ελλάδα. Λευκά, ροζέ και πορτοκαλί κόβουν την τσίκνα όσο καλά και ένα κόκκινο.'},
+    pairs: [{dish: {en: 'Lamb chops with oregano and lemon', el: 'Παϊδάκια με ρίγανη και λεμόνι'}, wine: 'Tear of the Pine (Kechris Winery)'},
+      {dish: {en: 'Pork chops on the coals', el: 'Χοιρινές μπριζόλες στα κάρβουνα'}, wine: 'Kallisti Reserve (Boutari Winery (Santorini))'},
+      {dish: {en: 'Burgers and kid on the grill', el: 'Μπιφτέκια και κατσικάκι στη σχάρα'}, wine: 'Rosé de Xinomavro (Thymiopoulos Vineyards)'},
+      {dish: {en: 'Mutton and village sausages', el: 'Προβατίνα και χωριάτικα λουκάνικα'}, wine: 'RAWditis (Oenops)'}]},
+  {key: 'kathara', at: y => daysBeforeEaster(y, 48), name: {en: 'Clean Monday', el: 'Καθαρά Δευτέρα'},
+    lede: {en: 'The first day of Lent: seafood, greens and lagana, with fresh whites of clean acidity.', el: 'Η πρώτη μέρα της Σαρακοστής: θαλασσινά, χόρτα και λαγάνα, με φρέσκα λευκά καθαρής οξύτητας.'},
+    pairs: [{dish: {en: 'Dolmadakia', el: 'Ντολμαδάκια'}, grape: {en: 'Sauvignon Blanc or young Assyrtiko', el: 'Sauvignon Blanc ή νέο Ασύρτικο'}},
+      {dish: {en: 'Fried calamari', el: 'Τηγανητά καλαμαράκια'}, grape: {en: 'Mineral Assyrtiko or Kidonitsa', el: 'Ορυκτό Ασύρτικο ή Κυδωνίτσα'}},
+      {dish: {en: 'Grilled prawns', el: 'Γαρίδες στη σχάρα'}, grape: {en: 'Vidiano, Moschofilero or Xinomavro rosé', el: 'Βιδιανό, Μοσχοφίλερο ή ροζέ Ξινόμαυρο'}},
+      {dish: {en: 'Halva', el: 'Χαλβάς'}, grape: {en: 'Off-dry Muscat', el: 'Ημίξηρο Μοσχάτο'}}]},
+  {key: 'march25', at: y => new Date(y, 2, 25), name: {en: '25 March', el: '25η Μαρτίου'},
+    lede: {en: 'Fried salt cod with skordalia: Roditis, still, orange or as retsina, stands up to the salt and the garlic.', el: 'Μπακαλιάρος σκορδαλιά: ο Ροδίτης, ήσυχος, πορτοκαλί ή ρετσίνα, αντέχει την αλμύρα και το σκόρδο.'},
+    pairs: [{dish: {en: 'Salt cod with skordalia', el: 'Μπακαλιάρος σκορδαλιά'}, wine: 'Afros (Kechris Winery)'},
+      {dish: {en: 'Salt cod with skordalia', el: 'Μπακαλιάρος σκορδαλιά'}, wine: 'RAWditis (Oenops)'}]},
+  {key: 'holyweek', at: y => daysBeforeEaster(y, 6), name: {en: 'Holy Week', el: 'Μεγάλη Εβδομάδα'},
+    lede: {en: 'Lenten pulses, rice dishes and seafood, with light whites and a cool red for the beans.', el: 'Νηστίσιμα όσπρια, ρυζάτα και θαλασσινά, με ελαφριά λευκά και ένα δροσερό κόκκινο για τα φασόλια.'},
+    pairs: [{dish: {en: 'Chickpea soup', el: 'Ρεβιθόσουπα'}, grape: {en: 'Athiri or Vilana', el: 'Αθήρι ή Βηλάνα'}},
+      {dish: {en: 'Spinach rice', el: 'Σπανακόρυζο'}, grape: {en: 'Sauvignon Blanc', el: 'Sauvignon Blanc'}},
+      {dish: {en: 'Fasolada and gigantes', el: 'Φασολάδα και γίγαντες'}, grape: {en: 'Chilled Limnio or Limniona', el: 'Δροσερό Λημνιό ή Λημνιώνα'}},
+      {dish: {en: 'Octopus', el: 'Χταπόδι'}, grape: {en: 'Greek rosé', el: 'Ελληνικό ροζέ'}}]},
+  {key: 'easter', at: y => orthodoxEaster(y), name: {en: 'Easter', el: 'Πάσχα'},
+    lede: {en: 'From the magiritsa at midnight to the lamb on the spit.', el: 'Από τη μαγειρίτσα του μεσονυχτίου ως το αρνί στη σούβλα.'},
+    pairs: [{dish: {en: 'Magiritsa', el: 'Μαγειρίτσα'}, wine: 'Sauvignon Blanc (Alpha Estate)'},
+      {dish: {en: 'The whole Easter table', el: 'Όλο το τραπέζι της Λαμπρής'}, wine: 'Apla Rosé (Oenops)'},
+      {dish: {en: 'Roast lamb', el: 'Αρνί στον φούρνο'}, wine: 'Anafora Limniona (Wine Art Estate)'},
+      {dish: {en: 'Lamb on the spit', el: 'Οβελίας'}, wine: 'Ramnista (Kir-Yianni)'}]},
+  {key: 'christmas', at: y => new Date(y, 11, 25), name: {en: 'Christmas', el: 'Χριστούγεννα'},
+    lede: {en: 'Stuffed turkey and pork for the feast: an orange Savatiano or a skin-contact white has the body for both.', el: 'Γεμιστή γαλοπούλα και χοιρινό για το γιορτινό τραπέζι: ένα πορτοκαλί Σαββατιανό ή λευκό με επαφή με τις φλούδες έχει το σώμα και για τα δύο.'},
+    pairs: [{dish: {en: 'Stuffed turkey', el: 'Γεμιστή γαλοπούλα'}, grape: {en: 'Orange Savatiano', el: 'Πορτοκαλί Σαββατιανό'}},
+      {dish: {en: 'Pork with prunes', el: 'Χοιρινό με δαμάσκηνα'}, grape: {en: 'Orange Savatiano', el: 'Πορτοκαλί Σαββατιανό'}}]},
+];
+// the feasts that fall in month mi (0-11), in the coming twelve months
+function occasionsIn(mi) {
+  const now = new Date(), y = mi >= now.getMonth() ? now.getFullYear() : now.getFullYear() + 1;
+  return OCCASIONS.map(o => ({o, d: o.at(y)})).filter(x => x.d.getMonth() === mi);
+}
+function occasionHtml(mi) {
+  return occasionsIn(mi).map(({o, d}) => {
+    const date = d.toLocaleDateString(lang === 'el' ? 'el-GR' : 'en-GB', {weekday: 'long', day: 'numeric', month: 'long'});
+    const rows = o.pairs.map(p => {
+      const w = p.wine && byId[p.wine];
+      const right = w ? `<div class="pw c-${colourKey(w)}">${bottle(w)}<span><a class="wl" data-wine="${esc(w.id)}">${esc(L(w, 'name'))}</a><small><b class="cw">${esc(t('col')[colourKey(w)])}</b>${esc(L(w, 'winery'))}</small></span></div>`
+        : `<div class="og">${esc(p.grape[lang])}</div>`;
+      return `<li><div class="pr"><span class="dish">${esc(p.dish[lang])}</span>${right}</div></li>`;
+    }).join('');
+    return `<div class="occasion"><div class="okick">${esc(t('feast'))} · ${esc(date)}</div><h3>${esc(o.name[lang])}</h3><p>${esc(o.lede[lang])}</p><ul class="slist">${rows}</ul></div>`;
+  }).join('');
+}
+// Tonight: one dish and its wine from this month's Top 10, a different one each day
+function tonightHtml(pairs) {
+  const now = new Date();
+  if (monthIndex() !== now.getMonth() || !pairs.length) return '';
+  const [r, w] = pairs[(now.getDate() - 1) % pairs.length];
+  return `<section class="tonight"><div class="okick">${esc(t('tonight'))} · ${esc(now.toLocaleDateString(lang === 'el' ? 'el-GR' : 'en-GB', {weekday: 'long', day: 'numeric', month: 'long'}))}</div>
+    <div class="tn"><a class="wl rl dish" data-dish="${esc(r.name)}">${esc(L(r, 'name'))}</a><span class="amp">&amp;</span>
+    <div class="pw c-${colourKey(w)}">${bottle(w)}<span><a class="wl" data-wine="${esc(w.id)}">${esc(L(w, 'name'))}</a><small><b class="cw">${esc(t('col')[colourKey(w)])}</b>${esc(L(w, 'winery'))} · ${esc(L(w, 'region'))}</small></span></div></div>
+    ${L(r, 'why') ? `<p class="why">${esc(L(r, 'why'))}</p>` : ''}</section>`;
+}
 function seasonHtml() {
   const mi = monthIndex(), S = MONTHS[mi], pairs = yearPlan()[mi + 1];
   const row = ([r, w], i) => `<li><span class="rank">${i + 1}</span><div class="pr"><a class="wl rl dish" data-dish="${esc(r.name)}">${esc(L(r, 'name'))}</a>
       <div class="pw c-${colourKey(w)}">${bottle(w)}<span><a class="wl" data-wine="${esc(w.id)}">${esc(L(w, 'name'))}</a><small><b class="cw">${esc(t('col')[colourKey(w)])}</b>${esc(L(w, 'winery'))} · ${esc(L(w, 'region'))}${L(w, 'grapes') ? ' · ' + esc(L(w, 'grapes')) : ''}</small></span></div></div></li>`;
   const nm = MONTHS[(mi + 1) % 12][lang];
-  return `<section class="season"><div class="snav"><button type="button" class="prev" data-month="-1" aria-label="${esc(t('prevMonth'))}">←</button><button type="button" data-month="1">${esc(t('nextMonth'))}: ${esc(nm)} →</button></div><div class="skick"><svg viewBox="0 0 24 24" aria-hidden="true">${SEASON_ICONS[S.icon]}</svg>${esc(t('inSeason'))}</div>
-    <h2>${esc(S.title[lang])}</h2><p class="slede">${esc(S.lede[lang])}</p>
+  return tonightHtml(pairs) + `<section class="season"><div class="snav"><button type="button" class="prev" data-month="-1" aria-label="${esc(t('prevMonth'))}">←</button><button type="button" data-month="1">${esc(t('nextMonth'))}: ${esc(nm)} →</button></div><div class="skick"><svg viewBox="0 0 24 24" aria-hidden="true">${SEASON_ICONS[S.icon]}</svg>${esc(t('inSeason'))}</div>
+    <h2>${esc(S.title[lang])}</h2><p class="slede">${esc(S.lede[lang])}</p>${occasionHtml(mi)}
     <h3 class="stitle">${esc(t('top10Pairs'))}</h3>
     <ol class="slist big">${pairs.map(row).join('')}</ol></section>`;
 }
