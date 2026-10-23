@@ -495,7 +495,8 @@
       "what-will-people-say",
       "prague",
       "karaoke",
-      "romanzo-criminale"
+      "romanzo-criminale",
+      "a-whole-life-ahead"
     ],
     "log": [
       {
@@ -595,11 +596,17 @@
         "slot": "2026-10-22 20",
         "slug": "romanzo-criminale",
         "id": "2113359887992328274"
+      },
+      {
+        "day": "2026-10-23",
+        "slot": "2026-10-23 20",
+        "slug": "a-whole-life-ahead",
+        "id": "2113709003809169905"
       }
     ],
-    "last_day": "2026-10-22"
+    "last_day": "2026-10-23"
   },
-  "last_slot": "2026-10-23 14",
+  "last_slot": "2026-10-23 20",
   "quote": {
     "seen": [
       "1",
