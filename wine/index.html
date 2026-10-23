@@ -884,13 +884,19 @@ function occasionHtml(mi) {
   }).join('');
 }
 // Tonight: one dish and its wine from this month's Top 10, a different one each day
+// the pick for a given day from that month's Top 10; Saturday and Sunday always meat or fish (Antonis)
+function pickFor(d) {
+  const all = yearPlan()[d.getMonth() + 1], weekend = d.getDay() === 0 || d.getDay() === 6;
+  const meatFish = all.filter(([r]) => r.category === 'Meat & poultry' || r.category === 'Fish & seafood');
+  const pool = weekend && meatFish.length ? meatFish : all;
+  return pool[(d.getDate() - 1) % pool.length];
+}
 function tonightHtml(pairs) {
   const now = new Date();
   if (monthIndex() !== now.getMonth() || !pairs.length) return '';
-  const [r, w] = pairs[(now.getDate() - 1) % pairs.length];
+  const [r, w] = pickFor(now);
   // tomorrow: the next day's pick, from next month's Top 10 when the month turns
-  const tm = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1), tp = yearPlan()[tm.getMonth() + 1];
-  const [r2, w2] = tp[(tm.getDate() - 1) % tp.length];
+  const [r2, w2] = pickFor(new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1));
   const tomorrow = `<div class="tmrw"><span class="okick">${esc(t('tomorrow'))}</span><a class="wl rl" data-dish="${esc(r2.name)}">${esc(L(r2, 'name'))}</a><span class="amp">&amp;</span><span class="dotw c-${colourKey(w2)}"></span><a class="wl" data-wine="${esc(w2.id)}">${esc(L(w2, 'name'))}</a><small>${esc(L(w2, 'winery'))}</small></div>`;
   return `<section class="tonight"><div class="okick">${esc(t('tonight'))} · ${esc(now.toLocaleDateString(lang === 'el' ? 'el-GR' : 'en-GB', {weekday: 'long', day: 'numeric', month: 'long'}))}</div>
     <div class="tn"><a class="wl rl dish" data-dish="${esc(r.name)}">${esc(L(r, 'name'))}</a><span class="amp">&amp;</span>
