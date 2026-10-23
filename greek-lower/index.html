@@ -134,6 +134,10 @@ table.mini{margin:0 0 16px}
 .tag{font:500 10.5px var(--mono);letter-spacing:.06em;text-transform:uppercase;border:1px solid var(--line);border-radius:4px;padding:1px 5px;margin-left:6px;color:var(--muted);vertical-align:2px}
 .lg{margin-bottom:18px}
 .card.simple{padding:16px 18px 14px}
+table.vb td,table.vb th{padding:5px 7px}
+table.vb td.edge{font-weight:500}
+tr.val td{background:color-mix(in srgb,var(--gold) 12%,transparent)}
+.bk{font-size:11.5px;color:var(--muted)}
 .card.simple h3{font-size:21px}
 .pick{color:var(--gold)}
 td.wr{white-space:normal}
@@ -145,13 +149,14 @@ td.wr{white-space:normal}
   <div class="seg lg" id="league"></div>
   <div class="tabs" id="tabs">
     <a href="#view=projections" data-view="projections" class="on">Projections</a>
+    <a href="#view=market" data-view="market">Vs Bookie</a>
     <a href="#view=results" data-view="results">Results</a>
     <a href="#view=table" data-view="table">Table &amp; ratings</a>
     <a href="#view=method" data-view="method">How it works</a>
   </div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=2a85cc7a"></script>
+<script src="data.js?v=c68c557c"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -161,7 +166,7 @@ const pct = x => Math.round(x*100) + '%';
 const MARGIN = 1.05;
 const modelOdds = p => (p > 0 ? Math.max(1.01, 1 / (p * MARGIN)) : 99).toFixed(2);
 const SHORT = {sl2: 'Super League 2', gamma: 'Gamma Ethniki 2', women: 'Women'};
-let lg = 'sl2', view = 'projections', rsSeason = 'cur';
+let lg = 'sl2', view = 'projections', rsSeason = 'cur', edgeMin = .10, mkSeason = 'all', oddsWhen = 'close';
 const LG = () => DATA.leagues.find(l => l.key === lg);
 const tagOf = s => s === 'up' ? '<span class="tag">promoted</span>' : s === 'down' ? '<span class="tag">relegated</span>' : '';
 
@@ -185,6 +190,98 @@ function renderProjections(){
   L.fixtures.forEach(g => (byDay[g.dt.slice(0,10)] ||= []).push(g));
   let h = '';
   for (const [d, gs] of Object.entries(byDay)) h += `<h2 class="day">${dayName(d)}</h2><div class="grid">${gs.map(card).join('')}</div>`;
+  return h;
+}
+
+// --- Vs Bookie ---------------------------------------------------------------------------------------------------
+const MK = [['1', 'x12', 0, 'h'], ['X', 'x12', 1, 'd'], ['2', 'x12', 2, 'a'], ['Over 2.5', 'ou', 0, 'over'], ['Under 2.5', 'ou', 1, 'under']];
+const modelP = (g, k) => k === 'under' ? 1 - g.over : g[k];
+// bookmaker chance with the margin taken out, averaged over every bookmaker that priced the game
+function fairP(books, i){
+  const v = Object.values(books || {});
+  if (!v.length) return null;
+  return v.reduce((s, o) => s + (1 / o[i]) / o.reduce((t, x) => t + 1 / x, 0), 0) / v.length;
+}
+function best(books, i){
+  let b = null;
+  for (const [name, o] of Object.entries(books || {})) if (!b || o[i] > b[0]) b = [o[i], name];
+  return b;
+}
+// open = the bookmakers' first prices for the game instead of the latest (about closing)
+function bets(g, open){
+  const out = [];
+  if (!g.odds) return out;
+  for (const [lab, m, i, k] of MK){
+    const b = best(g.odds[open ? 'o' + m : m], i);
+    if (!b) continue;
+    const p = modelP(g, k);
+    out.push({lab, m, k, p, fair: fairP(g.odds[m], i), price: b[0], book: b[1], edge: p * b[0] - 1});
+  }
+  return out;
+}
+const won = (g, k) => ({h: g.hg > g.ag, d: g.hg === g.ag, a: g.hg < g.ag, over: g.hg + g.ag > 2, under: g.hg + g.ag < 3})[k];
+const sgnPct = x => (x >= 0 ? '+' : '−') + Math.abs(x * 100).toFixed(0) + '%';
+const units = x => (x >= 0 ? '+' : '−') + Math.abs(x).toFixed(1) + 'u';
+
+function vbCard(g){
+  const bs = bets(g);
+  const rows = bs.map(b => `<tr class="${b.edge >= edgeMin ? 'val' : ''}"><td>${b.lab}</td><td class="n">${pct(b.p)}</td><td class="n muted">${b.fair == null ? '–' : pct(b.fair)}</td>`+
+    `<td class="n">${modelOdds(b.p)}</td><td class="n tot">${b.price.toFixed(2)} <span class="bk">${b.book}</span></td>`+
+    `<td class="n edge ${b.edge >= 0 ? 'ok' : 'bad'}">${sgnPct(b.edge)}</td></tr>`).join('');
+  return `<div class="card simple"><div class="ko">${dayName(g.dt)} ${g.dt.slice(11)}</div><h3>${g.home} <span class="muted">–</span> ${g.away}</h3>` +
+    (bs.length ? `<table class="vb"><thead><tr><th></th><th class="n">Model</th><th class="n">Bookie</th><th class="n">Model odds</th><th class="n">Best odds</th><th class="n">Edge</th></tr></thead><tbody>${rows}</tbody></table>`
+               : '<p class="note">No bookmaker odds on Flashscore yet.</p>') + '</div>';
+}
+
+function record(rows){
+  const all = {n: 0, w: 0, pl: 0}, by = {};
+  const ll = {m1: 0, b1: 0, n1: 0, m2: 0, b2: 0, n2: 0};
+  for (const g of rows){
+    const res = g.hg > g.ag ? 'h' : g.hg === g.ag ? 'd' : 'a', ov = g.hg + g.ag > 2;
+    if (g.odds.x12 && Object.keys(g.odds.x12).length){
+      ll.m1 -= Math.log(g[res]); ll.b1 -= Math.log(fairP(g.odds.x12, {h: 0, d: 1, a: 2}[res])); ll.n1++;
+    }
+    if (g.odds.ou && Object.keys(g.odds.ou).length){
+      ll.m2 -= Math.log(ov ? g.over : 1 - g.over); ll.b2 -= Math.log(fairP(g.odds.ou, ov ? 0 : 1)); ll.n2++;
+    }
+    for (const b of bets(g, oddsWhen === 'open')){
+      if (b.edge < edgeMin) continue;
+      const w = won(g, b.k), pl = w ? b.price - 1 : -1;
+      for (const r of [all, by[b.lab] ||= {n: 0, w: 0, pl: 0}]){ r.n++; r.w += w; r.pl += pl; }
+    }
+  }
+  return {all, by, ll};
+}
+
+function llRow(lab, m, b, n){
+  if (!n) return '';
+  m /= n; b /= n;
+  return `<tr><td>${lab}</td><td class="n">${n}</td><td class="n ${m <= b ? 'tot' : ''}">${m.toFixed(3)}</td><td class="n ${b < m ? 'tot' : ''}">${b.toFixed(3)}</td></tr>`;
+}
+
+function renderMarket(){
+  const L = LG(), cur = +DATA.season.slice(0,4);
+  let h = `<p class="note"><b>Model</b> is the model's chance, <b>Bookie</b> the bookmakers' chance with their margin taken out (average of every Greek bookmaker on Flashscore). <b>Best odds</b> is the highest price among them and <b>edge</b> = model chance × best odds − 1. Rows at or above the chosen edge are highlighted and counted in the record below. A very big gap usually means the bookmakers know something the model cannot see from scores alone (unpaid players, a youth side fielded, a coach change).</p>
+    <div class="bar"><span class="muted" style="font:400 12px var(--mono);text-transform:uppercase;letter-spacing:.08em">Edge from</span><div class="chips" id="edge">${[.05, .10, .15, .20, .30].map(x => `<button class="chip${x === edgeMin ? ' on' : ''}" data-e="${x}">${Math.round(x*100)}%</button>`).join('')}</div></div>`;
+  h += L.fixtures.length ? `<h2>Next round</h2><div class="grid">${L.fixtures.map(vbCard).join('')}</div>` : '<p class="note">The next round is not scheduled yet.</p>';
+
+  const priced = L.results.filter(r => r.odds);
+  const seasons = [...new Set(priced.map(r => r.season))].sort((a, b) => b - a);
+  const pickS = mkSeason === 'cur' ? cur : +mkSeason;
+  const rows = mkSeason === 'all' ? priced : priced.filter(r => r.season === pickS);
+  const R = record(rows), a = R.all;
+  h += `<h2>Record on played games</h2>
+    <p class="note">Every played game with Flashscore odds: 1 unit on every pick at or above the edge, at the best price. The model only used earlier games. <b>Closing</b> uses the last prices before kick-off, <b>opening</b> the first prices posted, which are softer but on the board days before the model is refitted after the previous round.</p>
+    <div class="bar"><div class="seg" id="mkwhen"><button data-w="close" class="${oddsWhen === 'close' ? 'on' : ''}">Closing odds</button><button data-w="open" class="${oddsWhen === 'open' ? 'on' : ''}">Opening odds</button></div><div class="seg" id="mkseason"><button data-s="all" class="${mkSeason === 'all' ? 'on' : ''}">All</button>${seasons.map(s => `<button data-s="${s === cur ? 'cur' : s}" class="${mkSeason !== 'all' && pickS === s ? 'on' : ''}">${s}–${String(s+1).slice(2)}</button>`).join('')}</div></div>
+    <div class="metrics"><div class="metric"><div class="lbl">Games with odds</div><div class="big">${rows.length}</div></div>
+    <div class="metric"><div class="lbl">Bets</div><div class="big">${a.n}</div></div>
+    <div class="metric"><div class="lbl">Won</div><div class="big">${a.n ? pct(a.w / a.n) : '–'}</div></div>
+    <div class="metric"><div class="lbl">Profit</div><div class="big ${a.pl >= 0 ? 'ok' : 'bad'}">${a.n ? units(a.pl) : '–'}</div></div>
+    <div class="metric"><div class="lbl">Return</div><div class="big ${a.pl >= 0 ? 'ok' : 'bad'}">${a.n ? sgnPct(a.pl / a.n) : '–'}</div></div></div>`;
+  h += `<div class="mkcols"><table class="mini"><thead><tr><th>Pick</th><th class="n">Bets</th><th class="n">Won</th><th class="n">Profit</th><th class="n">Return</th></tr></thead><tbody>` +
+    MK.map(([lab]) => { const r = R.by[lab]; return r ? `<tr><td>${lab}</td><td class="n">${r.n}</td><td class="n">${pct(r.w / r.n)}</td><td class="n ${r.pl >= 0 ? 'ok' : 'bad'}">${units(r.pl)}</td><td class="n ${r.pl >= 0 ? 'ok' : 'bad'}">${sgnPct(r.pl / r.n)}</td></tr>` : `<tr><td>${lab}</td><td class="n muted" colspan="4">no bets</td></tr>`; }).join('') +
+    `</tbody></table><table class="mini"><thead><tr><th>Who is more accurate (log loss, lower is better)</th><th class="n">Games</th><th class="n">Model</th><th class="n">Bookie</th></tr></thead><tbody>` +
+    llRow('1X2', R.ll.m1, R.ll.b1, R.ll.n1) + llRow('Over/under 2.5', R.ll.m2, R.ll.b2, R.ll.n2) + `</tbody></table></div>`;
   return h;
 }
 
@@ -263,7 +360,7 @@ function render(){
   $('league').innerHTML = DATA.leagues.map(l => `<button data-l="${l.key}" class="${l.key === lg ? 'on' : ''}">${SHORT[l.key]}</button>`).join('');
   document.querySelectorAll('#tabs a').forEach(a => a.classList.toggle('on', a.dataset.view === view));
   $('league').style.display = view === 'method' ? 'none' : '';
-  $('out').innerHTML = {projections: renderProjections, results: renderResults, table: renderTable, method: renderMethod}[view]();
+  $('out').innerHTML = {projections: renderProjections, market: renderMarket, results: renderResults, table: renderTable, method: renderMethod}[view]();
 }
 
 function readHash(){
@@ -274,11 +371,14 @@ function readHash(){
 function writeHash(){ history.replaceState(null, '', `#view=${view}&league=${lg}`); }
 
 document.addEventListener('click', e => {
-  const t = e.target.closest('[data-view],[data-l],#rsseason button');
+  const t = e.target.closest('[data-view],[data-l],#rsseason button,#edge button,#mkseason button,#mkwhen button');
   if (!t) return;
   e.preventDefault();
   if (t.dataset.view) view = t.dataset.view;
   else if (t.dataset.l) { lg = t.dataset.l; rsSeason = 'cur'; }
+  else if (t.dataset.e) edgeMin = +t.dataset.e;
+  else if (t.dataset.w) oddsWhen = t.dataset.w;
+  else if (t.closest('#mkseason')) mkSeason = t.dataset.s;
   else rsSeason = t.dataset.s;
   writeHash(); render();
 });
