@@ -247,7 +247,7 @@ function renderMethod(){
   const A = D.accuracy, E = D.example, MD = D.market_drive;
   let h = '<div class="doc">';
   h += `<h2 style="margin-top:0">The idea</h2>
-  <p>Every number on the Projections tab is built the same way. Start from what an average Super League game produces, then adjust it for how good or bad each team is at that stat. Goals and the result come from Superbet's match odds when they're out, because in testing the odds were more accurate than our own ratings. Cards also take into account who is the favourite (again from the odds), and cards and fouls take into account the referee.</p>`;
+  <p>Every number on the Projections tab is built the same way. Start from what an average Super League game produces, then adjust it for how good or bad each team is at that stat. Goals and the result come from Superbet's match odds when they're out, because in testing the odds were more accurate than our own ratings; the odds also nudge shots, SoT and saves. Cards also take into account who is the favourite (again from the odds), and cards and fouls take into account the referee.</p>`;
   if (E){
     const H = E.home, W = E.away, c = E.stats.corners, k = E.stats.cards, g = E.stats.goals, P = E.possession;
     const tH = D.teams.find(t => t.team === H), tW = D.teams.find(t => t.team === W);
@@ -319,7 +319,7 @@ function renderMethod(){
     <h3><span class="num">8</span>Possession</h3>
     <p>Possession is a split that always adds to 100%, so it can't be multiplied like the counts. Each team has one possession strength (points above or below an even split), and the home side gets a small edge:</p>
     <div class="calc">${H} possession = 50 ${sgn(P.edge)} <i>home edge</i> ${sgn(P.home)} <i>${H}</i> ${sgn(-P.away)} <i>${W}</i> = <b>${P.proj.toFixed(1)}%</b> · ${W} ${(100 - P.proj).toFixed(1)}%</div>
-    <p>Shots, SoT, xG, fouls, goal kicks, throw-ins, saves and woodwork all work like corners, each with its own averages and ratings.</p>`;
+    <p>Shots, SoT, xG, fouls, goal kicks, throw-ins, saves and woodwork all work like corners, each with its own averages and ratings. Shots, SoT and goalkeeper saves then get a small adjustment from the match odds: favourites take more shots and force more saves than their ratings alone suggest. In testing on 284 games since 2025–26 this made them about 1% more accurate (shots 1.4%, SoT 1.0%, saves 0.9%). I tested the same for xG, corners, fouls, goal kicks, throw-ins, woodwork and possession, but the odds didn't help there, so those come from the ratings alone.</p>`;
   }
   h += `<h2>Where the ratings come from</h2>
   <ul>
