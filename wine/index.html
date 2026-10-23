@@ -831,7 +831,7 @@ function render() {
   }
   document.querySelectorAll('.views button').forEach(b => { b.textContent = t({list: 'viewList', wineries: 'viewEstates', finder: 'viewFinder'}[b.dataset.view]); b.classList.toggle('on', b.dataset.view === view); });
   document.getElementById('hero').innerHTML = heroSvg(home ? 'list' : view);
-  document.querySelector('.search').hidden = view !== 'list';
+  document.querySelector('.search').hidden = true;  // Antonis: no search box on any page; filter with the chips
   ['tagsLabel', 'tags', 'grapesLabel', 'grapes'].forEach(id => { document.getElementById(id).hidden = view === 'finder'; });
   document.getElementById('season').innerHTML = home ? seasonHtml() : '';
   document.getElementById('finderChips').hidden = view !== 'finder';
