@@ -244,10 +244,10 @@ const ago = d => d < 300 ? `${Math.round(d/30)} months` : d < 500 ? '1 year' : `
 function poisson(mu){ const p = [Math.exp(-mu)]; for (let i = 1; i <= 10; i++) p.push(p[i-1] * mu / i); return p; }
 
 function renderMethod(){
-  const A = D.accuracy, E = D.example;
+  const A = D.accuracy, E = D.example, MD = D.market_drive;
   let h = '<div class="doc">';
   h += `<h2 style="margin-top:0">The idea</h2>
-  <p>Every number on the Projections tab is built the same way. Start from what an average Super League game produces, then adjust it for how good or bad each team is at that stat. Cards also take into account who is the favourite, and cards and fouls take into account the referee.</p>`;
+  <p>Every number on the Projections tab is built the same way. Start from what an average Super League game produces, then adjust it for how good or bad each team is at that stat. Goals and the result come from Superbet's match odds when they're out, because in testing the odds were more accurate than our own ratings. Cards also take into account who is the favourite (again from the odds), and cards and fouls take into account the referee.</p>`;
   if (E){
     const H = E.home, W = E.away, c = E.stats.corners, k = E.stats.cards, g = E.stats.goals, P = E.possession;
     const tH = D.teams.find(t => t.team === H), tW = D.teams.find(t => t.team === W);
@@ -287,8 +287,8 @@ function renderMethod(){
       ${H} cards = ${k.mu_home.toFixed(2)} × ${k.home_for.toFixed(2)} × ${k.away_against.toFixed(2)} = ${x(k.mu_home,k.home_for,k.away_against)}<br>
       ${W} cards = ${k.mu_away.toFixed(2)} × ${k.away_for.toFixed(2)} × ${k.home_against.toFixed(2)} = ${x(k.mu_away,k.away_for,k.home_against)}
     </div>
-    <p>Ratings know how many cards a club usually gets, but not how one-sided this particular game is. A team that's clearly better spends the game on the ball and commits fewer fouls, while even games get scrappy. In past games, a side projected to score 1.5 goals more than its opponent got about a quarter fewer cards than its usual level.</p>
-    <p>Here ${E.balance.home < E.balance.away ? H : W} are the favourites (projected ${Math.abs(g.proj.home - g.proj.away).toFixed(1)} goals better, see step 7), so their cards go down and ${E.balance.home < E.balance.away ? W : H}'s ${(E.balance.home < E.balance.away ? E.balance.away : E.balance.home) >= 1 ? 'go up slightly' : 'barely change'}:</p>
+    <p>Ratings know how many cards a club usually gets, but not how one-sided this particular game is. A team that's clearly better spends the game on the ball and commits fewer fouls, while even games get scrappy. In past games, a side expected to score 1.5 goals more than its opponent got about a quarter fewer cards than its usual level. Who is the favourite, and by how much, comes from the match odds: in testing on the ${MD.games} games since 2025–26, odds-based favourites cut the miss on match cards from ${MD.cards.teams_only.toFixed(2)} to ${MD.cards.market.toFixed(2)}, against ${MD.cards.model.toFixed(2)} using our own goal projections.</p>
+    <p>Here ${E.balance.home < E.balance.away ? H : W} are the favourites (the odds make them ${Math.abs(g.proj.home - g.proj.away).toFixed(1)} goals better, see step 7), so their cards go down and ${E.balance.home < E.balance.away ? W : H}'s ${(E.balance.home < E.balance.away ? E.balance.away : E.balance.home) >= 1 ? 'go up slightly' : 'barely change'}:</p>
     <div class="calc">${H} ${x(k.mu_home,k.home_for,k.away_against)} × ${E.balance.home.toFixed(2)} = <b>${bal(k.mu_home*k.home_for*k.away_against, E.balance.home)}</b> · ${W} ${x(k.mu_away,k.away_for,k.home_against)} × ${E.balance.away.toFixed(2)} = <b>${bal(k.mu_away*k.away_for*k.home_against, E.balance.away)}</b></div>
 
     <h3><span class="num">6</span>Add the referee (cards and fouls)</h3>`;
@@ -301,17 +301,19 @@ function renderMethod(){
     }
     const B = A.cards.balance;
     h += `<p>A referee's factor is pulled hard toward ×1.00, because a referee's past is a weak guide here: in testing, games with the referees who looked strictest had no more cards than games with the most lenient. I also tested whether some referees go easier on Olympiakos, Panathinaikos, AEK and PAOK. Their past lean didn't repeat, and the team ratings already know the Big-4 get fewer cards.</p>
-    <p>Together, on every game since 2023–24, the average miss on match cards went from ${B.teams_only.toFixed(2)} (teams only) to ${B.with_balance.toFixed(2)} with the favourite effect and ${B.with_both.toFixed(2)} with the referee as well. For fouls, the referee took it from ${A.fouls.mae.toFixed(2)} to ${A.fouls.ref_mae.toFixed(2)}.</p>`;
+    <p>For fouls, the referee took the average miss on match fouls from ${A.fouls.mae.toFixed(2)} to ${A.fouls.ref_mae.toFixed(2)} in testing.</p>`;
 
     const ph = poisson(g.proj.home), pa = poisson(g.proj.away);
     let best = [0, 0, 0];
     ph.forEach((p, i) => pa.forEach((q, j) => { if (p*q > best[2]) best = [i, j, p*q]; }));
     h += `<h3><span class="num">7</span>Who wins</h3>
-    <p>Goals are projected exactly like corners:</p>
+    <p>Our own ratings project goals exactly like corners:</p>
     <div class="calc">
-      ${H} goals = ${g.mu_home.toFixed(2)} × ${g.home_for.toFixed(2)} × ${g.away_against.toFixed(2)} = <b>${g.proj.home.toFixed(2)}</b><br>
-      ${W} goals = ${g.mu_away.toFixed(2)} × ${g.away_for.toFixed(2)} × ${g.home_against.toFixed(2)} = <b>${g.proj.away.toFixed(2)}</b>
+      ${H} goals = ${g.mu_home.toFixed(2)} × ${g.home_for.toFixed(2)} × ${g.away_against.toFixed(2)} = ${E.model_goals[0].toFixed(2)}<br>
+      ${W} goals = ${g.mu_away.toFixed(2)} × ${g.away_for.toFixed(2)} × ${g.home_against.toFixed(2)} = ${E.model_goals[1].toFixed(2)}
     </div>
+    ${E.goals_from === 'market' ? `<p>But the betting market knows things our ratings don't (injuries, form, team news), and on goals it has been more accurate: over ${MD.games_goals} games since 2024–25 the goals implied by the closing odds missed each team's goals by ${MD.goals['1'].mae.toFixed(3)} on average, against ${MD.goals['0'].mae.toFixed(3)} for our ratings, and every mix of the two did worse than the odds alone. So when Superbet's odds are out, the goals come from them: we find the scoring rates that reproduce its home/draw/away and over/under 2.5 prices.</p>
+    <div class="calc">From Superbet's odds: ${H} <b>${g.proj.home.toFixed(2)}</b> goals · ${W} <b>${g.proj.away.toFixed(2)}</b> goals</div>` : `<p>Superbet's odds for this game aren't out yet, so these are the goals used. Once the odds appear, they replace them (they have been more accurate in testing).</p>`}
     <p>Goals are rare, random events. A team expected to score ${g.proj.home.toFixed(2)} scores 0 in ${pct(ph[0])} of games, 1 in ${pct(ph[1])} and 2 in ${pct(ph[2])}. Doing this for both teams gives a chance for every score, and the most likely is <b>${best[0]}–${best[1]}</b> (${pct(best[2])}). Adding up all the scores: <b>${H} win ${pct(E.result.home)}</b>, <b>draw ${pct(E.result.draw)}</b>, <b>${W} win ${pct(E.result.away)}</b>.</p>
 
     <h3><span class="num">8</span>Possession</h3>
@@ -372,7 +374,7 @@ function renderMarket(){
   if (!games.length) return '<p class="empty">No Superbet odds for this round yet.</p>';
   const T = D.market_test;
   let h = `<p class="note">Superbet's odds for this round next to our projections. For each stat the line is Superbet's main one (closest to 50/50). <b>Superbet %</b> is its chance of over with the bookmaker's margin taken out; <b>ours</b> is our chance on the same line. Differences of 10 points or more are highlighted.</p>
-  <p class="note"><b>Read the differences with care.</b> On result and goals the market has been sharper than our model: over ${T.games} games since ${T.since}, its closing odds predicted results better than we did (log loss ${T.ll_market.toFixed(3)} vs ${T.ll_ours.toFixed(3)}), and backing our disagreements lost ${Math.round(-T.roi_1x2 * 100)}% per bet on 1X2 and ${Math.round(-T.roi_ou * 100 * 10) / 10}% on over/under 2.5. Superbet's shots lines run about 2 shots above ours in every game, which looks like a different way of counting shots rather than value. For corners, cards and the other stats there are no past odds to test against yet; every pull of Superbet's odds is now saved so this can be checked after a few rounds.</p>`;
+  <p class="note"><b>Result and goals now come from the odds</b>, so on those we match Superbet closely (small gaps come from the over/under 2.5 price). They used to come from our own ratings, and the market was sharper: over ${T.games} games since ${T.since}, its closing odds predicted results better than we did (log loss ${T.ll_market.toFixed(3)} vs ${T.ll_ours.toFixed(3)}), and backing our disagreements lost ${Math.round(-T.roi_1x2 * 100)}% per bet on 1X2 and ${Math.round(-T.roi_ou * 100 * 10) / 10}% on over/under 2.5. For the other stats, read the differences with care. Superbet's shots lines run about 2 shots above ours in every game, which looks like a different way of counting shots rather than value. For corners, cards and the other stats there are no past odds to test against yet; every pull of Superbet's odds is now saved so this can be checked after a few rounds.</p>`;
   const all = [];
   games.forEach(g => marketRows(g).forEach(r => all.push({...r, g})));
   const big = all.filter(r => Math.abs(r.diff) >= .1 && r.s !== 'shots').sort((a, b) => Math.abs(b.diff) - Math.abs(a.diff)).slice(0, 8);
