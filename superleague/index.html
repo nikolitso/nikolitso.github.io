@@ -127,6 +127,8 @@ const dayName = s => { const d = new Date(s.slice(0,10)+'T12:00'); return `${DAY
 const pct = x => Math.round(x*100) + '%';
 const dec = s => ['xg','goals','woodwork'].includes(s) ? 2 : 1;
 const f = (x, s) => x == null ? '–' : (+x).toFixed(s === 'possession' ? 0 : dec(s));
+// actual counts are whole numbers; only xG has decimals
+const fa = (x, s) => s === 'xg' ? f(x, s) : x == null ? '–' : String(Math.round(x));
 let view = 'projections', pjMode = 'match', pjStat = 'corners', rsStat = 'goals', tmStat = 'goals', tmSort = ['for', -1];
 
 $('sub').textContent = `${D.season.replace('-','–')} · updated ${D.updated} (Athens) · model built on ${D.history.games} games since ${D.history.from.slice(0,4)}`;
@@ -197,8 +199,8 @@ function renderResults(){
   for (const g of rows){
     const [ph, pa, ah, aa] = g.stats[s];
     const miss = poss ? ah - ph : ah + aa - ph - pa;
-    h += `<tr><td class="muted">${dayName(g.date)}</td><td>${g.home} – ${g.away}</td><td class="n">${f(ph,s)} – ${f(pa,s)}</td><td class="n">${f(ah,s)} – ${f(aa,s)}</td>`+
-      (poss ? '' : `<td class="n">${f(ph+pa,s)}</td><td class="n tot">${f(ah+aa,s)}</td>`)+
+    h += `<tr><td class="muted">${dayName(g.date)}</td><td>${g.home} – ${g.away}</td><td class="n">${f(ph,s)} – ${f(pa,s)}</td><td class="n">${fa(ah,s)} – ${fa(aa,s)}</td>`+
+      (poss ? '' : `<td class="n">${f(ph+pa,s)}</td><td class="n tot">${fa(ah+aa,s)}</td>`)+
       `<td class="n muted">${miss > 0 ? '+' : ''}${f(miss,s)}</td></tr>`;
   }
   return h + '</tbody></table></div>';
