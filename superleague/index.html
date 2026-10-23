@@ -61,6 +61,10 @@ td{padding:7px 8px;border-bottom:1px solid color-mix(in srgb,var(--line) 60%,tra
 td.n,th.n{text-align:right;font-family:var(--mono);font-size:13.5px}
 td.tot{color:var(--gold);font-weight:500}
 .card table{margin-top:6px}
+.coach{font:400 11.5px/1.5 var(--mono);color:var(--muted);margin-top:2px}
+.coach b{color:var(--text);font-weight:500}
+table.tm{max-width:1000px}table.tm .gl{border-left:1px solid var(--line);padding-left:12px}
+table.tm tr.grp th{color:var(--gold);border-bottom:0;padding-bottom:0}
 .head{display:flex;justify-content:space-between;align-items:flex-start;gap:6px 14px;flex-wrap:wrap}
 .ref{font:400 11.5px/1.5 var(--mono);color:var(--muted);text-align:right;margin-left:auto}
 .ref b{color:var(--text);font-weight:500}
@@ -142,6 +146,9 @@ const mult = x => `×${x.toFixed(2)}`;
 const monthYear = s => { const d = new Date(s + 'T12:00'); return `${MON[d.getMonth()]} ${d.getFullYear()}`; };
 // the referee factor uses his last 20 games (refs.py LAST_N)
 const refWindow = r => `${r.total > r.games ? 'last ' : ''}${r.games} game${r.games === 1 ? '' : 's'} since ${monthYear(r.since)}`;
+const surname = n => n.split(' ').slice(-1)[0];
+const coachOne = c => c ? `<b>${surname(c[0])}</b> ${c[2]} game${c[2] === 1 ? '' : 's'} since ${monthYear(c[1])}` : '–';
+const coachHtml = c => c ? `<div class="coach">Coaches ${coachOne(c.home)} · ${coachOne(c.away)}</div>` : '';
 function refHtml(r){
   if (!r) return '<div class="ref">Referee <b>not announced</b></div>';
   if (!r.games) return `<div class="ref">Referee <b>${r.name}</b><br>no league games yet · no adjustment</div>`;
@@ -158,7 +165,7 @@ function matchCard(g){
     return `<tr><td>${L[s]}</td><td class="n">${f(x.home, s)}</td><td class="n">${f(x.away, s)}</td>`+
       `<td class="n tot">${x.total == null ? '' : f(x.total, s)}</td><td class="ln">${linesHtml(mainLine(x.lines))}</td></tr>`;
   }).join('');
-  return `<div class="card"><div class="ko">${t}</div><div class="head"><h3>${g.home} <span class="muted">–</span> ${g.away}</h3>${refHtml(g.ref)}</div>
+  return `<div class="card"><div class="ko">${t}</div><div class="head"><h3>${g.home} <span class="muted">–</span> ${g.away}</h3>${refHtml(g.ref)}</div>${coachHtml(g.coaches)}
     <div class="wdl"><i style="width:${r.home*100}%"></i><i style="width:${r.draw*100}%"></i><i style="width:${r.away*100}%"></i></div>
     <div class="wdlt"><span>Home <b>${pct(r.home)}</b></span><span>Draw <b>${pct(r.draw)}</b></span><span>Away <b>${pct(r.away)}</b></span></div>
     <table><thead><tr><th>Stat</th><th class="n"><span class="full">${g.home}</span><span class="abbr">Home</span></th><th class="n"><span class="full">${g.away}</span><span class="abbr">Away</span></th><th class="n">Total</th><th class="n">Over</th></tr></thead><tbody>${rows}</tbody></table></div>`;
@@ -211,13 +218,21 @@ function renderResults(){
 
 function renderTeams(){
   const s = tmStat;
-  let h = `<p class="note">Per-game averages this season. <b>For</b> is what the team produced, <b>against</b> is what its opponents produced.</p>
+  let h = `<p class="note">Per-game averages. <b>This season</b> covers every game this season. <b>Current coach</b> covers only the games since the coach took over, which can include last season. <b>For</b> is what the team produced, <b>against</b> is what its opponents produced. A coach with only a few games is mostly luck: the projections themselves use the whole of the last three seasons.</p>
     <div class="bar">${chipsHtml('tmstat', s, ORDER)}</div>`;
   const [key, dir] = tmSort;
-  const rows = D.teams.slice().sort((a, b) => key === 'team' ? dir * a.team.localeCompare(b.team) : dir * ((a[key][s] ?? -1) - (b[key][s] ?? -1)));
-  const th = (k, lbl, n) => `<th class="sort${n ? ' n' : ''}${k === key ? ' on' : ''}" data-k="${k}">${lbl}${k === key ? (dir > 0 ? ' ▲' : ' ▼') : ''}</th>`;
-  h += `<div class="scroll"><table style="max-width:640px"><thead><tr>${th('team','Team')}<th class="n">Games</th>${th('for','For',1)}${th('against','Against',1)}</tr></thead><tbody>`;
-  for (const t of rows) h += `<tr><td>${t.team}</td><td class="n muted">${t.games}</td><td class="n tot">${f(t.for[s],s)}</td><td class="n">${f(t.against[s],s)}</td></tr>`;
+  const val = (t, k) => (k.startsWith('c_') ? t.coach?.[k.slice(2)]?.[s] : t[k][s]) ?? -1;
+  const rows = D.teams.slice().sort((a, b) => key === 'team' ? dir * a.team.localeCompare(b.team) : dir * (val(a, key) - val(b, key)));
+  const th = (k, lbl, n, cls = '') => `<th class="sort${n ? ' n' : ''}${k === key ? ' on' : ''} ${cls}" data-k="${k}">${lbl}${k === key ? (dir > 0 ? ' ▲' : ' ▼') : ''}</th>`;
+  h += `<div class="scroll"><table class="tm"><thead>
+    <tr class="grp"><th colspan="1"></th><th colspan="3" class="gl">This season</th><th colspan="5" class="gl">Current coach</th></tr>
+    <tr>${th('team','Team')}<th class="n gl">Games</th>${th('for','For',1)}${th('against','Against',1)}<th class="gl">Coach</th><th>Since</th><th class="n">Games</th>${th('c_for','For',1)}${th('c_against','Against',1)}</tr></thead><tbody>`;
+  for (const t of rows){
+    const c = t.coach;
+    h += `<tr><td>${t.team}</td><td class="n muted gl">${t.games}</td><td class="n tot">${f(t.for[s],s)}</td><td class="n">${f(t.against[s],s)}</td>` +
+      (c ? `<td class="gl">${c.name}</td><td class="muted">${monthYear(c.since)}</td><td class="n muted">${c.games}</td><td class="n tot">${f(c.for[s],s)}</td><td class="n">${f(c.against[s],s)}</td>`
+         : `<td class="gl muted" colspan="5">–</td>`) + '</tr>';
+  }
   return h + '</tbody></table></div>';
 }
 
