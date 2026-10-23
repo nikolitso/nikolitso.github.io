@@ -47,6 +47,8 @@ h2{font:600 22px var(--serif);margin:30px 0 12px}
 h2.day{font-size:20px;padding-bottom:8px;border-bottom:1px solid var(--line)}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(520px,100%),1fr));gap:18px}
 .grid>.card{min-width:0}
+.grid>.mcard{display:grid;grid-row:span 3;grid-template-rows:subgrid;row-gap:0;align-content:start}
+.mcard .top{padding-bottom:4px}
 .card td:first-child{white-space:normal}
 .card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px 18px 10px}
 .card h3{font:600 24px var(--serif);margin:0}
@@ -67,7 +69,7 @@ table.mk{margin-bottom:6px}table.mk td,table.mk th{padding:6px 7px}
 table.tm{max-width:1000px}table.tm .gl{border-left:1px solid var(--line);padding-left:12px}
 table.tm tr.grp th{color:var(--gold);border-bottom:0;padding-bottom:0}
 .head{display:flex;justify-content:space-between;align-items:flex-start;gap:6px 14px;flex-wrap:wrap}
-.ref{font:400 13.5px/1.55 var(--mono);color:var(--muted);text-align:right;margin-left:auto}
+.ref{font:400 13.5px/1.55 var(--mono);color:var(--muted);margin-top:6px}
 .ref b{color:var(--text);font-weight:500}
 .card tr:last-child td{border-bottom:0}
 .ln{font:400 12px var(--mono);color:var(--muted);text-align:right}
@@ -154,8 +156,8 @@ const coachOne = c => c ? `<b>${surname(c[0])}</b> ${c[2]} game${c[2] === 1 ? ''
 const coachHtml = c => c ? `<div class="coach">Coaches ${coachOne(c.home)} · ${coachOne(c.away)}</div>` : '';
 function refHtml(r){
   if (!r) return '<div class="ref">Referee <b>not announced</b></div>';
-  if (!r.games) return `<div class="ref">Referee <b>${r.name}</b><br>no league games yet · no adjustment</div>`;
-  return `<div class="ref">Referee <b>${r.name}</b><br>${refWindow(r)} · cards ${mult(r.cards)} · fouls ${mult(r.fouls)}</div>`;
+  if (!r.games) return `<div class="ref">Referee <b>${r.name}</b> · no league games yet · no adjustment</div>`;
+  return `<div class="ref">Referee <b>${r.name}</b> · ${refWindow(r)} · cards ${mult(r.cards)} · fouls ${mult(r.fouls)}</div>`;
 }
 
 // one line per stat: goals 2.5 and woodwork 0.5 always, others the half-point next to the projection
@@ -168,9 +170,9 @@ function matchCard(g){
     return `<tr><td>${L[s]}</td><td class="n">${f(x.home, s)}</td><td class="n">${f(x.away, s)}</td>`+
       `<td class="n tot">${x.total == null ? '' : f(x.total, s)}</td><td class="ln">${linesHtml(mainLine(x.lines))}</td></tr>`;
   }).join('');
-  return `<div class="card"><div class="ko">${t}</div><div class="head"><h3>${g.home} <span class="muted">–</span> ${g.away}</h3>${refHtml(g.ref)}</div>${coachHtml(g.coaches)}
-    <div class="wdl"><i style="width:${r.home*100}%"></i><i style="width:${r.draw*100}%"></i><i style="width:${r.away*100}%"></i></div>
-    <div class="wdlt"><span>Home <b>${pct(r.home)}</b></span><span>Draw <b>${pct(r.draw)}</b></span><span>Away <b>${pct(r.away)}</b></span></div>
+  return `<div class="card mcard"><div class="top"><div class="ko">${t}</div><h3>${g.home} <span class="muted">–</span> ${g.away}</h3>${refHtml(g.ref)}${coachHtml(g.coaches)}</div>
+    <div><div class="wdl"><i style="width:${r.home*100}%"></i><i style="width:${r.draw*100}%"></i><i style="width:${r.away*100}%"></i></div>
+    <div class="wdlt"><span>Home <b>${pct(r.home)}</b></span><span>Draw <b>${pct(r.draw)}</b></span><span>Away <b>${pct(r.away)}</b></span></div></div>
     <table><thead><tr><th>Stat</th><th class="n"><span class="full">${g.home}</span><span class="abbr">Home</span></th><th class="n"><span class="full">${g.away}</span><span class="abbr">Away</span></th><th class="n">Total</th><th class="n">Over</th></tr></thead><tbody>${rows}</tbody></table></div>`;
 }
 
