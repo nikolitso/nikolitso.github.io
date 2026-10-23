@@ -61,6 +61,7 @@ td{padding:7px 8px;border-bottom:1px solid color-mix(in srgb,var(--line) 60%,tra
 td.n,th.n{text-align:right;font-family:var(--mono);font-size:13.5px}
 td.tot{color:var(--gold);font-weight:500}
 .card table{margin-top:6px}
+table.mk{margin-bottom:6px}table.mk td,table.mk th{padding:6px 7px}
 .coach{font:400 11.5px/1.5 var(--mono);color:var(--muted);margin-top:2px}
 .coach b{color:var(--text);font-weight:500}
 table.tm{max-width:1000px}table.tm .gl{border-left:1px solid var(--line);padding-left:12px}
@@ -116,6 +117,7 @@ table.mini{margin:0 0 16px}
 
   <div class="tabs" id="tabs">
     <a href="#view=projections" data-view="projections" class="on">Projections</a>
+    <a href="#view=market" data-view="market">Vs Superbet</a>
     <a href="#view=results" data-view="results">Results</a>
     <a href="#view=teams" data-view="teams">Teams</a>
     <a href="#view=method" data-view="method">How it works</a>
@@ -349,15 +351,68 @@ function renderMethod(){
   return h;
 }
 
+// Vs Superbet: the bookmaker's main line for each stat (the one closest to 50/50), its fair
+// over chance with the margin removed, and ours on the same line
+const BOOK_STATS = ['goals','corners','cards','sot','shots','fouls','goal_kicks','throw_ins','saves','woodwork'];
+const pts = d => `${d > 0 ? '+' : ''}${Math.round(d * 100)}`;
+
+function marketRows(g){
+  const m = g.market, out = [];
+  for (const s of BOOK_STATS){
+    const ls = m.stats[s];
+    if (!ls || !ls.length) continue;
+    const [ln, ov, un, fair, ours] = ls.reduce((a, b) => Math.abs(b[3] - .5) < Math.abs(a[3] - .5) ? b : a);
+    out.push({s, ln, ov, un, fair, ours, diff: ours - fair, total: g.stats[s].total});
+  }
+  return out;
+}
+
+function renderMarket(){
+  const games = D.fixtures.filter(g => g.market);
+  if (!games.length) return '<p class="empty">No Superbet odds for this round yet.</p>';
+  const T = D.market_test;
+  let h = `<p class="note">Superbet's odds for this round next to our projections. For each stat the line is Superbet's main one (closest to 50/50). <b>Superbet %</b> is its chance of over with the bookmaker's margin taken out; <b>ours</b> is our chance on the same line. Differences of 10 points or more are highlighted.</p>
+  <p class="note"><b>Read the differences with care.</b> On result and goals the market has been sharper than our model: over ${T.games} games since ${T.since}, its closing odds predicted results better than we did (log loss ${T.ll_market.toFixed(3)} vs ${T.ll_ours.toFixed(3)}), and backing our disagreements lost ${Math.round(-T.roi_1x2 * 100)}% per bet on 1X2 and ${Math.round(-T.roi_ou * 100 * 10) / 10}% on over/under 2.5. Superbet's shots lines run about 2 shots above ours in every game, which looks like a different way of counting shots rather than value. For corners, cards and the other stats there are no past odds to test against yet; every pull of Superbet's odds is now saved so this can be checked after a few rounds.</p>`;
+  const all = [];
+  games.forEach(g => marketRows(g).forEach(r => all.push({...r, g})));
+  const big = all.filter(r => Math.abs(r.diff) >= .1 && r.s !== 'shots').sort((a, b) => Math.abs(b.diff) - Math.abs(a.diff)).slice(0, 8);
+  if (big.length){
+    h += `<h2>Biggest differences</h2><div class="scroll"><table class="mk"><thead><tr><th>Match</th><th>Stat</th><th class="n">Our total</th><th class="n">Line</th><th class="n">Superbet %</th><th class="n">Ours</th><th class="n">Diff</th><th class="n">Our side · odds</th></tr></thead><tbody>`;
+    for (const r of big) h += `<tr><td>${r.g.home} – ${r.g.away}</td><td>${L[r.s]}</td><td class="n">${f(r.total, r.s)}</td><td class="n">${r.ln}</td><td class="n">${pct(r.fair)}</td><td class="n tot">${pct(r.ours)}</td><td class="n ${r.diff > 0 ? 'w' : 'l'}">${pts(r.diff)}</td><td class="n">${r.diff > 0 ? 'Over ' + r.ov.toFixed(2) : 'Under ' + r.un.toFixed(2)}</td></tr>`;
+    h += '</tbody></table></div>';
+  }
+  const byDay = {};
+  games.forEach(g => (byDay[g.kickoff.slice(0,10)] ||= []).push(g));
+  for (const [d, gs] of Object.entries(byDay)){
+    h += `<h2 class="day">${dayName(d)}</h2><div class="grid">`;
+    for (const g of gs){
+      const res = g.market.result;
+      h += `<div class="card"><div class="ko">${g.kickoff.slice(11)}</div><h3>${g.home} <span class="muted">–</span> ${g.away}</h3>`;
+      if (res) h += `<div class="scroll"><table class="mk"><thead><tr><th>Result</th><th class="n">1</th><th class="n">X</th><th class="n">2</th></tr></thead><tbody>
+        <tr><td class="muted">Superbet odds</td>${res.odds.map(o => `<td class="n">${o.toFixed(2)}</td>`).join('')}</tr>
+        <tr><td class="muted">Superbet %</td>${res.fair.map(p => `<td class="n">${pct(p)}</td>`).join('')}</tr>
+        <tr><td class="muted">Ours</td>${[g.result.home, g.result.draw, g.result.away].map((p, i) => `<td class="n tot">${pct(p)} <span class="${Math.abs(p - res.fair[i]) >= .1 ? (p > res.fair[i] ? 'w' : 'l') : 'muted'}" style="font-size:11px">${pts(p - res.fair[i])}</span></td>`).join('')}</tr></tbody></table></div>`;
+      h += `<div class="scroll"><table class="mk"><thead><tr><th>Stat</th><th class="n">Our total</th><th class="n">Line</th><th class="n">Over · under</th><th class="n">Superbet %</th><th class="n">Ours</th><th class="n">Diff</th></tr></thead><tbody>`;
+      for (const r of marketRows(g)){
+        const hot = Math.abs(r.diff) >= .1;
+        h += `<tr><td>${L[r.s]}</td><td class="n">${f(r.total, r.s)}</td><td class="n">${r.ln}</td><td class="n muted">${r.ov.toFixed(2)} · ${r.un.toFixed(2)}</td><td class="n">${pct(r.fair)}</td><td class="n tot">${pct(r.ours)}</td><td class="n ${hot ? (r.diff > 0 ? 'w' : 'l') : 'muted'}">${pts(r.diff)}</td></tr>`;
+      }
+      h += '</tbody></table></div></div>';
+    }
+    h += '</div>';
+  }
+  return h;
+}
+
 function render(){
-  $('out').innerHTML = {projections: renderProjections, results: renderResults, teams: renderTeams, method: renderMethod}[view]();
+  $('out').innerHTML = {projections: renderProjections, market: renderMarket, results: renderResults, teams: renderTeams, method: renderMethod}[view]();
   document.querySelectorAll('#pjmode button').forEach(b => b.onclick = () => { pjMode = b.dataset.m; render(); });
   const chips = (id, set) => document.querySelectorAll(`#${id} .chip`).forEach(b => b.onclick = () => { set(b.dataset.s); render(); });
   chips('pjstat', s => pjStat = s); chips('rsstat', s => rsStat = s); chips('tmstat', s => tmStat = s);
   document.querySelectorAll('th.sort').forEach(t => t.onclick = () => { const k = t.dataset.k; tmSort = [k, tmSort[0] === k ? -tmSort[1] : (k === 'team' ? 1 : -1)]; render(); });
 }
 function setView(v){
-  view = ['projections','results','teams','method'].includes(v) ? v : 'projections';
+  view = ['projections','market','results','teams','method'].includes(v) ? v : 'projections';
   document.querySelectorAll('#tabs a').forEach(a => a.classList.toggle('on', a.dataset.view === view));
   render();
 }
