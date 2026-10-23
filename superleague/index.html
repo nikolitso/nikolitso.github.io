@@ -64,6 +64,13 @@ td.n,th.n{text-align:right;font-family:var(--mono);font-size:13.5px}
 td.tot{color:var(--gold);font-weight:500}
 .card table{margin-top:6px}
 table.mk{margin-bottom:6px}table.mk td,table.mk th{padding:6px 7px}
+.stack{display:grid;gap:18px}
+.mkcols{display:grid;grid-template-columns:minmax(0,300px) minmax(0,1fr);gap:24px;align-items:start;margin-top:8px}
+@media(max-width:900px){.mkcols{grid-template-columns:1fr}.mkcols table{display:block;overflow-x:auto}}
+.stack>.card{min-width:0}
+.wdlt i{font-style:normal;color:var(--gold)}
+.wdlt span:nth-child(2){text-align:center}.wdlt span:last-child{text-align:right}
+.coach .who{display:inline-block;min-width:118px;color:var(--muted)}
 .coach{font:400 13.5px/1.55 var(--mono);color:var(--muted);margin-top:2px}
 .coach b{color:var(--text);font-weight:500}
 table.tm{max-width:1000px}table.tm .gl{border-left:1px solid var(--line);padding-left:12px}
@@ -127,7 +134,7 @@ table.mini{margin:0 0 16px}
   </div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=7421fa4f"></script>
+<script src="data.js?v=e6c6ba95"></script>
 <script>
 const D = window.SL, $ = id => document.getElementById(id);
 const L = D.labels, ORDER = D.order;
@@ -148,16 +155,19 @@ function linesHtml(lines){
 }
 
 const mult = x => `×${x.toFixed(2)}`;
+// model chances shown as odds with a 5% bookmaker-style margin
+const MARGIN = 1.05;
+const modelOdds = p => (p > 0 ? Math.max(1.01, 1 / (p * MARGIN)) : 99).toFixed(2);
 const monthYear = s => { const d = new Date(s + 'T12:00'); return `${MON[d.getMonth()]} ${d.getFullYear()}`; };
 // the referee factor uses his last 20 games (refs.py LAST_N)
-const refWindow = r => `${r.total > r.games ? 'last ' : ''}${r.games} game${r.games === 1 ? '' : 's'} since ${monthYear(r.since)}`;
+const refWindow = r => `${r.games} game${r.games === 1 ? '' : 's'} since ${r.from.replace('-', '–')}`;
 const surname = n => n.split(' ').slice(-1)[0];
 const coachOne = c => c ? `<b>${surname(c[0])}</b> ${c[2]} game${c[2] === 1 ? '' : 's'} since ${monthYear(c[1])}` : '–';
-const coachHtml = c => c ? `<div class="coach">Coaches ${coachOne(c.home)} · ${coachOne(c.away)}</div>` : '';
+const coachHtml = (c, home, away) => c ? `<div class="coach"><span class="who">${home}</span> ${coachOne(c.home)}</div><div class="coach"><span class="who">${away}</span> ${coachOne(c.away)}</div>` : '';
 function refHtml(r){
   if (!r) return '<div class="ref">Referee <b>not announced</b></div>';
-  if (!r.games) return `<div class="ref">Referee <b>${r.name}</b> · no league games yet · no adjustment</div>`;
-  return `<div class="ref">Referee <b>${r.name}</b> · ${refWindow(r)} · cards ${mult(r.cards)} · fouls ${mult(r.fouls)}</div>`;
+  if (!r.games) return `<div class="ref">Referee <b>${r.name}</b> · no league games since ${r.from.replace('-', '–')} · no adjustment</div>`;
+  return `<div class="ref">Referee <b>${r.name}</b> · ${refWindow(r)} · <b>${r.avg.cards.toFixed(1)}</b> cards (${mult(r.cards)}) · <b>${r.avg.fouls.toFixed(1)}</b> fouls (${mult(r.fouls)}) per game</div>`;
 }
 
 // one line per stat: goals 2.5 and woodwork 0.5 always, others the half-point next to the projection
@@ -170,9 +180,9 @@ function matchCard(g){
     return `<tr><td>${L[s]}</td><td class="n">${f(x.home, s)}</td><td class="n">${f(x.away, s)}</td>`+
       `<td class="n tot">${x.total == null ? '' : f(x.total, s)}</td><td class="ln">${linesHtml(mainLine(x.lines))}</td></tr>`;
   }).join('');
-  return `<div class="card mcard"><div class="top"><div class="ko">${t}</div><h3>${g.home} <span class="muted">–</span> ${g.away}</h3>${refHtml(g.ref)}${coachHtml(g.coaches)}</div>
+  return `<div class="card mcard"><div class="top"><div class="ko">${t}</div><h3>${g.home} <span class="muted">–</span> ${g.away}</h3>${refHtml(g.ref)}${coachHtml(g.coaches, g.home, g.away)}</div>
     <div><div class="wdl"><i style="width:${r.home*100}%"></i><i style="width:${r.draw*100}%"></i><i style="width:${r.away*100}%"></i></div>
-    <div class="wdlt"><span>Home <b>${pct(r.home)}</b></span><span>Draw <b>${pct(r.draw)}</b></span><span>Away <b>${pct(r.away)}</b></span></div></div>
+    <div class="wdlt"><span>Home <b>${pct(r.home)}</b><br><i>${modelOdds(r.home)}</i></span><span>Draw <b>${pct(r.draw)}</b><br><i>${modelOdds(r.draw)}</i></span><span>Away <b>${pct(r.away)}</b><br><i>${modelOdds(r.away)}</i></span></div></div>
     <table><thead><tr><th>Stat</th><th class="n"><span class="full">${g.home}</span><span class="abbr">Home</span></th><th class="n"><span class="full">${g.away}</span><span class="abbr">Away</span></th><th class="n">Total</th><th class="n">Over</th></tr></thead><tbody>${rows}</tbody></table></div>`;
 }
 
@@ -297,7 +307,7 @@ function renderMethod(){
     <h3><span class="num">6</span>Add the referee (cards and fouls)</h3>`;
     const cH = +bal(k.mu_home*k.home_for*k.away_against, E.balance.home), cW = +bal(k.mu_away*k.away_for*k.home_against, E.balance.away);
     if (E.ref && E.ref.games){
-      h += `<p>The referee is <b>${E.ref.name}</b>. His factor comes from his last 20 games, about one season for a regular referee (here ${refWindow(E.ref)}), because referees change over time. In testing, the last 20 beat a referee's whole history, clearly so for fouls. In those games cards came out ${Math.abs(E.ref.cards - 1) < .02 ? 'almost exactly in line with' : E.ref.cards > 1 ? 'above' : 'below'} what the teams and the favourite effect would project. That gives him a factor of <b>${mult(E.ref.cards)}</b>, applied to both teams:</p>
+      h += `<p>The referee is <b>${E.ref.name}</b>. His factor comes from his games since the start of last season (here ${refWindow(E.ref)}, averaging ${E.ref.avg.cards.toFixed(1)} cards and ${E.ref.avg.fouls.toFixed(1)} fouls a game), because referees change over time. In testing, recent games beat a referee's whole history, clearly so for fouls. In those games cards came out ${Math.abs(E.ref.cards - 1) < .02 ? 'almost exactly in line with' : E.ref.cards > 1 ? 'above' : 'below'} what the teams and the favourite effect would project. That gives him a factor of <b>${mult(E.ref.cards)}</b>, applied to both teams:</p>
       <div class="calc">${H} ${cH.toFixed(2)} × ${E.ref.cards.toFixed(2)} = <b>${(cH * +E.ref.cards.toFixed(2)).toFixed(2)}</b> · ${W} ${cW.toFixed(2)} × ${E.ref.cards.toFixed(2)} = <b>${(cW * +E.ref.cards.toFixed(2)).toFixed(2)}</b> · total <b>${k.proj.total.toFixed(1)}</b><br>${lines(k.proj.lines)}</div>`;
     } else {
       h += `<p>${E.ref ? `The referee, ${E.ref.name}, has no Super League games in the data` : 'The referee has not been announced yet'}, so there is no adjustment and the total stays at <b>${k.proj.total.toFixed(1)}</b>.</p>`;
@@ -315,7 +325,7 @@ function renderMethod(){
       ${H} goals = ${g.mu_home.toFixed(2)} × ${g.home_for.toFixed(2)} × ${g.away_against.toFixed(2)} = <b>${E.model_goals[0].toFixed(2)}</b><br>
       ${W} goals = ${g.mu_away.toFixed(2)} × ${g.away_for.toFixed(2)} × ${g.home_against.toFixed(2)} = <b>${E.model_goals[1].toFixed(2)}</b>
     </div>
-    ${E.market_goals ? `<p>For comparison, Superbet's odds imply ${H} <b>${E.market_goals[0].toFixed(2)}</b> and ${W} <b>${E.market_goals[1].toFixed(2)}</b> goals. We keep our own numbers so they can be compared with the market (see Value bets), but on goals the market has been the more accurate of the two in testing, so treat goal and result differences with caution.</p>` : ''}
+    ${E.market_goals ? `<p>For comparison, the bookie's odds imply ${H} <b>${E.market_goals[0].toFixed(2)}</b> and ${W} <b>${E.market_goals[1].toFixed(2)}</b> goals. We keep our own numbers so they can be compared with the market (see Value bets), but on goals the market has been the more accurate of the two in testing, so treat goal and result differences with caution.</p>` : ''}
     <p>Goals are rare, random events. A team expected to score ${g.proj.home.toFixed(2)} scores 0 in ${pct(ph[0])} of games, 1 in ${pct(ph[1])} and 2 in ${pct(ph[2])}. Doing this for both teams gives a chance for every score, and the most likely is <b>${best[0]}–${best[1]}</b> (${pct(best[2])}). Adding up all the scores: <b>${H} win ${pct(E.result.home)}</b>, <b>draw ${pct(E.result.draw)}</b>, <b>${W} win ${pct(E.result.away)}</b>.</p>
 
     <h3><span class="num">8</span>Possession</h3>
@@ -375,31 +385,32 @@ function renderMarket(){
   const games = D.fixtures.filter(g => g.market);
   if (!games.length) return '<p class="empty">No bookie odds for this round yet.</p>';
   const T = D.market_test;
-  let h = `<p class="note">The bookie's odds (Superbet) for this round next to our projections, for every stat. For each stat the line is the bookie's main one (closest to 50/50). <b>Bookie %</b> is its chance of over with the bookmaker's margin taken out; <b>ours</b> is our chance on the same line. Differences of 10 points or more are highlighted. This is the full comparison, including markets we don't trust for betting; the short list of bets worth considering, with their record, is on <a href="#view=value" style="color:var(--gold)" onclick="setView('value')">Value bets</a>.</p>
-  <p class="note"><b>On result and goals the market has been sharper than our model:</b> over ${T.games} games since ${T.since}, its closing odds predicted results better than we did (log loss ${T.ll_market.toFixed(3)} vs ${T.ll_ours.toFixed(3)}), and backing our disagreements lost ${Math.round(-T.roi_1x2 * 100)}% per bet on 1X2 and ${Math.round(-T.roi_ou * 100 * 10) / 10}% on over/under 2.5. For the other stats, read the differences with care. Superbet's shots lines run about 2 shots above ours in every game, which looks like a different way of counting shots rather than value. For corners, cards and the other stats there are no past odds to test against yet; every pull of Superbet's odds is now saved so this can be checked after a few rounds.</p>`;
+  let h = `<p class="note">The bookie's odds for this round next to the model, for every stat. For each stat the line is the bookie's main one (closest to 50/50). <b>Bookie %</b> is the bookie's chance of over with its margin taken out; <b>Model %</b> is the model's chance on the same line, and <b>Model odds</b> are those chances turned into odds with a ${Math.round((MARGIN - 1) * 100)}% margin, comparable with the bookie's. Differences of 10 points or more are highlighted. This is the full comparison, including markets we don't trust for betting; the short list of bets worth considering, with their record, is on <a href="#view=value" style="color:var(--gold)" onclick="setView('value')">Value bets</a>.</p>
+  <p class="note"><b>On result and goals the market has been sharper than the model:</b> over ${T.games} games since ${T.since}, its closing odds predicted results better (log loss ${T.ll_market.toFixed(3)} vs ${T.ll_ours.toFixed(3)}), and backing the model's disagreements lost ${Math.round(-T.roi_1x2 * 100)}% per bet on 1X2 and ${Math.round(-T.roi_ou * 100 * 10) / 10}% on over/under 2.5. For the other stats, read the differences with care: the bookie's shots lines run about 2 shots above the model in every game, which looks like a different way of counting shots rather than value. Every pull of the bookie's odds is saved so this can be checked after a few rounds.</p>`;
   const all = [];
   games.forEach(g => marketRows(g).forEach(r => all.push({...r, g})));
   const big = all.filter(r => Math.abs(r.diff) >= .1 && r.s !== 'shots').sort((a, b) => Math.abs(b.diff) - Math.abs(a.diff)).slice(0, 8);
   if (big.length){
-    h += `<h2>Biggest differences</h2><div class="scroll"><table class="mk"><thead><tr><th>Match</th><th>Stat</th><th class="n">Our total</th><th class="n">Line</th><th class="n">Bookie %</th><th class="n">Ours</th><th class="n">Diff</th><th class="n">Our side · odds</th></tr></thead><tbody>`;
+    h += `<h2>Biggest differences</h2><div class="scroll"><table class="mk"><thead><tr><th>Match</th><th>Stat</th><th class="n">Model total</th><th class="n">Line</th><th class="n">Bookie %</th><th class="n">Model %</th><th class="n">Diff</th><th class="n">Model side · bookie odds</th></tr></thead><tbody>`;
     for (const r of big) h += `<tr><td>${r.g.home} – ${r.g.away}</td><td>${L[r.s]}</td><td class="n">${f(r.total, r.s)}</td><td class="n">${r.ln}</td><td class="n">${pct(r.fair)}</td><td class="n tot">${pct(r.ours)}</td><td class="n ${r.diff > 0 ? 'w' : 'l'}">${pts(r.diff)}</td><td class="n">${r.diff > 0 ? 'Over ' + r.ov.toFixed(2) : 'Under ' + r.un.toFixed(2)}</td></tr>`;
     h += '</tbody></table></div>';
   }
   const byDay = {};
   games.forEach(g => (byDay[g.kickoff.slice(0,10)] ||= []).push(g));
   for (const [d, gs] of Object.entries(byDay)){
-    h += `<h2 class="day">${dayName(d)}</h2><div class="grid">`;
+    h += `<h2 class="day">${dayName(d)}</h2><div class="stack">`;
     for (const g of gs){
-      const res = g.market.result;
-      h += `<div class="card"><div class="ko">${g.kickoff.slice(11)}</div><h3>${g.home} <span class="muted">–</span> ${g.away}</h3>`;
-      if (res) h += `<div class="scroll"><table class="mk"><thead><tr><th>Result</th><th class="n">1</th><th class="n">X</th><th class="n">2</th></tr></thead><tbody>
+      const res = g.market.result, mr = [g.result.home, g.result.draw, g.result.away];
+      h += `<div class="card"><div class="ko">${g.kickoff.slice(11)}</div><h3>${g.home} <span class="muted">–</span> ${g.away}</h3><div class="mkcols">`;
+      if (res) h += `<table class="mk"><thead><tr><th>Result</th><th class="n">1</th><th class="n">X</th><th class="n">2</th></tr></thead><tbody>
         <tr><td class="muted">Bookie odds</td>${res.odds.map(o => `<td class="n">${o.toFixed(2)}</td>`).join('')}</tr>
+        <tr><td class="muted">Model odds</td>${mr.map(p => `<td class="n tot">${modelOdds(p)}</td>`).join('')}</tr>
         <tr><td class="muted">Bookie %</td>${res.fair.map(p => `<td class="n">${pct(p)}</td>`).join('')}</tr>
-        <tr><td class="muted">Ours</td>${[g.result.home, g.result.draw, g.result.away].map((p, i) => `<td class="n tot">${pct(p)} <span class="${Math.abs(p - res.fair[i]) >= .1 ? (p > res.fair[i] ? 'w' : 'l') : 'muted'}" style="font-size:11px">${pts(p - res.fair[i])}</span></td>`).join('')}</tr></tbody></table></div>`;
-      h += `<div class="scroll"><table class="mk"><thead><tr><th>Stat</th><th class="n">Our total</th><th class="n">Line</th><th class="n">Over · under</th><th class="n">Bookie %</th><th class="n">Ours</th><th class="n">Diff</th></tr></thead><tbody>`;
+        <tr><td class="muted">Model %</td>${mr.map((p, i) => `<td class="n tot">${pct(p)} <span class="${Math.abs(p - res.fair[i]) >= .1 ? (p > res.fair[i] ? 'w' : 'l') : 'muted'}" style="font-size:11px">${pts(p - res.fair[i])}</span></td>`).join('')}</tr></tbody></table>`;
+      h += `<table class="mk"><thead><tr><th>Stat</th><th class="n">Model total</th><th class="n">Line</th><th class="n">Bookie odds<br>over · under</th><th class="n">Model odds<br>over · under</th><th class="n">Bookie %</th><th class="n">Model %</th><th class="n">Diff</th></tr></thead><tbody>`;
       for (const r of marketRows(g)){
         const hot = Math.abs(r.diff) >= .1;
-        h += `<tr><td>${L[r.s]}</td><td class="n">${f(r.total, r.s)}</td><td class="n">${r.ln}</td><td class="n muted">${r.ov.toFixed(2)} · ${r.un.toFixed(2)}</td><td class="n">${pct(r.fair)}</td><td class="n tot">${pct(r.ours)}</td><td class="n ${hot ? (r.diff > 0 ? 'w' : 'l') : 'muted'}">${pts(r.diff)}</td></tr>`;
+        h += `<tr><td>${L[r.s]}</td><td class="n">${f(r.total, r.s)}</td><td class="n">${r.ln}</td><td class="n muted">${r.ov.toFixed(2)} · ${r.un.toFixed(2)}</td><td class="n tot">${modelOdds(r.ours)} · ${modelOdds(1 - r.ours)}</td><td class="n">${pct(r.fair)}</td><td class="n tot">${pct(r.ours)}</td><td class="n ${hot ? (r.diff > 0 ? 'w' : 'l') : 'muted'}">${pts(r.diff)}</td></tr>`;
       }
       h += '</tbody></table></div></div>';
     }
@@ -408,7 +419,7 @@ function renderMarket(){
   return h;
 }
 
-// Value bets: Superbet prices where our chance x the odds is at least 1 + min_ev
+// Value bets: bookie prices where the model's chance x the odds is at least 1 + min_ev
 const lc = s => ({sot: 'SoT', saves: 'GK saves', xg: 'xG', result: 'match result'})[s] || L[s].toLowerCase();
 const betName = b => b.stat === 'result' ? ({1: 'Home win', X: 'Draw', 2: 'Away win'})[b.side] : `${b.side === 'over' ? 'Over' : 'Under'} ${b.line} ${lc(b.stat)}`;
 const evPct = x => `${x >= 0 ? '+' : ''}${Math.round(x * 100)}%`;
@@ -437,7 +448,7 @@ function renderValue(){
   const settled = R.settled.filter(b => b.ev >= valMin - 1e-9);
   const all = summary(settled);
   const label = x => x >= .3 ? '30%+' : Math.round(x * 100) + '%';
-  let h = `<p class="note">A bet is <b>value</b> when our chance of it winning, times the bookie's odds (Superbet), comes to more than 1: on average it would return more than the stake. <b>EV</b> = our chance × odds − 1, the expected return per 1 staked (EV +20% = 1.20 back per 1, on average). The bookie's own chance is shown for comparison only. One bet per game and stat (the best line), on lines where the bookie's own chance is between ${Math.round(V.fair_range[0] * 100)}% and ${Math.round(V.fair_range[1] * 100)}%.</p>
+  let h = `<p class="note">A bet is <b>value</b> when the model's chance of it winning, times the bookie's odds, comes to more than 1: on average it would return more than the stake. <b>EV</b> = model chance × bookie odds − 1, the expected return per 1 staked (EV +20% = 1.20 back per 1, on average). The bookie's own chance is shown for comparison only. One bet per game and stat (the best line), on lines where the bookie's own chance is between ${Math.round(V.fair_range[0] * 100)}% and ${Math.round(V.fair_range[1] * 100)}%.</p>
   <p class="note"><b>Not listed:</b> ${Object.entries(V.skip).map(([s, why]) => `<b>${lc(s)}</b>: ${why}`).join('; ')}. A very large EV usually means the model is missing something (a new coach, injuries, a change of style) rather than a gift, so check those first. Every bet from EV +5% is recorded with its last odds before kick-off and settled when the results come in; the record below follows the minimum EV you pick.</p>
   <div class="bar"><span class="muted" style="font:400 13px var(--mono)">Minimum EV</span><div class="seg" id="valmin">${EV_STEPS.map(x => `<button data-v="${x}" class="${x === valMin ? 'on' : ''}">${label(x)}</button>`).join('')}</div></div>`;
   h += `<div class="metrics">
@@ -448,8 +459,8 @@ function renderValue(){
     <div class="metric"><div class="lbl">Return per bet</div><div class="big">${all.n ? evPct(all.roi) : '–'}</div></div></div>`;
   if (!bets.length) h += `<p class="empty">No bets at EV ${label(valMin)} or more for the coming games.</p>`;
   else {
-    h += `<h2>Coming games</h2><div class="scroll"><table class="mk"><thead><tr><th>Kick-off</th><th>Match</th><th>Bet</th><th class="n">Odds</th><th class="n">Bookie %</th><th class="n">Ours</th><th class="n">EV</th></tr></thead><tbody>`;
-    for (const b of bets) h += `<tr><td class="muted">${dayName(b.kickoff)} ${b.kickoff.slice(11)}</td><td>${b.home} – ${b.away}</td><td><b>${betName(b)}</b></td><td class="n">${b.odds.toFixed(2)}</td><td class="n">${pct(b.fair)}</td><td class="n tot">${pct(b.ours)}</td><td class="n ${b.ev >= .15 ? 'w' : ''}">${evPct(b.ev)}</td></tr>`;
+    h += `<h2>Coming games</h2><div class="scroll"><table class="mk"><thead><tr><th>Kick-off</th><th>Match</th><th>Bet</th><th class="n">Bookie odds</th><th class="n">Model odds</th><th class="n">Bookie %</th><th class="n">Model %</th><th class="n">EV</th></tr></thead><tbody>`;
+    for (const b of bets) h += `<tr><td class="muted">${dayName(b.kickoff)} ${b.kickoff.slice(11)}</td><td>${b.home} – ${b.away}</td><td><b>${betName(b)}</b></td><td class="n">${b.odds.toFixed(2)}</td><td class="n tot">${modelOdds(b.ours)}</td><td class="n">${pct(b.fair)}</td><td class="n tot">${pct(b.ours)}</td><td class="n ${b.ev >= .15 ? 'w' : ''}">${evPct(b.ev)}</td></tr>`;
     h += '</tbody></table></div>';
   }
   if (!settled.length) return h + `<p class="muted" style="margin-top:18px">No settled bets yet at this EV level: the record starts once results for logged bets are in the data.</p>`;
