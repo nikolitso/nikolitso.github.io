@@ -118,7 +118,7 @@ table.mini{margin:0 0 16px}
   <div class="tabs" id="tabs">
     <a href="#view=projections" data-view="projections" class="on">Projections</a>
     <a href="#view=value" data-view="value">Value bets</a>
-    <a href="#view=market" data-view="market">Vs Superbet</a>
+    <a href="#view=market" data-view="market">Vs Bookie</a>
     <a href="#view=results" data-view="results">Results</a>
     <a href="#view=teams" data-view="teams">Teams</a>
     <a href="#view=method" data-view="method">How it works</a>
@@ -353,7 +353,7 @@ function renderMethod(){
   return h;
 }
 
-// Vs Superbet: the bookmaker's main line for each stat (the one closest to 50/50), its fair
+// Vs Bookie: the bookmaker's main line for each stat (the one closest to 50/50), its fair
 // over chance with the margin removed, and ours on the same line
 const BOOK_STATS = ['goals','corners','cards','sot','shots','fouls','goal_kicks','throw_ins','saves','woodwork'];
 const pts = d => `${d > 0 ? '+' : ''}${Math.round(d * 100)}`;
@@ -371,15 +371,15 @@ function marketRows(g){
 
 function renderMarket(){
   const games = D.fixtures.filter(g => g.market);
-  if (!games.length) return '<p class="empty">No Superbet odds for this round yet.</p>';
+  if (!games.length) return '<p class="empty">No bookie odds for this round yet.</p>';
   const T = D.market_test;
-  let h = `<p class="note">Superbet's odds for this round next to our projections. For each stat the line is Superbet's main one (closest to 50/50). <b>Superbet %</b> is its chance of over with the bookmaker's margin taken out; <b>ours</b> is our chance on the same line. Differences of 10 points or more are highlighted.</p>
+  let h = `<p class="note">The bookie's odds (Superbet) for this round next to our projections, for every stat. For each stat the line is the bookie's main one (closest to 50/50). <b>Bookie %</b> is its chance of over with the bookmaker's margin taken out; <b>ours</b> is our chance on the same line. Differences of 10 points or more are highlighted. This is the full comparison, including markets we don't trust for betting; the short list of bets worth considering, with their record, is on <a href="#view=value" style="color:var(--gold)" onclick="setView('value')">Value bets</a>.</p>
   <p class="note"><b>On result and goals the market has been sharper than our model:</b> over ${T.games} games since ${T.since}, its closing odds predicted results better than we did (log loss ${T.ll_market.toFixed(3)} vs ${T.ll_ours.toFixed(3)}), and backing our disagreements lost ${Math.round(-T.roi_1x2 * 100)}% per bet on 1X2 and ${Math.round(-T.roi_ou * 100 * 10) / 10}% on over/under 2.5. For the other stats, read the differences with care. Superbet's shots lines run about 2 shots above ours in every game, which looks like a different way of counting shots rather than value. For corners, cards and the other stats there are no past odds to test against yet; every pull of Superbet's odds is now saved so this can be checked after a few rounds.</p>`;
   const all = [];
   games.forEach(g => marketRows(g).forEach(r => all.push({...r, g})));
   const big = all.filter(r => Math.abs(r.diff) >= .1 && r.s !== 'shots').sort((a, b) => Math.abs(b.diff) - Math.abs(a.diff)).slice(0, 8);
   if (big.length){
-    h += `<h2>Biggest differences</h2><div class="scroll"><table class="mk"><thead><tr><th>Match</th><th>Stat</th><th class="n">Our total</th><th class="n">Line</th><th class="n">Superbet %</th><th class="n">Ours</th><th class="n">Diff</th><th class="n">Our side · odds</th></tr></thead><tbody>`;
+    h += `<h2>Biggest differences</h2><div class="scroll"><table class="mk"><thead><tr><th>Match</th><th>Stat</th><th class="n">Our total</th><th class="n">Line</th><th class="n">Bookie %</th><th class="n">Ours</th><th class="n">Diff</th><th class="n">Our side · odds</th></tr></thead><tbody>`;
     for (const r of big) h += `<tr><td>${r.g.home} – ${r.g.away}</td><td>${L[r.s]}</td><td class="n">${f(r.total, r.s)}</td><td class="n">${r.ln}</td><td class="n">${pct(r.fair)}</td><td class="n tot">${pct(r.ours)}</td><td class="n ${r.diff > 0 ? 'w' : 'l'}">${pts(r.diff)}</td><td class="n">${r.diff > 0 ? 'Over ' + r.ov.toFixed(2) : 'Under ' + r.un.toFixed(2)}</td></tr>`;
     h += '</tbody></table></div>';
   }
@@ -391,10 +391,10 @@ function renderMarket(){
       const res = g.market.result;
       h += `<div class="card"><div class="ko">${g.kickoff.slice(11)}</div><h3>${g.home} <span class="muted">–</span> ${g.away}</h3>`;
       if (res) h += `<div class="scroll"><table class="mk"><thead><tr><th>Result</th><th class="n">1</th><th class="n">X</th><th class="n">2</th></tr></thead><tbody>
-        <tr><td class="muted">Superbet odds</td>${res.odds.map(o => `<td class="n">${o.toFixed(2)}</td>`).join('')}</tr>
-        <tr><td class="muted">Superbet %</td>${res.fair.map(p => `<td class="n">${pct(p)}</td>`).join('')}</tr>
+        <tr><td class="muted">Bookie odds</td>${res.odds.map(o => `<td class="n">${o.toFixed(2)}</td>`).join('')}</tr>
+        <tr><td class="muted">Bookie %</td>${res.fair.map(p => `<td class="n">${pct(p)}</td>`).join('')}</tr>
         <tr><td class="muted">Ours</td>${[g.result.home, g.result.draw, g.result.away].map((p, i) => `<td class="n tot">${pct(p)} <span class="${Math.abs(p - res.fair[i]) >= .1 ? (p > res.fair[i] ? 'w' : 'l') : 'muted'}" style="font-size:11px">${pts(p - res.fair[i])}</span></td>`).join('')}</tr></tbody></table></div>`;
-      h += `<div class="scroll"><table class="mk"><thead><tr><th>Stat</th><th class="n">Our total</th><th class="n">Line</th><th class="n">Over · under</th><th class="n">Superbet %</th><th class="n">Ours</th><th class="n">Diff</th></tr></thead><tbody>`;
+      h += `<div class="scroll"><table class="mk"><thead><tr><th>Stat</th><th class="n">Our total</th><th class="n">Line</th><th class="n">Over · under</th><th class="n">Bookie %</th><th class="n">Ours</th><th class="n">Diff</th></tr></thead><tbody>`;
       for (const r of marketRows(g)){
         const hot = Math.abs(r.diff) >= .1;
         h += `<tr><td>${L[r.s]}</td><td class="n">${f(r.total, r.s)}</td><td class="n">${r.ln}</td><td class="n muted">${r.ov.toFixed(2)} · ${r.un.toFixed(2)}</td><td class="n">${pct(r.fair)}</td><td class="n tot">${pct(r.ours)}</td><td class="n ${hot ? (r.diff > 0 ? 'w' : 'l') : 'muted'}">${pts(r.diff)}</td></tr>`;
@@ -413,7 +413,7 @@ const evPct = x => `${x >= 0 ? '+' : ''}${Math.round(x * 100)}%`;
 
 function renderValue(){
   const V = D.value, R = V.record;
-  let h = `<p class="note">A bet is <b>value</b> when our chance of it winning, times Superbet's odds, comes to more than 1: on average it would return more than the stake. <b>EV</b> is that expected return per 1 staked (EV +20% = 1.20 back per 1, on average). Listed are bets with EV of at least ${Math.round(V.min_ev * 100)}%, one per game and stat (the best line), on lines where Superbet's own chance is between ${Math.round(V.fair_range[0] * 100)}% and ${Math.round(V.fair_range[1] * 100)}%.</p>
+  let h = `<p class="note">A bet is <b>value</b> when our chance of it winning, times the bookie's odds (Superbet), comes to more than 1: on average it would return more than the stake. <b>EV</b> is that expected return per 1 staked (EV +20% = 1.20 back per 1, on average). Listed are bets with EV of at least ${Math.round(V.min_ev * 100)}%, one per game and stat (the best line), on lines where the bookie's own chance is between ${Math.round(V.fair_range[0] * 100)}% and ${Math.round(V.fair_range[1] * 100)}%.</p>
   <p class="note"><b>Not listed:</b> ${Object.entries(V.skip).map(([s, why]) => `<b>${lc(s)}</b>: ${why}`).join('; ')}. A very large EV usually means the model is missing something (a new coach, injuries, a change of style) rather than a gift, so check those first. Every bet listed is recorded with its last odds before kick-off and settled when the results come in: the record below is the honest test of whether this finds value.</p>`;
   h += `<div class="metrics">
     <div class="metric"><div class="lbl">Value bets this round</div><div class="big">${V.bets.length}</div></div>
@@ -423,7 +423,7 @@ function renderValue(){
     <div class="metric"><div class="lbl">Return per bet</div><div class="big">${R.all.roi != null ? evPct(R.all.roi) : '–'}</div></div></div>`;
   if (!V.bets.length) h += '<p class="empty">No value bets for the coming games.</p>';
   else {
-    h += `<h2>Coming games</h2><div class="scroll"><table class="mk"><thead><tr><th>Kick-off</th><th>Match</th><th>Bet</th><th class="n">Odds</th><th class="n">Superbet %</th><th class="n">Ours</th><th class="n">EV</th></tr></thead><tbody>`;
+    h += `<h2>Coming games</h2><div class="scroll"><table class="mk"><thead><tr><th>Kick-off</th><th>Match</th><th>Bet</th><th class="n">Odds</th><th class="n">Bookie %</th><th class="n">Ours</th><th class="n">EV</th></tr></thead><tbody>`;
     for (const b of V.bets) h += `<tr><td class="muted">${dayName(b.kickoff)} ${b.kickoff.slice(11)}</td><td>${b.home} – ${b.away}</td><td><b>${betName(b)}</b></td><td class="n">${b.odds.toFixed(2)}</td><td class="n">${pct(b.fair)}</td><td class="n tot">${pct(b.ours)}</td><td class="n ${b.ev >= .15 ? 'w' : ''}">${evPct(b.ev)}</td></tr>`;
     h += '</tbody></table></div>';
   }
