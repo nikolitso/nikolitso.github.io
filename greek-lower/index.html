@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Greek Lower Leagues</title>
+<meta name="description" content="Greek Super League 2, Gamma Ethniki Group 2 and Division A Women projections for every game: 1X2 and over/under 2.5 goals.">
+<link rel="canonical" href="https://antonisnikolitsopoulos.com/greek-lower/">
+<meta property="og:title" content="Greek Lower Leagues">
+<meta property="og:description" content="Greek Super League 2, Gamma Ethniki Group 2 and Division A Women projections for every game: 1X2 and over/under 2.5 goals.">
+<meta property="og:url" content="https://antonisnikolitsopoulos.com/greek-lower/">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.png" type="image/png" sizes="64x64">
+<!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "b67bbb76d0e24af196b24ded3ab71ad0"}'></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Playfair+Display:wght@600;700&family=Source+Serif+4:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0c1424; --panel:#131d33; --line:#26334f; --text:#f1ead9; --muted:#9aa4ba;
+  --gold:#d4af37; --win:#6fcf97; --loss:#eb7a6c;
+  --serif:'Playfair Display',Georgia,serif; --body:'Source Serif 4',Georgia,serif; --mono:'IBM Plex Mono',ui-monospace,monospace;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:17px/1.5 var(--body)}
+.wrap{max-width:1180px;margin:0 auto;padding:40px 16px 80px}
+h1{font:700 clamp(30px,5vw,46px)/1.1 var(--serif);margin:0 0 6px}
+h1 a{color:inherit;text-decoration:none}
+h1 a:hover{color:var(--gold)}
+.home-link{display:inline-block;margin-bottom:14px;font:500 12px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-decoration:none}
+.home-link:hover{color:var(--gold)}
+.sub{font:400 13px var(--mono);color:var(--muted);letter-spacing:.04em;margin-bottom:32px}
+.tabs{display:flex;flex-wrap:wrap;gap:10px 28px;border-bottom:1px solid var(--line);margin:0 0 26px}
+.tabs a{border-bottom:2px solid transparent;color:var(--muted);font:600 18px var(--serif);padding:0 0 10px;margin-bottom:-1px;cursor:pointer;text-decoration:none}
+.tabs a.on{color:var(--text);border-color:var(--gold)}
+.tabs a:hover{color:var(--text)}
+.bar{display:flex;flex-wrap:wrap;align-items:center;gap:10px 18px;margin:0 0 18px}
+.seg{display:flex;border:1px solid var(--line);border-radius:6px;overflow:hidden;width:max-content}
+.seg button{background:none;border:0;color:var(--muted);font:500 13px var(--mono);padding:8px 16px;cursor:pointer;letter-spacing:.06em;text-transform:uppercase}
+.seg button.on{background:var(--gold);color:#0c1424}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{background:none;border:1px solid var(--line);border-radius:999px;color:var(--muted);font:500 12px var(--mono);padding:5px 12px;cursor:pointer}
+.chip:hover{color:var(--text)}
+.chip.on{background:var(--gold);border-color:var(--gold);color:#0c1424}
+h2{font:600 22px var(--serif);margin:30px 0 12px}
+h2.day{font-size:20px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(520px,100%),1fr));gap:18px}
+.grid>.card{min-width:0}
+.grid>.mcard{display:grid;grid-row:span 3;grid-template-rows:subgrid;row-gap:0;align-content:start}
+.mcard .top{padding-bottom:4px}
+.card td:first-child{white-space:normal}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px 18px 10px}
+.card h3{font:600 24px var(--serif);margin:0}
+.card .ko{font:500 14px var(--mono);color:var(--text);letter-spacing:.06em}
+.wdl{display:flex;height:8px;border-radius:4px;overflow:hidden;margin:12px 0 6px;background:var(--line)}
+.wdl i{display:block} .wdl i:nth-child(1){background:var(--gold)} .wdl i:nth-child(2){background:#59657f} .wdl i:nth-child(3){background:#5b7bd5}
+.wdlt{display:flex;justify-content:space-between;font:400 14px var(--mono);color:var(--muted)}
+.wdlt b{color:var(--text);font-weight:500}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+th{font:400 11px var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.08em;text-align:left;padding:8px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:7px 8px;border-bottom:1px solid color-mix(in srgb,var(--line) 60%,transparent);font-size:15px;white-space:nowrap}
+td.n,th.n{text-align:right;font-family:var(--mono);font-size:13.5px}
+td.tot{color:var(--gold);font-weight:500}
+.card table{margin-top:6px}
+table.mk{margin-bottom:6px}table.mk td,table.mk th{padding:6px 7px}
+.stack{display:grid;gap:18px}
+.mkcols{display:grid;grid-template-columns:minmax(0,300px) minmax(0,1fr);gap:24px;align-items:start;margin-top:8px}
+@media(max-width:900px){.mkcols{grid-template-columns:1fr}.mkcols table{display:block;overflow-x:auto}}
+.stack>.card{min-width:0}
+.wdlt i{font-style:normal;color:var(--gold)}
+.wdlt span:nth-child(2){text-align:center}.wdlt span:last-child{text-align:right}
+.coach .who{display:inline-block;min-width:118px;color:var(--muted)}
+.coach{font:400 13.5px/1.55 var(--mono);color:var(--muted);margin-top:2px}
+.coach b{color:var(--text);font-weight:500}
+table.tm{max-width:1000px}table.tm .gl{border-left:1px solid var(--line);padding-left:12px}
+table.tm tr.grp th{color:var(--gold);border-bottom:0;padding-bottom:0}
+.head{display:flex;justify-content:space-between;align-items:flex-start;gap:6px 14px;flex-wrap:wrap}
+.ref{font:400 13.5px/1.55 var(--mono);color:var(--muted);margin-top:6px}
+.ref b{color:var(--text);font-weight:500}
+.card tr:last-child td{border-bottom:0}
+.ln{font:400 12px var(--mono);color:var(--muted);text-align:right}
+.ln span{display:inline-block;min-width:92px}
+.ln b{color:var(--text);font-weight:500}
+.ln .hi{color:var(--win)} .ln .lo{color:var(--loss)}
+th.sort{cursor:pointer;user-select:none} th.sort:hover,th.sort.on{color:var(--gold)}
+.w{color:var(--win)} .l{color:var(--loss)}
+.muted{color:var(--muted)}
+.empty{color:var(--muted);padding:30px 0;text-align:center}
+.note{font:400 15px/1.55 var(--body);color:var(--muted);border-left:2px solid var(--gold);padding:2px 0 2px 14px;margin:0 0 14px;max-width:820px}
+.note b{color:var(--text);font-weight:600}
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin:0 0 18px}
+.metric{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.metric .lbl{font:400 11px var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}
+.metric .big{font:500 24px var(--mono);color:var(--gold)}
+.scroll{overflow-x:auto}
+.doc{max-width:860px}
+.doc p,.doc li{font-size:16.5px;line-height:1.65;margin:0 0 14px}
+.doc ul{padding-left:20px;margin:0 0 14px}
+.doc h3{font:600 18px var(--serif);margin:28px 0 8px;display:flex;align-items:center;gap:10px}
+.doc .num{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--gold);color:#0c1424;font:600 13px var(--mono);flex:none}
+.calc{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:8px;padding:12px 16px;margin:0 0 14px;font:400 14px/2 var(--mono);overflow-x:auto}
+.calc i{font-style:normal;color:var(--muted);font-size:12px}
+.calc b{color:var(--gold);font-weight:500}
+table.mini{margin:0 0 16px}
+.abbr{display:none}
+@media(max-width:600px){.grid{grid-template-columns:1fr}.ln span{min-width:0;margin-left:8px}.card{padding:14px 10px 8px}td,th{padding:6px 4px}
+  .card td{font-size:14px}.card td.n{font-size:12.5px}.full{display:none}.abbr{display:inline}.wdlt{flex-wrap:wrap;gap:2px 12px}}
+</style>
+</head>
+<body>
+<!-- sitebar:start (link back to antonisnikolitsopoulos.com; keep on every page) -->
+<style>
+.an-sitebar{background:#0d1220;border-bottom:1px solid rgba(255,255,255,.09);font:500 13px/1.2 "Segoe UI",system-ui,-apple-system,sans-serif;letter-spacing:.02em}
+.an-sitebar>div{max-width:72rem;margin:0 auto;padding:6px 16px;display:flex;justify-content:flex-end;align-items:center;gap:18px}
+.an-sitebar a{color:#9aa1b2;text-decoration:none;display:inline-flex;align-items:center;min-height:24px}.an-sitebar a:hover{color:#fff}
+.an-sitebar svg{width:17px;height:17px;fill:currentColor}
+.an-sitebar a[href="/"]{padding:6px 8px;margin:-6px -8px -6px -4px;border-radius:6px}.an-sitebar a[href="/"]:hover{background:rgba(255,255,255,.08)}
+</style>
+<nav class="an-sitebar" aria-label="Main site"><div><a href="/books/">Books</a><a href="/#projects">Projects</a><a href="/about/">About</a><a href="/" title="Main site: antonisnikolitsopoulos.com" aria-label="Main site"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 2 11.5h3V21h5.5v-6h3v6H19v-9.5h3z"/></svg></a></div></nav>
+<!-- sitebar:end -->
+<style>
+.metrics{display:flex;flex-wrap:wrap;gap:12px;margin:0 0 18px}
+.metric{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:10px 16px;min-width:150px}
+.metric .lbl{font:400 11px var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+.metric .big{font:500 22px var(--mono)}
+.metric .lbl b{color:var(--text);font-weight:500}
+.note{color:var(--muted);font-size:15.5px;max-width:900px}
+.note b{color:var(--text);font-weight:600}
+.muted{color:var(--muted)}
+.ok{color:var(--win)} .bad{color:var(--loss)}
+.ou{display:flex;justify-content:space-between;font:400 14px var(--mono);color:var(--muted);margin:10px 0 4px;gap:10px}
+.ou b{color:var(--text);font-weight:500} .ou i{font-style:normal;color:var(--gold)}
+.xg{font:400 13.5px var(--mono);color:var(--muted);margin-top:4px} .xg b{color:var(--text);font-weight:500}
+.tag{font:500 10.5px var(--mono);letter-spacing:.06em;text-transform:uppercase;border:1px solid var(--line);border-radius:4px;padding:1px 5px;margin-left:6px;color:var(--muted);vertical-align:2px}
+.lg{margin-bottom:18px}
+.card.simple{padding:16px 18px 14px}
+.card.simple h3{font-size:21px}
+.pick{color:var(--gold)}
+td.wr{white-space:normal}
+</style>
+<div class="wrap">
+  <a class="home-link" href="/greek-lower/">&#8962; Home</a>
+  <h1><a href="/greek-lower/">Greek Lower Leagues</a></h1>
+  <div class="sub" id="sub"></div>
+  <div class="seg lg" id="league"></div>
+  <div class="tabs" id="tabs">
+    <a href="#view=projections" data-view="projections" class="on">Projections</a>
+    <a href="#view=results" data-view="results">Results</a>
+    <a href="#view=table" data-view="table">Table &amp; ratings</a>
+    <a href="#view=method" data-view="method">How it works</a>
+  </div>
+  <div id="out"></div>
+</div>
+<script src="data.js?v=e17cf016"></script>
+<script>
+const $ = id => document.getElementById(id);
+const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const dayName = s => { const d = new Date(s.slice(0,10)+'T12:00'); return `${DAYS[d.getDay()]} ${d.getDate()} ${MON[d.getMonth()]}`; };
+const pct = x => Math.round(x*100) + '%';
+// model chances shown as odds with a 5% bookmaker-style margin (same as /superleague)
+const MARGIN = 1.05;
+const modelOdds = p => (p > 0 ? Math.max(1.01, 1 / (p * MARGIN)) : 99).toFixed(2);
+const SHORT = {sl2: 'Super League 2', gamma: 'Gamma Ethniki 2', women: 'Women'};
+let lg = 'sl2', view = 'projections', rsSeason = 'cur';
+const LG = () => DATA.leagues.find(l => l.key === lg);
+const tagOf = s => s === 'up' ? '<span class="tag">promoted</span>' : s === 'down' ? '<span class="tag">relegated</span>' : '';
+
+$('sub').textContent = `${DATA.season.replace('-','–')} · updated ${DATA.updated} (Athens) · 1X2 and over/under 2.5 goals`;
+
+function card(g){
+  const pick = Math.max(g.h, g.d, g.a);
+  const cls = p => p === pick ? ' class="pick"' : '';
+  return `<div class="card simple"><div class="ko">${g.dt.slice(11)} · ${g.round}${g.flag ? ' · ' + g.flag : ''}</div>
+    <h3>${g.home} <span class="muted">–</span> ${g.away}</h3>
+    <div class="xg">Expected goals <b>${g.xh.toFixed(2)}</b> – <b>${g.xa.toFixed(2)}</b> · total <b>${g.tot.toFixed(2)}</b></div>
+    <div class="wdl"><i style="width:${g.h*100}%"></i><i style="width:${g.d*100}%"></i><i style="width:${g.a*100}%"></i></div>
+    <div class="wdlt"><span>1 <b${cls(g.h)}>${pct(g.h)}</b><br><i>${modelOdds(g.h)}</i></span><span>X <b${cls(g.d)}>${pct(g.d)}</b><br><i>${modelOdds(g.d)}</i></span><span>2 <b${cls(g.a)}>${pct(g.a)}</b><br><i>${modelOdds(g.a)}</i></span></div>
+    <div class="ou"><span>Over 2.5 <b>${pct(g.over)}</b> <i>${modelOdds(g.over)}</i></span><span>Under 2.5 <b>${pct(g.under)}</b> <i>${modelOdds(g.under)}</i></span></div></div>`;
+}
+
+function renderProjections(){
+  const L = LG();
+  if (!L.fixtures.length) return '<p class="note">No fixtures scheduled in the next two weeks.</p>';
+  const byDay = {};
+  L.fixtures.forEach(g => (byDay[g.dt.slice(0,10)] ||= []).push(g));
+  let h = '';
+  for (const [d, gs] of Object.entries(byDay)) h += `<h2 class="day">${dayName(d)}</h2><div class="grid">${gs.map(card).join('')}</div>`;
+  return h;
+}
+
+function renderResults(){
+  const L = LG(), cur = +DATA.season.slice(0,4);
+  const seasons = [...new Set(L.results.map(r => r.season))].sort((a, b) => b - a);
+  const pickS = rsSeason === 'cur' ? cur : +rsSeason;
+  const rows = L.results.filter(r => r.season === pickS).slice().reverse();
+  let hit1 = 0, hitOU = 0;
+  for (const r of rows){
+    const res = r.hg > r.ag ? 'h' : r.hg === r.ag ? 'd' : 'a';
+    const pk = ['h','d','a'].reduce((a, b) => r[b] > r[a] ? b : a);
+    r._res = res; r._pk = pk;
+    if (pk === res) hit1++;
+    r._ouOk = (r.over >= .5) === (r.hg + r.ag > 2);
+    if (r._ouOk) hitOU++;
+  }
+  const n = rows.length;
+  let h = `<p class="note">Every league game, with the chances the model gave the day before it (only earlier games used). The <b>pick</b> is the most likely outcome.</p>
+    <div class="bar"><div class="seg" id="rsseason">${seasons.map(s => `<button data-s="${s === cur ? 'cur' : s}" class="${s === pickS ? 'on' : ''}">${s}–${String(s+1).slice(2)}</button>`).join('')}</div></div>
+    <div class="metrics"><div class="metric"><div class="lbl">Games</div><div class="big">${n}</div></div>
+    <div class="metric"><div class="lbl">1X2 pick right</div><div class="big">${n ? pct(hit1/n) : '–'}</div></div>
+    <div class="metric"><div class="lbl">Over/under 2.5 right</div><div class="big">${n ? pct(hitOU/n) : '–'}</div></div></div>`;
+  h += `<div class="scroll"><table><thead><tr><th>Date</th><th>Match</th><th class="n">Score</th><th class="n">1</th><th class="n">X</th><th class="n">2</th><th class="n">Pick</th><th class="n">Exp. total</th><th class="n">Over 2.5</th><th class="n">O/U</th></tr></thead><tbody>`;
+  const lab = {h: '1', d: 'X', a: '2'};
+  for (const r of rows){
+    const b = k => r._res === k ? ` class="n tot"` : ' class="n"';
+    h += `<tr><td class="muted">${dayName(r.dt)}</td><td class="wr">${r.home} – ${r.away}</td><td class="n">${r.hg}–${r.ag}</td>`+
+      `<td${b('h')}>${pct(r.h)}</td><td${b('d')}>${pct(r.d)}</td><td${b('a')}>${pct(r.a)}</td>`+
+      `<td class="n ${r._pk === r._res ? 'ok' : 'bad'}">${lab[r._pk]}</td><td class="n">${r.tot.toFixed(2)}</td><td class="n">${pct(r.over)}</td>`+
+      `<td class="n ${r._ouOk ? 'ok' : 'bad'}">${r.over >= .5 ? 'O' : 'U'}</td></tr>`;
+  }
+  return h + '</tbody></table></div>';
+}
+
+function renderTable(){
+  const L = LG(), R = Object.fromEntries(L.ratings.map(r => [r.team, r]));
+  let h = `<p class="note"><b>Rating</b> columns are the model's current expected goals scored and conceded per game against an average team of the league (home and away averaged), from the last three seasons with recent games counting most. Promoted and relegated teams are marked.</p>`;
+  h += `<div class="scroll"><table class="tm"><thead><tr><th class="n">#</th><th>Team</th><th class="n">P</th><th class="n">W</th><th class="n">D</th><th class="n">L</th><th class="n">Goals</th><th class="n">Pts</th><th class="n gl">Rating for</th><th class="n">against</th><th class="n">diff</th></tr></thead><tbody>`;
+  L.table.forEach((t, i) => {
+    const r = R[t.team] || {gf: 0, ga: 0, status: ''};
+    const d = r.gf - r.ga;
+    h += `<tr><td class="n muted">${i+1}</td><td>${t.team}${tagOf(r.status)}</td><td class="n">${t.p}</td><td class="n">${t.w}</td><td class="n">${t.d}</td><td class="n">${t.l}</td><td class="n">${t.gf}–${t.ga}</td><td class="n tot">${t.pts}</td>`+
+      `<td class="n gl">${r.gf.toFixed(2)}</td><td class="n">${r.ga.toFixed(2)}</td><td class="n ${d >= 0 ? 'ok' : 'bad'}">${d >= 0 ? '+' : '−'}${Math.abs(d).toFixed(2)}</td></tr>`;
+  });
+  h += '</tbody></table></div>';
+  if (lg === 'gamma') h += `<p class="note">Group 2 only. The ratings also learn from the other Gamma Ethniki groups, since teams move between groups from one season to the next.</p>`;
+  return h;
+}
+
+function renderMethod(){
+  const rows = DATA.leagues.map(l => {
+    const b = l.backtest, g1 = (1 - b.ll_1x2 / b.base_1x2) * 100, g2 = (1 - b.ll_ou / b.base_ou) * 100;
+    return `<tr><td>${l.name}</td><td class="n">${b.n}</td><td class="n">${b.ll_1x2.toFixed(3)}</td><td class="n muted">${b.base_1x2.toFixed(3)}</td><td class="n tot">${g1.toFixed(1)}%</td><td class="n gl">${b.ll_ou.toFixed(3)}</td><td class="n muted">${b.base_ou.toFixed(3)}</td><td class="n tot">${g2.toFixed(1)}%</td></tr>`;
+  }).join('');
+  const prm = DATA.leagues.map(l => `<tr><td>${l.name}</td><td class="n">${l.params['1x2'].half_life}</td><td class="n">${l.params['1x2'].k}</td><td class="n">${l.params['1x2'].a}</td><td class="n gl">${l.params.ou.half_life}</td><td class="n">${l.params.ou.k}</td><td class="n">${l.params.ou.a}</td><td class="n gl">${l.home.toFixed(2)} – ${l.away.toFixed(2)}</td></tr>`).join('');
+  return `<div class="doc">
+  <p>Only final scores go in: every league game of the last three seasons from Flashscore, for Super League 2, all four Gamma Ethniki groups and Division A Women, plus the Super League and Super League 2 team lists to know who was relegated.</p>
+  <h3><span class="num">1</span>Ratings</h3>
+  <p>Each team gets an attack and a defence rating, plus one home advantage per league. Expected goals for a game are</p>
+  <div class="calc">home goals = league average × home advantage × home attack × away defence<br>away goals = league average × away attack × home defence</div>
+  <p>The ratings are fitted to the old scores (Poisson). Recent games count more: a game loses half its weight every <i>half-life</i> days. Every rating is also pulled towards average (strength <i>k</i>), so a team with few games stays near average. Newly promoted teams start a step below average and relegated teams a step above (size <i>a</i>).</p>
+  <h3><span class="num">2</span>Chances</h3>
+  <p>The expected goals of each side give a Poisson chance for every score from 0–0 to 10–10. Adding them up gives home / draw / away and over / under 2.5. Odds shown are the chances with a 5% margin added, like a bookmaker price (1 / (chance × 1.05)), so a bookmaker price above them is worth a look.</p>
+  <p>1X2 and over/under use two separate fits: the backtest showed that the goal total needs much more pull towards average than the home/away balance does. That is why the expected-goals line and the total can differ a little.</p>
+  <h3><span class="num">3</span>Settings, picked by backtest</h3>
+  <div class="scroll"><table class="mini"><thead><tr><th></th><th class="n">1X2 half-life</th><th class="n">k</th><th class="n">a</th><th class="n gl">O/U half-life</th><th class="n">k</th><th class="n">a</th><th class="n gl">Avg goals H–A</th></tr></thead><tbody>${prm}</tbody></table></div>
+  <h3><span class="num">4</span>How good is it</h3>
+  <p>Walk-forward test over 2024–25, 2025–26 and this season: before every week the model was refitted on earlier games only and then scored on that week. Log loss, lower is better; the baseline uses only how often home wins, draws, away wins and overs had happened so far.</p>
+  <div class="scroll"><table class="mini"><thead><tr><th></th><th class="n">Games</th><th class="n">1X2 model</th><th class="n">baseline</th><th class="n">better</th><th class="n gl">O/U model</th><th class="n">baseline</th><th class="n">better</th></tr></thead><tbody>${rows}</tbody></table></div>
+  <p>1X2 is clearly better than knowing nothing about the teams. Over/under 2.5 is only slightly better: goal totals are hard to predict from scores alone, especially in Super League 2. There are no shots, xG, line-ups or odds in these models, so treat the numbers as a starting point, not as value on their own.</p>
+  </div>`;
+}
+
+function render(){
+  $('league').innerHTML = DATA.leagues.map(l => `<button data-l="${l.key}" class="${l.key === lg ? 'on' : ''}">${SHORT[l.key]}</button>`).join('');
+  document.querySelectorAll('#tabs a').forEach(a => a.classList.toggle('on', a.dataset.view === view));
+  $('league').style.display = view === 'method' ? 'none' : '';
+  $('out').innerHTML = {projections: renderProjections, results: renderResults, table: renderTable, method: renderMethod}[view]();
+}
+
+function readHash(){
+  const p = new URLSearchParams(location.hash.slice(1));
+  if (p.get('view')) view = p.get('view');
+  if (DATA.leagues.some(l => l.key === p.get('league'))) lg = p.get('league');
+}
+function writeHash(){ history.replaceState(null, '', `#view=${view}&league=${lg}`); }
+
+document.addEventListener('click', e => {
+  const t = e.target.closest('[data-view],[data-l],#rsseason button');
+  if (!t) return;
+  e.preventDefault();
+  if (t.dataset.view) view = t.dataset.view;
+  else if (t.dataset.l) { lg = t.dataset.l; rsSeason = 'cur'; }
+  else rsSeason = t.dataset.s;
+  writeHash(); render();
+});
+readHash(); render();
+</script>
+</body>
+</html>
