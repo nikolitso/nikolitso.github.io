@@ -145,7 +145,7 @@ function refHtml(r){
   return `<div class="ref">Referee <b>${r.name}</b><br>${r.games} game${r.games === 1 ? '' : 's'} · cards ${mult(r.cards)} · fouls ${mult(r.fouls)}</div>`;
 }
 
-// the line closest to a coin flip; all three show in the By stat view
+// each stat has one fixed line (update.py LINES)
 const mainLine = lines => lines && [lines.reduce((a, b) => Math.abs(b[1] - .5) < Math.abs(a[1] - .5) ? b : a)];
 
 function matchCard(g){
@@ -177,7 +177,7 @@ function renderProjections(){
     return h;
   }
   const s = pjStat;
-  h += `<div class="scroll"><table><thead><tr><th>Kick-off</th><th>Match</th><th class="n">Home</th><th class="n">Away</th>${s==='possession'?'':'<th class="n">Total</th>'}<th class="n">${s==='possession'||s==='xg'?'':'Over line · chance'}</th></tr></thead><tbody>`;
+  h += `<div class="scroll"><table><thead><tr><th>Kick-off</th><th>Match</th><th class="n">Home</th><th class="n">Away</th>${s==='possession'?'':'<th class="n">Total</th>'}<th class="n">${s==='possession'||s==='xg'?'':'Over'}</th></tr></thead><tbody>`;
   for (const g of D.fixtures){
     const x = g.stats[s];
     const rf = (s === 'cards' || s === 'fouls') && g.ref ? ` <span class="muted" style="font-size:12px">· ${g.ref.name}${g.ref.games ? ' ' + mult(g.ref[s]) : ''}</span>` : '';
@@ -256,9 +256,9 @@ function renderMethod(){
     <p>${W} ${c.away_for > 1 ? 'win more corners than most teams' : 'win fewer corners than most teams'}, and ${H} ${c.home_against > 1 ? 'concede more than most' : 'concede fewer than most'}. ${H} ${c.home_for < 1 ? 'win fewer than most' : 'win more than most'}, against a side that ${c.away_against < 1 ? 'rarely concedes them' : 'concedes plenty'}.</p>
 
     <h3><span class="num">4</span>Turn the projection into an over chance</h3>
-    <p>${c.proj.total.toFixed(1)} is what this game would average if it could be played many times over. Any single game lands above or below. I measured how widely real totals have spread around their projections in more than 1,000 past games, and used that spread to get the chance of each line:</p>
+    <p>${c.proj.total.toFixed(1)} is what this game would average if it could be played many times over. Any single game lands above or below. I measured how widely real totals have spread around their projections in more than 1,000 past games, and used that spread to get the chance of going over the line:</p>
     <div class="calc">${lines(c.proj.lines)}</div>
-    <p>The match card shows the line closest to 50/50. The By stat view shows all three.</p>
+    <p>Each stat has one line, the same in every match (corners 9.5, goals 2.5, cards 5.5...), so you can compare games directly. A total projected below the line gives an over chance under 50%, and above it over 50%.</p>
 
     <h3><span class="num">5</span>Add the referee (cards and fouls)</h3>
     <p>Cards are worked out the same way. Without the referee:</p>
