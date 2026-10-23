@@ -838,7 +838,8 @@ function render() {
   document.title = t('docTitle');
   document.getElementById('kicker').textContent = t('kicker');
   const home = view === 'home';
-  ['title', 'lede'].forEach(id => { document.getElementById(id).hidden = home; });
+  // the active tab already says where we are, so the Wine list has no title or intro (Antonis)
+  ['title', 'lede'].forEach(id => { document.getElementById(id).hidden = home || view === 'list'; });
   if (!home) {
     document.getElementById('title').textContent = t({list: 'listTitle', wineries: 'estatesTitle', finder: 'title'}[view]);
     document.getElementById('lede').textContent = t({list: 'listLede', wineries: 'estatesLede', finder: 'lede'}[view]);
