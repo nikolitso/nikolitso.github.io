@@ -134,7 +134,8 @@
       "becoming-a-winning-gambler",
       "the-subtle-art-of-not-giving-a-fck",
       "money-and-soccer-a-soccernomics-guide",
-      "mindset"
+      "mindset",
+      "the-culture-map"
     ],
     "log": [
       {
@@ -268,9 +269,15 @@
         "slot": "2026-10-23 14",
         "slug": "mindset",
         "id": "2113646322553069627"
+      },
+      {
+        "day": "2026-10-24",
+        "slot": "2026-10-24 02",
+        "slug": "the-culture-map",
+        "id": "2113768791738069420"
       }
     ],
-    "last_day": "2026-10-23"
+    "last_day": "2026-10-24"
   },
   "film": {
     "seen": [
@@ -606,7 +613,7 @@
     ],
     "last_day": "2026-10-23"
   },
-  "last_slot": "2026-10-23 20",
+  "last_slot": "2026-10-24 02",
   "quote": {
     "seen": [
       "1",
