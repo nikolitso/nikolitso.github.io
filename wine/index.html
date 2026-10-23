@@ -231,6 +231,10 @@ footer{margin-top:72px;padding-top:22px;border-top:1px solid var(--line);color:v
 .facts span{font-size:14.5px;color:var(--text);background:rgba(255,246,232,.06);border:1px solid var(--line);border-radius:999px;padding:4px 12px}
 .facts b{color:var(--gold2);font-weight:600}
 .facts a{color:var(--gold2)}
+#listChips{margin-top:64px;padding-top:8px;border-top:1px solid var(--line)}
+.activef{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;margin:6px 0 4px;color:var(--muted);font-size:16px}
+.activef b{color:var(--cream);font-weight:600}
+.activef button{font:var(--label);letter-spacing:.14em;text-transform:uppercase;color:var(--gold);background:none;border:1px solid var(--line);border-radius:999px;padding:8px 14px;cursor:pointer}
 .showall{display:block;margin:28px auto 0;font:var(--label);letter-spacing:.14em;text-transform:uppercase;color:var(--cream);background:linear-gradient(180deg,var(--wine),var(--wine2));border:1px solid var(--gold);border-radius:999px;padding:14px 26px;cursor:pointer}
 @media(max-width:560px){.views{width:100%;overflow:visible}.views button{flex:1;white-space:normal;text-align:center;padding:10px 6px;font-size:10px;letter-spacing:.08em;line-height:1.3}body{font-size:17px}.wrap{padding:0 16px 80px}.card{padding:20px}.pill summary{padding:18px 20px}.pill-body{padding:4px 20px 22px}}
 </style>
@@ -265,13 +269,15 @@ footer{margin-top:72px;padding-top:22px;border-top:1px solid var(--line);color:v
     <div class="chips-label" id="tagsLabel"></div><div class="chips" id="tags"></div>
     <div class="chips-label" id="grapesLabel"></div><div class="chips" id="grapes"></div>
   </div>
-  <div id="listChips">
-    <div class="chips-label" id="colourLabel"></div><div class="chips" id="colours"></div>
-    <div class="chips-label" id="varietyLabel"></div><div class="chips" id="varieties"></div>
-    <div class="chips-label" id="wineryLabel"></div><div class="chips" id="wineries"></div>
-  </div>
 </header>
 <main id="out"></main>
+<!-- Wine list filters sit below the Top 10 lists (Antonis: the page starts with the Top 10 per colour) -->
+<section id="listChips">
+  <h2 id="exploreTitle"></h2>
+  <div class="chips-label" id="colourLabel" hidden></div><div class="chips" id="colours" hidden></div>
+  <div class="chips-label" id="varietyLabel"></div><div class="chips" id="varieties"></div>
+  <div class="chips-label" id="wineryLabel"></div><div class="chips" id="wineries"></div>
+</section>
 <div class="modal" id="modal" hidden role="dialog" aria-modal="true"><div class="modal-box"><button type="button" class="modal-x" data-close aria-label="Close">×</button><div id="modalBody"></div></div></div>
 <footer><span id="foot"></span> · <a class="wl" href="/">antonisnikolitsopoulos.com</a></footer>
 <noscript><p style="padding:16px;color:#a79d8a">Greek wine and food pairing: this page needs JavaScript to show the Pairing Finder and the wine list.</p></noscript>
@@ -290,6 +296,7 @@ const UI = {
     estatesLede: 'Every estate on the list, with all of its labels. Select a label to see its tasting notes and pairings.',
     label1: 'label', labelsN: 'labels', favTitle: 'Top 10 favourites', allEstates: 'All estates', mapTitle: 'Choose a region', mapHint: 'Select a region on the map to see its estates.', mapAll: 'Show all regions', mapAria: 'Map of Greece with wine regions', mapLegend: 'Filled markers are regions with estates on the list. Hollow markers are wine regions still to come.', estN: 'estates', est1: 'estate', topWhite: 'Top 10 White', topRose: 'Top 10 Rosé', topRed: 'Top 10 Red', allWines: 'All wines', winery: 'Region', colour: 'Colour', listTitle: 'The Wine List',
     listLede: 'Every wine on the list with the food it suits. Select a wine to see its full tasting notes.',
+    exploreTitle: 'Browse by colour, grape and region', filter: 'Showing', clearFilter: 'Clear',
     col: {White: 'White', 'Rosé': 'Rosé', Red: 'Red'}, wine: 'wine', winesN: 'wines',
     bestFor: 'Dishes where it is the first choice', more: 'More wines that fit', dishesFor: 'Dishes',
     begin: 'Where to begin', beginText: (r, w) => `Pick a chip above, or type a dish. ${r} dishes and ${w} wines are loaded.`,
@@ -307,6 +314,7 @@ const UI = {
     estatesLede: 'Όλα τα κτήματα της λίστας, με όλες τις ετικέτες τους. Επιλέξτε μια ετικέτα για να δείτε τις γευστικές σημειώσεις και τα ταιριάσματά της.',
     label1: 'ετικέτα', labelsN: 'ετικέτες', favTitle: 'Τα 10 αγαπημένα', allEstates: 'Όλα τα κτήματα', mapTitle: 'Επιλέξτε περιοχή', mapHint: 'Επιλέξτε μια περιοχή στον χάρτη για να δείτε τα κτήματά της.', mapAll: 'Όλες οι περιοχές', mapAria: 'Χάρτης της Ελλάδας με τις οινικές περιοχές', mapLegend: 'Τα γεμάτα σημάδια είναι περιοχές με κτήματα στη λίστα. Τα κενά είναι οινικές περιοχές που θα προστεθούν.', estN: 'κτήματα', est1: 'κτήμα', topWhite: 'Τα 10 κορυφαία λευκά', topRose: 'Τα 10 κορυφαία ροζέ', topRed: 'Τα 10 κορυφαία ερυθρά', allWines: 'Όλα τα κρασιά', winery: 'Περιοχή', colour: 'Χρώμα', listTitle: 'Η Λίστα Κρασιών',
     listLede: 'Όλα τα κρασιά της λίστας με τα φαγητά που τους ταιριάζουν. Επιλέξτε ένα κρασί για να δείτε τις πλήρεις γευστικές σημειώσεις.',
+    exploreTitle: 'Ανά χρώμα, ποικιλία και περιοχή', filter: 'Εμφανίζονται', clearFilter: 'Καθαρισμός',
     col: {White: 'Λευκό', 'Rosé': 'Ροζέ', Red: 'Ερυθρό'}, wine: 'κρασί', winesN: 'κρασιά',
     bestFor: 'Πιάτα όπου είναι η πρώτη επιλογή', more: 'Περισσότερα κρασιά που ταιριάζουν', dishesFor: 'Πιάτα',
     begin: 'Από πού να ξεκινήσετε', beginText: (r, w) => `Επιλέξτε ένα κουμπί παραπάνω ή γράψτε ένα πιάτο. Φορτώθηκαν ${r} πιάτα και ${w} κρασιά.`,
@@ -338,6 +346,7 @@ const tags = Object.keys(tagCount).sort((a, b) => tagCount[b] - tagCount[a] || a
 const HASH = {home: '/wine/', list: '#list', wineries: '#estates', finder: '#finder'};
 let view = location.hash === '#finder' ? 'finder' : location.hash === '#estates' ? 'wineries' : location.hash === '#list' ? 'list' : 'home';
 let state = {q: '', cat: '', tag: '', grape: '', region: '', colour: '', variety: ''};
+let topColour = 'White';
 const G = D.grapes, gByKey = Object.fromEntries(G.map(g => [g.key, g]));
 
 const colourKey = w => w.colour.startsWith('Red') ? 'Red' : w.colour.startsWith('Ros') ? 'Rosé' : 'White';
@@ -805,10 +814,15 @@ function renderList() {
     && terms.every(x => wineText(w).includes(x)));
   if (!ws.length) return `<p class="empty">${esc(t('none'))}</p>`;
   const filtering = state.q.trim() || state.colour || state.variety || state.region;
-  const block = (c, key, first) => `<h2${first ? ' class="fav-title"' : ''}>${esc(t(key))}</h2><div class="top20">${D.top20[c].map((id, i) => listRow(byId[id], i + 1)).join('')}</div>`;
-  const top = filtering ? '' : block('White', 'topWhite', true) + block('Rosé', 'topRose') + block('Red', 'topRed');
+  // Antonis: one colour at a time, White by default; the tabs switch to the Top 10 rosé or red
+  const tabs = `<div class="chips-label">${esc(t('colour'))}</div><div class="chips toptabs">${['White', 'Rosé', 'Red'].map(c =>
+    `<button type="button" class="chip${topColour === c ? ' on' : ''}" data-top="${c}">${esc(t('col')[c])}</button>`).join('')}</div>`;
+  const top = filtering ? '' : tabs + `<h2 class="fav-title">${esc(t({White: 'topWhite', 'Rosé': 'topRose', Red: 'topRed'}[topColour]))}</h2><div class="top20">${D.top20[topColour].map((id, i) => listRow(byId[id], i + 1)).join('')}</div>`;
   if (!filtering && !state.showAll) return top + `<button type="button" class="showall" data-showall>${esc(t('showAll'))} (${W.length})</button>`;
-  return top + (filtering ? '' : `<h2>${esc(t('allWines'))}</h2>`) + wineries.map(name => {
+  const on = [state.colour && t('col')[state.colour], state.variety && (lang === 'el' ? D.varietyEl[state.variety] : state.variety),
+    state.region && (lang === 'el' ? regionEl[state.region] : state.region)].filter(Boolean);
+  const bar = on.length ? `<div class="activef">${esc(t('filter'))}: <b>${esc(on.join(' · '))}</b> · ${ws.length} ${ws.length === 1 ? t('wine') : t('winesN')}<button type="button" data-clearf>${esc(t('clearFilter'))}</button></div>` : '';
+  return top + bar + (filtering ? '' : `<h2>${esc(t('allWines'))}</h2>`) + wineries.map(name => {
     const g = ws.filter(w => w.winery === name);
     return g.length ? `<h2>${esc(lang === 'el' ? wineryEl[name] : name)}</h2><div class="count">${g.length} ${g.length === 1 ? t('wine') : t('winesN')}</div>${g.map(listRow).join('')}` : '';
   }).join('');
@@ -835,8 +849,9 @@ function render() {
   ['tagsLabel', 'tags', 'grapesLabel', 'grapes'].forEach(id => { document.getElementById(id).hidden = view === 'finder'; });
   document.getElementById('season').innerHTML = home ? seasonHtml() : '';
   document.getElementById('finderChips').hidden = view !== 'finder';
-  document.getElementById('listChips').hidden = view === 'finder' || home;
-  ['colourLabel', 'colours', 'varietyLabel', 'varieties', 'wineryLabel', 'wineries'].forEach(id => { document.getElementById(id).hidden = view === 'wineries'; });
+  document.getElementById('listChips').hidden = view !== 'list';
+  document.getElementById('exploreTitle').textContent = t('exploreTitle');
+  ['varietyLabel', 'varieties', 'wineryLabel', 'wineries'].forEach(id => { document.getElementById(id).hidden = view === 'wineries'; });
   document.getElementById('wineryLabel').textContent = t('winery');
   document.getElementById('varietyLabel').textContent = t('grapes');
   document.getElementById('colourLabel').textContent = t('colour');
@@ -914,13 +929,18 @@ document.addEventListener('click', e => {
   if (ct) { const id = ct.dataset.for; expandedRows.has(id) ? expandedRows.delete(id) : expandedRows.add(id); render(); return; }
   const lb = e.target.closest('.lang button');
   if (lb) { lang = lb.dataset.lang; try { localStorage.setItem('wine-lang', lang); } catch (x) {} render(); return; }
+  const tt = e.target.closest('[data-top]');
+  if (tt) { topColour = tt.dataset.top; render(); return; }
   const c = e.target.closest('.chip');
   if (c) {
     const {k, v} = c.dataset, on = state[k] === v;
     if (k === 'grape') { state = {q: '', cat: '', tag: '', grape: on ? '' : v, region: '', colour: ''}; document.getElementById('q').value = ''; }
     else { state[k] = on ? '' : v; state.grape = ''; }
-    render(); return;
+    render();
+    if (view === 'list') document.getElementById('out').scrollIntoView({behavior: 'smooth', block: 'start'});
+    return;
   }
+  if (e.target.closest('[data-clearf]')) { state.colour = state.variety = state.region = ''; render(); return; }
   const rl = e.target.closest('a.rl');
   if (rl) {
     const r = ALLR.find(x => x.name === rl.dataset.dish), nm = L(r, 'name');
