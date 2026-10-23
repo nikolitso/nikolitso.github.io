@@ -227,11 +227,12 @@ function renderMethod(){
   const A = D.accuracy, E = D.example;
   let h = '<div class="doc">';
   h += `<h2 style="margin-top:0">The idea</h2>
-  <p>Every number on the Projections tab is built the same way. Start from what an average Super League game produces, then adjust it for how good or bad each team is at that stat, and finally for the referee (cards and fouls only).</p>`;
+  <p>Every number on the Projections tab is built the same way. Start from what an average Super League game produces, then adjust it for how good or bad each team is at that stat. Cards also take into account who is the favourite, and cards and fouls take into account the referee.</p>`;
   if (E){
     const H = E.home, W = E.away, c = E.stats.corners, k = E.stats.cards, g = E.stats.goals, P = E.possession;
     const tH = D.teams.find(t => t.team === H), tW = D.teams.find(t => t.team === W);
     const x = (a, b, d) => (a * b * d).toFixed(2);
+    const bal = (v, m) => (+v.toFixed(2) * +m.toFixed(2)).toFixed(2);
     const lines = ls => ls.map(([ln, p]) => `over ${ln}: <b>${pct(p)}</b>`).join(' · ');
     h += `<h2>Worked example: ${H} – ${W}</h2>
     <p>Here is every step for this round's <b>${H} – ${W}</b>, starting with corners. All the figures are the real ones behind the match card.</p>
@@ -260,24 +261,32 @@ function renderMethod(){
     <div class="calc">${lines(c.proj.lines)}</div>
     <p>Each stat has one line, the same in every match (corners 9.5, goals 2.5, cards 5.5...), so you can compare games directly. A total projected below the line gives an over chance under 50%, and above it over 50%.</p>
 
-    <h3><span class="num">5</span>Add the referee (cards and fouls)</h3>
-    <p>Cards are worked out the same way. Without the referee:</p>
+    <h3><span class="num">5</span>Cards: who is the favourite</h3>
+    <p>Cards start the same way, from each team's ratings:</p>
     <div class="calc">
       ${H} cards = ${k.mu_home.toFixed(2)} × ${k.home_for.toFixed(2)} × ${k.away_against.toFixed(2)} = ${x(k.mu_home,k.home_for,k.away_against)}<br>
       ${W} cards = ${k.mu_away.toFixed(2)} × ${k.away_for.toFixed(2)} × ${k.home_against.toFixed(2)} = ${x(k.mu_away,k.away_for,k.home_against)}
-    </div>`;
+    </div>
+    <p>Ratings know how many cards a club usually gets, but not how one-sided this particular game is. A team that's clearly better spends the game on the ball and commits fewer fouls, while even games get scrappy. In past games, a side projected to score 1.5 goals more than its opponent got about a quarter fewer cards than its usual level.</p>
+    <p>Here ${E.balance.home < E.balance.away ? H : W} are the favourites (projected ${Math.abs(g.proj.home - g.proj.away).toFixed(1)} goals better, see step 7), so their cards go down and ${E.balance.home < E.balance.away ? W : H}'s ${(E.balance.home < E.balance.away ? E.balance.away : E.balance.home) >= 1 ? 'go up slightly' : 'barely change'}:</p>
+    <div class="calc">${H} ${x(k.mu_home,k.home_for,k.away_against)} × ${E.balance.home.toFixed(2)} = <b>${bal(k.mu_home*k.home_for*k.away_against, E.balance.home)}</b> · ${W} ${x(k.mu_away,k.away_for,k.home_against)} × ${E.balance.away.toFixed(2)} = <b>${bal(k.mu_away*k.away_for*k.home_against, E.balance.away)}</b></div>
+
+    <h3><span class="num">6</span>Add the referee (cards and fouls)</h3>`;
+    const cH = +bal(k.mu_home*k.home_for*k.away_against, E.balance.home), cW = +bal(k.mu_away*k.away_for*k.home_against, E.balance.away);
     if (E.ref && E.ref.games){
-      h += `<p>The referee is <b>${E.ref.name}</b>. In his ${E.ref.games} Super League games in the data, cards came out ${E.ref.cards >= 1 ? 'above' : 'below'} what the two teams alone would project. That gives him a factor of <b>${mult(E.ref.cards)}</b>, so both teams' cards are multiplied by it:</p>
-      <div class="calc">${H} ${x(k.mu_home,k.home_for,k.away_against)} × ${E.ref.cards.toFixed(2)} = <b>${(+x(k.mu_home,k.home_for,k.away_against) * +E.ref.cards.toFixed(2)).toFixed(2)}</b> · ${W} ${x(k.mu_away,k.away_for,k.home_against)} × ${E.ref.cards.toFixed(2)} = <b>${(+x(k.mu_away,k.away_for,k.home_against) * +E.ref.cards.toFixed(2)).toFixed(2)}</b> · total <b>${k.proj.total.toFixed(1)}</b><br>${lines(k.proj.lines)}</div>`;
+      h += `<p>The referee is <b>${E.ref.name}</b>. In his ${E.ref.games} Super League games in the data, cards came out ${E.ref.cards >= 1 ? 'above' : 'below'} what the teams and the favourite effect would project. That gives him a factor of <b>${mult(E.ref.cards)}</b>, applied to both teams:</p>
+      <div class="calc">${H} ${cH.toFixed(2)} × ${E.ref.cards.toFixed(2)} = <b>${(cH * +E.ref.cards.toFixed(2)).toFixed(2)}</b> · ${W} ${cW.toFixed(2)} × ${E.ref.cards.toFixed(2)} = <b>${(cW * +E.ref.cards.toFixed(2)).toFixed(2)}</b> · total <b>${k.proj.total.toFixed(1)}</b><br>${lines(k.proj.lines)}</div>`;
     } else {
       h += `<p>${E.ref ? `The referee, ${E.ref.name}, has no Super League games in the data` : 'The referee has not been announced yet'}, so there is no adjustment and the total stays at <b>${k.proj.total.toFixed(1)}</b>.</p>`;
     }
-    h += `<p>A referee's factor is pulled hard toward ×1.00, because a referee's past is a weak guide here. In testing, games with the referees who looked strictest had no more cards than games with the most lenient. Adding referees cut the average miss on match cards only from ${A.cards.mae.toFixed(2)} to ${A.cards.ref_mae.toFixed(2)}, and on fouls from ${A.fouls.mae.toFixed(2)} to ${A.fouls.ref_mae.toFixed(2)}.</p>`;
+    const B = A.cards.balance;
+    h += `<p>A referee's factor is pulled hard toward ×1.00, because a referee's past is a weak guide here: in testing, games with the referees who looked strictest had no more cards than games with the most lenient. I also tested whether some referees go easier on Olympiakos, Panathinaikos, AEK and PAOK. Their past lean didn't repeat, and the team ratings already know the Big-4 get fewer cards.</p>
+    <p>Together, on every game since 2023–24, the average miss on match cards went from ${B.teams_only.toFixed(2)} (teams only) to ${B.with_balance.toFixed(2)} with the favourite effect and ${B.with_both.toFixed(2)} with the referee as well. For fouls, the referee took it from ${A.fouls.mae.toFixed(2)} to ${A.fouls.ref_mae.toFixed(2)}.</p>`;
 
     const ph = poisson(g.proj.home), pa = poisson(g.proj.away);
     let best = [0, 0, 0];
     ph.forEach((p, i) => pa.forEach((q, j) => { if (p*q > best[2]) best = [i, j, p*q]; }));
-    h += `<h3><span class="num">6</span>Who wins</h3>
+    h += `<h3><span class="num">7</span>Who wins</h3>
     <p>Goals are projected exactly like corners:</p>
     <div class="calc">
       ${H} goals = ${g.mu_home.toFixed(2)} × ${g.home_for.toFixed(2)} × ${g.away_against.toFixed(2)} = <b>${g.proj.home.toFixed(2)}</b><br>
@@ -285,7 +294,7 @@ function renderMethod(){
     </div>
     <p>Goals are rare, random events. A team expected to score ${g.proj.home.toFixed(2)} scores 0 in ${pct(ph[0])} of games, 1 in ${pct(ph[1])} and 2 in ${pct(ph[2])}. Doing this for both teams gives a chance for every score, and the most likely is <b>${best[0]}–${best[1]}</b> (${pct(best[2])}). Adding up all the scores: <b>${H} win ${pct(E.result.home)}</b>, <b>draw ${pct(E.result.draw)}</b>, <b>${W} win ${pct(E.result.away)}</b>.</p>
 
-    <h3><span class="num">7</span>Possession</h3>
+    <h3><span class="num">8</span>Possession</h3>
     <p>Possession is a split that always adds to 100%, so it can't be multiplied like the counts. Each team has one possession strength (points above or below an even split), and the home side gets a small edge:</p>
     <div class="calc">${H} possession = 50 ${sgn(P.edge)} <i>home edge</i> ${sgn(P.home)} <i>${H}</i> ${sgn(-P.away)} <i>${W}</i> = <b>${P.proj.toFixed(1)}%</b> · ${W} ${(100 - P.proj).toFixed(1)}%</div>
     <p>Shots, SoT, xG, fouls, goal kicks, throw-ins, saves and woodwork all work like corners, each with its own averages and ratings.</p>`;
