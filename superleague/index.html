@@ -413,32 +413,56 @@ const lc = s => ({sot: 'SoT', saves: 'GK saves', xg: 'xG', result: 'match result
 const betName = b => b.stat === 'result' ? ({1: 'Home win', X: 'Draw', 2: 'Away win'})[b.side] : `${b.side === 'over' ? 'Over' : 'Under'} ${b.line} ${lc(b.stat)}`;
 const evPct = x => `${x >= 0 ? '+' : ''}${Math.round(x * 100)}%`;
 
+// minimum EV picked on the Value bets tab (5% to 30%+, default 15%)
+const EV_STEPS = [.05, .10, .15, .20, .25, .30];
+let valMin = .15;
+try { const v = +localStorage.getItem('sl-valmin'); if (EV_STEPS.includes(v)) valMin = v; } catch (e) {}
+
+function summary(bs){
+  const n = bs.length, won = bs.filter(b => b.result === 'won').length, profit = bs.reduce((a, b) => a + b.profit, 0);
+  return {n, won, profit, hit: n ? won / n : null, odds: n ? bs.reduce((a, b) => a + b.odds, 0) / n : null, roi: n ? profit / n : null};
+}
+
+function recordTable(title, groups, note){
+  const rows = Object.entries(groups).map(([k, bs]) => [k, summary(bs)]).sort((a, b) => b[1].n - a[1].n);
+  if (!rows.length) return '';
+  let h = `<h2>${title}</h2>${note ? `<p class="muted" style="margin:-4px 0 10px;font-size:14px">${note}</p>` : ''}<div class="scroll"><table class="mk" style="max-width:820px"><thead><tr><th></th><th class="n">Bets</th><th class="n">Won</th><th class="n">Hit rate</th><th class="n">Avg odds</th><th class="n">Profit</th><th class="n">Per bet</th></tr></thead><tbody>`;
+  for (const [k, r] of rows) h += `<tr><td>${k}</td><td class="n">${r.n}</td><td class="n">${r.won}</td><td class="n">${pct(r.hit)}</td><td class="n muted">${r.odds.toFixed(2)}</td><td class="n ${r.profit >= 0 ? 'w' : 'l'}">${r.profit > 0 ? '+' : ''}${r.profit.toFixed(2)}</td><td class="n ${r.roi >= 0 ? 'w' : 'l'}">${evPct(r.roi)}</td></tr>`;
+  return h + '</tbody></table></div>';
+}
+
 function renderValue(){
   const V = D.value, R = V.record;
-  let h = `<p class="note">A bet is <b>value</b> when our chance of it winning, times the bookie's odds (Superbet), comes to more than 1: on average it would return more than the stake. <b>EV</b> is that expected return per 1 staked (EV +20% = 1.20 back per 1, on average). Listed are bets with EV of at least ${Math.round(V.min_ev * 100)}%, one per game and stat (the best line), on lines where the bookie's own chance is between ${Math.round(V.fair_range[0] * 100)}% and ${Math.round(V.fair_range[1] * 100)}%.</p>
-  <p class="note"><b>Not listed:</b> ${Object.entries(V.skip).map(([s, why]) => `<b>${lc(s)}</b>: ${why}`).join('; ')}. A very large EV usually means the model is missing something (a new coach, injuries, a change of style) rather than a gift, so check those first. Every bet listed is recorded with its last odds before kick-off and settled when the results come in: the record below is the honest test of whether this finds value.</p>`;
+  const bets = V.bets.filter(b => b.ev >= valMin - 1e-9);
+  const settled = R.settled.filter(b => b.ev >= valMin - 1e-9);
+  const all = summary(settled);
+  const label = x => x >= .3 ? '30%+' : Math.round(x * 100) + '%';
+  let h = `<p class="note">A bet is <b>value</b> when our chance of it winning, times the bookie's odds (Superbet), comes to more than 1: on average it would return more than the stake. <b>EV</b> = our chance × odds − 1, the expected return per 1 staked (EV +20% = 1.20 back per 1, on average). The bookie's own chance is shown for comparison only. One bet per game and stat (the best line), on lines where the bookie's own chance is between ${Math.round(V.fair_range[0] * 100)}% and ${Math.round(V.fair_range[1] * 100)}%.</p>
+  <p class="note"><b>Not listed:</b> ${Object.entries(V.skip).map(([s, why]) => `<b>${lc(s)}</b>: ${why}`).join('; ')}. A very large EV usually means the model is missing something (a new coach, injuries, a change of style) rather than a gift, so check those first. Every bet from EV +5% is recorded with its last odds before kick-off and settled when the results come in; the record below follows the minimum EV you pick.</p>
+  <div class="bar"><span class="muted" style="font:400 13px var(--mono)">Minimum EV</span><div class="seg" id="valmin">${EV_STEPS.map(x => `<button data-v="${x}" class="${x === valMin ? 'on' : ''}">${label(x)}</button>`).join('')}</div></div>`;
   h += `<div class="metrics">
-    <div class="metric"><div class="lbl">Value bets this round</div><div class="big">${V.bets.length}</div></div>
-    <div class="metric"><div class="lbl">Settled so far</div><div class="big">${R.all.bets}</div></div>
-    <div class="metric"><div class="lbl">Won</div><div class="big">${R.all.bets ? R.all.won : '–'}</div></div>
-    <div class="metric"><div class="lbl">Profit (1 unit each)</div><div class="big">${R.all.bets ? (R.all.profit > 0 ? '+' : '') + R.all.profit.toFixed(2) : '–'}</div></div>
-    <div class="metric"><div class="lbl">Return per bet</div><div class="big">${R.all.roi != null ? evPct(R.all.roi) : '–'}</div></div></div>`;
-  if (!V.bets.length) h += '<p class="empty">No value bets for the coming games.</p>';
+    <div class="metric"><div class="lbl">Value bets coming up</div><div class="big">${bets.length}</div></div>
+    <div class="metric"><div class="lbl">Settled so far</div><div class="big">${all.n}</div></div>
+    <div class="metric"><div class="lbl">Hit rate</div><div class="big">${all.n ? pct(all.hit) : '–'}</div></div>
+    <div class="metric"><div class="lbl">Profit (1 unit each)</div><div class="big">${all.n ? (all.profit > 0 ? '+' : '') + all.profit.toFixed(2) : '–'}</div></div>
+    <div class="metric"><div class="lbl">Return per bet</div><div class="big">${all.n ? evPct(all.roi) : '–'}</div></div></div>`;
+  if (!bets.length) h += `<p class="empty">No bets at EV ${label(valMin)} or more for the coming games.</p>`;
   else {
     h += `<h2>Coming games</h2><div class="scroll"><table class="mk"><thead><tr><th>Kick-off</th><th>Match</th><th>Bet</th><th class="n">Odds</th><th class="n">Bookie %</th><th class="n">Ours</th><th class="n">EV</th></tr></thead><tbody>`;
-    for (const b of V.bets) h += `<tr><td class="muted">${dayName(b.kickoff)} ${b.kickoff.slice(11)}</td><td>${b.home} – ${b.away}</td><td><b>${betName(b)}</b></td><td class="n">${b.odds.toFixed(2)}</td><td class="n">${pct(b.fair)}</td><td class="n tot">${pct(b.ours)}</td><td class="n ${b.ev >= .15 ? 'w' : ''}">${evPct(b.ev)}</td></tr>`;
+    for (const b of bets) h += `<tr><td class="muted">${dayName(b.kickoff)} ${b.kickoff.slice(11)}</td><td>${b.home} – ${b.away}</td><td><b>${betName(b)}</b></td><td class="n">${b.odds.toFixed(2)}</td><td class="n">${pct(b.fair)}</td><td class="n tot">${pct(b.ours)}</td><td class="n ${b.ev >= .15 ? 'w' : ''}">${evPct(b.ev)}</td></tr>`;
     h += '</tbody></table></div>';
   }
-  const by = Object.entries(R.by_stat);
-  if (by.length){
-    h += `<h2>Record by market</h2><div class="scroll"><table class="mk" style="max-width:640px"><thead><tr><th>Market</th><th class="n">Bets</th><th class="n">Won</th><th class="n">Profit</th><th class="n">Per bet</th></tr></thead><tbody>`;
-    for (const [s, r] of by.sort((a, b) => b[1].bets - a[1].bets)) h += `<tr><td>${s === 'result' ? 'Result' : L[s]}</td><td class="n">${r.bets}</td><td class="n">${r.won}</td><td class="n ${r.profit >= 0 ? 'w' : 'l'}">${r.profit > 0 ? '+' : ''}${r.profit.toFixed(2)}</td><td class="n">${evPct(r.roi)}</td></tr>`;
-    h += '</tbody></table></div>';
-    h += `<h2>Settled bets</h2><div class="scroll"><table class="mk"><thead><tr><th>Date</th><th>Match</th><th>Bet</th><th class="n">Odds</th><th class="n">EV</th><th class="n">Result</th></tr></thead><tbody>`;
-    for (const b of R.settled) h += `<tr><td class="muted">${dayName(b.date)}</td><td>${b.home} – ${b.away}</td><td>${betName(b)}</td><td class="n">${b.odds.toFixed(2)}</td><td class="n">${evPct(b.ev)}</td><td class="n ${b.result === 'won' ? 'w' : 'l'}">${b.result === 'won' ? 'Won +' + (b.odds - 1).toFixed(2) : 'Lost −1'}</td></tr>`;
-    h += '</tbody></table></div>';
-  } else h += `<p class="muted" style="margin-top:18px">No settled bets yet: the record starts once this round's results are in the data.</p>`;
-  return h;
+  if (!settled.length) return h + `<p class="muted" style="margin-top:18px">No settled bets yet at this EV level: the record starts once results for logged bets are in the data.</p>`;
+  const group = key => settled.reduce((g, b) => ((g[key(b)] ||= []).push(b), g), {});
+  const band = b => b.ev >= .3 ? '30%+' : `${Math.floor(b.ev * 20) * 5}–${Math.floor(b.ev * 20) * 5 + 5}%`;
+  h += recordTable('Record by market', group(b => b.stat === 'result' ? 'Result' : L[b.stat]),
+    'A few dozen bets per market is still mostly luck: treat differences as a lead, not a verdict, until each market has 100 or more.');
+  h += recordTable('Record by side', group(b => b.stat === 'result' ? 'Result' : b.side === 'over' ? 'Overs' : 'Unders'));
+  h += recordTable('Record by market and side', group(b => b.stat === 'result' ? 'Result' : `${L[b.stat]} ${b.side}`));
+  h += recordTable('Record by EV', group(band), 'If the model finds real value, bigger EV should mean bigger returns.');
+  h += `<h2>Settled bets</h2><div class="scroll"><table class="mk"><thead><tr><th>Date</th><th>Match</th><th>Bet</th><th class="n">Odds</th><th class="n">EV</th><th class="n">Result</th></tr></thead><tbody>`;
+  for (const b of settled) h += `<tr><td class="muted">${dayName(b.date)}</td><td>${b.home} – ${b.away}</td><td>${betName(b)}</td><td class="n">${b.odds.toFixed(2)}</td><td class="n">${evPct(b.ev)}</td><td class="n ${b.result === 'won' ? 'w' : 'l'}">${b.result === 'won' ? 'Won +' + (b.odds - 1).toFixed(2) : 'Lost −1'}</td></tr>`;
+  return h + '</tbody></table></div>';
 }
 
 function render(){
@@ -446,6 +470,7 @@ function render(){
   document.querySelectorAll('#pjmode button').forEach(b => b.onclick = () => { pjMode = b.dataset.m; render(); });
   const chips = (id, set) => document.querySelectorAll(`#${id} .chip`).forEach(b => b.onclick = () => { set(b.dataset.s); render(); });
   chips('pjstat', s => pjStat = s); chips('rsstat', s => rsStat = s); chips('tmstat', s => tmStat = s);
+  document.querySelectorAll('#valmin button').forEach(b => b.onclick = () => { valMin = +b.dataset.v; try { localStorage.setItem('sl-valmin', valMin); } catch (e) {} render(); });
   document.querySelectorAll('th.sort').forEach(t => t.onclick = () => { const k = t.dataset.k; tmSort = [k, tmSort[0] === k ? -tmSort[1] : (k === 'team' ? 1 : -1)]; render(); });
 }
 function setView(v){
