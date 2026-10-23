@@ -139,10 +139,13 @@ function linesHtml(lines){
 }
 
 const mult = x => `×${x.toFixed(2)}`;
+const monthYear = s => { const d = new Date(s + 'T12:00'); return `${MON[d.getMonth()]} ${d.getFullYear()}`; };
+// the referee factor uses his last 20 games (refs.py LAST_N)
+const refWindow = r => `${r.total > r.games ? 'last ' : ''}${r.games} game${r.games === 1 ? '' : 's'} since ${monthYear(r.since)}`;
 function refHtml(r){
   if (!r) return '<div class="ref">Referee <b>not announced</b></div>';
   if (!r.games) return `<div class="ref">Referee <b>${r.name}</b><br>no league games yet · no adjustment</div>`;
-  return `<div class="ref">Referee <b>${r.name}</b><br>${r.games} game${r.games === 1 ? '' : 's'} · cards ${mult(r.cards)} · fouls ${mult(r.fouls)}</div>`;
+  return `<div class="ref">Referee <b>${r.name}</b><br>${refWindow(r)} · cards ${mult(r.cards)} · fouls ${mult(r.fouls)}</div>`;
 }
 
 // each stat has one fixed line (update.py LINES)
@@ -274,7 +277,7 @@ function renderMethod(){
     <h3><span class="num">6</span>Add the referee (cards and fouls)</h3>`;
     const cH = +bal(k.mu_home*k.home_for*k.away_against, E.balance.home), cW = +bal(k.mu_away*k.away_for*k.home_against, E.balance.away);
     if (E.ref && E.ref.games){
-      h += `<p>The referee is <b>${E.ref.name}</b>. In his ${E.ref.games} Super League games in the data, cards came out ${E.ref.cards >= 1 ? 'above' : 'below'} what the teams and the favourite effect would project. That gives him a factor of <b>${mult(E.ref.cards)}</b>, applied to both teams:</p>
+      h += `<p>The referee is <b>${E.ref.name}</b>. His factor comes from his last 20 games, about one season for a regular referee (here ${refWindow(E.ref)}), because referees change over time. In testing, the last 20 beat a referee's whole history, clearly so for fouls. In those games cards came out ${Math.abs(E.ref.cards - 1) < .02 ? 'almost exactly in line with' : E.ref.cards > 1 ? 'above' : 'below'} what the teams and the favourite effect would project. That gives him a factor of <b>${mult(E.ref.cards)}</b>, applied to both teams:</p>
       <div class="calc">${H} ${cH.toFixed(2)} × ${E.ref.cards.toFixed(2)} = <b>${(cH * +E.ref.cards.toFixed(2)).toFixed(2)}</b> · ${W} ${cW.toFixed(2)} × ${E.ref.cards.toFixed(2)} = <b>${(cW * +E.ref.cards.toFixed(2)).toFixed(2)}</b> · total <b>${k.proj.total.toFixed(1)}</b><br>${lines(k.proj.lines)}</div>`;
     } else {
       h += `<p>${E.ref ? `The referee, ${E.ref.name}, has no Super League games in the data` : 'The referee has not been announced yet'}, so there is no adjustment and the total stays at <b>${k.proj.total.toFixed(1)}</b>.</p>`;
