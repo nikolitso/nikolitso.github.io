@@ -511,7 +511,8 @@
       "karaoke",
       "romanzo-criminale",
       "a-whole-life-ahead",
-      "i-was-a-stranger"
+      "i-was-a-stranger",
+      "i-daniel-blake"
     ],
     "log": [
       {
@@ -623,11 +624,17 @@
         "slot": "2026-10-24 08",
         "slug": "i-was-a-stranger",
         "id": "2113891677958180963"
+      },
+      {
+        "day": "2026-10-24",
+        "slot": "2026-10-24 20",
+        "slug": "i-daniel-blake",
+        "id": "2114076242412818437"
       }
     ],
     "last_day": "2026-10-24"
   },
-  "last_slot": "2026-10-24 14",
+  "last_slot": "2026-10-24 20",
   "quote": {
     "seen": [
       "1",
