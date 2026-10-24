@@ -166,7 +166,7 @@ const pct = x => Math.round(x*100) + '%';
 const MARGIN = 1.05;
 const modelOdds = p => (p > 0 ? Math.max(1.01, 1 / (p * MARGIN)) : 99).toFixed(2);
 const SHORT = {sl2: 'Super League 2', gamma: 'Gamma Ethniki 2', women: 'Women'};
-let lg = 'sl2', view = 'projections', rsSeason = 'cur', edgeMin = .10, mkSeason = 'all', oddsWhen = 'close';
+let lg = 'sl2', view = 'projections', rsSeason = 'cur', edgeMin = .20, mkSeason = 'all', oddsWhen = 'close';
 const LG = () => DATA.leagues.find(l => l.key === lg);
 const tagOf = s => s === 'up' ? '<span class="tag">promoted</span>' : s === 'down' ? '<span class="tag">relegated</span>' : '';
 
@@ -267,7 +267,7 @@ function llRow(lab, m, b, n){
 function renderMarket(){
   const L = LG(), cur = +DATA.season.slice(0,4);
   let h = `<p class="note"><b>Model</b> is the model's chance, <b>Bookie</b> the bookmakers' chance with their margin taken out (average of every Greek bookmaker). <b>Best odds</b> is the highest price among them and <b>edge</b> = model chance × best odds − 1. Each game gets at most one bet: its biggest edge, highlighted when it reaches the chosen edge. The model disagrees with the bookmakers on almost every game and most of that is the model's own error, so a real edge should only turn up in a small share of games; the higher edges keep fewer. A very big gap usually means the bookmakers know something the model cannot see from scores alone (unpaid players, a youth side fielded, a coach change).</p>
-    <div class="bar"><span class="muted" style="font:400 12px var(--mono);text-transform:uppercase;letter-spacing:.08em">Edge from</span><div class="chips" id="edge">${[.05, .10, .20, .30, .40, .50].map(x => `<button class="chip${x === edgeMin ? ' on' : ''}" data-e="${x}">${Math.round(x*100)}%</button>`).join('')}</div></div>`;
+    <div class="bar"><span class="muted" style="font:400 12px var(--mono);text-transform:uppercase;letter-spacing:.08em">Edge from</span><div class="chips" id="edge">${[.20, .30].map(x => `<button class="chip${x === edgeMin ? ' on' : ''}" data-e="${x}">${Math.round(x*100)}%+</button>`).join('')}</div></div>`;
   h += L.fixtures.length ? `<h2>Next round</h2><div class="grid">${L.fixtures.map(vbCard).join('')}</div>` : '<p class="note">The next round is not scheduled yet.</p>';
 
   const priced = L.results.filter(r => r.odds);
@@ -276,7 +276,7 @@ function renderMarket(){
   const rows = mkSeason === 'all' ? priced : priced.filter(r => r.season === pickS);
   const R = record(rows), a = R.all;
   h += `<h2>Record on played games</h2>
-    <p class="note">Every played game with bookmaker odds: at most one 1-unit bet per game, on its biggest edge if that is at least the <b>Edge from</b> value chosen above (10% unless you change it), at the best price among the Greek bookmakers. The model only used earlier games. <b>Closing</b> uses the last prices before kick-off, <b>opening</b> the first prices posted, which are softer but on the board days before the model is refitted after the previous round.</p>
+    <p class="note">Every played game with bookmaker odds: at most one 1-unit bet per game, on its biggest edge if that is at least the <b>Edge from</b> value chosen above (20% unless you change it), at the best price among the Greek bookmakers. The model only used earlier games. <b>Closing</b> uses the last prices before kick-off, <b>opening</b> the first prices posted, which are softer but on the board days before the model is refitted after the previous round.</p>
     <div class="bar"><div class="seg" id="mkwhen"><button data-w="close" class="${oddsWhen === 'close' ? 'on' : ''}">Closing odds</button><button data-w="open" class="${oddsWhen === 'open' ? 'on' : ''}">Opening odds</button></div><div class="seg" id="mkseason"><button data-s="all" class="${mkSeason === 'all' ? 'on' : ''}">All</button>${seasons.map(s => `<button data-s="${s === cur ? 'cur' : s}" class="${mkSeason !== 'all' && pickS === s ? 'on' : ''}">${s}–${String(s+1).slice(2)}</button>`).join('')}</div></div>
     <div class="metrics"><div class="metric"><div class="lbl">Games with odds</div><div class="big">${rows.length}</div></div>
     <div class="metric"><div class="lbl">Bets</div><div class="big">${a.n}</div></div>
