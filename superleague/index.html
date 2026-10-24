@@ -408,7 +408,7 @@ function renderMarket(){
     h += `<h2 class="day">${dayName(d)}</h2><div class="stack">`;
     for (const g of gs){
       const res = g.market.result, mr = [g.result.home, g.result.draw, g.result.away];
-      h += `<div class="card"><div class="ko">${g.kickoff.slice(11)}</div><h3>${g.home} <span class="muted">–</span> ${g.away}</h3><div class="mkcols">`;
+      h += `<div class="card"><div class="ko">${g.kickoff.slice(11)}</div><h3>${g.home} <span class="muted">–</span> ${g.away}</h3>${sampleHtml(g)}<div class="mkcols">`;
       if (res) h += `<table class="mk"><thead><tr><th>Result</th><th class="n">1</th><th class="n">X</th><th class="n">2</th></tr></thead><tbody>
         <tr><td class="muted">Bookie odds</td>${res.odds.map(o => `<td class="n">${o.toFixed(2)}</td>`).join('')}</tr>
         <tr><td class="muted">Model odds</td>${mr.map(p => `<td class="n tot">${modelOdds(p)}</td>`).join('')}</tr>
