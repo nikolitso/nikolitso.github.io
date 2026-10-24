@@ -176,19 +176,18 @@ function refHtml(r){
 }
 
 // one line per stat: goals 2.5 and woodwork 0.5 always, others the half-point next to the projection
-const mainLine = lines => lines && [lines.reduce((a, b) => Math.abs(b[1] - .5) < Math.abs(a[1] - .5) ? b : a)];
 
 function matchCard(g){
   const r = g.result, t = g.kickoff.slice(11);
   const rows = ORDER.map(s => {
     const x = g.stats[s];
     return `<tr><td>${L[s]}</td><td class="n">${f(x.home, s)}</td><td class="n">${f(x.away, s)}</td>`+
-      `<td class="n tot">${x.total == null ? '' : f(x.total, s)}</td><td class="ln">${linesHtml(mainLine(x.lines))}</td></tr>`;
+      `<td class="n tot">${x.total == null ? '' : f(x.total, s)}</td></tr>`;
   }).join('');
   return `<div class="card mcard"><div class="top"><div class="ko">${t}</div><h3>${g.home} <span class="muted">–</span> ${g.away}</h3>${refHtml(g.ref)}${coachHtml(g.coaches, g.home, g.away)}${sampleHtml(g)}</div>
     <div><div class="wdl"><i style="width:${r.home*100}%"></i><i style="width:${r.draw*100}%"></i><i style="width:${r.away*100}%"></i></div>
     <div class="wdlt"><span>Home <b>${pct(r.home)}</b><br><i>${modelOdds(r.home)}</i></span><span>Draw <b>${pct(r.draw)}</b><br><i>${modelOdds(r.draw)}</i></span><span>Away <b>${pct(r.away)}</b><br><i>${modelOdds(r.away)}</i></span></div></div>
-    <table><thead><tr><th>Stat</th><th class="n"><span class="full">${g.home}</span><span class="abbr">Home</span></th><th class="n"><span class="full">${g.away}</span><span class="abbr">Away</span></th><th class="n">Total</th><th class="n">Over</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+    <table><thead><tr><th>Stat</th><th class="n"><span class="full">${g.home}</span><span class="abbr">Home</span></th><th class="n"><span class="full">${g.away}</span><span class="abbr">Away</span></th><th class="n">Total</th></tr></thead><tbody>${rows}</tbody></table></div>`;
 }
 
 function chipsHtml(id, cur, list){
