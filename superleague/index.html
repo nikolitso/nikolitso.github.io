@@ -52,6 +52,7 @@ h2.day{font-size:20px;padding-bottom:8px;border-bottom:1px solid var(--line)}
 .card td:first-child{white-space:normal}
 .card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px 18px 10px}
 .card h3{font:600 24px var(--serif);margin:0}
+.live{font:500 11px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--bg);background:var(--gold);border-radius:4px;padding:1px 6px;margin-left:8px;vertical-align:1px}
 .card .ko{font:500 14px var(--mono);color:var(--text);letter-spacing:.06em}
 .wdl{display:flex;height:8px;border-radius:4px;overflow:hidden;margin:12px 0 6px;background:var(--line)}
 .wdl i{display:block} .wdl i:nth-child(1){background:var(--gold)} .wdl i:nth-child(2){background:#59657f} .wdl i:nth-child(3){background:#5b7bd5}
@@ -135,7 +136,7 @@ table.mini{margin:0 0 16px}
   </div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=3e9f1206"></script>
+<script src="data.js?v=c07b6571"></script>
 <script>
 const D = window.SL, $ = id => document.getElementById(id);
 const L = D.labels, ORDER = D.order;
@@ -181,7 +182,7 @@ function refHtml(r){
 // one line per stat: goals 2.5 and woodwork 0.5 always, others the half-point next to the projection
 
 function matchCard(g){
-  const r = g.result, t = g.kickoff.slice(11);
+  const r = g.result, t = g.kickoff.slice(11) + (g.started ? ' <span class="live">Started</span>' : '');
   const rows = ORDER.map(s => {
     const x = g.stats[s];
     return `<tr><td>${L[s]}</td><td class="n">${f(x.home, s)}</td><td class="n">${f(x.away, s)}</td>`+
@@ -213,7 +214,7 @@ function renderProjections(){
   for (const g of D.fixtures){
     const x = g.stats[s];
     const rf = (s === 'cards' || s === 'fouls') && g.ref ? ` <span class="muted" style="font-size:12px">· ${g.ref.name}${g.ref.games ? ' ' + mult(g.ref[s]) : ''}</span>` : '';
-    h += `<tr><td class="muted">${dayName(g.kickoff)} ${g.kickoff.slice(11)}</td><td>${g.home} – ${g.away}${rf}${tenureLine(g)}</td><td class="n">${f(x.home,s)}</td><td class="n">${f(x.away,s)}</td>${s==='possession'?'':`<td class="n tot">${f(x.total,s)}</td>`}<td class="ln">${linesHtml(x.lines)}</td></tr>`;
+    h += `<tr><td class="muted">${dayName(g.kickoff)} ${g.kickoff.slice(11)}${g.started ? ' <span class="live">Started</span>' : ''}</td><td>${g.home} – ${g.away}${rf}${tenureLine(g)}</td><td class="n">${f(x.home,s)}</td><td class="n">${f(x.away,s)}</td>${s==='possession'?'':`<td class="n tot">${f(x.total,s)}</td>`}<td class="ln">${linesHtml(x.lines)}</td></tr>`;
   }
   return h + '</tbody></table></div>';
 }
@@ -472,6 +473,13 @@ function renderValue(){
   else {
     h += `<h2>Coming games</h2><div class="scroll"><table class="mk"><thead><tr><th>Kick-off</th><th>Match</th><th>Bet</th><th class="n">Bookie odds</th><th class="n">Model odds</th><th class="n">Bookie %</th><th class="n">Model %</th><th class="n">EV</th></tr></thead><tbody>`;
     for (const b of bets) h += `<tr><td class="muted">${dayName(b.kickoff)} ${b.kickoff.slice(11)}</td><td>${b.home} – ${b.away}</td><td><b>${betName(b)}</b></td><td class="n">${b.odds.toFixed(2)}</td><td class="n tot">${modelOdds(b.ours)}</td><td class="n">${pct(b.fair)}</td><td class="n tot">${pct(b.ours)}</td><td class="n ${b.ev >= .15 ? 'w' : ''}">${evPct(b.ev)}</td></tr>`;
+    h += '</tbody></table></div>';
+  }
+  // kicked off, result not in the data yet (settled on the next update after the stats arrive)
+  const started = (R.started || []).filter(b => b.ev >= valMin - 1e-9);
+  if (started.length){
+    h += `<h2>Started, waiting for result</h2><p class="muted" style="margin:-4px 0 10px;font-size:14px">These games have kicked off. Each bet is settled when the game's stats arrive in the data, usually a day or two after.</p><div class="scroll"><table class="mk"><thead><tr><th>Kick-off</th><th>Match</th><th>Bet</th><th class="n">Bookie odds</th><th class="n">Model %</th><th class="n">EV</th></tr></thead><tbody>`;
+    for (const b of started) h += `<tr><td class="muted">${dayName(b.kickoff)} ${b.kickoff.slice(11)}</td><td>${b.home} – ${b.away}</td><td><b>${betName(b)}</b></td><td class="n">${b.odds.toFixed(2)}</td><td class="n tot">${pct(b.ours)}</td><td class="n">${evPct(b.ev)}</td></tr>`;
     h += '</tbody></table></div>';
   }
   if (!settled.length) return h + `<p class="muted" style="margin-top:18px">No settled bets yet at this EV level: the record starts once results for logged bets are in the data.</p>`;
