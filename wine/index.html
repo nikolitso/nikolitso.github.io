@@ -1071,7 +1071,19 @@ document.addEventListener('click', e => {
     return;
   }
   if (e.target.closest('[data-playlist]')) {
-    document.getElementById('pl').innerHTML = `<div class="plframe"><iframe src="https://www.youtube-nocookie.com/embed/videoseries?list=${PLAYLIST}&autoplay=1" title="${esc(t('music'))}" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>`;
+    // shuffled, starting from a random song (Antonis: not the same song every time), via the YouTube player API
+    document.getElementById('pl').innerHTML = '<div class="plframe"><div id="plplayer"></div></div>';
+    const start = () => {
+      let shuffled = false;
+      new YT.Player('plplayer', {host: 'https://www.youtube-nocookie.com', playerVars: {listType: 'playlist', list: PLAYLIST, autoplay: 1, rel: 0},
+        events: {onStateChange: e => {
+          const n = (e.target.getPlaylist() || []).length;
+          if (shuffled || !n) return;
+          shuffled = true; e.target.setShuffle(true); e.target.playVideoAt(Math.floor(Math.random() * n));
+        }}});
+    };
+    if (window.YT && YT.Player) start();
+    else { window.onYouTubeIframeAPIReady = start; const sc = document.createElement('script'); sc.src = 'https://www.youtube.com/iframe_api'; document.head.appendChild(sc); }
     return;
   }
   const lg = e.target.closest('.logo');
