@@ -954,9 +954,9 @@ function tonightHtml(pairs) {
     ${L(r, 'why') ? `<p class="why">${esc(L(r, 'why'))}</p>` : ''}${tomorrow}</section>`;
 }
 // Music for the table (Antonis's YouTube playlist). The player loads only after a click, so YouTube sets nothing until then.
-// Antonis's YouTube playlist PLnVf7Ah71lsLs-PHZdQdkZtNUAXMhDXKt (80 songs, playlist.md) plus the 26 songs he added on 2026-10-24.
-// Written out here so the page can shuffle them; add new songs to this list.
-const SONGS = [
+// The music bar plays Antonis's YouTube playlist plus EXTRA_SONGS, shuffled. The playlist's song IDs come from songs.json,
+// which a daily GitHub Action (update-songs.yml in the site repo) refreshes; PLAYLIST_FALLBACK is used if songs.json cannot load.
+const PLAYLIST_FALLBACK = [
   '7-hMXhcc-tA', 'rmegHVEsSVY', 'bJJdXEpgK0Y', 'iTIhE1U17fU', 'NjKroD0AhJA', 'Xx7rL7k8o9A', 'z0zA5aIub-g', '7T2jmKfExIk', 'c9OLFnfiq6A',
   'gl17x1L_8Kc', 'SeZXux7whZw', '8oew4BwM0aU', 'ZvdecuTtsx4', 'l1U4Z856sW0', 'QaUJXIFY-bo', 'PZ_fSt6eNuM', 'ne5HvKx6q_4', 'k1622L_g1L4',
   'SCMBEpgdHm8', 'qnqb0Vfqxus', 'FCtjWiMM4kc', 'ff19Ovx-eW8', 'n2urB-yawdo', 'apo4QG6-00Q', 'H7MGD4ITvik', 'RWfXKFAhFK4', 'wgmI-D1XosY',
@@ -965,10 +965,13 @@ const SONGS = [
   'Oztvh92T7Zg', 'CJPxOLDnOG8', 'tAisaEtQtG8', 'AzEO4DZtcvw', 'opJGMqySfi4', 'U0tbJK1LxNU', 'oOYVg7mwFOo', 'Mc6TuysknT8', 'ZejaoZpyoqw',
   'Tt3H3K4c9hA', 'h5zdL8n-Gd8', '9P0IqbsLhB0', 'tHdAuJUIvXA', 'lnYan4E3FTM', 'NA53CCWzRF8', 'XOjkG_xYQWQ', 'gtMHRM3eKkw', 'QzMO-EjaDhs',
   'XYEtn5wiurM', 'rVvyBD6lcps', 'bxckWbEFJHM', 'RY9mcnKOh14', 'BueVGiyx_E4', 'sdCshKjGqsY', 'MtfTU7TJZbY', 'f3pgMxZJ9IU', 'Pw_V1kH8Bvk',
-  'UiInSNTnz-c', 'bQ1R--8MYx0', 'nXTtA5bKHrM', 'CdK-X2QFoY0', 'eF8nQXXrL90', '7ZvPahsmRB0', 'WTIM0w1mFWU', 'iBY-B49rgFA', 'cTNBmloshAc',
-  '7wfYIMyS_dI', 'kd50IlLtSAA', 'wmrQ32ENgEQ', 'KWHRLUSm4F8', 'F2vT9VyXOks', 'Q2XMM93B4nA', '8PWUk6P-GEc', 'wS68AerqHJU', 'NTHi-p7l3KM',
-  'diATRZMGwvM', 'x0I83Zcfo0M', '4m3iPE1maDM', 'U7BKKGMmB0Q', '02jrXcpfVAs', 'xTUpkNXgYmA', 'b1_9buEzFCc', 'OgRQWm-apQc', 'QaFJeMy_iLA',
-  's_m889GgvpI', 'RCTr51c8fD8', 'eTjTObSqtco', 'SiTrPVSwV6Y', 'QXi1DbnXIow', '1n2NAbz2oeI', 'u4vV4KDy_48',
+  'UiInSNTnz-c', 'bQ1R--8MYx0', 'nXTtA5bKHrM', 'CdK-X2QFoY0', 'eF8nQXXrL90', '7ZvPahsmRB0', 'WTIM0w1mFWU', 'iBY-B49rgFA',
+];
+// songs Antonis added that are not in the YouTube playlist (2026-10-24); add more here, or add them to the playlist itself
+const EXTRA_SONGS = [
+  'cTNBmloshAc', '7wfYIMyS_dI', 'kd50IlLtSAA', 'wmrQ32ENgEQ', 'KWHRLUSm4F8', 'F2vT9VyXOks', 'Q2XMM93B4nA', '8PWUk6P-GEc', 'wS68AerqHJU',
+  'NTHi-p7l3KM', 'diATRZMGwvM', 'x0I83Zcfo0M', '4m3iPE1maDM', 'U7BKKGMmB0Q', '02jrXcpfVAs', 'xTUpkNXgYmA', 'b1_9buEzFCc', 'OgRQWm-apQc',
+  'QaFJeMy_iLA', 's_m889GgvpI', 'RCTr51c8fD8', 'eTjTObSqtco', 'SiTrPVSwV6Y', 'QXi1DbnXIow', '1n2NAbz2oeI', 'u4vV4KDy_48',
 ];
 const playlistHtml = () => `<section class="playlist"><div class="okick">${esc(t('music'))}</div><div id="pl"><button type="button" class="showall" data-playlist>▶ ${esc(t('playMusic'))}</button></div></section>`;
 // compact bar: YouTube's player at its minimum size (200x200, as YouTube's terms require it visible), with the song title and controls beside it
@@ -1105,8 +1108,7 @@ document.addEventListener('click', e => {
   if (e.target.closest('[data-playlist]')) {
     // all songs, shuffled on every visit (Antonis: not the same song every time); a song that cannot play is skipped
     document.getElementById('pl').innerHTML = barHtml();
-    const order = SONGS.slice();
-    for (let i = order.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [order[i], order[j]] = [order[j], order[i]]; }
+    let order = [];
     const start = () => new YT.Player('plplayer', {host: 'https://www.youtube-nocookie.com', width: 200, height: 200, videoId: order[0],
       playerVars: {playlist: order.slice(1).join(','), autoplay: 1, rel: 0, playsinline: 1},
       events: {
@@ -1116,8 +1118,13 @@ document.addEventListener('click', e => {
         },
         onError: e => e.target.nextVideo(),
       }});
-    if (window.YT && YT.Player) start();
-    else { window.onYouTubeIframeAPIReady = start; const sc = document.createElement('script'); sc.src = 'https://www.youtube.com/iframe_api'; document.head.appendChild(sc); }
+    const go = ids => {
+      order = [...new Set([...ids, ...EXTRA_SONGS])];
+      for (let i = order.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [order[i], order[j]] = [order[j], order[i]]; }
+      if (window.YT && YT.Player) start();
+      else { window.onYouTubeIframeAPIReady = start; const sc = document.createElement('script'); sc.src = 'https://www.youtube.com/iframe_api'; document.head.appendChild(sc); }
+    };
+    fetch('songs.json', {cache: 'no-cache'}).then(r => r.ok ? r.json() : null).then(j => go(j && j.ids && j.ids.length ? j.ids : PLAYLIST_FALLBACK)).catch(() => go(PLAYLIST_FALLBACK));
     return;
   }
   const lg = e.target.closest('.logo');
