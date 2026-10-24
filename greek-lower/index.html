@@ -136,6 +136,8 @@ table.mini{margin:0 0 16px}
 .card.simple{padding:16px 18px 14px}
 table.vb td,table.vb th{padding:5px 7px}
 table.vb td.edge{font-weight:500}
+table.tm th.srt{cursor:pointer;user-select:none;white-space:nowrap}
+table.tm th.srt:hover,table.tm th.srt.on{color:var(--gold)}
 tr.val td{background:color-mix(in srgb,var(--gold) 12%,transparent)}
 .bk{font-size:11.5px;color:var(--muted)}
 .card.simple h3{font-size:21px}
@@ -323,16 +325,23 @@ function renderResults(){
   return h + '</tbody></table></div>';
 }
 
+// Table & ratings sorting: click a header; first click puts the best first, a second click flips it
+let tSort = 'pos', tDir = 1;
+const T_COLS = [['pos', '#', 'n', 1], ['team', 'Team', '', 1], ['p', 'P', 'n', -1], ['w', 'W', 'n', -1], ['d', 'D', 'n', -1], ['l', 'L', 'n', 1],
+  ['gd', 'Goals', 'n', -1], ['pts', 'Pts', 'n', -1], ['rgf', 'Rating for', 'n gl', -1], ['rga', 'against', 'n', 1], ['rd', 'diff', 'n', -1]];
 function renderTable(){
   const L = LG(), R = Object.fromEntries(L.ratings.map(r => [r.team, r]));
-  let h = `<p class="note"><b>Rating</b> columns are the model's current expected goals scored and conceded per game against an average team of the league (home and away averaged), from the last three seasons with recent games counting most. Promoted and relegated teams are marked.</p>`;
-  h += `<div class="scroll"><table class="tm"><thead><tr><th class="n">#</th><th>Team</th><th class="n">P</th><th class="n">W</th><th class="n">D</th><th class="n">L</th><th class="n">Goals</th><th class="n">Pts</th><th class="n gl">Rating for</th><th class="n">against</th><th class="n">diff</th></tr></thead><tbody>`;
-  L.table.forEach((t, i) => {
+  let h = `<p class="note"><b>Rating</b> columns are the model's current expected goals scored and conceded per game against an average team of the league (home and away averaged), from the last three seasons with recent games counting most. Promoted and relegated teams are marked. Click a column heading to sort.</p>`;
+  const rows = L.table.map((t, i) => {
     const r = R[t.team] || {gf: 0, ga: 0, status: ''};
-    const d = r.gf - r.ga;
-    h += `<tr><td class="n muted">${i+1}</td><td>${t.team}${tagOf(r.status)}</td><td class="n">${t.p}</td><td class="n">${t.w}</td><td class="n">${t.d}</td><td class="n">${t.l}</td><td class="n">${t.gf}–${t.ga}</td><td class="n tot">${t.pts}</td>`+
-      `<td class="n gl">${r.gf.toFixed(2)}</td><td class="n">${r.ga.toFixed(2)}</td><td class="n ${d >= 0 ? 'ok' : 'bad'}">${d >= 0 ? '+' : '−'}${Math.abs(d).toFixed(2)}</td></tr>`;
+    return {t, r, pos: i + 1, team: t.team, p: t.p, w: t.w, d: t.d, l: t.l, gd: t.gf - t.ga, pts: t.pts, rgf: r.gf, rga: r.ga, rd: r.gf - r.ga};
   });
+  rows.sort((a, b) => (tSort === 'team' ? a.team.localeCompare(b.team) : a[tSort] - b[tSort]) * tDir || a.pos - b.pos);
+  h += `<div class="scroll"><table class="tm"><thead><tr>` + T_COLS.map(([k, lab, cls]) =>
+    `<th class="${cls} srt${k === tSort ? ' on' : ''}" data-sort="${k}">${lab}${k === tSort ? (tDir === T_COLS.find(c => c[0] === k)[3] ? ' ▾' : ' ▴') : ''}</th>`).join('') + `</tr></thead><tbody>`;
+  for (const {t, r, pos, rd: d} of rows)
+    h += `<tr><td class="n muted">${pos}</td><td>${t.team}${tagOf(r.status)}</td><td class="n">${t.p}</td><td class="n">${t.w}</td><td class="n">${t.d}</td><td class="n">${t.l}</td><td class="n">${t.gf}–${t.ga}</td><td class="n tot">${t.pts}</td>`+
+      `<td class="n gl">${r.gf.toFixed(2)}</td><td class="n">${r.ga.toFixed(2)}</td><td class="n ${d >= 0 ? 'ok' : 'bad'}">${d >= 0 ? '+' : '−'}${Math.abs(d).toFixed(2)}</td></tr>`;
   h += '</tbody></table></div>';
   if (lg === 'gamma') h += `<p class="note">Group 2 only. The ratings also learn from the other Gamma Ethniki groups, since teams move between groups from one season to the next.</p>`;
   return h;
@@ -378,10 +387,11 @@ function readHash(){
 function writeHash(){ history.replaceState(null, '', `#view=${view}&league=${lg}`); }
 
 document.addEventListener('click', e => {
-  const t = e.target.closest('[data-view],[data-l],#rsseason button,#edge button,#mkseason button,#mkwhen button');
+  const t = e.target.closest('[data-view],[data-l],[data-sort],#rsseason button,#edge button,#mkseason button,#mkwhen button');
   if (!t) return;
   e.preventDefault();
-  if (t.dataset.view) view = t.dataset.view;
+  if (t.dataset.sort) { const k = t.dataset.sort, def = T_COLS.find(c => c[0] === k)[3]; tDir = k === tSort ? -tDir : def; tSort = k; }
+  else if (t.dataset.view) view = t.dataset.view;
   else if (t.dataset.l) { lg = t.dataset.l; rsSeason = 'cur'; }
   else if (t.dataset.e) edgeMin = +t.dataset.e;
   else if (t.dataset.w) oddsWhen = t.dataset.w;
