@@ -169,6 +169,7 @@ const MARGIN = 1.05;
 const modelOdds = p => (p > 0 ? Math.max(1.01, 1 / (p * MARGIN)) : 99).toFixed(2);
 const SHORT = {sl2: 'Super League 2', gamma: 'Gamma Ethniki 2', women: 'Women'};
 let lg = 'sl2', view = 'projections', rsSeason = 'cur', edgeMin = .20, mkSeason = 'all', oddsWhen = 'close';
+const betOn = new Set(['h', 'a', 'over', 'under']);   // picks that may get a bet (pills on Vs Bookie)
 const LG = () => DATA.leagues.find(l => l.key === lg);
 const tagOf = s => s === 'up' ? '<span class="tag">promoted</span>' : s === 'down' ? '<span class="tag">relegated</span>' : '';
 
@@ -223,7 +224,7 @@ function bets(g, open){
 }
 // the one pick per game that gets a bet: the biggest edge, if it reaches the chosen edge (never the draw)
 function pick(bs){
-  const top = bs.filter(b => b.k !== 'd').reduce((m, b) => !m || b.edge > m.edge ? b : m, null);
+  const top = bs.filter(b => betOn.has(b.k)).reduce((m, b) => !m || b.edge > m.edge ? b : m, null);
   return top && top.edge >= edgeMin ? top : null;
 }
 const won = (g, k) => ({h: g.hg > g.ag, d: g.hg === g.ag, a: g.hg < g.ag, over: g.hg + g.ag > 2, under: g.hg + g.ag < 3})[k];
@@ -279,8 +280,9 @@ function renderMarket(){
   const rows = mkSeason === 'all' ? priced : priced.filter(r => r.season === pickS);
   const R = record(rows), a = R.all;
   h += `<h2>Record on played games</h2>
-    <p class="note">Every played game with bookmaker odds: at most one 1-unit bet per game (1, 2, over or under; never the draw), on its biggest edge if that is at least the <b>Edge from</b> value chosen above (20% unless you change it), at the best price among the Greek bookmakers. The model only used earlier games. <b>Closing</b> uses the last prices before kick-off, <b>opening</b> the first prices posted, which are softer but on the board days before the model is refitted after the previous round.</p>
+    <p class="note">Every played game with bookmaker odds: at most one 1-unit bet per game (1, 2, over or under, as picked in <b>Bet on</b>; never the draw), on its biggest edge among those picks if that is at least the <b>Edge from</b> value chosen above (20% unless you change it), at the best price among the Greek bookmakers. The model only used earlier games. <b>Closing</b> uses the last prices before kick-off, <b>opening</b> the first prices posted, which are softer but on the board days before the model is refitted after the previous round.</p>
     <div class="bar"><div class="seg" id="mkwhen"><button data-w="close" class="${oddsWhen === 'close' ? 'on' : ''}">Closing odds</button><button data-w="open" class="${oddsWhen === 'open' ? 'on' : ''}">Opening odds</button></div><div class="seg" id="mkseason"><button data-s="all" class="${mkSeason === 'all' ? 'on' : ''}">All</button>${seasons.map(s => `<button data-s="${s === cur ? 'cur' : s}" class="${mkSeason !== 'all' && pickS === s ? 'on' : ''}">${s}–${String(s+1).slice(2)}</button>`).join('')}</div></div>
+    <div class="bar"><span class="muted" style="font:400 12px var(--mono);text-transform:uppercase;letter-spacing:.08em">Bet on</span><div class="chips" id="beton">${MK.filter(m => m[3] !== 'd').map(([lab, , , k]) => `<button class="chip${betOn.has(k) ? ' on' : ''}" data-k="${k}">${lab}</button>`).join('')}</div></div>
     <div class="metrics"><div class="metric"><div class="lbl">Games with odds</div><div class="big">${rows.length}</div></div>
     <div class="metric"><div class="lbl">Bets</div><div class="big">${a.n}</div></div>
     <div class="metric"><div class="lbl">Games bet</div><div class="big">${rows.length ? pct(a.n / rows.length) : '–'}</div></div>
@@ -395,10 +397,11 @@ function readHash(){
 function writeHash(){ history.replaceState(null, '', `#view=${view}&league=${lg}`); }
 
 document.addEventListener('click', e => {
-  const t = e.target.closest('[data-view],[data-l],[data-sort],#rsseason button,#edge button,#mkseason button,#mkwhen button');
+  const t = e.target.closest('[data-view],[data-l],[data-sort],#beton button,#rsseason button,#edge button,#mkseason button,#mkwhen button');
   if (!t) return;
   e.preventDefault();
-  if (t.dataset.sort) { const k = t.dataset.sort, def = T_COLS.find(c => c[0] === k)[3]; tDir = k === tSort ? -tDir : def; tSort = k; }
+  if (t.dataset.k) { if (!betOn.has(t.dataset.k)) betOn.add(t.dataset.k); else if (betOn.size > 1) betOn.delete(t.dataset.k); }
+  else if (t.dataset.sort) { const k = t.dataset.sort, def = T_COLS.find(c => c[0] === k)[3]; tDir = k === tSort ? -tDir : def; tSort = k; }
   else if (t.dataset.view) view = t.dataset.view;
   else if (t.dataset.l) { lg = t.dataset.l; rsSeason = 'cur'; }
   else if (t.dataset.e) edgeMin = +t.dataset.e;
