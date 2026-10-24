@@ -292,10 +292,10 @@ function renderMarket(){
     `</tbody></table><table class="mini"><thead><tr><th>Who is more accurate (log loss, lower is better)</th><th class="n">Games</th><th class="n">Model</th><th class="n">Bookie</th></tr></thead><tbody>` +
     llRow('1X2', R.ll.m1, R.ll.b1, R.ll.n1) + llRow('Over/under 2.5', R.ll.m2, R.ll.b2, R.ll.n2) + `</tbody></table></div>`;
   if (R.list.length){
-    h += `<h2>The bets</h2><div class="scroll"><table class="bets"><thead><tr><th>Date</th><th>Match</th><th class="n">Score</th><th class="n">Bet</th><th class="n">Model</th><th class="n">Bookie</th><th class="n">Odds</th><th class="n">Edge</th><th class="n">Profit</th></tr></thead><tbody>` +
+    h += `<h2>The bets</h2><div class="scroll"><table class="bets"><thead><tr><th>Date</th><th>Match</th><th class="n">Score</th><th class="n">Bet</th><th class="n">Model odds</th><th class="n">Best odds</th><th class="n">Edge</th><th class="n">Profit</th></tr></thead><tbody>` +
       [...R.list].sort((x, y) => y.g.dt.localeCompare(x.g.dt)).map(({g, b, w, pl}) =>
         `<tr><td class="muted">${dayName(g.dt)} ${g.dt.slice(2, 4)}</td><td class="wr">${g.home} – ${g.away}</td><td class="n">${g.hg}–${g.ag}</td><td class="n tot">${b.lab}</td>`+
-        `<td class="n">${pct(b.p)}</td><td class="n muted">${b.fair == null ? '–' : pct(b.fair)}</td><td class="n">${b.price.toFixed(2)} <span class="bk">${b.book}</span></td>`+
+        `<td class="n">${modelOdds(b.p)}</td><td class="n">${b.price.toFixed(2)} <span class="bk">${b.book}</span></td>`+
         `<td class="n">${sgnPct(b.edge)}</td><td class="n ${w ? 'ok' : 'bad'}">${units(pl)}</td></tr>`).join('') + `</tbody></table></div>`;
   }
   return h;
