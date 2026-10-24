@@ -178,7 +178,6 @@ const sampleHtml = g => g.sample ? `<div class="coach sample" title="${sampleTip
 // compact coach tenure under a match in tables: "Mazzarri 7 · Leto 43 games in charge"
 const tenureOne = c => c ? `${surname(c[0])} ${c[2]}` : '–';
 const tenureLine = g => g && g.coaches ? `<div class="tenure" title="League games in charge of the current coach">${tenureOne(g.coaches.home)} · ${tenureOne(g.coaches.away)} games in charge</div>` : '';
-const fixtureOf = b => D.fixtures.find(g => g.home === b.home && g.away === b.away);
 function refHtml(r){
   if (!r) return '<div class="ref">Referee <b>not announced</b></div>';
   if (!r.games) return `<div class="ref">Referee <b>${r.name}</b> · no league games since ${r.from.replace('-', '–')} · no adjustment</div>`;
@@ -525,7 +524,7 @@ function renderValue(){
   if (!bets.length) h += `<p class="empty">No bets at EV ${label(valMin)} or more for the coming games.</p>`;
   else {
     h += `<h2>Coming games</h2><div class="scroll"><table class="mk"><thead><tr><th>Kick-off</th><th>Match</th><th>Bet</th><th class="n">Bookie odds</th><th class="n">Model odds</th><th class="n">Bookie %</th><th class="n">Model %</th><th class="n">EV</th></tr></thead><tbody>`;
-    for (const b of bets) h += `<tr><td class="muted">${dayName(b.kickoff)} ${b.kickoff.slice(11)}</td><td>${b.home} – ${b.away}${tenureLine(fixtureOf(b))}</td><td><b>${betName(b)}</b></td><td class="n">${b.odds.toFixed(2)}</td><td class="n tot">${modelOdds(b.ours)}</td><td class="n">${pct(b.fair)}</td><td class="n tot">${pct(b.ours)}</td><td class="n ${b.ev >= .15 ? 'w' : ''}">${evPct(b.ev)}</td></tr>`;
+    for (const b of bets) h += `<tr><td class="muted">${dayName(b.kickoff)} ${b.kickoff.slice(11)}</td><td>${b.home} – ${b.away}</td><td><b>${betName(b)}</b></td><td class="n">${b.odds.toFixed(2)}</td><td class="n tot">${modelOdds(b.ours)}</td><td class="n">${pct(b.fair)}</td><td class="n tot">${pct(b.ours)}</td><td class="n ${b.ev >= .15 ? 'w' : ''}">${evPct(b.ev)}</td></tr>`;
     h += '</tbody></table></div>';
   }
   if (!settled.length) return h + `<p class="muted" style="margin-top:18px">No settled bets yet at this EV level: the record starts once results for logged bets are in the data.</p>`;
