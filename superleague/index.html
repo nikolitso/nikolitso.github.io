@@ -374,6 +374,8 @@ function renderMethod(){
 // over chance with the margin removed, and ours on the same line
 const BOOK_STATS = ['goals','corners','cards','sot','shots','fouls','goal_kicks','throw_ins','saves','woodwork'];
 const pts = d => `${d > 0 ? '+' : ''}${Math.round(d * 100)}`;
+// Vs Bookie shows a difference only from 10 points (as displayed, after rounding)
+const big10 = d => Math.abs(Math.round(d * 100)) >= 10;
 
 function marketRows(g){
   const m = g.market, out = [];
@@ -411,11 +413,11 @@ function renderMarket(){
         <tr><td class="muted">Bookie odds</td>${res.odds.map(o => `<td class="n">${o.toFixed(2)}</td>`).join('')}</tr>
         <tr><td class="muted">Model odds</td>${mr.map(p => `<td class="n tot">${modelOdds(p)}</td>`).join('')}</tr>
         <tr><td class="muted">Bookie %</td>${res.fair.map(p => `<td class="n">${pct(p)}</td>`).join('')}</tr>
-        <tr><td class="muted">Model %</td>${mr.map((p, i) => `<td class="n tot">${pct(p)} <span class="${Math.abs(p - res.fair[i]) >= .1 ? (p > res.fair[i] ? 'w' : 'l') : 'muted'}" style="font-size:11px">${pts(p - res.fair[i])}</span></td>`).join('')}</tr></tbody></table>`;
+        <tr><td class="muted">Model %</td>${mr.map((p, i) => `<td class="n tot">${pct(p)} ${big10(p - res.fair[i]) ? `<span class="${p > res.fair[i] ? 'w' : 'l'}" style="font-size:11px">${pts(p - res.fair[i])}</span>` : ''}</td>`).join('')}</tr></tbody></table>`;
       h += `<table class="mk"><thead><tr><th>Stat</th><th class="n">Model total</th><th class="n">Line</th><th class="n">Bookie odds<br>over · under</th><th class="n">Model odds<br>over · under</th><th class="n">Bookie %</th><th class="n">Model %</th><th class="n">Diff</th></tr></thead><tbody>`;
       for (const r of marketRows(g)){
-        const hot = Math.abs(r.diff) >= .1;
-        h += `<tr><td>${L[r.s]}</td><td class="n">${f(r.total, r.s)}</td><td class="n">${r.ln}</td><td class="n muted">${r.ov.toFixed(2)} · ${r.un.toFixed(2)}</td><td class="n tot">${modelOdds(r.ours)} · ${modelOdds(1 - r.ours)}</td><td class="n">${pct(r.fair)}</td><td class="n tot">${pct(r.ours)}</td><td class="n ${hot ? (r.diff > 0 ? 'w' : 'l') : 'muted'}">${pts(r.diff)}</td></tr>`;
+        const hot = big10(r.diff);
+        h += `<tr><td>${L[r.s]}</td><td class="n">${f(r.total, r.s)}</td><td class="n">${r.ln}</td><td class="n muted">${r.ov.toFixed(2)} · ${r.un.toFixed(2)}</td><td class="n tot">${modelOdds(r.ours)} · ${modelOdds(1 - r.ours)}</td><td class="n">${pct(r.fair)}</td><td class="n tot">${pct(r.ours)}</td><td class="n ${r.diff > 0 ? 'w' : 'l'}">${hot ? pts(r.diff) : ''}</td></tr>`;
       }
       h += '</tbody></table></div></div>';
     }
