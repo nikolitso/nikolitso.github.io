@@ -308,37 +308,6 @@ body { overflow-x: clip; }  /* safety net */
 
 
   <!-- unders:start -->
-  <section id="unders" aria-labelledby="h-unders">
-    <style>
-#unders .sec-intro { max-width: 60ch; }
-.ucards { list-style: none; margin: 1.75rem 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr)); gap: 1rem; }
-.uc { display: grid; gap: .3rem; padding: 1rem 1.1rem; border: 1px solid var(--rule); border-radius: 14px; background: var(--paper); text-decoration: none; color: inherit; transition: border-color .2s ease; }
-.uc:hover { border-color: var(--accent); }
-.uc-meta { font-size: .7rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
-.uc-match { font-family: var(--display); font-size: 1.3rem; line-height: 1.15; }
-.uc-bet { font-size: .95rem; } .uc-bet b { font-size: 1.15rem; }
-.uc-sub { font-size: .82rem; color: var(--muted); }
-.uc-more { margin: 1.25rem 0 0; font-size: .9rem; }
-</style>
-    <div class="wrap">
-      <p class="kicker">Betting picks</p>
-      <h2 id="h-unders">Unders this round</h2>
-      <p class="sec-intro">Under 2.5 goals in Greece's Super League 2 and Division A Women, where the best Greek price is at least 10% above the model's chance. Same rule on the 126 played games it picked since 2024: 48% won, +5% return at closing odds. A small sample, so treat it as a lead, not proof.</p>
-      <ul class="ucards">
-        <li data-ko="2026-10-24 15:00"><a class="uc" href="/greek-lower/#view=market&amp;league=sl2"><span class="uc-meta">Super League 2 · Sat 24 Oct 15:00</span><span class="uc-match">Kalamaria – Niki Volos</span><span class="uc-bet">Under 2.5 at <b>2.12</b> Stoiximan.gr</span><span class="uc-sub">Model odds 1.49 · edge +36%</span></a></li>
-        <li data-ko="2026-10-24 15:00"><a class="uc" href="/greek-lower/#view=market&amp;league=sl2"><span class="uc-meta">Super League 2 · Sat 24 Oct 15:00</span><span class="uc-match">Panserraikos – Ellas Syrou</span><span class="uc-bet">Under 2.5 at <b>1.75</b> Stoiximan.gr</span><span class="uc-sub">Model odds 1.49 · edge +12%</span></a></li>
-      </ul>
-      <p class="uc-more"><a href="/greek-lower/#view=market">Every game, odds and the full record →</a></p>
-    </div>
-    <script>
-    (() => {                                       // hide games that have kicked off (times are Athens)
-      const p = Object.fromEntries(new Intl.DateTimeFormat('en-CA', {timeZone: 'Europe/Athens', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hourCycle: 'h23'}).formatToParts(new Date()).map(x => [x.type, x.value]));
-      const now = `${p.year}-${p.month}-${p.day} ${p.hour}:${p.minute}`;
-      document.querySelectorAll('#unders [data-ko]').forEach(li => { if (li.dataset.ko <= now) li.remove(); });
-      if (!document.querySelector('#unders [data-ko]')) document.getElementById('unders').remove();
-    })();
-    </script>
-  </section>
   <!-- unders:end -->
 
   <section id="latest" aria-labelledby="h-latest">
