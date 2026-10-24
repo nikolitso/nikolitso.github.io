@@ -261,7 +261,7 @@ function llRow(lab, m, b, n){
 
 function renderMarket(){
   const L = LG(), cur = +DATA.season.slice(0,4);
-  let h = `<p class="note"><b>Model</b> is the model's chance, <b>Bookie</b> the bookmakers' chance with their margin taken out (average of every Greek bookmaker on Flashscore). <b>Best odds</b> is the highest price among them and <b>edge</b> = model chance × best odds − 1. Rows at or above the chosen edge are highlighted and counted in the record below. A very big gap usually means the bookmakers know something the model cannot see from scores alone (unpaid players, a youth side fielded, a coach change).</p>
+  let h = `<p class="note"><b>Model</b> is the model's chance, <b>Bookie</b> the bookmakers' chance with their margin taken out (average of every Greek bookmaker). <b>Best odds</b> is the highest price among them and <b>edge</b> = model chance × best odds − 1. Rows at or above the chosen edge are highlighted and counted in the record below. A very big gap usually means the bookmakers know something the model cannot see from scores alone (unpaid players, a youth side fielded, a coach change).</p>
     <div class="bar"><span class="muted" style="font:400 12px var(--mono);text-transform:uppercase;letter-spacing:.08em">Edge from</span><div class="chips" id="edge">${[.05, .10, .15, .20, .30].map(x => `<button class="chip${x === edgeMin ? ' on' : ''}" data-e="${x}">${Math.round(x*100)}%</button>`).join('')}</div></div>`;
   h += L.fixtures.length ? `<h2>Next round</h2><div class="grid">${L.fixtures.map(vbCard).join('')}</div>` : '<p class="note">The next round is not scheduled yet.</p>';
 
@@ -271,7 +271,7 @@ function renderMarket(){
   const rows = mkSeason === 'all' ? priced : priced.filter(r => r.season === pickS);
   const R = record(rows), a = R.all;
   h += `<h2>Record on played games</h2>
-    <p class="note">Every played game with Flashscore odds: 1 unit on every pick at or above the edge, at the best price. The model only used earlier games. <b>Closing</b> uses the last prices before kick-off, <b>opening</b> the first prices posted, which are softer but on the board days before the model is refitted after the previous round.</p>
+    <p class="note">Every played game with bookmaker odds: 1 unit on every pick at or above the edge, at the best price. The model only used earlier games. <b>Closing</b> uses the last prices before kick-off, <b>opening</b> the first prices posted, which are softer but on the board days before the model is refitted after the previous round.</p>
     <div class="bar"><div class="seg" id="mkwhen"><button data-w="close" class="${oddsWhen === 'close' ? 'on' : ''}">Closing odds</button><button data-w="open" class="${oddsWhen === 'open' ? 'on' : ''}">Opening odds</button></div><div class="seg" id="mkseason"><button data-s="all" class="${mkSeason === 'all' ? 'on' : ''}">All</button>${seasons.map(s => `<button data-s="${s === cur ? 'cur' : s}" class="${mkSeason !== 'all' && pickS === s ? 'on' : ''}">${s}–${String(s+1).slice(2)}</button>`).join('')}</div></div>
     <div class="metrics"><div class="metric"><div class="lbl">Games with odds</div><div class="big">${rows.length}</div></div>
     <div class="metric"><div class="lbl">Bets</div><div class="big">${a.n}</div></div>
@@ -339,7 +339,7 @@ function renderMethod(){
   }).join('');
   const prm = DATA.leagues.map(l => `<tr><td>${l.name}</td><td class="n">${l.params['1x2'].half_life}</td><td class="n">${l.params['1x2'].k}</td><td class="n">${l.params['1x2'].a}</td><td class="n">${l.params['1x2'].u ?? 0}</td><td class="n gl">${l.params.ou.half_life}</td><td class="n">${l.params.ou.k}</td><td class="n">${l.params.ou.a}</td><td class="n">${l.params.ou.u ?? 0}</td><td class="n gl">${l.home.toFixed(2)} – ${l.away.toFixed(2)}</td></tr>`).join('');
   return `<div class="doc">
-  <p>What goes in: every league game of the last three seasons from Flashscore, for Super League 2, all four Gamma Ethniki groups and Division A Women, plus the Super League and Super League 2 team lists to know who was relegated. For games already played in these three leagues, the closing bookmaker odds go in too (see below).</p>
+  <p>What goes in: every league game of the last three seasons, for Super League 2, all four Gamma Ethniki groups and Division A Women, plus the Super League and Super League 2 team lists to know who was relegated. For games already played in these three leagues, the closing bookmaker odds go in too (see below).</p>
   <h3><span class="num">1</span>Ratings</h3>
   <p>Each team gets an attack and a defence rating, plus one home advantage per league. Expected goals for a game are</p>
   <div class="calc">home goals = league average × home advantage × home attack × away defence<br>away goals = league average × away attack × home defence</div>
