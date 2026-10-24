@@ -457,7 +457,7 @@ function renderMarket(){
   const big = all.filter(r => Math.abs(r.diff) >= .1 && r.s !== 'shots').sort((a, b) => Math.abs(b.diff) - Math.abs(a.diff)).slice(0, 8);
   if (big.length){
     h += `<h2>Biggest differences</h2><div class="scroll"><table class="mk"><thead><tr><th>Match</th><th>Stat</th><th class="n">Model total</th><th class="n">Line</th><th class="n">Bookie %</th><th class="n">Model %</th><th class="n">Diff</th><th class="n">Model side · bookie odds</th></tr></thead><tbody>`;
-    for (const r of big) h += `<tr><td>${r.g.home} – ${r.g.away}${tenureLine(r.g)}</td><td>${L[r.s]}</td><td class="n">${f(r.total, r.s)}</td><td class="n">${r.ln}</td><td class="n">${pct(r.fair)}</td><td class="n tot">${pct(r.ours)}</td><td class="n ${r.diff > 0 ? 'w' : 'l'}">${pts(r.diff)}</td><td class="n">${r.diff > 0 ? 'Over ' + r.ov.toFixed(2) : 'Under ' + r.un.toFixed(2)}</td></tr>`;
+    for (const r of big) h += `<tr><td>${r.g.home} – ${r.g.away}</td><td>${L[r.s]}</td><td class="n">${f(r.total, r.s)}</td><td class="n">${r.ln}</td><td class="n">${pct(r.fair)}</td><td class="n tot">${pct(r.ours)}</td><td class="n ${r.diff > 0 ? 'w' : 'l'}">${pts(r.diff)}</td><td class="n">${r.diff > 0 ? 'Over ' + r.ov.toFixed(2) : 'Under ' + r.un.toFixed(2)}</td></tr>`;
     h += '</tbody></table></div>';
   }
   const byDay = {};
@@ -466,7 +466,7 @@ function renderMarket(){
     h += `<h2 class="day">${dayName(d)}</h2><div class="stack">`;
     for (const g of gs){
       const res = g.market.result, mr = [g.result.home, g.result.draw, g.result.away];
-      h += `<div class="card"><div class="ko">${g.kickoff.slice(11)}</div><h3>${g.home} <span class="muted">–</span> ${g.away}</h3>${coachHtml(g.coaches, g.home, g.away)}${sampleHtml(g)}<div class="mkcols">`;
+      h += `<div class="card"><div class="ko">${g.kickoff.slice(11)}</div><h3>${g.home} <span class="muted">–</span> ${g.away}</h3>${sampleHtml(g)}<div class="mkcols">`;
       if (res) h += `<table class="mk"><thead><tr><th>Result</th><th class="n">1</th><th class="n">X</th><th class="n">2</th></tr></thead><tbody>
         <tr><td class="muted">Bookie odds</td>${res.odds.map(o => `<td class="n">${o.toFixed(2)}</td>`).join('')}</tr>
         <tr><td class="muted">Model odds</td>${mr.map(p => `<td class="n tot">${modelOdds(p)}</td>`).join('')}</tr>
