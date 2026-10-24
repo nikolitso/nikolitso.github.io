@@ -71,8 +71,8 @@ table.mk{margin-bottom:6px}table.mk td,table.mk th{padding:6px 7px}
 .wdlt i{font-style:normal;color:var(--gold)}
 .wdlt span:nth-child(2){text-align:center}.wdlt span:last-child{text-align:right}
 .coach .who{display:inline-block;min-width:118px;color:var(--muted)}
+.tenure{font:400 12px/1.4 var(--mono);color:var(--muted);margin-top:2px}
 .coach{font:400 13.5px/1.55 var(--mono);color:var(--muted);margin-top:2px}
-.coach b{color:var(--text)}
 .coach b{color:var(--text);font-weight:500}
 table.tm{max-width:1000px}table.tm .gl{border-left:1px solid var(--line);padding-left:12px}
 table.tm tr.grp th{color:var(--gold);border-bottom:0;padding-bottom:0}
@@ -169,6 +169,10 @@ const coachHtml = (c, home, away) => c ? `<div class="coach"><span class="who">$
 const sampleOne = (n, x) => `${n} <b>${x.window}</b>`;
 const sampleTip = g => [['home', g.home], ['away', g.away]].map(([k, n]) => `${n}: ${g.sample[k].season} of them this season`).join(', ');
 const sampleHtml = g => g.sample ? `<div class="coach sample" title="${sampleTip(g)}"><span class="who">Stats from</span> ${sampleOne(g.home, g.sample.home)} · ${sampleOne(g.away, g.sample.away)} league games since ${D.history.from}–${String(+D.history.from + 1).slice(2)}</div>` : '';
+// compact coach tenure under a match in tables: "Mazzarri 7 · Leto 43 games in charge"
+const tenureOne = c => c ? `${surname(c[0])} ${c[2]}` : '–';
+const tenureLine = g => g && g.coaches ? `<div class="tenure" title="League games in charge of the current coach">${tenureOne(g.coaches.home)} · ${tenureOne(g.coaches.away)} games in charge</div>` : '';
+const fixtureOf = b => D.fixtures.find(g => g.home === b.home && g.away === b.away);
 function refHtml(r){
   if (!r) return '<div class="ref">Referee <b>not announced</b></div>';
   if (!r.games) return `<div class="ref">Referee <b>${r.name}</b> · no league games since ${r.from.replace('-', '–')} · no adjustment</div>`;
@@ -210,7 +214,7 @@ function renderProjections(){
   for (const g of D.fixtures){
     const x = g.stats[s];
     const rf = (s === 'cards' || s === 'fouls') && g.ref ? ` <span class="muted" style="font-size:12px">· ${g.ref.name}${g.ref.games ? ' ' + mult(g.ref[s]) : ''}</span>` : '';
-    h += `<tr><td class="muted">${dayName(g.kickoff)} ${g.kickoff.slice(11)}</td><td>${g.home} – ${g.away}${rf}</td><td class="n">${f(x.home,s)}</td><td class="n">${f(x.away,s)}</td>${s==='possession'?'':`<td class="n tot">${f(x.total,s)}</td>`}<td class="ln">${linesHtml(x.lines)}</td></tr>`;
+    h += `<tr><td class="muted">${dayName(g.kickoff)} ${g.kickoff.slice(11)}</td><td>${g.home} – ${g.away}${rf}${tenureLine(g)}</td><td class="n">${f(x.home,s)}</td><td class="n">${f(x.away,s)}</td>${s==='possession'?'':`<td class="n tot">${f(x.total,s)}</td>`}<td class="ln">${linesHtml(x.lines)}</td></tr>`;
   }
   return h + '</tbody></table></div>';
 }
@@ -399,7 +403,7 @@ function renderMarket(){
   const big = all.filter(r => Math.abs(r.diff) >= .1 && r.s !== 'shots').sort((a, b) => Math.abs(b.diff) - Math.abs(a.diff)).slice(0, 8);
   if (big.length){
     h += `<h2>Biggest differences</h2><div class="scroll"><table class="mk"><thead><tr><th>Match</th><th>Stat</th><th class="n">Model total</th><th class="n">Line</th><th class="n">Bookie %</th><th class="n">Model %</th><th class="n">Diff</th><th class="n">Model side · bookie odds</th></tr></thead><tbody>`;
-    for (const r of big) h += `<tr><td>${r.g.home} – ${r.g.away}</td><td>${L[r.s]}</td><td class="n">${f(r.total, r.s)}</td><td class="n">${r.ln}</td><td class="n">${pct(r.fair)}</td><td class="n tot">${pct(r.ours)}</td><td class="n ${r.diff > 0 ? 'w' : 'l'}">${pts(r.diff)}</td><td class="n">${r.diff > 0 ? 'Over ' + r.ov.toFixed(2) : 'Under ' + r.un.toFixed(2)}</td></tr>`;
+    for (const r of big) h += `<tr><td>${r.g.home} – ${r.g.away}${tenureLine(r.g)}</td><td>${L[r.s]}</td><td class="n">${f(r.total, r.s)}</td><td class="n">${r.ln}</td><td class="n">${pct(r.fair)}</td><td class="n tot">${pct(r.ours)}</td><td class="n ${r.diff > 0 ? 'w' : 'l'}">${pts(r.diff)}</td><td class="n">${r.diff > 0 ? 'Over ' + r.ov.toFixed(2) : 'Under ' + r.un.toFixed(2)}</td></tr>`;
     h += '</tbody></table></div>';
   }
   const byDay = {};
@@ -408,7 +412,7 @@ function renderMarket(){
     h += `<h2 class="day">${dayName(d)}</h2><div class="stack">`;
     for (const g of gs){
       const res = g.market.result, mr = [g.result.home, g.result.draw, g.result.away];
-      h += `<div class="card"><div class="ko">${g.kickoff.slice(11)}</div><h3>${g.home} <span class="muted">–</span> ${g.away}</h3>${sampleHtml(g)}<div class="mkcols">`;
+      h += `<div class="card"><div class="ko">${g.kickoff.slice(11)}</div><h3>${g.home} <span class="muted">–</span> ${g.away}</h3>${coachHtml(g.coaches, g.home, g.away)}${sampleHtml(g)}<div class="mkcols">`;
       if (res) h += `<table class="mk"><thead><tr><th>Result</th><th class="n">1</th><th class="n">X</th><th class="n">2</th></tr></thead><tbody>
         <tr><td class="muted">Bookie odds</td>${res.odds.map(o => `<td class="n">${o.toFixed(2)}</td>`).join('')}</tr>
         <tr><td class="muted">Model odds</td>${mr.map(p => `<td class="n tot">${modelOdds(p)}</td>`).join('')}</tr>
@@ -467,7 +471,7 @@ function renderValue(){
   if (!bets.length) h += `<p class="empty">No bets at EV ${label(valMin)} or more for the coming games.</p>`;
   else {
     h += `<h2>Coming games</h2><div class="scroll"><table class="mk"><thead><tr><th>Kick-off</th><th>Match</th><th>Bet</th><th class="n">Bookie odds</th><th class="n">Model odds</th><th class="n">Bookie %</th><th class="n">Model %</th><th class="n">EV</th></tr></thead><tbody>`;
-    for (const b of bets) h += `<tr><td class="muted">${dayName(b.kickoff)} ${b.kickoff.slice(11)}</td><td>${b.home} – ${b.away}</td><td><b>${betName(b)}</b></td><td class="n">${b.odds.toFixed(2)}</td><td class="n tot">${modelOdds(b.ours)}</td><td class="n">${pct(b.fair)}</td><td class="n tot">${pct(b.ours)}</td><td class="n ${b.ev >= .15 ? 'w' : ''}">${evPct(b.ev)}</td></tr>`;
+    for (const b of bets) h += `<tr><td class="muted">${dayName(b.kickoff)} ${b.kickoff.slice(11)}</td><td>${b.home} – ${b.away}${tenureLine(fixtureOf(b))}</td><td><b>${betName(b)}</b></td><td class="n">${b.odds.toFixed(2)}</td><td class="n tot">${modelOdds(b.ours)}</td><td class="n">${pct(b.fair)}</td><td class="n tot">${pct(b.ours)}</td><td class="n ${b.ev >= .15 ? 'w' : ''}">${evPct(b.ev)}</td></tr>`;
     h += '</tbody></table></div>';
   }
   if (!settled.length) return h + `<p class="muted" style="margin-top:18px">No settled bets yet at this EV level: the record starts once results for logged bets are in the data.</p>`;
