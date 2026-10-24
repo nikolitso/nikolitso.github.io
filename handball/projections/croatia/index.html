@@ -142,6 +142,7 @@ html{scroll-behavior:smooth}section{scroll-margin-top:60px}
 <section id="projections">
   <div><div class="eyebrow">Full time</div><h2>Projections</h2></div>
   <div class="tiles" id="sgTiles"></div>
+  <div class="tbl" id="sgPicks" hidden><table id="sgPicksT"></table></div>
   <h3>Leagues</h3>
   <p class="small muted">Open a league for its projections against the bookmaker.</p>
   <div class="tiles" id="sgLeagues"></div>
@@ -220,9 +221,12 @@ const day=d=>{if(!d)return '–';const [y,m,dd]=d.split('-');return new Date(+y,
   const push=done.filter(x=>x.status==='push').length;
   $('#sgRec').innerHTML=S.length?`<table><thead><tr><th>Flagged</th><th>Wins</th><th>Losses</th><th>Pushes</th><th>To play</th><th>Return (units)</th><th>Return %</th></tr></thead><tbody><tr><td><b>${S.length}</b></td><td>${won}</td><td>${lost}</td><td>${push}</td><td>${S.length-done.length}</td><td class="${cls(pr)}"><b>${sg(pr,2)}</b></td><td class="${cls(pr)}">${done.length?pct(pr/done.length*100):'–'}</td></tr></tbody></table>`:'<table><tbody><tr><td class="l empty">Nothing flagged yet this season.</td></tr></tbody></table>';
   const nUp=L.reduce((a,l)=>a+l.upcoming.length,0), nOpen=S.length-done.length;
-  $('#sgTiles').innerHTML=[['Flagged now',nOpen,nOpen?'to play':'none right now'],['Record',`${won}–${lost}`,push?`${push} push`:'win – loss'],['Return',`<span class="${cls(pr)}">${sg(pr,2)}</span>`,'units, 1 per match'],['Matches with a line',nUp,'next 8 days'],['Leagues',L.length,'leagues']].map(([k,v,n])=>`<div class="tile"><span class="klabel">${k}</span><span class="stat">${v}</span><span class="small muted">${n}</span></div>`).join('');
+  $('#sgTiles').innerHTML=[['Flagged now',nOpen,nOpen?'to play':'none right now'],['Record',`${won}–${lost}`,(push?`${push} push`:'win – loss')+' · see picks',1],['Return',`<span class="${cls(pr)}">${sg(pr,2)}</span>`,'units · see picks',1],['Matches with a line',nUp,'next 8 days'],['Leagues',L.length,'leagues']].map(([k,v,n,pk])=>`<div class="tile${pk?' pick':''}"${pk?' role="button" tabindex="0" style="cursor:pointer"':''}><span class="klabel">${k}</span><span class="stat">${v}</span><span class="small muted">${n}</span></div>`).join('');
+  const PK=$('#sgPicks'), togglePicks=()=>{PK.hidden=!PK.hidden;if(!PK.hidden)PK.scrollIntoView({behavior:'smooth',block:'nearest'})};
+  document.querySelectorAll('#sgTiles .pick').forEach(t=>{t.onclick=togglePicks;t.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();togglePicks()}}});
   const st={open:'<span class="sig wait">To play</span>',won:'<span class="sig go">Win</span>',lost:'<span class="sig">Loss</span>',push:'<span class="sig">Push</span>'};
   $('#sgLog').innerHTML=S.length?`<thead><tr><th class="l">League</th><th class="l">Match</th><th class="l">Date</th><th>Call</th><th>Odds</th><th>Model total</th><th>Real total</th><th class="l">Result</th><th>Return</th></tr></thead><tbody>${S.map(x=>`<tr class="${x.status==='open'?'hot':''}"><td class="l muted">${(x.leagueName||'').split(' · ')[0]}</td><td class="l m"><b>${x.home}</b> – ${x.away}</td><td class="l">${day(x.date)} <span class="muted">${x.time||''}</span></td><td><b>${side(x.side||'over')} ${f(x.line,1)}</b></td><td>${f(x.odds)}</td><td>${f(x.ours,1)}</td><td>${x.total??'–'}</td><td class="l">${st[x.status]}</td><td class="${cls(x.profit)}">${x.profit==null?'–':sg(x.profit,2)}</td></tr>`).join('')}</tbody>`:'<tbody><tr><td class="l empty">Nothing yet.</td></tr></tbody>';
+  $('#sgPicksT').innerHTML=$('#sgLog').innerHTML;
   const U=L.flatMap(l=>(l.proj||[]).map(x=>({...x,lg:l}))).sort((a,b)=>(a.date+(a.time||'')).localeCompare(b.date+(b.time||'')));
   const nm=x=>x.lg.name.split(' · ').slice(0,1).join(' · ');
   const LG={spain:'w_es',portugal:'w_pt',austria:'w_at',romania:'w_ro',hungary:'w_hu',croatia:'w_hr',bundesliga:'w_de','2-bundesliga':'bl2'}, SL=Object.fromEntries(Object.entries(LG).map(([a,b])=>[b,a]));
