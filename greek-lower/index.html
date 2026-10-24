@@ -156,7 +156,7 @@ td.wr{white-space:normal}
   </div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=c68c557c"></script>
+<script src="data.js?v=78ac14cf"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -337,22 +337,23 @@ function renderMethod(){
     const b = l.backtest, g1 = (1 - b.ll_1x2 / b.base_1x2) * 100, g2 = (1 - b.ll_ou / b.base_ou) * 100;
     return `<tr><td>${l.name}</td><td class="n">${b.n}</td><td class="n">${b.ll_1x2.toFixed(3)}</td><td class="n muted">${b.base_1x2.toFixed(3)}</td><td class="n tot">${g1.toFixed(1)}%</td><td class="n gl">${b.ll_ou.toFixed(3)}</td><td class="n muted">${b.base_ou.toFixed(3)}</td><td class="n tot">${g2.toFixed(1)}%</td></tr>`;
   }).join('');
-  const prm = DATA.leagues.map(l => `<tr><td>${l.name}</td><td class="n">${l.params['1x2'].half_life}</td><td class="n">${l.params['1x2'].k}</td><td class="n">${l.params['1x2'].a}</td><td class="n gl">${l.params.ou.half_life}</td><td class="n">${l.params.ou.k}</td><td class="n">${l.params.ou.a}</td><td class="n gl">${l.home.toFixed(2)} – ${l.away.toFixed(2)}</td></tr>`).join('');
+  const prm = DATA.leagues.map(l => `<tr><td>${l.name}</td><td class="n">${l.params['1x2'].half_life}</td><td class="n">${l.params['1x2'].k}</td><td class="n">${l.params['1x2'].a}</td><td class="n">${l.params['1x2'].u ?? 0}</td><td class="n gl">${l.params.ou.half_life}</td><td class="n">${l.params.ou.k}</td><td class="n">${l.params.ou.a}</td><td class="n">${l.params.ou.u ?? 0}</td><td class="n gl">${l.home.toFixed(2)} – ${l.away.toFixed(2)}</td></tr>`).join('');
   return `<div class="doc">
-  <p>Only final scores go in: every league game of the last three seasons from Flashscore, for Super League 2, all four Gamma Ethniki groups and Division A Women, plus the Super League and Super League 2 team lists to know who was relegated.</p>
+  <p>What goes in: every league game of the last three seasons from Flashscore, for Super League 2, all four Gamma Ethniki groups and Division A Women, plus the Super League and Super League 2 team lists to know who was relegated. For games already played in these three leagues, the closing bookmaker odds go in too (see below).</p>
   <h3><span class="num">1</span>Ratings</h3>
   <p>Each team gets an attack and a defence rating, plus one home advantage per league. Expected goals for a game are</p>
   <div class="calc">home goals = league average × home advantage × home attack × away defence<br>away goals = league average × away attack × home defence</div>
   <p>The ratings are fitted to the old scores (Poisson). Recent games count more: a game loses half its weight every <i>half-life</i> days. Every rating is also pulled towards average (strength <i>k</i>), so a team with few games stays near average. Newly promoted teams start a step below average and relegated teams a step above (size <i>a</i>).</p>
+  <p>A final score is a noisy record of a game: a 1–0 can be a game the winner should have lost. So each past game also counts the goals its closing odds implied (the home and away expected goals that match the bookmakers' 1X2 and over/under prices), a stand-in for xG. A past game is fitted as (1 − <i>u</i>) × real goals + <i>u</i> × odds-implied goals. Only odds of games already played are used, never the odds of the game being predicted. In the backtest this made 1X2 about 1.5% more accurate in all three leagues; over/under gained less.</p>
   <h3><span class="num">2</span>Chances</h3>
   <p>The expected goals of each side give a Poisson chance for every score from 0–0 to 10–10. Adding them up gives home / draw / away and over / under 2.5. Odds shown are the chances with a 5% margin added, like a bookmaker price (1 / (chance × 1.05)), so a bookmaker price above them is worth a look.</p>
   <p>1X2 and over/under use two separate fits: the backtest showed that the goal total needs much more pull towards average than the home/away balance does. That is why the expected-goals line and the total can differ a little.</p>
   <h3><span class="num">3</span>Settings, picked by backtest</h3>
-  <div class="scroll"><table class="mini"><thead><tr><th></th><th class="n">1X2 half-life</th><th class="n">k</th><th class="n">a</th><th class="n gl">O/U half-life</th><th class="n">k</th><th class="n">a</th><th class="n gl">Avg goals H–A</th></tr></thead><tbody>${prm}</tbody></table></div>
+  <div class="scroll"><table class="mini"><thead><tr><th></th><th class="n">1X2 half-life</th><th class="n">k</th><th class="n">a</th><th class="n">u</th><th class="n gl">O/U half-life</th><th class="n">k</th><th class="n">a</th><th class="n">u</th><th class="n gl">Avg goals H–A</th></tr></thead><tbody>${prm}</tbody></table></div>
   <h3><span class="num">4</span>How good is it</h3>
   <p>Walk-forward test over 2024–25, 2025–26 and this season: before every week the model was refitted on earlier games only and then scored on that week. Log loss, lower is better; the baseline uses only how often home wins, draws, away wins and overs had happened so far.</p>
   <div class="scroll"><table class="mini"><thead><tr><th></th><th class="n">Games</th><th class="n">1X2 model</th><th class="n">baseline</th><th class="n">better</th><th class="n gl">O/U model</th><th class="n">baseline</th><th class="n">better</th></tr></thead><tbody>${rows}</tbody></table></div>
-  <p>1X2 is clearly better than knowing nothing about the teams. Over/under 2.5 is only slightly better: goal totals are hard to predict from scores alone, especially in Super League 2. There are no shots, xG, line-ups or odds in these models, so treat the numbers as a starting point, not as value on their own.</p>
+  <p>1X2 is clearly better than knowing nothing about the teams. Over/under 2.5 is only slightly better: goal totals are hard to predict from scores alone, especially in Super League 2. There are no shots, line-ups or team news in these models, and the bookmakers are still more accurate (see Vs Bookie), so treat the numbers as a starting point, not as value on their own.</p>
   </div>`;
 }
 
