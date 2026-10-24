@@ -1,0 +1,30 @@
+name: Update wine music
+
+on:
+  schedule:
+    - cron: "41 4 * * *"   # every day, 04:41 UTC
+  workflow_dispatch:        # "Run workflow" button in the Actions tab
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - run: python scripts/update_songs.py
+        env:
+          YT_API_KEY: ${{ secrets.YT_API_KEY }}
+      - name: Commit if changed
+        run: |
+          git add wine/songs.json
+          if git diff --cached --quiet; then exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Update wine music playlist"
+          git pull --rebase
+          git push
