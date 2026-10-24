@@ -96,6 +96,11 @@ th.sort{cursor:pointer;user-select:none} th.sort:hover,th.sort.on{color:var(--go
 .metric .big{font:500 24px var(--mono);color:var(--gold)}
 .scroll{overflow-x:auto}
 .doc{max-width:860px}
+table.mg td{white-space:normal;vertical-align:top;font-size:15px;line-height:1.5}table.mg td:first-child{white-space:nowrap;padding-right:18px}
+tr.ctl td{border-top:1px solid var(--gold);color:var(--gold)}
+.mgpk{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:24px;max-width:980px}
+h3.mgh{font:600 16px var(--body);margin:0 0 8px}
+details.mgall{margin-top:26px}details.mgall summary{cursor:pointer;font:600 18px var(--serif);margin-bottom:10px}
 .doc p,.doc li{font-size:16.5px;line-height:1.65;margin:0 0 14px}
 .doc ul{padding-left:20px;margin:0 0 14px}
 .doc h3{font:600 18px var(--serif);margin:28px 0 8px;display:flex;align-items:center;gap:10px}
@@ -131,11 +136,12 @@ table.mini{margin:0 0 16px}
     <a href="#view=market" data-view="market">Vs Bookie</a>
     <a href="#view=results" data-view="results">Results</a>
     <a href="#view=teams" data-view="teams">Teams</a>
+    <a href="#view=managers" data-view="managers">Managers</a>
     <a href="#view=method" data-view="method">How it works</a>
   </div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=c8003f79"></script>
+<script src="data.js?v=82d6ef81"></script>
 <script>
 const D = window.SL, $ = id => document.getElementById(id);
 const L = D.labels, ORDER = D.order;
@@ -257,6 +263,54 @@ function renderTeams(){
          : `<td class="gl muted" colspan="5">–</td>`) + '</tr>';
   }
   return h + '</tbody></table></div>';
+}
+
+// Managers: the new-coach bounce against a no-change control, and how long a coach takes to peak
+function renderManagers(){
+  const G = D.managers;
+  if (!G) return '<p class="empty">No manager data yet.</p>';
+  const yrs = x => x.replace('-', '–').replace(/–20(\d\d)$/, '–$1');
+  const ppg = x => x == null ? '–' : x.toFixed(2);
+  const sd = (x, d = 2) => x == null ? '–' : (x > 0 ? '+' : x < 0 ? '−' : '') + Math.abs(x).toFixed(d);
+  const R = G.rows, B = R[0], F = R[1], C = G.control, P40 = G.peak[0], P60 = G.peak[1];
+  const best = P60.blocks.reduce((a, b) => b.pts > a.pts ? b : a);
+  const spread40 = Math.max(...P40.blocks.map(b => Math.abs(b.pts)));
+  let h = `<p class="note">Every coach change in the Super League from ${yrs(G.from)} to ${yrs(G.to)}, the seasons where the data names the coach of every game. A change counts when a club replaced its coach during the season (${G.changes} times). An assistant covering a few games before the coach returns is not a change; a caretaker and the permanent coach after him both count as the new regime. <b>Points vs model</b> is points above what the model expected before each game, so it allows for who the opponents were. xG, shots and corners are from 2019–20 on.</p>`;
+  h += `<div class="metrics">
+    <div class="metric"><div class="lbl">Coach changes studied</div><div class="big">${G.changes}</div></div>
+    <div class="metric"><div class="lbl">Points per game, last ${G.window} → first ${G.window}</div><div class="big">${ppg(B.ppg)} → ${ppg(F.ppg)}</div></div>
+    <div class="metric"><div class="lbl">Win rate, last ${G.window} → first ${G.window}</div><div class="big">${pct(B.win)} → ${pct(F.win)}</div></div>
+    <div class="metric"><div class="lbl">Same bad run, coach kept</div><div class="big">${ppg(C.ppg)}</div></div>
+    <div class="metric"><div class="lbl">Median spell</div><div class="big">${G.tenure.median} games</div></div></div>`;
+  h += `<h2>What the data says</h2><div class="scroll"><table class="mk mg" style="max-width:980px"><thead><tr><th>Aspect</th><th>Super League, ${yrs(G.from)} to ${yrs(G.to)}</th></tr></thead><tbody>
+    <tr><td><b>Short-term points gain</b></td><td>Teams went from <b>${ppg(B.ppg)}</b> points per game in the old coach's last ${G.window} games to <b>${ppg(F.ppg)}</b> in the new coach's first ${G.window} (90% range ${G.first5_range.map(ppg).join('–')}).</td></tr>
+    <tr><td><b>Win rate</b></td><td>Up from <b>${pct(B.win)}</b> to <b>${pct(F.win)}</b> of games.</td></tr>
+    <tr><td><b>Without a change</b></td><td>Teams on the same bad run who <b>kept</b> their coach got <b>${ppg(C.ppg)}</b> points per game and won <b>${pct(C.win)}</b> over their next ${G.window} (${C.situations.toLocaleString('en')} such runs). The jump after a change is the same bounce back from a bad run, not the new coach: a run of 0.8 points a game is mostly bad luck, and luck evens out either way.</td></tr>
+    <tr><td><b>Duration</b></td><td>There is no lasting lift to wear off. Against what the model expected, the new coach's teams were at <b>${sd(F.pae)}</b> points a game in games 1–5 and ${R.slice(2, 5).map(r => sd(r.pae)).join(', ')} in the next three blocks of 5: about level throughout. The old coach's last ${G.window} were ${sd(B.pae)} a game against expectation.</td></tr>
+    <tr><td><b>Underlying stats (xG / shots)</b></td><td>xG difference went from ${sd(B.xgd)} to ${sd(F.xgd)} a game, shots difference from ${sd(B.shd, 1)} to ${sd(F.shd, 1)}, corners ${sd(B.cod, 1)} to ${sd(F.cod, 1)}. Teams that kept their coach after the same run: xG difference ${sd(C.xgd)}. The new coach's numbers move no more than the old coach's would have.</td></tr>
+    <tr><td><b>Time to peak</b></td><td>No build-up. Among the ${P40.coaches} coaches who lasted ${P40.min}+ league games, games 1–10 were as good as any later block (all within ${spread40.toFixed(2)} points a game of their own average). Among the ${P60.coaches} who lasted ${P60.min}+, the best stretch was games ${best.games} (${sd(best.pts)} a game), then results fell off before they left.</td></tr>
+    <tr><td><b>How long coaches last</b></td><td>Median <b>${G.tenure.median}</b> league games over ${G.tenure.spells} finished spells: ${pct(G.tenure.le10)} lasted 10 games or fewer (caretakers included), ${pct(G.tenure.le20)} 20 or fewer, only ${pct(G.tenure.ge40)} reached 40.</td></tr>
+  </tbody></table></div>`;
+  h += `<h2>Before and after a change</h2><p class="muted" style="margin:-4px 0 10px;font-size:14px">Per game. Later blocks only include coaches who got that far within the season.</p><div class="scroll"><table class="mk" style="max-width:980px"><thead><tr><th></th><th class="n">Games</th><th class="n">Points</th><th class="n">Win %</th><th class="n">xG diff</th><th class="n">Shots diff</th><th class="n">Corners diff</th><th class="n">Points vs model</th></tr></thead><tbody>`;
+  const row = (lbl, r, cls = '') => `<tr class="${cls}"><td>${lbl}</td><td class="n muted">${r.n ?? '–'}</td><td class="n tot">${ppg(r.ppg)}</td><td class="n">${pct(r.win)}</td><td class="n">${sd(r.xgd)}</td><td class="n">${r.shd == null ? '–' : sd(r.shd, 1)}</td><td class="n">${r.cod == null ? '–' : sd(r.cod, 1)}</td><td class="n ${r.pae > .05 ? 'w' : r.pae < -.05 ? 'l' : ''}">${sd(r.pae)}</td></tr>`;
+  for (const r of R) h += row(r.label, r);
+  h += row(`Same bad run, coach kept (next ${G.window})`, {...C, n: null}, 'ctl');
+  h += '</tbody></table></div>';
+  h += `<h2>How long a coach needs to peak</h2><p class="muted" style="margin:-4px 0 10px;font-size:14px">Each coach's results in blocks of 10 games, minus his own average over the whole stretch, so the curve shows timing rather than who was good. Points per game; xG difference for spells from 2019–20 on.</p><div class="mgpk">`;
+  for (const P of G.peak){
+    h += `<div><h3 class="mgh">${P.coaches} coaches with ${P.min}+ games <span class="muted">(average ${ppg(P.avg_ppg)} points a game)</span></h3><table class="mk"><thead><tr><th>Games in charge</th><th class="n">Points vs own avg</th><th class="n">xG diff vs own avg</th></tr></thead><tbody>`;
+    for (const b of P.blocks) h += `<tr><td>${b.games}</td><td class="n ${b.pts > .05 ? 'w' : b.pts < -.05 ? 'l' : ''}">${sd(b.pts)}</td><td class="n">${sd(b.xgd)}</td></tr>`;
+    h += `</tbody></table><p class="muted" style="font-size:13px;margin:6px 0 0">xG from ${P.xg_coaches} of them.</p></div>`;
+  }
+  h += '</div>';
+  if (G.recent.length){
+    h += `<h2>Changes since ${G.to.slice(5)}</h2><p class="muted" style="margin:-4px 0 10px;font-size:14px">From the coach list we have, which only names the coaches still in charge at the end of 2025–26, so some changes that season may be missing.</p><div class="scroll"><table class="mk" style="max-width:860px"><thead><tr><th>Date</th><th>Team</th><th>New coach</th><th class="n">Last 5 before</th><th class="n">First 5</th><th class="n">Since (games)</th></tr></thead><tbody>`;
+    for (const r of G.recent.slice().reverse()) h += `<tr><td class="muted">${r.date}</td><td>${r.team}</td><td>${r.coach}</td><td class="n">${ppg(r.before.ppg)}</td><td class="n tot">${ppg(r.after.first5)}</td><td class="n">${ppg(r.after.ppg)} <span class="muted">(${r.after.games})</span></td></tr>`;
+    h += '</tbody></table></div>';
+  }
+  h += `<details class="mgall"><summary>Every in-season change, ${yrs(G.from)} to ${yrs(G.to)} (${G.list.length})</summary><div class="scroll"><table class="mk" style="max-width:980px"><thead><tr><th>Date</th><th>Team</th><th>Out</th><th>In</th><th class="n">Last 5</th><th class="n">First 5</th><th class="n">Rest of season</th></tr></thead><tbody>`;
+  for (const r of G.list) h += `<tr><td class="muted">${r.date}</td><td>${r.team}</td><td>${surname(r.old)}</td><td>${surname(r.new)}</td><td class="n">${ppg(r.before)}</td><td class="n tot">${ppg(r.first5)}</td><td class="n">${ppg(r.rest)} <span class="muted">(${r.games})</span></td></tr>`;
+  return h + '</tbody></table></div></details>';
 }
 
 const sgn = x => (x >= 0 ? '+ ' : '− ') + Math.abs(x).toFixed(1);
@@ -488,7 +542,7 @@ function renderValue(){
 }
 
 function render(){
-  $('out').innerHTML = {projections: renderProjections, value: renderValue, market: renderMarket, results: renderResults, teams: renderTeams, method: renderMethod}[view]();
+  $('out').innerHTML = {projections: renderProjections, value: renderValue, market: renderMarket, results: renderResults, teams: renderTeams, managers: renderManagers, method: renderMethod}[view]();
   document.querySelectorAll('#pjmode button').forEach(b => b.onclick = () => { pjMode = b.dataset.m; render(); });
   const chips = (id, set) => document.querySelectorAll(`#${id} .chip`).forEach(b => b.onclick = () => { set(b.dataset.s); render(); });
   chips('pjstat', s => pjStat = s); chips('rsstat', s => rsStat = s); chips('tmstat', s => tmStat = s);
@@ -496,7 +550,7 @@ function render(){
   document.querySelectorAll('th.sort').forEach(t => t.onclick = () => { const k = t.dataset.k; tmSort = [k, tmSort[0] === k ? -tmSort[1] : (k === 'team' ? 1 : -1)]; render(); });
 }
 function setView(v){
-  view = ['projections','value','market','results','teams','method'].includes(v) ? v : 'projections';
+  view = ['projections','value','market','results','teams','managers','method'].includes(v) ? v : 'projections';
   document.querySelectorAll('#tabs a').forEach(a => a.classList.toggle('on', a.dataset.view === view));
   render();
 }
