@@ -136,7 +136,7 @@ table.mini{margin:0 0 16px}
   </div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=68678c6d"></script>
+<script src="data.js?v=42caa0b7"></script>
 <script>
 const D = window.SL, $ = id => document.getElementById(id);
 const L = D.labels, ORDER = D.order;
@@ -460,7 +460,7 @@ function renderValue(){
   const settled = R.settled.filter(b => b.ev >= valMin - 1e-9);
   const all = summary(settled);
   const label = x => x >= .3 ? '30%+' : Math.round(x * 100) + '%';
-  let h = `<p class="note">A bet is <b>value</b> when the model's chance of it winning, times the bookie's odds, comes to more than 1: on average it would return more than the stake. <b>EV</b> = model chance × bookie odds − 1, the expected return per 1 staked (EV +20% = 1.20 back per 1, on average). The bookie's own chance is shown for comparison only. One bet per game and stat (the best line), on lines where the bookie's own chance is between ${Math.round(V.fair_range[0] * 100)}% and ${Math.round(V.fair_range[1] * 100)}%.</p>
+  let h = `<p class="note">A bet is <b>value</b> when the model's chance of it winning, times the bookie's odds, comes to more than 1: on average it would return more than the stake. <b>EV</b> = model chance × bookie odds − 1, the expected return per 1 staked (EV +20% = 1.20 back per 1, on average). The bookie's own chance is shown for comparison only. Level lines only: for each game and stat, the bookie's main line (the one it prices closest to 50-50, odds around 2.00 each side), and only when its own chance is between ${Math.round(V.fair_range[0] * 100)}% and ${Math.round(V.fair_range[1] * 100)}%.</p>
   <p class="note"><b>Not listed:</b> ${Object.entries(V.skip).map(([s, why]) => `<b>${lc(s)}</b>: ${why}`).join('; ')}. A very large EV usually means the model is missing something (a new coach, injuries, a change of style) rather than a gift, so check those first. Every bet from EV +5% is recorded (the list starts at +10%) with its last odds before kick-off and settled when the results come in; the record below follows the minimum EV you pick.</p>
   <div class="bar"><span class="muted" style="font:400 13px var(--mono)">Minimum EV</span><div class="seg" id="valmin">${EV_STEPS.map(x => `<button data-v="${x}" class="${x === valMin ? 'on' : ''}">${label(x)}</button>`).join('')}</div></div>`;
   h += `<div class="metrics">
