@@ -238,6 +238,10 @@ footer{margin-top:72px;padding-top:22px;border-top:1px solid var(--line);color:v
 .tonight .tmrw .amp{font-size:17px}
 .tonight .tmrw small{color:var(--muted);font-size:14.5px}
 .tonight .dotw{width:9px;height:9px;border-radius:50%;background:#f3e27a;align-self:center}.tonight .dotw.c-Rosé{background:#f48fa8}.tonight .dotw.c-Red{background:#d8294f}
+.playlist{margin:8px 0 30px;padding:22px 26px;border:1px solid var(--line2);border-radius:20px;background:rgba(10,4,6,.35);text-align:center}
+.playlist .showall{margin-top:14px}
+.plframe{position:relative;margin-top:14px;padding-top:56.25%;border-radius:12px;overflow:hidden;background:#000}
+.plframe iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
 .tonight .why{margin:12px 0 0;color:var(--text);max-width:70ch;font-size:16px}
 .occasion{margin:4px 0 8px;padding:18px 22px}
 .occasion h3{font:700 24px/1.2 var(--display);color:var(--cream);margin:6px 0 4px}
@@ -319,7 +323,7 @@ const UI = {
     estatesLede: 'Every estate on the list, with all of its labels. Select a label to see its tasting notes and pairings.',
     label1: 'label', labelsN: 'labels', favTitle: 'Top 10 favourites', allEstates: 'All estates', mapTitle: 'Choose a region', mapHint: 'Select a region on the map to see its estates.', mapAll: 'Show all regions', mapAria: 'Map of Greece with wine regions', mapLegend: 'Filled markers are regions with estates on the list. Hollow markers are wine regions still to come.', estN: 'estates', est1: 'estate', topWhite: 'Top 20 White', topRose: 'Top 20 Rosé', topRed: 'Top 20 Red', allWines: 'All wines', winery: 'Region', colour: 'Colour', listTitle: 'The Wine List',
     listLede: 'Every wine on the list with the food it suits. Select a wine to see its full tasting notes.',
-    exploreTitle: 'Browse by colour, grape and region', filter: 'Showing', clearFilter: 'Clear', tonight: 'Tonight', tomorrow: 'Tomorrow', feast: 'Feast of the month',
+    exploreTitle: 'Browse by colour, grape and region', filter: 'Showing', clearFilter: 'Clear', tonight: 'Tonight', tomorrow: 'Tomorrow', music: 'Music for the table', playMusic: 'Play the playlist', feast: 'Feast of the month',
     col: {White: 'White', 'Rosé': 'Rosé', Red: 'Red'}, wine: 'wine', winesN: 'wines',
     bestFor: 'Dishes where it is the first choice', more: 'More wines that fit', dishesFor: 'Dishes',
     begin: 'Where to begin', beginText: (r, w) => `Pick a chip above, or type a dish. ${r} dishes and ${w} wines are loaded.`,
@@ -337,7 +341,7 @@ const UI = {
     estatesLede: 'Όλα τα κτήματα της λίστας, με όλες τις ετικέτες τους. Επιλέξτε μια ετικέτα για να δείτε τις γευστικές σημειώσεις και τα ταιριάσματά της.',
     label1: 'ετικέτα', labelsN: 'ετικέτες', favTitle: 'Τα 10 αγαπημένα', allEstates: 'Όλα τα κτήματα', mapTitle: 'Επιλέξτε περιοχή', mapHint: 'Επιλέξτε μια περιοχή στον χάρτη για να δείτε τα κτήματά της.', mapAll: 'Όλες οι περιοχές', mapAria: 'Χάρτης της Ελλάδας με τις οινικές περιοχές', mapLegend: 'Τα γεμάτα σημάδια είναι περιοχές με κτήματα στη λίστα. Τα κενά είναι οινικές περιοχές που θα προστεθούν.', estN: 'κτήματα', est1: 'κτήμα', topWhite: 'Τα 20 κορυφαία λευκά', topRose: 'Τα 20 κορυφαία ροζέ', topRed: 'Τα 20 κορυφαία ερυθρά', allWines: 'Όλα τα κρασιά', winery: 'Περιοχή', colour: 'Χρώμα', listTitle: 'Η Λίστα Κρασιών',
     listLede: 'Όλα τα κρασιά της λίστας με τα φαγητά που τους ταιριάζουν. Επιλέξτε ένα κρασί για να δείτε τις πλήρεις γευστικές σημειώσεις.',
-    exploreTitle: 'Ανά χρώμα, ποικιλία και περιοχή', filter: 'Εμφανίζονται', clearFilter: 'Καθαρισμός', tonight: 'Απόψε', tomorrow: 'Αύριο', feast: 'Γιορτή του μήνα',
+    exploreTitle: 'Ανά χρώμα, ποικιλία και περιοχή', filter: 'Εμφανίζονται', clearFilter: 'Καθαρισμός', tonight: 'Απόψε', tomorrow: 'Αύριο', music: 'Μουσική για το τραπέζι', playMusic: 'Παίξε τη λίστα', feast: 'Γιορτή του μήνα',
     col: {White: 'Λευκό', 'Rosé': 'Ροζέ', Red: 'Ερυθρό'}, wine: 'κρασί', winesN: 'κρασιά',
     bestFor: 'Πιάτα όπου είναι η πρώτη επιλογή', more: 'Περισσότερα κρασιά που ταιριάζουν', dishesFor: 'Πιάτα',
     begin: 'Από πού να ξεκινήσετε', beginText: (r, w) => `Επιλέξτε ένα κουμπί παραπάνω ή γράψτε ένα πιάτο. Φορτώθηκαν ${r} πιάτα και ${w} κρασιά.`,
@@ -942,6 +946,9 @@ function tonightHtml(pairs) {
     <div class="pw c-${colourKey(w)}">${bottle(w)}<span><a class="wl" data-wine="${esc(w.id)}">${esc(L(w, 'name'))}</a><small><b class="cw">${esc(t('col')[colourKey(w)])}</b>${esc(L(w, 'winery'))} · ${esc(L(w, 'region'))}</small></span></div></div>
     ${L(r, 'why') ? `<p class="why">${esc(L(r, 'why'))}</p>` : ''}${tomorrow}</section>`;
 }
+// Music for the table (Antonis's YouTube playlist). The player loads only after a click, so YouTube sets nothing until then.
+const PLAYLIST = 'PLnVf7Ah71lsLs-PHZdQdkZtNUAXMhDXKt';
+const playlistHtml = () => `<section class="playlist"><div class="okick">${esc(t('music'))}</div><div id="pl"><button type="button" class="showall" data-playlist>▶ ${esc(t('playMusic'))}</button></div></section>`;
 function seasonHtml() {
   const mi = monthIndex(), S = MONTHS[mi], pairs = yearPlan()[mi + 1];
   const row = ([r, w], i) => `<li><span class="rank">${i + 1}</span><div class="pr"><a class="wl rl dish" data-dish="${esc(r.name)}">${esc(L(r, 'name'))}</a>
@@ -992,7 +999,7 @@ function render() {
   document.getElementById('hero').innerHTML = heroSvg(home ? 'list' : view);
   document.querySelector('.search').hidden = true;  // Antonis: no search box on any page; filter with the chips
   ['tagsLabel', 'tags', 'grapesLabel', 'grapes'].forEach(id => { document.getElementById(id).hidden = view === 'finder'; });
-  document.getElementById('season').innerHTML = home ? seasonHtml() : '';
+  document.getElementById('season').innerHTML = home ? seasonHtml() + playlistHtml() : '';
   document.getElementById('finderChips').hidden = view !== 'finder';
   document.getElementById('listChips').hidden = view !== 'list';
   document.getElementById('exploreTitle').textContent = t('exploreTitle');
@@ -1061,6 +1068,10 @@ document.addEventListener('click', e => {
     e.preventDefault();
     const dish = pop.dataset.dish ? ALLR.find(x => x.name === pop.dataset.dish) : null, wine = pop.dataset.wine ? byId[pop.dataset.wine] : null;
     if (dish) openModal(recipeCard(dish)); else if (wine) openModal(wineCard(wine));
+    return;
+  }
+  if (e.target.closest('[data-playlist]')) {
+    document.getElementById('pl').innerHTML = `<div class="plframe"><iframe src="https://www.youtube-nocookie.com/embed/videoseries?list=${PLAYLIST}&autoplay=1" title="${esc(t('music'))}" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>`;
     return;
   }
   const lg = e.target.closest('.logo');
