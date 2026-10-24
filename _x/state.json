@@ -503,7 +503,8 @@
       "prague",
       "karaoke",
       "romanzo-criminale",
-      "a-whole-life-ahead"
+      "a-whole-life-ahead",
+      "i-was-a-stranger"
     ],
     "log": [
       {
@@ -609,11 +610,17 @@
         "slot": "2026-10-23 20",
         "slug": "a-whole-life-ahead",
         "id": "2113709003809169905"
+      },
+      {
+        "day": "2026-10-24",
+        "slot": "2026-10-24 08",
+        "slug": "i-was-a-stranger",
+        "id": "2113891677958180963"
       }
     ],
-    "last_day": "2026-10-23"
+    "last_day": "2026-10-24"
   },
-  "last_slot": "2026-10-24 02",
+  "last_slot": "2026-10-24 08",
   "quote": {
     "seen": [
       "1",
