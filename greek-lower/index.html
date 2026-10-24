@@ -156,7 +156,7 @@ td.wr{white-space:normal}
   </div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=78ac14cf"></script>
+<script src="data.js?v=5495d8d0"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -343,7 +343,7 @@ function renderMethod(){
   <h3><span class="num">1</span>Ratings</h3>
   <p>Each team gets an attack and a defence rating, plus one home advantage per league. Expected goals for a game are</p>
   <div class="calc">home goals = league average × home advantage × home attack × away defence<br>away goals = league average × away attack × home defence</div>
-  <p>The ratings are fitted to the old scores (Poisson). Recent games count more: a game loses half its weight every <i>half-life</i> days. Every rating is also pulled towards average (strength <i>k</i>), so a team with few games stays near average. Newly promoted teams start a step below average and relegated teams a step above (size <i>a</i>).</p>
+  <p>The ratings are fitted to the old scores (Poisson). Recent games count more: a game loses half its weight every <i>half-life</i> days. Every rating is also pulled (strength <i>k</i>) towards the club's own long-run level, a slower fit over the last three seasons, so a club with few recent games falls back to what it usually is (PAOK stay champions after the summer break) instead of to an average team. Newly promoted teams start a step below average and relegated teams a step above (size <i>a</i>).</p>
   <p>A final score is a noisy record of a game: a 1–0 can be a game the winner should have lost. So each past game also counts the goals its closing odds implied (the home and away expected goals that match the bookmakers' 1X2 and over/under prices), a stand-in for xG. A past game is fitted as (1 − <i>u</i>) × real goals + <i>u</i> × odds-implied goals. Only odds of games already played are used, never the odds of the game being predicted. In the backtest this made 1X2 about 1.5% more accurate in all three leagues; over/under gained less.</p>
   <h3><span class="num">2</span>Chances</h3>
   <p>The expected goals of each side give a Poisson chance for every score from 0–0 to 10–10. Adding them up gives home / draw / away and over / under 2.5. Odds shown are the chances with a 5% margin added, like a bookmaker price (1 / (chance × 1.05)), so a bookmaker price above them is worth a look.</p>
