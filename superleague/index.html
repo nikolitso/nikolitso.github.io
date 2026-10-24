@@ -429,9 +429,9 @@ const lc = s => ({sot: 'SoT', saves: 'GK saves', xg: 'xG', result: 'match result
 const betName = b => b.stat === 'result' ? ({1: 'Home win', X: 'Draw', 2: 'Away win'})[b.side] : `${b.side === 'over' ? 'Over' : 'Under'} ${b.line} ${lc(b.stat)}`;
 const evPct = x => `${x >= 0 ? '+' : ''}${Math.round(x * 100)}%`;
 
-// minimum EV picked on the Value bets tab (5% to 30%+, default 15%)
-const EV_STEPS = [.05, .10, .15, .20, .25, .30];
-let valMin = .15;
+// minimum EV picked on the Value bets tab (10%, 20%, 30%+; default 10%)
+const EV_STEPS = [.10, .20, .30];
+let valMin = .10;
 try { const v = +localStorage.getItem('sl-valmin'); if (EV_STEPS.includes(v)) valMin = v; } catch (e) {}
 
 function summary(bs){
@@ -439,8 +439,8 @@ function summary(bs){
   return {n, won, profit, hit: n ? won / n : null, odds: n ? bs.reduce((a, b) => a + b.odds, 0) / n : null, roi: n ? profit / n : null};
 }
 
-function recordTable(title, groups, note){
-  const rows = Object.entries(groups).map(([k, bs]) => [k, summary(bs)]).sort((a, b) => b[1].n - a[1].n);
+function recordTable(title, groups, note, byEv){
+  const rows = Object.entries(groups).map(([k, bs]) => [k, summary(bs)]).sort(byEv ? (a, b) => parseInt(a[0]) - parseInt(b[0]) : (a, b) => b[1].n - a[1].n);
   if (!rows.length) return '';
   let h = `<h2>${title}</h2>${note ? `<p class="muted" style="margin:-4px 0 10px;font-size:14px">${note}</p>` : ''}<div class="scroll"><table class="mk" style="max-width:820px"><thead><tr><th></th><th class="n">Bets</th><th class="n">Won</th><th class="n">Hit rate</th><th class="n">Avg odds</th><th class="n">Profit</th><th class="n">Per bet</th></tr></thead><tbody>`;
   for (const [k, r] of rows) h += `<tr><td>${k}</td><td class="n">${r.n}</td><td class="n">${r.won}</td><td class="n">${pct(r.hit)}</td><td class="n muted">${r.odds.toFixed(2)}</td><td class="n ${r.profit >= 0 ? 'w' : 'l'}">${r.profit > 0 ? '+' : ''}${r.profit.toFixed(2)}</td><td class="n ${r.roi >= 0 ? 'w' : 'l'}">${evPct(r.roi)}</td></tr>`;
@@ -454,7 +454,7 @@ function renderValue(){
   const all = summary(settled);
   const label = x => x >= .3 ? '30%+' : Math.round(x * 100) + '%';
   let h = `<p class="note">A bet is <b>value</b> when the model's chance of it winning, times the bookie's odds, comes to more than 1: on average it would return more than the stake. <b>EV</b> = model chance × bookie odds − 1, the expected return per 1 staked (EV +20% = 1.20 back per 1, on average). The bookie's own chance is shown for comparison only. One bet per game and stat (the best line), on lines where the bookie's own chance is between ${Math.round(V.fair_range[0] * 100)}% and ${Math.round(V.fair_range[1] * 100)}%.</p>
-  <p class="note"><b>Not listed:</b> ${Object.entries(V.skip).map(([s, why]) => `<b>${lc(s)}</b>: ${why}`).join('; ')}. A very large EV usually means the model is missing something (a new coach, injuries, a change of style) rather than a gift, so check those first. Every bet from EV +5% is recorded with its last odds before kick-off and settled when the results come in; the record below follows the minimum EV you pick.</p>
+  <p class="note"><b>Not listed:</b> ${Object.entries(V.skip).map(([s, why]) => `<b>${lc(s)}</b>: ${why}`).join('; ')}. A very large EV usually means the model is missing something (a new coach, injuries, a change of style) rather than a gift, so check those first. Every bet from EV +5% is recorded (the list starts at +10%) with its last odds before kick-off and settled when the results come in; the record below follows the minimum EV you pick.</p>
   <div class="bar"><span class="muted" style="font:400 13px var(--mono)">Minimum EV</span><div class="seg" id="valmin">${EV_STEPS.map(x => `<button data-v="${x}" class="${x === valMin ? 'on' : ''}">${label(x)}</button>`).join('')}</div></div>`;
   h += `<div class="metrics">
     <div class="metric"><div class="lbl">Value bets coming up</div><div class="big">${bets.length}</div></div>
@@ -470,12 +470,12 @@ function renderValue(){
   }
   if (!settled.length) return h + `<p class="muted" style="margin-top:18px">No settled bets yet at this EV level: the record starts once results for logged bets are in the data.</p>`;
   const group = key => settled.reduce((g, b) => ((g[key(b)] ||= []).push(b), g), {});
-  const band = b => b.ev >= .3 ? '30%+' : `${Math.floor(b.ev * 20) * 5}–${Math.floor(b.ev * 20) * 5 + 5}%`;
+  const band = b => b.ev >= .3 ? '30%+' : `${Math.floor(b.ev * 10) * 10}–${Math.floor(b.ev * 10) * 10 + 10}%`;
   h += recordTable('Record by market', group(b => b.stat === 'result' ? 'Result' : L[b.stat]),
     'A few dozen bets per market is still mostly luck: treat differences as a lead, not a verdict, until each market has 100 or more.');
   h += recordTable('Record by side', group(b => b.stat === 'result' ? 'Result' : b.side === 'over' ? 'Overs' : 'Unders'));
   h += recordTable('Record by market and side', group(b => b.stat === 'result' ? 'Result' : `${L[b.stat]} ${b.side}`));
-  h += recordTable('Record by EV', group(band), 'If the model finds real value, bigger EV should mean bigger returns.');
+  h += recordTable('Record by EV', group(band), 'If the model finds real value, bigger EV should mean bigger returns.', true);
   h += `<h2>Settled bets</h2><div class="scroll"><table class="mk"><thead><tr><th>Date</th><th>Match</th><th>Bet</th><th class="n">Odds</th><th class="n">EV</th><th class="n">Result</th></tr></thead><tbody>`;
   for (const b of settled) h += `<tr><td class="muted">${dayName(b.date)}</td><td>${b.home} – ${b.away}</td><td>${betName(b)}</td><td class="n">${b.odds.toFixed(2)}</td><td class="n">${evPct(b.ev)}</td><td class="n ${b.result === 'won' ? 'w' : 'l'}">${b.result === 'won' ? 'Won +' + (b.odds - 1).toFixed(2) : 'Lost −1'}</td></tr>`;
   return h + '</tbody></table></div>';
