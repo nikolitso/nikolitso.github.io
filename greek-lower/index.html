@@ -232,11 +232,11 @@ const units = x => (x >= 0 ? '+' : '−') + Math.abs(x).toFixed(1) + 'u';
 
 function vbCard(g){
   const bs = bets(g), top = pick(bs);
-  const rows = bs.map(b => `<tr class="${b === top ? 'val' : ''}"><td>${b.lab}</td><td class="n">${pct(b.p)}</td><td class="n muted">${b.fair == null ? '–' : pct(b.fair)}</td>`+
+  const rows = bs.map(b => `<tr class="${b === top ? 'val' : ''}"><td>${b.lab}</td>`+
     `<td class="n">${modelOdds(b.p)}</td><td class="n tot">${b.price.toFixed(2)} <span class="bk">${b.book}</span></td>`+
     `<td class="n edge ${b.edge >= 0 ? 'ok' : 'bad'}">${sgnPct(b.edge)}</td></tr>`).join('');
   return `<div class="card simple"><div class="ko">${dayName(g.dt)} ${g.dt.slice(11)}</div><h3>${g.home} <span class="muted">–</span> ${g.away}</h3>` +
-    (bs.length ? `<table class="vb"><thead><tr><th></th><th class="n">Model</th><th class="n">Bookie</th><th class="n">Model odds</th><th class="n">Best odds</th><th class="n">Edge</th></tr></thead><tbody>${rows}</tbody></table>`
+    (bs.length ? `<table class="vb"><thead><tr><th></th><th class="n">Model odds</th><th class="n">Best odds</th><th class="n">Edge</th></tr></thead><tbody>${rows}</tbody></table>`
                : '<p class="note">No bookmaker odds yet.</p>') + '</div>';
 }
 
@@ -269,7 +269,7 @@ function llRow(lab, m, b, n){
 
 function renderMarket(){
   const L = LG(), cur = +DATA.season.slice(0,4);
-  let h = `<p class="note"><b>Model</b> is the model's chance, <b>Bookie</b> the bookmakers' chance with their margin taken out (average of every Greek bookmaker). <b>Best odds</b> is the highest price among them and <b>edge</b> = model chance × best odds − 1. Each game gets at most one bet, never on the draw: its biggest edge on 1, 2, over or under, highlighted when it reaches the chosen edge. The model disagrees with the bookmakers on almost every game and most of that is the model's own error, so a real edge should only turn up in a small share of games; the higher edges keep fewer. A very big gap usually means the bookmakers know something the model cannot see from scores alone (unpaid players, a youth side fielded, a coach change).</p>
+  let h = `<p class="note"><b>Model odds</b> are the model's odds with a 5% margin, like a bookmaker's; <b>best odds</b> the highest price among the Greek bookmakers; <b>edge</b> = model chance × best odds − 1, so the best odds must be about 5% above the model odds before the edge turns positive. Each game gets at most one bet, never on the draw: its biggest edge on 1, 2, over or under, highlighted when it reaches the chosen edge. The model disagrees with the bookmakers on almost every game and most of that is the model's own error, so a real edge should only turn up in a small share of games; the higher edges keep fewer. A very big gap usually means the bookmakers know something the model cannot see from scores alone (unpaid players, a youth side fielded, a coach change).</p>
     <div class="bar"><span class="muted" style="font:400 12px var(--mono);text-transform:uppercase;letter-spacing:.08em">Edge from</span><div class="chips" id="edge">${[.20, .30].map(x => `<button class="chip${x === edgeMin ? ' on' : ''}" data-e="${x}">${Math.round(x*100)}%+</button>`).join('')}</div></div>`;
   h += L.fixtures.length ? `<h2>Next round</h2><div class="grid">${L.fixtures.map(vbCard).join('')}</div>` : '<p class="note">The next round is not scheduled yet.</p>';
 
