@@ -135,7 +135,8 @@
       "the-subtle-art-of-not-giving-a-fck",
       "money-and-soccer-a-soccernomics-guide",
       "mindset",
-      "the-culture-map"
+      "the-culture-map",
+      "the-football-code-the-science-of"
     ],
     "log": [
       {
@@ -275,6 +276,12 @@
         "slot": "2026-10-24 02",
         "slug": "the-culture-map",
         "id": "2113768791738069420"
+      },
+      {
+        "day": "2026-10-24",
+        "slot": "2026-10-24 14",
+        "slug": "the-football-code-the-science-of",
+        "id": "2113973275030093921"
       }
     ],
     "last_day": "2026-10-24"
@@ -620,7 +627,7 @@
     ],
     "last_day": "2026-10-24"
   },
-  "last_slot": "2026-10-24 08",
+  "last_slot": "2026-10-24 14",
   "quote": {
     "seen": [
       "1",
