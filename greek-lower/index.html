@@ -133,6 +133,7 @@ table.mini{margin:0 0 16px}
 .xg{font:400 13.5px var(--mono);color:var(--muted);margin-top:4px} .xg b{color:var(--text);font-weight:500}
 .tag{font:500 10.5px var(--mono);letter-spacing:.06em;text-transform:uppercase;border:1px solid var(--line);border-radius:4px;padding:1px 5px;margin-left:6px;color:var(--muted);vertical-align:2px}
 .lg{margin-bottom:18px}
+h2.lgh{color:var(--gold);margin-top:34px;padding-bottom:8px;border-bottom:1px solid var(--line)}
 .card.simple{padding:16px 18px 14px}
 table.vb td,table.vb th{padding:5px 7px}
 table.vb td.edge{font-weight:500}
@@ -152,7 +153,6 @@ td.wr{white-space:normal}
   <div class="tabs" id="tabs">
     <a href="#view=projections" data-view="projections" class="on">Projections</a>
     <a href="#view=market" data-view="market">Vs Bookie</a>
-    <a href="#view=results" data-view="results">Results</a>
     <a href="#view=table" data-view="table">Table &amp; ratings</a>
     <a href="#view=method" data-view="method">How it works</a>
   </div>
@@ -168,12 +168,13 @@ const pct = x => Math.round(x*100) + '%';
 const MARGIN = 1.05;
 const modelOdds = p => (p > 0 ? Math.max(1.01, 1 / (p * MARGIN)) : 99).toFixed(2);
 const SHORT = {sl2: 'Super League 2', gamma: 'Gamma Ethniki 2', women: 'Women'};
-let lg = 'sl2', view = 'projections', rsSeason = 'cur', edgeMin = .20, mkSeason = 'all', oddsWhen = 'close';
+let view = 'projections', edgeMin = .20, mkSeason = 'all', oddsWhen = 'close';
 const betOn = new Set(['h', 'a', 'over', 'under']);   // picks that may get a bet (pills on Vs Bookie)
-const LG = () => DATA.leagues.find(l => l.key === lg);
+const lgs = new Set(['sl2']);                          // leagues picked with the pills (one or more)
+const SEL = () => DATA.leagues.filter(l => lgs.has(l.key)), multi = () => lgs.size > 1;
 const tagOf = s => s === 'up' ? '<span class="tag">promoted</span>' : s === 'down' ? '<span class="tag">relegated</span>' : '';
 
-$('sub').textContent = `${DATA.season.replace('-','–')} · updated ${DATA.updated} (Athens) · 1X2 and over/under 2.5 goals`;
+$('sub').textContent = `${DATA.season.replace('-','–')} · updated ${DATA.updated} (Athens)`;
 
 function card(g){
   const pick = Math.max(g.h, g.d, g.a);
@@ -182,17 +183,19 @@ function card(g){
     <h3>${g.home} <span class="muted">–</span> ${g.away}</h3>
     <div class="xg">Expected goals <b>${g.xh.toFixed(2)}</b> – <b>${g.xa.toFixed(2)}</b> · total <b>${g.tot.toFixed(2)}</b></div>
     <div class="wdl"><i style="width:${g.h*100}%"></i><i style="width:${g.d*100}%"></i><i style="width:${g.a*100}%"></i></div>
-    <div class="wdlt"><span>1 <b${cls(g.h)}>${pct(g.h)}</b><br><i>${modelOdds(g.h)}</i></span><span>X <b${cls(g.d)}>${pct(g.d)}</b><br><i>${modelOdds(g.d)}</i></span><span>2 <b${cls(g.a)}>${pct(g.a)}</b><br><i>${modelOdds(g.a)}</i></span></div>
-    <div class="ou"><span>Over 2.5 <b>${pct(g.over)}</b> <i>${modelOdds(g.over)}</i></span><span>Under 2.5 <b>${pct(g.under)}</b> <i>${modelOdds(g.under)}</i></span></div></div>`;
+    <div class="wdlt"><span>1 <b${cls(g.h)}>${modelOdds(g.h)}</b></span><span>X <b${cls(g.d)}>${modelOdds(g.d)}</b></span><span>2 <b${cls(g.a)}>${modelOdds(g.a)}</b></span></div>
+    <div class="ou"><span>Over 2.5 <b>${modelOdds(g.over)}</b></span><span>Under 2.5 <b>${modelOdds(g.under)}</b></span></div></div>`;
 }
 
 function renderProjections(){
-  const L = LG();
-  if (!L.fixtures.length) return '<p class="note">The next round is not scheduled yet.</p>';
-  const byDay = {};
-  L.fixtures.forEach(g => (byDay[g.dt.slice(0,10)] ||= []).push(g));
-  let h = '';
-  for (const [d, gs] of Object.entries(byDay)) h += `<h2 class="day">${dayName(d)}</h2><div class="grid">${gs.map(card).join('')}</div>`;
+  let h = '<p class="note">Model odds for the next round, with a 5% margin like a bookmaker price; the bold one is the most likely result.</p>';
+  for (const L of SEL()){
+    if (multi()) h += `<h2 class="lgh">${L.name}</h2>`;
+    if (!L.fixtures.length){ h += '<p class="note">The next round is not scheduled yet.</p>'; continue; }
+    const byDay = {};
+    L.fixtures.forEach(g => (byDay[g.dt.slice(0,10)] ||= []).push(g));
+    for (const [d, gs] of Object.entries(byDay)) h += `<h2 class="day">${dayName(d)}</h2><div class="grid">${gs.map(card).join('')}</div>`;
+  }
   return h;
 }
 
@@ -236,7 +239,7 @@ function vbCard(g){
   const rows = bs.map(b => `<tr class="${b === top ? 'val' : ''}"><td>${b.lab}</td>`+
     `<td class="n">${modelOdds(b.p)}</td><td class="n tot">${b.price.toFixed(2)} <span class="bk">${b.book}</span></td>`+
     `<td class="n edge ${b.edge >= 0 ? 'ok' : 'bad'}">${sgnPct(b.edge)}</td></tr>`).join('');
-  return `<div class="card simple"><div class="ko">${dayName(g.dt)} ${g.dt.slice(11)}</div><h3>${g.home} <span class="muted">–</span> ${g.away}</h3>` +
+  return `<div class="card simple"><div class="ko">${multi() ? SHORT[g._lg] + ' · ' : ''}${dayName(g.dt)} ${g.dt.slice(11)}</div><h3>${g.home} <span class="muted">–</span> ${g.away}</h3>` +
     (bs.length ? `<table class="vb"><thead><tr><th></th><th class="n">Model odds</th><th class="n">Best odds</th><th class="n">Edge</th></tr></thead><tbody>${rows}</tbody></table>`
                : '<p class="note">No bookmaker odds yet.</p>') + '</div>';
 }
@@ -269,12 +272,13 @@ function llRow(lab, m, b, n){
 }
 
 function renderMarket(){
-  const L = LG(), cur = +DATA.season.slice(0,4);
+  const LS = SEL(), cur = +DATA.season.slice(0,4);
+  const fixtures = LS.flatMap(L => L.fixtures.map(g => ({...g, _lg: L.key}))).sort((x, y) => x.dt.localeCompare(y.dt));
   let h = `<p class="note"><b>Model odds</b> are the model's odds with a 5% margin, like a bookmaker's; <b>best odds</b> the highest price among the Greek bookmakers; <b>edge</b> = model chance × best odds − 1, so the best odds must be about 5% above the model odds before the edge turns positive. Each game gets at most one bet, never on the draw: its biggest edge on 1, 2, over or under, highlighted when it reaches the chosen edge. The model disagrees with the bookmakers on almost every game and most of that is the model's own error, so a real edge should only turn up in a small share of games; the higher edges keep fewer. A very big gap usually means the bookmakers know something the model cannot see from scores alone (unpaid players, a youth side fielded, a coach change).</p>
     <div class="bar"><span class="muted" style="font:400 12px var(--mono);text-transform:uppercase;letter-spacing:.08em">Edge from</span><div class="chips" id="edge">${[.20, .30].map(x => `<button class="chip${x === edgeMin ? ' on' : ''}" data-e="${x}">${Math.round(x*100)}%+</button>`).join('')}</div></div>`;
-  h += L.fixtures.length ? `<h2>Next round</h2><div class="grid">${L.fixtures.map(vbCard).join('')}</div>` : '<p class="note">The next round is not scheduled yet.</p>';
+  h += fixtures.length ? `<h2>Next round</h2><div class="grid">${fixtures.map(vbCard).join('')}</div>` : '<p class="note">The next round is not scheduled yet.</p>';
 
-  const priced = L.results.filter(r => r.odds);
+  const priced = LS.flatMap(L => L.results.filter(r => r.odds).map(r => ({...r, _lg: L.key})));
   const seasons = [...new Set(priced.map(r => r.season))].sort((a, b) => b - a);
   const pickS = mkSeason === 'cur' ? cur : +mkSeason;
   const rows = mkSeason === 'all' ? priced : priced.filter(r => r.season === pickS);
@@ -296,43 +300,11 @@ function renderMarket(){
   if (R.list.length){
     h += `<h2>The bets</h2><div class="scroll"><table class="bets"><thead><tr><th>Date</th><th>Match</th><th class="n">Score</th><th class="n">Bet</th><th class="n">Model odds</th><th class="n">Best odds</th><th class="n">Edge</th><th class="n">Profit</th></tr></thead><tbody>` +
       [...R.list].sort((x, y) => y.g.dt.localeCompare(x.g.dt)).map(({g, b, w, pl}) =>
-        `<tr><td class="muted">${dayName(g.dt)} ${g.dt.slice(2, 4)}</td><td class="wr">${g.home} – ${g.away}</td><td class="n">${g.hg}–${g.ag}</td><td class="n tot">${b.lab}</td>`+
+        `<tr><td class="muted">${dayName(g.dt)} ${g.dt.slice(2, 4)}</td><td class="wr">${g.home} – ${g.away}${multi() ? ` <span class="bk">${SHORT[g._lg]}</span>` : ''}</td><td class="n">${g.hg}–${g.ag}</td><td class="n tot">${b.lab}</td>`+
         `<td class="n">${modelOdds(b.p)}</td><td class="n">${b.price.toFixed(2)} <span class="bk">${b.book}</span></td>`+
         `<td class="n">${sgnPct(b.edge)}</td><td class="n ${w ? 'ok' : 'bad'}">${units(pl)}</td></tr>`).join('') + `</tbody></table></div>`;
   }
   return h;
-}
-
-function renderResults(){
-  const L = LG(), cur = +DATA.season.slice(0,4);
-  const seasons = [...new Set(L.results.map(r => r.season))].sort((a, b) => b - a);
-  const pickS = rsSeason === 'cur' ? cur : +rsSeason;
-  const rows = L.results.filter(r => r.season === pickS).slice().reverse();
-  let hit1 = 0, hitOU = 0;
-  for (const r of rows){
-    const res = r.hg > r.ag ? 'h' : r.hg === r.ag ? 'd' : 'a';
-    const pk = ['h','d','a'].reduce((a, b) => r[b] > r[a] ? b : a);
-    r._res = res; r._pk = pk;
-    if (pk === res) hit1++;
-    r._ouOk = (r.over >= .5) === (r.hg + r.ag > 2);
-    if (r._ouOk) hitOU++;
-  }
-  const n = rows.length;
-  let h = `<p class="note">Every league game, with the chances the model gave the day before it (only earlier games used). The <b>pick</b> is the most likely outcome.</p>
-    <div class="bar"><div class="seg" id="rsseason">${seasons.map(s => `<button data-s="${s === cur ? 'cur' : s}" class="${s === pickS ? 'on' : ''}">${s}–${String(s+1).slice(2)}</button>`).join('')}</div></div>
-    <div class="metrics"><div class="metric"><div class="lbl">Games</div><div class="big">${n}</div></div>
-    <div class="metric"><div class="lbl">1X2 pick right</div><div class="big">${n ? pct(hit1/n) : '–'}</div></div>
-    <div class="metric"><div class="lbl">Over/under 2.5 right</div><div class="big">${n ? pct(hitOU/n) : '–'}</div></div></div>`;
-  h += `<div class="scroll"><table><thead><tr><th>Date</th><th>Match</th><th class="n">Score</th><th class="n">1</th><th class="n">X</th><th class="n">2</th><th class="n">Pick</th><th class="n">Exp. total</th><th class="n">Over 2.5</th><th class="n">O/U</th></tr></thead><tbody>`;
-  const lab = {h: '1', d: 'X', a: '2'};
-  for (const r of rows){
-    const b = k => r._res === k ? ` class="n tot"` : ' class="n"';
-    h += `<tr><td class="muted">${dayName(r.dt)}</td><td class="wr">${r.home} – ${r.away}</td><td class="n">${r.hg}–${r.ag}</td>`+
-      `<td${b('h')}>${pct(r.h)}</td><td${b('d')}>${pct(r.d)}</td><td${b('a')}>${pct(r.a)}</td>`+
-      `<td class="n ${r._pk === r._res ? 'ok' : 'bad'}">${lab[r._pk]}</td><td class="n">${r.tot.toFixed(2)}</td><td class="n">${pct(r.over)}</td>`+
-      `<td class="n ${r._ouOk ? 'ok' : 'bad'}">${r.over >= .5 ? 'O' : 'U'}</td></tr>`;
-  }
-  return h + '</tbody></table></div>';
 }
 
 // Table & ratings sorting: click a header; first click puts the best first, a second click flips it
@@ -340,8 +312,13 @@ let tSort = 'pos', tDir = 1;
 const T_COLS = [['pos', '#', 'n', 1], ['team', 'Team', '', 1], ['p', 'P', 'n', -1], ['w', 'W', 'n', -1], ['d', 'D', 'n', -1], ['l', 'L', 'n', 1],
   ['gd', 'Goals', 'n', -1], ['pts', 'Pts', 'n', -1], ['rgf', 'Rating for', 'n gl', -1], ['rga', 'against', 'n', 1], ['rd', 'diff', 'n', -1]];
 function renderTable(){
-  const L = LG(), R = Object.fromEntries(L.ratings.map(r => [r.team, r]));
-  let h = `<p class="note"><b>Rating</b> columns are the model's current expected goals scored and conceded per game against an average team of the league (home and away averaged), from the last three seasons with recent games counting most. Promoted and relegated teams are marked. Click a column heading to sort.</p>`;
+  let h = '';
+  for (const L of SEL()) h += leagueTable(L);
+  return h + `<p class="note"><b>Rating</b> columns are the model's current expected goals scored and conceded per game against an average team of the league (home and away averaged), from the last three seasons with recent games counting most. Promoted and relegated teams are marked. Click a column heading to sort.</p>`;
+}
+function leagueTable(L){
+  const R = Object.fromEntries(L.ratings.map(r => [r.team, r]));
+  let h = multi() ? `<h2 class="lgh">${L.name}</h2>` : '';
   const rows = L.table.map((t, i) => {
     const r = R[t.team] || {gf: 0, ga: 0, status: ''};
     return {t, r, pos: i + 1, team: t.team, p: t.p, w: t.w, d: t.d, l: t.l, gd: t.gf - t.ga, pts: t.pts, rgf: r.gf, rga: r.ga, rd: r.gf - r.ga};
@@ -353,7 +330,7 @@ function renderTable(){
     h += `<tr><td class="n muted">${pos}</td><td>${t.team}${tagOf(r.status)}</td><td class="n">${t.p}</td><td class="n">${t.w}</td><td class="n">${t.d}</td><td class="n">${t.l}</td><td class="n">${t.gf}–${t.ga}</td><td class="n tot">${t.pts}</td>`+
       `<td class="n gl">${r.gf.toFixed(2)}</td><td class="n">${r.ga.toFixed(2)}</td><td class="n ${d >= 0 ? 'ok' : 'bad'}">${d >= 0 ? '+' : '−'}${Math.abs(d).toFixed(2)}</td></tr>`;
   h += '</tbody></table></div>';
-  if (lg === 'gamma') h += `<p class="note">Group 2 only. The ratings also learn from the other Gamma Ethniki groups, since teams move between groups from one season to the next.</p>`;
+  if (L.key === 'gamma') h += `<p class="note">Group 2 only. The ratings also learn from the other Gamma Ethniki groups, since teams move between groups from one season to the next.</p>`;
   return h;
 }
 
@@ -383,31 +360,31 @@ function renderMethod(){
 }
 
 function render(){
-  $('league').innerHTML = DATA.leagues.map(l => `<button data-l="${l.key}" class="${l.key === lg ? 'on' : ''}">${SHORT[l.key]}</button>`).join('');
+  $('league').innerHTML = DATA.leagues.map(l => `<button data-l="${l.key}" class="${lgs.has(l.key) ? 'on' : ''}">${SHORT[l.key]}</button>`).join('');
   document.querySelectorAll('#tabs a').forEach(a => a.classList.toggle('on', a.dataset.view === view));
   $('league').style.display = view === 'method' ? 'none' : '';
-  $('out').innerHTML = {projections: renderProjections, market: renderMarket, results: renderResults, table: renderTable, method: renderMethod}[view]();
+  $('out').innerHTML = {projections: renderProjections, market: renderMarket, table: renderTable, method: renderMethod}[view]();
 }
 
 function readHash(){
   const p = new URLSearchParams(location.hash.slice(1));
-  if (p.get('view')) view = p.get('view');
-  if (DATA.leagues.some(l => l.key === p.get('league'))) lg = p.get('league');
+  if (['projections', 'market', 'table', 'method'].includes(p.get('view'))) view = p.get('view');
+  const ks = (p.get('league') || '').split(',').filter(k => DATA.leagues.some(l => l.key === k));
+  if (ks.length){ lgs.clear(); ks.forEach(k => lgs.add(k)); }
 }
-function writeHash(){ history.replaceState(null, '', `#view=${view}&league=${lg}`); }
+function writeHash(){ history.replaceState(null, '', `#view=${view}&league=${[...lgs].join(',')}`); }
 
 document.addEventListener('click', e => {
-  const t = e.target.closest('[data-view],[data-l],[data-sort],#beton button,#rsseason button,#edge button,#mkseason button,#mkwhen button');
+  const t = e.target.closest('[data-view],[data-l],[data-sort],#beton button,#edge button,#mkseason button,#mkwhen button');
   if (!t) return;
   e.preventDefault();
   if (t.dataset.k) { if (!betOn.has(t.dataset.k)) betOn.add(t.dataset.k); else if (betOn.size > 1) betOn.delete(t.dataset.k); }
   else if (t.dataset.sort) { const k = t.dataset.sort, def = T_COLS.find(c => c[0] === k)[3]; tDir = k === tSort ? -tDir : def; tSort = k; }
   else if (t.dataset.view) view = t.dataset.view;
-  else if (t.dataset.l) { lg = t.dataset.l; rsSeason = 'cur'; }
+  else if (t.dataset.l) { const k = t.dataset.l; if (!lgs.has(k)) lgs.add(k); else if (lgs.size > 1) lgs.delete(k); }
   else if (t.dataset.e) edgeMin = +t.dataset.e;
   else if (t.dataset.w) oddsWhen = t.dataset.w;
   else if (t.closest('#mkseason')) mkSeason = t.dataset.s;
-  else rsSeason = t.dataset.s;
   writeHash(); render();
 });
 readHash(); render();
