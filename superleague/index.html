@@ -96,6 +96,10 @@ th.sort{cursor:pointer;user-select:none} th.sort:hover,th.sort.on{color:var(--go
 .metric .big{font:500 24px var(--mono);color:var(--gold)}
 .scroll{overflow-x:auto}
 .doc{max-width:860px}
+.take{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:8px;padding:12px 16px;margin:0 0 14px;max-width:900px;font-size:16px;line-height:1.55}
+.pbar{display:inline-block;width:80px;height:8px;background:var(--line);border-radius:4px;margin-right:10px;vertical-align:middle}.pbar i{display:block;height:100%;background:var(--gold);border-radius:4px}
+tr.hl td{font-weight:600}
+.mgleg{font-size:13.5px;margin:8px 0 0;max-width:900px}
 table.mg td{white-space:normal;vertical-align:top;font-size:15px;line-height:1.5}table.mg td:first-child{white-space:nowrap;padding-right:18px}
 tr.ctl td{border-top:1px solid var(--gold);color:var(--gold)}
 .mgpk{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:24px;max-width:980px}
@@ -290,16 +294,34 @@ function renderManagers(){
     <tr><td><b>Time to peak</b></td><td>No build-up. Among the ${P40.coaches} coaches who lasted ${P40.min}+ league games, games 1–10 were as good as any later block (all within ${spread40.toFixed(2)} points a game of their own average). Among the ${P60.coaches} who lasted ${P60.min}+, the best stretch was games ${best.games} (${sd(best.pts)} a game), then results fell off before they left.</td></tr>
     <tr><td><b>How long coaches last</b></td><td>Median <b>${G.tenure.median}</b> league games over ${G.tenure.spells} finished spells: ${pct(G.tenure.le10)} lasted 10 games or fewer (caretakers included), ${pct(G.tenure.le20)} 20 or fewer, only ${pct(G.tenure.ge40)} reached 40.</td></tr>
   </tbody></table></div>`;
-  h += `<h2>Before and after a change</h2><p class="muted" style="margin:-4px 0 10px;font-size:14px">Per game. Later blocks only include coaches who got that far within the season.</p><div class="scroll"><table class="mk" style="max-width:980px"><thead><tr><th></th><th class="n">Games</th><th class="n">Points</th><th class="n">Win %</th><th class="n">xG diff</th><th class="n">Shots diff</th><th class="n">Corners diff</th><th class="n">Points vs model</th></tr></thead><tbody>`;
-  const row = (lbl, r, cls = '') => `<tr class="${cls}"><td>${lbl}</td><td class="n muted">${r.n ?? '–'}</td><td class="n tot">${ppg(r.ppg)}</td><td class="n">${pct(r.win)}</td><td class="n">${sd(r.xgd)}</td><td class="n">${r.shd == null ? '–' : sd(r.shd, 1)}</td><td class="n">${r.cod == null ? '–' : sd(r.cod, 1)}</td><td class="n ${r.pae > .05 ? 'w' : r.pae < -.05 ? 'l' : ''}">${sd(r.pae)}</td></tr>`;
-  for (const r of R) h += row(r.label, r);
-  h += row(`Same bad run, coach kept (next ${G.window})`, {...C, n: null}, 'ctl');
-  h += '</tbody></table></div>';
-  h += `<h2>How long a coach needs to peak</h2><p class="muted" style="margin:-4px 0 10px;font-size:14px">Each coach's results in blocks of 10 games, minus his own average over the whole stretch, so the curve shows timing rather than who was good. Points per game; xG difference for spells from 2019–20 on.</p><div class="mgpk">`;
+  // plain-language helpers: a points bar, and a verdict against a coach's own average
+  const bar = x => `<span class="pbar"><i style="width:${Math.min(100, x / 2.2 * 100)}%"></i></span>`;
+  const verdict = d => Math.abs(d) < .07 ? '<span class="muted">about the same</span>' : d > 0 ? `<span class="w">better (${sd(d)})</span>` : `<span class="l">worse (${sd(d)})</span>`;
+  const vsExp = x => Math.abs(x) < .07 ? '<span class="muted">as expected</span>' : x > 0 ? `<span class="w">${sd(x)} above</span>` : `<span class="l">${sd(x)} below</span>`;
+  const head = '<th class="n">Points per game</th><th class="n">Wins</th><th class="n">xG difference</th><th class="n">Points vs expected</th>';
+  const line = (lbl, r, cls = '') => `<tr class="${cls}"><td>${lbl}</td><td class="n">${bar(r.ppg)}<b class="tot">${ppg(r.ppg)}</b></td><td class="n">${pct(r.win)}</td><td class="n">${sd(r.xgd)}</td><td class="n">${vsExp(r.pae)}</td></tr>`;
+  const legend = `<p class="muted mgleg"><b>xG difference</b>: expected goals made minus conceded, per game (below 0 = outplayed). <b>Points vs expected</b>: points won compared with what the model predicted against those opponents.</p>`;
+
+  h += `<h2>Does a new coach make a difference?</h2>
+  <div class="take"><b>No.</b> After a bad run (${ppg(B.ppg)} points a game), teams that changed coach got <b>${ppg(F.ppg)}</b> a game over the next ${G.window}. Teams that kept their coach got <b>${ppg(C.ppg)}</b>. The jump comes from the bad run ending, not from the new coach.</div>
+  <div class="scroll"><table class="mk" style="max-width:900px"><thead><tr><th></th>${head}</tr></thead><tbody>
+  ${line(`Bad run: old coach's last ${G.window} games`, B)}
+  ${line(`Changed coach: next ${G.window} games`, F, 'hl')}
+  ${line(`Kept the coach: next ${G.window} games`, C, 'hl')}
+  </tbody></table></div>${legend}`;
+
+  h += `<h2>Does the new coach's effect last?</h2>
+  <div class="take"><b>There is no effect to last.</b> Points creep up over the season (${ppg(F.ppg)} → ${ppg(R[R.length - 1].ppg)} a game), but against the model's expectation the team stays about level throughout: it is back at its normal level, nothing more. The later rows also only include coaches who got that far, which favours the ones doing well.</div>
+  <div class="scroll"><table class="mk" style="max-width:900px"><thead><tr><th>New coach</th>${head}</tr></thead><tbody>`;
+  for (const r of R.slice(1)) h += line(r.label.replace('New coach, games', 'Games'), r);
+  h += `</tbody></table></div>${legend}`;
+
+  h += `<h2>How long until a coach peaks?</h2>
+  <div class="take"><b>There is no warm-up period.</b> Coaches who lasted ${P40.min}+ games got about the same points in their first 10 games as later on. For the ${P60.coaches} who lasted ${P60.min}+, games ${best.games} were a little better (${sd(best.pts)} a game), then results dropped near the end of their spell. Most coaches never get that far: the median spell is ${G.tenure.median} games.</div><div class="mgpk">`;
   for (const P of G.peak){
-    h += `<div><h3 class="mgh">${P.coaches} coaches with ${P.min}+ games <span class="muted">(average ${ppg(P.avg_ppg)} points a game)</span></h3><table class="mk"><thead><tr><th>Games in charge</th><th class="n">Points vs own avg</th><th class="n">xG diff vs own avg</th></tr></thead><tbody>`;
-    for (const b of P.blocks) h += `<tr><td>${b.games}</td><td class="n ${b.pts > .05 ? 'w' : b.pts < -.05 ? 'l' : ''}">${sd(b.pts)}</td><td class="n">${sd(b.xgd)}</td></tr>`;
-    h += `</tbody></table><p class="muted" style="font-size:13px;margin:6px 0 0">xG from ${P.xg_coaches} of them.</p></div>`;
+    h += `<div><h3 class="mgh">${P.coaches} coaches who lasted ${P.min}+ games</h3><table class="mk"><thead><tr><th>Games in charge</th><th class="n">Points per game</th><th class="n">Vs his own average</th></tr></thead><tbody>`;
+    for (const b of P.blocks) h += `<tr><td>${b.games}</td><td class="n">${bar(P.avg_ppg + b.pts)}<b class="tot">${ppg(P.avg_ppg + b.pts)}</b></td><td class="n">${verdict(b.pts)}</td></tr>`;
+    h += `</tbody></table><p class="muted" style="font-size:13px;margin:6px 0 0">Their average: ${ppg(P.avg_ppg)} points a game.</p></div>`;
   }
   h += '</div>';
   if (G.recent.length){
