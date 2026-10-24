@@ -221,9 +221,9 @@ function bets(g, open){
   }
   return out;
 }
-// the one pick per game that gets a bet: the biggest edge, if it reaches the chosen edge
+// the one pick per game that gets a bet: the biggest edge, if it reaches the chosen edge (never the draw)
 function pick(bs){
-  const top = bs.reduce((m, b) => !m || b.edge > m.edge ? b : m, null);
+  const top = bs.filter(b => b.k !== 'd').reduce((m, b) => !m || b.edge > m.edge ? b : m, null);
   return top && top.edge >= edgeMin ? top : null;
 }
 const won = (g, k) => ({h: g.hg > g.ag, d: g.hg === g.ag, a: g.hg < g.ag, over: g.hg + g.ag > 2, under: g.hg + g.ag < 3})[k];
@@ -241,7 +241,7 @@ function vbCard(g){
 }
 
 function record(rows){
-  const all = {n: 0, w: 0, pl: 0}, by = {};
+  const all = {n: 0, w: 0, pl: 0}, by = {}, list = [];
   const ll = {m1: 0, b1: 0, n1: 0, m2: 0, b2: 0, n2: 0};
   for (const g of rows){
     const res = g.hg > g.ag ? 'h' : g.hg === g.ag ? 'd' : 'a', ov = g.hg + g.ag > 2;
@@ -255,9 +255,10 @@ function record(rows){
     if (b){
       const w = won(g, b.k), pl = w ? b.price - 1 : -1;
       for (const r of [all, by[b.lab] ||= {n: 0, w: 0, pl: 0}]){ r.n++; r.w += w; r.pl += pl; }
+      list.push({g, b, w, pl});
     }
   }
-  return {all, by, ll};
+  return {all, by, ll, list};
 }
 
 function llRow(lab, m, b, n){
@@ -268,7 +269,7 @@ function llRow(lab, m, b, n){
 
 function renderMarket(){
   const L = LG(), cur = +DATA.season.slice(0,4);
-  let h = `<p class="note"><b>Model</b> is the model's chance, <b>Bookie</b> the bookmakers' chance with their margin taken out (average of every Greek bookmaker). <b>Best odds</b> is the highest price among them and <b>edge</b> = model chance × best odds − 1. Each game gets at most one bet: its biggest edge, highlighted when it reaches the chosen edge. The model disagrees with the bookmakers on almost every game and most of that is the model's own error, so a real edge should only turn up in a small share of games; the higher edges keep fewer. A very big gap usually means the bookmakers know something the model cannot see from scores alone (unpaid players, a youth side fielded, a coach change).</p>
+  let h = `<p class="note"><b>Model</b> is the model's chance, <b>Bookie</b> the bookmakers' chance with their margin taken out (average of every Greek bookmaker). <b>Best odds</b> is the highest price among them and <b>edge</b> = model chance × best odds − 1. Each game gets at most one bet, never on the draw: its biggest edge on 1, 2, over or under, highlighted when it reaches the chosen edge. The model disagrees with the bookmakers on almost every game and most of that is the model's own error, so a real edge should only turn up in a small share of games; the higher edges keep fewer. A very big gap usually means the bookmakers know something the model cannot see from scores alone (unpaid players, a youth side fielded, a coach change).</p>
     <div class="bar"><span class="muted" style="font:400 12px var(--mono);text-transform:uppercase;letter-spacing:.08em">Edge from</span><div class="chips" id="edge">${[.20, .30].map(x => `<button class="chip${x === edgeMin ? ' on' : ''}" data-e="${x}">${Math.round(x*100)}%+</button>`).join('')}</div></div>`;
   h += L.fixtures.length ? `<h2>Next round</h2><div class="grid">${L.fixtures.map(vbCard).join('')}</div>` : '<p class="note">The next round is not scheduled yet.</p>';
 
@@ -278,7 +279,7 @@ function renderMarket(){
   const rows = mkSeason === 'all' ? priced : priced.filter(r => r.season === pickS);
   const R = record(rows), a = R.all;
   h += `<h2>Record on played games</h2>
-    <p class="note">Every played game with bookmaker odds: at most one 1-unit bet per game, on its biggest edge if that is at least the <b>Edge from</b> value chosen above (20% unless you change it), at the best price among the Greek bookmakers. The model only used earlier games. <b>Closing</b> uses the last prices before kick-off, <b>opening</b> the first prices posted, which are softer but on the board days before the model is refitted after the previous round.</p>
+    <p class="note">Every played game with bookmaker odds: at most one 1-unit bet per game (1, 2, over or under; never the draw), on its biggest edge if that is at least the <b>Edge from</b> value chosen above (20% unless you change it), at the best price among the Greek bookmakers. The model only used earlier games. <b>Closing</b> uses the last prices before kick-off, <b>opening</b> the first prices posted, which are softer but on the board days before the model is refitted after the previous round.</p>
     <div class="bar"><div class="seg" id="mkwhen"><button data-w="close" class="${oddsWhen === 'close' ? 'on' : ''}">Closing odds</button><button data-w="open" class="${oddsWhen === 'open' ? 'on' : ''}">Opening odds</button></div><div class="seg" id="mkseason"><button data-s="all" class="${mkSeason === 'all' ? 'on' : ''}">All</button>${seasons.map(s => `<button data-s="${s === cur ? 'cur' : s}" class="${mkSeason !== 'all' && pickS === s ? 'on' : ''}">${s}–${String(s+1).slice(2)}</button>`).join('')}</div></div>
     <div class="metrics"><div class="metric"><div class="lbl">Games with odds</div><div class="big">${rows.length}</div></div>
     <div class="metric"><div class="lbl">Bets</div><div class="big">${a.n}</div></div>
@@ -287,9 +288,16 @@ function renderMarket(){
     <div class="metric"><div class="lbl">Profit</div><div class="big ${a.pl >= 0 ? 'ok' : 'bad'}">${a.n ? units(a.pl) : '–'}</div></div>
     <div class="metric"><div class="lbl">Return</div><div class="big ${a.pl >= 0 ? 'ok' : 'bad'}">${a.n ? sgnPct(a.pl / a.n) : '–'}</div></div></div>`;
   h += `<div class="mkcols"><table class="mini"><thead><tr><th>Pick</th><th class="n">Bets</th><th class="n">Won</th><th class="n">Profit</th><th class="n">Return</th></tr></thead><tbody>` +
-    MK.map(([lab]) => { const r = R.by[lab]; return r ? `<tr><td>${lab}</td><td class="n">${r.n}</td><td class="n">${pct(r.w / r.n)}</td><td class="n ${r.pl >= 0 ? 'ok' : 'bad'}">${units(r.pl)}</td><td class="n ${r.pl >= 0 ? 'ok' : 'bad'}">${sgnPct(r.pl / r.n)}</td></tr>` : `<tr><td>${lab}</td><td class="n muted" colspan="4">no bets</td></tr>`; }).join('') +
+    MK.filter(m => m[3] !== 'd').map(([lab]) => { const r = R.by[lab]; return r ? `<tr><td>${lab}</td><td class="n">${r.n}</td><td class="n">${pct(r.w / r.n)}</td><td class="n ${r.pl >= 0 ? 'ok' : 'bad'}">${units(r.pl)}</td><td class="n ${r.pl >= 0 ? 'ok' : 'bad'}">${sgnPct(r.pl / r.n)}</td></tr>` : `<tr><td>${lab}</td><td class="n muted" colspan="4">no bets</td></tr>`; }).join('') +
     `</tbody></table><table class="mini"><thead><tr><th>Who is more accurate (log loss, lower is better)</th><th class="n">Games</th><th class="n">Model</th><th class="n">Bookie</th></tr></thead><tbody>` +
     llRow('1X2', R.ll.m1, R.ll.b1, R.ll.n1) + llRow('Over/under 2.5', R.ll.m2, R.ll.b2, R.ll.n2) + `</tbody></table></div>`;
+  if (R.list.length){
+    h += `<h2>The bets</h2><div class="scroll"><table class="bets"><thead><tr><th>Date</th><th>Match</th><th class="n">Score</th><th class="n">Bet</th><th class="n">Model</th><th class="n">Bookie</th><th class="n">Odds</th><th class="n">Edge</th><th class="n">Profit</th></tr></thead><tbody>` +
+      [...R.list].sort((x, y) => y.g.dt.localeCompare(x.g.dt)).map(({g, b, w, pl}) =>
+        `<tr><td class="muted">${dayName(g.dt)} ${g.dt.slice(2, 4)}</td><td class="wr">${g.home} – ${g.away}</td><td class="n">${g.hg}–${g.ag}</td><td class="n tot">${b.lab}</td>`+
+        `<td class="n">${pct(b.p)}</td><td class="n muted">${b.fair == null ? '–' : pct(b.fair)}</td><td class="n">${b.price.toFixed(2)} <span class="bk">${b.book}</span></td>`+
+        `<td class="n">${sgnPct(b.edge)}</td><td class="n ${w ? 'ok' : 'bad'}">${units(pl)}</td></tr>`).join('') + `</tbody></table></div>`;
+  }
   return h;
 }
 
