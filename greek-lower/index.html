@@ -230,7 +230,7 @@ function vbCard(g){
     `<td class="n edge ${b.edge >= 0 ? 'ok' : 'bad'}">${sgnPct(b.edge)}</td></tr>`).join('');
   return `<div class="card simple"><div class="ko">${dayName(g.dt)} ${g.dt.slice(11)}</div><h3>${g.home} <span class="muted">–</span> ${g.away}</h3>` +
     (bs.length ? `<table class="vb"><thead><tr><th></th><th class="n">Model</th><th class="n">Bookie</th><th class="n">Model odds</th><th class="n">Best odds</th><th class="n">Edge</th></tr></thead><tbody>${rows}</tbody></table>`
-               : '<p class="note">No bookmaker odds on Flashscore yet.</p>') + '</div>';
+               : '<p class="note">No bookmaker odds yet.</p>') + '</div>';
 }
 
 function record(rows){
