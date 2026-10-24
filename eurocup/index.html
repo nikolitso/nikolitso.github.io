@@ -585,7 +585,7 @@ function renderArchive(){
     <th class="n gap">Score</th><th class="n" title="Home minus away">Margin</th><th class="n" title="Only for gaps of ${gapMin}+ points: did the model's side of the line cover?">Model's side</th><th class="n gap" title="Whose handicap was nearer the real margin">Nearer</th><th class="n">Total</th></tr>`;
   box.innerHTML = `<div class="pjbar">${gapSelect()}<span class="tag">Games further apart than this are highlighted and judged in the cards.</span></div>` + summary +
     rounds.map(rd => `<h2>${esc(rd)}</h2><div class="scroll"><table class="fx">${head}${rows.filter(x => x.round === rd).map(x => x.html).join('')}</table></div>`).join('') +
-    `<div class="tag" style="margin-top:14px">Every projection is written before tip-off with the bookmaker's line of that moment (Bwin.gr, else Stoiximan.gr, from Flashscore) and the injury list of that moment, then never changed. Hcp is home minus away. The result fills in by itself once the game is in the data.</div>`;
+    `<div class="tag" style="margin-top:14px">Every projection is written before tip-off with the bookmaker's line of that moment (Bwin.gr, else Stoiximan.gr) and the injury list of that moment, then never changed. Hcp is home minus away. The result fills in by itself once the game is in the data.</div>`;
   bindGap(box, renderArchive);
 }
 // ---------- Vs Market: every Regular Season game's bookmaker line against what happened, by group and club
@@ -657,7 +657,7 @@ function mkRatings(games){
 }
 function renderMarket(){
   const box = $('mkView');
-  // lines from market.js: every played game's line, read from its Flashscore match page
+  // lines from market.js: every played game's line, read before tip-off
   const games = [], seen = new Set();
   const add = (date, g) => {
     const r = arResult(date, g.h, g.a);
