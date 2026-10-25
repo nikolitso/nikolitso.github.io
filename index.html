@@ -368,7 +368,7 @@ body { overflow-x: clip; }  /* safety net */
           <span class="go">Open the finder <i aria-hidden="true">→</i></span>
         </a>
         <a class="card" href="/quotes/">
-          <div class="card-shot quote-shot" aria-hidden="true"><blockquote>Do not use your energy to worry. Use your energy to believe, to create, to learn, to think and to grow.</blockquote><cite>Richard Feynman</cite></div>
+          <div class="card-shot quote-shot" id="quote-of-week" aria-hidden="true"><blockquote>Do not use your energy to worry. Use your energy to believe, to create, to learn, to think and to grow.</blockquote><cite>Richard Feynman</cite></div>
           <span class="tag">Collection</span>
           <h3>Quotes to live by</h3>
           <p>Lines worth keeping, collected one at a time from books, articles and people worth listening to, arranged as a life manual in ten chapters, from action and discipline to happiness, character and time.</p>
@@ -467,6 +467,44 @@ body { overflow-x: clip; }  /* safety net */
     </div>
   </div>
 </footer>
+<script>
+/* Quotes card: a different quote each week (Monday to Sunday), from the short quotes on /quotes/.
+   The Feynman quote in the markup is the fallback if the list can't be loaded. */
+(function () {
+  var box = document.getElementById('quote-of-week');
+  if (!box || !window.fetch) return;
+  fetch('/quotes/quotes.json').then(function (r) { return r.json(); }).then(function (all) {
+    var pool = all.filter(function (q) {
+      return q && q.text && !q.draft && q.text.length <= 200 && q.text.indexOf('\n') < 0;
+    });
+    if (!pool.length) return;
+    var week = Math.floor((Date.now() / 864e5 + 3) / 7);       // weeks since a Monday, 5 Jan 1970
+    var q = pool[week % pool.length];
+    var who = String(q.author || q.source || '').trim()
+      .replace(/^(un|non[- ]?)?attributed( to)?:?\s*/i, '')
+      .replace(/^["“].*?["”]\s+by\s+/, '');
+    box.querySelector('blockquote').textContent = q.text.trim();
+    var cite = box.querySelector('cite');
+    cite.textContent = who;
+    cite.hidden = !who;
+    var n = q.id || all.indexOf(q) + 1;
+    box.closest('a').href = '/quotes/#q-' + n;
+    fit();
+  }).catch(function () {});
+  // The card is a fixed 16:9 box: shrink the quote's type until it fits, at any screen width
+  function fit() {
+    var bq = box.querySelector('blockquote');
+    bq.style.fontSize = '';
+    var size = parseFloat(getComputedStyle(bq).fontSize);
+    while (box.scrollHeight > box.clientHeight + 1 && size > 12) {
+      size -= 1;
+      bq.style.fontSize = size + 'px';
+    }
+  }
+  var t;
+  window.addEventListener('resize', function () { clearTimeout(t); t = setTimeout(fit, 150); });
+})();
+</script>
 <!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "b67bbb76d0e24af196b24ded3ab71ad0"}'></script><!-- End Cloudflare Web Analytics -->
 </body>
 </html>
