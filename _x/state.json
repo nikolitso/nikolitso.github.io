@@ -519,7 +519,8 @@
       "romanzo-criminale",
       "a-whole-life-ahead",
       "i-was-a-stranger",
-      "i-daniel-blake"
+      "i-daniel-blake",
+      "metro-manila"
     ],
     "log": [
       {
@@ -637,11 +638,17 @@
         "slot": "2026-10-24 20",
         "slug": "i-daniel-blake",
         "id": "2114076242412818437"
+      },
+      {
+        "day": "2026-10-25",
+        "slot": "2026-10-25 08",
+        "slug": "metro-manila",
+        "id": "2114236026331811999"
       }
     ],
-    "last_day": "2026-10-24"
+    "last_day": "2026-10-25"
   },
-  "last_slot": "2026-10-25 02",
+  "last_slot": "2026-10-25 08",
   "quote": {
     "seen": [
       "1",
