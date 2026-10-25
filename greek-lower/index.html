@@ -155,6 +155,7 @@ td.wr{white-space:normal}
   <div class="tabs" id="tabs">
     <a href="#view=projections" data-view="projections" class="on">Projections</a>
     <a href="#view=market" data-view="market">Vs Bookie</a>
+    <a href="#view=record" data-view="record">Record</a>
     <a href="#view=table" data-view="table">Table &amp; ratings</a>
     <a href="#view=method" data-view="method">How it works</a>
   </div>
@@ -280,16 +281,23 @@ function renderMarket(){
   const LS = SEL(), cur = +DATA.season.slice(0,4);
   const fixtures = LS.flatMap(L => L.fixtures.map(g => ({...g, _lg: L.key}))).sort((x, y) => x.dt.localeCompare(y.dt));
   let h = `<p class="note"><b>Model odds</b> are the model's odds with a 5% margin, like a bookmaker's; <b>best odds</b> the highest price among the Greek bookmakers; <b>edge</b> = model chance × best odds − 1, so the best odds must be about 5% above the model odds before the edge turns positive. Each game gets at most one bet, never on the draw: its biggest edge on 1, 2, over or under, highlighted when it reaches the chosen edge. The model disagrees with the bookmakers on almost every game and most of that is the model's own error, so a real edge should only turn up in a small share of games; the higher edges keep fewer. A very big gap usually means the bookmakers know something the model cannot see from scores alone (unpaid players, a youth side fielded, a coach change).</p>
-    <div class="bar"><span class="muted" style="font:400 12px var(--mono);text-transform:uppercase;letter-spacing:.08em">Edge from</span><div class="chips" id="edge">${[.20, .30].map(x => `<button class="chip${x === edgeMin ? ' on' : ''}" data-e="${x}">${Math.round(x*100)}%+</button>`).join('')}</div></div>`;
+    ${edgeBar()}`;
   h += fixtures.length ? `<h2>Next round</h2><div class="grid">${fixtures.map(vbCard).join('')}</div>` : '<p class="note">The next round is not scheduled yet.</p>';
+  return h;
+}
+const edgeBar = () => `<div class="bar"><span class="muted" style="font:400 12px var(--mono);text-transform:uppercase;letter-spacing:.08em">Edge from</span><div class="chips" id="edge">${[.20, .30].map(x => `<button class="chip${x === edgeMin ? ' on' : ''}" data-e="${x}">${Math.round(x*100)}%+</button>`).join('')}</div></div>`;
 
+// --- Record: the same betting rule on every played game ---
+function renderRecord(){
+  const LS = SEL(), cur = +DATA.season.slice(0,4);
+  let h = '';
   const priced = LS.flatMap(L => L.results.filter(r => r.odds).map(r => ({...r, _lg: L.key})));
   const seasons = [...new Set(priced.map(r => r.season))].sort((a, b) => b - a);
   const pickS = mkSeason === 'cur' ? cur : +mkSeason;
   const rows = mkSeason === 'all' ? priced : priced.filter(r => r.season === pickS);
   const R = record(rows), a = R.all;
-  h += `<h2>Record on played games</h2>
-    <p class="note">Every played game with bookmaker odds: at most one 1-unit bet per game (1, 2, over or under, as picked in <b>Bet on</b>; never the draw), on its biggest edge among those picks if that is at least the <b>Edge from</b> value chosen above (20% unless you change it), at the best price among the Greek bookmakers. The model only used earlier games. <b>Closing</b> uses the last prices before kick-off, <b>opening</b> the first prices posted, which are softer but on the board days before the model is refitted after the previous round.</p>
+  h += `<p class="note">Every played game with bookmaker odds: at most one 1-unit bet per game (1, 2, over or under, as picked in <b>Bet on</b>; never the draw), on its biggest edge among those picks if that is at least the <b>Edge from</b> value (20% unless you change it), at the best price among the Greek bookmakers. The model only used earlier games. <b>Closing</b> uses the last prices before kick-off, <b>opening</b> the first prices posted, which are softer but on the board days before the model is refitted after the previous round.</p>
+    ${edgeBar()}
     <div class="bar"><div class="seg" id="mkwhen"><button data-w="close" class="${oddsWhen === 'close' ? 'on' : ''}">Closing odds</button><button data-w="open" class="${oddsWhen === 'open' ? 'on' : ''}">Opening odds</button></div><div class="seg" id="mkseason"><button data-s="all" class="${mkSeason === 'all' ? 'on' : ''}">All</button>${seasons.map(s => `<button data-s="${s === cur ? 'cur' : s}" class="${mkSeason !== 'all' && pickS === s ? 'on' : ''}">${s}–${String(s+1).slice(2)}</button>`).join('')}</div></div>
     <div class="bar"><span class="muted" style="font:400 12px var(--mono);text-transform:uppercase;letter-spacing:.08em">Bet on</span><div class="chips" id="beton">${MK.filter(m => m[3] !== 'd').map(([lab, , , k]) => `<button class="chip${betOn.has(k) ? ' on' : ''}" data-k="${k}">${lab}</button>`).join('')}</div></div>
     <div class="metrics"><div class="metric"><div class="lbl">Games with odds</div><div class="big">${rows.length}</div></div>
@@ -368,12 +376,12 @@ function render(){
   $('league').innerHTML = DATA.leagues.map(l => `<button data-l="${l.key}" class="${lgs.has(l.key) ? 'on' : ''}">${SHORT[l.key]}</button>`).join('');
   document.querySelectorAll('#tabs a').forEach(a => a.classList.toggle('on', a.dataset.view === view));
   $('league').style.display = view === 'method' ? 'none' : '';
-  $('out').innerHTML = {projections: renderProjections, market: renderMarket, table: renderTable, method: renderMethod}[view]();
+  $('out').innerHTML = {projections: renderProjections, market: renderMarket, record: renderRecord, table: renderTable, method: renderMethod}[view]();
 }
 
 function readHash(){
   const p = new URLSearchParams(location.hash.slice(1));
-  if (['projections', 'market', 'table', 'method'].includes(p.get('view'))) view = p.get('view');
+  if (['projections', 'market', 'record', 'table', 'method'].includes(p.get('view'))) view = p.get('view');
   const ks = (p.get('league') || '').split(',').filter(k => DATA.leagues.some(l => l.key === k));
   if (ks.length){ lgs.clear(); ks.forEach(k => lgs.add(k)); }
 }
