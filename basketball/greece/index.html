@@ -531,7 +531,7 @@ function leaguePage(l){
   $('#lName').innerHTML=flag(l,'flag big')+esc(l.name);
   $('#lNote').textContent='Flagged when the model is 5 or more points away from the bookmakers\' handicap, on either side, once both teams have played 6 games.';
   const bt=l.backtest, ru=x=>x&&x.n?`${x.won}–${x.lost}${x.push?' ('+x.push+' push)':''}, ${sg(x.units,1)} u`:'–';
-  const items=[['Games played',l.gamesMin===l.gamesMax?l.gamesMin:l.gamesMin+'–'+l.gamesMax,'per team'],['League average',l.avg?`${f(l.avg.muH,0)}–${f(l.avg.muA,0)}`:'–','home – away points'],['Next 8 days',l.upcoming.length,'matches projected'],['Margin error',`±${f(l.sd,0)}`,'typical miss, points']];
+  const items=[['Games played',l.gamesMin===l.gamesMax?l.gamesMin:l.gamesMin+'–'+l.gamesMax,'per team'],['League average',l.avg?`${f(l.avg.muH,1)}–${f(l.avg.muA,1)}`:'–','home – away points'],['Next 8 days',l.upcoming.length,'matches projected'],['Margin error',`±${f(l.sd,0)}`,'typical miss, points']];
   if(bt&&bt.lines)items.push(['Same rule, 2022-26',ru({n:bt.train.n+bt.test.n,won:bt.train.won+bt.test.won,lost:bt.train.lost+bt.test.lost,push:bt.train.push+bt.test.push,units:bt.train.units+bt.test.units}),(bt.train.n+bt.test.n)+' past bets']);
   tiles($('#lTiles'),D.showProjections===false?items.filter(x=>!/Next 8 days|Margin error|Same rule/.test(x[0])):items);
   nextTable($('#lNext'),l.upcoming.map(u=>({...u,lg:l})),false);
