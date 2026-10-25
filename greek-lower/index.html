@@ -184,18 +184,14 @@ const tagOf = s => s === 'up' ? '<span class="tag">promoted</span>' : s === 'dow
 $('sub').textContent = `${DATA.season.replace('-','–')} · updated ${DATA.updated} (Athens)`;
 
 function card(g){
-  const pick = Math.max(g.h, g.d, g.a);
-  const cls = p => p === pick ? ' class="pick"' : '';
   return `<div class="card simple"><div class="ko">${g.dt.slice(11)} · ${g.round}${g.flag ? ' · ' + g.flag : ''}</div>
     <h3>${g.home} <span class="muted">–</span> ${g.away}</h3>
     <div class="xg">Expected goals <b>${g.xh.toFixed(2)}</b> – <b>${g.xa.toFixed(2)}</b> · total <b>${g.tot.toFixed(2)}</b></div>
-    <div class="wdl"><i style="width:${g.h*100}%"></i><i style="width:${g.d*100}%"></i><i style="width:${g.a*100}%"></i></div>
-    <div class="wdlt"><span>1 <b${cls(g.h)}>${modelOdds(g.h)}</b></span><span>X <b${cls(g.d)}>${modelOdds(g.d)}</b></span><span>2 <b${cls(g.a)}>${modelOdds(g.a)}</b></span></div>
-    <div class="ou"><span>Over 2.5 <b>${modelOdds(g.over)}</b></span><span>Under 2.5 <b>${modelOdds(g.under)}</b></span></div></div>`;
+    <div class="ou"><span>Under 2.5 <b>${modelOdds(1 - g.over)}</b></span><span>BTTS No <b>${modelOdds(bttsNo(g))}</b></span></div></div>`;
 }
 
 function renderProjections(){
-  let h = '<p class="note">Model odds for the next round, with a 5% margin like a bookmaker price; the bold one is the most likely result.</p>';
+  let h = '<p class="note">Model odds for the next round on the two bets this site takes, Under 2.5 and BTTS No (both teams to score: no), with a 5% margin like a bookmaker price.</p>';
   for (const L of SEL()){
     if (multi()) h += `<h2 class="lgh">${L.name}</h2>`;
     if (!L.fixtures.length){ h += '<p class="note">The next round is not scheduled yet.</p>'; continue; }
