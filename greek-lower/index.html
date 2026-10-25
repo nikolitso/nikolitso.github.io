@@ -241,12 +241,16 @@ const units = x => (x >= 0 ? '+' : '−') + Math.abs(x).toFixed(1) + 'u';
 
 function vbCard(g){
   const bs = bets(g).filter(b => BETS.includes(b.k)), top = pick(bs);   // only the two bets we take
-  const rows = bs.map(b => `<tr class="${b === top ? 'val' : ''}"><td>${b.lab}</td>`+
-    `<td class="n">${modelOdds(b.p)}</td><td class="n tot">${b.price.toFixed(2)}</td>`+
-    `<td class="n edge ${b.edge >= 0 ? 'ok' : 'bad'}">${sgnPct(b.edge)}</td></tr>`).join('');
+  // model odds always; best odds and edge only where a bookmaker has priced the bet
+  const rows = MK.filter(m => BETS.includes(m[3])).map(([lab, , , k]) => {
+    const b = bs.find(x => x.k === k);
+    return `<tr class="${b && b === top ? 'val' : ''}"><td>${lab}</td><td class="n">${modelOdds(modelP(g, k))}</td>` +
+      (b ? `<td class="n tot">${b.price.toFixed(2)}</td><td class="n edge ${b.edge >= 0 ? 'ok' : 'bad'}">${sgnPct(b.edge)}</td>`
+         : `<td class="n muted">–</td><td class="n muted">–</td>`) + '</tr>';
+  }).join('');
   return `<div class="card simple"><div class="ko">${multi() ? SHORT[g._lg] + ' · ' : ''}${dayName(g.dt)} ${g.dt.slice(11)}</div><h3>${g.home} <span class="muted">–</span> ${g.away}</h3>` +
-    (bs.length ? `<table class="vb"><thead><tr><th></th><th class="n">Model odds</th><th class="n">Best odds</th><th class="n">Edge</th></tr></thead><tbody>${rows}</tbody></table>`
-               : '<p class="note">No bookmaker odds yet.</p>') + '</div>';
+    `<table class="vb"><thead><tr><th></th><th class="n">Model odds</th><th class="n">Best odds</th><th class="n">Edge</th></tr></thead><tbody>${rows}</tbody></table>` +
+    (bs.length ? '' : '<p class="note">No bookmaker odds yet.</p>') + '</div>';
 }
 
 function record(rows){
