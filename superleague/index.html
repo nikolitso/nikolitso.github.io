@@ -136,7 +136,7 @@ table.mini{margin:0 0 16px}
   </div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=0ed36417"></script>
+<script src="data.js?v=95674db5"></script>
 <script>
 const D = window.SL, $ = id => document.getElementById(id);
 const L = D.labels, ORDER = D.order;
@@ -168,8 +168,10 @@ const coachOne = c => c ? `<b>${surname(c[0])}</b> ${c[2]} game${c[2] === 1 ? ''
 const coachHtml = (c, home, away) => c ? `<div class="coach"><span class="who">${home}</span> ${coachOne(c.home)}</div><div class="coach"><span class="who">${away}</span> ${coachOne(c.away)}</div>` : '';
 // league games each side's projection rests on: the model's window, and how many are from this season
 const sampleOne = (n, x) => `${n} <b>${x.window}</b>`;
-const sampleTip = g => [['home', g.home], ['away', g.away]].map(([k, n]) => `${n}: ${g.sample[k].season} of them this season`).join(', ');
-const sampleHtml = g => g.sample ? `<div class="coach sample" title="${sampleTip(g)}"><span class="who">Stats from</span> ${sampleOne(g.home, g.sample.home)} · ${sampleOne(g.away, g.sample.away)} league games since ${D.history.from}–${String(+D.history.from + 1).slice(2)}</div>` : '';
+const weightOne = (n, x) => `${n} <b>${Math.round(x.weight * 100)}%</b> <span class="muted">(${x.season} game${x.season == 1 ? '' : 's'})</span>`;
+const sampleTip = g => 'Recent games count more: each game fades with age, and games from earlier seasons count less again. ' + [['home', g.home], ['away', g.away]].map(([k, n]) => `${n}: ${g.sample[k].season} of ${g.sample[k].window} games are from this season` + (g.sample[k].weight != null ? `, and they carry ${Math.round(g.sample[k].weight * 100)}% of the weight` : '')).join('; ');
+const sampleHtml = g => g.sample ? `<div class="coach sample" title="${sampleTip(g)}"><span class="who">Stats from</span> ${sampleOne(g.home, g.sample.home)} · ${sampleOne(g.away, g.sample.away)} league games since ${D.history.from}–${String(+D.history.from + 1).slice(2)}</div>`
+  + (g.sample.home.weight != null ? `<div class="coach sample" title="${sampleTip(g)}"><span class="who">This season</span> ${weightOne(g.home, g.sample.home)} · ${weightOne(g.away, g.sample.away)} of the weight</div>` : '') : '';
 // compact coach tenure under a match in tables: "Mazzarri 7 · Leto 43 games in charge"
 const tenureOne = c => c ? `${surname(c[0])} ${c[2]}` : '–';
 const tenureLine = g => g && g.coaches ? `<div class="tenure" title="League games in charge of the current coach">${tenureOne(g.coaches.home)} · ${tenureOne(g.coaches.away)} games in charge</div>` : '';
@@ -344,15 +346,16 @@ function renderMethod(){
   h += `<h2>Where the ratings come from</h2>
   <ul>
     <li><b>Data:</b> the ${D.history.games} Super League games since ${D.history.from}–${String(+D.history.from + 1).slice(2)}, this season and the two before. Older seasons are left out because teams change too much; in testing, going further back made almost no difference. Goalkeeper saves before 2025 are worked out as the opponent's SoT minus goals.</li>
-    <li><b>Recent games count more.</b> How fast old games fade depends on the stat. The ones that change quickly with a team's coach and style fade fastest; mostly random ones need a long history to read:</li>
+    <li><b>Recent games count more, and this season most of all.</b> Every game fades with age, and a game from an earlier season is cut again on top of that (the last column). How fast depends on the stat: the ones that change quickly with a team's coach and style fade fastest, mostly random ones need a long history to read. So seven games into this season, those seven already carry about 35% of a team's weight, against 60-odd older games, and the share grows every week. Every match card shows that share for both teams.</li>
   </ul>
-  <div class="scroll"><table class="mini" style="max-width:520px"><thead><tr><th>Stat</th><th>A game this old counts half</th></tr></thead><tbody>`;
-  if (E) for (const s of ORDER) h += `<tr><td>${L[s]}</td><td class="muted">${ago(E.half_lives[s])}</td></tr>`;
+  <div class="scroll"><table class="mini" style="max-width:520px"><thead><tr><th>Stat</th><th>A game this old counts half</th><th class="n">Earlier seasons also count</th></tr></thead><tbody>`;
+  if (E) for (const s of ORDER) h += `<tr><td>${L[s]}</td><td class="muted">${ago(E.half_lives[s])}</td><td class="n">${E.past_w && E.past_w[s] < 1 ? '×' + E.past_w[s].toFixed(1) : 'no extra cut'}</td></tr>`;
   h += `</tbody></table></div>
   <ul>
     <li><b>Small samples are pulled toward the club's usual level.</b> After four games a team isn't really a corner machine because it won 9 in one of them. In Greece the Big 4 stay big and the small clubs stay small, so a team is pulled toward its own long-run level (every season since 2019), not toward the league average: Olympiakos toward Olympiakos, a promoted side toward a typical promoted side. Before this, the model under-rated the Big 4: they scored 9% more goals than it projected. Fouls and throw-ins follow the coach more than the club, so they are still pulled toward the league average.</li>
     <li><b>The Big 4 against the small clubs.</b> Even with that, a small club facing Olympiakos, PAOK, AEK or Panathinaikos has scored 15–20% fewer goals than projected in every season since 2019. So in those games the small club's goals are multiplied by ×${D.matchup['small v big'].toFixed(2)} and the big club's by ×${D.matchup['big v small'].toFixed(2)} (half of the gap seen so far, which tested best season by season). This feeds the goals line and the 1X2 chances.</li>
     <li><b>Promoted teams</b> start from how promoted sides have usually done. For corners that's ${E ? Math.round((1 - E.newcomer[0])*100) : 15}% fewer won and ${E ? Math.round((E.newcomer[1] - 1)*100) : 12}% more conceded than average. Their own results take over as games come in.</li>
+    <li><b>Why not lean even harder on this season?</b> I tested cutting earlier seasons to ×0.35 and ×0.2. Both missed more than the settings above: with 7–10 games a team's own season is still mostly noise, so the older games keep the ratings steady while the fading lets this season take over as it goes on.</li>
     <li><b>None of these settings are guesses.</b> For each stat I tried several combinations on every game since 2023–24, each time using only games played before that date, and kept the one that missed least.</li>
   </ul>
 
