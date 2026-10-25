@@ -1,6 +1,6 @@
 name: Daily X posts
 
-# Four posts a day, every 6 hours (Athens time): 02:00 book, 08:00 film, 14:00 book, 20:00 film.
+# Five posts a day (Athens time): 02:00 book, 08:00 film, 11:00 quote, 14:00 book, 20:00 film.
 # A Cloudflare Worker triggers this every 30 minutes ("auto"); GitHub's own hourly schedule
 # is a backup. Each slot posts once; late runs still post the current slot, never a burst.
 on:
@@ -11,7 +11,7 @@ on:
       kind:
         description: "What to post (auto = the regular check: the current slot, if not posted yet)"
         type: choice
-        options: [book, film, auto]
+        options: [book, film, quote, auto]
         default: book
       dry_run:
         description: "Dry run (show the post, don't publish)"
