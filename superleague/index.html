@@ -75,6 +75,7 @@ table.mk{margin-bottom:6px}table.mk td,table.mk th{padding:6px 7px}
 .tenure{font:400 12px/1.4 var(--mono);color:var(--muted);margin-top:2px}
 .coach{font:400 13.5px/1.55 var(--mono);color:var(--muted);margin-top:2px}
 .coach b{color:var(--text);font-weight:500}
+.coach .wc{display:inline-block;width:7ch;text-align:right}
 table.tm{max-width:1000px}table.tm .gl{border-left:1px solid var(--line);padding-left:12px}
 table.tm tr.grp th{color:var(--gold);border-bottom:0;padding-bottom:0}
 .head{display:flex;justify-content:space-between;align-items:flex-start;gap:6px 14px;flex-wrap:wrap}
@@ -169,10 +170,11 @@ const coachHtml = (c, home, away) => c ? `<div class="coach"><span class="who">$
 // league games each side's projection rests on: the model's window, and how many are from this season
 const sampleOne = (n, x) => `${n} <b>${x.window}</b>`;
 const seasonLbl = x => x.slice(2, 4) + '–' + x.slice(7, 9);
-const weightOne = (n, x) => `${n} ` + (x.seasons || [x.weight]).map((w, i) => w > 0 ? `<b>${Math.round(w * 100)}%</b>` : '<span class="muted">–</span>').join(' / ');
+const weightOne = x => (x.seasons || [x.weight]).map(w => `<span class="wc">${w > 0 ? `<b>${Math.round(w * 100)}%</b>` : '–'}</span>`).join('');
 const sampleTip = g => 'Recent games count more: each game fades with age, and games from earlier seasons count less again. ' + [['home', g.home], ['away', g.away]].map(([k, n]) => `${n}: ${g.sample[k].season} of ${g.sample[k].window} games are from this season` + (g.sample[k].weight != null ? `, and they carry ${Math.round(g.sample[k].weight * 100)}% of the weight` : '')).join('; ') + '. Shares are averaged over the stats; How it works has them stat by stat.';
 const sampleHtml = g => g.sample ? `<div class="coach sample" title="${sampleTip(g)}"><span class="who">Stats from</span> ${sampleOne(g.home, g.sample.home)} · ${sampleOne(g.away, g.sample.away)} league games since ${D.history.from}–${String(+D.history.from + 1).slice(2)}</div>`
-  + (g.sample.home.weight != null ? `<div class="coach sample" title="${sampleTip(g)}"><span class="who">Weight</span> <span class="muted">${(D.history.seasons || []).map(seasonLbl).join(' / ')}:</span> ${weightOne(g.home, g.sample.home)} · ${weightOne(g.away, g.sample.away)}</div>` : '') : '';
+  + (g.sample.home.weight != null ? `<div class="coach sample" title="${sampleTip(g)}"><span class="who">Weight</span>${(D.history.seasons || []).map(x => `<span class="wc">${seasonLbl(x)}</span>`).join('')}</div>`
+    + [['home', g.home], ['away', g.away]].map(([k, n]) => `<div class="coach sample" title="${sampleTip(g)}"><span class="who">${n}</span>${weightOne(g.sample[k])}</div>`).join('') : '') : '';
 // compact coach tenure under a match in tables: "Mazzarri 7 · Leto 43 games in charge"
 const tenureOne = c => c ? `${surname(c[0])} ${c[2]}` : '–';
 const tenureLine = g => g && g.coaches ? `<div class="tenure" title="League games in charge of the current coach">${tenureOne(g.coaches.home)} · ${tenureOne(g.coaches.away)} games in charge</div>` : '';
