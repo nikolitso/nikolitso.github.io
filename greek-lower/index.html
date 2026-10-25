@@ -242,7 +242,7 @@ const units = x => (x >= 0 ? '+' : '−') + Math.abs(x).toFixed(1) + 'u';
 function vbCard(g){
   const bs = bets(g).filter(b => BETS.includes(b.k)), top = pick(bs);   // only the two bets we take
   const rows = bs.map(b => `<tr class="${b === top ? 'val' : ''}"><td>${b.lab}</td>`+
-    `<td class="n">${modelOdds(b.p)}</td><td class="n tot">${b.price.toFixed(2)} <span class="bk">${b.book}</span></td>`+
+    `<td class="n">${modelOdds(b.p)}</td><td class="n tot">${b.price.toFixed(2)}</td>`+
     `<td class="n edge ${b.edge >= 0 ? 'ok' : 'bad'}">${sgnPct(b.edge)}</td></tr>`).join('');
   return `<div class="card simple"><div class="ko">${multi() ? SHORT[g._lg] + ' · ' : ''}${dayName(g.dt)} ${g.dt.slice(11)}</div><h3>${g.home} <span class="muted">–</span> ${g.away}</h3>` +
     (bs.length ? `<table class="vb"><thead><tr><th></th><th class="n">Model odds</th><th class="n">Best odds</th><th class="n">Edge</th></tr></thead><tbody>${rows}</tbody></table>`
@@ -317,7 +317,7 @@ function renderRecord(){
     h += `<h2>The bets</h2><div class="scroll"><table class="bets"><thead><tr><th>Date</th><th>Match</th><th class="n">Score</th><th class="n">Bet</th><th class="n">Model odds</th><th class="n">Best odds</th><th class="n">Edge</th><th class="n">Profit</th></tr></thead><tbody>` +
       [...R.list].sort((x, y) => y.g.dt.localeCompare(x.g.dt)).map(({g, b, w, pl}) =>
         `<tr><td class="muted">${dayName(g.dt)} ${g.dt.slice(2, 4)}</td><td class="wr">${g.home} – ${g.away}${multi() ? ` <span class="bk">${SHORT[g._lg]}</span>` : ''}</td><td class="n">${g.hg}–${g.ag}</td><td class="n tot">${b.lab}</td>`+
-        `<td class="n">${modelOdds(b.p)}</td><td class="n">${b.price.toFixed(2)} <span class="bk">${b.book}</span></td>`+
+        `<td class="n">${modelOdds(b.p)}</td><td class="n">${b.price.toFixed(2)}</td>`+
         `<td class="n">${sgnPct(b.edge)}</td><td class="n ${w ? 'ok' : 'bad'}">${units(pl)}</td></tr>`).join('') + `</tbody></table></div>`;
   }
   return h;
