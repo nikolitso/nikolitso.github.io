@@ -161,7 +161,7 @@ td.wr{white-space:normal}
   </div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=8bcd0563"></script>
+<script src="data.js?v=7a707b01"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -172,7 +172,8 @@ const MARGIN = 1.05;
 const modelOdds = p => (p > 0 ? Math.max(1.01, 1 / (p * MARGIN)) : 99).toFixed(2);
 const SHORT = {sl2: 'Super League 2', gamma: 'Gamma Ethniki 2', women: 'Women'};
 let view = 'projections', edgeMin = .20, mkSeason = 'all', oddsWhen = 'close';
-const betOn = new Set(['h', 'a', 'over', 'under']);   // picks that may get a bet (pills on Vs Bookie)
+const BETS = ['under', 'btn'];                         // the only picks that can get a bet
+const betOn = new Set(BETS);                           // picked with the Bet on pills
 // Super League 2 and Gamma Ethniki stay hidden until 10 rounds of this season are played
 const roundsPlayed = l => Math.max(0, ...l.results.filter(r => r.season === +DATA.season.slice(0,4)).map(r => +(r.round.match(/\d+/) || [0])[0]));
 DATA.leagues = DATA.leagues.filter(l => !['sl2', 'gamma'].includes(l.key) || roundsPlayed(l) >= 10);
@@ -206,8 +207,10 @@ function renderProjections(){
 }
 
 // --- Vs Bookie ---------------------------------------------------------------------------------------------------
-const MK = [['1', 'x12', 0, 'h'], ['X', 'x12', 1, 'd'], ['2', 'x12', 2, 'a'], ['Over 2.5', 'ou', 0, 'over'], ['Under 2.5', 'ou', 1, 'under']];
-const modelP = (g, k) => k === 'under' ? 1 - g.over : g[k];
+const MK = [['1', 'x12', 0, 'h'], ['X', 'x12', 1, 'd'], ['2', 'x12', 2, 'a'], ['Over 2.5', 'ou', 0, 'over'], ['Under 2.5', 'ou', 1, 'under'], ['BTTS No', 'btts', 1, 'btn']];
+// both teams to score: no = home blank or away blank, from the 1X2 fit's expected goals (Poisson)
+const bttsNo = g => Math.exp(-g.xh) + Math.exp(-g.xa) - Math.exp(-g.xh - g.xa);
+const modelP = (g, k) => k === 'under' ? 1 - g.over : k === 'btn' ? bttsNo(g) : g[k];
 // bookmaker chance with the margin taken out, averaged over every bookmaker that priced the game
 function fairP(books, i){
   const v = Object.values(books || {});
@@ -236,7 +239,7 @@ function pick(bs){
   const top = bs.filter(b => betOn.has(b.k)).reduce((m, b) => !m || b.edge > m.edge ? b : m, null);
   return top && top.edge >= edgeMin ? top : null;
 }
-const won = (g, k) => ({h: g.hg > g.ag, d: g.hg === g.ag, a: g.hg < g.ag, over: g.hg + g.ag > 2, under: g.hg + g.ag < 3})[k];
+const won = (g, k) => ({h: g.hg > g.ag, d: g.hg === g.ag, a: g.hg < g.ag, over: g.hg + g.ag > 2, under: g.hg + g.ag < 3, btn: g.hg === 0 || g.ag === 0})[k];
 const sgnPct = x => (x >= 0 ? '+' : '−') + Math.abs(x * 100).toFixed(0) + '%';
 const units = x => (x >= 0 ? '+' : '−') + Math.abs(x).toFixed(1) + 'u';
 
@@ -252,7 +255,7 @@ function vbCard(g){
 
 function record(rows){
   const all = {n: 0, w: 0, pl: 0}, by = {}, list = [];
-  const ll = {m1: 0, b1: 0, n1: 0, m2: 0, b2: 0, n2: 0};
+  const ll = {m1: 0, b1: 0, n1: 0, m2: 0, b2: 0, n2: 0, m3: 0, b3: 0, n3: 0};
   for (const g of rows){
     const res = g.hg > g.ag ? 'h' : g.hg === g.ag ? 'd' : 'a', ov = g.hg + g.ag > 2;
     if (g.odds.x12 && Object.keys(g.odds.x12).length){
@@ -260,6 +263,10 @@ function record(rows){
     }
     if (g.odds.ou && Object.keys(g.odds.ou).length){
       ll.m2 -= Math.log(ov ? g.over : 1 - g.over); ll.b2 -= Math.log(fairP(g.odds.ou, ov ? 0 : 1)); ll.n2++;
+    }
+    if (g.odds.btts && Object.keys(g.odds.btts).length){
+      const no = g.hg === 0 || g.ag === 0, p = bttsNo(g);
+      ll.m3 -= Math.log(no ? p : 1 - p); ll.b3 -= Math.log(fairP(g.odds.btts, no ? 1 : 0)); ll.n3++;
     }
     const b = pick(bets(g, oddsWhen === 'open'));
     if (b){
@@ -280,7 +287,7 @@ function llRow(lab, m, b, n){
 function renderMarket(){
   const LS = SEL(), cur = +DATA.season.slice(0,4);
   const fixtures = LS.flatMap(L => L.fixtures.map(g => ({...g, _lg: L.key}))).sort((x, y) => x.dt.localeCompare(y.dt));
-  let h = `<p class="note"><b>Model odds</b> are the model's odds with a 5% margin, like a bookmaker's; <b>best odds</b> the highest price among the Greek bookmakers; <b>edge</b> = model chance × best odds − 1, so the best odds must be about 5% above the model odds before the edge turns positive. Each game gets at most one bet, never on the draw: its biggest edge on 1, 2, over or under, highlighted when it reaches the chosen edge. The model disagrees with the bookmakers on almost every game and most of that is the model's own error, so a real edge should only turn up in a small share of games; the higher edges keep fewer. A very big gap usually means the bookmakers know something the model cannot see from scores alone (unpaid players, a youth side fielded, a coach change).</p>
+  let h = `<p class="note"><b>Model odds</b> are the model's odds with a 5% margin, like a bookmaker's; <b>best odds</b> the highest price among the Greek bookmakers; <b>edge</b> = model chance × best odds − 1, so the best odds must be about 5% above the model odds before the edge turns positive. Each game gets at most one bet, only on Under 2.5 or BTTS No (both teams to score: no): the bigger edge of the two, highlighted when it reaches the chosen edge. The model disagrees with the bookmakers on almost every game and most of that is the model's own error, so a real edge should only turn up in a small share of games; the higher edges keep fewer. A very big gap usually means the bookmakers know something the model cannot see from scores alone (unpaid players, a youth side fielded, a coach change).</p>
     ${edgeBar()}`;
   h += fixtures.length ? `<h2>Next round</h2><div class="grid">${fixtures.map(vbCard).join('')}</div>` : '<p class="note">The next round is not scheduled yet.</p>';
   return h;
@@ -296,10 +303,10 @@ function renderRecord(){
   const pickS = mkSeason === 'cur' ? cur : +mkSeason;
   const rows = mkSeason === 'all' ? priced : priced.filter(r => r.season === pickS);
   const R = record(rows), a = R.all;
-  h += `<p class="note">Every played game with bookmaker odds: at most one 1-unit bet per game (1, 2, over or under, as picked in <b>Bet on</b>; never the draw), on its biggest edge among those picks if that is at least the <b>Edge from</b> value (20% unless you change it), at the best price among the Greek bookmakers. The model only used earlier games. <b>Closing</b> uses the last prices before kick-off, <b>opening</b> the first prices posted, which are softer but on the board days before the model is refitted after the previous round.</p>
+  h += `<p class="note">Every played game with bookmaker odds: at most one 1-unit bet per game (Under 2.5 or BTTS No, as picked in <b>Bet on</b>), on the bigger edge of the two if that is at least the <b>Edge from</b> value (20% unless you change it), at the best price among the Greek bookmakers. The model only used earlier games. <b>Closing</b> uses the last prices before kick-off, <b>opening</b> the first prices posted, which are softer but on the board days before the model is refitted after the previous round.</p>
     ${edgeBar()}
     <div class="bar"><div class="seg" id="mkwhen"><button data-w="close" class="${oddsWhen === 'close' ? 'on' : ''}">Closing odds</button><button data-w="open" class="${oddsWhen === 'open' ? 'on' : ''}">Opening odds</button></div><div class="seg" id="mkseason"><button data-s="all" class="${mkSeason === 'all' ? 'on' : ''}">All</button>${seasons.map(s => `<button data-s="${s === cur ? 'cur' : s}" class="${mkSeason !== 'all' && pickS === s ? 'on' : ''}">${s}–${String(s+1).slice(2)}</button>`).join('')}</div></div>
-    <div class="bar"><span class="muted" style="font:400 12px var(--mono);text-transform:uppercase;letter-spacing:.08em">Bet on</span><div class="chips" id="beton">${MK.filter(m => m[3] !== 'd').map(([lab, , , k]) => `<button class="chip${betOn.has(k) ? ' on' : ''}" data-k="${k}">${lab}</button>`).join('')}</div></div>
+    <div class="bar"><span class="muted" style="font:400 12px var(--mono);text-transform:uppercase;letter-spacing:.08em">Bet on</span><div class="chips" id="beton">${MK.filter(m => BETS.includes(m[3])).map(([lab, , , k]) => `<button class="chip${betOn.has(k) ? ' on' : ''}" data-k="${k}">${lab}</button>`).join('')}</div></div>
     <div class="metrics"><div class="metric"><div class="lbl">Games with odds</div><div class="big">${rows.length}</div></div>
     <div class="metric"><div class="lbl">Bets</div><div class="big">${a.n}</div></div>
     <div class="metric"><div class="lbl">Games bet</div><div class="big">${rows.length ? pct(a.n / rows.length) : '–'}</div></div>
@@ -307,9 +314,9 @@ function renderRecord(){
     <div class="metric"><div class="lbl">Profit</div><div class="big ${a.pl >= 0 ? 'ok' : 'bad'}">${a.n ? units(a.pl) : '–'}</div></div>
     <div class="metric"><div class="lbl">Return</div><div class="big ${a.pl >= 0 ? 'ok' : 'bad'}">${a.n ? sgnPct(a.pl / a.n) : '–'}</div></div></div>`;
   h += `<div class="mkcols"><table class="mini"><thead><tr><th>Pick</th><th class="n">Bets</th><th class="n">Won</th><th class="n">Profit</th><th class="n">Return</th></tr></thead><tbody>` +
-    MK.filter(m => m[3] !== 'd').map(([lab]) => { const r = R.by[lab]; return r ? `<tr><td>${lab}</td><td class="n">${r.n}</td><td class="n">${pct(r.w / r.n)}</td><td class="n ${r.pl >= 0 ? 'ok' : 'bad'}">${units(r.pl)}</td><td class="n ${r.pl >= 0 ? 'ok' : 'bad'}">${sgnPct(r.pl / r.n)}</td></tr>` : `<tr><td>${lab}</td><td class="n muted" colspan="4">no bets</td></tr>`; }).join('') +
+    MK.filter(m => BETS.includes(m[3])).map(([lab]) => { const r = R.by[lab]; return r ? `<tr><td>${lab}</td><td class="n">${r.n}</td><td class="n">${pct(r.w / r.n)}</td><td class="n ${r.pl >= 0 ? 'ok' : 'bad'}">${units(r.pl)}</td><td class="n ${r.pl >= 0 ? 'ok' : 'bad'}">${sgnPct(r.pl / r.n)}</td></tr>` : `<tr><td>${lab}</td><td class="n muted" colspan="4">no bets</td></tr>`; }).join('') +
     `</tbody></table><table class="mini"><thead><tr><th>Who is more accurate (log loss, lower is better)</th><th class="n">Games</th><th class="n">Model</th><th class="n">Bookie</th></tr></thead><tbody>` +
-    llRow('1X2', R.ll.m1, R.ll.b1, R.ll.n1) + llRow('Over/under 2.5', R.ll.m2, R.ll.b2, R.ll.n2) + `</tbody></table></div>`;
+    llRow('1X2', R.ll.m1, R.ll.b1, R.ll.n1) + llRow('Over/under 2.5', R.ll.m2, R.ll.b2, R.ll.n2) + llRow('Both teams to score', R.ll.m3, R.ll.b3, R.ll.n3) + `</tbody></table></div>`;
   if (R.list.length){
     h += `<h2>The bets</h2><div class="scroll"><table class="bets"><thead><tr><th>Date</th><th>Match</th><th class="n">Score</th><th class="n">Bet</th><th class="n">Model odds</th><th class="n">Best odds</th><th class="n">Edge</th><th class="n">Profit</th></tr></thead><tbody>` +
       [...R.list].sort((x, y) => y.g.dt.localeCompare(x.g.dt)).map(({g, b, w, pl}) =>
