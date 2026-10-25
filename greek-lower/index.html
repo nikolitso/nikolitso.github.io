@@ -244,7 +244,7 @@ const sgnPct = x => (x >= 0 ? '+' : '−') + Math.abs(x * 100).toFixed(0) + '%';
 const units = x => (x >= 0 ? '+' : '−') + Math.abs(x).toFixed(1) + 'u';
 
 function vbCard(g){
-  const bs = bets(g), top = pick(bs);
+  const bs = bets(g).filter(b => BETS.includes(b.k)), top = pick(bs);   // only the two bets we take
   const rows = bs.map(b => `<tr class="${b === top ? 'val' : ''}"><td>${b.lab}</td>`+
     `<td class="n">${modelOdds(b.p)}</td><td class="n tot">${b.price.toFixed(2)} <span class="bk">${b.book}</span></td>`+
     `<td class="n edge ${b.edge >= 0 ? 'ok' : 'bad'}">${sgnPct(b.edge)}</td></tr>`).join('');
