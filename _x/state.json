@@ -527,7 +527,8 @@
       "a-whole-life-ahead",
       "i-was-a-stranger",
       "i-daniel-blake",
-      "metro-manila"
+      "metro-manila",
+      "a-wedding"
     ],
     "log": [
       {
@@ -651,11 +652,17 @@
         "slot": "2026-10-25 08",
         "slug": "metro-manila",
         "id": "2114236026331811999"
+      },
+      {
+        "day": "2026-10-25",
+        "slot": "2026-10-25 20",
+        "slug": "a-wedding",
+        "id": "2114431862579843255"
       }
     ],
     "last_day": "2026-10-25"
   },
-  "last_slot": "2026-10-25 14",
+  "last_slot": "2026-10-25 20",
   "quote": {
     "seen": [
       "1",
