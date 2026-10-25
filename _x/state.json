@@ -137,7 +137,8 @@
       "mindset",
       "the-culture-map",
       "the-football-code-the-science-of",
-      "scorecasting"
+      "scorecasting",
+      "football-hackers-the-science-and"
     ],
     "log": [
       {
@@ -289,6 +290,12 @@
         "slot": "2026-10-25 02",
         "slug": "scorecasting",
         "id": "2114160999972368842"
+      },
+      {
+        "day": "2026-10-25",
+        "slot": "2026-10-25 14",
+        "slug": "football-hackers-the-science-and",
+        "id": "2114387949739749589"
       }
     ],
     "last_day": "2026-10-25"
@@ -648,7 +655,7 @@
     ],
     "last_day": "2026-10-25"
   },
-  "last_slot": "2026-10-25 11",
+  "last_slot": "2026-10-25 14",
   "quote": {
     "seen": [
       "1",
