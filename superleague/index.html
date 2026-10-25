@@ -136,7 +136,7 @@ table.mini{margin:0 0 16px}
   </div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=f5592791"></script>
+<script src="data.js?v=06bbd4fc"></script>
 <script>
 const D = window.SL, $ = id => document.getElementById(id);
 const L = D.labels, ORDER = D.order;
@@ -347,10 +347,10 @@ function renderMethod(){
   h += `<h2>Where the ratings come from</h2>
   <ul>
     <li><b>Data:</b> the ${D.history.games} Super League games since ${D.history.from}–${String(+D.history.from + 1).slice(2)}, this season and the two before. Older seasons are left out because teams change too much; in testing, going further back made almost no difference. Goalkeeper saves before 2025 are worked out as the opponent's SoT minus goals.</li>
-    <li><b>Recent games count more, and this season most of all.</b> Every game fades with age, and a game from an earlier season is cut again on top of that (the last column). How fast depends on the stat: the ones that change quickly with a team's coach and style fade fastest, mostly random ones need a long history to read. So seven games into this season, those seven already carry about 35% of a team's weight, against 60-odd older games, and the share grows every week. Every match card shows that share for both teams.</li>
+    <li><b>Recent games count more, and this season most of all.</b> Every game fades with age, and a game from an earlier season is cut again on top of that (the last column). How fast depends on the stat: the ones that change quickly with a team's coach and style fade fastest, mostly random ones need a long history to read. ${D.history.weights ? `Today this season already carries about ${Math.round(Object.values(D.history.weights).reduce((a, w) => a + w[0], 0) / Object.keys(D.history.weights).length * 100)}% of a team's weight on average, and the share grows every week. ` : ''}Every match card shows that share for both teams.</li>
   </ul>
   <div class="scroll"><table class="mini" style="max-width:520px"><thead><tr><th>Stat</th><th>A game this old counts half</th><th class="n">Earlier seasons also count</th></tr></thead><tbody>`;
-  if (E) for (const s of ORDER) h += `<tr><td>${L[s]}</td><td class="muted">${ago(E.half_lives[s])}</td><td class="n">${E.past_w && E.past_w[s] < 1 ? '×' + E.past_w[s].toFixed(1) : 'no extra cut'}</td></tr>`;
+  if (E) for (const s of ORDER) h += `<tr><td>${L[s]}</td><td class="muted">${ago(E.half_lives[s])}</td><td class="n">${E.past_w && E.past_w[s] < 1 ? '×' + (+E.past_w[s].toFixed(2)) : 'no extra cut'}</td></tr>`;
   h += `</tbody></table></div>`;
   if (D.history.weights) {
     const SS = D.history.seasons;
@@ -364,7 +364,7 @@ function renderMethod(){
     <li><b>Small samples are pulled toward the club's usual level.</b> After four games a team isn't really a corner machine because it won 9 in one of them. In Greece the Big 4 stay big and the small clubs stay small, so a team is pulled toward its own long-run level (every season since 2019), not toward the league average: Olympiakos toward Olympiakos, a promoted side toward a typical promoted side. Before this, the model under-rated the Big 4: they scored 9% more goals than it projected. Fouls and throw-ins follow the coach more than the club, so they are still pulled toward the league average.</li>
     <li><b>The Big 4 against the small clubs.</b> Even with that, a small club facing Olympiakos, PAOK, AEK or Panathinaikos has scored 15–20% fewer goals than projected in every season since 2019. So in those games the small club's goals are multiplied by ×${D.matchup['small v big'].toFixed(2)} and the big club's by ×${D.matchup['big v small'].toFixed(2)} (half of the gap seen so far, which tested best season by season). This feeds the goals line and the 1X2 chances.</li>
     <li><b>Promoted teams</b> start from how promoted sides have usually done. For corners that's ${E ? Math.round((1 - E.newcomer[0])*100) : 15}% fewer won and ${E ? Math.round((E.newcomer[1] - 1)*100) : 12}% more conceded than average. Their own results take over as games come in.</li>
-    <li><b>Why not lean even harder on this season?</b> I tested cutting earlier seasons to ×0.35 and ×0.2. Both missed more than the settings above: with 7–10 games a team's own season is still mostly noise, so the older games keep the ratings steady while the fading lets this season take over as it goes on.</li>
+    <li><b>How these were picked.</b> For every stat I replayed each game since 2023–24 with 20 combinations of fade speed and earlier-season cut, and took the one that gives this season the most weight while missing no more than 0.05% more than the old setting (in practice, no difference). Pushing further did cost accuracy: for goals, giving this season more than about 55% made the projections miss more, because 7–10 games of one season are still mostly luck. Throw-ins already fade fastest, so they stay as they were.</li>
     <li><b>None of these settings are guesses.</b> For each stat I tried several combinations on every game since 2023–24, each time using only games played before that date, and kept the one that missed least.</li>
   </ul>
 
