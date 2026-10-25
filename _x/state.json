@@ -136,7 +136,8 @@
       "money-and-soccer-a-soccernomics-guide",
       "mindset",
       "the-culture-map",
-      "the-football-code-the-science-of"
+      "the-football-code-the-science-of",
+      "scorecasting"
     ],
     "log": [
       {
@@ -282,9 +283,15 @@
         "slot": "2026-10-24 14",
         "slug": "the-football-code-the-science-of",
         "id": "2113973275030093921"
+      },
+      {
+        "day": "2026-10-25",
+        "slot": "2026-10-25 02",
+        "slug": "scorecasting",
+        "id": "2114160999972368842"
       }
     ],
-    "last_day": "2026-10-24"
+    "last_day": "2026-10-25"
   },
   "film": {
     "seen": [
@@ -634,7 +641,7 @@
     ],
     "last_day": "2026-10-24"
   },
-  "last_slot": "2026-10-24 20",
+  "last_slot": "2026-10-25 02",
   "quote": {
     "seen": [
       "1",
