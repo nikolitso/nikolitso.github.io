@@ -137,7 +137,7 @@ table.mini{margin:0 0 16px}
   </div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=1d53acac"></script>
+<script src="data.js?v=e256d054"></script>
 <script>
 const D = window.SL, $ = id => document.getElementById(id);
 const L = D.labels, ORDER = D.order;
@@ -355,11 +355,11 @@ function renderMethod(){
     <li><b>Recent games count more, and this season most of all.</b> Every game fades with age, and a game from an earlier season is cut again on top of that (the last column). How fast depends on the stat: the ones that change quickly with a team's coach and style fade fastest, mostly random ones need a long history to read. ${D.history.weights ? `Today this season already carries about ${Math.round(Object.values(D.history.weights).reduce((a, w) => a + w[0], 0) / Object.keys(D.history.weights).length * 100)}% of a team's weight on average, and the share grows every week. ` : ''}Every match card shows that share for both teams.</li>
   </ul>
   <div class="scroll"><table class="mini" style="max-width:520px"><thead><tr><th>Stat</th><th>A game this old counts half</th><th class="n">Earlier seasons also count</th></tr></thead><tbody>`;
-  if (E) for (const s of ORDER) h += `<tr><td>${L[s]}</td><td class="muted">${ago(E.half_lives[s])}</td><td class="n">${E.past_w && E.past_w[s] < 1 ? '×' + (+E.past_w[s].toFixed(2)) : 'no extra cut'}</td></tr>`;
+  if (E) for (const s of ORDER) h += `<tr><td>${L[s]}</td><td class="muted">${ago(E.half_lives[s])}</td><td class="n">${E.past_w && E.past_w[s] < 1 ? '×' + (+E.past_w[s].toFixed(2)) : 'no extra cut'}${(D.coach_window || []).includes(s) ? ', same coach only' : ''}</td></tr>`;
   h += `</tbody></table></div>`;
   if (D.history.weights) {
     const SS = D.history.seasons;
-    h += `<p>What that adds up to today for a team with all three seasons behind it (league median). Every match card shows the same split for its two teams, averaged over the stats.</p>
+    h += `<p>What that adds up to today, by season. For the stats marked “same coach only” it's the average over all teams, so it includes the many whose coach is new this season and who have no earlier games at all; for the rest it's the league median for a team with all three seasons behind it. Every match card shows the same split for its two teams, averaged over the stats.</p>
   <div class="scroll"><table class="mini" style="max-width:600px"><thead><tr><th>Stat</th>${SS.map((x, i) => `<th class="n">${seasonLbl(x)}${i == 0 ? ' (this season)' : ''}</th>`).join('')}</tr></thead><tbody>`;
     for (const s of ORDER) if (D.history.weights[s]) h += `<tr><td>${L[s]}</td>${D.history.weights[s].map((w, i) => `<td class="n">${i == 0 ? '<b>' : ''}${Math.round(w * 100)}%${i == 0 ? '</b>' : ''}</td>`).join('')}</tr>`;
     h += `</tbody></table></div>`;
@@ -369,6 +369,7 @@ function renderMethod(){
     <li><b>Small samples are pulled toward the club's usual level.</b> After four games a team isn't really a corner machine because it won 9 in one of them. In Greece the Big 4 stay big and the small clubs stay small, so a team is pulled toward its own long-run level (every season since 2019), not toward the league average: Olympiakos toward Olympiakos, a promoted side toward a typical promoted side. Before this, the model under-rated the Big 4: they scored 9% more goals than it projected. Fouls and throw-ins follow the coach more than the club, so they are still pulled toward the league average.</li>
     <li><b>The Big 4 against the small clubs.</b> Even with that, a small club facing Olympiakos, PAOK, AEK or Panathinaikos has scored 15–20% fewer goals than projected in every season since 2019. So in those games the small club's goals are multiplied by ×${D.matchup['small v big'].toFixed(2)} and the big club's by ×${D.matchup['big v small'].toFixed(2)} (half of the gap seen so far, which tested best season by season). This feeds the goals line and the 1X2 chances.</li>
     <li><b>Promoted teams</b> start from how promoted sides have usually done. For corners that's ${E ? Math.round((1 - E.newcomer[0])*100) : 15}% fewer won and ${E ? Math.round((E.newcomer[1] - 1)*100) : 12}% more conceded than average. Their own results take over as games come in.</li>
+    ${(D.coach_window || []).length ? `<li><b>Same coach only.</b> For ${D.coach_window.map(s => lc(s)).join(', ')}, a team's own numbers start this season, or at its current coach's first game if he was already there before. Games under an earlier coach don't count. Until a new coach has enough games, the team is pulled toward the club's usual level, not the league average: replaying 2023–24 and 2024–25, this was as accurate as using every game, while dropping the club level as well made projections miss 2–6% more. Shots, fouls, throw-ins and possession lost a little with this rule, so they still use every game, faded.</li>` : ''}
     ${Object.keys(D.rebuilt || {}).length ? `<li><b>Rebuilt clubs.</b> Sometimes a club's past says little about it now: a new coach and a new squad. For these teams the earlier games are dropped altogether, and the rating isn't pulled toward the club's usual level, only toward the league average until enough new games are in. ${Object.entries(D.rebuilt).map(([t, x]) => `<b>${t}</b>: only games since ${longDate(x.since)} (${x.why}).`).join(' ')} This is a judgement call, set by hand, not something the model finds by itself.</li>` : ''}
     <li><b>How these were picked.</b> For every stat I replayed each game since 2023–24 with 20 combinations of fade speed and earlier-season cut, and took the one that gives this season the most weight while missing no more than 0.05% more than the old setting (in practice, no difference). Pushing further did cost accuracy: for goals, giving this season more than about 55% made the projections miss more, because 7–10 games of one season are still mostly luck. Throw-ins already fade fastest, so they stay as they were.</li>
     <li><b>None of these settings are guesses.</b> For each stat I tried several combinations on every game since 2023–24, each time using only games played before that date, and kept the one that missed least.</li>
