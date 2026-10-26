@@ -54,7 +54,7 @@ content:
   - name: quotes
     label: Thought Bank
     type: file
-    path: Thought-Bank/quotes.json
+    path: thought-bank/quotes.json
     format: json
     list: true
     fields:

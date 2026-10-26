@@ -150,7 +150,7 @@
     }).map(function (n) { return [slug(n), n, names[n], personTone(n)]; }), byTotal, by, onBy);
   }
 
-  fetch("/Thought-Bank/quotes.json", { cache: "no-cache" })
+  fetch("/thought-bank/quotes.json", { cache: "no-cache" })
     .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
     .then(function (data) {
       // Within a chapter, quotes read in number order.

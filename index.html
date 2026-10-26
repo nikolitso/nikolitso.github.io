@@ -275,7 +275,7 @@ body { overflow-x: clip; }  /* safety net */
       <span class="mono">A<i>N</i></span>
       <span class="wordmark"><span>Antonis <em>Nikolitsopoulos</em></span><small>Trading · Sports Analytics</small></span>
     </a>
-    <nav class="menu" aria-label="Main"><a href="/#projects">Projects</a><a href="/books/">Books</a><a href="https://whatalgomissed.com/" target="_blank" rel="noopener">Films <span aria-hidden="true">↗</span></a><a href="/wine/">Wine</a><a href="/Thought-Bank/">Thought Bank</a><a href="/about/">About</a></nav>
+    <nav class="menu" aria-label="Main"><a href="/#projects">Projects</a><a href="/books/">Books</a><a href="https://whatalgomissed.com/" target="_blank" rel="noopener">Films <span aria-hidden="true">↗</span></a><a href="/wine/">Wine</a><a href="/thought-bank/">Thought Bank</a><a href="/about/">About</a></nav>
     <ul class="social" aria-label="Social links">
       <li><a href="https://www.linkedin.com/in/antonis-nikolitsopoulos/" target="_blank" rel="noopener" aria-label="LinkedIn" title="LinkedIn"><svg><use href="#i-in"/></svg></a></li>
       <li><a href="https://x.com/nikolitso" target="_blank" rel="noopener" aria-label="X (Twitter)" title="X"><svg><use href="#i-x"/></svg></a></li>
@@ -367,7 +367,7 @@ body { overflow-x: clip; }  /* safety net */
           <div class="meta"><span>Pairing finder</span><span>By grape</span><span>Wine list</span></div>
           <span class="go">Open the finder <i aria-hidden="true">→</i></span>
         </a>
-        <a class="card" href="/Thought-Bank/">
+        <a class="card" href="/thought-bank/">
           <div class="card-shot quote-shot" id="quote-of-week" aria-hidden="true"><blockquote>Do not use your energy to worry. Use your energy to believe, to create, to learn, to think and to grow.</blockquote><cite>Richard Feynman</cite></div>
           <span class="tag">Collection</span>
           <h3>Thought Bank</h3>
@@ -469,18 +469,18 @@ body { overflow-x: clip; }  /* safety net */
     </ul>
     </div>
     <div class="foot-in">
-      <nav class="menu" aria-label="Footer"><a href="/#projects">Projects</a><a href="/books/">Books</a><a href="https://whatalgomissed.com/" target="_blank" rel="noopener">Films <span aria-hidden="true">↗</span></a><a href="/wine/">Wine</a><a href="/Thought-Bank/">Thought Bank</a><a href="/about/">About</a></nav>
+      <nav class="menu" aria-label="Footer"><a href="/#projects">Projects</a><a href="/books/">Books</a><a href="https://whatalgomissed.com/" target="_blank" rel="noopener">Films <span aria-hidden="true">↗</span></a><a href="/wine/">Wine</a><a href="/thought-bank/">Thought Bank</a><a href="/about/">About</a></nav>
       <span class="copy">© 2026 Antonis Nikolitsopoulos</span>
     </div>
   </div>
 </footer>
 <script>
-/* Quotes card: a different quote each week (Monday to Sunday), from the short quotes on /Thought-Bank/.
+/* Quotes card: a different quote each week (Monday to Sunday), from the short quotes on /thought-bank/.
    The Feynman quote in the markup is the fallback if the list can't be loaded. */
 (function () {
   var box = document.getElementById('quote-of-week');
   if (!box || !window.fetch) return;
-  fetch('/Thought-Bank/quotes.json').then(function (r) { return r.json(); }).then(function (all) {
+  fetch('/thought-bank/quotes.json').then(function (r) { return r.json(); }).then(function (all) {
     var pool = all.filter(function (q) {
       return q && q.text && !q.draft && q.text.length <= 200 && q.text.indexOf('\n') < 0;
     });
@@ -495,7 +495,7 @@ body { overflow-x: clip; }  /* safety net */
     cite.textContent = who;
     cite.hidden = !who;
     var n = q.id || all.indexOf(q) + 1;
-    box.closest('a').href = '/Thought-Bank/#q-' + n;
+    box.closest('a').href = '/thought-bank/#q-' + n;
     fit();
   }).catch(function () {});
   // The card is a fixed 16:9 box: shrink the quote's type until it fits, at any screen width
