@@ -77,15 +77,13 @@ table.pjt{table-layout:fixed;width:1182px}table.pjt td{overflow:hidden;text-over
 td.big{color:var(--bg);background:var(--gold);font-weight:700}
 /* numbers first: bigger and brighter than the text around them, digits lined up */
 table{font-variant-numeric:tabular-nums}
-.fx td.n{font-size:16px;font-weight:500;color:var(--text)}
-.fx td.n.hcp{font-size:18px;font-weight:700;color:var(--gold)}
+.fx td.n{font-size:15px;color:var(--text)}
+.fx td.n.hcp{font-size:16px;font-weight:600;color:var(--gold)}
 .fx td.n.dim{color:var(--muted);font-weight:400}
 .fx td.n.tag{font-size:12px;font-weight:400;color:var(--muted)}
-.fx td.n:first-child{font-size:14px;font-weight:400;color:var(--muted)}
-.fx td.n.big{font-size:17px;font-weight:700;box-shadow:inset 0 0 0 3px var(--bg)}
-.fx tr:nth-child(even){background:rgba(255,255,255,.022)}
-.fx td{padding-top:11px;padding-bottom:11px}
-table.pjt td:nth-child(3),table.pjt td:nth-child(4),table.pjt td:nth-child(5){background:rgba(212,175,55,.045)}
+.fx td.n:first-child{font-size:14px;color:var(--muted)}
+.fx td.n.big{font-weight:600;box-shadow:inset 0 0 0 3px var(--bg)}
+.fx tr:nth-child(even){background:rgba(255,255,255,.018)}
 /* Vs Market group tables */
 h2.mkh{font:600 21px var(--serif);margin:38px 0 10px;padding-bottom:8px;border-bottom:1px solid var(--line)}
 table.mkt{table-layout:fixed;width:100%;border-collapse:separate;border-spacing:0;font-variant-numeric:tabular-nums}
@@ -95,8 +93,7 @@ table.mkt th.grp{color:var(--gold);text-align:center;font-size:10px;letter-spaci
 table.mkt th.grp span{display:block;border-bottom:1px solid color-mix(in srgb,var(--gold) 45%,transparent);padding-bottom:4px}
 table.mkt td{padding:11px 8px;border-bottom:1px solid color-mix(in srgb,var(--line) 55%,transparent);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 table.mkt td.n,table.mkt th.n{text-align:right;font-family:var(--mono);font-size:13.5px}
-table.mkt td.n{font-size:14px;font-weight:600}
-table.mkt td.n b.hcp{font-weight:700}
+table.mkt td.n{font-weight:500}
 table.mkt td.n b{font-weight:600}
 /* sort arrow: after the label on Team, just under the label on number columns (adds no width) */
 table.mkt th .ar{font-style:normal;font-size:9px;margin-left:5px}
@@ -140,7 +137,7 @@ th.sort{cursor:pointer;user-select:none}th.sort:hover,th.sort.on{color:var(--gol
 .metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px;margin:0 0 8px}
 .metric{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
 .metric .lbl{font:400 11px var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}
-.metric .big2{font:600 30px var(--mono);color:var(--gold);line-height:1.15}
+.metric .big2{font:500 26px var(--mono);color:var(--gold)}
 .pjbar{display:flex;flex-wrap:wrap;align-items:center;gap:10px 22px;margin:0 0 8px}
 .pjbar label{font:400 13px var(--mono);color:var(--muted);text-transform:none;letter-spacing:0;margin:0;display:flex;align-items:center;gap:8px}
 select.peer{background:var(--panel);border:1px solid var(--line);border-radius:6px;color:var(--text);font:500 14px var(--mono);padding:4px 6px;cursor:pointer}
