@@ -544,7 +544,8 @@
       "i-daniel-blake",
       "metro-manila",
       "a-wedding",
-      "amal"
+      "amal",
+      "happiness"
     ],
     "log": [
       {
@@ -680,11 +681,17 @@
         "slot": "2026-10-26 08",
         "slug": "amal",
         "id": "2114599024405930064"
+      },
+      {
+        "day": "2026-10-26",
+        "slot": "2026-10-26 20",
+        "slug": "happiness",
+        "id": "2114797503677931591"
       }
     ],
     "last_day": "2026-10-26"
   },
-  "last_slot": "2026-10-26 14",
+  "last_slot": "2026-10-26 20",
   "quote": {
     "seen": [
       "1",
