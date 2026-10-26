@@ -138,7 +138,8 @@
       "the-culture-map",
       "the-football-code-the-science-of",
       "scorecasting",
-      "football-hackers-the-science-and"
+      "football-hackers-the-science-and",
+      "soccernomics"
     ],
     "log": [
       {
@@ -296,9 +297,15 @@
         "slot": "2026-10-25 14",
         "slug": "football-hackers-the-science-and",
         "id": "2114387949739749589"
+      },
+      {
+        "day": "2026-10-26",
+        "slot": "2026-10-26 02",
+        "slug": "soccernomics",
+        "id": "2114510867064836350"
       }
     ],
-    "last_day": "2026-10-25"
+    "last_day": "2026-10-26"
   },
   "film": {
     "seen": [
@@ -662,7 +669,7 @@
     ],
     "last_day": "2026-10-25"
   },
-  "last_slot": "2026-10-25 20",
+  "last_slot": "2026-10-26 02",
   "quote": {
     "seen": [
       "1",
