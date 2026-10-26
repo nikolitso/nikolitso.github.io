@@ -173,7 +173,7 @@ const seasonLbl = x => x.slice(2, 4) + '–' + x.slice(7, 9);
 const weightOne = x => (x.seasons || [x.weight]).map(w => `<span class="wc">${w > 0 ? `<b>${Math.round(w * 100)}%</b>` : '–'}</span>`).join('');
 // rebuilt clubs (new coach and squad): only games since the given date count for them
 const longDate = s => { const d = new Date(s + 'T12:00'); return `${d.getDate()} ${MON[d.getMonth()]} ${d.getFullYear()}`; };
-const rebuiltOne = x => x.rebuilt ? ` <span class="muted" style="margin-left:1ch" title="${x.rebuilt.why}">rebuilt: only games since ${longDate(x.rebuilt.since)}</span>` : '';
+const rebuiltOne = x => x.rebuilt ? ` <span class="muted" style="margin-left:1ch" title="Rebuilt club: only games since ${longDate(x.rebuilt.since)} count (${x.rebuilt.why})">rebuilt</span>` : '';
 const sampleTip = g => 'Recent games count more: each game fades with age, and games from earlier seasons count less again. ' + [['home', g.home], ['away', g.away]].map(([k, n]) => `${n}: ${g.sample[k].season} of ${g.sample[k].window} games are from this season` + (g.sample[k].weight != null ? `, and they carry ${Math.round(g.sample[k].weight * 100)}% of the weight` : '')).join('; ') + '. Shares are averaged over the stats; How it works has them stat by stat.';
 const sampleHtml = g => g.sample ? `<div class="coach sample" title="${sampleTip(g)}"><span class="who">Stats from</span> ${sampleOne(g.home, g.sample.home)} · ${sampleOne(g.away, g.sample.away)} league games since ${D.history.from}–${String(+D.history.from + 1).slice(2)}</div>`
   + (g.sample.home.weight != null ? `<div class="coach sample" title="${sampleTip(g)}"><span class="who">Weight</span>${(D.history.seasons || []).map(x => `<span class="wc">${seasonLbl(x)}</span>`).join('')}</div>`
