@@ -1,0 +1,42 @@
+name: Super League closing odds
+
+# Every 15 minutes from 12:00 to 23:45 Athens (winter time): Superbet's odds for the Super League
+# games kicking off within 45 minutes, saved on the "odds" branch (see close.py there). The site
+# pipeline on the PC copies them in as each game's closing odds, to score the value bets (CLV).
+# A push of this file runs it once with a week-wide window, as a test that the feed answers.
+on:
+  schedule:
+    - cron: "*/15 10-21 * * *"
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: [".github/workflows/superleague-closing-odds.yml"]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: superleague-closing-odds
+  cancel-in-progress: false
+
+jobs:
+  pull:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: odds
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - name: Pull the odds
+        run: python close.py ${{ github.event_name == 'push' && '10080' || '45' }}
+      - name: Save
+        run: |
+          git add data/odds
+          if git diff --cached --quiet; then exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Closing odds $(date -u +%Y-%m-%dT%H:%MZ)"
+          git pull --rebase
+          git push
