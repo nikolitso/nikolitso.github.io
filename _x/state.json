@@ -139,7 +139,8 @@
       "the-football-code-the-science-of",
       "scorecasting",
       "football-hackers-the-science-and",
-      "soccernomics"
+      "soccernomics",
+      "betting-on-football"
     ],
     "log": [
       {
@@ -303,6 +304,12 @@
         "slot": "2026-10-26 02",
         "slug": "soccernomics",
         "id": "2114510867064836350"
+      },
+      {
+        "day": "2026-10-26",
+        "slot": "2026-10-26 14",
+        "slug": "betting-on-football",
+        "id": "2114701529621954619"
       }
     ],
     "last_day": "2026-10-26"
@@ -677,7 +684,7 @@
     ],
     "last_day": "2026-10-26"
   },
-  "last_slot": "2026-10-26 08",
+  "last_slot": "2026-10-26 14",
   "quote": {
     "seen": [
       "1",
