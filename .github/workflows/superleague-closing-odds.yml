@@ -3,7 +3,8 @@ name: Super League closing odds
 # Every 15 minutes from 12:00 to 23:45 Athens (winter time): Superbet's odds for the Super League
 # games kicking off within 45 minutes, saved on the "odds" branch (see close.py there). The site
 # pipeline on the PC copies them in as each game's closing odds, to score the value bets (CLV).
-# A push of this file runs it once with a week-wide window, as a test that the feed answers.
+# GitHub often runs schedules late or skips them, so the Cloudflare Worker x-daily-scheduler also
+# triggers it every 30 minutes (workflow_dispatch). A push of this file runs it once with a week-wide window, as a test that the feed answers.
 on:
   schedule:
     - cron: "*/15 10-21 * * *"
