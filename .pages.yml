@@ -52,9 +52,9 @@ content:
         description: Write the review. For the special boxes, use a bold line "Key ideas:" followed by a bullet list, and a paragraph starting with bold "Worth it if:".
         type: rich-text
   - name: quotes
-    label: Quotes
+    label: Thought Bank
     type: file
-    path: quotes/quotes.json
+    path: Thought-Bank/quotes.json
     format: json
     list: true
     fields:
@@ -67,11 +67,11 @@ content:
         type: date
         required: true
       - name: category
-        label: Chapter
+        label: Folder
         type: select
         required: true
         options:
-          values: ["Action & initiative", "Discipline & consistency", "Health & daily habits", "Excellence & work ethic", "Resilience & inner growth", "Happiness & gratitude", "Relationships & character", "Authenticity & independence", "Time & money", "Rules for life"]
+          values: ["Physical Health", "Emotions", "Mind", "Relationships", "Career", "Money", "Environment"]
       - name: title
         label: Core message (optional heading)
         type: string

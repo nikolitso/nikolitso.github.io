@@ -1,5 +1,5 @@
 """Post one book (antonisnikolitsopoulos.com/books), one film (What Algo Missed) or one quote
-(antonisnikolitsopoulos.com/quotes) to X.
+(antonisnikolitsopoulos.com/Thought-Bank) to X.
 
 Usage:  python scripts/x_daily.py auto [--dry-run]                (scheduled: post the current slot if not done)
         python scripts/x_daily.py book|film|quote --force [--dry-run]  (manual: post one now)
@@ -36,7 +36,7 @@ FILMS = Path(os.environ.get("WAM_DIR", ROOT.parent / "whatalgomissed")) / "conte
 ATHENS = ZoneInfo("Europe/Athens")
 # Five slots a day (Athens time): book and film every 6 hours, plus one quote a day
 SLOTS = [(2, "book"), (8, "film"), (11, "quote"), (14, "book"), (20, "film")]
-QUOTES = ROOT / "quotes" / "quotes.json"
+QUOTES = ROOT / "Thought-Bank" / "quotes.json"
 URL_LEN = 23  # X counts every link as 23 characters
 
 
@@ -159,7 +159,7 @@ def films():
 
 
 def quotes():
-    """The quotes page (quotes/quotes.json, edited in Pages CMS), keyed by quote number."""
+    """The quotes page (Thought-Bank/quotes.json, edited in Pages CMS), keyed by quote number."""
     if not QUOTES.exists():
         return {}
     items = {}
@@ -171,7 +171,7 @@ def quotes():
         src = re.sub(r"^(un|non[- ]?)?attributed( to)?:?\s*", "", src, flags=re.I)   # just the name, never "attributed"
         src = re.sub(r'^["“].*?["”]\s+by\s+', "", src)    # '"Article title" by Author' -> 'Author'
         items[str(n)] = dict(text=q["text"].strip(), source=src, date=str(q.get("date") or ""),
-                             url=f"https://antonisnikolitsopoulos.com/quotes/?q={n}#q-{n}")   # ?q= gives X a fresh link preview
+                             url=f"https://antonisnikolitsopoulos.com/Thought-Bank/?q={n}#q-{n}")   # ?q= gives X a fresh link preview
     return items
 
 

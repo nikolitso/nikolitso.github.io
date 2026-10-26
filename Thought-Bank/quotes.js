@@ -1,4 +1,4 @@
-// Quotes to live by: renders quotes.json (edited in Pages CMS) as chapters, with chapter and author filters.
+// Thought Bank: renders quotes.json (edited in Pages CMS) in seven folders, with folder and author filters.
 (function () {
   "use strict";
   var list = document.getElementById("q-list");
@@ -6,18 +6,15 @@
   var byFilter = document.getElementById("q-by");
   var onAuthor = function () {};
   var wide = window.matchMedia("(min-width: 861px)");
-  // Chapters in reading order, each with its one-line summary. Unknown categories go last.
+  // The seven Thought Bank folders in order, each with its one-line summary. Unknown categories go last.
   var CHAPTERS = [
-    ["Action & initiative", "Start before you feel ready; nobody else will build your life for you."],
-    ["Discipline & consistency", "Small steps every day, whatever your mood."],
-    ["Health & daily habits", "Move, sleep, eat well, protect your focus."],
-    ["Excellence & work ethic", "Do things well, be reliable, enjoy the work."],
-    ["Resilience & inner growth", "Face the truth about yourself, let go, recover faster."],
-    ["Happiness & gratitude", "Happiness is an activity: appreciate what you have and solve problems."],
-    ["Relationships & character", "Appreciate people, speak well of the absent, keep confidences, belong somewhere."],
-    ["Authenticity & independence", "Be real, think for yourself, stop performing for others."],
-    ["Time & money", "Time is the real wealth; spend it on what satisfies you."],
-    ["Rules for life", "Checklists that span every chapter."]
+    ["Physical Health", "Move, sleep, eat well: the body carries everything else."],
+    ["Emotions", "Worry less, recover faster, appreciate what you have."],
+    ["Mind", "Think clearly, learn constantly, act on what you know."],
+    ["Relationships", "Appreciate people, speak well of the absent, keep good company."],
+    ["Career", "Do the work well, finish things, be easy to work with."],
+    ["Money", "Money buys control over your time; keep the burn rate low."],
+    ["Environment", "What surrounds you, at home and in your days, shapes who you become."]
   ];
   var ORDER = CHAPTERS.map(function (c) { return c[0]; });
   function rank(c) { var i = ORDER.indexOf(c); return i < 0 ? 99 : i; }
@@ -105,7 +102,7 @@
       (groups[q.category] = groups[q.category] || []).push(q);
     });
     var cats = Object.keys(groups).sort(function (a, b) { return rank(a) - rank(b) || a.localeCompare(b); });
-    if (!cats.length) { list.appendChild(el("p", "q-empty", "No quotes match this chapter and author yet.")); return; }
+    if (!cats.length) { list.appendChild(el("p", "q-empty", "No quotes match this folder and author yet.")); return; }
     cats.forEach(function (c) {
       var sec = list.appendChild(el("section", "q-chapter"));
       sec.id = slug(c);
@@ -153,7 +150,7 @@
     }).map(function (n) { return [slug(n), n, names[n], personTone(n)]; }), byTotal, by, onBy);
   }
 
-  fetch("/quotes/quotes.json", { cache: "no-cache" })
+  fetch("/Thought-Bank/quotes.json", { cache: "no-cache" })
     .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
     .then(function (data) {
       // Within a chapter, quotes read in number order.
