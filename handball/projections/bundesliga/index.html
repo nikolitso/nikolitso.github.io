@@ -20,7 +20,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@500;600;700&family=Source+Sans+3:wght@400;500;600;700&display=swap">
 <style>
 :root{
-  --bg:#f1f3f6; --surface:#ffffff; --ink:#121826; --ink2:#46505f; --muted:#737d8c; --line:#dbe0e7; --grid:#e9edf2;
+  --bg:#dce8f4; --surface:#ffffff; --ink:#121826; --ink2:#46505f; --muted:#68758a; --line:#c9d6e4; --grid:#e3ebf4;
   --accent:#c8203a; --accent-soft:#fbe9ec; --md:#1b7f4b; --md-soft:#e5f3eb;
   --pos:#1b7f4b; --neg:#b3372f; --warn:#a86b00; --warn-bg:#fdf3dc;
   --display:"Saira Condensed","Arial Narrow",system-ui,sans-serif;
@@ -28,16 +28,16 @@
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){color-scheme:dark;
-    --bg:#0f1319; --surface:#171c24; --ink:#eef1f5; --ink2:#b9c1cc; --muted:#8a94a3; --line:#2a313c; --grid:#212833;
+    --bg:#0b1726; --surface:#132235; --ink:#eef1f5; --ink2:#b9c1cc; --muted:#8a9ab0; --line:#24364c; --grid:#1b2b3f;
     --accent:#ff5c72; --accent-soft:#2c1a1f; --md:#4cc47a; --md-soft:#16271d;
     --pos:#4cc47a; --neg:#ef7a70; --warn:#f0b84a; --warn-bg:#2d2512;}
 }
 :root[data-theme="dark"]{color-scheme:dark;
-  --bg:#0f1319; --surface:#171c24; --ink:#eef1f5; --ink2:#b9c1cc; --muted:#8a94a3; --line:#2a313c; --grid:#212833;
+  --bg:#0b1726; --surface:#132235; --ink:#eef1f5; --ink2:#b9c1cc; --muted:#8a9ab0; --line:#24364c; --grid:#1b2b3f;
   --accent:#ff5c72; --accent-soft:#2c1a1f; --md:#4cc47a; --md-soft:#16271d;
   --pos:#4cc47a; --neg:#ef7a70; --warn:#f0b84a; --warn-bg:#2d2512;}
 *{box-sizing:border-box}
-body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5;margin:0}
+body{background:radial-gradient(circle at 50% -380px,transparent 520px,color-mix(in srgb,var(--surface) 55%,transparent) 521px,color-mix(in srgb,var(--surface) 55%,transparent) 524px,transparent 525px) no-repeat,var(--bg);background-attachment:fixed;color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5;margin:0}
 .wrap{max-width:1040px;margin:0 auto;padding-inline:18px;padding-block:24px 56px;display:flex;flex-direction:column;gap:40px}
 h1,h2,h3{font-family:var(--display);font-weight:700;margin:0;text-wrap:balance;letter-spacing:.01em}
 h1{font-size:clamp(2.1rem,5.5vw,3rem);line-height:1}
