@@ -137,7 +137,7 @@ table.mini{margin:0 0 16px}
   </div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=e91837e1"></script>
+<script src="data.js?v=52b3236f"></script>
 <script>
 const D = window.SL, $ = id => document.getElementById(id);
 const L = D.labels, ORDER = D.order;
@@ -504,8 +504,8 @@ function renderValue(){
   h += recordTable('Record by side', group(b => b.stat === 'result' ? 'Result' : b.side === 'over' ? 'Overs' : 'Unders'));
   h += recordTable('Record by market and side', group(b => b.stat === 'result' ? 'Result' : `${L[b.stat]} ${b.side}`));
   h += recordTable('Record by EV', group(band), 'If the model finds real value, bigger EV should mean bigger returns.', true);
-  h += `<h2>Settled bets</h2><div class="scroll"><table class="mk"><thead><tr><th>Date</th><th>Match</th><th>Bet</th><th class="n">Odds</th><th class="n">EV</th><th class="n">Result</th></tr></thead><tbody>`;
-  for (const b of settled) h += `<tr><td class="muted">${dayName(b.date)}</td><td>${b.home} – ${b.away}</td><td>${betName(b)}</td><td class="n">${b.odds.toFixed(2)}</td><td class="n">${evPct(b.ev)}</td><td class="n ${b.result === 'won' ? 'w' : 'l'}">${b.result === 'won' ? 'Won +' + (b.odds - 1).toFixed(2) : 'Lost −1'}</td></tr>`;
+  h += `<h2>Settled bets</h2><div class="scroll"><table class="mk"><thead><tr><th>Date</th><th>Match</th><th>Bet</th><th class="n">Odds</th><th class="n">EV</th><th class="n" title="What happened: the final score for 1X2 bets, the match total for the rest">Actual</th><th class="n">Result</th></tr></thead><tbody>`;
+  for (const b of settled) h += `<tr><td class="muted">${dayName(b.date)}</td><td>${b.home} – ${b.away}</td><td>${betName(b)}</td><td class="n">${b.odds.toFixed(2)}</td><td class="n">${evPct(b.ev)}</td><td class="n"><b>${b.actual ?? '–'}</b></td><td class="n ${b.result === 'won' ? 'w' : 'l'}">${b.result === 'won' ? 'Won +' + (b.odds - 1).toFixed(2) : 'Lost −1'}</td></tr>`;
   return h + '</tbody></table></div>';
 }
 
