@@ -1,7 +1,8 @@
 name: Update project pills
 
-# Every morning (about 06:30 Athens): read the live project sites and refresh the pills on the
-# homepage's "Data & models" cards (scripts/update_projects.py). Commits only when something changed.
+# Every morning (about 06:30 Athens): read the live project sites, refresh the pills on the
+# homepage's project cards (scripts/update_projects.py) and retake their screenshots
+# (scripts/update_shots.py). Commits only when something changed.
 on:
   schedule:
     - cron: "23 4 * * *"
@@ -24,12 +25,16 @@ jobs:
           python-version: "3.12"
       - name: Refresh the pills
         run: python scripts/update_projects.py
+      - name: Retake the screenshots
+        run: |
+          pip install --quiet pillow
+          python scripts/update_shots.py
       - name: Save
         run: |
-          if git diff --quiet -- index.html; then exit 0; fi
+          if git diff --quiet -- index.html '*.jpg'; then exit 0; fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add index.html
-          git commit -m "Homepage: refresh project pills"
+          git add index.html *.jpg
+          git commit -m "Homepage: refresh project pills and screenshots"
           git pull --rebase
           git push

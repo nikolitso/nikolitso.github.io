@@ -1,8 +1,8 @@
 """Refresh the screenshots on the homepage's project cards.
 
 Run:  python scripts/update_shots.py
-A GitHub Action runs it every morning and after changes to the project folders, so the
-cards always show the current version of each page.
+The "Update project pills" GitHub Action runs it every morning, so the cards always show
+the current version of each page.
 
 Pages that live in this repo are served from the checkout (so a change shows up at once);
 the PAOK hubs live in their own repos and are captured from the live site.
@@ -28,11 +28,13 @@ SIZE = (1200, 675)
 # (card link on the homepage, image file name)
 SHOTS = [
     ("/wine/", "wine"),
+    ("/superleague/", "superleague"),
+    ("/eurocup/", "eurocup"),
+    ("/fibaeuropecup/", "fibaeuropecup"),
+    ("/handball/projections/", "handball"),
+    ("/basketball/", "basketball"),
     ("/paok-hub/", "paok-hub"),
     ("/paok-basketball/", "paok-basketball"),
-    ("/fibaeuropecup/", "fibaeuropecup"),
-    ("/handball/", "handball"),
-    ("/basketball/", "basketball"),
 ]
 
 
