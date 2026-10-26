@@ -202,7 +202,7 @@ SOCIAL = """<ul class="social" aria-label="Social links">
 def site_menu(active=""):
     items = [("projects", "/#projects", "Projects"), ("books", "/books/", "Books"),
              ("films", "https://whatalgomissed.com/", 'Films <span aria-hidden="true">↗</span>'),
-             ("wine", "/wine/", "Wine"), ("quotes", "/thought-bank/", "Thought Bank"), ("about", "/about/", "About")]
+             ("quotes", "/thought-bank/", "Thought Bank"), ("wine", "/wine/", "Wine"), ("about", "/about/", "About")]
     return "".join(
         f'<a href="{h}"' + (' target="_blank" rel="noopener"' if h.startswith("http") else "")
         + (' class="on" aria-current="page"' if k == active else "") + f">{l}</a>" for k, h, l in items)
