@@ -265,14 +265,14 @@ function renderBacktest(){
     h += `<h2>By season</h2><p class="note">Click a season to see its bets one by one.</p>`;
     h += `<table class="seasons" style="max-width:620px"><thead><tr><th>Season</th><th class="n">Bets</th><th class="n">Won</th><th class="n">Hit</th><th class="n">P/L</th><th class="n">ROI</th></tr></thead><tbody>`;
     for (const [season, t] of Object.entries(by).sort()) h += `<tr class="srow${season === btSeason ? ' on' : ''}" data-season="${season}"><td><span class="caret">${season === btSeason ? '▾' : '▸'}</span> ${season.replace('-','–')}</td><td class="n">${t.n}</td><td class="n">${t.w}</td><td class="n">${pct(t.w / t.n)}</td><td class="n ${cls(t.pl)}">${sgn(t.pl, 1)}</td><td class="n ${cls(t.pl)}">${sgn(t.pl / t.n * 100, 1)}%</td></tr>`;
-    h += '</tbody></table>' + byLine();
+    h += '</tbody></table>' + byMonth() + byLine();
     if (btSeason) h += seasonBets(btSeason);
     return h;
   }
   h += `<p class="note">Click a season to see its bets one by one.</p>`;
   h += `<table class="seasons" style="max-width:560px"><thead><tr><th>Season</th><th class="n">Bets</th><th class="n">Won</th><th class="n">Hit</th><th class="n">ROI</th></tr></thead><tbody>`;
   for (const s of B.seasons.filter(inLg)) h += `<tr class="srow${s.season === btSeason ? ' on' : ''}" data-season="${s.season}"><td><span class="caret">${s.season === btSeason ? '▾' : '▸'}</span> ${s.season.replace('-','–')}${s.tuned ? ' <span class="muted">(tuned on)</span>' : ''}</td><td class="n">${s.n}</td><td class="n">${s.w}</td><td class="n">${pct(s.w/s.n)}</td><td class="n ${cls(s.roi)}">${sgn(s.roi*100, 1)}%</td></tr>`;
-  h += '</tbody></table>' + byLine();
+  h += '</tbody></table>' + byMonth() + byLine();
   if (btSeason) h += seasonBets(btSeason);
   return h;
 }
@@ -299,6 +299,22 @@ function byLine(){
   for (const b of W) h += `<tr><td>${b.lab}</td><td class="n">${b.n}</td><td class="n ${cls(b.pl)}">${b.n ? sgn(b.pl, 1) : '–'}</td><td class="n ${cls(b.roi)}">${b.n ? sgn(b.roi*100, 1) + '%' : '–'}</td><td class="n">${b.s ? `${b.sp} of ${b.s}` : '–'}</td></tr>`;
   h += `</tbody></table></div><p class="note"><b>Low lines</b> have been the model's best ground. A line of 130 or less means the bookmakers expect a one-sided 3-0, so a single close set takes the total over, and both the hit rate and the run of seasons there are hard to put down to luck. <b>The middle band</b> holds most of the bets and the thinnest edge, but it has still made money, so the rule keeps it: dropping bands picked after seeing these results would flatter the record, the same trap as picking leagues by their backtest. <b>Small bands</b> (the highest lines, the lowest ones) can swing a long way on a few results, so they are shown, not acted on. The live picks are the real test, band by band.</p>`;
   return h;
+}
+
+// the same bets by calendar month, every season together: does the rule do better early or late in the season?
+function byMonth(){
+  const live = new Set(DATA.leagues.filter(l => l.live).map(l => l.key));
+  const tuned = new Set(DATA.backtest.seasons.filter(x => x.tuned).map(x => x.lg + '|' + x.season));
+  const bets = DATA.backtest.bets.filter(b => (lg === 'all' ? live.has(b.lg) : b.lg === lg) && !tuned.has(b.lg + '|' + b.season));
+  const MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'], by = {};
+  for (const b of bets){ const m = +b.dt.slice(5, 7); const t = by[m] ||= {n: 0, w: 0, pl: 0}; t.n++; t.w += b.won; t.pl += b.ret; }
+  let h = `<h2>By month</h2><p class="note">The same bets by calendar month, every season together.</p>`;
+  h += `<div class="scroll"><table style="max-width:620px"><thead><tr><th>Month</th><th class="n">Bets</th><th class="n">Won</th><th class="n">Hit</th><th class="n">P/L</th><th class="n">ROI</th></tr></thead><tbody>`;
+  for (const m of [8, 9, 10, 11, 12, 1, 2, 3, 4, 5, 6, 7]){
+    const t = by[m]; if (!t) continue;
+    h += `<tr><td>${MON[m - 1]}</td><td class="n">${t.n}</td><td class="n">${t.w}</td><td class="n">${pct(t.w / t.n)}</td><td class="n ${cls(t.pl)}">${sgn(t.pl, 1)}</td><td class="n ${cls(t.pl)}">${sgn(t.pl / t.n * 100, 1)}%</td></tr>`;
+  }
+  return h + '</tbody></table></div>';
 }
 
 function seasonBets(season){
