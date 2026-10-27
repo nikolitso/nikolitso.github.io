@@ -162,7 +162,7 @@ tr.srow{cursor:pointer} tr.srow:hover td,tr.srow.on td{background:color-mix(in s
   <div class="chips" id="chips"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=f1038f5b"></script>
+<script src="data.js?v=291037d7"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -181,7 +181,7 @@ const one = () => lg === 'all' ? DATA.leagues[0].key : lg;      // tabs that sho
 $('sub').textContent = `Women's top leagues · ${DATA.season.replace('-','–')} · updated ${DATA.updated} (Athens)`;
 
 function renderProjections(){
-  let h = `<p class="note">Every match in the next 7 days: the chance it goes 3, 4 or 5 sets, the projected total points and the model's own fair line. Once a bookmaker posts a line, the row shows the line, the average over price and the model's over chance against it. Rows in green have an edge of more than ${DATA.edge*100}% on the over; only <b>picks</b> (gold) are backed and recorded: overs on lines below ${DATA.low}, the matches the market expects to end 3-0, where the edge is above ${DATA.edge*100}%.</p>`;
+  let h = `<p class="note">Every match in the next 7 days: the chance it goes 3, 4 or 5 sets, the projected total points and the model's own fair line. Once a bookmaker posts a line, the row shows the line, the average over price and the model's over chance against it. Rows in green have an edge of more than ${DATA.edge*100}% on the over; only <b>picks</b> (gold) are backed and recorded: overs on lines ${DATA.min_line}.5 to ${DATA.low - 0.5}, except ${DATA.skip[0]}.5 to ${DATA.skip[1]}.5 this season (the backtest returned under 8% there), the matches the market expects to end 3-0, where the edge is above ${DATA.edge*100}%.</p>`;
   const fx = DATA.fixtures.filter(inLg);
   if (!fx.length) return h + '<p class="empty">No matches in the next 7 days.</p>';
   const byDay = {};
@@ -207,7 +207,7 @@ function tiles(list){
 function renderPicks(){
   const picks = DATA.picks.filter(inLg), done = picks.filter(p => 'won' in p), open = picks.filter(p => !('won' in p));
   const w = done.filter(p => p.won).length, units = done.reduce((s, p) => s + p.profit, 0);
-  let h = `<p class="note">Every pick since the page went live, logged before the first serve: an over on a line below ${DATA.low} when the model's chance × the average price is more than ${DATA.edge*100}% above 1. Leagues: ${liveNames()}. Stake 1 unit each. The page judges itself at <b>100 settled picks</b>; before that, the record is mostly noise.</p>`;
+  let h = `<p class="note">Every pick since the page went live, logged before the first serve: an over on a line from ${DATA.min_line}.5 to ${DATA.low - 0.5}, except ${DATA.skip[0]}.5 to ${DATA.skip[1]}.5 this season, when the model's chance × the average price is more than ${DATA.edge*100}% above 1. Leagues: ${liveNames()}. Stake 1 unit each. The page judges itself at <b>100 settled picks</b>; before that, the record is mostly noise.</p>`;
   h += tiles([['Settled picks', done.length], ['Record', `${w}–${done.length - w}`], ['Units', sgn(units, 2), cls(units)],
               ['ROI', done.length ? sgn(units / done.length * 100, 1) + '%' : '–', cls(units)], ['Open picks', open.length]]);
   if (!picks.length) return h + '<p class="empty">No picks yet. The first ones appear once bookmakers post lines for a match that qualifies.</p>';
@@ -243,7 +243,7 @@ function renderSeason(){
 function renderBacktest(){
   const B = DATA.backtest, S = lg === 'all' ? B.all : B.leagues[lg];
   const range = s => s.n ? `${sgn(s.ci[0]*100, 0)}% to ${sgn(s.ci[1]*100, 0)}%` : '–';
-  let h = `<p class="note">The live rule run on every season since ${B.first.slice(0,4)}, each match projected only from earlier matches of its own league, at the closing line and the average price. The settings were tuned on the Sultanlar Ligi's 2024-25 alone, so the totals leave that season out and every other league is a test the model never saw. ${S.blind_n ? `<b>Backing every low-line over without the model</b> returned ${sgn(S.blind_roi*100, 1)}% over ${S.blind_n} matches.` : `<b>This league never has a line below ${DATA.low}</b> (its totals run higher), so the rule has had nothing to bet on.`}</p>`;
+  let h = `<p class="note">The live rule run on every season since ${B.first.slice(0,4)}, each match projected only from earlier matches of its own league, at the closing line and the average price. The settings were tuned on the Sultanlar Ligi's 2024-25 alone, so the totals leave that season out and every other league is a test the model never saw. Lines of ${DATA.min_line - 1}.5 or lower are left out. ${S.blind_n ? `<b>Backing every low-line over without the model</b> returned ${sgn(S.blind_roi*100, 1)}% over ${S.blind_n} matches.` : `<b>This league never has a line below ${DATA.low}</b> (its totals run higher), so the rule has had nothing to bet on.`}</p>`;
   h += tiles([['Bets (unseen)', S.n], ['Hit rate', S.n ? pct(S.w / S.n) : '–'], ['ROI', sgn(S.roi*100, 1) + '%', cls(S.roi)], ['90% range', range(S)]]);
   if (lg === 'all'){
     h += `<p class="note">${lg === 'all' && DATA.leagues.some(l => !l.live) ? 'The totals above count the leagues with live picks only. ' : ''}Click a league to see its seasons and bets.</p>`;
@@ -266,17 +266,16 @@ function renderBacktest(){
 function byLine(){
   const tuned = new Set(DATA.backtest.seasons.filter(s => s.tuned).map(s => s.lg + '|' + s.season));
   const bets = DATA.backtest.bets.filter(b => inLg(b) && !tuned.has(b.lg + '|' + b.season));
-  const band = b => { const f = Math.floor(b.line); return f <= 125 ? 125 : Math.ceil(f / 5) * 5; };
+  const band = b => { const f = Math.floor(b.line); return Math.ceil(f / 5) * 5; };
   const by = {};
   bets.forEach(b => (by[band(b)] ||= []).push(b));
-  let h = `<h2>By line</h2><p class="note">The same bets grouped by the bookmaker's total-points line: 126–130 means lines 126.5 to 130.5. Profit and loss in units, stake 1 per bet. The few bets on lines of 125 or less have no row of their own but count in All and in the table below.</p>`;
+  let h = `<h2>By line</h2><p class="note">The same bets grouped by the bookmaker's total-points line: 126–130 means lines 126.5 to 130.5. Profit and loss in units, stake 1 per bet.</p>`;
   h += `<div class="scroll"><table style="max-width:620px"><thead><tr><th>Line</th><th class="n">Bets</th><th class="n">Won</th><th class="n">Hit</th><th class="n">P/L</th><th class="n">ROI</th></tr></thead><tbody>`;
   let n = 0, w = 0, pl = 0;
   for (const k of Object.keys(by).map(Number).sort((a, b) => a - b)){
     const g = by[k], gw = g.filter(b => b.won).length, gp = g.reduce((s, b) => s + b.ret, 0);
     n += g.length; w += gw; pl += gp;
-    if (k === 125) continue;                         // too few bets on lines of 125 or less for a row of their own
-    h += `<tr><td>${k - 4}–${k}</td><td class="n">${g.length}</td><td class="n">${gw}</td><td class="n">${pct(gw / g.length)}</td><td class="n ${cls(gp)}">${sgn(gp, 1)}</td><td class="n ${cls(gp)}">${sgn(gp / g.length * 100, 1)}%</td></tr>`;
+    h += `<tr><td>${k - 4}–${k}${k - 4 >= DATA.skip[0] && k <= DATA.skip[1] ? ' <span class="muted">· not bet this season</span>' : ''}</td><td class="n">${g.length}</td><td class="n">${gw}</td><td class="n">${pct(gw / g.length)}</td><td class="n ${cls(gp)}">${sgn(gp, 1)}</td><td class="n ${cls(gp)}">${sgn(gp / g.length * 100, 1)}%</td></tr>`;
   }
   if (n) h += `<tr><td><b>All</b></td><td class="n"><b>${n}</b></td><td class="n"><b>${w}</b></td><td class="n"><b>${pct(w / n)}</b></td><td class="n ${cls(pl)}"><b>${sgn(pl, 1)}</b></td><td class="n ${cls(pl)}"><b>${sgn(pl / n * 100, 1)}%</b></td></tr>`;
   h += '</tbody></table></div>';
