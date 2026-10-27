@@ -246,15 +246,14 @@ function renderSeason(){
 
 function renderBacktest(){
   const B = DATA.backtest, S = lg === 'all' ? B.all : B.leagues[lg];
-  const range = s => s.n ? `${sgn(s.ci[0]*100, 0)}% to ${sgn(s.ci[1]*100, 0)}%` : '–';
   let h = `<p class="note">The live rule run on every season since ${B.first.slice(0,4)}, each match projected only from earlier matches of its own league, at the closing line and the average price. The settings were tuned on the Sultanlar Ligi's 2024-25 alone, so the totals leave that season out and every other league is a test the model never saw. Lines of ${DATA.min_line - 1}.5 or lower are left out. ${S.blind_n ? `<b>Backing every low-line over without the model</b> returned ${sgn(S.blind_roi*100, 1)}% over ${S.blind_n} matches.` : `<b>This league never has a line below ${DATA.low}</b> (its totals run higher), so the rule has had nothing to bet on.`}</p>`;
-  h += tiles([['Bets', S.n], ['Hit rate', S.n ? pct(S.w / S.n) : '–'], ['ROI', sgn(S.roi*100, 1) + '%', cls(S.roi)], ['90% range', range(S)]]);
+  h += tiles([['Bets', S.n], ['Hit rate', S.n ? pct(S.w / S.n) : '–'], ['ROI', sgn(S.roi*100, 1) + '%', cls(S.roi)]]);
   if (lg === 'all'){
     h += `<p class="note">${lg === 'all' && DATA.leagues.some(l => !l.live) ? 'The totals above count the leagues with live picks only. ' : ''}Click a league to see its seasons and bets.</p>`;
-    h += `<div class="scroll"><table style="max-width:760px"><thead><tr><th>League</th><th class="n">Bets</th><th class="n">Hit</th><th class="n">ROI</th><th class="n">90% range</th><th class="n">No model</th></tr></thead><tbody>`;
+    h += `<div class="scroll"><table style="max-width:760px"><thead><tr><th>League</th><th class="n">Bets</th><th class="n">Hit</th><th class="n">ROI</th><th class="n">No model</th></tr></thead><tbody>`;
     for (const l of DATA.leagues){
       const s = B.leagues[l.key];
-      h += `<tr class="srow" data-lg="${l.key}"><td><span class="caret">▸</span> ${l.country} <span class="muted">${l.name}${l.live ? '' : ' · no picks'}</span></td><td class="n">${s.n}</td><td class="n">${s.n ? pct(s.w/s.n) : '–'}</td><td class="n ${cls(s.roi)}">${sgn(s.roi*100, 1)}%</td><td class="n">${range(s)}</td><td class="n ${cls(s.blind_roi)}">${sgn(s.blind_roi*100, 1)}%</td></tr>`;
+      h += `<tr class="srow" data-lg="${l.key}"><td><span class="caret">▸</span> ${l.country} <span class="muted">${l.name}${l.live ? '' : ' · no picks'}</span></td><td class="n">${s.n}</td><td class="n">${s.n ? pct(s.w/s.n) : '–'}</td><td class="n ${cls(s.roi)}">${sgn(s.roi*100, 1)}%</td><td class="n ${cls(s.blind_roi)}">${sgn(s.blind_roi*100, 1)}%</td></tr>`;
     }
     return h + '</tbody></table></div>' + byLine();
   }
@@ -284,9 +283,9 @@ function byLine(){
   if (n) h += `<tr><td><b>All</b></td><td class="n"><b>${n}</b></td><td class="n"><b>${w}</b></td><td class="n"><b>${pct(w / n)}</b></td><td class="n ${cls(pl)}"><b>${sgn(pl, 1)}</b></td><td class="n ${cls(pl)}"><b>${sgn(pl / n * 100, 1)}%</b></td></tr>`;
   h += '</tbody></table></div>';
   const W = DATA.backtest.bands[lg === 'all' ? 'all' : lg] || [];
-  h += `<h2>Low, middle and high lines</h2><div class="scroll"><table style="max-width:720px"><thead><tr><th>Line</th><th class="n">Bets</th><th class="n">P/L</th><th class="n">ROI</th><th class="n">90% range</th><th class="n">Seasons in profit</th></tr></thead><tbody>`;
-  for (const b of W) h += `<tr><td>${b.lab}</td><td class="n">${b.n}</td><td class="n ${cls(b.pl)}">${b.n ? sgn(b.pl, 1) : '–'}</td><td class="n ${cls(b.roi)}">${b.n ? sgn(b.roi*100, 1) + '%' : '–'}</td><td class="n">${b.n ? `${sgn(b.ci[0]*100, 0)}% to ${sgn(b.ci[1]*100, 0)}%` : '–'}</td><td class="n">${b.s ? `${b.sp} of ${b.s}` : '–'}</td></tr>`;
-  h += `</tbody></table></div><p class="note">The 90% range is how far the ROI could be from the truth by luck alone: the bets resampled thousands of times. <b>Low lines</b> have been the model's best ground. A line of 130 or less means the bookmakers expect a one-sided 3-0, so a single close set takes the total over, and both the hit rate and the run of seasons there are hard to put down to luck. <b>The middle band</b> holds most of the bets and the thinnest edge, but it has still made money, so the rule keeps it: dropping bands picked after seeing these results would flatter the record, the same trap as picking leagues by their backtest. <b>Small bands</b> (the highest lines, the lowest ones) can swing a long way on a few results, so they are shown, not acted on. The live picks are the real test, band by band.</p>`;
+  h += `<h2>Low, middle and high lines</h2><div class="scroll"><table style="max-width:720px"><thead><tr><th>Line</th><th class="n">Bets</th><th class="n">P/L</th><th class="n">ROI</th><th class="n">Seasons in profit</th></tr></thead><tbody>`;
+  for (const b of W) h += `<tr><td>${b.lab}</td><td class="n">${b.n}</td><td class="n ${cls(b.pl)}">${b.n ? sgn(b.pl, 1) : '–'}</td><td class="n ${cls(b.roi)}">${b.n ? sgn(b.roi*100, 1) + '%' : '–'}</td><td class="n">${b.s ? `${b.sp} of ${b.s}` : '–'}</td></tr>`;
+  h += `</tbody></table></div><p class="note"><b>Low lines</b> have been the model's best ground. A line of 130 or less means the bookmakers expect a one-sided 3-0, so a single close set takes the total over, and both the hit rate and the run of seasons there are hard to put down to luck. <b>The middle band</b> holds most of the bets and the thinnest edge, but it has still made money, so the rule keeps it: dropping bands picked after seeing these results would flatter the record, the same trap as picking leagues by their backtest. <b>Small bands</b> (the highest lines, the lowest ones) can swing a long way on a few results, so they are shown, not acted on. The live picks are the real test, band by band.</p>`;
   return h;
 }
 
