@@ -140,7 +140,8 @@
       "scorecasting",
       "football-hackers-the-science-and",
       "soccernomics",
-      "betting-on-football"
+      "betting-on-football",
+      "maximize-your-potential"
     ],
     "log": [
       {
@@ -310,9 +311,15 @@
         "slot": "2026-10-26 14",
         "slug": "betting-on-football",
         "id": "2114701529621954619"
+      },
+      {
+        "day": "2026-10-27",
+        "slot": "2026-10-27 02",
+        "slug": "maximize-your-potential",
+        "id": "2114943954529464530"
       }
     ],
-    "last_day": "2026-10-26"
+    "last_day": "2026-10-27"
   },
   "film": {
     "seen": [
@@ -691,7 +698,7 @@
     ],
     "last_day": "2026-10-26"
   },
-  "last_slot": "2026-10-26 20",
+  "last_slot": "2026-10-27 02",
   "quote": {
     "seen": [
       "1",
