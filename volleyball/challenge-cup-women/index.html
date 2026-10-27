@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Challenge Cup Women</title>
+<meta name="description" content="Volleyball Challenge Cup Women: fair winner prices for both legs of a tie from the opening odds, the two countries and the venue, plus every country's home and away record against the odds.">
+<link rel="canonical" href="https://antonisnikolitsopoulos.com/volleyball/challenge-cup-women/">
+<meta property="og:title" content="Challenge Cup Women">
+<meta property="og:description" content="Fair winner prices for both legs of a Challenge Cup Women tie, from the opening odds, the countries and the venue.">
+<meta property="og:url" content="https://antonisnikolitsopoulos.com/volleyball/challenge-cup-women/">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.png" type="image/png" sizes="64x64">
+<!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "b67bbb76d0e24af196b24ded3ab71ad0"}'></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Playfair+Display:wght@600;700&family=Source+Serif+4:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0c1424; --panel:#131d33; --line:#26334f; --text:#f1ead9; --muted:#9aa4ba;
+  --gold:#d4af37; --win:#6fcf97; --loss:#eb7a6c;
+  --serif:'Playfair Display',Georgia,serif; --body:'Source Serif 4',Georgia,serif; --mono:'IBM Plex Mono',ui-monospace,monospace;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:17px/1.5 var(--body)}
+.wrap{max-width:1180px;margin:0 auto;padding:40px 16px 80px}
+h1{font:700 clamp(30px,5vw,46px)/1.1 var(--serif);margin:0 0 6px}
+h1 a{color:inherit;text-decoration:none}
+h1 a:hover{color:var(--gold)}
+.sub{font:400 13px var(--mono);color:var(--muted);letter-spacing:.04em;margin-bottom:32px}
+.tabs{display:flex;flex-wrap:wrap;gap:10px 28px;border-bottom:1px solid var(--line);margin:0 0 26px}
+.tabs a{border-bottom:2px solid transparent;color:var(--muted);font:600 18px var(--serif);padding:0 0 10px;margin-bottom:-1px;cursor:pointer;text-decoration:none}
+.tabs a.on{color:var(--text);border-color:var(--gold)}
+.tabs a:hover{color:var(--text)}
+.seg{display:flex;border:1px solid var(--line);border-radius:6px;overflow:hidden;width:max-content;max-width:100%}
+.seg button{background:none;border:0;color:var(--muted);font:500 13px var(--mono);padding:8px 14px;cursor:pointer;letter-spacing:.06em;text-transform:uppercase}
+.seg button.on{background:var(--gold);color:#0c1424}
+h2{font:600 22px var(--serif);margin:34px 0 12px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px 18px 14px;min-width:0}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+th{font:400 11px var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.08em;text-align:left;padding:8px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:7px 8px;border-bottom:1px solid color-mix(in srgb,var(--line) 60%,transparent);font-size:15px;white-space:nowrap}
+td.n,th.n{text-align:right;font-family:var(--mono);font-size:13.5px}
+td.tot{color:var(--gold);font-weight:500}
+.gl{border-left:1px solid var(--line);padding-left:12px}
+tr:last-child td{border-bottom:0}
+tr.grp th{color:var(--gold);border-bottom:0;padding-bottom:0}
+th.srt{cursor:pointer;user-select:none} th.srt:hover,th.srt.on{color:var(--gold)}
+.ok{color:var(--win)} .bad{color:var(--loss)} .muted{color:var(--muted)}
+.note{font:400 15.5px/1.55 var(--body);color:var(--muted);border-left:2px solid var(--gold);padding:2px 0 2px 14px;margin:0 0 16px;max-width:900px}
+.note b{color:var(--text);font-weight:600}
+.scroll{overflow-x:auto}
+.form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px 28px}
+.side h3{font:600 15px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--gold);margin:0 0 10px}
+label{display:block;font:400 11px var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin:0 0 5px}
+select,input{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:6px;color:var(--text);font:500 15px var(--mono);padding:9px 10px}
+select:focus,input:focus{outline:none;border-color:var(--gold)}
+.odds{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.field{margin-bottom:14px}
+.hint{font:400 12.5px/1.5 var(--mono);color:var(--muted);margin-top:4px}
+table.res td{font-size:16px}
+table.res td.n{font-size:15px}
+.big{font:500 18px var(--mono);color:var(--gold)}
+tr.val td{background:color-mix(in srgb,var(--gold) 12%,transparent)}
+.cols{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px;align-items:start}
+.doc{max-width:860px}
+.doc p,.doc li{font-size:16.5px;line-height:1.65;margin:0 0 14px}
+.doc ul{padding-left:20px}
+.doc h3{font:600 18px var(--serif);margin:28px 0 8px;display:flex;align-items:center;gap:10px}
+.doc .num{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--gold);color:#0c1424;font:600 13px var(--mono);flex:none}
+.calc{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:8px;padding:12px 16px;margin:0 0 14px;font:400 14px/2 var(--mono);overflow-x:auto}
+table.mini{margin:0 0 16px;max-width:620px}
+.empty{color:var(--muted);padding:12px 0}
+@media(max-width:760px){.form,.cols{grid-template-columns:1fr}td,th{padding:6px 5px}td.n,th.n{font-size:12.5px}table.res td{font-size:14px}table.res td.n{font-size:13px}.card{padding:14px 10px 10px}.full{display:none}}
+</style>
+</head>
+<body>
+<!-- sitebar:start (link back to antonisnikolitsopoulos.com; keep on every page) -->
+<style>
+.an-sitebar{background:#0d1220;border-bottom:1px solid rgba(255,255,255,.09);font:500 13px/1.2 "Segoe UI",system-ui,-apple-system,sans-serif;letter-spacing:.02em}
+.an-sitebar>div{max-width:72rem;margin:0 auto;padding:6px 16px;display:flex;justify-content:flex-end;align-items:center;gap:18px}
+.an-sitebar a{color:#9aa1b2;text-decoration:none;display:inline-flex;align-items:center;min-height:24px}.an-sitebar a:hover{color:#fff}
+.an-sitebar svg{width:17px;height:17px;fill:currentColor}
+.an-sitebar a[href="/"]{padding:6px 8px;margin:-6px -8px -6px -4px;border-radius:6px}.an-sitebar a[href="/"]:hover{background:rgba(255,255,255,.08)}
+</style>
+<nav class="an-sitebar" aria-label="Main site"><div><a href="/books/">Books</a><a href="/#projects">Projects</a><a href="/about/">About</a><a href="/" title="Main site: antonisnikolitsopoulos.com" aria-label="Main site"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 2 11.5h3V21h5.5v-6h3v6H19v-9.5h3z"/></svg></a></div></nav>
+<!-- sitebar:end -->
+<div class="wrap">
+  <h1><a href="/volleyball/challenge-cup-women/">Challenge Cup Women</a></h1>
+  <div class="sub" id="sub"></div>
+  <div class="tabs" id="tabs">
+    <a href="#view=projector" data-view="projector" class="on">Projector</a>
+    <a href="#view=countries" data-view="countries">Countries home &amp; away</a>
+    <a href="#view=method" data-view="method">How it works</a>
+  </div>
+  <div id="out"></div>
+</div>
+<script src="data.js?v=1"></script>
+<script>
+const $ = id => document.getElementById(id);
+const M = DATA.model, MS = DATA.matches;
+const logit = p => Math.log(p / (1 - p)), sig = z => 1 / (1 + Math.exp(-z));
+const pct = x => Math.round(x * 100) + '%';
+const sgn = (x, d = 0) => (x >= 0 ? '+' : '−') + Math.abs(x).toFixed(d);
+const sgnPct = x => (x >= 0 ? '+' : '−') + Math.abs(x * 100).toFixed(1) + '%';
+const COUNTRIES = [...new Set(MS.flatMap(m => [m.hc, m.ac]))].sort();
+const OTHER = 'Other (no history)';
+let view = 'projector', cSort = 'country', cDir = 1;
+const st = {a: 'Greece', b: 'Italy', o1a: '', o1b: '', o2b: '', o2a: '', mode: 'tie'};
+
+$('sub').textContent = `Seasons ${DATA.seasons[0].replace('-', '–')} to ${DATA.seasons.at(-1).replace('-', '–')} · ${MS.length} matches between clubs of different countries · updated ${DATA.updated}`;
+
+// the bookmaker chance of the host with the margin taken out
+const fair = (h, a) => (1 / h) / (1 / h + 1 / a);
+// model chance of the host: the opening-odds chance, stretched (favourites are too long), plus the second-leg home edge and the countries' venue adjustments
+const model = (x, host, guest, leg2) => sig(M.slope * x + M.home + M.leg2 * leg2 + (M.H[host] || 0) + (M.A[guest] || 0));
+const odd = v => { const x = parseFloat(String(v).replace(',', '.')); return x > 1 ? x : null; };
+
+// --- Projector -------------------------------------------------------------------------------------------------
+function countrySel(id, val){
+  return `<select id="${id}">${[...COUNTRIES, OTHER].map(c => `<option${c === val ? ' selected' : ''}>${c}</option>`).join('')}</select>`;
+}
+function renderProjector(){
+  const tie = st.mode === 'tie';
+  return `<p class="note">Pick the two countries and type the <b>opening</b> winner odds. The projector gives the fair price of each leg (no bookmaker margin) and the edge against the odds you typed. Before the second leg is priced, its odds are estimated from the first leg with the venue turned round.</p>
+    <div class="card"><div class="seg" id="mode" style="margin-bottom:18px"><button data-m="tie" class="${tie ? 'on' : ''}">Both legs</button><button data-m="one" class="${tie ? '' : 'on'}">One match</button></div>
+    <div class="form">
+      <div class="side"><h3>${tie ? 'Hosts leg 1' : 'Host'}</h3>
+        <div class="field"><label for="ca">Country</label>${countrySel('ca', st.a)}</div>
+        <div class="odds"><div><label for="o1a">${tie ? 'Leg 1 odds' : 'Odds'}</label><input id="o1a" inputmode="decimal" placeholder="e.g. 2.40" value="${st.o1a}"></div>
+        ${tie ? `<div><label for="o2a">Leg 2 odds</label><input id="o2a" inputmode="decimal" placeholder="once out" value="${st.o2a}"></div>` : ''}</div></div>
+      <div class="side"><h3>${tie ? 'Hosts leg 2' : 'Visitor'}</h3>
+        <div class="field"><label for="cb">Country</label>${countrySel('cb', st.b)}</div>
+        <div class="odds"><div><label for="o1b">${tie ? 'Leg 1 odds' : 'Odds'}</label><input id="o1b" inputmode="decimal" placeholder="e.g. 1.55" value="${st.o1b}"></div>
+        ${tie ? `<div><label for="o2b">Leg 2 odds</label><input id="o2b" inputmode="decimal" placeholder="once out" value="${st.o2b}"></div>` : ''}</div></div>
+    </div>${tie ? '' : '<p class="hint">One match is scored as a first leg (or a single match): no second-leg home edge.</p>'}</div>
+    <div id="result"></div><div id="context"></div>`;
+}
+
+function renderResult(){
+  const a = st.a, b = st.b, tie = st.mode === 'tie';
+  const o1a = odd(st.o1a), o1b = odd(st.o1b), o2a = odd(st.o2a), o2b = odd(st.o2b);
+  if (!o1a || !o1b){ $('result').innerHTML = '<p class="empty">Type both leg 1 odds (decimal, above 1.00) to see the prices.</p>'; return; }
+  const x1 = logit(fair(o1a, o1b)), legs = [[tie ? 'Leg 1' : 'Match', a, b, x1, [o1a, o1b], 0]];
+  if (tie){
+    if (o2a && o2b) legs.push(['Leg 2', b, a, logit(fair(o2b, o2a)), [o2b, o2a], 1]);
+    else legs.push(['Leg 2', b, a, -x1 + 2 * M.market_home_edge, null, 1]);
+  }
+  const rows = legs.map(([lab, h, g, x, off, l2]) => {
+    const p = model(x, h, g, l2), po = sig(x);
+    let edge = '<td class="n muted">–</td>', cls = '';
+    if (off){
+      const eh = p * off[0] - 1, eg = (1 - p) * off[1] - 1, [e, who] = eh > eg ? [eh, h] : [eg, g];
+      edge = `<td class="n ${e >= 0 ? 'ok' : 'bad'}">${who} ${sgnPct(e)}</td>`;
+      if (e >= .05) cls = 'val';
+    }
+    return `<tr class="${cls}"><td>${lab}</td><td>${h} <span class="muted">v</span> ${g}</td>` +
+      `<td class="n">${off ? off[0].toFixed(2) + ' / ' + off[1].toFixed(2) : '<span class="muted">est. ' + (1 / po / 1.07).toFixed(2) + ' / ' + (1 / (1 - po) / 1.07).toFixed(2) + '</span>'}</td>` +
+      `<td class="n">${pct(po)}</td><td class="n tot">${pct(p)}</td><td class="n big">${(1 / p).toFixed(2)} / ${(1 / (1 - p)).toFixed(2)}</td>${edge}</tr>`;
+  }).join('');
+  $('result').innerHTML = `<h2>Fair prices</h2><div class="card scroll"><table class="res"><thead><tr><th></th><th>Host v visitor</th><th class="n">Odds</th><th class="n">Odds say host</th><th class="n">Model host</th><th class="n">Fair odds host / visitor</th><th class="n">Edge</th></tr></thead><tbody>${rows}</tbody></table></div>
+    <p class="hint">Edge = model chance × your odds − 1, on the better side; rows from +5% are highlighted. Country adjustments used: ${adjText(a)}; ${adjText(b)}.${tie && !(o2a && o2b) ? ' Leg 2 odds are estimated (with a typical 7% margin) until you type them; they ignore the leg 1 score.' : ''}</p>`;
+}
+const adjText = c => (M.H[c] === undefined ? `${c} none (no history)` : `${c} at home ${sgn(M.H[c], 2)}, away ${sgn(M.A[c], 2)}`);
+
+// the two countries' meetings and each one's home / away record
+function renderContext(){
+  const a = st.a, b = st.b;
+  let h = '';
+  const meet = MS.filter(m => (m.hc === a && m.ac === b) || (m.hc === b && m.ac === a)).sort((x, y) => y.date.localeCompare(x.date));
+  if (a !== OTHER && b !== OTHER && a !== b){
+    const s = side => { const ms = meet.filter(m => m.hc === side); const w = ms.filter(m => m.hs > m.as).length; return `${ms.length ? w + '–' + (ms.length - w) : '–'}`; };
+    h += `<h2>${a} v ${b}: every meeting</h2>`;
+    h += meet.length ? `<p class="hint" style="margin-bottom:10px">${a} at home ${s(a)} · ${b} at home ${s(b)} (wins–losses of the host)</p><div class="card scroll"><table><thead><tr><th>Season</th><th>Round</th><th>Host</th><th>Visitor</th><th class="n">Sets</th><th class="n">Points</th><th class="n">Opening odds</th><th class="n">Odds said host</th></tr></thead><tbody>` +
+      meet.map(m => `<tr><td class="muted">${m.season}</td><td class="muted">${m.round}${m.leg ? ' · leg ' + m.leg : ''}</td><td>${m.home} <span class="muted">${m.hc}</span></td><td>${m.away} <span class="muted">${m.ac}</span></td>` +
+        `<td class="n ${m.hs > m.as ? 'ok' : 'bad'}">${m.hs}–${m.as}</td><td class="n">${m.hp}–${m.ap}</td><td class="n">${m.oh ? m.oh.toFixed(2) + ' / ' + m.oa.toFixed(2) : '–'}</td><td class="n">${m.p ? pct(m.p) : '–'}</td></tr>`).join('') + '</tbody></table></div>'
+      : '<p class="empty">No meetings in these seasons.</p>';
+  }
+  const cs = [a, b].filter(c => c !== OTHER && COUNTRIES.includes(c));
+  if (cs.length) h += `<h2>Home and away against the odds</h2><div class="card scroll">${venueTable(cs.map(stats), false)}</div>`;
+  $('context').innerHTML = h;
+}
+
+// --- Countries ------------------------------------------------------------------------------------------------
+function rec(ms, home){
+  const won = m => home ? m.hs > m.as : m.as > m.hs;
+  const pr = ms.filter(m => m.p);
+  const exp = pr.reduce((s, m) => s + (home ? m.p : 1 - m.p), 0), act = pr.filter(won).length;
+  const pts = ms.reduce((s, m) => s + (home ? m.hp - m.ap : m.ap - m.hp), 0);
+  return {n: ms.length, w: ms.filter(won).length, win: ms.length ? ms.filter(won).length / ms.length : null,
+          exp: pr.length ? exp / pr.length : null, diff: pr.length ? (act - exp) / pr.length : null, pts: ms.length ? pts / ms.length : null};
+}
+function stats(c){
+  return {country: c, h: rec(MS.filter(m => m.hc === c), true), a: rec(MS.filter(m => m.ac === c), false)};
+}
+const C_COLS = [['country', 'Country', '', 1], ['hn', 'P', 'n gl', -1], ['hw', 'W–L', 'n', -1], ['hwin', 'Won', 'n', -1], ['hexp', 'Odds said', 'n full', -1], ['hdiff', 'vs odds', 'n', -1], ['hadj', 'Adj.', 'n full', -1],
+  ['an', 'P', 'n gl', -1], ['aw', 'W–L', 'n', -1], ['awin', 'Won', 'n', -1], ['aexp', 'Odds said', 'n full', -1], ['adiff', 'vs odds', 'n', -1], ['aadj', 'Adj.', 'n full', -1]];
+function venueTable(rows, sortable){
+  const key = r => ({country: r.country, hn: r.h.n, hw: r.h.w, hwin: r.h.win, hexp: r.h.exp, hdiff: r.h.diff, hadj: M.H[r.country],
+                     an: r.a.n, aw: r.a.w, awin: r.a.win, aexp: r.a.exp, adiff: r.a.diff, aadj: M.A[r.country]})[cSort];
+  if (sortable) rows.sort((x, y) => cSort === 'country' ? x.country.localeCompare(y.country) * cDir : ((key(x) ?? -9) - (key(y) ?? -9)) * cDir || x.country.localeCompare(y.country));
+  const cell = (v, f) => v === null || v === undefined ? '<td class="n muted">–</td>' : f(v);
+  const half = (r, adj) => `<td class="n gl">${r.n}</td><td class="n">${r.n ? r.w + '–' + (r.n - r.w) : '–'}</td>` + cell(r.win, v => `<td class="n">${pct(v)}</td>`) +
+    cell(r.exp, v => `<td class="n full muted">${pct(v)}</td>`) + cell(r.diff, v => `<td class="n ${v >= 0 ? 'ok' : 'bad'}">${sgn(v * 100)}</td>`) + cell(adj, v => `<td class="n full tot">${sgn(v, 2)}</td>`);
+  return `<table><thead><tr class="grp"><th></th><th class="gl" colspan="6">At home</th><th class="gl" colspan="6">Away</th></tr><tr>` +
+    C_COLS.map(([k, lab, cls]) => sortable ? `<th class="${cls} srt${k === cSort ? ' on' : ''}" data-sort="${k}">${lab}${k === cSort ? (cDir === C_COLS.find(c => c[0] === k)[3] ? ' ▾' : ' ▴') : ''}</th>` : `<th class="${cls}">${lab}</th>`).join('') +
+    `</tr></thead><tbody>` + rows.map(r => `<tr><td>${r.country}</td>${half(r.h, M.H[r.country])}${half(r.a, M.A[r.country])}</tr>`).join('') + '</tbody></table>';
+}
+function renderCountries(){
+  return `<p class="note"><b>Won</b> is the share of matches won; <b>odds said</b> the average chance the opening odds gave (margin taken out); <b>vs odds</b> the difference in percentage points, so + means the country's clubs did better than priced. <b>Adj.</b> is what the projector actually uses: the same idea after the general corrections (favourites too long, second-leg home edge) and pulled hard towards zero, since a few dozen matches say little. Click a heading to sort.</p>
+    <div class="card scroll">${venueTable(COUNTRIES.map(stats), true)}</div>`;
+}
+
+// --- How it works ------------------------------------------------------------------------------------------------
+function renderMethod(){
+  const b = M.bets, row = (t, l) => b.find(x => x.edge === t && x.legs === l);
+  const bt = [0, .05, .10].map(t => `<tr><td>Edge above ${Math.round(t * 100)}%</td>` + ['leg 1', 'leg 2'].map(l => { const r = row(t, l); return r ? `<td class="n gl">${r.n}</td><td class="n ${r.profit >= 0 ? 'ok' : 'bad'}">${sgnPct(r.profit / r.n)}</td>` : '<td class="n gl muted">0</td><td class="n muted">–</td>'; }).join('') + '</tr>').join('');
+  const gain = (1 - M.cv.logloss / M.cv.logloss_market) * 100;
+  return `<div class="doc">
+  <p>What goes in: every Challenge Cup Women match of the last five seasons between clubs from different countries, ${MS.length} in all, with the bookmakers' opening and closing winner odds. Matches between clubs of the same country, golden sets and awarded matches are left out. The host is the club playing at home.</p>
+  <h3><span class="num">1</span>What the odds get wrong</h3>
+  <p>Taken at face value (margin removed), the opening odds make favourites too long: a club the odds give 70% wins about ${pct(sig(M.slope * logit(.7) + M.home))} of the time, and one given 85% about ${pct(sig(M.slope * logit(.85) + M.home))}. And in a <b>second leg</b> the host does clearly better than priced, while in a first leg the venue is priced about right.</p>
+  <h3><span class="num">2</span>The projector</h3>
+  <div class="calc">host chance = 1 / (1 + e<sup>−z</sup>)<br>z = ${M.slope.toFixed(2)} × logit(opening odds chance) ${sgn(M.home, 2)} ${sgn(M.leg2, 2)} × [second leg] + host country at home + visitor country away</div>
+  <p>The country terms (Countries tab, <i>Adj.</i>) are shrunk towards zero; every one ended between ${sgn(Math.min(...Object.values(M.H), ...Object.values(M.A)), 2)} and ${sgn(Math.max(...Object.values(M.H), ...Object.values(M.A)), 2)}, so the country moves a price a little once the two general effects are in, not a lot. A second leg not yet priced gets the first leg's odds with the venue turned round, using the home edge the bookmakers themselves price in (${sgn(M.market_home_edge, 2)} on the logit scale, measured on ties where both legs had odds).</p>
+  <h3><span class="num">3</span>How good is it</h3>
+  <p>Checked season by season: fitted on four seasons, scored on the fifth, for each of the five. Log loss ${M.cv.logloss.toFixed(3)} against ${M.cv.logloss_market.toFixed(3)} for the opening odds alone, ${gain.toFixed(1)}% better.</p>
+  <p>Betting one unit on the better side whenever the edge passed a threshold, at the typical opening price, in the left-out seasons:</p>
+  <div class="scroll"><table class="mini"><thead><tr class="grp"><th></th><th class="gl" colspan="2">First legs</th><th class="gl" colspan="2">Second legs</th></tr><tr><th></th><th class="n gl">Bets</th><th class="n">Return</th><th class="n gl">Bets</th><th class="n">Return</th></tr></thead><tbody>${bt}</tbody></table></div>
+  <p>Most of the gain is on clear favourites, where the price is short and the money small. The second-leg favourite is the angle to watch; the sample is too small to call it proven.</p>
+  <h3><span class="num">4</span>Limits</h3>
+  <ul><li>The estimated second-leg price ignores the first-leg score. Once leg 1 is played the bookmakers price that in, so use the real leg 2 odds.</li>
+  <li>Some home matches were played away from home, for example Israeli and Ukrainian clubs hosting abroad since the wars began.</li>
+  <li>No team news or line-ups: clubs resting players in a decided second leg show up only through the odds.</li></ul>
+  </div>`;
+}
+
+// --- wiring ------------------------------------------------------------------------------------------------------
+function render(){
+  document.querySelectorAll('#tabs a').forEach(a => a.classList.toggle('on', a.dataset.view === view));
+  $('out').innerHTML = {projector: renderProjector, countries: renderCountries, method: renderMethod}[view]();
+  if (view === 'projector'){ renderResult(); renderContext(); }
+}
+function readHash(){
+  const p = new URLSearchParams(location.hash.slice(1));
+  if (['projector', 'countries', 'method'].includes(p.get('view'))) view = p.get('view');
+  for (const k of ['a', 'b']) if ([...COUNTRIES, OTHER].includes(p.get(k))) st[k] = p.get(k);
+}
+function writeHash(){ history.replaceState(null, '', `#view=${view}` + (view === 'projector' ? `&a=${encodeURIComponent(st.a)}&b=${encodeURIComponent(st.b)}` : '')); }
+
+document.addEventListener('click', e => {
+  const t = e.target.closest('[data-view],[data-sort],#mode button');
+  if (!t) return;
+  e.preventDefault();
+  if (t.dataset.view) view = t.dataset.view;
+  else if (t.dataset.sort){ const k = t.dataset.sort, def = C_COLS.find(c => c[0] === k)[3]; cDir = k === cSort ? -cDir : def; cSort = k; }
+  else if (t.dataset.m) st.mode = t.dataset.m;
+  writeHash(); render();
+});
+document.addEventListener('input', e => {
+  const id = e.target.id;
+  if (['o1a', 'o1b', 'o2a', 'o2b'].includes(id)){ st[id] = e.target.value; renderResult(); }
+});
+document.addEventListener('change', e => {
+  if (e.target.id === 'ca' || e.target.id === 'cb'){ st[e.target.id === 'ca' ? 'a' : 'b'] = e.target.value; writeHash(); renderResult(); renderContext(); }
+});
+readHash(); render();
+</script>
+</body>
+</html>
