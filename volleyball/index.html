@@ -180,15 +180,8 @@ const one = () => lg === 'all' ? DATA.leagues[0].key : lg;      // tabs that sho
 
 $('sub').textContent = `Women's top leagues · ${DATA.season.replace('-','–')} · updated ${DATA.updated} (Athens)`;
 
-// the better side of the line: edge = model chance x average price - 1, over or under
-const side = g => {
-  if (!g.mk) return null;
-  const u = (1 - g.p_over) * g.mk.under - 1;
-  return u > g.edge ? {lab: 'Under', v: u} : {lab: 'Over', v: g.edge};
-};
-
 function renderProjections(){
-  let h = `<p class="note">Every match in the next 7 days: the chance it goes 3, 4 or 5 sets, the projected total points and the model's own fair line. Once a bookmaker posts a line, the row shows the line, the average over price and the model's over chance against it. Rows in green have an edge of more than ${DATA.edge*100}% on the over or the under; only <b>picks</b> (gold) are backed and recorded: overs on lines below ${DATA.low}, the matches the market expects to end 3-0, where the edge is above ${DATA.edge*100}%.</p>`;
+  let h = `<p class="note">Every match in the next 7 days: the chance it goes 3, 4 or 5 sets, the projected total points and the model's own fair line. Once a bookmaker posts a line, the row shows the line, the average over price and the model's over chance against it. Rows in green have an edge of more than ${DATA.edge*100}% on the over; only <b>picks</b> (gold) are backed and recorded: overs on lines below ${DATA.low}, the matches the market expects to end 3-0, where the edge is above ${DATA.edge*100}%.</p>`;
   const fx = DATA.fixtures.filter(inLg);
   if (!fx.length) return h + '<p class="empty">No matches in the next 7 days.</p>';
   const byDay = {};
@@ -197,11 +190,10 @@ function renderProjections(){
   for (const [d, gs] of Object.entries(byDay)){
     h += `<h2 class="day">${dayName(d)}</h2><div class="scroll"><table class="proj">${head}<tbody>`;
     for (const g of gs){
-      const e = side(g);
-      h += `<tr${g.pick ? ' class="pk"' : e && e.v > DATA.edge ? ' class="ed"' : ''}><td>${g.dt.slice(11)}</td>${lg === 'all' ? `<td>${LG[g.lg].country}</td>` : ''}
+      h += `<tr${g.pick ? ' class="pk"' : g.mk && g.edge > DATA.edge ? ' class="ed"' : ''}><td>${g.dt.slice(11)}</td>${lg === 'all' ? `<td>${LG[g.lg].country}</td>` : ''}
       <td class="wr">${g.home} – ${g.away}${g.pick ? `<span class="badge">Over ${g.mk.line}</span>` : ''}${g.note ? `<div class="flag">${g.note}</div>` : ''}</td>
       <td class="n">${pct(g.p3)}</td><td class="n">${pct(g.p4)}</td><td class="n">${pct(g.p5)}</td><td class="n"><b>${g.med}</b></td><td class="n muted">${g.fair}</td>
-      ${g.mk ? `<td class="n">${g.mk.line}</td><td class="n">${g.mk.over.toFixed(2)}</td><td class="n">${pct(g.p_over)}</td><td class="n ${cls(e.v)}">${e.v > 0 ? e.lab + ' ' : ''}${sgn(e.v*100, 0)}%</td>` : '<td class="n muted" colspan="4">no line yet</td>'}</tr>`;
+      ${g.mk ? `<td class="n">${g.mk.line}</td><td class="n">${g.mk.over.toFixed(2)}</td><td class="n">${pct(g.p_over)}</td><td class="n ${cls(g.edge)}">${sgn(g.edge*100, 0)}%</td>` : '<td class="n muted" colspan="4">no line yet</td>'}</tr>`;
     }
     h += '</tbody></table></div>';
   }
