@@ -515,7 +515,7 @@ function renderProjections(){
     return `<tr><td class="n">${g.when.slice(11)}</td>
       <td><b>${esc(g.h)}</b> <span class="tag">${esc(code(teams[g.h]))}</span> – <b>${esc(g.a)}</b> <span class="tag">${esc(code(teams[g.a]))}</span></td>
       <td class="n hcp"${g.adj ? ` title="Absences ${sgn(g.adj)}"` : ''}><b>${sgn(g.mh)}</b>${g.adj ? '*' : ''}</td><td class="n">${g.mt.toFixed(1)}</td><td class="n gap">${pct(g.ph)}</td>
-      ${o ? `<td class="n" title="${esc((o.src || [''])[0])}">${sgn(bh)}</td><td class="n">${bt === null || bt === undefined ? '–' : bt.toFixed(1)}</td><td class="n gap">${pb === null ? '–' : pct(pb)}</td>`
+      ${o ? `<td class="n">${sgn(bh)}</td><td class="n">${bt === null || bt === undefined ? '–' : bt.toFixed(1)}</td><td class="n gap">${pb === null ? '–' : pct(pb)}</td>`
           : '<td class="n tag" colspan="3" title="Lines appear a few days before the game">no line yet</td>'}
       ${o ? gapCell(g.mh - bh) + gapCell(bt === null || bt === undefined ? null : g.mt - bt, ' gap') : '<td class="n tag">–</td><td class="n tag gap">–</td>'}
       ${agree(o ? g.mh - bh : null, xh && xa ? xh.vsS - xa.vsS : null, okS, 'home − away vs line', xh && xa ? `${g.h} ${sgn(xh.vsS)} (${xh.n} games), ${g.a} ${sgn(xa.vsS)} (${xa.n} games). ` : '')}${agree(o && bt !== null && bt !== undefined ? g.mt - bt : null, xh && xa && xh.vsT !== null && xa.vsT !== null ? (xh.vsT + xa.vsT) / 2 : null, okT, 'the average of the two clubs vs the total', xh && xa && xh.vsT !== null && xa.vsT !== null ? `${g.h} games ${sgn(xh.vsT)}, ${g.a} games ${sgn(xa.vsT)} vs the total. ` : '').replace('class="n ', 'class="n gap ')}

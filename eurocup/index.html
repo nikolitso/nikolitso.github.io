@@ -531,7 +531,7 @@ function renderProjections(){
     return `<tr><td class="n">${g.when.slice(11)}</td>
       <td><b>${esc(g.h)}</b> <span class="tag">${esc(code(teams[g.h]))}</span> – <b>${esc(g.a)}</b> <span class="tag">${esc(code(teams[g.a]))}</span></td>
       <td class="n hcp"><b>${sgn(g.mh)}</b></td><td class="n">${g.mt.toFixed(1)}</td><td class="n gap">${Math.round(g.ph * 100)}%</td>
-      ${o ? `<td class="n" title="${esc(o.src)}">${sgn(o.bh)}</td><td class="n gap">${o.bt === null ? '–' : o.bt.toFixed(1)}</td>` : '<td class="n tag" colspan="2" title="Lines appear a few days before the game">no line yet</td>'}
+      ${o ? `<td class="n">${sgn(o.bh)}</td><td class="n gap">${o.bt === null ? '–' : o.bt.toFixed(1)}</td>` : '<td class="n tag" colspan="2" title="Lines appear a few days before the game">no line yet</td>'}
       ${o ? gapCell(g.mh - o.bh) + gapCell(o.bt === null ? null : g.mt - o.bt, ' gap') : '<td class="n tag">–</td><td class="n tag gap">–</td>'}
       <td class="tag">${out.length ? (g.outH.length ? `${esc(g.h)}: ${outText(g.outH)}` : '') + (g.outH.length && g.outA.length ? '; ' : '') + (g.outA.length ? `${esc(g.a)}: ${outText(g.outA)}` : '') : '–'}</td></tr>`;
   };
@@ -595,7 +595,7 @@ function renderArchive(){
     <th class="n gap">Score</th><th class="n" title="Home minus away">Margin</th><th class="n" title="Only for gaps of ${gapMin}+ points: did the model's side of the line cover?">Model's side</th><th class="n gap" title="Whose handicap was nearer the real margin">Nearer</th><th class="n">Total</th></tr>`;
   box.innerHTML = `<div class="pjbar">${gapSelect()}<span class="tag">Games further apart than this are highlighted and judged in the cards.</span></div>` + summary +
     rounds.map(rd => `<h2>${esc(rd)}</h2><div class="scroll"><table class="fx">${head}${rows.filter(x => x.round === rd).map(x => x.html).join('')}</table></div>`).join('') +
-    `<div class="tag" style="margin-top:14px">Every projection is written before tip-off with the bookmaker's line of that moment (Bwin.gr, else Stoiximan.gr) and the injury list of that moment, then never changed. Hcp is home minus away. The result fills in by itself once the game is in the data.</div>`;
+    `<div class="tag" style="margin-top:14px">Every projection is written before tip-off with the bookmaker's line of that moment and the injury list of that moment, then never changed. Hcp is home minus away. The result fills in by itself once the game is in the data.</div>`;
   bindGap(box, renderArchive);
 }
 // ---------- Vs Market: every Regular Season game's bookmaker line against what happened, by group and club
