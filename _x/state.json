@@ -559,7 +559,8 @@
       "metro-manila",
       "a-wedding",
       "amal",
-      "happiness"
+      "happiness",
+      "the-commune"
     ],
     "log": [
       {
@@ -701,11 +702,17 @@
         "slot": "2026-10-26 20",
         "slug": "happiness",
         "id": "2114797503677931591"
+      },
+      {
+        "day": "2026-10-27",
+        "slot": "2026-10-27 20",
+        "slug": "the-commune",
+        "id": "2115190736006025245"
       }
     ],
-    "last_day": "2026-10-26"
+    "last_day": "2026-10-27"
   },
-  "last_slot": "2026-10-27 14",
+  "last_slot": "2026-10-27 20",
   "quote": {
     "seen": [
       "1",
