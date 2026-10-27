@@ -266,7 +266,7 @@ function renderBacktest(){
 function byLine(){
   const tuned = new Set(DATA.backtest.seasons.filter(s => s.tuned).map(s => s.lg + '|' + s.season));
   const bets = DATA.backtest.bets.filter(b => inLg(b) && !tuned.has(b.lg + '|' + b.season));
-  const band = b => { const f = Math.floor(b.line); return f <= 125 ? 125 : Math.ceil(f / 5) * 5; };
+  const band = b => { const f = Math.floor(b.line); return f <= 120 ? 120 : Math.ceil(f / 5) * 5; };
   const by = {};
   bets.forEach(b => (by[band(b)] ||= []).push(b));
   let h = `<h2>By line</h2><p class="note">The same bets grouped by the bookmaker's total-points line: 126–130 means lines 126.5 to 130.5. Profit and loss in units, stake 1 per bet.</p>`;
@@ -275,7 +275,7 @@ function byLine(){
   for (const k of Object.keys(by).map(Number).sort((a, b) => a - b)){
     const g = by[k], gw = g.filter(b => b.won).length, gp = g.reduce((s, b) => s + b.ret, 0);
     n += g.length; w += gw; pl += gp;
-    h += `<tr><td>${k === 125 ? '125 or less' : `${k - 4}–${k}`}</td><td class="n">${g.length}</td><td class="n">${gw}</td><td class="n">${pct(gw / g.length)}</td><td class="n ${cls(gp)}">${sgn(gp, 1)}</td><td class="n ${cls(gp)}">${sgn(gp / g.length * 100, 1)}%</td></tr>`;
+    h += `<tr><td>${k === 120 ? '120 or less' : `${k - 4}–${k}`}</td><td class="n">${g.length}</td><td class="n">${gw}</td><td class="n">${pct(gw / g.length)}</td><td class="n ${cls(gp)}">${sgn(gp, 1)}</td><td class="n ${cls(gp)}">${sgn(gp / g.length * 100, 1)}%</td></tr>`;
   }
   if (n) h += `<tr><td><b>All</b></td><td class="n"><b>${n}</b></td><td class="n"><b>${w}</b></td><td class="n"><b>${pct(w / n)}</b></td><td class="n ${cls(pl)}"><b>${sgn(pl, 1)}</b></td><td class="n ${cls(pl)}"><b>${sgn(pl / n * 100, 1)}%</b></td></tr>`;
   return h + '</tbody></table></div>';
