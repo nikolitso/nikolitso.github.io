@@ -140,6 +140,8 @@ table.mini{margin:0 0 16px}
 @media(max-width:900px){.cols{grid-template-columns:minmax(0,1fr)}}
 td.wr{white-space:normal}
 .pos{color:var(--win)} .neg{color:var(--loss)}
+tr.srow{cursor:pointer} tr.srow:hover td,tr.srow.on td{background:color-mix(in srgb,var(--gold) 10%,transparent)}
+.caret{color:var(--gold);display:inline-block;width:1em}
 </style>
 <div class="wrap">
   <a class="home-link" href="/">&#8962; Home</a>
@@ -154,7 +156,7 @@ td.wr{white-space:normal}
   </div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=83abf1a2"></script>
+<script src="data.js?v=9430ea8c"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -232,10 +234,35 @@ function renderBacktest(){
   let h = `<p class="note">The live rule run on every season since ${B.first.slice(0,4)}, each match projected only from matches before it, at the closing line and the average price. The settings were tuned on 2024-25 alone, so the totals below leave that season out. <b>Backing every low-line over without the model</b> returned ${sgn(B.blind_roi*100, 1)}% over ${B.blind_n} matches.</p>`;
   h += tiles([['Bets (unseen seasons)', B.n], ['Hit rate', pct(B.w / B.n)], ['ROI', sgn(B.roi*100, 1) + '%', cls(B.roi)],
               ['90% range', `${sgn(B.ci[0]*100, 0)}% to ${sgn(B.ci[1]*100, 0)}%`]]);
-  h += `<table style="max-width:560px"><thead><tr><th>Season</th><th class="n">Bets</th><th class="n">Won</th><th class="n">Hit</th><th class="n">ROI</th></tr></thead><tbody>`;
-  for (const s of B.seasons) h += `<tr><td>${s.season.replace('-','–')}${s.tuned ? ' <span class="muted">(tuned on)</span>' : ''}</td><td class="n">${s.n}</td><td class="n">${s.w}</td><td class="n">${pct(s.w/s.n)}</td><td class="n ${cls(s.roi)}">${sgn(s.roi*100, 1)}%</td></tr>`;
-  return h + '</tbody></table>';
+  h += `<p class="note">Click a season to see its bets one by one.</p>`;
+  h += `<table class="seasons" style="max-width:560px"><thead><tr><th>Season</th><th class="n">Bets</th><th class="n">Won</th><th class="n">Hit</th><th class="n">ROI</th></tr></thead><tbody>`;
+  for (const s of B.seasons) h += `<tr class="srow${s.season === btSeason ? ' on' : ''}" data-season="${s.season}"><td><span class="caret">${s.season === btSeason ? '▾' : '▸'}</span> ${s.season.replace('-','–')}${s.tuned ? ' <span class="muted">(tuned on)</span>' : ''}</td><td class="n">${s.n}</td><td class="n">${s.w}</td><td class="n">${pct(s.w/s.n)}</td><td class="n ${cls(s.roi)}">${sgn(s.roi*100, 1)}%</td></tr>`;
+  h += '</tbody></table>';
+  if (btSeason) h += seasonBets(btSeason);
+  return h;
 }
+
+function seasonBets(season){
+  const list = DATA.backtest.bets.filter(b => b.season === season);
+  let run = 0;
+  let h = `<h2 id="btbets">${season.replace('-','–')}: ${list.length} bets</h2><div class="scroll"><table><thead><tr><th>Date</th><th>Match</th><th class="n">Line</th><th class="n">Price</th><th class="n">Model</th><th class="n">Edge</th><th class="n">Sets</th><th class="n">Total</th><th class="n">Units</th><th class="n">Running</th></tr></thead><tbody>`;
+  for (const b of list){
+    run += b.ret;
+    h += `<tr><td>${short(b.dt)} ${b.dt.slice(0,4)}</td><td class="wr">${b.home} – ${b.away}</td><td class="n">Over ${b.line}</td><td class="n">${b.px.toFixed(2)}</td>
+      <td class="n">${pct(b.p)}</td><td class="n">${sgn(b.edge*100, 0)}%</td><td class="n">${b.sets}</td><td class="n ${b.won ? 'w' : 'l'}">${b.total}</td>
+      <td class="n ${cls(b.ret)}">${sgn(b.ret, 2)}</td><td class="n ${cls(run)}">${sgn(run, 2)}</td></tr>`;
+  }
+  return h + '</tbody></table></div>';
+}
+
+let btSeason = null;
+document.addEventListener('click', e => {
+  const r = e.target.closest('tr.srow');
+  if (!r) return;
+  btSeason = btSeason === r.dataset.season ? null : r.dataset.season;
+  render();
+  if (btSeason) document.getElementById('btbets').scrollIntoView({behavior: 'smooth', block: 'start'});
+});
 
 function renderMethod(){
   return `<div class="doc">
