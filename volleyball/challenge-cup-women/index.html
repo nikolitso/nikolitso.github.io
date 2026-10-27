@@ -71,6 +71,16 @@ tr.val td{background:color-mix(in srgb,var(--gold) 12%,transparent)}
 .calc{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:8px;padding:12px 16px;margin:0 0 14px;font:400 14px/2 var(--mono);overflow-x:auto}
 table.mini{margin:0 0 16px;max-width:620px}
 .empty{color:var(--muted);padding:12px 0}
+h2.day{font-size:20px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(520px,100%),1fr));gap:18px}
+.card.fx h3{font:600 22px var(--serif);margin:2px 0 4px}
+.ko{font:500 13px var(--mono);color:var(--muted);letter-spacing:.04em}
+.cty{font:400 13.5px/1.6 var(--mono);color:var(--text)}
+.cty b,.h2h b{color:var(--gold);font-weight:500}
+.h2h{font:400 13.5px/1.6 var(--mono);color:var(--text);margin-top:10px;display:grid;gap:8px}
+.lbl{display:block;font:400 11px var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+a.go{color:var(--gold);text-decoration:none} a.go:hover{text-decoration:underline}
+.card.fx .res td,.card.fx .res th{padding:6px 6px}
 @media(max-width:760px){.form,.cols{grid-template-columns:1fr}td,th{padding:6px 5px}td.n,th.n{font-size:12.5px}table.res td{font-size:14px}table.res td.n{font-size:13px}.card{padding:14px 10px 10px}.full{display:none}}
 </style>
 </head>
@@ -89,13 +99,15 @@ table.mini{margin:0 0 16px;max-width:620px}
   <h1><a href="/volleyball/challenge-cup-women/">Challenge Cup Women</a></h1>
   <div class="sub" id="sub"></div>
   <div class="tabs" id="tabs">
-    <a href="#view=projector" data-view="projector" class="on">Projector</a>
+    <a href="#view=fixtures" data-view="fixtures" class="on">Fixtures</a>
+    <a href="#view=projector" data-view="projector">Projector</a>
+    <a href="#view=rankings" data-view="rankings">Power rankings</a>
     <a href="#view=countries" data-view="countries">Countries home &amp; away</a>
     <a href="#view=method" data-view="method">How it works</a>
   </div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=1"></script>
+<script src="data.js?v=2"></script>
 <script>
 const $ = id => document.getElementById(id);
 const M = DATA.model, MS = DATA.matches;
@@ -105,7 +117,7 @@ const sgn = (x, d = 0) => (x >= 0 ? '+' : '−') + Math.abs(x).toFixed(d);
 const sgnPct = x => (x >= 0 ? '+' : '−') + Math.abs(x * 100).toFixed(1) + '%';
 const COUNTRIES = [...new Set(MS.flatMap(m => [m.hc, m.ac]))].sort();
 const OTHER = 'Other (no history)';
-let view = 'projector', cSort = 'country', cDir = 1;
+let view = 'fixtures', cSort = 'country', cDir = 1;
 const st = {a: 'Greece', b: 'Italy', o1a: '', o1b: '', o2b: '', o2a: '', mode: 'tie'};
 
 $('sub').textContent = `Seasons ${DATA.seasons[0].replace('-', '–')} to ${DATA.seasons.at(-1).replace('-', '–')} · ${MS.length} matches between clubs of different countries · updated ${DATA.updated}`;
@@ -123,7 +135,7 @@ function countrySel(id, val){
 function renderProjector(){
   const tie = st.mode === 'tie';
   return `<p class="note">Pick the two countries and type the <b>opening</b> winner odds. The projector gives the fair price of each leg (no bookmaker margin) and the edge against the odds you typed. Before the second leg is priced, its odds are estimated from the first leg with the venue turned round.</p>
-    <div class="card"><div class="seg" id="mode" style="margin-bottom:18px"><button data-m="tie" class="${tie ? 'on' : ''}">Both legs</button><button data-m="one" class="${tie ? '' : 'on'}">One match</button></div>
+    <div class="card"><div class="seg" id="mode" style="margin-bottom:18px"><button data-m="tie" class="${tie ? 'on' : ''}">Both legs</button><button data-m="one" class="${st.mode === 'one' ? 'on' : ''}">First leg</button><button data-m="two" class="${st.mode === 'two' ? 'on' : ''}">Second leg</button></div>
     <div class="form">
       <div class="side"><h3>${tie ? 'Hosts leg 1' : 'Host'}</h3>
         <div class="field"><label for="ca">Country</label>${countrySel('ca', st.a)}</div>
@@ -133,7 +145,7 @@ function renderProjector(){
         <div class="field"><label for="cb">Country</label>${countrySel('cb', st.b)}</div>
         <div class="odds"><div><label for="o1b">${tie ? 'Leg 1 odds' : 'Odds'}</label><input id="o1b" inputmode="decimal" placeholder="e.g. 1.55" value="${st.o1b}"></div>
         ${tie ? `<div><label for="o2b">Leg 2 odds</label><input id="o2b" inputmode="decimal" placeholder="once out" value="${st.o2b}"></div>` : ''}</div></div>
-    </div>${tie ? '' : '<p class="hint">One match is scored as a first leg (or a single match): no second-leg home edge.</p>'}</div>
+    </div>${tie ? '' : st.mode === 'one' ? '<p class="hint">A first leg (or a single match): no second-leg home edge.</p>' : '<p class="hint">A second leg: the host gets the second-leg home edge. Use odds posted after the first leg, which already know its score.</p>'}</div>
     <div id="result"></div><div id="context"></div>`;
 }
 
@@ -141,7 +153,7 @@ function renderResult(){
   const a = st.a, b = st.b, tie = st.mode === 'tie';
   const o1a = odd(st.o1a), o1b = odd(st.o1b), o2a = odd(st.o2a), o2b = odd(st.o2b);
   if (!o1a || !o1b){ $('result').innerHTML = '<p class="empty">Type both leg 1 odds (decimal, above 1.00) to see the prices.</p>'; return; }
-  const x1 = logit(fair(o1a, o1b)), legs = [[tie ? 'Leg 1' : 'Match', a, b, x1, [o1a, o1b], 0]];
+  const x1 = logit(fair(o1a, o1b)), legs = [[tie ? 'Leg 1' : st.mode === 'two' ? 'Leg 2' : 'Match', a, b, x1, [o1a, o1b], st.mode === 'two' ? 1 : 0]];
   if (tie){
     if (o2a && o2b) legs.push(['Leg 2', b, a, logit(fair(o2b, o2a)), [o2b, o2a], 1]);
     else legs.push(['Leg 2', b, a, -x1 + 2 * M.market_home_edge, null, 1]);
@@ -179,6 +191,111 @@ function renderContext(){
   const cs = [a, b].filter(c => c !== OTHER && COUNTRIES.includes(c));
   if (cs.length) h += `<h2>Home and away against the odds</h2><div class="card scroll">${venueTable(cs.map(stats), false)}</div>`;
   $('context').innerHTML = h;
+}
+
+// --- Power rankings: country Elo over every match in date order ---------------------------------------------------
+// Start 1500, K 20, home advantage 50 Elo points (hosts win 57%). A 3-0 counts more than a 3-2, damped when the
+// favourite wins (as in FiveThirtyEight's Elo). Matches between clubs of the same country are not in the data.
+const ELO = {K: 20, HCA: 50};
+let RANK = null, rkSeasons = 0, rkSort = {k: 'place', dir: 1};
+function computeRankings(){
+  const elo = {}, snaps = {}, last = {};
+  const get = c => (elo[c] ??= 1500);
+  const snap = s => { snaps[s] = Object.fromEntries(Object.entries(elo).sort((x, y) => y[1] - x[1]).map(([c], i) => [c, i + 1])); };
+  let prev = null;
+  for (const m of [...MS].sort((x, y) => x.date.localeCompare(y.date))){
+    if (prev !== null && m.season !== prev) snap(prev);
+    prev = m.season;
+    const rh = get(m.hc), ra = get(m.ac), exp = 1 / (1 + 10 ** ((ra - rh - ELO.HCA) / 400)), won = m.hs > m.as ? 1 : 0;
+    const diff = won ? rh + ELO.HCA - ra : ra - rh - ELO.HCA;
+    const mult = [0, .75, 1, 1.25][Math.abs(m.hs - m.as)] * 2.2 / (2.2 + .001 * diff);
+    const d = ELO.K * mult * (won - exp);
+    elo[m.hc] = rh + d; elo[m.ac] = ra - d; last[m.hc] = last[m.ac] = m.season;
+  }
+  const rows = Object.keys(elo).map(c => ({c, elo: elo[c], last: last[c]})).sort((x, y) => y.elo - x.elo);
+  rows.prev = snaps[DATA.seasons.at(-2)] || {};                  // places before the latest season
+  return rows;
+}
+const eloOf = c => { RANK ||= computeRankings(); return RANK.find(r => r.c === c)?.elo ?? 1500; };
+const rankOf = c => { RANK ||= computeRankings(); const i = RANK.findIndex(r => r.c === c); return i < 0 ? '' : `#${i + 1}`; };
+const eloHost = (hc, ac) => 1 / (1 + 10 ** ((eloOf(ac) - eloOf(hc) - ELO.HCA) / 400));
+
+function renderRankings(){
+  RANK ||= computeRankings();
+  const seasons = DATA.seasons, ok = rkSeasons ? new Set(seasons.slice(-rkSeasons)) : null;
+  const ms = MS.filter(m => !ok || ok.has(m.season));
+  const list = RANK.map((r, i) => {
+    const mine = ms.filter(m => m.hc === r.c || m.ac === r.c);
+    const w = mine.filter(m => (m.hc === r.c) === (m.hs > m.as)).length;
+    const sw = mine.reduce((s, m) => s + (m.hc === r.c ? m.hs : m.as), 0), sl = mine.reduce((s, m) => s + (m.hc === r.c ? m.as : m.hs), 0);
+    const pm = mine.length ? mine.reduce((s, m) => s + (m.hc === r.c ? m.hp - m.ap : m.ap - m.hp), 0) / mine.length : null;
+    const pr = mine.filter(m => m.p), vs = pr.length ? (pr.filter(m => (m.hc === r.c) === (m.hs > m.as)).length - pr.reduce((s, m) => s + (m.hc === r.c ? m.p : 1 - m.p), 0)) / pr.length : null;
+    const before = RANK.prev[r.c], move = before ? before - (i + 1) : null;
+    return {keys: {place: i + 1, country: r.c, rating: r.elo, move, n: mine.length, wl: mine.length ? 2 * w - mine.length : null,
+                   pct: mine.length ? w / mine.length : null, sets: mine.length ? sw - sl : null, margin: pm, vs},
+      html: `<tr><td class="n muted">${i + 1}</td><td>${r.c}</td><td class="n tot">${Math.round(r.elo)}</td>` +
+        `<td class="n ${move > 0 ? 'ok' : move < 0 ? 'bad' : 'muted'}">${move === null ? 'new' : move > 0 ? '▲' + move : move < 0 ? '▼' + -move : '–'}</td>` +
+        `<td class="n gl">${mine.length}</td><td class="n">${mine.length ? w + '–' + (mine.length - w) : '–'}</td><td class="n">${mine.length ? pct(w / mine.length) : '–'}</td>` +
+        `<td class="n full">${mine.length ? sw + '–' + sl : '–'}</td><td class="n">${pm === null ? '–' : sgn(pm, 1)}</td>` +
+        `<td class="n ${vs === null ? 'muted' : vs >= 0 ? 'ok' : 'bad'}">${vs === null ? '–' : sgn(vs * 100)}</td></tr>`};
+  });
+  const {k, dir} = rkSort;
+  list.sort((p, q) => {
+    const a = p.keys[k], b = q.keys[k];
+    if (a === null || b === null) return (a === null) - (b === null) || p.keys.place - q.keys.place;
+    return (typeof a === 'string' ? a.localeCompare(b) : a - b) * dir || p.keys.place - q.keys.place;
+  });
+  const th = (key, lab, cls, title) => `<th class="${cls} srt${key === k ? ' on' : ''}" data-rk="${key}"${title ? ` title="${title}"` : ''}>${lab}${key === k ? (dir > 0 ? ' ▲' : ' ▼') : ''}</th>`;
+  const sel = [1, 2, 3, 4, 0].filter(n => n < seasons.length).map(n => `<button data-rs="${n}" class="${n === rkSeasons ? 'on' : ''}">${n ? (n === 1 ? 'Last season' : 'Last ' + n) : 'All ' + seasons.length + ' seasons'}</button>`).join('');
+  const rows = list.filter(x => x.keys.n).map(x => x.html).join('');
+  return `<p class="note"><b>Rating</b> is an Elo rating of each country's clubs, updated match by match since ${seasons[0].replace('-', '–')} and always as of today: it starts at 1500 and rises with wins, more for beating strong countries, away and 3–0. <b>Move</b> is the change of place since the end of ${seasons.at(-2).replace('-', '–')}. The record columns cover the sample picked below; <b>vs odds</b> is wins above (or below) what the opening odds expected, in percentage points. Click a heading to sort.</p>
+    <div class="seg" id="rksel" style="margin-bottom:16px">${sel}</div>
+    <div class="card scroll"><table><thead><tr>${th('place', '#', 'n')}${th('country', 'Country', '')}${th('rating', 'Rating', 'n', 'Elo rating today')}${th('move', 'Move', 'n', 'Places gained since the end of last season')}
+    ${th('n', 'Matches', 'n gl')}${th('wl', 'W–L', 'n', 'Sorted by wins minus losses')}${th('pct', 'Win %', 'n')}${th('sets', 'Sets', 'n full', 'Sorted by sets won minus lost')}${th('margin', 'Pts +/−', 'n', 'Average points margin per match')}${th('vs', 'vs odds', 'n', 'Wins above the opening odds, percentage points')}</tr></thead><tbody>${rows}</tbody></table></div>`;
+}
+
+// --- Fixtures: this season's next matches with the two countries' head to head -------------------------------------
+const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'], MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const dayName = s => { const d = new Date(s + 'T12:00'); return `${DAYS[d.getDay()]} ${d.getDate()} ${MON[d.getMonth()]}`; };
+const wl = ms => ({n: ms.length, w: ms.filter(m => m._w).length});
+const wlTxt = r => r.n ? `<b>${r.w}–${r.n - r.w}</b>` : '<span class="muted">none</span>';
+function fxCard(f){
+  const hc = f.hc, ac = f.ac, same = hc === ac;
+  const meet = MS.filter(m => (m.hc === hc && m.ac === ac) || (m.hc === ac && m.ac === hc)).map(m => ({...m, _w: (m.hc === hc) === (m.hs > m.as)}));
+  const atHome = wl(meet.filter(m => m.hc === hc)), away = wl(meet.filter(m => m.hc === ac)), all = wl(meet);
+  const club = MS.filter(m => (m.home === f.home && m.away === f.away) || (m.home === f.away && m.away === f.home));
+  const hv = stats(hc).h, av = stats(ac).a;
+  const vline = (c, r, where) => r.n ? `${c} ${where} <b>${r.w}–${r.n - r.w}</b> <span class="muted">(${pct(r.win)}${r.diff !== null ? ', ' + sgn(r.diff * 100) + ' vs odds' : ''})</span>` : `${c} ${where} <span class="muted">no matches</span>`;
+  let price = '';
+  const oc = Object.values(f.odds_open || {}).length ? f.odds_open : f.odds;
+  const books = Object.values(oc || {});
+  if (books.length){
+    const ph = books.reduce((s, o) => s + fair(o[0], o[1]), 0) / books.length, x = logit(ph);
+    const p = model(x, hc, ac, f.leg === 2 ? 1 : 0);
+    const bh = Math.max(...Object.values(f.odds).map(o => o[0])), ba = Math.max(...Object.values(f.odds).map(o => o[1]));
+    const eh = p * bh - 1, ea = (1 - p) * ba - 1, [e, who] = eh > ea ? [eh, f.home] : [ea, f.away];
+    price = `<table class="res" style="margin-top:10px"><thead><tr><th class="n">Opening odds</th><th class="n">Odds say host</th><th class="n">Model host</th><th class="n">Fair odds</th><th class="n">Edge (best now)</th></tr></thead><tbody><tr class="${e >= .05 ? 'val' : ''}">` +
+      `<td class="n">${(books.reduce((s, o) => s + o[0], 0) / books.length).toFixed(2)} / ${(books.reduce((s, o) => s + o[1], 0) / books.length).toFixed(2)}</td><td class="n">${pct(ph)}</td><td class="n tot">${pct(p)}</td>` +
+      `<td class="n big">${(1 / p).toFixed(2)} / ${(1 / (1 - p)).toFixed(2)}</td><td class="n ${e >= 0 ? 'ok' : 'bad'}">${who} ${sgnPct(e)}</td></tr></tbody></table>`;
+  }
+  const link = `#view=projector&a=${encodeURIComponent(hc)}&b=${encodeURIComponent(ac)}&mode=${f.leg === 2 ? 'two' : f.leg === 1 ? 'tie' : 'one'}`;
+  const leg1 = f.leg1 ? ` · leg 1 ${f.leg1.home} ${f.leg1.hs}–${f.leg1.as} ${f.leg1.away}` : '';
+  return `<div class="card fx"><div class="ko">${f.time} · ${f.round}${f.leg ? ' · leg ' + f.leg : ''}${leg1}</div>
+    <h3>${f.home} <span class="muted">v</span> ${f.away}</h3>
+    <div class="cty">${hc} <span class="muted">${rankOf(hc)}</span> <span class="muted">v</span> ${ac} <span class="muted">${rankOf(ac)}</span>${same ? '' : ` · country Elo gives the host <b>${pct(eloHost(hc, ac))}</b>`}</div>
+    ${same ? '<p class="hint">Same country: no country head to head (these matches are left out of the data).</p>' : `
+    <div class="h2h"><div><span class="lbl">${hc} v ${ac}</span>all ${wlTxt(all)} · ${hc} hosting ${wlTxt(atHome)} · ${ac} hosting ${wlTxt(away)} <span class="muted">(${hc} side's W–L)</span></div>
+    <div><span class="lbl">Venue form</span>${vline(hc, hv, 'at home')}<br>${vline(ac, av, 'away')}</div>
+    ${club.length ? `<div><span class="lbl">These clubs</span>${club.map(m => `${m.season} ${m.home} ${m.hs}–${m.as} ${m.away}`).join(' · ')}</div>` : ''}</div>`}
+    ${price || `<p class="hint">No odds yet. <a href="${link}" class="go">Price it in the projector →</a></p>`}</div>`;
+}
+function renderFixtures(){
+  const fx = DATA.fixtures || [];
+  if (!fx.length) return '<p class="empty">No fixtures scheduled right now.</p>';
+  const by = {};
+  fx.forEach(f => (by[f.date] ||= []).push(f));
+  return `<p class="note">The next Challenge Cup Women matches with the head to head of the two <b>countries</b> over the last five seasons, split by venue (W–L always from the first-named country's side), each country's home or away record against the odds, and the power-ranking places. Once bookmakers price a match, the projector's fair odds and edge show here; until then each card links to the projector with its countries filled in.</p>` +
+    Object.entries(by).map(([d, fs]) => `<h2 class="day">${dayName(d)}</h2><div class="grid">${fs.map(fxCard).join('')}</div>`).join('');
 }
 
 // --- Countries ------------------------------------------------------------------------------------------------
@@ -238,22 +355,26 @@ function renderMethod(){
 // --- wiring ------------------------------------------------------------------------------------------------------
 function render(){
   document.querySelectorAll('#tabs a').forEach(a => a.classList.toggle('on', a.dataset.view === view));
-  $('out').innerHTML = {projector: renderProjector, countries: renderCountries, method: renderMethod}[view]();
+  $('out').innerHTML = {fixtures: renderFixtures, projector: renderProjector, rankings: renderRankings, countries: renderCountries, method: renderMethod}[view]();
   if (view === 'projector'){ renderResult(); renderContext(); }
 }
 function readHash(){
   const p = new URLSearchParams(location.hash.slice(1));
-  if (['projector', 'countries', 'method'].includes(p.get('view'))) view = p.get('view');
+  if (['fixtures', 'projector', 'rankings', 'countries', 'method'].includes(p.get('view'))) view = p.get('view');
   for (const k of ['a', 'b']) if ([...COUNTRIES, OTHER].includes(p.get(k))) st[k] = p.get(k);
+  if (['tie', 'one', 'two'].includes(p.get('mode'))) st.mode = p.get('mode');
 }
-function writeHash(){ history.replaceState(null, '', `#view=${view}` + (view === 'projector' ? `&a=${encodeURIComponent(st.a)}&b=${encodeURIComponent(st.b)}` : '')); }
+function writeHash(){ history.replaceState(null, '', `#view=${view}` + (view === 'projector' ? `&a=${encodeURIComponent(st.a)}&b=${encodeURIComponent(st.b)}&mode=${st.mode}` : '')); }
 
 document.addEventListener('click', e => {
-  const t = e.target.closest('[data-view],[data-sort],#mode button');
+  const t = e.target.closest('[data-view],[data-sort],[data-rk],#mode button,#rksel button,a.go');
   if (!t) return;
   e.preventDefault();
-  if (t.dataset.view) view = t.dataset.view;
+  if (t.matches('a.go')){ history.replaceState(null, '', t.getAttribute('href')); st.o1a = st.o1b = st.o2a = st.o2b = ''; readHash(); window.scrollTo({top: 0}); }
+  else if (t.dataset.view) view = t.dataset.view;
   else if (t.dataset.sort){ const k = t.dataset.sort, def = C_COLS.find(c => c[0] === k)[3]; cDir = k === cSort ? -cDir : def; cSort = k; }
+  else if (t.dataset.rk){ const k = t.dataset.rk; rkSort = k === rkSort.k ? {k, dir: -rkSort.dir} : {k, dir: k === 'place' || k === 'country' ? 1 : -1}; }
+  else if (t.dataset.rs !== undefined) rkSeasons = +t.dataset.rs;
   else if (t.dataset.m) st.mode = t.dataset.m;
   writeHash(); render();
 });
@@ -264,6 +385,7 @@ document.addEventListener('input', e => {
 document.addEventListener('change', e => {
   if (e.target.id === 'ca' || e.target.id === 'cb'){ st[e.target.id === 'ca' ? 'a' : 'b'] = e.target.value; writeHash(); renderResult(); renderContext(); }
 });
+addEventListener('hashchange', () => { readHash(); render(); });
 readHash(); render();
 </script>
 </body>
