@@ -56,6 +56,8 @@ label{display:block;font:400 11px var(--mono);color:var(--muted);text-transform:
 select,input{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:6px;color:var(--text);font:500 15px var(--mono);padding:9px 10px}
 select:focus,input:focus{outline:none;border-color:var(--gold)}
 .odds{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.odds3{display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:10px}
+.form.pts{margin-top:18px;padding-top:16px;border-top:1px solid var(--line)}
 .field{margin-bottom:14px}
 .hint{font:400 12.5px/1.5 var(--mono);color:var(--muted);margin-top:4px}
 table.res td{font-size:16px}
@@ -80,7 +82,7 @@ h2.day{font-size:20px;padding-bottom:8px;border-bottom:1px solid var(--line)}
 .h2h{font:400 13.5px/1.6 var(--mono);color:var(--text);margin-top:10px;display:grid;gap:8px}
 .lbl{display:block;font:400 11px var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
 a.go{color:var(--gold);text-decoration:none} a.go:hover{text-decoration:underline}
-.card.fx .res td,.card.fx .res th{padding:6px 6px}
+.card.fx .res td,.card.fx .res th{padding:6px 6px} .card.fx .res td.n{font-size:14px} .card.fx .res .big{font-size:15px}
 table.today td,table.today th{padding:7px 5px} table.today td{font-size:15px} table.today td.n{font-size:13.5px} table.today .big{font-size:15px}
 @media(max-width:760px){.form,.cols{grid-template-columns:1fr}td,th{padding:6px 5px}td.n,th.n{font-size:12.5px}table.res td{font-size:14px}table.res td.n{font-size:13px}.card{padding:14px 10px 10px}.full{display:none}}
 </style>
@@ -108,7 +110,7 @@ table.today td,table.today th{padding:7px 5px} table.today td{font-size:15px} ta
   </div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=2"></script>
+<script src="data.js?v=3"></script>
 <script>
 const $ = id => document.getElementById(id);
 const M = DATA.model, MS = DATA.matches;
@@ -119,7 +121,8 @@ const sgnPct = x => (x >= 0 ? '+' : '−') + Math.abs(x * 100).toFixed(1) + '%';
 const COUNTRIES = [...new Set(MS.flatMap(m => [m.hc, m.ac]))].sort();
 const OTHER = 'Other (no history)';
 let view = 'fixtures', cSort = 'country', cDir = 1;
-const st = {a: 'Greece', b: 'Italy', o1a: '', o1b: '', o2b: '', o2a: '', mode: 'tie'};
+const st = {a: 'Greece', b: 'Italy', o1a: '', o1b: '', o2b: '', o2a: '', mode: 'tie', l1: '', ov1: '', un1: '', l2: '', ov2: '', un2: ''};
+const OU_KEYS = ['l1', 'ov1', 'un1', 'l2', 'ov2', 'un2'];
 
 $('sub').textContent = `Seasons ${DATA.seasons[0].replace('-', '–')} to ${DATA.seasons.at(-1).replace('-', '–')} · ${MS.length} matches between clubs of different countries · updated ${DATA.updated}`;
 
@@ -128,6 +131,31 @@ const fair = (h, a) => (1 / h) / (1 / h + 1 / a);
 // model chance of the host: the opening-odds chance, stretched (favourites are too long), plus the second-leg home edge and the countries' venue adjustments
 const model = (x, host, guest, leg2) => sig(M.slope * x + M.home + M.leg2 * leg2 + (M.H[host] || 0) + (M.A[guest] || 0));
 const odd = v => { const x = parseFloat(String(v).replace(',', '.')); return x > 1 ? x : null; };
+
+// --- Total points: the host's win chance -> the full points distribution (rally engine, table in DATA.ou) -----------------
+const OU = DATA.ou;
+const ouAt = (arr, p) => { const x = (Math.min(Math.max(p, .01), .99) - .01) * 100, i = Math.min(Math.floor(x), arr.length - 2), t = x - i; return [arr[i], arr[i + 1], t]; };
+const lerp = (arr, p) => { const [a, b, t] = ouAt(arr, p); return a + (b - a) * t; };
+// P(total points > line) for a .5 line
+function pOver(p, line){
+  const k = Math.floor(line) - OU.t0, [a, b, t] = ouAt(OU.over, p);
+  if (k < 0) return 1;
+  if (k >= a.length) return 0;
+  return a[k] + (b[k] - a[k]) * t;
+}
+// the .5 line the model makes closest to evens
+function fairLine(p){
+  let best = null;
+  for (let k = 0; k < OU.over[0].length; k++){ const q = pOver(p, OU.t0 + k + .5); if (!best || Math.abs(q - .5) < Math.abs(best[1] - .5)) best = [OU.t0 + k + .5, q]; }
+  return best[0];
+}
+// model against a line: chance of the over, edge at the given prices (better side); high-line unders are the one angle the backtest liked
+function ouEdge(p, line, o, u){
+  const po = pOver(p, line), eo = po * o - 1, eu = (1 - po) * u - 1;
+  return {po, e: Math.max(eo, eu), side: eo > eu ? 'Over' : 'Under', val: eu > eo && eu >= .03 && line >= OU.bt.low};
+}
+const ouLineInputs = (leg, lab) => `<div class="side"><h3>${lab}</h3><div class="odds3"><div><label for="l${leg}">Points line</label><input id="l${leg}" inputmode="decimal" placeholder="e.g. 168.5" value="${st['l' + leg]}"></div>` +
+  `<div><label for="ov${leg}">Over</label><input id="ov${leg}" inputmode="decimal" placeholder="1.83" value="${st['ov' + leg]}"></div><div><label for="un${leg}">Under</label><input id="un${leg}" inputmode="decimal" placeholder="1.83" value="${st['un' + leg]}"></div></div></div>`;
 
 // --- Projector -------------------------------------------------------------------------------------------------
 function countrySel(id, val){
@@ -160,7 +188,21 @@ function renderToday(){
   }).join('');
   return `<h2 style="margin-top:0">${day === today ? 'Today' : dayName(day)}: model v odds</h2>
     <div class="card scroll" style="margin-bottom:10px"><table class="res today"><thead><tr><th class="n">Time</th><th>Host v visitor</th><th class="n full">Opening odds</th><th class="n" title="The host's chance in the opening odds, margin taken out">Odds host</th><th class="n">Model host</th><th class="n" title="Model chance minus the odds' chance, percentage points">Diff</th><th class="n">Fair odds</th><th class="n full">Best now</th><th class="n">Edge</th></tr></thead><tbody>${rows}</tbody></table></div>
-    <p class="hint" style="margin-bottom:26px">Odds host = the opening odds' chance with the margin taken out (average over the bookmakers). Diff = model minus odds, in percentage points. Edge = model chance × best price now − 1, on the better side; rows from +5% are highlighted. Click a match to load it into the projector below.</p>`;
+    <p class="hint" style="margin-bottom:26px">Odds host = the opening odds' chance with the margin taken out (average over the bookmakers). Diff = model minus odds, in percentage points. Edge = model chance × best price now − 1, on the better side; rows from +5% are highlighted. Click a match to load it into the projector below.</p>` + todayTotals(fx.filter(f => f.date === day), day === today ? 'Today' : dayName(day));
+}
+// the same matches, total points: the model's points distribution (from its win chance) against the bookmakers' main line
+function todayTotals(fs, lab){
+  const rows = fs.sort((x, y) => x.time.localeCompare(y.time)).map(f => {
+    const p = fxPrice(f).p, q = f.ou, r = q ? ouEdge(p, q.line, q.bo, q.bu) : null, fl = fairLine(p);
+    return `<tr class="${r && r.val ? 'val' : ''}"><td class="n muted">${f.time}</td><td><a href="#" class="go" data-fx="${f.id}">${f.home} <span class="muted">v</span> ${f.away}</a></td>` +
+      (q ? `<td class="n">${q.line}</td><td class="n full">${q.o.toFixed(2)} / ${q.u.toFixed(2)}</td><td class="n">${pct(fair(q.o, q.u))}</td><td class="n tot">${pct(r.po)}</td>`
+         : '<td class="n muted">–</td><td class="n full muted">–</td><td class="n muted">–</td><td class="n muted">–</td>') +
+      `<td class="n full">${Math.round(lerp(OU.mean, p))}</td><td class="n big">${fl}</td><td class="n">${pct(lerp(OU.sets3, p))}</td>` +
+      (q ? `<td class="n ${r.e >= 0 ? 'ok' : 'bad'}">${r.side} ${sgnPct(r.e)}</td>` : '<td class="n muted">no line yet</td>') + '</tr>';
+  }).join('');
+  return `<h2>${lab}: total points v the line</h2>
+    <div class="card scroll" style="margin-bottom:10px"><table class="res today"><thead><tr><th class="n">Time</th><th>Host v visitor</th><th class="n">Line</th><th class="n full">Over / under</th><th class="n" title="The over's chance in the bookmakers' prices, margin taken out">Book over</th><th class="n">Model over</th><th class="n full" title="Average total points the model expects">Model avg</th><th class="n" title="The line the model makes closest to evens">Fair line</th><th class="n" title="Chance the match ends 3–0 either way">3 sets</th><th class="n">Edge</th></tr></thead><tbody>${rows}</tbody></table></div>
+    <p class="hint" style="margin-bottom:26px">The model turns its win chance for the host into the whole distribution of total points (rally by rally, sets to 25 and a fifth to 15). Line = the bookmakers' main line, prices averaged; edge at the best price. In the backtest the totals model did <b>not</b> beat the bookmakers overall; the one pattern that held up is unders on high lines (${OU.bt.low} and up), so only those rows are highlighted, from +3%. See How it works.</p>`;
 }
 
 function renderProjector(){
@@ -176,7 +218,8 @@ function renderProjector(){
         <div class="field"><label for="cb">Country</label>${countrySel('cb', st.b)}</div>
         <div class="odds"><div><label for="o1b">${tie ? 'Leg 1 odds' : 'Odds'}</label><input id="o1b" inputmode="decimal" placeholder="e.g. 1.55" value="${st.o1b}"></div>
         ${tie ? `<div><label for="o2b">Leg 2 odds</label><input id="o2b" inputmode="decimal" placeholder="once out" value="${st.o2b}"></div>` : ''}</div></div>
-    </div>${tie ? '' : st.mode === 'one' ? '<p class="hint">A first leg (or a single match): no second-leg home edge.</p>' : '<p class="hint">A second leg: the host gets the second-leg home edge. Use odds posted after the first leg, which already know its score.</p>'}</div>
+    </div>
+    <div class="form pts">${ouLineInputs(1, tie ? 'Leg 1 total points' : 'Total points')}${tie ? ouLineInputs(2, 'Leg 2 total points') : '<div class="side"><p class="hint" style="margin-top:22px">Optional: the bookmaker line and prices, to compare with the model.</p></div>'}</div>${tie ? '' : st.mode === 'one' ? '<p class="hint">A first leg (or a single match): no second-leg home edge.</p>' : '<p class="hint">A second leg: the host gets the second-leg home edge. Use odds posted after the first leg, which already know its score.</p>'}</div>
     <div id="result"></div><div id="context"></div>`;
 }
 
@@ -201,8 +244,17 @@ function renderResult(){
       `<td class="n">${off ? off[0].toFixed(2) + ' / ' + off[1].toFixed(2) : '<span class="muted">est. ' + (1 / po / 1.07).toFixed(2) + ' / ' + (1 / (1 - po) / 1.07).toFixed(2) + '</span>'}</td>` +
       `<td class="n">${pct(po)}</td><td class="n tot">${pct(p)}</td><td class="n big">${(1 / p).toFixed(2)} / ${(1 / (1 - p)).toFixed(2)}</td>${edge}</tr>`;
   }).join('');
+  const ouRows = legs.map(([lab, h, g, x, off, l2], i) => {
+    const p = model(x, h, g, l2), n = i + 1, line = parseFloat(String(st['l' + n]).replace(',', '.')), o = odd(st['ov' + n]), u = odd(st['un' + n]);
+    const ok = line > 0 && o && u, r = ok ? ouEdge(p, Math.floor(line) + .5, o, u) : null;
+    return `<tr class="${r && r.val ? 'val' : ''}"><td>${lab}</td><td>${h} <span class="muted">v</span> ${g}</td><td class="n">${Math.round(lerp(OU.mean, p))}</td><td class="n big">${fairLine(p)}</td><td class="n">${pct(lerp(OU.sets3, p))}</td>` +
+      (ok ? `<td class="n">${Math.floor(line) + .5}</td><td class="n">${pct(fair(o, u))}</td><td class="n tot">${pct(r.po)}</td><td class="n">${(1 / r.po).toFixed(2)} / ${(1 / (1 - r.po)).toFixed(2)}</td><td class="n ${r.e >= 0 ? 'ok' : 'bad'}">${r.side} ${sgnPct(r.e)}</td>`
+          : '<td class="n muted">–</td><td class="n muted">–</td><td class="n muted">–</td><td class="n muted">–</td><td class="n muted">–</td>') + '</tr>';
+  }).join('');
+  const ouTable = `<h2>Total points</h2><div class="card scroll"><table class="res"><thead><tr><th></th><th>Host v visitor</th><th class="n" title="Average total points the model expects">Model avg</th><th class="n" title="The line the model makes closest to evens">Fair line</th><th class="n" title="Chance the match ends 3–0 either way">3 sets</th><th class="n">Line</th><th class="n">Book over</th><th class="n">Model over</th><th class="n">Fair over / under</th><th class="n">Edge</th></tr></thead><tbody>${ouRows}</tbody></table></div>
+    <p class="hint">From the model's win chance for the host above. Type a points line and its over / under odds to compare. Only unders on lines of ${OU.bt.low} and up held an edge in the backtest; those rows are highlighted from +3%.</p>`;
   $('result').innerHTML = `<h2>Fair prices</h2><div class="card scroll"><table class="res"><thead><tr><th></th><th>Host v visitor</th><th class="n">Odds</th><th class="n">Odds say host</th><th class="n">Model host</th><th class="n">Fair odds host / visitor</th><th class="n">Edge</th></tr></thead><tbody>${rows}</tbody></table></div>
-    <p class="hint">Edge = model chance × your odds − 1, on the better side; rows from +5% are highlighted. Country adjustments used: ${adjText(a)}; ${adjText(b)}.${tie && !(o2a && o2b) ? ' Leg 2 odds are estimated (with a typical 7% margin) until you type them; they ignore the leg 1 score.' : ''}</p>`;
+    <p class="hint">Edge = model chance × your odds − 1, on the better side; rows from +5% are highlighted. Country adjustments used: ${adjText(a)}; ${adjText(b)}.${tie && !(o2a && o2b) ? ' Leg 2 odds are estimated (with a typical 7% margin) until you type them; they ignore the leg 1 score.' : ''}</p>` + ouTable;
 }
 const adjText = c => (M.H[c] === undefined ? `${c} none (no history)` : `${c} at home ${sgn(M.H[c], 2)}, away ${sgn(M.A[c], 2)}`);
 
@@ -290,6 +342,12 @@ const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'], MON = ['Jan', 'F
 const dayName = s => { const d = new Date(s + 'T12:00'); return `${DAYS[d.getDay()]} ${d.getDate()} ${MON[d.getMonth()]}`; };
 const wl = ms => ({n: ms.length, w: ms.filter(m => m._w).length});
 const wlTxt = r => r.n ? `<b>${r.w}–${r.n - r.w}</b>` : '<span class="muted">none</span>';
+function ouCardLine(f, p){
+  const q = f.ou, fl = fairLine(p), base = `model avg <b>${Math.round(lerp(OU.mean, p))}</b> · fair line <b>${fl}</b> · 3 sets ${pct(lerp(OU.sets3, p))}`;
+  if (!q) return `<div class="h2h"><div><span class="lbl">Total points</span>${base} <span class="muted">· no line yet</span></div></div>`;
+  const r = ouEdge(p, q.line, q.bo, q.bu);
+  return `<div class="h2h"><div><span class="lbl">Total points</span>line <b>${q.line}</b> (${q.o.toFixed(2)} / ${q.u.toFixed(2)}) · book over ${pct(fair(q.o, q.u))} · model over <b>${pct(r.po)}</b><br>${base} · edge <span class="${r.e >= 0 ? 'ok' : 'bad'}">${r.side} ${sgnPct(r.e)}</span>${r.val ? ' <b>(high-line under)</b>' : ''}</div></div>`;
+}
 function fxCard(f){
   const hc = f.hc, ac = f.ac, same = hc === ac;
   const meet = MS.filter(m => (m.hc === hc && m.ac === ac) || (m.hc === ac && m.ac === hc)).map(m => ({...m, _w: (m.hc === hc) === (m.hs > m.as)}));
@@ -301,9 +359,9 @@ function fxCard(f){
   const r = fxPrice(f);
   if (r){
     const {ph, p, e, who} = r;
-    price = `<table class="res" style="margin-top:10px"><thead><tr><th class="n">Opening odds</th><th class="n">Odds say host</th><th class="n">Model host</th><th class="n">Fair odds</th><th class="n">Edge (best now)</th></tr></thead><tbody><tr class="${e >= .05 ? 'val' : ''}">` +
+    price = `<div class="scroll" style="margin-top:10px"><table class="res"><thead><tr><th class="n" title="Opening winner odds, host / visitor">Opening</th><th class="n" title="The host's chance in the opening odds, margin taken out">Odds host</th><th class="n">Model host</th><th class="n">Fair odds</th><th class="n" title="At the best price now">Edge</th></tr></thead><tbody><tr class="${e >= .05 ? 'val' : ''}">` +
       `<td class="n">${r.oh.toFixed(2)} / ${r.oa.toFixed(2)}</td><td class="n">${pct(ph)}</td><td class="n tot">${pct(p)}</td>` +
-      `<td class="n big">${(1 / p).toFixed(2)} / ${(1 / (1 - p)).toFixed(2)}</td><td class="n ${e >= 0 ? 'ok' : 'bad'}">${who} ${sgnPct(e)}</td></tr></tbody></table>`;
+      `<td class="n big">${(1 / p).toFixed(2)} / ${(1 / (1 - p)).toFixed(2)}</td><td class="n ${e >= 0 ? 'ok' : 'bad'}">${sgnPct(e)}<br><span class="muted">${who.split(/[ -]/)[0]}</span></td></tr></tbody></table></div>`;
   }
   const link = `#view=projector&a=${encodeURIComponent(hc)}&b=${encodeURIComponent(ac)}&mode=${f.leg === 2 ? 'two' : f.leg === 1 ? 'tie' : 'one'}`;
   const leg1 = f.leg1 ? ` · leg 1 ${f.leg1.home} ${f.leg1.hs}–${f.leg1.as} ${f.leg1.away}` : '';
@@ -314,6 +372,7 @@ function fxCard(f){
     <div class="h2h"><div><span class="lbl">${hc} v ${ac}</span>all ${wlTxt(all)} · ${hc} hosting ${wlTxt(atHome)} · ${ac} hosting ${wlTxt(away)} <span class="muted">(${hc} side's W–L)</span></div>
     <div><span class="lbl">Venue form</span>${vline(hc, hv, 'at home')}<br>${vline(ac, av, 'away')}</div>
     ${club.length ? `<div><span class="lbl">These clubs</span>${club.map(m => `${m.season} ${m.home} ${m.hs}–${m.as} ${m.away}`).join(' · ')}</div>` : ''}</div>`}
+    ${r ? ouCardLine(f, r.p) : ''}
     ${price || `<p class="hint">No odds yet. <a href="${link}" class="go">Price it in the projector →</a></p>`}</div>`;
 }
 function renderFixtures(){
@@ -372,7 +431,14 @@ function renderMethod(){
   <p>Betting one unit on the better side whenever the edge passed a threshold, at the typical opening price, in the left-out seasons:</p>
   <div class="scroll"><table class="mini"><thead><tr class="grp"><th></th><th class="gl" colspan="2">First legs</th><th class="gl" colspan="2">Second legs</th></tr><tr><th></th><th class="n gl">Bets</th><th class="n">Return</th><th class="n gl">Bets</th><th class="n">Return</th></tr></thead><tbody>${bt}</tbody></table></div>
   <p>Most of the gain is on clear favourites, where the price is short and the money small. The second-leg favourite is the angle to watch; the sample is too small to call it proven.</p>
-  <h3><span class="num">4</span>Limits</h3>
+  <h3><span class="num">4</span>Total points</h3>
+  <p>The win chance above also prices the total points. A rally engine (the one behind the league over/under pages) finds the rally strength that gives the host exactly that chance of winning, then works out every way the match can go, rally by rally: sets to 25, a fifth set to 15, win by two. That gives the whole distribution of total points, so the chance of any over, the fair line and the chance of a 3–0. Lopsided matches project low (about ${Math.round(lerp(OU.mean, .97))} points at a 97% favourite), even ones high (about ${Math.round(lerp(OU.mean, .5))}).</p>
+  <p>Checked the same way, season by season, against the bookmakers' opening main line in ${OU.bt.n} matches (the line sits where the over is priced about 50%): log loss ${OU.bt.ll_model.toFixed(4)} for the model against ${OU.bt.ll_book.toFixed(4)} for the bookmakers, so <b>overall the model does not beat the line</b>. By line:</p>
+  <div class="scroll"><table class="mini"><thead><tr><th></th><th class="n gl">Matches</th><th class="n">Overs hit</th><th class="n">Model said</th><th class="n gl">All overs</th><th class="n">All unders</th><th class="n gl" title="Model edge above 3%">Model overs</th><th class="n" title="Model edge above 3%">Model unders</th></tr></thead><tbody>${OU.bt.groups.map(g => `<tr><td>${g.label}</td><td class="n gl">${g.n}</td><td class="n">${pct(g.over_hit)}</td><td class="n">${pct(g.model)}</td>` +
+    `<td class="n gl ${g.blind_over >= 0 ? 'ok' : 'bad'}">${sgnPct(g.blind_over)}</td><td class="n ${g.blind_under >= 0 ? 'ok' : 'bad'}">${sgnPct(g.blind_under)}</td>` +
+    [g.model_over, g.model_under].map(([n, roi], i) => `<td class="n${i ? '' : ' gl'} ${roi === null ? 'muted' : roi >= 0 ? 'ok' : 'bad'}">${roi === null ? '–' : sgnPct(roi) + ' <span class="muted">(' + n + ')</span>'}</td>`).join('') + '</tr>').join('')}</tbody></table></div>
+  <p>On high lines the bookmakers price the over at 50% but it hit only ${pct(OU.bt.groups[1].over_hit)}, and the model saw that (it said ${pct(OU.bt.groups[1].model)}): its unders there returned ${sgnPct(OU.bt.groups[1].model_under[1])} over ${OU.bt.groups[1].model_under[0]} bets. On low lines it lost. Season by season the high-line unders went ${OU.bt.seasons.map(s => s.season + ' ' + sgnPct(s.high_under)).join(', ')}, so much of it is one season: an angle to track, not a proven edge.</p>
+  <h3><span class="num">5</span>Limits</h3>
   <ul><li>The estimated second-leg price ignores the first-leg score. Once leg 1 is played the bookmakers price that in, so use the real leg 2 odds.</li>
   <li>Some home matches were played away from home, for example Israeli and Ukrainian clubs hosting abroad since the wars began.</li>
   <li>No team news or line-ups: clubs resting players in a decided second leg show up only through the odds.</li></ul>
@@ -399,10 +465,11 @@ document.addEventListener('click', e => {
   e.preventDefault();
   if (t.dataset.fx){                                  // a match from today's table: its countries and opening odds
     const f = DATA.fixtures.find(x => x.id === t.dataset.fx), r = fxPrice(f), cc = c => COUNTRIES.includes(c) ? c : OTHER;
-    Object.assign(st, {a: cc(f.hc), b: cc(f.ac), mode: f.leg === 2 ? 'two' : f.leg === 1 ? 'tie' : 'one', o1a: r.oh.toFixed(2), o1b: r.oa.toFixed(2), o2a: '', o2b: ''});
+    Object.assign(st, {a: cc(f.hc), b: cc(f.ac), mode: f.leg === 2 ? 'two' : f.leg === 1 ? 'tie' : 'one', o1a: r.oh.toFixed(2), o1b: r.oa.toFixed(2), o2a: '', o2b: '',
+      l1: f.ou ? String(f.ou.line) : '', ov1: f.ou ? f.ou.bo.toFixed(2) : '', un1: f.ou ? f.ou.bu.toFixed(2) : '', l2: '', ov2: '', un2: ''});
     writeHash(); render(); $('mode').scrollIntoView({block: 'center'}); return;
   }
-  if (t.matches('a.go')){ history.replaceState(null, '', t.getAttribute('href')); st.o1a = st.o1b = st.o2a = st.o2b = ''; readHash(); window.scrollTo({top: 0}); }
+  if (t.matches('a.go')){ history.replaceState(null, '', t.getAttribute('href')); st.o1a = st.o1b = st.o2a = st.o2b = ''; OU_KEYS.forEach(k => st[k] = ''); readHash(); window.scrollTo({top: 0}); }
   else if (t.dataset.view) view = t.dataset.view;
   else if (t.dataset.sort){ const k = t.dataset.sort, def = C_COLS.find(c => c[0] === k)[3]; cDir = k === cSort ? -cDir : def; cSort = k; }
   else if (t.dataset.rk){ const k = t.dataset.rk; rkSort = k === rkSort.k ? {k, dir: -rkSort.dir} : {k, dir: k === 'place' || k === 'country' ? 1 : -1}; }
@@ -412,7 +479,7 @@ document.addEventListener('click', e => {
 });
 document.addEventListener('input', e => {
   const id = e.target.id;
-  if (['o1a', 'o1b', 'o2a', 'o2b'].includes(id)){ st[id] = e.target.value; renderResult(); }
+  if (['o1a', 'o1b', 'o2a', 'o2b', ...OU_KEYS].includes(id)){ st[id] = e.target.value; renderResult(); }
 });
 document.addEventListener('change', e => {
   if (e.target.id === 'ca' || e.target.id === 'cb'){ st[e.target.id === 'ca' ? 'a' : 'b'] = e.target.value; writeHash(); renderResult(); renderContext(); }
