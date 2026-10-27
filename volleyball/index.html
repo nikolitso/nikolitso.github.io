@@ -4,10 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Volleyball</title>
-<meta name="description" content="Women's volleyball projections for 15 top leagues, Europe, Brazil and Asia: set count, total points and over picks against the bookmaker lines.">
+<meta name="description" content="Women's volleyball projections for 18 top leagues in Europe, the Americas and Asia: set count, total points and over picks against the bookmaker lines.">
 <link rel="canonical" href="https://antonisnikolitsopoulos.com/volleyball/">
 <meta property="og:title" content="Volleyball">
-<meta property="og:description" content="Women's volleyball projections for 15 top leagues, Europe, Brazil and Asia: set count, total points and over picks against the bookmaker lines.">
+<meta property="og:description" content="Women's volleyball projections for 18 top leagues in Europe, the Americas and Asia: set count, total points and over picks against the bookmaker lines.">
 <meta property="og:url" content="https://antonisnikolitsopoulos.com/volleyball/">
 <meta property="og:image" content="https://antonisnikolitsopoulos.com/volleyball.jpg">
 <meta name="twitter:card" content="summary_large_image">
@@ -161,7 +161,7 @@ tr.srow{cursor:pointer} tr.srow:hover td,tr.srow.on td{background:color-mix(in s
   <div class="chips" id="chips"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=2d3e80f2"></script>
+<script src="data.js?v=444cfd55"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -224,7 +224,7 @@ function renderPicks(){
 
 function renderSeason(){
   const k = one(), res = DATA.results.filter(r => r.lg === k);
-  let h = `<p class="note"><b>${lgName(k)}</b>${lg === 'all' ? ' (pick a league above for the others)' : ''}. This season's matches with the projection each one had before it was played (fitted on earlier matches only), next to the closing line. Ratings: the chance of winning a rally against an average team, from points won, recent matches weighted more.</p>`;
+  let h = `<p class="note"><b>${lgName(k)}</b>${lg === 'all' ? ' (pick a league above for the others)' : ''}, ${LG[k].season.replace('-','–')} season${LG[k].season !== DATA.season ? ' (its latest: the next one has not started)' : ''}. The matches with the projection each one had before it was played (fitted on earlier matches only), next to the closing line. Ratings: the chance of winning a rally against an average team, from points won, recent matches weighted more.</p>`;
   h += '<div class="cols"><div><h2>Results</h2>';
   if (!res.length) h += '<p class="empty">No matches played yet.</p>';
   else {
@@ -244,7 +244,7 @@ function renderSeason(){
 function renderBacktest(){
   const B = DATA.backtest, S = lg === 'all' ? B.all : B.leagues[lg];
   const range = s => s.n ? `${sgn(s.ci[0]*100, 0)}% to ${sgn(s.ci[1]*100, 0)}%` : '–';
-  let h = `<p class="note">The live rule run on every season since ${B.first.slice(0,4)}, each match projected only from earlier matches of its own league, at the closing line and the average price. The settings were tuned on the Sultanlar Ligi's 2024-25 alone, so the totals leave that season out and every other league is a test the model never saw. <b>Backing every low-line over without the model</b> returned ${sgn(S.blind_roi*100, 1)}% over ${S.blind_n} matches.</p>`;
+  let h = `<p class="note">The live rule run on every season since ${B.first.slice(0,4)}, each match projected only from earlier matches of its own league, at the closing line and the average price. The settings were tuned on the Sultanlar Ligi's 2024-25 alone, so the totals leave that season out and every other league is a test the model never saw. ${S.blind_n ? `<b>Backing every low-line over without the model</b> returned ${sgn(S.blind_roi*100, 1)}% over ${S.blind_n} matches.` : `<b>This league never has a line below ${DATA.low}</b> (its totals run higher), so the rule has had nothing to bet on.`}</p>`;
   h += tiles([['Bets (unseen)', S.n], ['Hit rate', S.n ? pct(S.w / S.n) : '–'], ['ROI', sgn(S.roi*100, 1) + '%', cls(S.roi)], ['90% range', range(S)]]);
   if (lg === 'all'){
     h += `<p class="note">${lg === 'all' && DATA.leagues.some(l => !l.live) ? 'The totals above count the leagues with live picks only. ' : ''}Click a league to see its seasons and bets.</p>`;
