@@ -156,7 +156,7 @@ tr.srow{cursor:pointer} tr.srow:hover td,tr.srow.on td{background:color-mix(in s
   </div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=9430ea8c"></script>
+<script src="data.js?v=1c2a3609"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -275,7 +275,41 @@ function renderMethod(){
   <h3><span class="num">4</span>The bet</h3>
   <p>Only overs on low lines, below ${DATA.low}: across the backtest, unders and high-line overs did not beat the price. The model's job is to pick out the low-line matches most likely to go to a fourth set.</p>
   <h3><span class="num">5</span>What it cannot see</h3>
-  <p>No news: injuries, transfers and rested players are invisible to it. Top teams rotate in Champions League and cup weeks, so those matches can be flagged by hand and the pick held back.</p></div>`;
+  <p>No news: injuries, transfers and rested players are invisible to it. Top teams rotate in Champions League and cup weeks, so those matches can be flagged by hand and the pick held back.</p>
+  ${worked()}</div>`;
+}
+
+function worked(){
+  const e = DATA.backtest.example, p1 = x => (x*100).toFixed(1) + '%', f3 = x => (x >= 0 ? '+' : '−') + Math.abs(x).toFixed(3);
+  // every line adds up from the rounded numbers it shows
+  const r3 = x => Math.round(x*1000)/1000, mu = r3(r3(e.lhome) + r3(e.lh) - r3(e.la)), pr = 1/(1 + Math.exp(-mu));
+  const edge = r3(e.p_over) * +e.px.toFixed(2) - 1;
+  return `<h2 style="margin-top:40px">A worked example</h2>
+  <p>The most recent bet the rule made: <b>${e.home} – ${e.away}</b>, ${dayName(e.dt)} ${e.dt.slice(0,4)}, with the ratings as they stood the day before.</p>
+  <h3><span class="num">1</span>The rally chance</h3>
+  <div class="calc">${e.home} wins <b>${p1(e.rh)}</b> of rallies against an average team <i>(log-odds ${f3(e.lh)})</i><br>
+  ${e.away} wins <b>${p1(e.ra)}</b> <i>(log-odds ${f3(e.la)})</i> · home edge <i>log-odds ${f3(e.lhome)}</i><br>
+  match log-odds = ${f3(e.lhome)} ${f3(e.lh)} − (${f3(e.la)}) = <b>${f3(mu)}</b><br>
+  ${e.home} wins a rally: 1 / (1 + e<sup>−${mu.toFixed(3)}</sup>) = <b>${p1(pr)}</b></div>
+  <h3><span class="num">2</span>From one rally to one set</h3>
+  <div class="calc">first to 25, won by 2, with a ${p1(e.p)} rally chance → ${e.home} wins the set <b>${p1(e.pset)}</b><br>
+  <i>sets that go past 24–24: ${p1(e.deuce)}</i></div>
+  <p>A small edge per rally becomes a big one per set: 25 points give the better side many chances to show it.</p>
+  <h3><span class="num">3</span>From sets to the match</h3>
+  <div class="calc">3–0 ${e.home} <b>${p1(e.p30)}</b> · 0–3 <b>${p1(e.p03)}</b> → 3 sets <b>${p1(e.p3)}</b><br>
+  4 sets <b>${p1(e.p4)}</b> · 5 sets <b>${p1(e.p5)}</b><br>
+  <i>a 3-set match here averages ${e.mean3} points</i></div>
+  <h3><span class="num">4</span>The over chance</h3>
+  <div class="calc">line ${e.line}: a 4- or 5-set match is practically always over → <b>${p1(e.p_long_over)}</b><br>
+  a 3-set match over ${e.line} (long, close sets) → <b>${p1(e.p3_over)}</b><br>
+  over ${e.line} = ${p1(e.p_long_over)} + ${p1(e.p3_over)} = <b>${p1(e.p_over)}</b></div>
+  <h3><span class="num">5</span>The edge and the decision</h3>
+  <div class="calc">average over price <b>${e.px.toFixed(2)}</b><br>
+  edge = ${e.p_over.toFixed(3)} × ${e.px.toFixed(2)} − 1 = <b>${sgn(edge*100, 1)}%</b><br>
+  line ${e.line} is below ${DATA.low} and the edge is above ${DATA.edge*100}% → <b>bet over ${e.line}</b></div>
+  <h3><span class="num">6</span>What happened</h3>
+  <div class="calc">${e.home} – ${e.away} ${e.sets}, <b>${e.total}</b> points → over ${e.line} <b class="${e.won ? 'pos' : 'neg'}">${e.won ? 'won' : 'lost'}</b> (${sgn(e.ret, 2)} units)</div>
+  <p>${e.won ? 'A' : 'Even a'} ${p1(e.p_over)} bet ${e.won ? 'still loses' : 'loses'} ${p1(1 - e.p_over)} of the time. The edge only shows over many bets, which is why the page judges itself at 100 picks. This example always shows the latest bet, win or loss.</p>`;
 }
 
 const RENDER = {projections: renderProjections, picks: renderPicks, season: renderSeason, backtest: renderBacktest, method: renderMethod};
