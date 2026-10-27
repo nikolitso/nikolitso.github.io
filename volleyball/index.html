@@ -266,23 +266,24 @@ function renderBacktest(){
 function byLine(){
   const tuned = new Set(DATA.backtest.seasons.filter(s => s.tuned).map(s => s.lg + '|' + s.season));
   const bets = DATA.backtest.bets.filter(b => inLg(b) && !tuned.has(b.lg + '|' + b.season));
-  const band = b => { const f = Math.floor(b.line); return f <= 120 ? 120 : Math.ceil(f / 5) * 5; };
+  const band = b => { const f = Math.floor(b.line); return f <= 125 ? 125 : Math.ceil(f / 5) * 5; };
   const by = {};
   bets.forEach(b => (by[band(b)] ||= []).push(b));
-  let h = `<h2>By line</h2><p class="note">The same bets grouped by the bookmaker's total-points line: 126–130 means lines 126.5 to 130.5. Profit and loss in units, stake 1 per bet.</p>`;
+  let h = `<h2>By line</h2><p class="note">The same bets grouped by the bookmaker's total-points line: 126–130 means lines 126.5 to 130.5. Profit and loss in units, stake 1 per bet. The few bets on lines of 125 or less have no row of their own but count in All and in the table below.</p>`;
   h += `<div class="scroll"><table style="max-width:620px"><thead><tr><th>Line</th><th class="n">Bets</th><th class="n">Won</th><th class="n">Hit</th><th class="n">P/L</th><th class="n">ROI</th></tr></thead><tbody>`;
   let n = 0, w = 0, pl = 0;
   for (const k of Object.keys(by).map(Number).sort((a, b) => a - b)){
     const g = by[k], gw = g.filter(b => b.won).length, gp = g.reduce((s, b) => s + b.ret, 0);
     n += g.length; w += gw; pl += gp;
-    h += `<tr><td>${k === 120 ? '120 or less' : `${k - 4}–${k}`}</td><td class="n">${g.length}</td><td class="n">${gw}</td><td class="n">${pct(gw / g.length)}</td><td class="n ${cls(gp)}">${sgn(gp, 1)}</td><td class="n ${cls(gp)}">${sgn(gp / g.length * 100, 1)}%</td></tr>`;
+    if (k === 125) continue;                         // too few bets on lines of 125 or less for a row of their own
+    h += `<tr><td>${k - 4}–${k}</td><td class="n">${g.length}</td><td class="n">${gw}</td><td class="n">${pct(gw / g.length)}</td><td class="n ${cls(gp)}">${sgn(gp, 1)}</td><td class="n ${cls(gp)}">${sgn(gp / g.length * 100, 1)}%</td></tr>`;
   }
   if (n) h += `<tr><td><b>All</b></td><td class="n"><b>${n}</b></td><td class="n"><b>${w}</b></td><td class="n"><b>${pct(w / n)}</b></td><td class="n ${cls(pl)}"><b>${sgn(pl, 1)}</b></td><td class="n ${cls(pl)}"><b>${sgn(pl / n * 100, 1)}%</b></td></tr>`;
   h += '</tbody></table></div>';
   const W = DATA.backtest.bands[lg === 'all' ? 'all' : lg] || [];
   h += `<h2>Low, middle and high lines</h2><div class="scroll"><table style="max-width:720px"><thead><tr><th>Line</th><th class="n">Bets</th><th class="n">P/L</th><th class="n">ROI</th><th class="n">90% range</th><th class="n">Seasons in profit</th></tr></thead><tbody>`;
   for (const b of W) h += `<tr><td>${b.lab}</td><td class="n">${b.n}</td><td class="n ${cls(b.pl)}">${b.n ? sgn(b.pl, 1) : '–'}</td><td class="n ${cls(b.roi)}">${b.n ? sgn(b.roi*100, 1) + '%' : '–'}</td><td class="n">${b.n ? `${sgn(b.ci[0]*100, 0)}% to ${sgn(b.ci[1]*100, 0)}%` : '–'}</td><td class="n">${b.s ? `${b.sp} of ${b.s}` : '–'}</td></tr>`;
-  h += `</tbody></table></div><p class="note">The 90% range is how far the ROI could be from the truth by luck alone: the bets resampled thousands of times. <b>Low lines</b> have been the model's best ground. A line of 130 or less means the bookmakers expect a one-sided 3-0, so a single close set takes the total over, and both the hit rate and the run of seasons there are hard to put down to luck. <b>The middle band</b> holds most of the bets and the thinnest edge, but it has still made money, so the rule keeps it: dropping bands picked after seeing these results would flatter the record, the same trap as picking leagues by their backtest. <b>Small bands</b> (the highest lines, or 121–125 above with about 25 bets) can swing a long way on a few results, so they are shown, not acted on. The live picks are the real test, band by band.</p>`;
+  h += `</tbody></table></div><p class="note">The 90% range is how far the ROI could be from the truth by luck alone: the bets resampled thousands of times. <b>Low lines</b> have been the model's best ground. A line of 130 or less means the bookmakers expect a one-sided 3-0, so a single close set takes the total over, and both the hit rate and the run of seasons there are hard to put down to luck. <b>The middle band</b> holds most of the bets and the thinnest edge, but it has still made money, so the rule keeps it: dropping bands picked after seeing these results would flatter the record, the same trap as picking leagues by their backtest. <b>Small bands</b> (the highest lines, the lowest ones) can swing a long way on a few results, so they are shown, not acted on. The live picks are the real test, band by band.</p>`;
   return h;
 }
 
