@@ -139,6 +139,7 @@ table.mini{margin:0 0 16px}
 .cols{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:28px;align-items:start}
 @media(max-width:900px){.cols{grid-template-columns:minmax(0,1fr)}}
 td.wr{white-space:normal}
+table.proj tr.pk td{background:rgba(212,175,55,.08)}table.proj tr.pk td:first-child{box-shadow:inset 3px 0 var(--gold)}table.proj .flag{margin-top:4px;font-size:12px}
 .pos{color:var(--win)} .neg{color:var(--loss)}
 tr.srow{cursor:pointer} tr.srow:hover td,tr.srow.on td{background:color-mix(in srgb,var(--gold) 10%,transparent)}
 .caret{color:var(--gold);display:inline-block;width:1em}
@@ -161,7 +162,7 @@ tr.srow{cursor:pointer} tr.srow:hover td,tr.srow.on td{background:color-mix(in s
   <div class="chips" id="chips"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=b23dd235"></script>
+<script src="data.js?v=4ac69929"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -179,25 +180,21 @@ const one = () => lg === 'all' ? DATA.leagues[0].key : lg;      // tabs that sho
 
 $('sub').textContent = `Women's top leagues · ${DATA.season.replace('-','–')} · updated ${DATA.updated} (Athens)`;
 
-function card(g){
-  const mk = g.mk ? `<div class="mk"><span>Line <b>${g.mk.line}</b> · over <b>${g.mk.over.toFixed(2)}</b></span>
-      <span>Model over <b>${pct(g.p_over)}</b></span><span>Edge <b class="${cls(g.edge)}">${sgn(g.edge*100, 0)}%</b></span></div>`
-    : '<div class="mk"><span>No bookmaker line yet</span></div>';
-  return `<div class="card simple${g.pick ? ' pick' : ''}"><div class="ko">${lg === 'all' ? `<span class="lgt">${LG[g.lg].country}</span> · ` : ''}${g.dt.slice(11)} · ${g.round}</div>
-    <h3>${g.home} <span class="muted">–</span> ${g.away}${g.pick ? `<span class="badge">Over ${g.mk.line}</span>` : ''}</h3>
-    <div class="sets"><i style="width:${g.p3*100}%"></i><i style="width:${g.p4*100}%"></i><i style="width:${g.p5*100}%"></i></div>
-    <div class="setst"><span>3 sets <b>${pct(g.p3)}</b></span><span>4 sets <b>${pct(g.p4)}</b></span><span>5 sets <b>${pct(g.p5)}</b></span></div>
-    <div class="proj">Projected total <b>${g.med}</b> points · fair line <b>${g.fair}</b> · ${g.home} wins <b>${pct(g.ph)}</b></div>
-    ${mk}${g.note ? `<div class="flag">${g.note}</div>` : ''}</div>`;
-}
-
 function renderProjections(){
-  let h = `<p class="note">Every match in the next 7 days: the chance it goes 3, 4 or 5 sets, the projected total points and the model's own fair line. Once a bookmaker posts a line, the card shows the model's over chance against it. <b>Picks</b> (gold) are overs on lines below ${DATA.low}, the matches the market expects to end 3-0, where the edge is above ${DATA.edge*100}%. The page keeps the leagues where the backtest beat the price: ${liveNames()}. Italy, Brazil, China and nine others were tested too and did not, so they are left out.</p>`;
+  let h = `<p class="note">Every match in the next 7 days: the chance it goes 3, 4 or 5 sets, the projected total points and the model's own fair line. Once a bookmaker posts a line, the row shows the line, the average over price and the model's over chance against it. <b>Picks</b> (gold) are overs on lines below ${DATA.low}, the matches the market expects to end 3-0, where the edge is above ${DATA.edge*100}%. The page keeps the leagues where the backtest beat the price: ${liveNames()}. Italy, Brazil, China and nine others were tested too and did not, so they are left out.</p>`;
   const fx = DATA.fixtures.filter(inLg);
   if (!fx.length) return h + '<p class="empty">No matches in the next 7 days.</p>';
   const byDay = {};
   fx.forEach(g => (byDay[g.dt.slice(0,10)] ||= []).push(g));
-  for (const [d, gs] of Object.entries(byDay)) h += `<h2 class="day">${dayName(d)}</h2><div class="grid">${gs.map(card).join('')}</div>`;
+  const head = `<thead><tr><th>Time</th>${lg === 'all' ? '<th>League</th>' : ''}<th>Match</th><th class="n">3 sets</th><th class="n">4 sets</th><th class="n">5 sets</th><th class="n">Proj.</th><th class="n">Fair</th><th class="n">Line</th><th class="n">Over</th><th class="n">Model</th><th class="n">Edge</th></tr></thead>`;
+  for (const [d, gs] of Object.entries(byDay)){
+    h += `<h2 class="day">${dayName(d)}</h2><div class="scroll"><table class="proj">${head}<tbody>`;
+    for (const g of gs) h += `<tr${g.pick ? ' class="pk"' : ''}><td>${g.dt.slice(11)}</td>${lg === 'all' ? `<td>${LG[g.lg].country}</td>` : ''}
+      <td class="wr">${g.home} – ${g.away}${g.pick ? `<span class="badge">Over ${g.mk.line}</span>` : ''}${g.note ? `<div class="flag">${g.note}</div>` : ''}</td>
+      <td class="n">${pct(g.p3)}</td><td class="n">${pct(g.p4)}</td><td class="n">${pct(g.p5)}</td><td class="n"><b>${g.med}</b></td><td class="n muted">${g.fair}</td>
+      ${g.mk ? `<td class="n">${g.mk.line}</td><td class="n">${g.mk.over.toFixed(2)}</td><td class="n">${pct(g.p_over)}</td><td class="n ${cls(g.edge)}">${sgn(g.edge*100, 0)}%</td>` : '<td class="n muted" colspan="4">no line yet</td>'}</tr>`;
+    h += '</tbody></table></div>';
+  }
   return h;
 }
 
@@ -217,7 +214,7 @@ function renderPicks(){
     const res = 'won' in p ? `<td class="n">${p.sets}</td><td class="n ${p.won ? 'w' : 'l'}">${p.total}</td><td class="n ${cls(p.profit)}">${sgn(p.profit, 2)}</td>`
       : '<td class="n muted" colspan="3">to play</td>';
     h += `<tr><td>${short(p.dt)}</td>${lg === 'all' ? `<td>${LG[p.lg].country}</td>` : ''}<td class="wr">${p.home} – ${p.away}</td><td class="n">Over ${p.line}</td><td class="n">${p.px.toFixed(2)}</td>
-      <td class="n muted">${p.best.toFixed(2)} ${p.book}</td><td class="n">${pct(p.p)}</td><td class="n">${sgn(p.edge*100, 0)}%</td>${res}</tr>`;
+      <td class="n muted">${p.best.toFixed(2)}</td><td class="n">${pct(p.p)}</td><td class="n">${sgn(p.edge*100, 0)}%</td>${res}</tr>`;
   }
   return h + '</tbody></table></div>';
 }
