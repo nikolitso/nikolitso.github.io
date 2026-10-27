@@ -248,7 +248,7 @@ function renderBacktest(){
   const B = DATA.backtest, S = lg === 'all' ? B.all : B.leagues[lg];
   const range = s => s.n ? `${sgn(s.ci[0]*100, 0)}% to ${sgn(s.ci[1]*100, 0)}%` : '–';
   let h = `<p class="note">The live rule run on every season since ${B.first.slice(0,4)}, each match projected only from earlier matches of its own league, at the closing line and the average price. The settings were tuned on the Sultanlar Ligi's 2024-25 alone, so the totals leave that season out and every other league is a test the model never saw. Lines of ${DATA.min_line - 1}.5 or lower are left out. ${S.blind_n ? `<b>Backing every low-line over without the model</b> returned ${sgn(S.blind_roi*100, 1)}% over ${S.blind_n} matches.` : `<b>This league never has a line below ${DATA.low}</b> (its totals run higher), so the rule has had nothing to bet on.`}</p>`;
-  h += tiles([['Bets (unseen)', S.n], ['Hit rate', S.n ? pct(S.w / S.n) : '–'], ['ROI', sgn(S.roi*100, 1) + '%', cls(S.roi)], ['90% range', range(S)]]);
+  h += tiles([['Bets', S.n], ['Hit rate', S.n ? pct(S.w / S.n) : '–'], ['ROI', sgn(S.roi*100, 1) + '%', cls(S.roi)], ['90% range', range(S)]]);
   if (lg === 'all'){
     h += `<p class="note">${lg === 'all' && DATA.leagues.some(l => !l.live) ? 'The totals above count the leagues with live picks only. ' : ''}Click a league to see its seasons and bets.</p>`;
     h += `<div class="scroll"><table style="max-width:760px"><thead><tr><th>League</th><th class="n">Bets</th><th class="n">Hit</th><th class="n">ROI</th><th class="n">90% range</th><th class="n">No model</th></tr></thead><tbody>`;
