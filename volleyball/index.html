@@ -255,7 +255,19 @@ function renderBacktest(){
       const s = B.leagues[l.key];
       h += `<tr class="srow" data-lg="${l.key}"><td><span class="caret">▸</span> ${l.country} <span class="muted">${l.name}${l.live ? '' : ' · no picks'}</span></td><td class="n">${s.n}</td><td class="n">${s.n ? pct(s.w/s.n) : '–'}</td><td class="n ${cls(s.roi)}">${sgn(s.roi*100, 1)}%</td><td class="n ${cls(s.blind_roi)}">${sgn(s.blind_roi*100, 1)}%</td></tr>`;
     }
-    return h + '</tbody></table></div>' + byLine();
+    h += '</tbody></table></div>';
+    // the same bets by season, the live leagues together (the tuned-on season left out, as in the totals)
+    const live = new Set(DATA.leagues.filter(l => l.live).map(l => l.key)), by = {};
+    for (const x of B.seasons.filter(x => live.has(x.lg) && !x.tuned)){
+      const t = by[x.season] ||= {n: 0, w: 0, pl: 0};
+      t.n += x.n; t.w += x.w; t.pl += x.roi * x.n;
+    }
+    h += `<h2>By season</h2><p class="note">Click a season to see its bets one by one.</p>`;
+    h += `<table class="seasons" style="max-width:620px"><thead><tr><th>Season</th><th class="n">Bets</th><th class="n">Won</th><th class="n">Hit</th><th class="n">P/L</th><th class="n">ROI</th></tr></thead><tbody>`;
+    for (const [season, t] of Object.entries(by).sort()) h += `<tr class="srow${season === btSeason ? ' on' : ''}" data-season="${season}"><td><span class="caret">${season === btSeason ? '▾' : '▸'}</span> ${season.replace('-','–')}</td><td class="n">${t.n}</td><td class="n">${t.w}</td><td class="n">${pct(t.w / t.n)}</td><td class="n ${cls(t.pl)}">${sgn(t.pl, 1)}</td><td class="n ${cls(t.pl)}">${sgn(t.pl / t.n * 100, 1)}%</td></tr>`;
+    h += '</tbody></table>' + byLine();
+    if (btSeason) h += seasonBets(btSeason);
+    return h;
   }
   h += `<p class="note">Click a season to see its bets one by one.</p>`;
   h += `<table class="seasons" style="max-width:560px"><thead><tr><th>Season</th><th class="n">Bets</th><th class="n">Won</th><th class="n">Hit</th><th class="n">ROI</th></tr></thead><tbody>`;
@@ -290,12 +302,14 @@ function byLine(){
 }
 
 function seasonBets(season){
-  const list = DATA.backtest.bets.filter(b => b.season === season && b.lg === lg);
+  const live = new Set(DATA.leagues.filter(l => l.live).map(l => l.key));
+  const tuned = new Set(DATA.backtest.seasons.filter(x => x.tuned).map(x => x.lg + '|' + x.season));
+  const list = DATA.backtest.bets.filter(b => b.season === season && (lg === 'all' ? live.has(b.lg) && !tuned.has(b.lg + '|' + b.season) : b.lg === lg));
   let run = 0;
-  let h = `<h2 id="btbets">${season.replace('-','–')}: ${list.length} bets</h2><div class="scroll"><table><thead><tr><th>Date</th><th>Match</th><th class="n">Line</th><th class="n">Price</th><th class="n">Model</th><th class="n">Edge</th><th class="n">Sets</th><th class="n">Total</th><th class="n">Units</th><th class="n">Running</th></tr></thead><tbody>`;
+  let h = `<h2 id="btbets">${season.replace('-','–')}: ${list.length} bets</h2><div class="scroll"><table><thead><tr><th>Date</th>${lg === 'all' ? '<th>League</th>' : ''}<th>Match</th><th class="n">Line</th><th class="n">Price</th><th class="n">Model</th><th class="n">Edge</th><th class="n">Sets</th><th class="n">Total</th><th class="n">Units</th><th class="n">Running</th></tr></thead><tbody>`;
   for (const b of list){
     run += b.ret;
-    h += `<tr><td>${short(b.dt)} ${b.dt.slice(0,4)}</td><td class="wr">${b.home} – ${b.away}</td><td class="n">Over ${b.line}</td><td class="n">${b.px.toFixed(2)}</td>
+    h += `<tr><td>${short(b.dt)} ${b.dt.slice(0,4)}</td>${lg === 'all' ? `<td>${LG[b.lg].country}</td>` : ''}<td class="wr">${b.home} – ${b.away}</td><td class="n">Over ${b.line}</td><td class="n">${b.px.toFixed(2)}</td>
       <td class="n">${pct(b.p)}</td><td class="n">${sgn(b.edge*100, 0)}%</td><td class="n">${b.sets}</td><td class="n ${b.won ? 'w' : 'l'}">${b.total}</td>
       <td class="n ${cls(b.ret)}">${sgn(b.ret, 2)}</td><td class="n ${cls(run)}">${sgn(run, 2)}</td></tr>`;
   }
