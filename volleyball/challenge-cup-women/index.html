@@ -81,6 +81,7 @@ h2.day{font-size:20px;padding-bottom:8px;border-bottom:1px solid var(--line)}
 .lbl{display:block;font:400 11px var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
 a.go{color:var(--gold);text-decoration:none} a.go:hover{text-decoration:underline}
 .card.fx .res td,.card.fx .res th{padding:6px 6px}
+table.today td,table.today th{padding:7px 5px} table.today td{font-size:15px} table.today td.n{font-size:13.5px} table.today .big{font-size:15px}
 @media(max-width:760px){.form,.cols{grid-template-columns:1fr}td,th{padding:6px 5px}td.n,th.n{font-size:12.5px}table.res td{font-size:14px}table.res td.n{font-size:13px}.card{padding:14px 10px 10px}.full{display:none}}
 </style>
 </head>
@@ -132,9 +133,39 @@ const odd = v => { const x = parseFloat(String(v).replace(',', '.')); return x >
 function countrySel(id, val){
   return `<select id="${id}">${[...COUNTRIES, OTHER].map(c => `<option${c === val ? ' selected' : ''}>${c}</option>`).join('')}</select>`;
 }
+// a priced fixture: the opening-odds chance of the host (every book), the model chance and the edge at the best price now
+function fxPrice(f){
+  const oc = Object.values(f.odds_open || {}).length ? f.odds_open : f.odds, books = Object.values(oc || {});
+  if (!books.length) return null;
+  const now = Object.values(f.odds || {}).length ? Object.values(f.odds) : books;
+  const ph = books.reduce((s, o) => s + fair(o[0], o[1]), 0) / books.length, p = model(logit(ph), f.hc, f.ac, f.leg === 2 ? 1 : 0);
+  const bh = Math.max(...now.map(o => o[0])), ba = Math.max(...now.map(o => o[1])), eh = p * bh - 1, ea = (1 - p) * ba - 1;
+  return {ph, p, oh: books.reduce((s, o) => s + o[0], 0) / books.length, oa: books.reduce((s, o) => s + o[1], 0) / books.length,
+          bh, ba, e: Math.max(eh, ea), who: eh > ea ? f.home : f.away};
+}
+const ymd = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+
+// today's priced matches (or the next day with prices), model against the odds; a click loads the match into the projector
+function renderToday(){
+  const fx = (DATA.fixtures || []).filter(f => f.hc !== f.ac && fxPrice(f)), today = ymd(new Date());
+  const day = fx.some(f => f.date === today) ? today : fx.map(f => f.date).filter(d => d > today).sort()[0];
+  if (!day) return '';
+  const rows = fx.filter(f => f.date === day).sort((x, y) => x.time.localeCompare(y.time)).map(f => {
+    const r = fxPrice(f), d = r.p - r.ph;
+    return `<tr class="${r.e >= .05 ? 'val' : ''}"><td class="n muted">${f.time}</td>` +
+      `<td><a href="#" class="go" data-fx="${f.id}">${f.home} <span class="muted">v</span> ${f.away}</a><div class="hint" style="margin:0">${f.hc} v ${f.ac}${f.leg ? ' · leg ' + f.leg : ''}</div></td>` +
+      `<td class="n full">${r.oh.toFixed(2)} / ${r.oa.toFixed(2)}</td><td class="n">${pct(r.ph)}</td><td class="n tot">${pct(r.p)}</td>` +
+      `<td class="n ${d >= 0 ? 'ok' : 'bad'}">${sgn(d * 100)}</td><td class="n big">${(1 / r.p).toFixed(2)} / ${(1 / (1 - r.p)).toFixed(2)}</td>` +
+      `<td class="n full">${r.bh.toFixed(2)} / ${r.ba.toFixed(2)}</td><td class="n ${r.e >= 0 ? 'ok' : 'bad'}">${sgnPct(r.e)} <span class="muted">${r.who.split(' ')[0]}</span></td></tr>`;
+  }).join('');
+  return `<h2 style="margin-top:0">${day === today ? 'Today' : dayName(day)}: model v odds</h2>
+    <div class="card scroll" style="margin-bottom:10px"><table class="res today"><thead><tr><th class="n">Time</th><th>Host v visitor</th><th class="n full">Opening odds</th><th class="n" title="The host's chance in the opening odds, margin taken out">Odds host</th><th class="n">Model host</th><th class="n" title="Model chance minus the odds' chance, percentage points">Diff</th><th class="n">Fair odds</th><th class="n full">Best now</th><th class="n">Edge</th></tr></thead><tbody>${rows}</tbody></table></div>
+    <p class="hint" style="margin-bottom:26px">Odds host = the opening odds' chance with the margin taken out (average over the bookmakers). Diff = model minus odds, in percentage points. Edge = model chance × best price now − 1, on the better side; rows from +5% are highlighted. Click a match to load it into the projector below.</p>`;
+}
+
 function renderProjector(){
   const tie = st.mode === 'tie';
-  return `<p class="note">Pick the two countries and type the <b>opening</b> winner odds. The projector gives the fair price of each leg (no bookmaker margin) and the edge against the odds you typed. Before the second leg is priced, its odds are estimated from the first leg with the venue turned round.</p>
+  return renderToday() + `<p class="note">Pick the two countries and type the <b>opening</b> winner odds. The projector gives the fair price of each leg (no bookmaker margin) and the edge against the odds you typed. Before the second leg is priced, its odds are estimated from the first leg with the venue turned round.</p>
     <div class="card"><div class="seg" id="mode" style="margin-bottom:18px"><button data-m="tie" class="${tie ? 'on' : ''}">Both legs</button><button data-m="one" class="${st.mode === 'one' ? 'on' : ''}">First leg</button><button data-m="two" class="${st.mode === 'two' ? 'on' : ''}">Second leg</button></div>
     <div class="form">
       <div class="side"><h3>${tie ? 'Hosts leg 1' : 'Host'}</h3>
@@ -267,15 +298,11 @@ function fxCard(f){
   const hv = stats(hc).h, av = stats(ac).a;
   const vline = (c, r, where) => r.n ? `${c} ${where} <b>${r.w}–${r.n - r.w}</b> <span class="muted">(${pct(r.win)}${r.diff !== null ? ', ' + sgn(r.diff * 100) + ' vs odds' : ''})</span>` : `${c} ${where} <span class="muted">no matches</span>`;
   let price = '';
-  const oc = Object.values(f.odds_open || {}).length ? f.odds_open : f.odds;
-  const books = Object.values(oc || {});
-  if (books.length){
-    const ph = books.reduce((s, o) => s + fair(o[0], o[1]), 0) / books.length, x = logit(ph);
-    const p = model(x, hc, ac, f.leg === 2 ? 1 : 0);
-    const bh = Math.max(...Object.values(f.odds).map(o => o[0])), ba = Math.max(...Object.values(f.odds).map(o => o[1]));
-    const eh = p * bh - 1, ea = (1 - p) * ba - 1, [e, who] = eh > ea ? [eh, f.home] : [ea, f.away];
+  const r = fxPrice(f);
+  if (r){
+    const {ph, p, e, who} = r;
     price = `<table class="res" style="margin-top:10px"><thead><tr><th class="n">Opening odds</th><th class="n">Odds say host</th><th class="n">Model host</th><th class="n">Fair odds</th><th class="n">Edge (best now)</th></tr></thead><tbody><tr class="${e >= .05 ? 'val' : ''}">` +
-      `<td class="n">${(books.reduce((s, o) => s + o[0], 0) / books.length).toFixed(2)} / ${(books.reduce((s, o) => s + o[1], 0) / books.length).toFixed(2)}</td><td class="n">${pct(ph)}</td><td class="n tot">${pct(p)}</td>` +
+      `<td class="n">${r.oh.toFixed(2)} / ${r.oa.toFixed(2)}</td><td class="n">${pct(ph)}</td><td class="n tot">${pct(p)}</td>` +
       `<td class="n big">${(1 / p).toFixed(2)} / ${(1 / (1 - p)).toFixed(2)}</td><td class="n ${e >= 0 ? 'ok' : 'bad'}">${who} ${sgnPct(e)}</td></tr></tbody></table>`;
   }
   const link = `#view=projector&a=${encodeURIComponent(hc)}&b=${encodeURIComponent(ac)}&mode=${f.leg === 2 ? 'two' : f.leg === 1 ? 'tie' : 'one'}`;
@@ -370,6 +397,11 @@ document.addEventListener('click', e => {
   const t = e.target.closest('[data-view],[data-sort],[data-rk],#mode button,#rksel button,a.go');
   if (!t) return;
   e.preventDefault();
+  if (t.dataset.fx){                                  // a match from today's table: its countries and opening odds
+    const f = DATA.fixtures.find(x => x.id === t.dataset.fx), r = fxPrice(f), cc = c => COUNTRIES.includes(c) ? c : OTHER;
+    Object.assign(st, {a: cc(f.hc), b: cc(f.ac), mode: f.leg === 2 ? 'two' : f.leg === 1 ? 'tie' : 'one', o1a: r.oh.toFixed(2), o1b: r.oa.toFixed(2), o2a: '', o2b: ''});
+    writeHash(); render(); $('mode').scrollIntoView({block: 'center'}); return;
+  }
   if (t.matches('a.go')){ history.replaceState(null, '', t.getAttribute('href')); st.o1a = st.o1b = st.o2a = st.o2b = ''; readHash(); window.scrollTo({top: 0}); }
   else if (t.dataset.view) view = t.dataset.view;
   else if (t.dataset.sort){ const k = t.dataset.sort, def = C_COLS.find(c => c[0] === k)[3]; cDir = k === cSort ? -cDir : def; cSort = k; }
