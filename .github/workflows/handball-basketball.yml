@@ -1,0 +1,77 @@
+name: Handball and basketball
+
+# The /handball/ and /basketball/ pipelines (scripts and their ledgers in the private repo nikolitso/BettingSignal),
+# on GitHub instead of the PC. Each run: refresh from Flashscore, rebuild the pages, publish them here, and save the
+# updated ledgers (signals, lines, results) back to BettingSignal. Needs the SITES_TOKEN secret with
+# Contents read & write on nikolitso/BettingSignal. The "Update all sites" button runs it too.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: handball-basketball
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    env:
+      TZ: Europe/Athens
+      PYTHONIOENCODING: utf-8
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/checkout@v5
+        with:
+          repository: nikolitso/BettingSignal
+          token: ${{ secrets.SITES_TOKEN }}
+          path: _bs
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.14"
+      - run: pip install --quiet numpy scipy
+
+      - name: Handball
+        id: handball
+        continue-on-error: true
+        working-directory: _bs/handball/projector
+        run: |
+          python -W ignore run_update.py | tee /tmp/handball.log
+          python ../site/make_site.py "$GITHUB_WORKSPACE/handball"
+
+      - name: Basketball
+        id: basketball
+        continue-on-error: true
+        working-directory: _bs/basketball/projector
+        run: |
+          python -W ignore run_update.py | tee /tmp/basketball.log
+          python make_site.py "$GITHUB_WORKSPACE/basketball"
+
+      - name: Publish the pages
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add handball basketball
+          if git diff --cached --quiet; then echo "pages unchanged"; exit 0; fi
+          git commit -q -m "Handball and basketball: refresh $(date '+%Y-%m-%d %H:%M')"
+          git pull -q --rebase
+          git push -q
+
+      - name: Save the ledgers
+        working-directory: _bs
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then echo "ledgers unchanged"; exit 0; fi
+          git commit -q -m "Refresh $(date '+%Y-%m-%d %H:%M')"
+          git pull -q --rebase
+          git push -q
+
+      - name: Result
+        run: |
+          grep -h "^SIGNALS\|^SUMMARY" /tmp/handball.log /tmp/basketball.log 2>/dev/null || true
+          if [ "${{ steps.handball.outcome }}" != "success" ] || [ "${{ steps.basketball.outcome }}" != "success" ]; then
+            echo "::error::handball ${{ steps.handball.outcome }}, basketball ${{ steps.basketball.outcome }}"; exit 1
+          fi

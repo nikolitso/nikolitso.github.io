@@ -3,7 +3,7 @@ name: Update all sites
 # One button for everything: hit "Run workflow" (Actions tab, or the GitHub mobile app) and this runs
 # every update job in order, waiting for each one:
 #   1. PAOK Basketball stats (nikolitso/paok-basketball "Update stats"), then waits for its deploy
-#   2. Wine music, latest posts, FIBA Europe Cup (results, odds, fixtures)
+#   2. Wine music, latest posts, FIBA Europe Cup (results, odds, fixtures), handball and basketball
 #   3. Project pills and screenshots last, so they read the freshly updated sites
 # Step 1 is in another repo, so it needs the SITES_TOKEN secret: a fine-grained token with
 # Actions read & write on nikolitso/paok-basketball. Without it that step is skipped.
@@ -64,6 +64,10 @@ jobs:
       - name: FIBA Europe Cup
         if: ${{ !cancelled() }}
         run: /tmp/run.sh ${{ github.repository }} fiba-europe-cup.yml
+
+      - name: Handball and basketball
+        if: ${{ !cancelled() }}
+        run: /tmp/run.sh ${{ github.repository }} handball-basketball.yml
 
       - name: Project pills and screenshots
         if: ${{ !cancelled() }}
