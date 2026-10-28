@@ -228,12 +228,11 @@
     var n = G.length;
     var h = '<p class="note">' + note + '</p>';
     h += '<div class="metrics">';
-    [["goals", "Goals per game"], ["shots", "Shots per game"], ["cards", "Cards per game"]].forEach(function (m) {
+    [["goals", "Goals per game"], ["shots", "Shots per game"], ["cards", "Cards per game"], ["sot", "SoT per game"]].forEach(function (m) {
       var s = 0; G.forEach(function (g) { s += g[m[0]][0] + g[m[0]][1]; });
       h += '<div class="metric"><div class="lbl">' + m[1] + '</div><div class="big">' + f1(s / n) + '</div></div>';
     });
-    var hw = G.filter(function (g) { return g.goals[0] > g.goals[1]; }).length, dr = G.filter(function (g) { return g.goals[0] === g.goals[1]; }).length;
-    h += '<div class="metric"><div class="lbl">Home / draw / away (' + (G === G1 ? 'half-time' : '90 min') + ')</div><div class="big">' + hw + ' / ' + dr + ' / ' + (n - hw - dr) + '</div></div></div>';
+    h += '</div>';
     h += '<div class="scroll"><table class="tt"><thead><tr><th>Stat</th><th class="n">Avg total</th><th class="n">Home</th><th class="n">Away</th><th class="n">Low</th><th class="n">Median</th><th class="n">High</th><th class="n">Over line</th></tr></thead><tbody>';
     STATS.forEach(function (s) {
       var k = s[0], tot = G.map(function (g) { return g[k][0] + g[k][1]; }).sort(function (a, b) { return a - b; });
