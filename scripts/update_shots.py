@@ -29,6 +29,7 @@ SIZE = (1200, 675)
 SHOTS = [
     ("/wine/", "wine"),
     ("/superleague/", "superleague"),
+    ("/football/greek-cup/", "greek-cup"),
     ("/eurocup/", "eurocup"),
     ("/fibaeuropecup/", "fibaeuropecup"),
     ("/handball/projections/", "handball"),

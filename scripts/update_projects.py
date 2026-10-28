@@ -126,6 +126,13 @@ def superleague():
     return pills
 
 
+def greek_cup():
+    d = js_object("/football/greek-cup/data.js", r"window\.CUP\s*=")
+    g = max(d["games"], key=lambda g: g["date"])
+    return [updated(d["updated"]), f"{len(d['games'])} games",
+            f"Last: {g['home']} {g['goals'][0]}–{g['goals'][1]} {g['away']}"]
+
+
 def basketball_cup(folder):
     d = js_object(f"/{folder}/projections.js", r"window\.PROJ\s*=")
     games = upcoming(d.get("list", []), lambda g: g["when"])
@@ -167,6 +174,7 @@ def basketball():
 
 CARDS = {                    # slug -> (card href on the homepage, reader)
     "superleague": ("/superleague/", superleague),
+    "greek-cup": ("/football/greek-cup/", greek_cup),
     "eurocup": ("/eurocup/", lambda: basketball_cup("eurocup")),
     "fibaeuropecup": ("/fibaeuropecup/", lambda: basketball_cup("fibaeuropecup")),
     "handball": ("/handball/projections/", handball),
