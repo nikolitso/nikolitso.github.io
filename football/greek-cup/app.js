@@ -1,15 +1,28 @@
 (function () {
-  var D = window.CUP, G = D.games;
+  var D = window.CUP, GF = D.games;
   var STATS = [
     ["goals", "Goals"], ["shots", "Shots"], ["sot", "Shots on target"], ["fouls", "Fouls"],
-    ["gk", "Goal kicks"], ["cards", "Cards"]
+    ["gk", "Goal kicks"], ["ti", "Throw-ins"], ["sv", "Goalkeeper saves"], ["cards", "Cards"]
   ];
-  var SHORT = {goals: "Goals", shots: "Shots", sot: "SoT", fouls: "Fouls", gk: "Goal kicks", cards: "Cards"};
+  var SHORT = {goals: "Goals", shots: "Shots", sot: "SoT", fouls: "Fouls", gk: "Goal kicks", ti: "Throw-ins", sv: "Saves", cards: "Cards"};
+  // first-half copy of every game: same shape, stats taken from g.h1
+  var G1 = GF.filter(function (g) { return g.h1; }).map(function (g) {
+    var o = {}; for (var k in g) o[k] = g[k];
+    STATS.forEach(function (s) { o[s[0]] = g.h1[s[0]]; });
+    o.half = true; return o;
+  });
+  var G = GF;   // the set the current view reads: GF (full match) or G1 (first half)
   // tier is order-free ("SL1 v SL2" whoever is at home); tierHA keeps the home side first
   function tier(g) { return g.div.slice().sort().join(" v "); }
   function tierHA(g) { return g.div[0] + " v " + g.div[1]; }
   var out = document.getElementById("out");
-  var st = {view: "matches", round: "all", team: "", side: "for", sort: "goals", dir: -1};
+  var st = {view: "matches", round: "all", team: "", side: "for", sort: "goals", dir: -1, half: false};
+  function periodSeg() {
+    return '<div class="seg" id="per"><button data-p="0"' + (st.half ? '' : ' class="on"') + '>Full match</button><button data-p="1"' + (st.half ? ' class="on"' : '') + '>1st half</button></div>';
+  }
+  function bindPeriod(fn) {
+    out.querySelectorAll("#per button").forEach(function (b) { b.onclick = function () { st.half = b.dataset.p === "1"; fn(); }; });
+  }
   var MON = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
   var DAY = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
@@ -19,12 +32,13 @@
   function pct(x) { return Math.round(x * 100) + "%"; }
   function rounds() { var r = {}; G.forEach(function (g) { r[g.round] = 1; }); return Object.keys(r).map(Number).sort(function (a, b) { return b - a; }); }
 
-  var last = G.reduce(function (m, g) { return g.date > m ? g.date : m; }, "");
-  document.getElementById("sub").textContent = "Season " + D.season + " · " + G.length + " games · last game " + day(last);
+  var last = GF.reduce(function (m, g) { return g.date > m ? g.date : m; }, "");
+  document.getElementById("sub").textContent = "Season " + D.season + " · " + GF.length + " games · last game " + day(last);
 
   // ---------- matches ----------
   function matches() {
-    var h = '<div class="bar"><div class="chips" id="rch">';
+    G = st.half ? G1 : GF;
+    var h = '<div class="bar">' + periodSeg() + '<div class="chips" id="rch">';
     h += '<button class="chip' + (st.round === "all" ? " on" : "") + '" data-r="all">All rounds</button>';
     rounds().forEach(function (r) { h += '<button class="chip' + (st.round == r ? " on" : "") + '" data-r="' + r + '">Round ' + r + '</button>'; });
     h += '</div>';
@@ -40,13 +54,14 @@
       h += '</div>';
     });
     out.innerHTML = h;
+    bindPeriod(matches);
     out.querySelectorAll("#rch .chip").forEach(function (b) { b.onclick = function () { st.round = b.dataset.r; matches(); }; });
     var c = document.getElementById("clr"); if (c) c.onclick = function () { st.team = ""; matches(); };
     out.querySelectorAll("[data-team]").forEach(function (a) { a.onclick = function (e) { e.preventDefault(); st.team = a.dataset.team; matches(); }; });
   }
 
   function card(g) {
-    var h = '<div class="card mc"><div class="meta">' + day(g.date) + ' · ' + tierHA(g) + '</div><div class="row">';
+    var h = '<div class="card mc"><div class="meta">' + day(g.date) + ' · ' + tierHA(g) + (g.half ? ' · <span style="color:var(--gold)">1st half</span>' : '') + '</div><div class="row">';
     h += '<a class="tm" href="#" data-team="' + esc(g.home) + '" style="color:inherit;text-decoration:none">' + esc(g.home) + '</a>';
     h += '<span class="sc">' + g.goals[0] + ' – ' + g.goals[1] + '</span>';
     h += '<a class="tm" href="#" data-team="' + esc(g.away) + '" style="color:inherit;text-decoration:none;text-align:right">' + esc(g.away) + '</a></div><table>';
@@ -86,13 +101,14 @@
   }
 
   function teams() {
+    G = st.half ? G1 : GF;
     var rows = teamRows();
     rows.sort(function (a, b) {
       var d = (val(a, st.sort) - val(b, st.sort)) * st.dir;
       return d || a.team.localeCompare(b.team);
     });
     var h = '<p class="note">Per-game averages in the cup only. <b>For</b> = what the team did, <b>Against</b> = what its opponents did, <b>Game total</b> = both sides. Click a column to sort, a team to see its games. One or two games per team, so treat these as notes, not ratings.</p>';
-    h += '<div class="bar"><div class="seg" id="side">';
+    h += '<div class="bar">' + periodSeg() + '<div class="seg" id="side">';
     [["for", "For"], ["against", "Against"], ["total", "Game total"]].forEach(function (s) {
       h += '<button data-s="' + s[0] + '"' + (st.side === s[0] ? ' class="on"' : '') + '>' + s[1] + '</button>';
     });
@@ -106,6 +122,7 @@
       h += '</tr>';
     });
     out.innerHTML = h + '</tbody></table></div>';
+    bindPeriod(teams);
     out.querySelectorAll("#side button").forEach(function (b) { b.onclick = function () { st.side = b.dataset.s; teams(); }; });
     out.querySelectorAll("th.sort").forEach(function (c) {
       c.onclick = function () { var k = c.dataset.k; if (st.sort === k) st.dir *= -1; else { st.sort = k; st.dir = -1; } teams(); };
@@ -116,17 +133,32 @@
   }
   function th(k, l) { return '<th class="n sort' + (st.sort === k ? " on" : "") + '" data-k="' + k + '">' + l + (st.sort === k ? (st.dir < 0 ? " ↓" : " ↑") : "") + '</th>'; }
 
-  // ---------- totals ----------
-  function totals() {
+  // ---------- stats (full match) and 1H stats ----------
+  function stats() { G = GF; out.innerHTML = totals('Both teams added together, per game, across all ' + GF.length + ' cup games (full match). The lines are the half-points either side of the average, with how often the game went over.'); }
+  function firstHalf() {
+    G = G1;
+    var h = totals('First half only (to the half-time whistle, stoppage time included), both teams added together, across ' + G1.length + ' games. Cards are those shown before half-time, counted the same way: yellow 1, straight red 2, second yellow 3.');
+    h += '<h2>First half by tier</h2><div class="scroll"><table class="tt">' + head("Tier", "Games") + '<tbody>';
+    ["SL1 v SL1", "SL1 v SL2", "SL2 v SL2"].forEach(function (t) { h += avgRow(G.filter(function (g) { return tier(g) === t; }), t); });
+    h += avgRow(G, '<b>All</b>') + '</tbody></table></div>';
+    h += '<h2>Share of the game in the first half</h2><p class="note">First-half total as a share of the full-match total, all games together.</p><div class="scroll"><table class="tt"><thead><tr><th>Stat</th><th class="n">1st half</th><th class="n">Full match</th><th class="n">Share</th></tr></thead><tbody>';
+    STATS.forEach(function (s) {
+      var a = 0, b = 0; G1.forEach(function (g) { a += g[s[0]][0] + g[s[0]][1]; });
+      GF.forEach(function (g) { if (g.h1) b += g[s[0]][0] + g[s[0]][1]; });
+      h += '<tr><td>' + s[1] + '</td><td class="n">' + f1(a / G1.length) + '</td><td class="n">' + f1(b / G1.length) + '</td><td class="n tot">' + (b ? pct(a / b) : "–") + '</td></tr>';
+    });
+    out.innerHTML = h + '</tbody></table></div>';
+  }
+  function totals(note) {
     var n = G.length;
-    var h = '<p class="note">Both teams added together, per game, across all ' + n + ' cup games. The lines are the half-points either side of the average, with how often the game went over.</p>';
+    var h = '<p class="note">' + note + '</p>';
     h += '<div class="metrics">';
     [["goals", "Goals per game"], ["shots", "Shots per game"], ["cards", "Cards per game"]].forEach(function (m) {
       var s = 0; G.forEach(function (g) { s += g[m[0]][0] + g[m[0]][1]; });
       h += '<div class="metric"><div class="lbl">' + m[1] + '</div><div class="big">' + f1(s / n) + '</div></div>';
     });
     var hw = G.filter(function (g) { return g.goals[0] > g.goals[1]; }).length, dr = G.filter(function (g) { return g.goals[0] === g.goals[1]; }).length;
-    h += '<div class="metric"><div class="lbl">Home / draw / away (90 min)</div><div class="big">' + hw + ' / ' + dr + ' / ' + (n - hw - dr) + '</div></div></div>';
+    h += '<div class="metric"><div class="lbl">Home / draw / away (' + (G === G1 ? 'half-time' : '90 min') + ')</div><div class="big">' + hw + ' / ' + dr + ' / ' + (n - hw - dr) + '</div></div></div>';
     h += '<div class="scroll"><table class="tt"><thead><tr><th>Stat</th><th class="n">Avg total</th><th class="n">Home</th><th class="n">Away</th><th class="n">Low</th><th class="n">Median</th><th class="n">High</th><th class="n">Over lines</th></tr></thead><tbody>';
     STATS.forEach(function (s) {
       var k = s[0], tot = G.map(function (g) { return g[k][0] + g[k][1]; }).sort(function (a, b) { return a - b; });
@@ -149,9 +181,9 @@
       var hi = srt[0], lo = srt[srt.length - 1];
       h += '<tr><td>' + s[1] + '</td><td class="wr">' + gm(hi, k) + '</td><td class="wr">' + gm(lo, k) + '</td></tr>';
     });
-    out.innerHTML = h + '</tbody></table></div>';
+    return h + '</tbody></table></div>';
   }
-  function gm(g, k) { return '<b style="color:var(--gold);font-weight:500;font-family:var(--mono)">' + (g[k][0] + g[k][1]) + '</b> <span class="muted">·</span> ' + esc(g.home) + ' ' + g.goals[0] + '–' + g.goals[1] + ' ' + esc(g.away) + ' <span class="muted">(R' + g.round + ')</span>'; }
+  function gm(g, k) { return '<b style="color:var(--gold);font-weight:500;font-family:var(--mono)">' + (g[k][0] + g[k][1]) + '</b> <span class="muted">·</span> ' + esc(g.home) + ' ' + g.goals[0] + '–' + g.goals[1] + ' ' + esc(g.away) + ' <span class="muted">(' + (g.half ? 'HT, ' : '') + 'R' + g.round + ')</span>'; }
 
   // ---------- by tier ----------
   function avgRow(gs, label, extra) {
@@ -168,6 +200,7 @@
     return h + '</tr></thead>';
   }
   function tiers() {
+    G = GF;
     var T = ["SL1 v SL1", "SL1 v SL2", "SL2 v SL2"];
     var h = '<p class="note">SL1 = Super League clubs, SL2 = Super League 2. All figures are per game and add both teams together unless the column says home, away or side. Small samples: read them as a direction, not a rate.</p>';
 
@@ -200,7 +233,7 @@
   // ---------- about ----------
   function about() {
     out.innerHTML = '<div class="doc">' +
-      '<p>Every Greek Cup ' + D.season + ' main-draw game (from Round 1, 1 September) with full-match team stats: goals, shots, shots on target, fouls, goal kicks, and yellow and red cards. The August qualifying rounds are not included.</p>' +
+      '<p>Every Greek Cup ' + D.season + ' main-draw game (from Round 1, 1 September) with team stats for the full match and the first half: goals, shots, shots on target, fouls, goal kicks, throw-ins, goalkeeper saves and cards. The August qualifying rounds are not included.</p>' +
       '<ul><li>Score is after 90 minutes plus stoppage time, as recorded in the match stats.</li>' +
       '<li><b>Cards</b> are counted as: yellow 1, straight red 2, a player sent off with two yellows 3. Counted from the match incidents. The only red so far: PAOK v OFI, 2 Sep, a straight red in stoppage time (no second yellows yet).</li>' +
       '<li><b>Tiers</b>: SL1 = the 14 Super League clubs of 2026-27, SL2 = Super League 2 (Panserraikos, Niki Volos, AEL Larissa, Marko, Chrisoupolis). "SL1 v SL2" counts the tie whoever is at home; the home/away table keeps the home side first.</li>' +
@@ -210,8 +243,9 @@
   }
 
   // ---------- tabs ----------
-  var VIEWS = {matches: matches, teams: teams, totals: totals, tier: tiers, about: about};
+  var VIEWS = {matches: matches, teams: teams, stats: stats, h1: firstHalf, tier: tiers, about: about};
   function go(v) {
+    if (v === "totals") v = "stats";   // old link
     st.view = VIEWS[v] ? v : "matches";
     document.querySelectorAll("#tabs a").forEach(function (a) { a.classList.toggle("on", a.dataset.view === st.view); });
     if (location.hash !== "#view=" + st.view) history.replaceState(null, "", "#view=" + st.view);
