@@ -1,0 +1,68 @@
+name: Update all sites
+
+# One button for everything: hit "Run workflow" (Actions tab, or the GitHub mobile app) and this runs
+# every update job in order, waiting for each one:
+#   1. PAOK Basketball stats (nikolitso/paok-basketball "Update stats"), then waits for its deploy
+#   2. Wine music, latest posts
+#   3. Project pills and screenshots last, so they read the freshly updated sites
+# Step 1 is in another repo, so it needs the SITES_TOKEN secret: a fine-grained token with
+# Actions read & write on nikolitso/paok-basketball. Without it that step is skipped.
+on:
+  workflow_dispatch:
+
+permissions:
+  actions: write
+  contents: read
+
+concurrency:
+  group: update-all
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: Helper
+        run: |
+          cat > /tmp/run.sh <<'EOF'
+          # run.sh REPO WORKFLOW_FILE: dispatch it, wait for it to finish, fail if it failed
+          set -euo pipefail
+          repo=$1; wf=$2
+          since=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+          gh workflow run "$wf" -R "$repo"
+          for i in $(seq 30); do
+            sleep 5
+            id=$(gh run list -R "$repo" -w "$wf" -e workflow_dispatch -L 5 --json databaseId,createdAt \
+                 -q "[.[] | select(.createdAt >= \"$since\")][0].databaseId")
+            [ -n "$id" ] && break
+          done
+          [ -n "$id" ] || { echo "::error::$repo $wf did not start"; exit 1; }
+          echo "$repo $wf: https://github.com/$repo/actions/runs/$id"
+          gh run watch "$id" -R "$repo" --exit-status --interval 15 > /dev/null
+          echo "$repo $wf: done"
+          EOF
+          chmod +x /tmp/run.sh
+
+      - name: PAOK Basketball stats
+        env:
+          GH_TOKEN: ${{ secrets.SITES_TOKEN }}
+        run: |
+          if [ -z "$GH_TOKEN" ]; then echo "::warning::SITES_TOKEN secret not set, PAOK Basketball skipped"; exit 0; fi
+          /tmp/run.sh nikolitso/paok-basketball update-data.yml
+          sleep 90   # let GitHub Pages publish the new data before the pills read it
+
+      - name: Wine music
+        if: ${{ !cancelled() }}
+        run: /tmp/run.sh ${{ github.repository }} update-songs.yml
+
+      - name: Latest posts
+        if: ${{ !cancelled() }}
+        run: /tmp/run.sh ${{ github.repository }} update-posts.yml
+
+      - name: Project pills and screenshots
+        if: ${{ !cancelled() }}
+        run: |
+          sleep 60   # the steps above may have just pushed; let Pages publish first
+          /tmp/run.sh ${{ github.repository }} update-projects.yml
