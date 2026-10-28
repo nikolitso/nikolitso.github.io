@@ -1,8 +1,8 @@
 (function () {
   var D = window.CUP, GF = D.games;
   var STATS = [
-    ["goals", "Goals"], ["xg", "xG"], ["xgot", "xG on target"], ["shots", "Shots"], ["sot", "Shots on target"],
-    ["bc", "Big chances"], ["co", "Corners"], ["fouls", "Fouls"], ["gk", "Goal kicks"], ["ti", "Throw-ins"],
+    ["goals", "Goals"], ["xg", "xG"], ["co", "Corners"], ["xgot", "xG on target"], ["shots", "Shots"], ["sot", "Shots on target"],
+    ["bc", "Big chances"], ["fouls", "Fouls"], ["gk", "Goal kicks"], ["ti", "Throw-ins"],
     ["sv", "Goalkeeper saves"], ["cards", "Cards"]
   ];
   var SHORT = {goals: "Goals", xg: "xG", xgot: "xGOT", shots: "Shots", sot: "SoT", bc: "Big ch.", co: "Corners", fouls: "Fouls", gk: "Goal kicks", ti: "Throw-ins", sv: "Saves", cards: "Cards"};
@@ -23,7 +23,7 @@
     return '<div class="seg" id="per"><button data-p="0"' + (st.half ? '' : ' class="on"') + '>Full match</button><button data-p="1"' + (st.half ? ' class="on"' : '') + '>1st half</button></div>';
   }
   // wide tables show one group of stats at a time so they fit the page
-  var GROUPS = {att: ["goals", "xg", "xgot", "shots", "sot", "bc", "co"], oth: ["fouls", "gk", "ti", "sv", "cards"]};
+  var GROUPS = {att: ["goals", "xg", "co", "xgot", "shots", "sot", "bc"], oth: ["fouls", "gk", "ti", "sv", "cards"]};
   function COLS() { return STATS.filter(function (s) { return GROUPS[st.grp].indexOf(s[0]) >= 0; }); }
   function grpSeg() {
     return '<div class="seg grp"><button data-g="att"' + (st.grp === "att" ? ' class="on"' : '') + '>Attack</button><button data-g="oth"' + (st.grp === "oth" ? ' class="on"' : '') + '>Other</button></div>';
@@ -42,6 +42,7 @@
   function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return {"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]; }); }
   function day(iso) { var d = new Date(iso + "T12:00:00"); return DAY[d.getDay()] + " " + d.getDate() + " " + MON[d.getMonth()]; }
   function f1(x) { return (Math.round(x * 10) / 10).toFixed(1); }
+  function xl(t) { return String(t).replace(/xG/g, '<span style="text-transform:none">xG</span>'); }
   function fk(k, x) { return XG[k] ? (Math.round(x * 100) / 100).toFixed(2) : f1(x); }
   function pct(x) { return Math.round(x * 100) + "%"; }
   function dates() { var r = {}; G.forEach(function (g) { r[g.date] = 1; }); return Object.keys(r).sort().reverse(); }
@@ -74,11 +75,12 @@
     h += '<span class="sc">' + g.goals[0] + ' – ' + g.goals[1] + '</span>';
     h += '<a class="tm" href="#" data-team="' + esc(g.away) + '" style="color:inherit;text-decoration:none;text-align:right">' + esc(g.away) + '</a></div>';
     if (g.odds) h += oddsLine(g);
+    if (g.ref) h += '<div class="ref">Referee <b>' + esc(g.ref) + '</b></div>';
     h += '<table>';
     STATS.slice(1).forEach(function (s) {
       var v = g[s[0]], t = v[0] + v[1];
       var a = t ? v[0] / t * 100 : 50;
-      h += '<tr><td class="n h' + (v[0] < v[1] ? " lo" : "") + '"><b>' + (XG[s[0]] ? v[0].toFixed(2) : v[0]) + '</b></td><td class="lbl">' + s[1] +
+      h += '<tr><td class="n h' + (v[0] < v[1] ? " lo" : "") + '"><b>' + (XG[s[0]] ? v[0].toFixed(2) : v[0]) + '</b></td><td class="lbl">' + xl(s[1]) +
         (t ? '<div class="bar2"><i style="width:' + a + '%"></i><i style="width:' + (100 - a) + '%"></i></div>' : '') +
         '</td><td class="n' + (v[1] < v[0] ? " lo" : "") + '"><b>' + (XG[s[0]] ? v[1].toFixed(2) : v[1]) + '</b></td></tr>';
     });
@@ -210,7 +212,7 @@
       h += '<button data-s="' + s[0] + '"' + (st.side === s[0] ? ' class="on"' : '') + '>' + s[1] + '</button>';
     });
     h += '</div></div><div class="scroll"><table class="tt"><thead><tr><th>Team</th><th>League</th>' + th("gp", "GP") + '<th class="n">W-D-L</th>';
-    COLS().forEach(function (s) { h += th(s[0], SHORT[s[0]]); });
+    COLS().forEach(function (s) { h += th(s[0], xl(SHORT[s[0]])); });
     h += '</tr></thead><tbody>';
     rows.forEach(function (t) {
       h += '<tr><td><a href="#" data-team="' + esc(t.team) + '" style="color:inherit;text-decoration:none">' + esc(t.team) + '</a></td><td><span class="tag">' + t.div + '</span></td><td class="n">' + t.gp +
@@ -258,9 +260,9 @@
     var n = G.length;
     var h = '<p class="note">' + note + '</p>';
     h += '<div class="metrics"><div class="metric"><div class="lbl">Matches</div><div class="big">' + n + '</div></div>';
-    [["goals", "Goals per game"], ["xg", "xG per game"], ["sot", "SoT per game"], ["shots", "Shots per game"], ["cards", "Cards per game"]].forEach(function (m) {
+    [["goals", "Goals per game"], ["xg", "xG per game"], ["co", "Corners per game"], ["sot", "SoT per game"], ["shots", "Shots per game"], ["cards", "Cards per game"]].forEach(function (m) {
       var s = 0; G.forEach(function (g) { s += g[m[0]][0] + g[m[0]][1]; });
-      h += '<div class="metric"><div class="lbl">' + m[1] + '</div><div class="big">' + fk(m[0], s / n) + '</div></div>';
+      h += '<div class="metric"><div class="lbl">' + xl(m[1]) + '</div><div class="big">' + (m[0] === "goals" ? (s / n).toFixed(2) : fk(m[0], s / n)) + '</div></div>';
     });
     h += '</div>';
     h += '<div class="scroll"><table class="tt"><thead><tr><th>Stat</th><th class="n">Avg total</th><th class="n">Home</th><th class="n">Away</th><th class="n">Over line</th></tr></thead><tbody>';
@@ -288,7 +290,7 @@
   }
   function head(first, n) {
     var h = '<thead><tr><th>' + first + '</th><th class="n">' + n + '</th>';
-    COLS().forEach(function (s) { h += '<th class="n">' + SHORT[s[0]] + '</th>'; });
+    COLS().forEach(function (s) { h += '<th class="n">' + xl(SHORT[s[0]]) + '</th>'; });
     return h + '</tr></thead>';
   }
   function tiers() {
