@@ -333,7 +333,7 @@
     h += '<div class="facts">';
     links.forEach(function (l) { h += '<a class="fact" href="#view=' + l[0] + '" style="text-decoration:none"><b>' + l[1] + '</b>' + l[2] + '</a>'; });
     h += '</div>' +
-      '<ul><li>Score is after 90 minutes plus stoppage time, as recorded in the match stats.</li>' +
+      '<ul><li><b>All stats are 90 minutes plus stoppage time</b>, as recorded in the match stats. Extra time is not included, as it does not count in betting settlements.</li>' +
       '<li><b>xG</b> (expected goals) and <b>xG on target</b> are shown with two decimals. <b>Big chances</b> are clear scoring chances as logged for each game.</li>' +
       '<li><b>Cards</b> are counted as: yellow 1, straight red 2, a player sent off with two yellows 3. Counted from the match incidents.</li>' +
       '<li><b>Tiers</b>: SL1 = Super League clubs, SL2 = Super League 2 (' + sl2.join(", ") + '). "SL1 v SL2" counts the tie whoever is at home.</li>' +
