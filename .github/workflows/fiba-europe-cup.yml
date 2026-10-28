@@ -44,6 +44,7 @@ jobs:
           FIBA_SITE: ${{ github.workspace }}/fibaeuropecup
           FIBA_NO_MIRROR: "1"
           PYTHONIOENCODING: utf-8
+          TZ: Europe/Athens          # time stamps and commit messages in Athens time, as on the PC
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
