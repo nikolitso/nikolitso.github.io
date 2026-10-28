@@ -16,7 +16,7 @@
   function tier(g) { return g.div.slice().sort().join(" v "); }
   function tierHA(g) { return g.div[0] + " v " + g.div[1]; }
   var out = document.getElementById("out");
-  var st = {view: "stats", round: "all", team: "", side: "for", sort: "goals", dir: -1, half: false};
+  var st = {view: "stats", round: "all", team: "", side: "for", sort: "goals", dir: -1, half: false, tier: "SL1 v SL1"};
   function periodSeg() {
     return '<div class="seg" id="per"><button data-p="0"' + (st.half ? '' : ' class="on"') + '>Full match</button><button data-p="1"' + (st.half ? ' class="on"' : '') + '>1st half</button></div>';
   }
@@ -263,34 +263,33 @@
     return h + '</tr></thead>';
   }
   function tiers() {
-    G = GF;
     var T = ["SL1 v SL1", "SL1 v SL2", "SL2 v SL2"];
-    var h = '<p class="note">SL1 = Super League clubs, SL2 = Super League 2. All figures are per game and add both teams together unless the column says home, away or side. Small samples: read them as a direction, not a rate.</p>';
-
-    h += '<h2>Game totals by tier</h2><div class="scroll"><table class="tt">' + head("Tier", "Games") + '<tbody>';
-    T.forEach(function (t) { h += avgRow(G.filter(function (g) { return tier(g) === t; }), t); });
-    h += avgRow(G, '<b>All</b>') + '</tbody></table></div>';
-
-    h += '<h2>Home and away by tier</h2><p class="note">Home side first: "SL2 v SL1" means the Super League 2 club was at home. Each cell is home – away.</p>';
-    h += '<div class="scroll"><table class="tt">' + head("Home v away", "Games") + '<tbody>';
-    ["SL1 v SL1", "SL1 v SL2", "SL2 v SL1", "SL2 v SL2", "All"].forEach(function (t) {
-      var gs = G.filter(function (g) { return t === "All" || tierHA(g) === t; });
-      h += '<tr><td>' + (t === "All" ? "<b>All</b>" : t) + '</td><td class="n">' + gs.length + '</td>';
-      STATS.forEach(function (s) {
-        var a = 0, b = 0; gs.forEach(function (g) { a += g[s[0]][0]; b += g[s[0]][1]; });
-        h += '<td class="n">' + (gs.length ? f1(a / gs.length) + ' <span class="muted">–</span> ' + f1(b / gs.length) : "–") + '</td>';
+    if (T.indexOf(st.tier) < 0) st.tier = T[0];
+    var all = st.half ? G1 : GF;
+    var h = '<div class="bar">' + periodSeg() + '<div class="chips" id="tch">';
+    T.forEach(function (t) {
+      var c = all.filter(function (g) { return tier(g) === t; }).length;
+      h += '<button class="chip' + (st.tier === t ? " on" : "") + '" data-t="' + t + '">' + t + ' <span style="opacity:.7">' + c + '</span></button>';
+    });
+    h += '</div></div>';
+    G = all.filter(function (g) { return tier(g) === st.tier; });
+    if (!G.length) { out.innerHTML = h + '<p class="note">No games in this tier yet.</p>'; bindTiers(); return; }
+    h += totals('SL1 = Super League clubs, SL2 = Super League 2. ' + st.tier + ' games only' + (st.half ? ', first half' : ', full match') +
+      ', both teams added together, per game. The over line is the half-point next to the average, with how often the game went over it. Small samples: read them as a direction, not a rate.');
+    if (st.tier === "SL1 v SL2") {
+      h += '<h2>Each side</h2><p class="note">What the SL1 club and the SL2 club did on their own, home or away, per game.</p>';
+      h += '<div class="scroll"><table class="tt">' + head("Side", "Games") + '<tbody>';
+      ["SL1", "SL2"].forEach(function (d) {
+        h += avgRow(G, d + ' team', function (g, k) { return g[k][g.div[0] === d ? 0 : 1]; });
       });
-      h += '</tr>';
-    });
-    h += '</tbody></table></div>';
-
-    var mixed = G.filter(function (g) { return tier(g) === "SL1 v SL2"; });
-    h += '<h2>Super League v Super League 2 ties: each side</h2><p class="note">The ' + mixed.length + ' mixed ties split by the division of each team: what the SL1 club did and what the SL2 club did, home or away.</p>';
-    h += '<div class="scroll"><table class="tt">' + head("Side", "Games") + '<tbody>';
-    ["SL1", "SL2"].forEach(function (d) {
-      h += avgRow(mixed, d + ' team', function (g, k) { return g[k][g.div[0] === d ? 0 : 1]; });
-    });
-    out.innerHTML = h + '</tbody></table></div>';
+      h += '</tbody></table></div>';
+    }
+    out.innerHTML = h;
+    bindTiers();
+  }
+  function bindTiers() {
+    bindPeriod(tiers);
+    out.querySelectorAll("#tch .chip").forEach(function (b) { b.onclick = function () { st.tier = b.dataset.t; tiers(); }; });
   }
 
   // ---------- about ----------
