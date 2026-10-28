@@ -18,7 +18,7 @@
   function tier(g) { return g.div.slice().sort().join(" v "); }
   function tierHA(g) { return g.div[0] + " v " + g.div[1]; }
   var out = document.getElementById("out");
-  var st = {view: "stats", team: "", side: "for", sort: "goals", dir: -1, half: false, tier: "SL1 v SL1", grp: "att"};
+  var st = {view: "stats", team: "", side: "for", sort: "goals", dir: -1, half: false, tier: "SL1 v SL1", grp: "att", ob: "f0"};
   function periodSeg() {
     return '<div class="seg" id="per"><button data-p="0"' + (st.half ? '' : ' class="on"') + '>Full match</button><button data-p="1"' + (st.half ? ' class="on"' : '') + '>1st half</button></div>';
   }
@@ -99,63 +99,71 @@
   // ---------- by odds ----------
   // no-margin chances from a set of odds
   function fair(arr) { var inv = arr.map(function (x) { return 1 / x; }), s = inv.reduce(function (a, b) { return a + b; }, 0); return inv.map(function (x) { return x / s; }); }
-  var FAV_BANDS = [[0, 1.30, "1.30 or less"], [1.30, 1.60, "1.31 – 1.60"], [1.60, 2.00, "1.61 – 2.00"], [2.00, 99, "Over 2.00 (close)"]];
-  var OV_BANDS = [[0, 1.60, "1.60 or less"], [1.60, 1.90, "1.61 – 1.90"], [1.90, 2.20, "1.91 – 2.20"], [2.20, 99, "Over 2.20"]];
   function favSide(g) { return g.odds.x12[0] <= g.odds.x12[2] ? 0 : 1; }
+  function favPrice(g) { return Math.min(g.odds.x12[0], g.odds.x12[2]); }
+  // split games into three groups as equal as possible (8 / 8 / 7 for 23), lowest price first
+  function thirds(gs, key) {
+    var srt = gs.slice().sort(function (a, b) { return key(a) - key(b); }), n = srt.length, out3 = [], i0 = 0;
+    for (var i = 0; i < 3; i++) {
+      var size = Math.floor(n / 3) + (i < n % 3 ? 1 : 0), part = srt.slice(i0, i0 + size); i0 += size;
+      if (part.length) out3.push({gs: part, lo: key(part[0]), hi: key(part[part.length - 1])});
+    }
+    return out3;
+  }
   function byOdds() {
-    G = st.half ? G1 : GF;
-    var gx = G.filter(function (g) { return g.odds && g.odds.x12; });
-    var h = '<p class="note">Odds are the middle price across the bookmakers listed before kick-off. Results and over/under use the full match; the stats columns follow the switch (full match or first half). <b>Odds %</b> is the chance the odds give once the margin is removed; <b>Won %</b> and <b>Over %</b> are what happened. Bands hold only a few games each, so read them as a direction.</p>';
-    h += '<div class="bar">' + periodSeg() + grpSeg() + '</div>';
-
-    h += '<h2>By the favourite\u2019s price (1X2)</h2><div class="scroll"><table class="tt"><thead><tr><th>Favourite at</th><th class="n">Games</th><th class="n">Fav W-D-L</th><th class="n" title="Favourite win chance from the odds, margin removed">Odds %</th><th class="n" title="How often the favourite won">Won %</th>';
-    COLS().forEach(function (s) { h += '<th class="n">' + SHORT[s[0]] + '</th>'; });
-    h += '</tr></thead><tbody>';
-    FAV_BANDS.forEach(function (b) {
-      var gs = gx.filter(function (g) { var m = Math.min(g.odds.x12[0], g.odds.x12[2]); return m > b[0] && m <= b[1]; });
-      if (!gs.length) return;
+    var all = st.half ? G1 : GF;
+    var fav = thirds(all.filter(function (g) { return g.odds && g.odds.x12; }), favPrice);
+    var ovr = thirds(all.filter(function (g) { return g.odds && g.odds.ou25; }), function (g) { return g.odds.ou25[0]; });
+    if (!/^[fo][0-2]$/.test(st.ob)) st.ob = "f0";
+    var h = '<p class="note">Games split into three groups as equal as possible, by the favourite\u2019s 1X2 price or by the over 2.5 goals price. Odds are the middle price across the bookmakers listed before kick-off. <b>Odds %</b> is the chance the odds give once the margin is removed; results and over/under always use the full match.</p>';
+    h += '<div class="bar">' + periodSeg() + '</div>';
+    function pills(lbl, set, pre) {
+      var r = '<div class="bar"><span class="muted" style="font:500 12px var(--mono);text-transform:uppercase;letter-spacing:.06em;min-width:150px">' + lbl + '</span><div class="chips">';
+      set.forEach(function (t, i) {
+        r += '<button class="chip' + (st.ob === pre + i ? " on" : "") + '" data-ob="' + pre + i + '">' + t.lo.toFixed(2) + ' – ' + t.hi.toFixed(2) + ' <span style="opacity:.7">' + t.gs.length + '</span></button>';
+      });
+      return r + '</div></div>';
+    }
+    h += pills("Favourite\u2019s price", fav, "f") + pills("Over 2.5 price", ovr, "o");
+    var isFav = st.ob[0] === "f", grp = (isFav ? fav : ovr)[+st.ob[1]];
+    if (!grp) { out.innerHTML = h; bindOdds(); return; }
+    var gs = grp.gs, n = gs.length, rng = grp.lo.toFixed(2) + ' – ' + grp.hi.toFixed(2);
+    h += '<div class="facts">';
+    if (isFav) {
       var w = 0, d = 0, l = 0, pe = 0;
       gs.forEach(function (g) {
         var f = full(g), fs = favSide(g), gf = f.goals[fs], ga = f.goals[1 - fs];
         if (gf > ga) w++; else if (gf === ga) d++; else l++;
         pe += fair(g.odds.x12)[fs === 0 ? 0 : 2];
       });
-      h += '<tr><td>' + b[2] + '</td><td class="n">' + gs.length + '</td><td class="n">' + w + '-' + d + '-' + l + '</td><td class="n">' + pct(pe / gs.length) + '</td><td class="n tot">' + pct(w / gs.length) + '</td>';
-      COLS().forEach(function (s) { var v = 0; gs.forEach(function (g) { v += g[s[0]][0] + g[s[0]][1]; }); h += '<td class="n">' + fk(s[0], v / gs.length) + '</td>'; });
-      h += '</tr>';
-    });
-    h += '</tbody></table></div>';
-
-    h += '<h2>Favourite and underdog, each side</h2><p class="note">Per game, favourite – underdog, by the favourite\u2019s price.</p><div class="scroll"><table class="tt"><thead><tr><th>Favourite at</th><th class="n">Games</th>';
-    COLS().forEach(function (s) { h += '<th class="n">' + SHORT[s[0]] + '</th>'; });
-    h += '</tr></thead><tbody>';
-    FAV_BANDS.concat([[0, 99, "<b>All</b>"]]).forEach(function (b) {
-      var gs = gx.filter(function (g) { var m = Math.min(g.odds.x12[0], g.odds.x12[2]); return m > b[0] && m <= b[1]; });
-      if (!gs.length) return;
-      h += '<tr><td>' + b[2] + '</td><td class="n">' + gs.length + '</td>';
-      COLS().forEach(function (s) {
+      h += '<span class="fact"><b>' + w + '-' + d + '-' + l + '</b>favourite won-drew-lost</span>' +
+        '<span class="fact"><b>' + pct(pe / n) + '</b>favourite win, odds %</span>' +
+        '<span class="fact"><b>' + pct(w / n) + '</b>favourite win, happened</span>';
+    } else {
+      var pe2 = 0, ov = 0;
+      gs.forEach(function (g) { var f = full(g); pe2 += fair(g.odds.ou25)[0]; if (f.goals[0] + f.goals[1] > 2.5) ov++; });
+      h += '<span class="fact"><b>' + ov + ' of ' + n + '</b>went over 2.5</span>' +
+        '<span class="fact"><b>' + pct(pe2 / n) + '</b>over 2.5, odds %</span>' +
+        '<span class="fact"><b>' + pct(ov / n) + '</b>over 2.5, happened</span>';
+    }
+    h += '</div>';
+    G = gs;
+    h += totals((isFav ? 'Favourite priced ' : 'Over 2.5 priced ') + rng + ': ' + n + ' games' + (st.half ? ', first half' : ', full match') +
+      ', both teams added together, per game. The over line is the half-point next to the average, with how often the game went over it.');
+    if (isFav) {
+      h += '<h2>Favourite and underdog</h2><p class="note">Per game, what the favourite and the underdog did on their own.</p><div class="scroll"><table class="tt"><thead><tr><th>Stat</th><th class="n">Favourite</th><th class="n">Underdog</th></tr></thead><tbody>';
+      STATS.forEach(function (s) {
         var a = 0, c = 0; gs.forEach(function (g) { var fs = favSide(g); a += g[s[0]][fs]; c += g[s[0]][1 - fs]; });
-        h += '<td class="n">' + fk(s[0], a / gs.length) + ' <span class="muted">–</span> ' + fk(s[0], c / gs.length) + '</td>';
+        h += '<tr><td>' + s[1] + '</td><td class="n tot">' + fk(s[0], a / n) + '</td><td class="n">' + fk(s[0], c / n) + '</td></tr>';
       });
-      h += '</tr>';
-    });
-    h += '</tbody></table></div>';
-
-    var go = G.filter(function (g) { return g.odds && g.odds.ou25; });
-    h += '<h2>By the over 2.5 goals price</h2><div class="scroll"><table class="tt"><thead><tr><th>Over 2.5 at</th><th class="n">Games</th><th class="n" title="Over 2.5 chance from the odds, margin removed">Odds %</th><th class="n" title="How often the game went over 2.5">Over %</th>';
-    COLS().forEach(function (s) { h += '<th class="n">' + SHORT[s[0]] + '</th>'; });
-    h += '</tr></thead><tbody>';
-    OV_BANDS.forEach(function (b) {
-      var gs = go.filter(function (g) { return g.odds.ou25[0] > b[0] && g.odds.ou25[0] <= b[1]; });
-      if (!gs.length) return;
-      var pe = 0, n = 0;
-      gs.forEach(function (g) { var f = full(g); pe += fair(g.odds.ou25)[0]; if (f.goals[0] + f.goals[1] > 2.5) n++; });
-      h += '<tr><td>' + b[2] + '</td><td class="n">' + gs.length + '</td><td class="n">' + pct(pe / gs.length) + '</td><td class="n tot">' + pct(n / gs.length) + '</td>';
-      COLS().forEach(function (s) { var v = 0; gs.forEach(function (g) { v += g[s[0]][0] + g[s[0]][1]; }); h += '<td class="n">' + fk(s[0], v / gs.length) + '</td>'; });
-      h += '</tr>';
-    });
-    out.innerHTML = h + '</tbody></table></div>';
-    bindPeriod(byOdds); bindGrp(byOdds);
+      h += '</tbody></table></div>';
+    }
+    out.innerHTML = h;
+    bindOdds();
+  }
+  function bindOdds() {
+    bindPeriod(byOdds);
+    out.querySelectorAll("[data-ob]").forEach(function (b) { b.onclick = function () { st.ob = b.dataset.ob; byOdds(); }; });
   }
 
   // ---------- teams ----------
