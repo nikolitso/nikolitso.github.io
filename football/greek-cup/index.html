@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Greek Cup Stats</title>
+<meta name="description" content="Greek Cup 2026-27 match stats: goals, shots, shots on target, fouls, goal kicks and cards for every game, team averages and game totals.">
+<link rel="canonical" href="https://antonisnikolitsopoulos.com/football/greek-cup/">
+<meta property="og:title" content="Greek Cup Stats">
+<meta property="og:description" content="Greek Cup 2026-27 match stats: goals, shots, shots on target, fouls, goal kicks and cards for every game, team averages and game totals.">
+<meta property="og:url" content="https://antonisnikolitsopoulos.com/football/greek-cup/">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.png" type="image/png" sizes="64x64">
+<!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "b67bbb76d0e24af196b24ded3ab71ad0"}'></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Playfair+Display:wght@600;700&family=Source+Serif+4:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0c1424; --panel:#131d33; --line:#26334f; --text:#f1ead9; --muted:#9aa4ba;
+  --gold:#d4af37; --win:#6fcf97; --loss:#eb7a6c;
+  --serif:'Playfair Display',Georgia,serif; --body:'Source Serif 4',Georgia,serif; --mono:'IBM Plex Mono',ui-monospace,monospace;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:17px/1.5 var(--body)}
+.wrap{max-width:1180px;margin:0 auto;padding:40px 16px 80px}
+h1{font:700 clamp(30px,5vw,46px)/1.1 var(--serif);margin:0 0 6px}
+h1 a{color:inherit;text-decoration:none}
+h1 a:hover{color:var(--gold)}
+.home-link{display:inline-block;margin-bottom:14px;font:500 12px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-decoration:none}
+.home-link:hover{color:var(--gold)}
+.sub{font:400 13px var(--mono);color:var(--muted);letter-spacing:.04em;margin-bottom:32px}
+.tabs{display:flex;flex-wrap:wrap;gap:10px 28px;border-bottom:1px solid var(--line);margin:0 0 26px}
+.tabs a{border-bottom:2px solid transparent;color:var(--muted);font:600 18px var(--serif);padding:0 0 10px;margin-bottom:-1px;cursor:pointer;text-decoration:none}
+.tabs a.on{color:var(--text);border-color:var(--gold)}
+.tabs a:hover{color:var(--text)}
+.bar{display:flex;flex-wrap:wrap;align-items:center;gap:10px 18px;margin:0 0 18px}
+.seg{display:flex;border:1px solid var(--line);border-radius:6px;overflow:hidden;width:max-content}
+.seg button{background:none;border:0;color:var(--muted);font:500 13px var(--mono);padding:8px 16px;cursor:pointer;letter-spacing:.06em;text-transform:uppercase}
+.seg button.on{background:var(--gold);color:#0c1424}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{background:none;border:1px solid var(--line);border-radius:999px;color:var(--muted);font:500 12px var(--mono);padding:5px 12px;cursor:pointer}
+.chip:hover{color:var(--text)}
+.chip.on{background:var(--gold);border-color:var(--gold);color:#0c1424}
+h2{font:600 22px var(--serif);margin:30px 0 12px}
+h2.day{font-size:20px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(520px,100%),1fr));gap:18px}
+.grid>.card{min-width:0}
+.grid>.mcard{display:grid;grid-row:span 3;grid-template-rows:subgrid;row-gap:0;align-content:start}
+.mcard .top{padding-bottom:4px}
+.card td:first-child{white-space:normal}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px 18px 10px}
+.card h3{font:600 24px var(--serif);margin:0}
+.live{font:500 11px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--bg);background:var(--gold);border-radius:4px;padding:1px 6px;margin-left:8px;vertical-align:1px}
+.card .ko{font:500 14px var(--mono);color:var(--text);letter-spacing:.06em}
+.wdl{display:flex;height:8px;border-radius:4px;overflow:hidden;margin:12px 0 6px;background:var(--line)}
+.wdl i{display:block} .wdl i:nth-child(1){background:var(--gold)} .wdl i:nth-child(2){background:#59657f} .wdl i:nth-child(3){background:#5b7bd5}
+.wdlt{display:flex;justify-content:space-between;font:400 14px var(--mono);color:var(--muted)}
+.wdlt b{color:var(--text);font-weight:500}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+th{font:400 11px var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.08em;text-align:left;padding:8px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:7px 8px;border-bottom:1px solid color-mix(in srgb,var(--line) 60%,transparent);font-size:15px;white-space:nowrap}
+td.n,th.n{text-align:right;font-family:var(--mono);font-size:13.5px}
+td.tot{color:var(--gold);font-weight:500}
+.card table{margin-top:6px}
+table.mk{margin-bottom:6px}table.mk td,table.mk th{padding:6px 7px}
+.stack{display:grid;gap:18px}
+.mkcols{display:grid;grid-template-columns:minmax(0,300px) minmax(0,1fr);gap:24px;align-items:start;margin-top:8px}
+@media(max-width:900px){.mkcols{grid-template-columns:1fr}.mkcols table{display:block;overflow-x:auto}}
+.stack>.card{min-width:0}
+.wdlt i{font-style:normal;color:var(--gold)}
+.wdlt span:nth-child(2){text-align:center}.wdlt span:last-child{text-align:right}
+.coach .who{display:inline-block;min-width:118px;color:var(--muted)}
+.tenure{font:400 12px/1.4 var(--mono);color:var(--muted);margin-top:2px}
+.coach{font:400 13.5px/1.55 var(--mono);color:var(--muted);margin-top:2px}
+.coach b{color:var(--text);font-weight:500}
+.coach .wc{display:inline-block;width:7ch;text-align:right}
+table.tm{max-width:1000px}table.tm .gl{border-left:1px solid var(--line);padding-left:12px}
+table.tm tr.grp th{color:var(--gold);border-bottom:0;padding-bottom:0}
+.head{display:flex;justify-content:space-between;align-items:flex-start;gap:6px 14px;flex-wrap:wrap}
+.ref{font:400 13.5px/1.55 var(--mono);color:var(--muted);margin-top:6px}
+.ref b{color:var(--text);font-weight:500}
+.card tr:last-child td{border-bottom:0}
+.ln{font:400 12px var(--mono);color:var(--muted);text-align:right}
+.ln span{display:inline-block;min-width:92px}
+.ln b{color:var(--text);font-weight:500}
+.ln .hi{color:var(--win)} .ln .lo{color:var(--loss)}
+th.sort{cursor:pointer;user-select:none} th.sort:hover,th.sort.on{color:var(--gold)}
+.w{color:var(--win)} .l{color:var(--loss)}
+.muted{color:var(--muted)}
+.empty{color:var(--muted);padding:30px 0;text-align:center}
+.note{font:400 15px/1.55 var(--body);color:var(--muted);border-left:2px solid var(--gold);padding:2px 0 2px 14px;margin:0 0 14px;max-width:820px}
+.note b{color:var(--text);font-weight:600}
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin:0 0 18px}
+.metric{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.metric .lbl{font:400 11px var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}
+.metric .big{font:500 24px var(--mono);color:var(--gold)}
+.scroll{overflow-x:auto}
+.doc{max-width:860px}
+.doc p,.doc li{font-size:16.5px;line-height:1.65;margin:0 0 14px}
+.doc ul{padding-left:20px;margin:0 0 14px}
+.doc h3{font:600 18px var(--serif);margin:28px 0 8px;display:flex;align-items:center;gap:10px}
+.doc .num{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--gold);color:#0c1424;font:600 13px var(--mono);flex:none}
+.calc{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:8px;padding:12px 16px;margin:0 0 14px;font:400 14px/2 var(--mono);overflow-x:auto}
+.calc i{font-style:normal;color:var(--muted);font-size:12px}
+.calc b{color:var(--gold);font-weight:500}
+table.mini{margin:0 0 16px}
+.abbr{display:none}
+@media(max-width:600px){.grid{grid-template-columns:1fr}.ln span{min-width:0;margin-left:8px}.card{padding:14px 10px 8px}td,th{padding:6px 4px}
+  .card td{font-size:14px}.card td.n{font-size:12.5px}.full{display:none}.abbr{display:inline}.wdlt{flex-wrap:wrap;gap:2px 12px}}
+
+.mc .sc{font:500 26px var(--mono);color:var(--gold);white-space:nowrap}
+.mc .tm{font:600 20px var(--serif)}
+.mc .row{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.mc .meta{font:400 12px var(--mono);color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px}
+.mc td.lbl{color:var(--muted);font:400 12px var(--mono);text-transform:uppercase;letter-spacing:.06em;text-align:center}
+.mc td.n{width:30%} .mc td.n.h{text-align:left}
+.mc td.n b{color:var(--text);font-weight:500} .mc td.n.lo{color:var(--muted)}
+.bar2{display:flex;height:4px;border-radius:2px;overflow:hidden;background:var(--line);margin-top:3px}
+.bar2 i{display:block;background:var(--gold)} .bar2 i+i{background:#5b7bd5}
+table.tt th.sort{text-align:right} table.tt th:first-child{text-align:left}
+tr.sel td{background:color-mix(in srgb,var(--gold) 10%,transparent)}
+</style>
+</head>
+<body>
+<!-- sitebar:start (link back to antonisnikolitsopoulos.com; keep on every page) -->
+<style>
+.an-sitebar{background:#0d1220;border-bottom:1px solid rgba(255,255,255,.09);font:500 13px/1.2 "Segoe UI",system-ui,-apple-system,sans-serif;letter-spacing:.02em}
+.an-sitebar>div{max-width:72rem;margin:0 auto;padding:6px 16px;display:flex;justify-content:flex-end;align-items:center;gap:18px}
+.an-sitebar a{color:#9aa1b2;text-decoration:none;display:inline-flex;align-items:center;min-height:24px}.an-sitebar a:hover{color:#fff}
+.an-sitebar svg{width:17px;height:17px;fill:currentColor}
+.an-sitebar a[href="/"]{padding:6px 8px;margin:-6px -8px -6px -4px;border-radius:6px}.an-sitebar a[href="/"]:hover{background:rgba(255,255,255,.08)}
+</style>
+<nav class="an-sitebar" aria-label="Main site"><div><a href="/books/">Books</a><a href="/#projects">Projects</a><a href="/about/">About</a><a href="/" title="Main site: antonisnikolitsopoulos.com" aria-label="Main site"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 2 11.5h3V21h5.5v-6h3v6H19v-9.5h3z"/></svg></a></div></nav>
+<!-- sitebar:end -->
+<div class="wrap">
+  <a class="home-link" href="/#projects">&#8962; Home</a>
+  <h1><a href="/football/greek-cup/">Greek Cup Stats</a></h1>
+  <div class="sub" id="sub"></div>
+  <div class="tabs" id="tabs">
+    <a href="#view=matches" data-view="matches" class="on">Matches</a>
+    <a href="#view=teams" data-view="teams">Teams</a>
+    <a href="#view=totals" data-view="totals">Game totals</a>
+    <a href="#view=about" data-view="about">About the data</a>
+  </div>
+  <div id="out"></div>
+</div>
+<script src="data.js?v=1"></script>
+<script src="app.js?v=1"></script>
+</body>
+</html>
