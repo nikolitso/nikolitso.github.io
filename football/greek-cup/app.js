@@ -212,7 +212,14 @@
   function stats() { G = GF; out.innerHTML = totals('Both teams added together, per game, across all ' + GF.length + ' cup games (full match). The over line is the half-point next to the average, with how often the game went over it.'); }
   function firstHalf() {
     G = G1;
-    var h = totals('First half only (to the half-time whistle, stoppage time included), both teams added together, across ' + G1.length + ' games. Cards are those shown before half-time, counted the same way: yellow 1, straight red 2, second yellow 3.');
+    // first-half share of goals and throw-ins, as pills above the tables
+    function share(k) { var a = 0, b = 0; G1.forEach(function (g) { a += g[k][0] + g[k][1]; }); GF.forEach(function (g) { if (g.h1) b += g[k][0] + g[k][1]; }); return [a / G1.length, (b - a) / G1.length, b ? a / b : 0]; }
+    var sg = share("goals"), st_ = share("ti");
+    var p = '<div class="facts">' +
+      '<span class="fact"><b>' + pct(sg[2]) + '</b> of goals in the first half: ' + f1(sg[0]) + ' per game before the break, ' + f1(sg[1]) + ' after (a league season is usually nearer 45%)</span>' +
+      '<span class="fact"><b>' + pct(st_[2]) + '</b> of throw-ins in the first half: ' + f1(st_[0]) + ' per game before the break, ' + f1(st_[1]) + ' after</span>' +
+      '</div>';
+    var h = p + totals('First half only (to the half-time whistle, stoppage time included), both teams added together, across ' + G1.length + ' games. Cards are those shown before half-time, counted the same way: yellow 1, straight red 2, second yellow 3.');
     h += '<h2>First half by tier</h2><div class="scroll"><table class="tt">' + head("Tier", "Games") + '<tbody>';
     ["SL1 v SL1", "SL1 v SL2", "SL2 v SL2"].forEach(function (t) { h += avgRow(G.filter(function (g) { return tier(g) === t; }), t); });
     h += avgRow(G, '<b>All</b>') + '</tbody></table></div>';
@@ -300,7 +307,7 @@
       '<li><b>Cards</b> are counted as: yellow 1, straight red 2, a player sent off with two yellows 3. Counted from the match incidents. The only red so far: PAOK v OFI, 2 Sep, a straight red in stoppage time (no second yellows yet).</li>' +
       '<li><b>Tiers</b>: SL1 = the 14 Super League clubs of 2026-27, SL2 = Super League 2 (Panserraikos, Niki Volos, AEL Larissa, Marko, Chrisoupolis). "SL1 v SL2" counts the tie whoever is at home; the home/away table keeps the home side first.</li>' +
       '<li><b>Odds</b>: 1X2 and over/under 2.5 goals before kick-off, the middle price across the bookmakers listed for each game. "Odds say" removes the margin.</li>' +
-      '<li>AEK 8-1 Panserraikos (17 Sep) is listed under Round 2, as published.</li>' +
+      '<li><b>Rounds</b>: every round is 8 games with each club once. Postponed games are counted in the round they belong to (Asteras Tripolis v Aris, 10 Sep, is Round 1).</li>' +
       '<li>The cup mixes Super League clubs with lower-division sides, so team averages say as much about the draw as about the team.</li></ul>' +
       '<p class="muted">Updated ' + day(D.updated) + '.</p></div>';
   }
