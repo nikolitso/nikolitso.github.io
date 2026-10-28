@@ -1,10 +1,12 @@
 (function () {
   var D = window.CUP, GF = D.games;
   var STATS = [
-    ["goals", "Goals"], ["shots", "Shots"], ["sot", "Shots on target"], ["fouls", "Fouls"],
-    ["gk", "Goal kicks"], ["ti", "Throw-ins"], ["sv", "Goalkeeper saves"], ["cards", "Cards"]
+    ["goals", "Goals"], ["xg", "xG"], ["xgot", "xG on target"], ["shots", "Shots"], ["sot", "Shots on target"],
+    ["bc", "Big chances"], ["co", "Corners"], ["fouls", "Fouls"], ["gk", "Goal kicks"], ["ti", "Throw-ins"],
+    ["sv", "Goalkeeper saves"], ["cards", "Cards"]
   ];
-  var SHORT = {goals: "Goals", shots: "Shots", sot: "SoT", fouls: "Fouls", gk: "Goal kicks", ti: "Throw-ins", sv: "Saves", cards: "Cards"};
+  var SHORT = {goals: "Goals", xg: "xG", xgot: "xGOT", shots: "Shots", sot: "SoT", bc: "Big ch.", co: "Corners", fouls: "Fouls", gk: "Goal kicks", ti: "Throw-ins", sv: "Saves", cards: "Cards"};
+  var XG = {xg: 1, xgot: 1};   // shown with two decimals, no over line
   // first-half copy of every game: same shape, stats taken from g.h1
   var G1 = GF.filter(function (g) { return g.h1; }).map(function (g) {
     var o = {}; for (var k in g) o[k] = g[k];
@@ -16,9 +18,20 @@
   function tier(g) { return g.div.slice().sort().join(" v "); }
   function tierHA(g) { return g.div[0] + " v " + g.div[1]; }
   var out = document.getElementById("out");
-  var st = {view: "stats", team: "", side: "for", sort: "goals", dir: -1, half: false, tier: "SL1 v SL1"};
+  var st = {view: "stats", team: "", side: "for", sort: "goals", dir: -1, half: false, tier: "SL1 v SL1", grp: "att"};
   function periodSeg() {
     return '<div class="seg" id="per"><button data-p="0"' + (st.half ? '' : ' class="on"') + '>Full match</button><button data-p="1"' + (st.half ? ' class="on"' : '') + '>1st half</button></div>';
+  }
+  // wide tables show one group of stats at a time so they fit the page
+  var GROUPS = {att: ["goals", "xg", "xgot", "shots", "sot", "bc", "co"], oth: ["fouls", "gk", "ti", "sv", "cards"]};
+  function COLS() { return STATS.filter(function (s) { return GROUPS[st.grp].indexOf(s[0]) >= 0; }); }
+  function grpSeg() {
+    return '<div class="seg grp"><button data-g="att"' + (st.grp === "att" ? ' class="on"' : '') + '>Attack</button><button data-g="oth"' + (st.grp === "oth" ? ' class="on"' : '') + '>Other</button></div>';
+  }
+  function bindGrp(fn) {
+    out.querySelectorAll(".grp button").forEach(function (b) { b.onclick = function () {
+      st.grp = b.dataset.g; if (GROUPS[st.grp].indexOf(st.sort) < 0) { st.sort = GROUPS[st.grp][0]; st.dir = -1; } fn();
+    }; });
   }
   function bindPeriod(fn) {
     out.querySelectorAll("#per button").forEach(function (b) { b.onclick = function () { st.half = b.dataset.p === "1"; fn(); }; });
@@ -29,6 +42,7 @@
   function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return {"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]; }); }
   function day(iso) { var d = new Date(iso + "T12:00:00"); return DAY[d.getDay()] + " " + d.getDate() + " " + MON[d.getMonth()]; }
   function f1(x) { return (Math.round(x * 10) / 10).toFixed(1); }
+  function fk(k, x) { return XG[k] ? (Math.round(x * 100) / 100).toFixed(2) : f1(x); }
   function pct(x) { return Math.round(x * 100) + "%"; }
   function dates() { var r = {}; G.forEach(function (g) { r[g.date] = 1; }); return Object.keys(r).sort().reverse(); }
 
@@ -64,9 +78,9 @@
     STATS.slice(1).forEach(function (s) {
       var v = g[s[0]], t = v[0] + v[1];
       var a = t ? v[0] / t * 100 : 50;
-      h += '<tr><td class="n h' + (v[0] < v[1] ? " lo" : "") + '"><b>' + v[0] + '</b></td><td class="lbl">' + s[1] +
+      h += '<tr><td class="n h' + (v[0] < v[1] ? " lo" : "") + '"><b>' + (XG[s[0]] ? v[0].toFixed(2) : v[0]) + '</b></td><td class="lbl">' + s[1] +
         (t ? '<div class="bar2"><i style="width:' + a + '%"></i><i style="width:' + (100 - a) + '%"></i></div>' : '') +
-        '</td><td class="n' + (v[1] < v[0] ? " lo" : "") + '"><b>' + v[1] + '</b></td></tr>';
+        '</td><td class="n' + (v[1] < v[0] ? " lo" : "") + '"><b>' + (XG[s[0]] ? v[1].toFixed(2) : v[1]) + '</b></td></tr>';
     });
     return h + '</table></div>';
   }
@@ -92,10 +106,10 @@
     G = st.half ? G1 : GF;
     var gx = G.filter(function (g) { return g.odds && g.odds.x12; });
     var h = '<p class="note">Odds are the middle price across the bookmakers listed before kick-off. Results and over/under use the full match; the stats columns follow the switch (full match or first half). <b>Odds %</b> is the chance the odds give once the margin is removed; <b>Won %</b> and <b>Over %</b> are what happened. Bands hold only a few games each, so read them as a direction.</p>';
-    h += '<div class="bar">' + periodSeg() + '</div>';
+    h += '<div class="bar">' + periodSeg() + grpSeg() + '</div>';
 
     h += '<h2>By the favourite\u2019s price (1X2)</h2><div class="scroll"><table class="tt"><thead><tr><th>Favourite at</th><th class="n">Games</th><th class="n">Fav W-D-L</th><th class="n" title="Favourite win chance from the odds, margin removed">Odds %</th><th class="n" title="How often the favourite won">Won %</th>';
-    STATS.forEach(function (s) { h += '<th class="n">' + SHORT[s[0]] + '</th>'; });
+    COLS().forEach(function (s) { h += '<th class="n">' + SHORT[s[0]] + '</th>'; });
     h += '</tr></thead><tbody>';
     FAV_BANDS.forEach(function (b) {
       var gs = gx.filter(function (g) { var m = Math.min(g.odds.x12[0], g.odds.x12[2]); return m > b[0] && m <= b[1]; });
@@ -107,21 +121,21 @@
         pe += fair(g.odds.x12)[fs === 0 ? 0 : 2];
       });
       h += '<tr><td>' + b[2] + '</td><td class="n">' + gs.length + '</td><td class="n">' + w + '-' + d + '-' + l + '</td><td class="n">' + pct(pe / gs.length) + '</td><td class="n tot">' + pct(w / gs.length) + '</td>';
-      STATS.forEach(function (s) { var v = 0; gs.forEach(function (g) { v += g[s[0]][0] + g[s[0]][1]; }); h += '<td class="n">' + f1(v / gs.length) + '</td>'; });
+      COLS().forEach(function (s) { var v = 0; gs.forEach(function (g) { v += g[s[0]][0] + g[s[0]][1]; }); h += '<td class="n">' + fk(s[0], v / gs.length) + '</td>'; });
       h += '</tr>';
     });
     h += '</tbody></table></div>';
 
     h += '<h2>Favourite and underdog, each side</h2><p class="note">Per game, favourite – underdog, by the favourite\u2019s price.</p><div class="scroll"><table class="tt"><thead><tr><th>Favourite at</th><th class="n">Games</th>';
-    STATS.forEach(function (s) { h += '<th class="n">' + SHORT[s[0]] + '</th>'; });
+    COLS().forEach(function (s) { h += '<th class="n">' + SHORT[s[0]] + '</th>'; });
     h += '</tr></thead><tbody>';
     FAV_BANDS.concat([[0, 99, "<b>All</b>"]]).forEach(function (b) {
       var gs = gx.filter(function (g) { var m = Math.min(g.odds.x12[0], g.odds.x12[2]); return m > b[0] && m <= b[1]; });
       if (!gs.length) return;
       h += '<tr><td>' + b[2] + '</td><td class="n">' + gs.length + '</td>';
-      STATS.forEach(function (s) {
+      COLS().forEach(function (s) {
         var a = 0, c = 0; gs.forEach(function (g) { var fs = favSide(g); a += g[s[0]][fs]; c += g[s[0]][1 - fs]; });
-        h += '<td class="n">' + f1(a / gs.length) + ' <span class="muted">–</span> ' + f1(c / gs.length) + '</td>';
+        h += '<td class="n">' + fk(s[0], a / gs.length) + ' <span class="muted">–</span> ' + fk(s[0], c / gs.length) + '</td>';
       });
       h += '</tr>';
     });
@@ -129,7 +143,7 @@
 
     var go = G.filter(function (g) { return g.odds && g.odds.ou25; });
     h += '<h2>By the over 2.5 goals price</h2><div class="scroll"><table class="tt"><thead><tr><th>Over 2.5 at</th><th class="n">Games</th><th class="n" title="Over 2.5 chance from the odds, margin removed">Odds %</th><th class="n" title="How often the game went over 2.5">Over %</th>';
-    STATS.forEach(function (s) { h += '<th class="n">' + SHORT[s[0]] + '</th>'; });
+    COLS().forEach(function (s) { h += '<th class="n">' + SHORT[s[0]] + '</th>'; });
     h += '</tr></thead><tbody>';
     OV_BANDS.forEach(function (b) {
       var gs = go.filter(function (g) { return g.odds.ou25[0] > b[0] && g.odds.ou25[0] <= b[1]; });
@@ -137,11 +151,11 @@
       var pe = 0, n = 0;
       gs.forEach(function (g) { var f = full(g); pe += fair(g.odds.ou25)[0]; if (f.goals[0] + f.goals[1] > 2.5) n++; });
       h += '<tr><td>' + b[2] + '</td><td class="n">' + gs.length + '</td><td class="n">' + pct(pe / gs.length) + '</td><td class="n tot">' + pct(n / gs.length) + '</td>';
-      STATS.forEach(function (s) { var v = 0; gs.forEach(function (g) { v += g[s[0]][0] + g[s[0]][1]; }); h += '<td class="n">' + f1(v / gs.length) + '</td>'; });
+      COLS().forEach(function (s) { var v = 0; gs.forEach(function (g) { v += g[s[0]][0] + g[s[0]][1]; }); h += '<td class="n">' + fk(s[0], v / gs.length) + '</td>'; });
       h += '</tr>';
     });
     out.innerHTML = h + '</tbody></table></div>';
-    bindPeriod(byOdds);
+    bindPeriod(byOdds); bindGrp(byOdds);
   }
 
   // ---------- teams ----------
@@ -183,21 +197,21 @@
       '<span class="fact"><b>' + n1 + '</b> from Super League (SL1)</span>' +
       '<span class="fact"><b>' + (nt - n1) + '</b> from Super League 2 (SL2)</span></div>';
     h += '<p class="note">Per-game averages in the cup only. <b>For</b> = what the team did, <b>Against</b> = what its opponents did, <b>Game total</b> = both sides. Click a column to sort, a team to see its games. Only a few games per team, so treat these as notes, not ratings.</p>';
-    h += '<div class="bar">' + periodSeg() + '<div class="seg" id="side">';
+    h += '<div class="bar">' + periodSeg() + grpSeg() + '<div class="seg" id="side">';
     [["for", "For"], ["against", "Against"], ["total", "Game total"]].forEach(function (s) {
       h += '<button data-s="' + s[0] + '"' + (st.side === s[0] ? ' class="on"' : '') + '>' + s[1] + '</button>';
     });
     h += '</div></div><div class="scroll"><table class="tt"><thead><tr><th>Team</th><th>League</th>' + th("gp", "GP") + '<th class="n">W-D-L</th>';
-    STATS.forEach(function (s) { h += th(s[0], SHORT[s[0]]); });
+    COLS().forEach(function (s) { h += th(s[0], SHORT[s[0]]); });
     h += '</tr></thead><tbody>';
     rows.forEach(function (t) {
       h += '<tr><td><a href="#" data-team="' + esc(t.team) + '" style="color:inherit;text-decoration:none">' + esc(t.team) + '</a></td><td><span class="tag">' + t.div + '</span></td><td class="n">' + t.gp +
         '</td><td class="n">' + t.w + '-' + t.d + '-' + t.l + '</td>';
-      STATS.forEach(function (s) { h += '<td class="n' + (st.sort === s[0] ? " tot" : "") + '">' + f1(val(t, s[0])) + '</td>'; });
+      COLS().forEach(function (s) { h += '<td class="n' + (st.sort === s[0] ? " tot" : "") + '">' + fk(s[0], val(t, s[0])) + '</td>'; });
       h += '</tr>';
     });
     out.innerHTML = h + '</tbody></table></div>';
-    bindPeriod(teams);
+    bindPeriod(teams); bindGrp(teams);
     out.querySelectorAll("#side button").forEach(function (b) { b.onclick = function () { st.side = b.dataset.s; teams(); }; });
     out.querySelectorAll("th.sort").forEach(function (c) {
       c.onclick = function () { var k = c.dataset.k; if (st.sort === k) st.dir *= -1; else { st.sort = k; st.dir = -1; } teams(); };
@@ -220,37 +234,37 @@
       '<span class="fact"><b>' + pct(st_[2]) + '</b> of throw-ins in the first half: ' + f1(st_[0]) + ' per game before the break, ' + f1(st_[1]) + ' after</span>' +
       '</div>';
     var h = p + totals('First half only (to the half-time whistle, stoppage time included), both teams added together, across ' + G1.length + ' games. Cards are those shown before half-time, counted the same way: yellow 1, straight red 2, second yellow 3.');
-    h += '<h2>First half by tier</h2><div class="scroll"><table class="tt">' + head("Tier", "Games") + '<tbody>';
+    h += '<h2>First half by tier</h2><div class="bar">' + grpSeg() + '</div><div class="scroll"><table class="tt">' + head("Tier", "Games") + '<tbody>';
     ["SL1 v SL1", "SL1 v SL2", "SL2 v SL2"].forEach(function (t) { h += avgRow(G.filter(function (g) { return tier(g) === t; }), t); });
     h += avgRow(G, '<b>All</b>') + '</tbody></table></div>';
     h += '<h2>Share of the game in the first half</h2><p class="note">First-half total as a share of the full-match total, all games together.</p><div class="scroll"><table class="tt"><thead><tr><th>Stat</th><th class="n">1st half</th><th class="n">Full match</th><th class="n">Share</th></tr></thead><tbody>';
     STATS.forEach(function (s) {
       var a = 0, b = 0; G1.forEach(function (g) { a += g[s[0]][0] + g[s[0]][1]; });
       GF.forEach(function (g) { if (g.h1) b += g[s[0]][0] + g[s[0]][1]; });
-      h += '<tr><td>' + s[1] + '</td><td class="n">' + f1(a / G1.length) + '</td><td class="n">' + f1(b / G1.length) + '</td><td class="n tot">' + (b ? pct(a / b) : "–") + '</td></tr>';
+      h += '<tr><td>' + s[1] + '</td><td class="n">' + fk(s[0], a / G1.length) + '</td><td class="n">' + fk(s[0], b / G1.length) + '</td><td class="n tot">' + (b ? pct(a / b) : "–") + '</td></tr>';
     });
     out.innerHTML = h + '</tbody></table></div>';
+    bindGrp(firstHalf);
   }
   function totals(note) {
     var n = G.length;
     var h = '<p class="note">' + note + '</p>';
     h += '<div class="metrics"><div class="metric"><div class="lbl">Matches</div><div class="big">' + n + '</div></div>';
-    [["goals", "Goals per game"], ["sot", "SoT per game"], ["shots", "Shots per game"], ["cards", "Cards per game"]].forEach(function (m) {
+    [["goals", "Goals per game"], ["xg", "xG per game"], ["sot", "SoT per game"], ["shots", "Shots per game"], ["cards", "Cards per game"]].forEach(function (m) {
       var s = 0; G.forEach(function (g) { s += g[m[0]][0] + g[m[0]][1]; });
-      h += '<div class="metric"><div class="lbl">' + m[1] + '</div><div class="big">' + f1(s / n) + '</div></div>';
+      h += '<div class="metric"><div class="lbl">' + m[1] + '</div><div class="big">' + fk(m[0], s / n) + '</div></div>';
     });
     h += '</div>';
-    h += '<div class="scroll"><table class="tt"><thead><tr><th>Stat</th><th class="n">Avg total</th><th class="n">Home</th><th class="n">Away</th><th class="n">Low</th><th class="n">Median</th><th class="n">High</th><th class="n">Over line</th></tr></thead><tbody>';
+    h += '<div class="scroll"><table class="tt"><thead><tr><th>Stat</th><th class="n">Avg total</th><th class="n">Home</th><th class="n">Away</th><th class="n">Over line</th></tr></thead><tbody>';
     STATS.forEach(function (s) {
       var k = s[0], tot = G.map(function (g) { return g[k][0] + g[k][1]; }).sort(function (a, b) { return a - b; });
       var sum = tot.reduce(function (a, b) { return a + b; }, 0), avg = sum / n;
       var hs = 0, as = 0; G.forEach(function (g) { hs += g[k][0]; as += g[k][1]; });
-      var med = n % 2 ? tot[(n - 1) / 2] : (tot[n / 2 - 1] + tot[n / 2]) / 2;
       // the half-point line next to the average
       var L = Math.floor(avg) + 0.5, c = tot.filter(function (t) { return t > L; }).length;
-      var ov = L.toFixed(1) + ' <b style="color:var(--text);font-weight:500">' + pct(c / n) + '</b>';
-      h += '<tr><td>' + s[1] + '</td><td class="n tot">' + f1(avg) + '</td><td class="n">' + f1(hs / n) + '</td><td class="n">' + f1(as / n) +
-        '</td><td class="n">' + tot[0] + '</td><td class="n">' + med + '</td><td class="n">' + tot[n - 1] + '</td><td class="n muted">' + ov + '</td></tr>';
+      var ov = XG[k] ? '–' : L.toFixed(1) + ' <b style="color:var(--text);font-weight:500">' + pct(c / n) + '</b>';
+      h += '<tr><td>' + s[1] + '</td><td class="n tot">' + fk(k, avg) + '</td><td class="n">' + fk(k, hs / n) + '</td><td class="n">' + fk(k, as / n) +
+        '</td><td class="n muted">' + ov + '</td></tr>';
     });
     return h + '</tbody></table></div>';
   }
@@ -258,15 +272,15 @@
   // ---------- by tier ----------
   function avgRow(gs, label, extra) {
     var h = '<tr><td>' + label + '</td><td class="n">' + gs.length + '</td>';
-    STATS.forEach(function (s) {
+    COLS().forEach(function (s) {
       var k = s[0], v = 0; gs.forEach(function (g) { v += extra ? extra(g, k) : g[k][0] + g[k][1]; });
-      h += '<td class="n">' + (gs.length ? f1(v / gs.length) : "–") + '</td>';
+      h += '<td class="n">' + (gs.length ? fk(k, v / gs.length) : "–") + '</td>';
     });
     return h + '</tr>';
   }
   function head(first, n) {
     var h = '<thead><tr><th>' + first + '</th><th class="n">' + n + '</th>';
-    STATS.forEach(function (s) { h += '<th class="n">' + SHORT[s[0]] + '</th>'; });
+    COLS().forEach(function (s) { h += '<th class="n">' + SHORT[s[0]] + '</th>'; });
     return h + '</tr></thead>';
   }
   function tiers() {
@@ -284,7 +298,7 @@
     h += totals('SL1 = Super League clubs, SL2 = Super League 2. ' + st.tier + ' games only' + (st.half ? ', first half' : ', full match') +
       ', both teams added together, per game. The over line is the half-point next to the average, with how often the game went over it. Small samples: read them as a direction, not a rate.');
     if (st.tier === "SL1 v SL2") {
-      h += '<h2>Each side</h2><p class="note">What the SL1 club and the SL2 club did on their own, home or away, per game.</p>';
+      h += '<h2>Each side</h2><p class="note">What the SL1 club and the SL2 club did on their own, home or away, per game.</p><div class="bar">' + grpSeg() + '</div>';
       h += '<div class="scroll"><table class="tt">' + head("Side", "Games") + '<tbody>';
       ["SL1", "SL2"].forEach(function (d) {
         h += avgRow(G, d + ' team', function (g, k) { return g[k][g.div[0] === d ? 0 : 1]; });
@@ -295,29 +309,40 @@
     bindTiers();
   }
   function bindTiers() {
-    bindPeriod(tiers);
+    bindPeriod(tiers); bindGrp(tiers);
     out.querySelectorAll("#tch .chip").forEach(function (b) { b.onclick = function () { st.tier = b.dataset.t; tiers(); }; });
   }
 
-  // ---------- about ----------
-  function about() {
-    out.innerHTML = '<div class="doc">' +
-      '<p>Every Greek Cup ' + D.season + ' main-draw game (from 1 September) with team stats for the full match and the first half: goals, shots, shots on target, fouls, goal kicks, throw-ins, goalkeeper saves and cards. The August qualifiers are not included.</p>' +
+  // ---------- home (the page with no tab chosen) ----------
+  function home() {
+    var dv = {}; GF.forEach(function (g) { dv[g.home] = g.div[0]; dv[g.away] = g.div[1]; });
+    var sl2 = Object.keys(dv).filter(function (k) { return dv[k] === "SL2"; }).sort();
+    var links = [["stats", "Stats", "per-game averages and over lines"], ["tier", "By tier", "SL1 v SL1, SL1 v SL2, SL2 v SL2"],
+      ["h1", "1H stats", "the first half on its own"], ["teams", "Teams", "every club, for and against"],
+      ["odds", "By odds", "stats by the favourite's price and the over 2.5 price"], ["matches", "Matches", "every game by date"]];
+    var h = '<div class="doc">' +
+      '<p>Every Greek Cup ' + D.season + ' league-phase game (from 1 September) with team stats for the full match and the first half: goals, xG, xG on target, shots, shots on target, big chances, corners, fouls, goal kicks, throw-ins, goalkeeper saves and cards. The August qualifiers are not included.</p>';
+    h += '<div class="facts">';
+    links.forEach(function (l) { h += '<a class="fact" href="#view=' + l[0] + '" style="text-decoration:none"><b>' + l[1] + '</b>' + l[2] + '</a>'; });
+    h += '</div>' +
       '<ul><li>Score is after 90 minutes plus stoppage time, as recorded in the match stats.</li>' +
-      '<li><b>Cards</b> are counted as: yellow 1, straight red 2, a player sent off with two yellows 3. Counted from the match incidents. The only red so far: PAOK v OFI, 2 Sep, a straight red in stoppage time (no second yellows yet).</li>' +
-      '<li><b>Tiers</b>: SL1 = the 14 Super League clubs of 2026-27, SL2 = Super League 2 (Panserraikos, Niki Volos, AEL Larissa, Marko, Chrisoupolis). "SL1 v SL2" counts the tie whoever is at home; the home/away table keeps the home side first.</li>' +
-      '<li><b>Odds</b>: 1X2 and over/under 2.5 goals before kick-off, the middle price across the bookmakers listed for each game. "Odds say" removes the margin.</li>' +
+      '<li><b>xG</b> (expected goals) and <b>xG on target</b> are shown with two decimals. <b>Big chances</b> are clear scoring chances as logged for each game.</li>' +
+      '<li><b>Cards</b> are counted as: yellow 1, straight red 2, a player sent off with two yellows 3. Counted from the match incidents.</li>' +
+      '<li><b>Tiers</b>: SL1 = Super League clubs, SL2 = Super League 2 (' + sl2.join(", ") + '). "SL1 v SL2" counts the tie whoever is at home.</li>' +
+      '<li><b>Odds</b>: 1X2 and over/under 2.5 goals before kick-off, the middle price across the bookmakers listed for each game. "Odds %" removes the margin.</li>' +
       '<li>The cup mixes Super League clubs with lower-division sides, so team averages say as much about the draw as about the team.</li></ul>' +
       '<p class="muted">Updated ' + day(D.updated) + '.</p></div>';
+    out.innerHTML = h;
   }
 
   // ---------- tabs ----------
-  var VIEWS = {matches: matches, teams: teams, stats: stats, h1: firstHalf, tier: tiers, odds: byOdds, about: about};
+  var VIEWS = {matches: matches, teams: teams, stats: stats, h1: firstHalf, tier: tiers, odds: byOdds, home: home};
   function go(v) {
     if (v === "totals") v = "stats";   // old link
-    st.view = VIEWS[v] ? v : "stats";
+    st.view = VIEWS[v] ? v : "home";   // no tab chosen (or the old about link): the home page
     document.querySelectorAll("#tabs a").forEach(function (a) { a.classList.toggle("on", a.dataset.view === st.view); });
-    if (location.hash !== "#view=" + st.view) history.replaceState(null, "", "#view=" + st.view);
+    var want = st.view === "home" ? "" : "#view=" + st.view;
+    if (location.hash !== want) history.replaceState(null, "", location.pathname + want);
     VIEWS[st.view]();
   }
   document.querySelectorAll("#tabs a").forEach(function (a) { a.onclick = function (e) { e.preventDefault(); go(a.dataset.view); }; });
