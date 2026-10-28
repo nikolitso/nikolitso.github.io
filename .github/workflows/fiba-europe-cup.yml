@@ -1,0 +1,55 @@
+name: FIBA Europe Cup
+
+# The /fibaeuropecup/ pipeline (scripts in nikolitso/FIBA-Europe-Cup), on GitHub instead of the PC:
+#   07:35 Athens   update.py          results (Flashscore), odds and fixtures (BetExplorer), projections
+#   hourly 10-21   matchday_odds.py   today's games: Flashscore lines (Bwin.gr, else Stoiximan.gr ...), projections
+# Both commit and push the fibaeuropecup/ files here. The "Update all sites" button runs the full update.
+on:
+  schedule:
+    - cron: "35 5 * * *"      # full update (UTC; 07:35 Athens in winter, 08:35 in summer)
+    - cron: "5 7-18 * * *"    # matchday lines, 10:05-21:05 Athens in winter
+  workflow_dispatch:
+    inputs:
+      job:
+        description: "update = results, odds, fixtures; odds = today's matchday lines"
+        type: choice
+        options: [update, odds]
+        default: update
+
+permissions:
+  contents: write
+
+concurrency:
+  group: fiba-europe-cup
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/checkout@v5
+        with:
+          repository: nikolitso/FIBA-Europe-Cup
+          path: _fiba
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.14"
+      - name: Install
+        run: |
+          pip install --quiet -r _fiba/requirements.txt
+          python -m playwright install --with-deps chromium > /dev/null
+      - name: Run
+        env:
+          FIBA_SITE: ${{ github.workspace }}/fibaeuropecup
+          FIBA_NO_MIRROR: "1"
+          PYTHONIOENCODING: utf-8
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          cd _fiba
+          if [ "${{ github.event.schedule }}" = "5 7-18 * * *" ] || [ "${{ inputs.job }}" = "odds" ]; then
+            python -u matchday_odds.py
+          else
+            python -u update.py
+          fi
