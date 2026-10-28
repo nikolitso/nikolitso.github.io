@@ -16,7 +16,7 @@
   function tier(g) { return g.div.slice().sort().join(" v "); }
   function tierHA(g) { return g.div[0] + " v " + g.div[1]; }
   var out = document.getElementById("out");
-  var st = {view: "matches", round: "all", team: "", side: "for", sort: "goals", dir: -1, half: false};
+  var st = {view: "stats", round: "all", team: "", side: "for", sort: "goals", dir: -1, half: false};
   function periodSeg() {
     return '<div class="seg" id="per"><button data-p="0"' + (st.half ? '' : ' class="on"') + '>Full match</button><button data-p="1"' + (st.half ? ' class="on"' : '') + '>1st half</button></div>';
   }
@@ -311,7 +311,7 @@
   var VIEWS = {matches: matches, teams: teams, stats: stats, h1: firstHalf, tier: tiers, odds: byOdds, about: about};
   function go(v) {
     if (v === "totals") v = "stats";   // old link
-    st.view = VIEWS[v] ? v : "matches";
+    st.view = VIEWS[v] ? v : "stats";
     document.querySelectorAll("#tabs a").forEach(function (a) { a.classList.toggle("on", a.dataset.view === st.view); });
     if (location.hash !== "#view=" + st.view) history.replaceState(null, "", "#view=" + st.view);
     VIEWS[st.view]();
