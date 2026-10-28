@@ -2,9 +2,12 @@
   var D = window.CUP, G = D.games;
   var STATS = [
     ["goals", "Goals"], ["shots", "Shots"], ["sot", "Shots on target"], ["fouls", "Fouls"],
-    ["gk", "Goal kicks"], ["yellow", "Yellow cards"], ["red", "Red cards"]
+    ["gk", "Goal kicks"], ["cards", "Cards"]
   ];
-  var SHORT = {goals: "Goals", shots: "Shots", sot: "SoT", fouls: "Fouls", gk: "Goal kicks", yellow: "Yellow", red: "Red"};
+  var SHORT = {goals: "Goals", shots: "Shots", sot: "SoT", fouls: "Fouls", gk: "Goal kicks", cards: "Cards"};
+  // tier is order-free ("SL1 v SL2" whoever is at home); tierHA keeps the home side first
+  function tier(g) { return g.div.slice().sort().join(" v "); }
+  function tierHA(g) { return g.div[0] + " v " + g.div[1]; }
   var out = document.getElementById("out");
   var st = {view: "matches", round: "all", team: "", side: "for", sort: "goals", dir: -1};
   var MON = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -43,7 +46,7 @@
   }
 
   function card(g) {
-    var h = '<div class="card mc"><div class="meta">' + day(g.date) + '</div><div class="row">';
+    var h = '<div class="card mc"><div class="meta">' + day(g.date) + ' · ' + tierHA(g) + '</div><div class="row">';
     h += '<a class="tm" href="#" data-team="' + esc(g.home) + '" style="color:inherit;text-decoration:none">' + esc(g.home) + '</a>';
     h += '<span class="sc">' + g.goals[0] + ' – ' + g.goals[1] + '</span>';
     h += '<a class="tm" href="#" data-team="' + esc(g.away) + '" style="color:inherit;text-decoration:none;text-align:right">' + esc(g.away) + '</a></div><table>';
@@ -62,7 +65,7 @@
     var T = {};
     G.forEach(function (g) {
       [[g.home, 0], [g.away, 1]].forEach(function (p) {
-        var t = T[p[0]] || (T[p[0]] = {team: p[0], gp: 0, w: 0, d: 0, l: 0, f: {}, a: {}});
+        var t = T[p[0]] || (T[p[0]] = {team: p[0], div: g.div[p[1]], gp: 0, w: 0, d: 0, l: 0, f: {}, a: {}});
         var me = p[1], op = 1 - me;
         t.gp++;
         if (g.goals[me] > g.goals[op]) t.w++; else if (g.goals[me] < g.goals[op]) t.l++; else t.d++;
@@ -97,7 +100,7 @@
     STATS.forEach(function (s) { h += th(s[0], SHORT[s[0]]); });
     h += '</tr></thead><tbody>';
     rows.forEach(function (t) {
-      h += '<tr><td><a href="#" data-team="' + esc(t.team) + '" style="color:inherit;text-decoration:none">' + esc(t.team) + '</a></td><td class="n">' + t.gp +
+      h += '<tr><td><a href="#" data-team="' + esc(t.team) + '" style="color:inherit;text-decoration:none">' + esc(t.team) + '</a> <span class="tag">' + t.div + '</span></td><td class="n">' + t.gp +
         '</td><td class="n">' + t.w + '-' + t.d + '-' + t.l + '</td>';
       STATS.forEach(function (s) { h += '<td class="n' + (st.sort === s[0] ? " tot" : "") + '">' + f1(val(t, s[0])) + '</td>'; });
       h += '</tr>';
@@ -118,7 +121,7 @@
     var n = G.length;
     var h = '<p class="note">Both teams added together, per game, across all ' + n + ' cup games. The lines are the half-points either side of the average, with how often the game went over.</p>';
     h += '<div class="metrics">';
-    [["goals", "Goals per game"], ["shots", "Shots per game"], ["yellow", "Yellow cards per game"]].forEach(function (m) {
+    [["goals", "Goals per game"], ["shots", "Shots per game"], ["cards", "Cards per game"]].forEach(function (m) {
       var s = 0; G.forEach(function (g) { s += g[m[0]][0] + g[m[0]][1]; });
       h += '<div class="metric"><div class="lbl">' + m[1] + '</div><div class="big">' + f1(s / n) + '</div></div>';
     });
@@ -141,7 +144,7 @@
     h += '</tbody></table></div>';
 
     h += '<h2>Highest and lowest games</h2><div class="scroll"><table class="tt"><thead><tr><th>Stat</th><th>Highest</th><th>Lowest</th></tr></thead><tbody>';
-    STATS.slice(0, 6).forEach(function (s) {
+    STATS.forEach(function (s) {
       var k = s[0], srt = G.slice().sort(function (a, b) { return (b[k][0] + b[k][1]) - (a[k][0] + a[k][1]); });
       var hi = srt[0], lo = srt[srt.length - 1];
       h += '<tr><td>' + s[1] + '</td><td class="wr">' + gm(hi, k) + '</td><td class="wr">' + gm(lo, k) + '</td></tr>';
@@ -150,20 +153,64 @@
   }
   function gm(g, k) { return '<b style="color:var(--gold);font-weight:500;font-family:var(--mono)">' + (g[k][0] + g[k][1]) + '</b> <span class="muted">·</span> ' + esc(g.home) + ' ' + g.goals[0] + '–' + g.goals[1] + ' ' + esc(g.away) + ' <span class="muted">(R' + g.round + ')</span>'; }
 
+  // ---------- by tier ----------
+  function avgRow(gs, label, extra) {
+    var h = '<tr><td>' + label + '</td><td class="n">' + gs.length + '</td>';
+    STATS.forEach(function (s) {
+      var k = s[0], v = 0; gs.forEach(function (g) { v += extra ? extra(g, k) : g[k][0] + g[k][1]; });
+      h += '<td class="n">' + (gs.length ? f1(v / gs.length) : "–") + '</td>';
+    });
+    return h + '</tr>';
+  }
+  function head(first, n) {
+    var h = '<thead><tr><th>' + first + '</th><th class="n">' + n + '</th>';
+    STATS.forEach(function (s) { h += '<th class="n">' + SHORT[s[0]] + '</th>'; });
+    return h + '</tr></thead>';
+  }
+  function tiers() {
+    var T = ["SL1 v SL1", "SL1 v SL2", "SL2 v SL2"];
+    var h = '<p class="note">SL1 = Super League clubs, SL2 = Super League 2. All figures are per game and add both teams together unless the column says home, away or side. Small samples: read them as a direction, not a rate.</p>';
+
+    h += '<h2>Game totals by tier</h2><div class="scroll"><table class="tt">' + head("Tier", "Games") + '<tbody>';
+    T.forEach(function (t) { h += avgRow(G.filter(function (g) { return tier(g) === t; }), t); });
+    h += avgRow(G, '<b>All</b>') + '</tbody></table></div>';
+
+    h += '<h2>Home and away by tier</h2><p class="note">Home side first: "SL2 v SL1" means the Super League 2 club was at home. Each cell is home – away.</p>';
+    h += '<div class="scroll"><table class="tt">' + head("Home v away", "Games") + '<tbody>';
+    ["SL1 v SL1", "SL1 v SL2", "SL2 v SL1", "SL2 v SL2", "All"].forEach(function (t) {
+      var gs = G.filter(function (g) { return t === "All" || tierHA(g) === t; });
+      h += '<tr><td>' + (t === "All" ? "<b>All</b>" : t) + '</td><td class="n">' + gs.length + '</td>';
+      STATS.forEach(function (s) {
+        var a = 0, b = 0; gs.forEach(function (g) { a += g[s[0]][0]; b += g[s[0]][1]; });
+        h += '<td class="n">' + (gs.length ? f1(a / gs.length) + ' <span class="muted">–</span> ' + f1(b / gs.length) : "–") + '</td>';
+      });
+      h += '</tr>';
+    });
+    h += '</tbody></table></div>';
+
+    var mixed = G.filter(function (g) { return tier(g) === "SL1 v SL2"; });
+    h += '<h2>Super League v Super League 2 ties: each side</h2><p class="note">The ' + mixed.length + ' mixed ties split by the division of each team: what the SL1 club did and what the SL2 club did, home or away.</p>';
+    h += '<div class="scroll"><table class="tt">' + head("Side", "Games") + '<tbody>';
+    ["SL1", "SL2"].forEach(function (d) {
+      h += avgRow(mixed, d + ' team', function (g, k) { return g[k][g.div[0] === d ? 0 : 1]; });
+    });
+    out.innerHTML = h + '</tbody></table></div>';
+  }
+
   // ---------- about ----------
   function about() {
     out.innerHTML = '<div class="doc">' +
       '<p>Every Greek Cup ' + D.season + ' main-draw game (from Round 1, 1 September) with full-match team stats: goals, shots, shots on target, fouls, goal kicks, and yellow and red cards. The August qualifying rounds are not included.</p>' +
       '<ul><li>Score is after 90 minutes plus stoppage time, as recorded in the match stats.</li>' +
-      '<li>Cards are counted from the match incidents. A second yellow counts as one red card only (none so far).</li>' +
-      '<li>The only red card so far: PAOK v OFI, 2 Sep, a straight red in stoppage time.</li>' +
+      '<li><b>Cards</b> are counted as: yellow 1, straight red 2, a player sent off with two yellows 3. Counted from the match incidents. The only red so far: PAOK v OFI, 2 Sep, a straight red in stoppage time (no second yellows yet).</li>' +
+      '<li><b>Tiers</b>: SL1 = the 14 Super League clubs of 2026-27, SL2 = Super League 2 (Panserraikos, Niki Volos, AEL Larissa, Marko, Chrisoupolis). "SL1 v SL2" counts the tie whoever is at home; the home/away table keeps the home side first.</li>' +
       '<li>AEK 8-1 Panserraikos (17 Sep) is listed under Round 2, as published.</li>' +
       '<li>The cup mixes Super League clubs with lower-division sides, so team averages say as much about the draw as about the team.</li></ul>' +
       '<p class="muted">Updated ' + day(D.updated) + '.</p></div>';
   }
 
   // ---------- tabs ----------
-  var VIEWS = {matches: matches, teams: teams, totals: totals, about: about};
+  var VIEWS = {matches: matches, teams: teams, totals: totals, tier: tiers, about: about};
   function go(v) {
     st.view = VIEWS[v] ? v : "matches";
     document.querySelectorAll("#tabs a").forEach(function (a) { a.classList.toggle("on", a.dataset.view === st.view); });
