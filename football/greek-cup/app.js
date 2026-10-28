@@ -209,7 +209,7 @@
   function th(k, l) { return '<th class="n sort' + (st.sort === k ? " on" : "") + '" data-k="' + k + '">' + l + (st.sort === k ? (st.dir < 0 ? " ↓" : " ↑") : "") + '</th>'; }
 
   // ---------- stats (full match) and 1H stats ----------
-  function stats() { G = GF; out.innerHTML = totals('Both teams added together, per game, across all ' + GF.length + ' cup games (full match). The lines are the half-points either side of the average, with how often the game went over.'); }
+  function stats() { G = GF; out.innerHTML = totals('Both teams added together, per game, across all ' + GF.length + ' cup games (full match). The over line is the half-point next to the average, with how often the game went over it.'); }
   function firstHalf() {
     G = G1;
     var h = totals('First half only (to the half-time whistle, stoppage time included), both teams added together, across ' + G1.length + ' games. Cards are those shown before half-time, counted the same way: yellow 1, straight red 2, second yellow 3.');
@@ -234,17 +234,15 @@
     });
     var hw = G.filter(function (g) { return g.goals[0] > g.goals[1]; }).length, dr = G.filter(function (g) { return g.goals[0] === g.goals[1]; }).length;
     h += '<div class="metric"><div class="lbl">Home / draw / away (' + (G === G1 ? 'half-time' : '90 min') + ')</div><div class="big">' + hw + ' / ' + dr + ' / ' + (n - hw - dr) + '</div></div></div>';
-    h += '<div class="scroll"><table class="tt"><thead><tr><th>Stat</th><th class="n">Avg total</th><th class="n">Home</th><th class="n">Away</th><th class="n">Low</th><th class="n">Median</th><th class="n">High</th><th class="n">Over lines</th></tr></thead><tbody>';
+    h += '<div class="scroll"><table class="tt"><thead><tr><th>Stat</th><th class="n">Avg total</th><th class="n">Home</th><th class="n">Away</th><th class="n">Low</th><th class="n">Median</th><th class="n">High</th><th class="n">Over line</th></tr></thead><tbody>';
     STATS.forEach(function (s) {
       var k = s[0], tot = G.map(function (g) { return g[k][0] + g[k][1]; }).sort(function (a, b) { return a - b; });
       var sum = tot.reduce(function (a, b) { return a + b; }, 0), avg = sum / n;
       var hs = 0, as = 0; G.forEach(function (g) { hs += g[k][0]; as += g[k][1]; });
       var med = n % 2 ? tot[(n - 1) / 2] : (tot[n / 2 - 1] + tot[n / 2]) / 2;
-      var base = Math.floor(avg) + 0.5, lines = [base - 1, base, base + 1].filter(function (x) { return x > 0; });
-      var ov = lines.map(function (L) {
-        var c = tot.filter(function (t) { return t > L; }).length;
-        return '<span style="display:inline-block;min-width:96px">' + L.toFixed(1) + ' <b style="color:var(--text);font-weight:500">' + pct(c / n) + '</b></span>';
-      }).join("");
+      // the half-point line next to the average
+      var L = Math.floor(avg) + 0.5, c = tot.filter(function (t) { return t > L; }).length;
+      var ov = L.toFixed(1) + ' <b style="color:var(--text);font-weight:500">' + pct(c / n) + '</b>';
       h += '<tr><td>' + s[1] + '</td><td class="n tot">' + f1(avg) + '</td><td class="n">' + f1(hs / n) + '</td><td class="n">' + f1(as / n) +
         '</td><td class="n">' + tot[0] + '</td><td class="n">' + med + '</td><td class="n">' + tot[n - 1] + '</td><td class="n muted">' + ov + '</td></tr>';
     });
