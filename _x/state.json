@@ -142,7 +142,8 @@
       "soccernomics",
       "betting-on-football",
       "maximize-your-potential",
-      "smart-sports-betting-advanced-stats"
+      "smart-sports-betting-advanced-stats",
+      "the-drunkards-walk-how-randomness"
     ],
     "log": [
       {
@@ -324,9 +325,15 @@
         "slot": "2026-10-27 14",
         "slug": "smart-sports-betting-advanced-stats",
         "id": "2115119070181765496"
+      },
+      {
+        "day": "2026-10-28",
+        "slot": "2026-10-28 02",
+        "slug": "the-drunkards-walk-how-randomness",
+        "id": "2115251044322054521"
       }
     ],
-    "last_day": "2026-10-27"
+    "last_day": "2026-10-28"
   },
   "film": {
     "seen": [
@@ -712,7 +719,7 @@
     ],
     "last_day": "2026-10-27"
   },
-  "last_slot": "2026-10-27 20",
+  "last_slot": "2026-10-28 02",
   "quote": {
     "seen": [
       "1",
