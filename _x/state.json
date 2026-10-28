@@ -567,7 +567,8 @@
       "a-wedding",
       "amal",
       "happiness",
-      "the-commune"
+      "the-commune",
+      "the-priests-children"
     ],
     "log": [
       {
@@ -715,11 +716,17 @@
         "slot": "2026-10-27 20",
         "slug": "the-commune",
         "id": "2115190736006025245"
+      },
+      {
+        "day": "2026-10-28",
+        "slot": "2026-10-28 08",
+        "slug": "the-priests-children",
+        "id": "2115358240221368321"
       }
     ],
-    "last_day": "2026-10-27"
+    "last_day": "2026-10-28"
   },
-  "last_slot": "2026-10-28 02",
+  "last_slot": "2026-10-28 08",
   "quote": {
     "seen": [
       "1",
