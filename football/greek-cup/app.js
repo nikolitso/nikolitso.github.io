@@ -64,7 +64,9 @@
     var h = '<div class="card mc"><div class="meta">' + day(g.date) + ' · ' + tierHA(g) + (g.half ? ' · <span style="color:var(--gold)">1st half</span>' : '') + '</div><div class="row">';
     h += '<a class="tm" href="#" data-team="' + esc(g.home) + '" style="color:inherit;text-decoration:none">' + esc(g.home) + '</a>';
     h += '<span class="sc">' + g.goals[0] + ' – ' + g.goals[1] + '</span>';
-    h += '<a class="tm" href="#" data-team="' + esc(g.away) + '" style="color:inherit;text-decoration:none;text-align:right">' + esc(g.away) + '</a></div><table>';
+    h += '<a class="tm" href="#" data-team="' + esc(g.away) + '" style="color:inherit;text-decoration:none;text-align:right">' + esc(g.away) + '</a></div>';
+    if (g.odds) h += oddsLine(g);
+    h += '<table>';
     STATS.slice(1).forEach(function (s) {
       var v = g[s[0]], t = v[0] + v[1];
       var a = t ? v[0] / t * 100 : 50;
@@ -73,6 +75,79 @@
         '</td><td class="n' + (v[1] < v[0] ? " lo" : "") + '"><b>' + v[1] + '</b></td></tr>';
     });
     return h + '</table></div>';
+  }
+
+  function oddsLine(g) {
+    var o = g.odds, f = full(g), r = f.goals[0] > f.goals[1] ? 0 : f.goals[0] === f.goals[1] ? 1 : 2;
+    var ov = f.goals[0] + f.goals[1] > 2.5 ? 0 : 1;
+    function c(lbl, v, on) { return '<span class="od' + (on ? ' hit' : '') + '"><i>' + lbl + '</i>' + (v ? v.toFixed(2) : '–') + '</span>'; }
+    var h = '<div class="odds">';
+    if (o.x12) h += c("1", o.x12[0], r === 0) + c("X", o.x12[1], r === 1) + c("2", o.x12[2], r === 2);
+    if (o.ou25) h += '<span class="sep"></span>' + c("O2.5", o.ou25[0], ov === 0) + c("U2.5", o.ou25[1], ov === 1);
+    return h + '</div>';
+  }
+  function full(g) { return g.half ? GF.filter(function (x) { return x.date === g.date && x.home === g.home; })[0] : g; }
+
+  // ---------- by odds ----------
+  // no-margin chances from a set of odds
+  function fair(arr) { var inv = arr.map(function (x) { return 1 / x; }), s = inv.reduce(function (a, b) { return a + b; }, 0); return inv.map(function (x) { return x / s; }); }
+  var FAV_BANDS = [[0, 1.30, "1.30 or less"], [1.30, 1.60, "1.31 – 1.60"], [1.60, 2.00, "1.61 – 2.00"], [2.00, 99, "Over 2.00 (close)"]];
+  var OV_BANDS = [[0, 1.60, "1.60 or less"], [1.60, 1.90, "1.61 – 1.90"], [1.90, 2.20, "1.91 – 2.20"], [2.20, 99, "Over 2.20"]];
+  function favSide(g) { return g.odds.x12[0] <= g.odds.x12[2] ? 0 : 1; }
+  function byOdds() {
+    G = st.half ? G1 : GF;
+    var gx = G.filter(function (g) { return g.odds && g.odds.x12; });
+    var h = '<p class="note">Odds are the middle price across the bookmakers listed before kick-off. Results and over/under use the full match; the stats columns follow the switch (full match or first half). <b>Odds %</b> is the chance the odds give once the margin is removed; <b>Won %</b> and <b>Over %</b> are what happened. Bands hold only a few games each, so read them as a direction.</p>';
+    h += '<div class="bar">' + periodSeg() + '</div>';
+
+    h += '<h2>By the favourite\u2019s price (1X2)</h2><div class="scroll"><table class="tt"><thead><tr><th>Favourite at</th><th class="n">Games</th><th class="n">Fav W-D-L</th><th class="n" title="Favourite win chance from the odds, margin removed">Odds %</th><th class="n" title="How often the favourite won">Won %</th>';
+    STATS.forEach(function (s) { h += '<th class="n">' + SHORT[s[0]] + '</th>'; });
+    h += '</tr></thead><tbody>';
+    FAV_BANDS.forEach(function (b) {
+      var gs = gx.filter(function (g) { var m = Math.min(g.odds.x12[0], g.odds.x12[2]); return m > b[0] && m <= b[1]; });
+      if (!gs.length) return;
+      var w = 0, d = 0, l = 0, pe = 0;
+      gs.forEach(function (g) {
+        var f = full(g), fs = favSide(g), gf = f.goals[fs], ga = f.goals[1 - fs];
+        if (gf > ga) w++; else if (gf === ga) d++; else l++;
+        pe += fair(g.odds.x12)[fs === 0 ? 0 : 2];
+      });
+      h += '<tr><td>' + b[2] + '</td><td class="n">' + gs.length + '</td><td class="n">' + w + '-' + d + '-' + l + '</td><td class="n">' + pct(pe / gs.length) + '</td><td class="n tot">' + pct(w / gs.length) + '</td>';
+      STATS.forEach(function (s) { var v = 0; gs.forEach(function (g) { v += g[s[0]][0] + g[s[0]][1]; }); h += '<td class="n">' + f1(v / gs.length) + '</td>'; });
+      h += '</tr>';
+    });
+    h += '</tbody></table></div>';
+
+    h += '<h2>Favourite and underdog, each side</h2><p class="note">Per game, favourite – underdog, by the favourite\u2019s price.</p><div class="scroll"><table class="tt"><thead><tr><th>Favourite at</th><th class="n">Games</th>';
+    STATS.forEach(function (s) { h += '<th class="n">' + SHORT[s[0]] + '</th>'; });
+    h += '</tr></thead><tbody>';
+    FAV_BANDS.concat([[0, 99, "<b>All</b>"]]).forEach(function (b) {
+      var gs = gx.filter(function (g) { var m = Math.min(g.odds.x12[0], g.odds.x12[2]); return m > b[0] && m <= b[1]; });
+      if (!gs.length) return;
+      h += '<tr><td>' + b[2] + '</td><td class="n">' + gs.length + '</td>';
+      STATS.forEach(function (s) {
+        var a = 0, c = 0; gs.forEach(function (g) { var fs = favSide(g); a += g[s[0]][fs]; c += g[s[0]][1 - fs]; });
+        h += '<td class="n">' + f1(a / gs.length) + ' <span class="muted">–</span> ' + f1(c / gs.length) + '</td>';
+      });
+      h += '</tr>';
+    });
+    h += '</tbody></table></div>';
+
+    var go = G.filter(function (g) { return g.odds && g.odds.ou25; });
+    h += '<h2>By the over 2.5 goals price</h2><div class="scroll"><table class="tt"><thead><tr><th>Over 2.5 at</th><th class="n">Games</th><th class="n" title="Over 2.5 chance from the odds, margin removed">Odds %</th><th class="n" title="How often the game went over 2.5">Over %</th>';
+    STATS.forEach(function (s) { h += '<th class="n">' + SHORT[s[0]] + '</th>'; });
+    h += '</tr></thead><tbody>';
+    OV_BANDS.forEach(function (b) {
+      var gs = go.filter(function (g) { return g.odds.ou25[0] > b[0] && g.odds.ou25[0] <= b[1]; });
+      if (!gs.length) return;
+      var pe = 0, n = 0;
+      gs.forEach(function (g) { var f = full(g); pe += fair(g.odds.ou25)[0]; if (f.goals[0] + f.goals[1] > 2.5) n++; });
+      h += '<tr><td>' + b[2] + '</td><td class="n">' + gs.length + '</td><td class="n">' + pct(pe / gs.length) + '</td><td class="n tot">' + pct(n / gs.length) + '</td>';
+      STATS.forEach(function (s) { var v = 0; gs.forEach(function (g) { v += g[s[0]][0] + g[s[0]][1]; }); h += '<td class="n">' + f1(v / gs.length) + '</td>'; });
+      h += '</tr>';
+    });
+    out.innerHTML = h + '</tbody></table></div>';
+    bindPeriod(byOdds);
   }
 
   // ---------- teams ----------
@@ -237,13 +312,14 @@
       '<ul><li>Score is after 90 minutes plus stoppage time, as recorded in the match stats.</li>' +
       '<li><b>Cards</b> are counted as: yellow 1, straight red 2, a player sent off with two yellows 3. Counted from the match incidents. The only red so far: PAOK v OFI, 2 Sep, a straight red in stoppage time (no second yellows yet).</li>' +
       '<li><b>Tiers</b>: SL1 = the 14 Super League clubs of 2026-27, SL2 = Super League 2 (Panserraikos, Niki Volos, AEL Larissa, Marko, Chrisoupolis). "SL1 v SL2" counts the tie whoever is at home; the home/away table keeps the home side first.</li>' +
+      '<li><b>Odds</b>: 1X2 and over/under 2.5 goals before kick-off, the middle price across the bookmakers listed for each game. "Odds say" removes the margin.</li>' +
       '<li>AEK 8-1 Panserraikos (17 Sep) is listed under Round 2, as published.</li>' +
       '<li>The cup mixes Super League clubs with lower-division sides, so team averages say as much about the draw as about the team.</li></ul>' +
       '<p class="muted">Updated ' + day(D.updated) + '.</p></div>';
   }
 
   // ---------- tabs ----------
-  var VIEWS = {matches: matches, teams: teams, stats: stats, h1: firstHalf, tier: tiers, about: about};
+  var VIEWS = {matches: matches, teams: teams, stats: stats, h1: firstHalf, tier: tiers, odds: byOdds, about: about};
   function go(v) {
     if (v === "totals") v = "stats";   // old link
     st.view = VIEWS[v] ? v : "matches";

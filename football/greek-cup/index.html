@@ -120,6 +120,11 @@ table.mini{margin:0 0 16px}
 .bar2 i{display:block;background:var(--gold)} .bar2 i+i{background:#5b7bd5}
 table.tt th.sort{text-align:right} table.tt th:first-child{text-align:left}
 tr.sel td{background:color-mix(in srgb,var(--gold) 10%,transparent)}
+.odds{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 2px;font:400 12.5px var(--mono);color:var(--muted)}
+.odds .od{border:1px solid var(--line);border-radius:5px;padding:2px 7px;white-space:nowrap}
+.odds .od i{font-style:normal;margin-right:5px;font-size:11px}
+.odds .od.hit{border-color:var(--gold);color:var(--gold)}
+.odds .sep{flex:0 0 6px}
 </style>
 </head>
 <body>
@@ -143,11 +148,12 @@ tr.sel td{background:color-mix(in srgb,var(--gold) 10%,transparent)}
     <a href="#view=stats" data-view="stats">Stats</a>
     <a href="#view=h1" data-view="h1">1H stats</a>
     <a href="#view=tier" data-view="tier">By tier</a>
+    <a href="#view=odds" data-view="odds">By odds</a>
     <a href="#view=about" data-view="about">About the data</a>
   </div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=3"></script>
-<script src="app.js?v=4"></script>
+<script src="data.js?v=4"></script>
+<script src="app.js?v=6"></script>
 </body>
 </html>
