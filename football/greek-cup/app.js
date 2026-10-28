@@ -329,7 +329,7 @@
       ["h1", "1H stats", "the first half on its own"], ["teams", "Teams", "every club, for and against"],
       ["odds", "By odds", "stats by the favourite's price and the over 2.5 price"], ["matches", "Matches", "every game by date"]];
     var h = '<div class="doc">' +
-      '<p>Every Greek Cup ' + D.season + ' league-phase game (from 1 September) with team stats for the full match and the first half: goals, xG, xG on target, shots, shots on target, big chances, corners, fouls, goal kicks, throw-ins, goalkeeper saves and cards. The August qualifiers are not included.</p>';
+      '<p>Every Greek Cup ' + D.season + ' league-phase game with team stats for the full match and the first half: goals, xG, xG on target, shots, shots on target, big chances, corners, fouls, goal kicks, throw-ins, goalkeeper saves and cards. The August qualifiers are not included.</p>';
     h += '<div class="facts">';
     links.forEach(function (l) { h += '<a class="fact" href="#view=' + l[0] + '" style="text-decoration:none"><b>' + l[1] + '</b>' + l[2] + '</a>'; });
     h += '</div>' +
