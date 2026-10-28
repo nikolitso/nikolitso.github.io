@@ -575,7 +575,8 @@
       "amal",
       "happiness",
       "the-commune",
-      "the-priests-children"
+      "the-priests-children",
+      "volcano"
     ],
     "log": [
       {
@@ -729,11 +730,17 @@
         "slot": "2026-10-28 08",
         "slug": "the-priests-children",
         "id": "2115358240221368321"
+      },
+      {
+        "day": "2026-10-28",
+        "slot": "2026-10-28 20",
+        "slug": "volcano",
+        "id": "2115549195692040425"
       }
     ],
     "last_day": "2026-10-28"
   },
-  "last_slot": "2026-10-28 14",
+  "last_slot": "2026-10-28 20",
   "quote": {
     "seen": [
       "1",
