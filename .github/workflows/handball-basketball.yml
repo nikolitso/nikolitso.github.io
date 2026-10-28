@@ -3,9 +3,11 @@ name: Handball and basketball
 # The /handball/ and /basketball/ pipelines (scripts and their ledgers in the private repo nikolitso/BettingSignal),
 # on GitHub instead of the PC. Each run: refresh from Flashscore, rebuild the pages, publish them here, and save the
 # updated ledgers (signals, lines, results) back to BettingSignal. Needs the SITES_TOKEN secret with
-# Contents read & write on nikolitso/BettingSignal. The "Update all sites" button runs it too.
+# Contents read & write on nikolitso/BettingSignal. Runs twice a day; the "Update all sites" button runs it too.
 on:
-  workflow_dispatch:
+  schedule:
+    - cron: "0 7,14 * * *"   # 09:00 and 16:00 Athens in winter (10:00 and 17:00 in summer)
+  workflow_dispatch:          # Run workflow button: Actions tab, or the GitHub mobile app
 
 permissions:
   contents: write
