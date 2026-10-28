@@ -162,7 +162,7 @@ tr.srow{cursor:pointer} tr.srow:hover td,tr.srow.on td{background:color-mix(in s
   <div class="chips" id="chips"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=422b3792"></script>
+<script src="data.js?v=42d98e02"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -181,13 +181,9 @@ const one = () => lg === 'all' ? DATA.leagues[0].key : lg;      // tabs that sho
 $('sub').textContent = `Women's top leagues · ${DATA.season.replace('-','–')} · updated ${DATA.updated} (Athens)`;
 
 function renderProjections(){
-  let h = `<p class="note">Every match in the next 7 days whose line is in the pick range: the chance it goes 3, 4 or 5 sets, the projected total points and the model's own fair line. Once a bookmaker posts a line, the row shows the line, the average over price and the model's over chance against it. Rows in green have an edge of more than ${DATA.edge*100}% on the over; only <b>picks</b> (gold) are backed and recorded: overs on lines ${DATA.min_line}.5 to ${DATA.low - 0.5}, except ${DATA.skip[0]}.5 to ${DATA.skip[1]}.5 this season (the backtest returned under 8% there), the matches the market expects to end 3-0, where the edge is above ${DATA.edge*100}%.</p>`;
-  // only matches whose line is in the pick range: the rest (other lines, or no line yet) are counted, not shown
-  const inRange = g => { if (!g.mk) return false; const f = Math.floor(g.mk.line);
-    return f >= DATA.min_line && g.mk.line < DATA.low && !(f >= DATA.skip[0] && f <= DATA.skip[1]); };
-  const all = DATA.fixtures.filter(inLg), fx = all.filter(inRange), rest = all.length - fx.length;
-  if (rest) h += `<p class="note">${rest} other ${rest === 1 ? 'match' : 'matches'} in the next 7 days ${rest === 1 ? 'is' : 'are'} not shown: a line outside the pick range, or no line yet.</p>`;
-  if (!fx.length) return h + '<p class="empty">No matches with a line in the pick range in the next 7 days.</p>';
+  let h = `<p class="note">Every match in the next 7 days: the chance it goes 3, 4 or 5 sets, the projected total points and the model's own fair line. Once a bookmaker posts a line, the row shows the line, the average over price and the model's over chance against it. Rows in green have an edge of more than ${DATA.edge*100}% on the over; only <b>picks</b> (gold) are backed and recorded: overs on lines ${DATA.min_line}.5 to ${DATA.low - 0.5}, except ${DATA.skip[0]}.5 to ${DATA.skip[1]}.5 this season (the backtest returned under 8% there), the matches the market expects to end 3-0, where the edge is above ${DATA.edge*100}%.</p>`;
+  const fx = DATA.fixtures.filter(inLg);
+  if (!fx.length) return h + '<p class="empty">No matches in the next 7 days.</p>';
   const byDay = {};
   fx.forEach(g => (byDay[g.dt.slice(0,10)] ||= []).push(g));
   const head = `<thead><tr><th>Time</th>${lg === 'all' ? '<th>League</th>' : ''}<th>Match</th><th class="n">3 sets</th><th class="n">4 sets</th><th class="n">5 sets</th><th class="n">Proj.</th><th class="n">Fair</th><th class="n">Line</th><th class="n">Over</th><th class="n">Model</th><th class="n">Edge</th></tr></thead>`;
