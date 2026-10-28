@@ -227,7 +227,7 @@
   function totals(note) {
     var n = G.length;
     var h = '<p class="note">' + note + '</p>';
-    h += '<div class="metrics">';
+    h += '<div class="metrics"><div class="metric"><div class="lbl">Matches</div><div class="big">' + n + '</div></div>';
     [["goals", "Goals per game"], ["shots", "Shots per game"], ["cards", "Cards per game"], ["sot", "SoT per game"]].forEach(function (m) {
       var s = 0; G.forEach(function (g) { s += g[m[0]][0] + g[m[0]][1]; });
       h += '<div class="metric"><div class="lbl">' + m[1] + '</div><div class="big">' + f1(s / n) + '</div></div>';
