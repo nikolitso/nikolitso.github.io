@@ -176,16 +176,22 @@
       var d = (val(a, st.sort) - val(b, st.sort)) * st.dir;
       return d || a.team.localeCompare(b.team);
     });
-    var h = '<p class="note">Per-game averages in the cup only. <b>For</b> = what the team did, <b>Against</b> = what its opponents did, <b>Game total</b> = both sides. Click a column to sort, a team to see its games. One or two games per team, so treat these as notes, not ratings.</p>';
+    // clubs in the league phase by division, from every game played
+    var dv = {}; GF.forEach(function (g) { dv[g.home] = g.div[0]; dv[g.away] = g.div[1]; });
+    var nt = Object.keys(dv).length, n1 = Object.keys(dv).filter(function (k) { return dv[k] === "SL1"; }).length;
+    var h = '<div class="facts"><span class="fact"><b>' + nt + '</b> teams in the league phase</span>' +
+      '<span class="fact"><b>' + n1 + '</b> from Super League (SL1)</span>' +
+      '<span class="fact"><b>' + (nt - n1) + '</b> from Super League 2 (SL2)</span></div>';
+    h += '<p class="note">Per-game averages in the cup only. <b>For</b> = what the team did, <b>Against</b> = what its opponents did, <b>Game total</b> = both sides. Click a column to sort, a team to see its games. Only a few games per team, so treat these as notes, not ratings.</p>';
     h += '<div class="bar">' + periodSeg() + '<div class="seg" id="side">';
     [["for", "For"], ["against", "Against"], ["total", "Game total"]].forEach(function (s) {
       h += '<button data-s="' + s[0] + '"' + (st.side === s[0] ? ' class="on"' : '') + '>' + s[1] + '</button>';
     });
-    h += '</div></div><div class="scroll"><table class="tt"><thead><tr><th>Team</th>' + th("gp", "GP") + '<th class="n">W-D-L</th>';
+    h += '</div></div><div class="scroll"><table class="tt"><thead><tr><th>Team</th><th>League</th>' + th("gp", "GP") + '<th class="n">W-D-L</th>';
     STATS.forEach(function (s) { h += th(s[0], SHORT[s[0]]); });
     h += '</tr></thead><tbody>';
     rows.forEach(function (t) {
-      h += '<tr><td><a href="#" data-team="' + esc(t.team) + '" style="color:inherit;text-decoration:none">' + esc(t.team) + '</a> <span class="tag">' + t.div + '</span></td><td class="n">' + t.gp +
+      h += '<tr><td><a href="#" data-team="' + esc(t.team) + '" style="color:inherit;text-decoration:none">' + esc(t.team) + '</a></td><td><span class="tag">' + t.div + '</span></td><td class="n">' + t.gp +
         '</td><td class="n">' + t.w + '-' + t.d + '-' + t.l + '</td>';
       STATS.forEach(function (s) { h += '<td class="n' + (st.sort === s[0] ? " tot" : "") + '">' + f1(val(t, s[0])) + '</td>'; });
       h += '</tr>';
