@@ -248,17 +248,8 @@
       h += '<tr><td>' + s[1] + '</td><td class="n tot">' + f1(avg) + '</td><td class="n">' + f1(hs / n) + '</td><td class="n">' + f1(as / n) +
         '</td><td class="n">' + tot[0] + '</td><td class="n">' + med + '</td><td class="n">' + tot[n - 1] + '</td><td class="n muted">' + ov + '</td></tr>';
     });
-    h += '</tbody></table></div>';
-
-    h += '<h2>Highest and lowest games</h2><div class="scroll"><table class="tt"><thead><tr><th>Stat</th><th>Highest</th><th>Lowest</th></tr></thead><tbody>';
-    STATS.forEach(function (s) {
-      var k = s[0], srt = G.slice().sort(function (a, b) { return (b[k][0] + b[k][1]) - (a[k][0] + a[k][1]); });
-      var hi = srt[0], lo = srt[srt.length - 1];
-      h += '<tr><td>' + s[1] + '</td><td class="wr">' + gm(hi, k) + '</td><td class="wr">' + gm(lo, k) + '</td></tr>';
-    });
     return h + '</tbody></table></div>';
   }
-  function gm(g, k) { return '<b style="color:var(--gold);font-weight:500;font-family:var(--mono)">' + (g[k][0] + g[k][1]) + '</b> <span class="muted">·</span> ' + esc(g.home) + ' ' + g.goals[0] + '–' + g.goals[1] + ' ' + esc(g.away) + ' <span class="muted">(' + (g.half ? 'HT, ' : '') + 'R' + g.round + ')</span>'; }
 
   // ---------- by tier ----------
   function avgRow(gs, label, extra) {
