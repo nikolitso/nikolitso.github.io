@@ -16,7 +16,7 @@
   function tier(g) { return g.div.slice().sort().join(" v "); }
   function tierHA(g) { return g.div[0] + " v " + g.div[1]; }
   var out = document.getElementById("out");
-  var st = {view: "stats", round: "all", team: "", side: "for", sort: "goals", dir: -1, half: false, tier: "SL1 v SL1"};
+  var st = {view: "stats", team: "", side: "for", sort: "goals", dir: -1, half: false, tier: "SL1 v SL1"};
   function periodSeg() {
     return '<div class="seg" id="per"><button data-p="0"' + (st.half ? '' : ' class="on"') + '>Full match</button><button data-p="1"' + (st.half ? ' class="on"' : '') + '>1st half</button></div>';
   }
@@ -30,7 +30,7 @@
   function day(iso) { var d = new Date(iso + "T12:00:00"); return DAY[d.getDay()] + " " + d.getDate() + " " + MON[d.getMonth()]; }
   function f1(x) { return (Math.round(x * 10) / 10).toFixed(1); }
   function pct(x) { return Math.round(x * 100) + "%"; }
-  function rounds() { var r = {}; G.forEach(function (g) { r[g.round] = 1; }); return Object.keys(r).map(Number).sort(function (a, b) { return b - a; }); }
+  function dates() { var r = {}; G.forEach(function (g) { r[g.date] = 1; }); return Object.keys(r).sort().reverse(); }
 
   var last = GF.reduce(function (m, g) { return g.date > m ? g.date : m; }, "");
   document.getElementById("sub").textContent = "Season " + D.season + " · " + GF.length + " games · last game " + day(last);
@@ -38,24 +38,18 @@
   // ---------- matches ----------
   function matches() {
     G = st.half ? G1 : GF;
-    var h = '<div class="bar">' + periodSeg() + '<div class="chips" id="rch">';
-    h += '<button class="chip' + (st.round === "all" ? " on" : "") + '" data-r="all">All rounds</button>';
-    rounds().forEach(function (r) { h += '<button class="chip' + (st.round == r ? " on" : "") + '" data-r="' + r + '">Round ' + r + '</button>'; });
-    h += '</div>';
+    var h = '<div class="bar">' + periodSeg();
     if (st.team) h += '<button class="chip on" id="clr">' + esc(st.team) + ' &times;</button>';
     h += '</div>';
-    rounds().forEach(function (r) {
-      if (st.round !== "all" && st.round != r) return;
-      var gs = G.filter(function (g) { return g.round === r && (!st.team || g.home === st.team || g.away === st.team); })
-        .sort(function (a, b) { return a.date < b.date ? 1 : a.date > b.date ? -1 : 0; });
+    dates().forEach(function (d) {
+      var gs = G.filter(function (g) { return g.date === d && (!st.team || g.home === st.team || g.away === st.team); });
       if (!gs.length) return;
-      h += '<h2 class="day">Round ' + r + '</h2><div class="grid">';
+      h += '<h2 class="day">' + day(d) + '</h2><div class="grid">';
       gs.forEach(function (g) { h += card(g); });
       h += '</div>';
     });
     out.innerHTML = h;
     bindPeriod(matches);
-    out.querySelectorAll("#rch .chip").forEach(function (b) { b.onclick = function () { st.round = b.dataset.r; matches(); }; });
     var c = document.getElementById("clr"); if (c) c.onclick = function () { st.team = ""; matches(); };
     out.querySelectorAll("[data-team]").forEach(function (a) { a.onclick = function (e) { e.preventDefault(); st.team = a.dataset.team; matches(); }; });
   }
@@ -203,7 +197,7 @@
       c.onclick = function () { var k = c.dataset.k; if (st.sort === k) st.dir *= -1; else { st.sort = k; st.dir = -1; } teams(); };
     });
     out.querySelectorAll("[data-team]").forEach(function (a) {
-      a.onclick = function (e) { e.preventDefault(); st.team = a.dataset.team; st.round = "all"; go("matches"); };
+      a.onclick = function (e) { e.preventDefault(); st.team = a.dataset.team; go("matches"); };
     });
   }
   function th(k, l) { return '<th class="n sort' + (st.sort === k ? " on" : "") + '" data-k="' + k + '">' + l + (st.sort === k ? (st.dir < 0 ? " ↓" : " ↑") : "") + '</th>'; }
@@ -302,12 +296,11 @@
   // ---------- about ----------
   function about() {
     out.innerHTML = '<div class="doc">' +
-      '<p>Every Greek Cup ' + D.season + ' main-draw game (from Round 1, 1 September) with team stats for the full match and the first half: goals, shots, shots on target, fouls, goal kicks, throw-ins, goalkeeper saves and cards. The August qualifying rounds are not included.</p>' +
+      '<p>Every Greek Cup ' + D.season + ' main-draw game (from 1 September) with team stats for the full match and the first half: goals, shots, shots on target, fouls, goal kicks, throw-ins, goalkeeper saves and cards. The August qualifiers are not included.</p>' +
       '<ul><li>Score is after 90 minutes plus stoppage time, as recorded in the match stats.</li>' +
       '<li><b>Cards</b> are counted as: yellow 1, straight red 2, a player sent off with two yellows 3. Counted from the match incidents. The only red so far: PAOK v OFI, 2 Sep, a straight red in stoppage time (no second yellows yet).</li>' +
       '<li><b>Tiers</b>: SL1 = the 14 Super League clubs of 2026-27, SL2 = Super League 2 (Panserraikos, Niki Volos, AEL Larissa, Marko, Chrisoupolis). "SL1 v SL2" counts the tie whoever is at home; the home/away table keeps the home side first.</li>' +
       '<li><b>Odds</b>: 1X2 and over/under 2.5 goals before kick-off, the middle price across the bookmakers listed for each game. "Odds say" removes the margin.</li>' +
-      '<li><b>Rounds</b>: every round is 8 games with each club once. Postponed games are counted in the round they belong to (Asteras Tripolis v Aris, 10 Sep, is Round 1).</li>' +
       '<li>The cup mixes Super League clubs with lower-division sides, so team averages say as much about the draw as about the team.</li></ul>' +
       '<p class="muted">Updated ' + day(D.updated) + '.</p></div>';
   }
