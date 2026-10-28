@@ -82,7 +82,8 @@ h2.day{font-size:20px;padding-bottom:8px;border-bottom:1px solid var(--line)}
 .h2h{font:400 13.5px/1.6 var(--mono);color:var(--text);margin-top:10px;display:grid;gap:8px}
 .lbl{display:block;font:400 11px var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
 a.go{color:var(--gold);text-decoration:none} a.go:hover{text-decoration:underline}
-.card.fx .res td,.card.fx .res th{padding:6px 6px} .card.fx .res td.n{font-size:14px} .card.fx .res .big{font-size:15px}
+table.fxl td,table.fxl th{padding:7px 6px;vertical-align:top} table.fxl td{font-size:15px;line-height:1.35} table.fxl td.n,table.fxl td.mono{font:400 13px/1.55 var(--mono)} table.fxl .big{font-size:14px}
+table.fxl td.m{white-space:normal;min-width:230px} table.fxl td.hl{background:color-mix(in srgb,var(--gold) 14%,transparent)} table.fxl .hint{font-size:12px}
 table.today td,table.today th{padding:7px 5px} table.today td{font-size:15px} table.today td.n{font-size:13.5px} table.today .big{font-size:15px}
 @media(max-width:760px){.form,.cols{grid-template-columns:1fr}td,th{padding:6px 5px}td.n,th.n{font-size:12.5px}table.res td{font-size:14px}table.res td.n{font-size:13px}.card{padding:14px 10px 10px}.full{display:none}}
 </style>
@@ -342,46 +343,43 @@ const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'], MON = ['Jan', 'F
 const dayName = s => { const d = new Date(s + 'T12:00'); return `${DAYS[d.getDay()]} ${d.getDate()} ${MON[d.getMonth()]}`; };
 const wl = ms => ({n: ms.length, w: ms.filter(m => m._w).length});
 const wlTxt = r => r.n ? `<b>${r.w}–${r.n - r.w}</b>` : '<span class="muted">none</span>';
-function ouCardLine(f, p){
-  const q = f.ou, fl = fairLine(p), base = `model avg <b>${Math.round(lerp(OU.mean, p))}</b> · fair line <b>${fl}</b> · 3 sets ${pct(lerp(OU.sets3, p))}`;
-  if (!q) return `<div class="h2h"><div><span class="lbl">Total points</span>${base} <span class="muted">· no line yet</span></div></div>`;
-  const r = ouEdge(p, q.line, q.bo, q.bu);
-  return `<div class="h2h"><div><span class="lbl">Total points</span>line <b>${q.line}</b> (${q.o.toFixed(2)} / ${q.u.toFixed(2)}) · book over ${pct(fair(q.o, q.u))} · model over <b>${pct(r.po)}</b><br>${base} · edge <span class="${r.e >= 0 ? 'ok' : 'bad'}">${r.side} ${sgnPct(r.e)}</span>${r.val ? ' <b>(high-line under)</b>' : ''}</div></div>`;
-}
-function fxCard(f){
+// one row per match: who, the countries' record, then the winner and the total points against the odds
+function fxRow(f){
   const hc = f.hc, ac = f.ac, same = hc === ac;
   const meet = MS.filter(m => (m.hc === hc && m.ac === ac) || (m.hc === ac && m.ac === hc)).map(m => ({...m, _w: (m.hc === hc) === (m.hs > m.as)}));
   const atHome = wl(meet.filter(m => m.hc === hc)), away = wl(meet.filter(m => m.hc === ac)), all = wl(meet);
-  const club = MS.filter(m => (m.home === f.home && m.away === f.away) || (m.home === f.away && m.away === f.home));
+  const club = MS.filter(m => ((m.home === f.home && m.away === f.away) || (m.home === f.away && m.away === f.home)) &&
+    !(m.season === DATA.seasons.at(-1) && m.round === f.round));               // this tie's first leg is shown on its own
   const hv = stats(hc).h, av = stats(ac).a;
-  const vline = (c, r, where) => r.n ? `${c} ${where} <b>${r.w}–${r.n - r.w}</b> <span class="muted">(${pct(r.win)}${r.diff !== null ? ', ' + sgn(r.diff * 100) + ' vs odds' : ''})</span>` : `${c} ${where} <span class="muted">no matches</span>`;
-  let price = '';
+  const vf = (r, lab) => r.n ? `${lab} <b>${r.w}–${r.n - r.w}</b>${r.diff !== null ? ` <span class="${r.diff >= 0 ? 'ok' : 'bad'}">${sgn(r.diff * 100)}</span>` : ''}` : `${lab} <span class="muted">–</span>`;
+  const sub = [`${hc} <span class="muted">${rankOf(hc)}</span> v ${ac} <span class="muted">${rankOf(ac)}</span>`];
+  if (f.leg1) sub.push(`leg 1 ${f.leg1.home} ${f.leg1.hs}–${f.leg1.as} ${f.leg1.away}`);
+  if (club.length) sub.push(`met ${club.map(m => `${m.season} ${m.home === f.home ? m.hs + '–' + m.as : m.as + '–' + m.hs}`).join(', ')}`);
+  let row = `<td class="n muted">${f.time}${f.leg ? '<br>leg ' + f.leg : ''}</td>` +
+    `<td class="m"><a href="#" class="go" data-fx="${f.id}">${f.home} <span class="muted">v</span> ${f.away}</a><div class="hint" style="margin:0">${sub.join(' · ')}</div></td>`;
+  row += same ? '<td class="full muted" colspan="2">same country</td>'
+    : `<td class="full mono">all ${wlTxt(all)}<br>home ${wlTxt(atHome)} · away ${wlTxt(away)}</td>` +
+      `<td class="full mono">${vf(hv, 'home')}<br>${vf(av, 'away')}</td>`;
   const r = fxPrice(f);
-  if (r){
-    const {ph, p, e, who} = r;
-    price = `<div class="scroll" style="margin-top:10px"><table class="res"><thead><tr><th class="n" title="Opening winner odds, host / visitor">Opening</th><th class="n" title="The host's chance in the opening odds, margin taken out">Odds host</th><th class="n">Model host</th><th class="n">Fair odds</th><th class="n" title="At the best price now">Edge</th></tr></thead><tbody><tr class="${e >= .05 ? 'val' : ''}">` +
-      `<td class="n">${r.oh.toFixed(2)} / ${r.oa.toFixed(2)}</td><td class="n">${pct(ph)}</td><td class="n tot">${pct(p)}</td>` +
-      `<td class="n big">${(1 / p).toFixed(2)} / ${(1 / (1 - p)).toFixed(2)}</td><td class="n ${e >= 0 ? 'ok' : 'bad'}">${sgnPct(e)}<br><span class="muted">${who.split(/[ -]/)[0]}</span></td></tr></tbody></table></div>`;
-  }
-  const link = `#view=projector&a=${encodeURIComponent(hc)}&b=${encodeURIComponent(ac)}&mode=${f.leg === 2 ? 'two' : f.leg === 1 ? 'tie' : 'one'}`;
-  const leg1 = f.leg1 ? ` · leg 1 ${f.leg1.home} ${f.leg1.hs}–${f.leg1.as} ${f.leg1.away}` : '';
-  return `<div class="card fx"><div class="ko">${f.time} · ${f.round}${f.leg ? ' · leg ' + f.leg : ''}${leg1}</div>
-    <h3>${f.home} <span class="muted">v</span> ${f.away}</h3>
-    <div class="cty">${hc} <span class="muted">${rankOf(hc)}</span> <span class="muted">v</span> ${ac} <span class="muted">${rankOf(ac)}</span>${same ? '' : ` · country Elo gives the host <b>${pct(eloHost(hc, ac))}</b>`}</div>
-    ${same ? '<p class="hint">Same country: no country head to head (these matches are left out of the data).</p>' : `
-    <div class="h2h"><div><span class="lbl">${hc} v ${ac}</span>all ${wlTxt(all)} · ${hc} hosting ${wlTxt(atHome)} · ${ac} hosting ${wlTxt(away)} <span class="muted">(${hc} side's W–L)</span></div>
-    <div><span class="lbl">Venue form</span>${vline(hc, hv, 'at home')}<br>${vline(ac, av, 'away')}</div>
-    ${club.length ? `<div><span class="lbl">These clubs</span>${club.map(m => `${m.season} ${m.home} ${m.hs}–${m.as} ${m.away}`).join(' · ')}</div>` : ''}</div>`}
-    ${r ? ouCardLine(f, r.p) : ''}
-    ${price || `<p class="hint">No odds yet. <a href="${link}" class="go">Price it in the projector →</a></p>`}</div>`;
+  if (!r) return `<tr>${row}<td class="n muted" colspan="5">no odds yet · <a href="#" class="go" data-fx="${f.id}">projector →</a></td></tr>`;
+  const q = f.ou, o = q ? ouEdge(r.p, q.line, q.bo, q.bu) : null;
+  row += `<td class="n">${pct(r.ph)} <span class="muted">→</span> <span class="tot">${pct(r.p)}</span></td>` +
+    `<td class="n big">${(1 / r.p).toFixed(2)}<br>${(1 / (1 - r.p)).toFixed(2)}</td>` +
+    `<td class="n ${r.e >= .05 ? 'hl' : ''} ${r.e >= 0 ? 'ok' : 'bad'}">${sgnPct(r.e)}<br><span class="muted">${r.who.split(/[ -]/)[0]}</span></td>` +
+    `<td class="n">${q ? `${q.line} <span class="muted">·</span> <span class="tot">${pct(o.po)}</span>` : '<span class="muted">no line</span>'}<br><span class="muted">fair ${fairLine(r.p)}</span></td>` +
+    (q ? `<td class="n ${o.val ? 'hl' : ''} ${o.e >= 0 ? 'ok' : 'bad'}">${o.side}<br>${sgnPct(o.e)}</td>` : '<td class="n muted">–</td>');
+  return `<tr>${row}</tr>`;
 }
 function renderFixtures(){
   const fx = DATA.fixtures || [];
   if (!fx.length) return '<p class="empty">No fixtures scheduled right now.</p>';
   const by = {};
   fx.forEach(f => (by[f.date] ||= []).push(f));
-  return `<p class="note">The next Challenge Cup Women matches with the head to head of the two <b>countries</b> over the last five seasons, split by venue (W–L always from the first-named country's side), each country's home or away record against the odds, and the power-ranking places. Once bookmakers price a match, the projector's fair odds and edge show here; until then each card links to the projector with its countries filled in.</p>` +
-    Object.entries(by).map(([d, fs]) => `<h2 class="day">${dayName(d)}</h2><div class="grid">${fs.map(fxCard).join('')}</div>`).join('');
+  const head = `<thead><tr><th class="n">Time</th><th>Host v visitor</th><th class="full" title="The two countries' meetings, host country's W–L: all, then with it hosting (home) and visiting (away)">Country H2H</th><th class="full" title="Host country at home and visitor country away: W–L, then wins above the odds in points">Venue form</th>` +
+    `<th class="n" title="The host's chance: opening odds (margin out) → model">Host chance</th><th class="n" title="Model fair odds, host above visitor">Fair odds</th><th class="n" title="Model chance × best price now − 1, better side; highlighted from +5%">Edge</th>` +
+    `<th class="n" title="Bookmakers' main points line · model chance of the over; the model's fair line below">Points</th><th class="n" title="Better side at the best price; highlighted: high-line unders from +3%">Pts edge</th></tr></thead>`;
+  return `<p class="note">The next Challenge Cup Women matches. <b>Country H2H</b> is the two countries' record over the last five seasons, all and with each one hosting (from the host country's side); <b>venue form</b> is the host country at home and the visitor country away, W–L and wins above the odds. Then the host's chance in the opening odds and in the model, the model's fair odds and edge, and the total points: line, model chance of the over and fair line. Click a match to open it in the projector.</p>` +
+    Object.entries(by).map(([d, fs]) => `<h2 class="day">${dayName(d)} <span class="muted" style="font-size:15px">${[...new Set(fs.map(f => f.round))].join(', ')}</span></h2><div class="card scroll"><table class="res fxl">${head}<tbody>${fs.sort((x, y) => x.time.localeCompare(y.time)).map(fxRow).join('')}</tbody></table></div>`).join('');
 }
 
 // --- Countries ------------------------------------------------------------------------------------------------
@@ -463,9 +461,10 @@ document.addEventListener('click', e => {
   const t = e.target.closest('[data-view],[data-sort],[data-rk],#mode button,#rksel button,a.go');
   if (!t) return;
   e.preventDefault();
-  if (t.dataset.fx){                                  // a match from today's table: its countries and opening odds
+  if (t.dataset.fx){                                  // a match from a fixtures list: into the projector with its countries and odds
     const f = DATA.fixtures.find(x => x.id === t.dataset.fx), r = fxPrice(f), cc = c => COUNTRIES.includes(c) ? c : OTHER;
-    Object.assign(st, {a: cc(f.hc), b: cc(f.ac), mode: f.leg === 2 ? 'two' : f.leg === 1 ? 'tie' : 'one', o1a: r.oh.toFixed(2), o1b: r.oa.toFixed(2), o2a: '', o2b: '',
+    view = 'projector';
+    Object.assign(st, {a: cc(f.hc), b: cc(f.ac), mode: f.leg === 2 ? 'two' : f.leg === 1 ? 'tie' : 'one', o1a: r ? r.oh.toFixed(2) : '', o1b: r ? r.oa.toFixed(2) : '', o2a: '', o2b: '',
       l1: f.ou ? String(f.ou.line) : '', ov1: f.ou ? f.ou.bo.toFixed(2) : '', un1: f.ou ? f.ou.bu.toFixed(2) : '', l2: '', ov2: '', un2: ''});
     writeHash(); render(); $('mode').scrollIntoView({block: 'center'}); return;
   }
