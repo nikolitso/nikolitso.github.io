@@ -1,8 +1,8 @@
 (function () {
   var D = window.CUP, GF = D.games;
   var STATS = [
-    ["goals", "Goals"], ["xg", "xG"], ["co", "Corners"], ["xgot", "xG on target"], ["shots", "Shots"], ["sot", "Shots on target"],
-    ["bc", "Big chances"], ["fouls", "Fouls"], ["gk", "Goal kicks"], ["ti", "Throw-ins"],
+    ["goals", "Goals"], ["xg", "xG"], ["xgot", "xG on target"], ["bc", "Big chances"], ["co", "Corners"],
+    ["shots", "Shots"], ["sot", "Shots on target"], ["fouls", "Fouls"], ["gk", "Goal kicks"], ["ti", "Throw-ins"],
     ["sv", "Goalkeeper saves"], ["cards", "Cards"]
   ];
   var SHORT = {goals: "Goals", xg: "xG", xgot: "xGOT", shots: "Shots", sot: "SoT", bc: "Big ch.", co: "Corners", fouls: "Fouls", gk: "Goal kicks", ti: "Throw-ins", sv: "Saves", cards: "Cards"};
@@ -23,7 +23,7 @@
     return '<div class="seg" id="per"><button data-p="0"' + (st.half ? '' : ' class="on"') + '>Full match</button><button data-p="1"' + (st.half ? ' class="on"' : '') + '>1st half</button></div>';
   }
   // wide tables show one group of stats at a time so they fit the page
-  var GROUPS = {att: ["goals", "xg", "co", "xgot", "shots", "sot", "bc"], oth: ["fouls", "gk", "ti", "sv", "cards"]};
+  var GROUPS = {att: ["goals", "xg", "xgot", "bc", "co", "shots", "sot"], oth: ["fouls", "gk", "ti", "sv", "cards"]};
   function COLS() { return STATS.filter(function (s) { return GROUPS[st.grp].indexOf(s[0]) >= 0; }); }
   function grpSeg() {
     return '<div class="seg grp"><button data-g="att"' + (st.grp === "att" ? ' class="on"' : '') + '>Attack</button><button data-g="oth"' + (st.grp === "oth" ? ' class="on"' : '') + '>Other</button></div>';
@@ -43,7 +43,8 @@
   function day(iso) { var d = new Date(iso + "T12:00:00"); return DAY[d.getDay()] + " " + d.getDate() + " " + MON[d.getMonth()]; }
   function f1(x) { return (Math.round(x * 10) / 10).toFixed(1); }
   function xl(t) { return String(t).replace(/xG/g, '<span style="text-transform:none">xG</span>'); }
-  function fk(k, x) { return XG[k] ? (Math.round(x * 100) / 100).toFixed(2) : f1(x); }
+  var DEC2 = {goals: 1, xg: 1, xgot: 1, cards: 1};   // averages shown with two decimals
+  function fk(k, x) { return DEC2[k] ? (Math.round(x * 100) / 100).toFixed(2) : f1(x); }
   function pct(x) { return Math.round(x * 100) + "%"; }
   function dates() { var r = {}; G.forEach(function (g) { r[g.date] = 1; }); return Object.keys(r).sort().reverse(); }
 
@@ -262,7 +263,7 @@
     h += '<div class="metrics"><div class="metric"><div class="lbl">Matches</div><div class="big">' + n + '</div></div>';
     [["goals", "Goals per game"], ["xg", "xG per game"], ["co", "Corners per game"], ["sot", "SoT per game"], ["shots", "Shots per game"], ["cards", "Cards per game"]].forEach(function (m) {
       var s = 0; G.forEach(function (g) { s += g[m[0]][0] + g[m[0]][1]; });
-      h += '<div class="metric"><div class="lbl">' + xl(m[1]) + '</div><div class="big">' + (m[0] === "goals" ? (s / n).toFixed(2) : fk(m[0], s / n)) + '</div></div>';
+      h += '<div class="metric"><div class="lbl">' + xl(m[1]) + '</div><div class="big">' + fk(m[0], s / n) + '</div></div>';
     });
     h += '</div>';
     h += '<div class="scroll"><table class="tt"><thead><tr><th>Stat</th><th class="n">Avg total</th><th class="n">Home</th><th class="n">Away</th><th class="n">Over line</th></tr></thead><tbody>';
