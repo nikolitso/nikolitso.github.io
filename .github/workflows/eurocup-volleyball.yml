@@ -1,0 +1,106 @@
+name: EuroCup and volleyball
+
+# The /eurocup/, /volleyball/ and /volleyball/challenge-cup-women/ pipelines (scripts and data in the private repo
+# nikolitso/BettingSignal), on GitHub instead of the PC. Each run: refresh from Flashscore (and the Euroleague API
+# for EuroCup box scores), rebuild the pages, publish them here, and save the updated data back to BettingSignal.
+# Needs the SITES_TOKEN secret with Contents read & write on nikolitso/BettingSignal.
+# Schedules keep the PC's old times (Athens, winter): EuroCup Mon-Thu 09:30; volleyball 09:00 and 13:00;
+# Challenge Cup Women 10:30, 15:30, 19:30 and 23:45. The "Update all sites" button runs all three.
+on:
+  schedule:
+    - cron: "30 7 * * 1-4"      # EuroCup
+    - cron: "0 7,11 * * *"      # volleyball
+    - cron: "30 8,13,17 * * *"  # Challenge Cup Women
+    - cron: "45 21 * * *"       # Challenge Cup Women
+  workflow_dispatch:            # Run workflow button: Actions tab, or the GitHub mobile app
+    inputs:
+      job:
+        description: "Which pipeline"
+        type: choice
+        options: [all, eurocup, volleyball, challenge-cup]
+        default: all
+
+permissions:
+  contents: write
+
+concurrency:
+  group: eurocup-volleyball
+  cancel-in-progress: false
+
+env:
+  # which pipelines this run covers: the schedule that fired it, or the button's choice
+  EUROCUP: ${{ github.event.schedule == '30 7 * * 1-4' || contains(fromJSON('["all","eurocup"]'), inputs.job) }}
+  VOLLEYBALL: ${{ github.event.schedule == '0 7,11 * * *' || contains(fromJSON('["all","volleyball"]'), inputs.job) }}
+  CHALLENGE: ${{ github.event.schedule == '30 8,13,17 * * *' || github.event.schedule == '45 21 * * *' || contains(fromJSON('["all","challenge-cup"]'), inputs.job) }}
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    env:
+      TZ: Europe/Athens
+      PYTHONIOENCODING: utf-8
+      SITE_REPO: ${{ github.workspace }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/checkout@v5
+        with:
+          repository: nikolitso/BettingSignal
+          token: ${{ secrets.SITES_TOKEN }}
+          path: _bs
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.14"
+      - run: |
+          pip install --quiet -r _bs/eurocup/requirements.txt -r _bs/volleyball/requirements.txt
+          playwright install --with-deps chromium
+
+      - name: EuroCup
+        id: eurocup
+        if: ${{ env.EUROCUP == 'true' }}
+        continue-on-error: true
+        working-directory: _bs/eurocup
+        run: python -u update.py --no-push
+
+      - name: Volleyball
+        id: volleyball
+        if: ${{ env.VOLLEYBALL == 'true' }}
+        continue-on-error: true
+        working-directory: _bs/volleyball
+        run: python -u update.py --no-push
+
+      - name: Challenge Cup Women
+        id: challenge
+        if: ${{ env.CHALLENGE == 'true' }}
+        continue-on-error: true
+        working-directory: _bs/volleyball/challenge-cup
+        run: python -u update.py --no-push
+
+      - name: Publish the pages
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add eurocup volleyball index.html
+          if git diff --cached --quiet; then echo "pages unchanged"; exit 0; fi
+          git commit -q -m "EuroCup and volleyball: refresh $(date '+%Y-%m-%d %H:%M')"
+          git pull -q --rebase
+          git push -q
+
+      - name: Save the data
+        working-directory: _bs
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then echo "data unchanged"; exit 0; fi
+          git commit -q -m "Refresh $(date '+%Y-%m-%d %H:%M')"
+          git pull -q --rebase
+          git push -q
+
+      - name: Result
+        run: |
+          bad=""
+          [ "${{ steps.eurocup.outcome }}" = "failure" ] && bad="$bad eurocup"
+          [ "${{ steps.volleyball.outcome }}" = "failure" ] && bad="$bad volleyball"
+          [ "${{ steps.challenge.outcome }}" = "failure" ] && bad="$bad challenge-cup"
+          if [ -n "$bad" ]; then echo "::error::failed:$bad"; exit 1; fi
+          echo "ok"
