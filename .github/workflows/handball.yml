@@ -1,0 +1,34 @@
+name: Handball
+
+# /handball/: refresh from Flashscore, rebuild the pages, publish them, save the ledgers to nikolitso/BettingSignal
+# (scripts in handball/projector there). Twice a day; the "Update all sites" button runs it too.
+on:
+  schedule:
+    - cron: "0 7,14 * * *"   # 09:00 and 16:00 Athens in winter (10:00 and 17:00 in summer)
+  workflow_dispatch:          # Run workflow button: Actions tab, or the GitHub mobile app
+
+permissions:
+  contents: write
+
+concurrency:
+  group: handball
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: ./.github/actions/pipeline
+        with:
+          dir: handball/projector
+          requirements: numpy scipy
+          run: |
+            python -W ignore run_update.py | tee /tmp/update.log
+            python ../site/make_site.py "$GITHUB_WORKSPACE/handball"
+          pages: handball
+          label: Handball
+          token: ${{ secrets.SITES_TOKEN }}
+      - name: Signals
+        if: ${{ always() }}
+        run: grep -h "^SIGNALS\|^SUMMARY" /tmp/update.log 2>/dev/null || true

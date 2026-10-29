@@ -1,4 +1,4 @@
-name: Update latest posts
+name: Homepage - latest posts
 
 on:
   schedule:

@@ -1,0 +1,30 @@
+name: Volleyball
+
+# /volleyball/: results and fixtures from Flashscore, odds, ratings, projections and picks, the page and the
+# homepage card. Scripts and data in nikolitso/BettingSignal (volleyball/). Twice a day; "Update all sites" too.
+on:
+  schedule:
+    - cron: "0 7,11 * * *"   # 09:00 and 13:00 Athens in winter (10:00 and 14:00 in summer)
+  workflow_dispatch:          # Run workflow button: Actions tab, or the GitHub mobile app
+
+permissions:
+  contents: write
+
+concurrency:
+  group: volleyball
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: ./.github/actions/pipeline
+        with:
+          dir: volleyball
+          requirements: -r _bs/volleyball/requirements.txt
+          browser: "true"
+          run: python -u update.py --no-push
+          pages: volleyball/data.js volleyball/index.html index.html
+          label: Volleyball
+          token: ${{ secrets.SITES_TOKEN }}

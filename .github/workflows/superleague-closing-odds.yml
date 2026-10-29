@@ -1,4 +1,4 @@
-name: Super League closing odds
+name: Super League
 
 # Every 15 minutes from 12:00 to 23:45 Athens (winter time): Superbet's odds for the Super League
 # games kicking off within 45 minutes, saved on the "odds" branch (see close.py there). The site

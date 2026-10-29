@@ -3,8 +3,8 @@ name: Update all sites
 # One button for everything: hit "Run workflow" (Actions tab, or the GitHub mobile app) and this runs
 # every update job in order, waiting for each one:
 #   1. PAOK Basketball stats (nikolitso/paok-basketball "Update stats"), then waits for its deploy
-#   2. Wine music, latest posts, FIBA Europe Cup (results, odds, fixtures), handball and basketball,
-#      EuroCup, volleyball and Challenge Cup Women
+#   2. Wine music, latest posts, FIBA Europe Cup (results, odds, fixtures), then handball, basketball,
+#      EuroCup, volleyball and Challenge Cup Women side by side
 #   3. Project pills and screenshots last, so they read the freshly updated sites
 # Step 1 is in another repo, so it needs the SITES_TOKEN secret: a fine-grained token with
 # Actions read & write on nikolitso/paok-basketball. Without it that step is skipped.
@@ -71,13 +71,15 @@ jobs:
         if: ${{ !cancelled() }}
         run: /tmp/run.sh ${{ github.repository }} fiba-europe-cup.yml
 
-      - name: Handball and basketball
+      - name: Handball, basketball, EuroCup, volleyball, Challenge Cup Women
         if: ${{ !cancelled() }}
-        run: /tmp/run.sh ${{ github.repository }} handball-basketball.yml
-
-      - name: EuroCup and volleyball
-        if: ${{ !cancelled() }}
-        run: /tmp/run.sh ${{ github.repository }} eurocup-volleyball.yml
+        run: |
+          # independent pipelines: run them side by side, fail if any failed
+          pids=(); for wf in handball.yml basketball.yml eurocup.yml volleyball.yml challenge-cup.yml; do
+            /tmp/run.sh ${{ github.repository }} $wf > /tmp/$wf.log 2>&1 & pids+=($!)
+          done
+          rc=0; for p in "${pids[@]}"; do wait $p || rc=1; done
+          cat /tmp/*.yml.log; exit $rc
 
       - name: Project pills and screenshots
         if: ${{ !cancelled() }}

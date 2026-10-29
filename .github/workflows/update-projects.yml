@@ -1,4 +1,4 @@
-name: Update project pills
+name: Homepage - project pills and screenshots
 
 # Every morning (about 06:30 Athens): read the live project sites, refresh the pills on the
 # homepage's project cards (scripts/update_projects.py) and retake their screenshots

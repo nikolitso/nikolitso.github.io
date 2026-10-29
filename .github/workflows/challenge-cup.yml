@@ -1,0 +1,31 @@
+name: Challenge Cup Women
+
+# /volleyball/challenge-cup-women/: fixtures, odds and results, H2H tables, totals lines, projector refit, page data.
+# Scripts and data in nikolitso/BettingSignal (volleyball/challenge-cup). Four times a day; "Update all sites" too.
+on:
+  schedule:
+    - cron: "30 8,13,17 * * *"   # 10:30, 15:30 and 19:30 Athens in winter (an hour later in summer)
+    - cron: "45 21 * * *"        # 23:45 Athens in winter (00:45 in summer)
+  workflow_dispatch:              # Run workflow button: Actions tab, or the GitHub mobile app
+
+permissions:
+  contents: write
+
+concurrency:
+  group: challenge-cup
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: ./.github/actions/pipeline
+        with:
+          dir: volleyball/challenge-cup
+          requirements: -r _bs/volleyball/requirements.txt
+          browser: "true"
+          run: python -u update.py --no-push
+          pages: volleyball/challenge-cup-women
+          label: Challenge Cup Women
+          token: ${{ secrets.SITES_TOKEN }}

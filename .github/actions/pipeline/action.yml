@@ -1,0 +1,72 @@
+name: Run a BettingSignal pipeline
+description: >
+  Check out the private repo nikolitso/BettingSignal, run one of its pipelines, publish the pages it wrote
+  here, and save its refreshed data back to BettingSignal. Used by the Handball, Basketball, EuroCup,
+  Volleyball and Challenge Cup Women workflows. If the pipeline fails nothing is published or saved.
+inputs:
+  dir:
+    description: Folder inside BettingSignal to run in (e.g. eurocup, handball/projector)
+    required: true
+  run:
+    description: The command(s) that refresh and rebuild the pages
+    required: true
+  requirements:
+    description: pip arguments (package names or -r files, paths from the repo root)
+    default: ""
+  browser:
+    description: "true to install Playwright's Chromium"
+    default: "false"
+  pages:
+    description: Paths in this repo to publish (space-separated)
+    required: true
+  label:
+    description: Commit message prefix, e.g. EuroCup
+    required: true
+  token:
+    description: SITES_TOKEN (Contents read & write on nikolitso/BettingSignal)
+    required: true
+runs:
+  using: composite
+  steps:
+    - uses: actions/checkout@v5
+      with:
+        repository: nikolitso/BettingSignal
+        token: ${{ inputs.token }}
+        path: _bs
+    - uses: actions/setup-python@v6
+      with:
+        python-version: "3.14"
+    - name: Install
+      shell: bash
+      run: |
+        if [ -n "${{ inputs.requirements }}" ]; then pip install --quiet ${{ inputs.requirements }}; fi
+        if [ "${{ inputs.browser }}" = "true" ]; then playwright install --with-deps chromium; fi
+    - name: Update
+      shell: bash
+      working-directory: _bs/${{ inputs.dir }}
+      env:
+        TZ: Europe/Athens
+        PYTHONIOENCODING: utf-8
+        SITE_REPO: ${{ github.workspace }}
+      run: ${{ inputs.run }}
+    - name: Publish the pages
+      shell: bash
+      run: |
+        git config user.name "github-actions[bot]"
+        git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        git add ${{ inputs.pages }}
+        if git diff --cached --quiet; then echo "pages unchanged"; exit 0; fi
+        git commit -q -m "${{ inputs.label }}: refresh $(TZ=Europe/Athens date '+%Y-%m-%d %H:%M')"
+        git pull -q --rebase
+        git push -q
+    - name: Save the data
+      shell: bash
+      working-directory: _bs
+      run: |
+        git config user.name "github-actions[bot]"
+        git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        git add -A
+        if git diff --cached --quiet; then echo "data unchanged"; exit 0; fi
+        git commit -q -m "${{ inputs.label }}: refresh $(TZ=Europe/Athens date '+%Y-%m-%d %H:%M')"
+        git pull -q --rebase
+        git push -q

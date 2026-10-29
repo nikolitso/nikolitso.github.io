@@ -1,0 +1,30 @@
+name: EuroCup
+
+# /eurocup/: results, groups, lines and rosters from Flashscore and the Euroleague API, projections, publish.
+# Scripts and data in nikolitso/BettingSignal (eurocup/). Mon-Thu mornings; "Update all sites" runs it too.
+on:
+  schedule:
+    - cron: "30 7 * * 1-4"   # 09:30 Athens in winter (10:30 in summer), Monday to Thursday
+  workflow_dispatch:          # Run workflow button: Actions tab, or the GitHub mobile app
+
+permissions:
+  contents: write
+
+concurrency:
+  group: eurocup
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: ./.github/actions/pipeline
+        with:
+          dir: eurocup
+          requirements: -r _bs/eurocup/requirements.txt
+          browser: "true"
+          run: python -u update.py --no-push
+          pages: eurocup
+          label: EuroCup
+          token: ${{ secrets.SITES_TOKEN }}
