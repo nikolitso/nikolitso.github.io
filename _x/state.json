@@ -145,7 +145,8 @@
       "smart-sports-betting-advanced-stats",
       "the-drunkards-walk-how-randomness",
       "the-gold-mine-effect-crack-the-secrets",
-      "inside-the-box-how-constraints-make"
+      "inside-the-box-how-constraints-make",
+      "how-to-find-the-right-words"
     ],
     "log": [
       {
@@ -345,6 +346,12 @@
         "slot": "2026-10-29 02",
         "slug": "inside-the-box-how-constraints-make",
         "id": "2115607222889951410"
+      },
+      {
+        "day": "2026-10-29",
+        "slot": "2026-10-29 14",
+        "slug": "how-to-find-the-right-words",
+        "id": "2115775841640882218"
       }
     ],
     "last_day": "2026-10-29"
@@ -754,7 +761,7 @@
     ],
     "last_day": "2026-10-29"
   },
-  "last_slot": "2026-10-29 11",
+  "last_slot": "2026-10-29 14",
   "quote": {
     "seen": [
       "1",
