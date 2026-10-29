@@ -1,0 +1,38 @@
+name: PAOK Hub
+
+# PAOK Hub (nikolitso/paok-hub): every finished Super League match is read once from Flashscore (the same Opta
+# statistics as Scoresway, plus xG, big chances, referee, attendance) into the season file, then the league-wide
+# pages are rebuilt: Teams Stats, Opponents Stats, The Expected Table, PAOK vs Big-3, PAOK vs Rest.
+# Scripts and the season file live in nikolitso/BettingSignal (paok-hub/); the pages are pushed to nikolitso/paok-hub,
+# so SITES_TOKEN needs Contents read & write on that repo too. A run with no new match publishes nothing.
+# PAOK's player pages, vs-opponents, refs and match reports are still updated by hand (see the paok-hub-update skill).
+on:
+  schedule:
+    - cron: "45 21 * * *"   # 23:45 Athens in winter (00:45 in summer): the evening's matches are final
+    - cron: "0 8 * * *"     # 10:00 Athens in winter (11:00 in summer)
+  workflow_dispatch:         # Run workflow button: Actions tab, or the GitHub mobile app
+
+permissions:
+  contents: read
+
+concurrency:
+  group: paok-hub
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: ./.github/actions/pipeline
+        with:
+          dir: paok-hub
+          requirements: -r _bs/paok-hub/requirements.txt
+          browser: "true"
+          run: |
+            python -X utf8 -u fs_match.py new --write
+            python -X utf8 -u build_league_pages.py auto
+          pages: teams-stats.html opponents-stats.html league-standings.html paok-vs-big3.html paok-vs-rest.html
+          label: PAOK Hub
+          site: nikolitso/paok-hub
+          token: ${{ secrets.SITES_TOKEN }}
