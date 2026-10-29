@@ -144,7 +144,8 @@
       "maximize-your-potential",
       "smart-sports-betting-advanced-stats",
       "the-drunkards-walk-how-randomness",
-      "the-gold-mine-effect-crack-the-secrets"
+      "the-gold-mine-effect-crack-the-secrets",
+      "inside-the-box-how-constraints-make"
     ],
     "log": [
       {
@@ -338,9 +339,15 @@
         "slot": "2026-10-28 14",
         "slug": "the-gold-mine-effect-crack-the-secrets",
         "id": "2115473030038061201"
+      },
+      {
+        "day": "2026-10-29",
+        "slot": "2026-10-29 02",
+        "slug": "inside-the-box-how-constraints-make",
+        "id": "2115607222889951410"
       }
     ],
-    "last_day": "2026-10-28"
+    "last_day": "2026-10-29"
   },
   "film": {
     "seen": [
@@ -740,7 +747,7 @@
     ],
     "last_day": "2026-10-28"
   },
-  "last_slot": "2026-10-28 20",
+  "last_slot": "2026-10-29 02",
   "quote": {
     "seen": [
       "1",
