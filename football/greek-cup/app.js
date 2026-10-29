@@ -323,8 +323,8 @@
     out.querySelectorAll("#tch .chip").forEach(function (b) { b.onclick = function () { st.tier = b.dataset.t; tiers(); }; });
   }
 
-  // ---------- home (the page with no tab chosen) ----------
-  function home() {
+  // ---------- how it works ----------
+  function how() {
     var dv = {}; GF.forEach(function (g) { dv[g.home] = g.div[0]; dv[g.away] = g.div[1]; });
     var sl2 = Object.keys(dv).filter(function (k) { return dv[k] === "SL2"; }).sort();
     var links = [["stats", "Stats", "per-game averages and over lines"], ["tier", "By tier", "SL1 v SL1, SL1 v SL2, SL2 v SL2"],
@@ -346,12 +346,13 @@
   }
 
   // ---------- tabs ----------
-  var VIEWS = {matches: matches, teams: teams, stats: stats, h1: firstHalf, tier: tiers, odds: byOdds, home: home};
+  var VIEWS = {matches: matches, teams: teams, stats: stats, h1: firstHalf, tier: tiers, odds: byOdds, how: how};
   function go(v) {
     if (v === "totals") v = "stats";   // old link
-    st.view = VIEWS[v] ? v : "home";   // no tab chosen (or the old about link): the home page
+    if (v === "about" || v === "home") v = "how";   // old links
+    st.view = VIEWS[v] ? v : "stats";   // no tab chosen: the page opens on Stats
     document.querySelectorAll("#tabs a").forEach(function (a) { a.classList.toggle("on", a.dataset.view === st.view); });
-    var want = st.view === "home" ? "" : "#view=" + st.view;
+    var want = st.view === "stats" ? "" : "#view=" + st.view;
     if (location.hash !== want) history.replaceState(null, "", location.pathname + want);
     VIEWS[st.view]();
   }
