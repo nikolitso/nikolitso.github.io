@@ -1,6 +1,6 @@
 // Pre-game bookmaker lines for played EuroCup games (fs_odds.py).
 // bh = handicap home minus away, bt = points total; main line = most even odds.
-window.MARKET = {"updated": "2026-10-21", "list": [
+window.MARKET = {"updated": "2026-10-28", "list": [
 {"date": "2026-09-29", "h": "Hapoel Jerusalem", "a": "Rostock", "bh": 14.5, "bt": 170.5},
 {"date": "2026-09-29", "h": "Le Mans", "a": "Aris", "bh": -8.5, "bt": 167.5},
 {"date": "2026-09-29", "h": "Neptunas", "a": "Trento", "bh": -1.5, "bt": 171.5},
@@ -64,5 +64,21 @@ window.MARKET = {"updated": "2026-10-21", "list": [
 {"date": "2026-10-21", "h": "KK Bosna", "a": "Bahcesehir Kol.", "bh": -10.5, "bt": 166.5},
 {"date": "2026-10-21", "h": "Maxima Roma", "a": "Venezia", "bh": 3.5, "bt": 174.5},
 {"date": "2026-10-21", "h": "PAOK", "a": "Ulm", "bh": 13.5, "bt": 173.5},
-{"date": "2026-10-21", "h": "Tortona", "a": "San Pablo Burgos", "bh": 4.5, "bt": 172.5}
+{"date": "2026-10-21", "h": "Tortona", "a": "San Pablo Burgos", "bh": 4.5, "bt": 172.5},
+{"date": "2026-10-27", "h": "BC Roma", "a": "KK Bosna", "bh": 6.5, "bt": 173.5},
+{"date": "2026-10-27", "h": "Bahcesehir Kol.", "a": "PAOK", "bh": 6.5, "bt": 169.5},
+{"date": "2026-10-27", "h": "Balkan", "a": "Manresa", "bh": -9.5, "bt": 171.5},
+{"date": "2026-10-27", "h": "Frankfurt", "a": "Cluj-Napoca", "bh": -2.5, "bt": 175.5},
+{"date": "2026-10-27", "h": "Lietkabelis", "a": "Ulm", "bh": 3.5, "bt": 168.5},
+{"date": "2026-10-27", "h": "Trento", "a": "Buducnost", "bh": -4.5, "bt": 171.5},
+{"date": "2026-10-28", "h": "Aris", "a": "Cedevita Olimpija", "bh": 13.5, "bt": 166.5},
+{"date": "2026-10-28", "h": "Chemnitz", "a": "JL Bourg", "bh": 3.5, "bt": 169.5},
+{"date": "2026-10-28", "h": "Le Mans", "a": "Hapoel Jerusalem", "bh": -6.5, "bt": 166.5},
+{"date": "2026-10-28", "h": "London Lions", "a": "Turk Telekom", "bh": -2.5, "bt": 159.5},
+{"date": "2026-10-28", "h": "Neptunas", "a": "Basket Napoli", "bh": -4.5, "bt": 177.5},
+{"date": "2026-10-28", "h": "San Pablo Burgos", "a": "Rigas Zelli", "bh": 10.5, "bt": 171.5},
+{"date": "2026-10-28", "h": "Siauliai", "a": "Maxima Roma", "bh": -7.5, "bt": 167.5},
+{"date": "2026-10-28", "h": "Slask Wroclaw", "a": "Tofas", "bh": -8.5, "bt": 170.5},
+{"date": "2026-10-28", "h": "Tenerife", "a": "Venezia", "bh": 10.5, "bt": 170.5},
+{"date": "2026-10-28", "h": "Tortona", "a": "Rostock", "bh": 7.5, "bt": 170.5}
 ]};
