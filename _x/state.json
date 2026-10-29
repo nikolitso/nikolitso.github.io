@@ -583,7 +583,8 @@
       "happiness",
       "the-commune",
       "the-priests-children",
-      "volcano"
+      "volcano",
+      "omar"
     ],
     "log": [
       {
@@ -743,11 +744,17 @@
         "slot": "2026-10-28 20",
         "slug": "volcano",
         "id": "2115549195692040425"
+      },
+      {
+        "day": "2026-10-29",
+        "slot": "2026-10-29 08",
+        "slug": "omar",
+        "id": "2115699985455124596"
       }
     ],
-    "last_day": "2026-10-28"
+    "last_day": "2026-10-29"
   },
-  "last_slot": "2026-10-29 02",
+  "last_slot": "2026-10-29 08",
   "quote": {
     "seen": [
       "1",
