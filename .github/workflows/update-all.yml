@@ -7,8 +7,13 @@ name: Update all sites
 #   3. Project pills and screenshots last, so they read the freshly updated sites
 # Step 1 is in another repo, so it needs the SITES_TOKEN secret: a fine-grained token with
 # Actions read & write on nikolitso/paok-basketball. Without it that step is skipped.
+# Also runs on its own three times a day. GitHub crons are UTC and often start some minutes late.
 on:
   workflow_dispatch:
+  schedule:
+    - cron: "0 7 * * *"    # 09:00 Athens in winter (10:00 in summer)
+    - cron: "0 12 * * *"   # 14:00 Athens in winter (15:00 in summer)
+    - cron: "59 21 * * *"  # 23:59 Athens in winter (00:59 in summer)
 
 permissions:
   actions: write
