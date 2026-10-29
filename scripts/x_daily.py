@@ -363,8 +363,17 @@ def main():
             if (state.get(kind) or {}).get("last_day") == now.date().isoformat():
                 state["last_slot"] = key
         if state.get("last_slot") == key:
-            print(f"slot {key} ({kind}): already posted"); return
-        if pick_and_post(state, kind, dry, key):
+            # The quote slot is the only one of its kind each day, so a run that comes after the next slot
+            # has started (GitHub's schedule often runs hours late) still posts it, once, until midnight.
+            qhour = next(h for h, k in SLOTS if k == "quote")
+            qkey = f"{now.date().isoformat()} {qhour:02d}"
+            logged = {e["slot"] for e in (state.get("quote") or {}).get("log", [])}
+            if now.hour >= qhour and qkey not in logged and pick_and_post(state, "quote", dry, qkey):
+                print(f"slot {key} ({kind}): already posted; posted today's missed quote instead")
+            else:
+                print(f"slot {key} ({kind}): already posted")
+            if dry: return
+        elif pick_and_post(state, kind, dry, key):
             state["last_slot"] = key
     else:
         if "--force" not in args:
