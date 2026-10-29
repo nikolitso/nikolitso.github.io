@@ -1,0 +1,32 @@
+name: Greek Cup
+
+# /football/greek-cup/: each finished game read once from Flashscore (stats, xG, cards, referee, odds), then the
+# page data is rebuilt. Scripts and data in nikolitso/BettingSignal (greek-cup/). Twice a day; "Update all
+# sites" runs it too. A run with no new game publishes nothing.
+on:
+  schedule:
+    - cron: "0 8 * * *"     # 10:00 Athens in winter (11:00 in summer)
+    - cron: "45 21 * * *"   # 23:45 Athens in winter (00:45 in summer)
+  workflow_dispatch:         # Run workflow button: Actions tab, or the GitHub mobile app
+
+permissions:
+  contents: write
+
+concurrency:
+  group: greek-cup
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: ./.github/actions/pipeline
+        with:
+          dir: greek-cup
+          requirements: -r _bs/greek-cup/requirements.txt
+          browser: "true"
+          run: python -u update.py --no-push
+          pages: football/greek-cup
+          label: Greek Cup
+          token: ${{ secrets.SITES_TOKEN }}
