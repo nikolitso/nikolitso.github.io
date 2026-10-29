@@ -591,7 +591,8 @@
       "the-commune",
       "the-priests-children",
       "volcano",
-      "omar"
+      "omar",
+      "victoria"
     ],
     "log": [
       {
@@ -757,11 +758,17 @@
         "slot": "2026-10-29 08",
         "slug": "omar",
         "id": "2115699985455124596"
+      },
+      {
+        "day": "2026-10-29",
+        "slot": "2026-10-29 20",
+        "slug": "victoria",
+        "id": "2115866438296556008"
       }
     ],
     "last_day": "2026-10-29"
   },
-  "last_slot": "2026-10-29 14",
+  "last_slot": "2026-10-29 20",
   "quote": {
     "seen": [
       "1",
