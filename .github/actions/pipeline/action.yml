@@ -68,8 +68,9 @@ runs:
         git add ${{ inputs.pages }}
         if git diff --cached --quiet; then echo "pages unchanged"; exit 0; fi
         git commit -q -m "${{ inputs.label }}: refresh $(TZ=Europe/Athens date '+%Y-%m-%d %H:%M')"
-        git pull -q --rebase
-        git push -q
+        # several pipelines push at once: on a rejected push, rebase and try again
+        for i in 1 2 3 4 5; do git pull -q --rebase && git push -q && exit 0; sleep $((RANDOM % 10 + 5)); done
+        exit 1
     - name: Save the data
       shell: bash
       working-directory: _bs
@@ -79,5 +80,6 @@ runs:
         git add -A
         if git diff --cached --quiet; then echo "data unchanged"; exit 0; fi
         git commit -q -m "${{ inputs.label }}: refresh $(TZ=Europe/Athens date '+%Y-%m-%d %H:%M')"
-        git pull -q --rebase
-        git push -q
+        # several pipelines push at once: on a rejected push, rebase and try again
+        for i in 1 2 3 4 5; do git pull -q --rebase && git push -q && exit 0; sleep $((RANDOM % 10 + 5)); done
+        exit 1
