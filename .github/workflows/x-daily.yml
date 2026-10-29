@@ -9,9 +9,9 @@ on:
   workflow_dispatch:
     inputs:
       kind:
-        description: "What to post (auto = the regular check: the current slot, if not posted yet)"
+        description: "What to post (auto = the regular check: the current slot, if not posted yet; redo-quote = delete the last quote and post it again)"
         type: choice
-        options: [book, film, quote, auto]
+        options: [book, film, quote, auto, redo-quote]
         default: book
       dry_run:
         description: "Dry run (show the post, don't publish)"
@@ -49,6 +49,7 @@ jobs:
           if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.kind }}" != "auto" ]; then
             KIND="${{ inputs.kind }}"
             FLAGS="--force"
+            if [ "$KIND" = "redo-quote" ]; then KIND="quote"; FLAGS="redo $FLAGS"; fi
             if [ "${{ inputs.dry_run }}" = "true" ]; then FLAGS="$FLAGS --dry-run"; fi
             python scripts/x_daily.py "$KIND" $FLAGS
           else

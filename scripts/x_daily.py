@@ -3,6 +3,7 @@
 
 Usage:  python scripts/x_daily.py auto [--dry-run]                (scheduled: post the current slot if not done)
         python scripts/x_daily.py book|film|quote --force [--dry-run]  (manual: post one now)
+        python scripts/x_daily.py redo quote --force                     (delete the last one and post it again)
 
 - New additions go first, newest first; otherwise a random pick from what this
   round hasn't posted yet. When everything has been posted, a new round starts.
@@ -274,10 +275,10 @@ def compose(kind, it, variant=0):
 
 
 # ---------------------------------------------------------------- X API (OAuth 1.0a, user context)
-def post_to_x(text, reply_to=None):
+def x_auth(method, url):
+    """OAuth 1.0a header for one X API v2 call (JSON body: not part of the signature)."""
     key, sec = os.environ["X_API_KEY"], os.environ["X_API_KEY_SECRET"]
     tok, tsec = os.environ["X_ACCESS_TOKEN"], os.environ["X_ACCESS_TOKEN_SECRET"]
-    url = "https://api.x.com/2/tweets"
     oauth = {
         "oauth_consumer_key": key, "oauth_nonce": secrets.token_hex(16),
         "oauth_signature_method": "HMAC-SHA1", "oauth_timestamp": str(int(time.time())),
@@ -285,10 +286,22 @@ def post_to_x(text, reply_to=None):
     }
     q = lambda s: urllib.parse.quote(str(s), safe="~")
     params = "&".join(f"{q(k)}={q(v)}" for k, v in sorted(oauth.items()))
-    base = "&".join(["POST", q(url), q(params)])
+    base = "&".join([method, q(url), q(params)])
     sig = base64.b64encode(hmac.new(f"{q(sec)}&{q(tsec)}".encode(), base.encode(), hashlib.sha1).digest()).decode()
     oauth["oauth_signature"] = sig
-    header = "OAuth " + ", ".join(f'{q(k)}="{q(v)}"' for k, v in sorted(oauth.items()))
+    return "OAuth " + ", ".join(f'{q(k)}="{q(v)}"' for k, v in sorted(oauth.items()))
+
+
+def delete_from_x(tweet_id):
+    url = f"https://api.x.com/2/tweets/{tweet_id}"
+    req = urllib.request.Request(url, method="DELETE", headers={"Authorization": x_auth("DELETE", url)})
+    with urllib.request.urlopen(req, timeout=30) as r:
+        return json.loads(r.read())["data"]["deleted"]
+
+
+def post_to_x(text, reply_to=None):
+    url = "https://api.x.com/2/tweets"
+    header = x_auth("POST", url)
     body = {"text": text}
     if reply_to:
         body["reply"] = {"in_reply_to_tweet_id": reply_to}
@@ -302,7 +315,8 @@ def post_to_x(text, reply_to=None):
 
 
 # ---------------------------------------------------------------- scheduling
-def pick_and_post(state, kind, dry, slot_key):
+def pick_and_post(state, kind, dry, slot_key, redo=None):
+    """redo: the log entry of a post to delete and send again (same item, a fresh link so X refetches the preview)."""
     catalogue = {"book": books, "film": films, "quote": quotes}[kind]()
     if not catalogue:
         sys.exit(f"No {kind}s found")
@@ -311,7 +325,15 @@ def pick_and_post(state, kind, dry, slot_key):
         st.update(seen=sorted(catalogue), round=1, posted=[], log=[])
 
     new = [s for s in catalogue if s not in st["seen"]]
-    if new:
+    if redo:
+        slug = redo["slug"]
+        if slug not in catalogue:
+            sys.exit(f"{kind} {slug} is no longer in the catalogue")
+        n = redo.get("redo", 0) + 1
+        sep = "&" if "?" in catalogue[slug]["url"] else "?"
+        base, _, anchor = catalogue[slug]["url"].partition("#")
+        catalogue[slug]["url"] = f"{base}{sep}v={n}" + (f"#{anchor}" if anchor else "")
+    elif new:
         slug = max(new, key=lambda s: catalogue[s]["date"])
     else:
         left = [s for s in catalogue if s not in st["posted"]]
@@ -326,15 +348,21 @@ def pick_and_post(state, kind, dry, slot_key):
     if dry:
         print("dry run: nothing posted, state unchanged")
         return False
+    if redo:
+        delete_from_x(redo["id"])
+        print(f"deleted: https://x.com/nikolitso/status/{redo['id']}")
     tweet_id = post_to_x(posts[0])
     reply = tweet_id
     for extra in posts[1:]:                         # long quotes: the rest as a thread under the first post
         reply = post_to_x(extra, reply_to=reply)
     today = datetime.now(ATHENS).date().isoformat()
     st["seen"] = sorted(set(st["seen"]) | {slug})
-    st["posted"].append(slug)
-    st["last_day"] = today
-    st["log"].append({"day": today, "slot": slot_key, "slug": slug, "id": tweet_id})
+    if redo:
+        redo.update(id=tweet_id, redo=redo.get("redo", 0) + 1)
+    else:
+        st["posted"].append(slug)
+        st["last_day"] = today
+        st["log"].append({"day": today, "slot": slot_key, "slug": slug, "id": tweet_id})
     print(f"posted: https://x.com/nikolitso/status/{tweet_id}")
     return True
 
@@ -352,7 +380,7 @@ def main():
     args = sys.argv[1:]
     mode = next((a for a in args if a in ("auto", "book", "film", "quote")), None)
     if not mode:
-        sys.exit("usage: x_daily.py auto | book|film|quote --force [--dry-run]")
+        sys.exit("usage: x_daily.py auto | book|film|quote --force [--dry-run] | redo book|film|quote --force")
     dry = "--dry-run" in args or not os.environ.get("X_API_KEY")
     state = json.loads(STATE.read_text(encoding="utf-8")) if STATE.exists() else {}
     now = datetime.now(ATHENS)
@@ -375,6 +403,15 @@ def main():
             if dry: return
         elif pick_and_post(state, kind, dry, key):
             state["last_slot"] = key
+    elif "redo" in args:
+        # delete the last post of this kind and send it again (e.g. after fixing its link preview)
+        if "--force" not in args:
+            sys.exit("redo deletes the last post and reposts it; add --force to confirm")
+        log = (state.get(mode) or {}).get("log") or []
+        if not log:
+            sys.exit(f"no {mode} post on record")
+        if not pick_and_post(state, mode, dry, log[-1]["slot"], redo=log[-1]):
+            return
     else:
         if "--force" not in args:
             sys.exit("book/film/quote posts immediately; add --force to confirm (scheduled posting uses: auto)")
