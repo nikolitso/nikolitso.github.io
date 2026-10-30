@@ -146,7 +146,8 @@
       "the-drunkards-walk-how-randomness",
       "the-gold-mine-effect-crack-the-secrets",
       "inside-the-box-how-constraints-make",
-      "how-to-find-the-right-words"
+      "how-to-find-the-right-words",
+      "everything-is-predictable"
     ],
     "log": [
       {
@@ -352,9 +353,15 @@
         "slot": "2026-10-29 14",
         "slug": "how-to-find-the-right-words",
         "id": "2115775841640882218"
+      },
+      {
+        "day": "2026-10-30",
+        "slot": "2026-10-30 02",
+        "slug": "everything-is-predictable",
+        "id": "2115957035527454869"
       }
     ],
-    "last_day": "2026-10-29"
+    "last_day": "2026-10-30"
   },
   "film": {
     "seen": [
@@ -768,7 +775,7 @@
     ],
     "last_day": "2026-10-29"
   },
-  "last_slot": "2026-10-29 20",
+  "last_slot": "2026-10-30 02",
   "quote": {
     "seen": [
       "1",
