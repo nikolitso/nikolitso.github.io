@@ -607,7 +607,8 @@
       "volcano",
       "omar",
       "victoria",
-      "perfect-strangers"
+      "perfect-strangers",
+      "life-in-a-fishbowl"
     ],
     "log": [
       {
@@ -785,11 +786,17 @@
         "slot": "2026-10-30 08",
         "slug": "perfect-strangers",
         "id": "2116047630564536725"
+      },
+      {
+        "day": "2026-10-30",
+        "slot": "2026-10-30 20",
+        "slug": "life-in-a-fishbowl",
+        "id": "2116228842012737690"
       }
     ],
     "last_day": "2026-10-30"
   },
-  "last_slot": "2026-10-30 14",
+  "last_slot": "2026-10-30 20",
   "quote": {
     "seen": [
       "1",
