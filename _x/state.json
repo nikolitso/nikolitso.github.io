@@ -599,7 +599,8 @@
       "the-priests-children",
       "volcano",
       "omar",
-      "victoria"
+      "victoria",
+      "perfect-strangers"
     ],
     "log": [
       {
@@ -771,11 +772,17 @@
         "slot": "2026-10-29 20",
         "slug": "victoria",
         "id": "2115866438296556008"
+      },
+      {
+        "day": "2026-10-30",
+        "slot": "2026-10-30 08",
+        "slug": "perfect-strangers",
+        "id": "2116047630564536725"
       }
     ],
-    "last_day": "2026-10-29"
+    "last_day": "2026-10-30"
   },
-  "last_slot": "2026-10-30 02",
+  "last_slot": "2026-10-30 08",
   "quote": {
     "seen": [
       "1",
