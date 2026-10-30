@@ -147,7 +147,8 @@
       "the-gold-mine-effect-crack-the-secrets",
       "inside-the-box-how-constraints-make",
       "how-to-find-the-right-words",
-      "everything-is-predictable"
+      "everything-is-predictable",
+      "storytelling-with-data-a-data-visualization"
     ],
     "log": [
       {
@@ -359,6 +360,12 @@
         "slot": "2026-10-30 02",
         "slug": "everything-is-predictable",
         "id": "2115957035527454869"
+      },
+      {
+        "day": "2026-10-30",
+        "slot": "2026-10-30 14",
+        "slug": "storytelling-with-data-a-data-visualization",
+        "id": "2116138222551970291"
       }
     ],
     "last_day": "2026-10-30"
@@ -782,7 +789,7 @@
     ],
     "last_day": "2026-10-30"
   },
-  "last_slot": "2026-10-30 11",
+  "last_slot": "2026-10-30 14",
   "quote": {
     "seen": [
       "1",
