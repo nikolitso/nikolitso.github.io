@@ -230,6 +230,11 @@ function refHtml(r){
     const x = refRecord(r.name);
     return `<div class="ref">Referee <b>${refLink(r.name)}</b>${r.from ? ` (${r.from})` : ''} · ${x ? `${x.games} league game${x.games === 1 ? '' : 's'} since 2024–25${x.partial ? ' read so far' : ''}, <b>${x.cards.toFixed(1)}</b> cards per game` : 'no league games since 2024–25 in the data'} · appointed after the last model update, not in these projections yet</div>`;
   }
+  // appointed after the last model update: factor estimated on this page (see "How it works"), applied to cards and fouls
+  if (r.est){
+    const fl = r.fouls_games ? `fouls ${mult(r.fouls)} (${r.fouls_games} game${r.fouls_games === 1 ? '' : 's'} this season)` : 'fouls ×1.00 (no games this season)';
+    return `<div class="ref" title="Appointed after the last model update. Factors estimated from the referee's record, pulled hard toward ×1.00; the model's own factor replaces them at its next update.">Referee <b>${refLink(r.name)}</b>${r.country ? ` (${r.country})` : ''} · ${r.games ? `${r.games} game${r.games === 1 ? '' : 's'} since 2024–25${r.partial ? ' read so far' : ''}, <b>${r.avg.cards.toFixed(1)}</b> cards per game` : 'no league games since 2024–25'} · cards ${mult(r.cards)} · ${fl} · <span class="muted">estimated factors</span></div>`;
+  }
   if (!r.games) return `<div class="ref">Referee <b>${r.name}</b> · no league games since ${r.from.replace('-', '–')} · no adjustment</div>`;
   return `<div class="ref">Referee <b>${r.name}</b> · ${refWindow(r)} · <b>${r.avg.cards.toFixed(1)}</b> cards (${mult(r.cards)}) · <b>${r.avg.fouls.toFixed(1)}</b> fouls (${mult(r.fouls)}) per game</div>`;
 }
@@ -258,6 +263,7 @@ function renderProjections(){
   let h = `<div class="bar"><div class="seg" id="pjmode"><button data-m="match" class="${pjMode==='match'?'on':''}">By match</button><button data-m="stat" class="${pjMode==='stat'?'on':''}">By stat</button></div>`;
   if (pjMode === 'stat') h += chipsHtml('pjstat', pjStat, ORDER);
   h += '</div>';
+  if (D.fixtures.some(g => g.ref && g.ref.est)) h += `<p class="note">This round's referees were appointed after the last model update, so their effect on cards and fouls is estimated here: each referee's cards per game since 2024–25 (fouls: this season's games against the model's projection) next to the league's, pulled hard toward ×1.00, because in testing a referee's past said little about his next game's cards. The model's own referee factors replace these at its next update. Bookie comparisons and value bets use the adjusted numbers.</p>`;
   const byDay = {};
   D.fixtures.forEach(g => (byDay[g.kickoff.slice(0,10)] ||= []).push(g));
   if (pjMode === 'match'){
