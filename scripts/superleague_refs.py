@@ -9,6 +9,7 @@ games between two Big-4 teams (the Big-4 against Big-4 table goes back to 2021-2
 
     python scripts/superleague_refs.py              # read up to 150 new games
     python scripts/superleague_refs.py --limit 600  # backfill faster
+    --minutes 90 (the default) stops reading new games after that long, so the workflow can still publish
 
 Run by the "Super League referees" workflow (.github/workflows/superleague-referees.yml).
 """
@@ -209,6 +210,8 @@ def read_game(page, g, season):
 
 def main():
     limit = int(sys.argv[sys.argv.index("--limit") + 1]) if "--limit" in sys.argv else 150
+    minutes = float(sys.argv[sys.argv.index("--minutes") + 1]) if "--minutes" in sys.argv else 90
+    stop_at = time.monotonic() + minutes * 60          # the workflow is cut off at 120 min and would lose the run
     games, complete = load()
     print(f"{len(games)} games saved")
     done, left, failed = 0, 0, False
@@ -234,7 +237,7 @@ def main():
                 todo = [g for g in todo if team(g["home"]) in BIG4 and team(g["away"]) in BIG4]
             print(f"{season}: {len(lst)} results, {len(todo)} to read", flush=True)
             for g in todo:
-                if done >= limit:
+                if done >= limit or time.monotonic() > stop_at:
                     left += 1
                     continue
                 try:
