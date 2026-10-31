@@ -43,6 +43,14 @@ BIG4 = {"Olympiakos", "Panathinaikos", "AEK", "PAOK"}
 LABELS = {"Fotias": "UEFA A", "Papapetrou": "UEFA A", "Matsoukas": "UEFA B", "Moschou": "UEFA B",
           "Polychronis": "UEFA B", "Tsakalidis": "UEFA B", "Vergetis": "UEFA B"}
 # Flashscore spellings -> the ones in the diaititis.gr reports (Katopis is listed as "Eleftherios K.")
+# referees from abroad (Flashscore gives no country): left out of the Greek-referee tables
+FOREIGN = {"Aghayev", "Aytekin", "Bognar", "Branco Godinho", "Brisard", "Brych", "Colombo", "Dabanovic",
+           "Daugbjerg Burchardt", "Del Cerro", "Delajod", "Dingert", "Fabbri", "Grinfeld", "Hernández", "Jablonski",
+           "Jorgji", "Jug", "Kabakov", "Kikacheishvili", "Kruzliak", "Kulbakov", "Lambrechts", "Letexier", "Lindhout",
+           "Makkelie", "Manzano", "Mariani", "Massa", "Meler", "Nobre", "Nogueira", "Obrenovic", "Osmers", "Pawson",
+           "Peljto", "Pereira", "Pinheiro", "Redder", "Reinshreiber", "Saggi", "Sanchez", "Schlager", "Schroder",
+           "Siebert", "Soares Dias", "Sozza", "Stegemann", "Stieler", "Storks", "Sylwestrzak", "Treimanis", "Vincic",
+           "Zwayer"}
 ALIASES = {"Hernandez Hernandez": "Hernández", "Hernandez": "Hernández", "Daoulas": "Ntaoulas",
            "Katoikos": "Katikos", "Eleftherios": "Katopis"}
 CARD_ICONS = {"yellow-card", "red-card", "yellow-red-card", "red-yellow-card"}   # each one counts as a card
@@ -57,8 +65,17 @@ LIST_JS = r"""() => [...document.querySelectorAll('.event__match')].map(e => {
           home: q('.event__homeParticipant'), away: q('.event__awayParticipant'),
           hs: q('.event__score--home'), as: q('.event__score--away')};
 })"""
-MORE_JS = r"""() => { const b = [...document.querySelectorAll('a, button, span')].find(e => /^show more matches$/i.test(e.innerText.trim()));
-  if (!b) return false; b.scrollIntoView(); b.click(); return true; }"""
+# the link under a season's results; its markup has changed over time, so try the known ones, then any "Show more"
+MORE_JS = r"""() => {
+  window.scrollTo(0, document.body.scrollHeight);
+  const known = document.querySelector('a.event__more, .event__more, [data-testid="wcl-buttonLink"]');
+  const any = [...document.querySelectorAll('a, button, [role="button"], span, div')]
+    .filter(e => /^\s*show more( matches| games)?\s*$/i.test(e.innerText || '') && e.offsetParent !== null);
+  const b = known && /show more/i.test(known.innerText || '') ? known : any[any.length - 1];
+  if (!b) return false;
+  (b.closest('a, button, [role="button"]') || b).click();
+  return true;
+}"""
 SUMMARY_JS = r"""() => {
   const cards = [0, 0];
   document.querySelectorAll('.smv__participantRow').forEach(e => {
@@ -95,6 +112,7 @@ def tidy(g):
     if g[7]:
         base = re.sub(r" \(UEFA [AB]\)$", "", g[7])
         base = ALIASES.get(base, base)
+        g[8] = 1 if (g[8] or base in FOREIGN) else 0
         surname = base.split()[-1]
         g[7] = f"{base} ({LABELS[surname]})" if surname in LABELS and not g[8] else base
     return g
@@ -121,6 +139,7 @@ def open_page(page, url, ready):
 
 def read_list(page, slug):
     open_page(page, f"{BASE}{slug}/results/", "() => document.querySelector('.event__match')")
+    clicks = 0
     for _ in range(40):                                     # a whole season: keep pressing "Show more matches"
         n = page.evaluate("() => document.querySelectorAll('.event__match').length")
         if not page.evaluate(MORE_JS):
@@ -129,8 +148,17 @@ def read_list(page, slug):
             page.wait_for_function(f"() => document.querySelectorAll('.event__match').length > {n}", timeout=15000)
         except Exception:
             break
+        clicks += 1
         page.wait_for_timeout(800)
-    return page.evaluate(LIST_JS)
+    lst = page.evaluate(LIST_JS)
+    print(f"   list {slug}: {len(lst)} games after {clicks} 'show more' click(s)", flush=True)
+    return lst
+
+
+def whole_season(lst, season):
+    """True if the list reaches back to the season's start (August-September): no "Show more" page was missed."""
+    dates = [iso_date(g["when"], season) for g in lst if re.match(r"\d\d\.\d\d\.", g["when"])]
+    return bool(dates) and min(dates) <= f"{season[:4]}-09-30"
 
 
 def iso_date(when, season):
@@ -149,6 +177,7 @@ def referee(raw):
     name = re.sub(r"\s*\(\w{3}\)\s*$", "", raw)
     name = re.sub(r"(\s+[A-ZÀ-Ž][a-zà-ž]?\.)+$", "", name).strip()         # drop initials
     name = ALIASES.get(name, name)
+    foreign = foreign or name in FOREIGN
     surname = name.split()[-1] if name else name
     if surname in LABELS and not foreign:
         name = f"{name} ({LABELS[surname]})"
@@ -196,6 +225,9 @@ def main():
                 print(f"{season}: list failed ({e.__class__.__name__}: {str(e)[:100]})")
                 failed = True
                 continue
+            if season != SEASONS[0][0] and not whole_season(lst, season):
+                print(f"{season}: the list does not reach the season's start; not complete yet")
+                failed = True
             todo = [g for g in lst if g["id"] not in games and g["href"] and "/?mid=" in g["href"] and g["hs"] != ""
                     and not g["flag"].startswith(SKIP_FLAGS)]
             if which == "big4":
