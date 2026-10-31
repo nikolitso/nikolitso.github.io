@@ -1,5 +1,5 @@
 // Written by scripts/superleague_refs.py from Flashscore: one row per league game.
-window.SLREFGAMES = {"updated":"2026-10-31 13:23","complete":true,"cols":["mid", "season", "date", "home", "away", "hg", "ag", "ref", "foreign", "hc", "ac", "odds"],"games":[
+window.SLREFGAMES = {"updated":"2026-10-31 13:23","complete":false,"cols":["mid", "season", "date", "home", "away", "hg", "ag", "ref", "foreign", "hc", "ac", "odds"],"games":[
 ["Yu8q0lLF","2026-27","2026-10-25","Volos","Panathinaikos",0,1,"Tsetsilas",0,4,1,8.88],
 ["t6BibSkS","2026-27","2026-10-25","Olympiakos","Kalamata",5,0,"Zampalas",0,2,3,1.17],
 ["AL1Nh6Dk","2026-27","2026-10-25","OFI","PAOK",2,1,"Vergetis (UEFA B)",0,3,2,4.75],
