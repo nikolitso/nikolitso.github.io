@@ -148,7 +148,8 @@
       "inside-the-box-how-constraints-make",
       "how-to-find-the-right-words",
       "everything-is-predictable",
-      "storytelling-with-data-a-data-visualization"
+      "storytelling-with-data-a-data-visualization",
+      "games-people-play"
     ],
     "log": [
       {
@@ -366,9 +367,15 @@
         "slot": "2026-10-30 14",
         "slug": "storytelling-with-data-a-data-visualization",
         "id": "2116138222551970291"
+      },
+      {
+        "day": "2026-10-31",
+        "slot": "2026-10-31 02",
+        "slug": "games-people-play",
+        "id": "2116322721005207665"
       }
     ],
-    "last_day": "2026-10-30"
+    "last_day": "2026-10-31"
   },
   "film": {
     "seen": [
@@ -796,7 +803,7 @@
     ],
     "last_day": "2026-10-30"
   },
-  "last_slot": "2026-10-30 20",
+  "last_slot": "2026-10-31 02",
   "quote": {
     "seen": [
       "1",
