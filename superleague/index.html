@@ -93,6 +93,7 @@ th.sort{cursor:pointer;user-select:none} th.sort:hover,th.sort.on{color:var(--go
 .note{font:400 15px/1.55 var(--body);color:var(--muted);border-left:2px solid var(--gold);padding:2px 0 2px 14px;margin:0 0 14px;max-width:820px}
 .note b{color:var(--text);font-weight:600}
 .metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin:0 0 18px}
+.refsub{font:600 18px var(--serif);margin:8px 0 8px}
 .metric{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
 .metric .lbl{font:400 11px var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}
 .metric .big{font:500 24px var(--mono);color:var(--gold)}
@@ -216,8 +217,24 @@ const sampleHtml = g => g.sample ? `<div class="coach sample" title="${sampleTip
 // compact coach tenure under a match in tables: "Mazzarri 7 · Leto 43 games in charge"
 const tenureOne = c => c ? `${surname(c[0])} ${c[2]}` : '–';
 const tenureLine = g => g && g.coaches ? `<div class="tenure" title="League games in charge of the current coach">${tenureOne(g.coaches.home)} · ${tenureOne(g.coaches.away)} games in charge</div>` : '';
+// a referee appointed after the last model update: named, with his record since 2024-25, but not in the projections
+function refRecord(name){
+  const row = window.SLREF && window.SLREF.cards.find(c => c[0] === name);
+  if (row) return {games: row[1], cards: row[2]};
+  const gs = refRows().filter(g => g.ref === name && g.season >= '2024-25' && g.hc != null);
+  return gs.length ? {games: gs.length, cards: avgOf(gs.map(g => g.hc + g.ac)), partial: !(window.SLREFGAMES || {}).complete} : null;
+}
 function refHtml(r){
   if (!r) return '<div class="ref">Referee <b>not announced</b></div>';
+  if (r.pending){
+    const x = refRecord(r.name);
+    return `<div class="ref">Referee <b>${refLink(r.name)}</b>${r.from ? ` (${r.from})` : ''} · ${x ? `${x.games} league game${x.games === 1 ? '' : 's'} since 2024–25${x.partial ? ' read so far' : ''}, <b>${x.cards.toFixed(1)}</b> cards per game` : 'no league games since 2024–25 in the data'} · appointed after the last model update, not in these projections yet</div>`;
+  }
+  // appointed after the last model update: factor estimated on this page (see "How it works"), applied to cards and fouls
+  if (r.est){
+    const fl = r.fouls_games ? `fouls ${mult(r.fouls)} (${r.fouls_games} game${r.fouls_games === 1 ? '' : 's'} this season)` : 'fouls ×1.00 (no games this season)';
+    return `<div class="ref" title="Appointed after the last model update. Factors estimated from the referee's record, pulled hard toward ×1.00; the model's own factor replaces them at its next update.">Referee <b>${refLink(r.name)}</b>${r.country ? ` (${r.country})` : ''} · ${r.games ? `${r.games} game${r.games === 1 ? '' : 's'} since 2024–25${r.partial ? ' read so far' : ''}, <b>${r.avg.cards.toFixed(1)}</b> cards per game` : 'no league games since 2024–25'} · cards ${mult(r.cards)} · ${fl} · <span class="muted">estimated factors</span></div>`;
+  }
   if (!r.games) return `<div class="ref">Referee <b>${r.name}</b> · no league games since ${r.from.replace('-', '–')} · no adjustment</div>`;
   return `<div class="ref">Referee <b>${r.name}</b> · ${refWindow(r)} · <b>${r.avg.cards.toFixed(1)}</b> cards (${mult(r.cards)}) · <b>${r.avg.fouls.toFixed(1)}</b> fouls (${mult(r.fouls)}) per game</div>`;
 }
@@ -246,6 +263,7 @@ function renderProjections(){
   let h = `<div class="bar"><div class="seg" id="pjmode"><button data-m="match" class="${pjMode==='match'?'on':''}">By match</button><button data-m="stat" class="${pjMode==='stat'?'on':''}">By stat</button></div>`;
   if (pjMode === 'stat') h += chipsHtml('pjstat', pjStat, ORDER);
   h += '</div>';
+  if (D.fixtures.some(g => g.ref && g.ref.est)) h += `<p class="note">This round's referees were appointed after the last model update, so their effect on cards and fouls is estimated here: each referee's cards per game since 2024–25 (fouls: this season's games against the model's projection) next to the league's, pulled hard toward ×1.00, because in testing a referee's past said little about his next game's cards. The model's own referee factors replace these at its next update. Bookie comparisons and value bets use the adjusted numbers.</p>`;
   const byDay = {};
   D.fixtures.forEach(g => (byDay[g.kickoff.slice(0,10)] ||= []).push(g));
   if (pjMode === 'match'){
@@ -256,7 +274,7 @@ function renderProjections(){
   h += `<div class="scroll"><table><thead><tr><th>Kick-off</th><th>Match</th><th class="n">Home</th><th class="n">Away</th>${s==='possession'?'':'<th class="n">Total</th>'}<th class="n">${s==='possession'||s==='xg'?'':'Over'}</th></tr></thead><tbody>`;
   for (const g of D.fixtures){
     const x = g.stats[s];
-    const rf = (s === 'cards' || s === 'fouls') && g.ref ? ` <span class="muted" style="font-size:12px">· ${g.ref.name}${g.ref.games ? ' ' + mult(g.ref[s]) : ''}</span>` : '';
+    const rf = (s === 'cards' || s === 'fouls') && g.ref && !g.ref.pending ? ` <span class="muted" style="font-size:12px">· ${g.ref.name}${g.ref.games ? ' ' + mult(g.ref[s]) : ''}</span>` : '';
     h += `<tr><td class="muted">${dayName(g.kickoff)} ${g.kickoff.slice(11)}${g.started ? ' <span class="live">Started</span>' : ''}</td><td>${g.home} – ${g.away}${rf}${tenureLine(g)}</td><td class="n">${f(x.home,s)}</td><td class="n">${f(x.away,s)}</td>${s==='possession'?'':`<td class="n tot">${f(x.total,s)}</td>`}<td class="ln">${linesHtml(x.lines)}</td></tr>`;
   }
   return h + '</tbody></table></div>';
@@ -545,6 +563,9 @@ function renderValue(){
     h += '</tbody></table></div>';
   }
   if (!settled.length) return h + `<p class="muted" style="margin-top:18px">No settled bets yet at this EV level: the record starts once results for logged bets are in the data.</p>`;
+  h += `<h2>Settled bets</h2><p class="muted" style="margin:-4px 0 10px;font-size:14px">Every bet from EV +${Math.round(valMin * 100)}% with its result, newest first; the record by market, side and EV follows below.</p><div class="scroll"><table class="mk"><thead><tr><th>Date</th><th>Match</th><th>Bet</th><th class="n">Odds</th><th class="n" title="The bookie's last odds before kick-off">Close</th><th class="n">EV</th><th class="n" title="Closing-line value: our odds x the closing chance (margin out) - 1">CLV</th><th class="n" title="What happened: the final score for 1X2 bets, the match total for the rest">Actual</th><th class="n">Result</th></tr></thead><tbody>`;
+  for (const b of settled) h += `<tr><td class="muted">${dayName(b.date)}</td><td>${b.home} – ${b.away}</td><td>${betName(b)}</td><td class="n">${b.odds.toFixed(2)}</td>${closeCell(b)}<td class="n">${evPct(b.ev)}</td>${clvCell(b)}<td class="n"><b>${b.actual ?? '–'}</b></td><td class="n ${b.result === 'won' ? 'w' : 'l'}">${b.result === 'won' ? 'Won +' + (b.odds - 1).toFixed(2) : 'Lost −1'}</td></tr>`;
+  h += '</tbody></table></div>';
   const group = key => settled.reduce((g, b) => ((g[key(b)] ||= []).push(b), g), {});
   const band = b => b.ev >= .3 ? '30%+' : `${Math.floor(b.ev * 10) * 10}–${Math.floor(b.ev * 10) * 10 + 10}%`;
   h += recordTable('Record by market', group(b => b.stat === 'result' ? 'Result' : L[b.stat]),
@@ -552,9 +573,7 @@ function renderValue(){
   h += recordTable('Record by side', group(b => b.stat === 'result' ? 'Result' : b.side === 'over' ? 'Overs' : 'Unders'));
   h += recordTable('Record by market and side', group(b => b.stat === 'result' ? 'Result' : `${L[b.stat]} ${b.side}`));
   h += recordTable('Record by EV', group(band), 'If the model finds real value, bigger EV should mean bigger returns.', true);
-  h += `<h2>Settled bets</h2><div class="scroll"><table class="mk"><thead><tr><th>Date</th><th>Match</th><th>Bet</th><th class="n">Odds</th><th class="n" title="The bookie's last odds before kick-off">Close</th><th class="n">EV</th><th class="n" title="Closing-line value: our odds x the closing chance (margin out) - 1">CLV</th><th class="n" title="What happened: the final score for 1X2 bets, the match total for the rest">Actual</th><th class="n">Result</th></tr></thead><tbody>`;
-  for (const b of settled) h += `<tr><td class="muted">${dayName(b.date)}</td><td>${b.home} – ${b.away}</td><td>${betName(b)}</td><td class="n">${b.odds.toFixed(2)}</td>${closeCell(b)}<td class="n">${evPct(b.ev)}</td>${clvCell(b)}<td class="n"><b>${b.actual ?? '–'}</b></td><td class="n ${b.result === 'won' ? 'w' : 'l'}">${b.result === 'won' ? 'Won +' + (b.odds - 1).toFixed(2) : 'Lost −1'}</td></tr>`;
-  return h + '</tbody></table></div>';
+  return h;
 }
 
 // Referees: card averages by referee and by the home team's odds, and the 2026-27 referee reports (referees.js)
@@ -681,11 +700,39 @@ function refGames(name){
     return {r, cards: g ? g.stats.cards.slice(2) : [null, null], fouls: g ? g.stats.fouls.slice(2) : [null, null]};
   });
 }
+// favourite and outsider by the 1X2 odds: the side with the shorter win price. Games read before away
+// odds were kept have the home price only; there the home side is the favourite below 2.70, about where
+// home and away chances are level once the draw is allowed for.
+const FAV_CUT = 2.70;
+const favSide = g => g.aodds ? (g.odds < g.aodds ? 'h' : g.odds > g.aodds ? 'a' : null) : g.odds ? (g.odds < FAV_CUT ? 'h' : 'a') : null;
+// games as {hg, ag, hc, ac, odds, aodds}: n with a favourite, share the favourite won, share the outsider got more cards
+function favStats(gs){
+  let n = 0, win = 0, out = 0;
+  for (const g of gs){
+    const f = favSide(g);
+    if (!f || g.hg == null || g.hc == null) continue;
+    const [fg, og, fc, oc] = f === 'h' ? [g.hg, g.ag, g.hc, g.ac] : [g.ag, g.hg, g.ac, g.hc];
+    n++; if (fg > og) win++; if (oc > fc) out++;
+  }
+  return {n, win: n ? win / n : null, out: n ? out / n : null};
+}
+// every game read so far, as objects (the tables wait for the full list; the pop-up's odds stats don't need to)
+function refRows(){
+  const G = window.SLREFGAMES;
+  return G ? G.games.map(r => Object.fromEntries(G.cols.map((k, i) => [k, r[i]]))) : [];
+}
 function openRef(name){
   const R = window.SLREF, all = refGameList();
   const avg = xs => { const v = xs.filter(x => x != null); return v.length ? v.reduce((a, b) => a + b, 0) / v.length : null; };
   const tot = p => p[0] == null || p[1] == null ? null : p[0] + p[1];
-  const metric = (l, v) => `<div class="metric"><div class="lbl">${l}</div><div class="big">${v}</div></div>`;
+  const metric = (l, v, sub) => `<div class="metric"><div class="lbl">${l}</div><div class="big">${v}</div>${sub ? `<div class="muted" style="font:400 12px var(--mono);margin-top:4px">${sub}</div>` : ''}</div>`;
+  // favourite wins % and outsider-more-cards %, next to the same for every referee over the same games
+  const favMetrics = (gs, base) => {
+    const s = favStats(gs), b = favStats(base), p = x => x == null ? '–' : Math.round(x * 100) + '%';
+    return metric('Favourite wins', p(s.win), s.n ? `${Math.round(s.win * s.n)} of ${s.n} · all refs ${p(b.win)}` : `no odds yet`)
+      + metric('Outsider more cards', p(s.out), s.n ? `${Math.round(s.out * s.n)} of ${s.n} · all refs ${p(b.out)}` : `no odds yet`);
+  };
+  const favNote = `<p class="muted" style="font-size:13px;margin:-6px 0 12px">The boxes cover league games since 2024–25; the list below is this season's. Favourite and outsider by the bookmakers' 1X2 odds (the shorter win price). A draw counts as the favourite not winning; level cards count as the outsider not getting more. <b>All refs</b> is the same over every referee's games in the same span${all ? '' : ', from the games read so far (the full game list is still being read)'}.</p>`;
   $('refdlg-h').textContent = name;
   let h = '';
   if (all){
@@ -693,22 +740,27 @@ function openRef(name){
     const gs = all.filter(g => g.ref === name), rep = r => R.report.find(x => x[3] === name && x[0] === r.date && x[1].split(' - ').map(teamName).join('|') === `${r.home}|${r.away}`);
     const rec = gs.filter(g => g.season >= '2024-25'), rt = avg(rec.map(g => (rep(g) || [])[4]).filter(x => x != null));
     h += `<div class="metrics">${metric('Games since 2024–25', rec.length)}${metric('Cards per game', rec.length ? avgOf(rec.map(g => g.hc + g.ac)).toFixed(2) : '–')}
-      ${metric('Home · away', rec.length ? `${avgOf(rec.map(g => g.hc)).toFixed(1)} · ${avgOf(rec.map(g => g.ac)).toFixed(1)}` : '–')}${metric('Rating 2026–27', rt == null ? '–' : round1(rt))}</div>`;
-    if (!gs.length) h += '<p class="empty">No league games with this referee in the data.</p>';
+      ${metric('Home · away', rec.length ? `${avgOf(rec.map(g => g.hc)).toFixed(1)} · ${avgOf(rec.map(g => g.ac)).toFixed(1)}` : '–')}${metric('Rating 2026–27', rt == null ? '–' : round1(rt))}
+      ${favMetrics(rec, all.filter(g => g.season >= '2024-25'))}</div>${favNote}`;
+    const cur = gs.filter(g => g.season === '2026-27');
+    h += `<h3 class="refsub">This season's games</h3>`;
+    if (!cur.length) h += '<p class="empty">No 2026–27 games with this referee yet.</p>';
     else {
       h += `<div class="scroll"><table class="mk rp"><thead><tr><th>Date</th><th>Match</th><th class="n">Score</th><th class="n">Cards</th><th class="n">Total</th><th class="n" title="Bookmakers' median home-win odds">Home odds</th><th class="n">Rating</th><th>Comment</th></tr></thead><tbody>`;
-      for (const g of gs){ const r = rep(g);
+      for (const g of cur){ const r = rep(g);
         h += `<tr><td class="muted">${ddmm(g.date)}</td><td>${g.home} – ${g.away}</td><td class="n">${g.hg}–${g.ag}</td><td class="n">${g.hc}–${g.ac}</td><td class="n tot">${g.hc + g.ac}</td><td class="n">${g.odds ? g.odds.toFixed(2) : '–'}</td><td class="n">${r ? rate(r[4]) : '<span class="muted">–</span>'}</td><td class="cm">${r ? r[6] : ''}</td></tr>`; }
       h += '</tbody></table></div>';
     }
   } else {
-    const gs = refGames(name), row = R.cards.find(c => c[0] === name);
-    if (row) h += `<p class="note">Since 2024–25: <b>${row[1]}</b> games, <b>${n2(row[2])}</b> cards a game (home ${n2(row[3])}, away ${n2(row[4])}). The games listed below are this season's only, until the full game list has been read.</p>`;
+    const gs = refGames(name), row = R.cards.find(c => c[0] === name), rt = avg(gs.map(g => g.r[4]));
+    // since 2024-25: games and cards from the snapshot, favourite and outsider from the games read so far
+    const rows = refRows().filter(g => g.season >= '2024-25');
+    h += `<div class="metrics">${metric('Games since 2024–25', row ? row[1] : '–')}${metric('Cards per game', row ? n2(row[2]) : '–')}
+      ${metric('Home · away', row ? `${(+row[3]).toFixed(1)} · ${(+row[4]).toFixed(1)}` : '–')}${metric('Rating 2026–27', rt == null ? '–' : round1(rt))}
+      ${favMetrics(rows.filter(g => g.ref === name), rows)}</div>${favNote}<h3 class="refsub">This season's games</h3>`;
     if (!gs.length) h += '<p class="empty">No 2026–27 games in the referee reports yet.</p>';
     else {
-      const c = avg(gs.map(g => tot(g.cards))), f = avg(gs.map(g => tot(g.fouls))), rt = avg(gs.map(g => g.r[4]));
-      h += `<div class="metrics">${metric('Games 2026–27', gs.length)}${metric('Cards per game', c == null ? '–' : c.toFixed(2))}${metric('Fouls per game', f == null ? '–' : f.toFixed(1))}${metric('Average rating', rt == null ? '–' : round1(rt))}</div>
-        <div class="scroll"><table class="mk rp"><thead><tr><th>Date</th><th>Match</th><th class="n">Score</th><th class="n">Cards</th><th class="n">Total</th><th class="n">Fouls</th><th class="n">Rating</th><th>Favoured</th><th>Comment</th></tr></thead><tbody>`;
+      h += `<div class="scroll"><table class="mk rp"><thead><tr><th>Date</th><th>Match</th><th class="n">Score</th><th class="n">Cards</th><th class="n">Total</th><th class="n">Fouls</th><th class="n">Rating</th><th>Favoured</th><th>Comment</th></tr></thead><tbody>`;
       for (const {r, cards, fouls} of gs) h += `<tr><td class="muted">${ddmm(r[0])}</td><td>${r[1].replace(' - ', ' – ')}</td><td class="n">${r[2].replace('-', '–')}</td><td class="n">${cards[0] == null ? '–' : `${cards[0]}–${cards[1]}`}</td><td class="n tot">${tot(cards) ?? '–'}</td><td class="n">${tot(fouls) ?? '–'}</td><td class="n">${rate(r[4])}</td><td>${r[5] ?? '<span class="muted">–</span>'}</td><td class="cm">${r[6]}</td></tr>`;
       h += '</tbody></table></div>';
     }
@@ -718,6 +770,8 @@ function openRef(name){
   $('refdlg-b').scrollTop = 0;
 }
 $('refdlg-x').onclick = () => $('refdlg').close();
+// any referee name on the page (Referees tab, the referee line on Projections) opens their pop-up
+document.addEventListener('click', e => { const b = e.target.closest('button.reflink'); if (b) openRef(b.dataset.ref); });
 $('refdlg').onclick = e => { if (e.target === $('refdlg')) $('refdlg').close(); };
 
 function refRatings(R){
@@ -798,7 +852,6 @@ function makeSortable(tbl){
 }
 function bindRefs(){
   document.querySelectorAll('table.sortable').forEach(makeSortable);
-  document.querySelectorAll('button.reflink').forEach(b => b.onclick = () => openRef(b.dataset.ref));
   document.querySelectorAll('[data-jump]').forEach(b => b.onclick = () => $(b.dataset.jump).scrollIntoView({behavior: 'smooth', block: 'start'}));
   const tip = $('tip');
   document.querySelectorAll('.chart .hit').forEach(el => {
