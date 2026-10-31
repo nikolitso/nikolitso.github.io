@@ -13,6 +13,9 @@ on:
       limit:
         description: Most games to read in this run
         default: "150"
+  push:
+    branches: [ccr-ec916b33-scivoa]
+    paths: ["scripts/superleague_refs.py"]
 
 permissions:
   contents: write
@@ -38,7 +41,7 @@ jobs:
         env:
           TZ: Europe/Athens
           PYTHONIOENCODING: utf-8
-        run: python -u scripts/superleague_refs.py --limit ${{ github.event.inputs.limit || '150' }}
+        run: python -u scripts/superleague_refs.py --limit ${{ github.event.inputs.limit || (github.event_name == 'push' && '20') || '150' }}
       - name: Publish
         run: |
           git config user.name "github-actions[bot]"
