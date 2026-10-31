@@ -4,10 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Greek Super League</title>
-<meta name="description" content="Greek Super League projections for every game: goals, xG, shots, shots on target, corners, cards, fouls, possession and goalkeeper saves.">
+<meta name="description" content="Greek Super League projections for every game: goals, xG, shots, shots on target, corners, cards, fouls, goal kicks, throw-ins, possession and goalkeeper saves.">
 <link rel="canonical" href="https://antonisnikolitsopoulos.com/superleague/">
 <meta property="og:title" content="Greek Super League">
-<meta property="og:description" content="Greek Super League projections for every game: goals, xG, shots, corners, cards, fouls, possession and saves.">
+<meta property="og:description" content="Greek Super League projections for every game: goals, xG, shots, corners, cards, fouls, goal kicks, throw-ins, possession and saves.">
 <meta property="og:url" content="https://antonisnikolitsopoulos.com/superleague/">
 <meta property="og:image" content="https://antonisnikolitsopoulos.com/superleague.jpg">
 <meta name="twitter:card" content="summary_large_image">
@@ -177,7 +177,9 @@ th.rs{cursor:pointer;user-select:none} th.rs:hover,th.rs.on{color:var(--gold)}
 <script src="referee-games.js?v=0731bd6a" onerror="window.SLREFGAMES=null"></script>
 <script>
 const D = window.SL, $ = id => document.getElementById(id);
-const L = D.labels, ORDER = D.order;
+// goal kicks and throw-ins show on Projections only (user, 1 Nov 2026)
+const PROJ_ONLY = ['goal_kicks', 'throw_ins'];
+const L = D.labels, PROJ_ORDER = D.order, ORDER = D.order.filter(s => !PROJ_ONLY.includes(s));
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 const dayName = s => { const d = new Date(s.slice(0,10)+'T12:00'); return `${DAYS[d.getDay()]} ${d.getDate()} ${MON[d.getMonth()]}`; };
 const pct = x => Math.round(x*100) + '%';
@@ -244,7 +246,7 @@ function refHtml(r){
 
 function matchCard(g){
   const r = g.result, t = g.kickoff.slice(11) + (g.started ? ' <span class="live">Started</span>' : '');
-  const rows = ORDER.map(s => {
+  const rows = PROJ_ORDER.map(s => {
     const x = g.stats[s];
     return `<tr><td>${L[s]}</td><td class="n">${f(x.home, s)}</td><td class="n">${f(x.away, s)}</td>`+
       `<td class="n tot">${x.total == null ? '' : f(x.total, s)}</td></tr>`;
@@ -262,7 +264,7 @@ function chipsHtml(id, cur, list){
 function renderProjections(){
   if (!D.fixtures.length) return '<p class="empty">No fixtures scheduled in the next two weeks.</p>';
   let h = `<div class="bar"><div class="seg" id="pjmode"><button data-m="match" class="${pjMode==='match'?'on':''}">By match</button><button data-m="stat" class="${pjMode==='stat'?'on':''}">By stat</button></div>`;
-  if (pjMode === 'stat') h += chipsHtml('pjstat', pjStat, ORDER);
+  if (pjMode === 'stat') h += chipsHtml('pjstat', pjStat, PROJ_ORDER);
   h += '</div>';
   if (D.fixtures.some(g => g.ref && g.ref.est)) h += `<p class="note">This round's referees were appointed after the last model update, so their effect on cards and fouls is estimated here: each referee's cards per game since 2024–25 (fouls: this season's games against the model's projection) next to the league's, pulled hard toward ×1.00, because in testing a referee's past said little about his next game's cards. The model's own referee factors replace these at its next update. Bookie comparisons and value bets use the adjusted numbers.</p>`;
   const byDay = {};
@@ -401,7 +403,7 @@ function renderMethod(){
     <h3><span class="num">8</span>Possession</h3>
     <p>Possession is a split that always adds to 100%, so it can't be multiplied like the counts. Each team has one possession strength (points above or below an even split), and the home side gets a small edge:</p>
     <div class="calc">${H} possession = 50 ${sgn(P.edge)} <i>home edge</i> ${sgn(P.home)} <i>${H}</i> ${sgn(-P.away)} <i>${W}</i> = <b>${P.proj.toFixed(1)}%</b> · ${W} ${(100 - P.proj).toFixed(1)}%</div>
-    <p>Shots, SoT, xG, fouls, goal kicks, throw-ins and saves all work like corners, each with its own averages and ratings. Shots, SoT and goalkeeper saves then get a small adjustment from the match odds: favourites take more shots and force more saves than their ratings alone suggest. In testing on 284 games since 2025–26 this made them about 1% more accurate (shots 1.4%, SoT 1.0%, saves 0.9%). I tested the same for xG, corners, fouls and possession, but the odds didn't help there, so those come from the ratings alone.</p>`;
+    <p>Shots, SoT, xG, fouls, goal kicks, throw-ins and saves all work like corners, each with its own averages and ratings. Shots, SoT and goalkeeper saves then get a small adjustment from the match odds: favourites take more shots and force more saves than their ratings alone suggest. In testing on 284 games since 2025–26 this made them about 1% more accurate (shots 1.4%, SoT 1.0%, saves 0.9%). I tested the same for xG, corners, fouls, goal kicks, throw-ins and possession, but the odds didn't help there, so those come from the ratings alone.</p>`;
   }
   h += `<h2>Where the ratings come from</h2>
   <ul>
