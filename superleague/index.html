@@ -545,6 +545,9 @@ function renderValue(){
     h += '</tbody></table></div>';
   }
   if (!settled.length) return h + `<p class="muted" style="margin-top:18px">No settled bets yet at this EV level: the record starts once results for logged bets are in the data.</p>`;
+  h += `<h2>Settled bets</h2><p class="muted" style="margin:-4px 0 10px;font-size:14px">Every bet from EV +${Math.round(valMin * 100)}% with its result, newest first; the record by market, side and EV follows below.</p><div class="scroll"><table class="mk"><thead><tr><th>Date</th><th>Match</th><th>Bet</th><th class="n">Odds</th><th class="n" title="The bookie's last odds before kick-off">Close</th><th class="n">EV</th><th class="n" title="Closing-line value: our odds x the closing chance (margin out) - 1">CLV</th><th class="n" title="What happened: the final score for 1X2 bets, the match total for the rest">Actual</th><th class="n">Result</th></tr></thead><tbody>`;
+  for (const b of settled) h += `<tr><td class="muted">${dayName(b.date)}</td><td>${b.home} – ${b.away}</td><td>${betName(b)}</td><td class="n">${b.odds.toFixed(2)}</td>${closeCell(b)}<td class="n">${evPct(b.ev)}</td>${clvCell(b)}<td class="n"><b>${b.actual ?? '–'}</b></td><td class="n ${b.result === 'won' ? 'w' : 'l'}">${b.result === 'won' ? 'Won +' + (b.odds - 1).toFixed(2) : 'Lost −1'}</td></tr>`;
+  h += '</tbody></table></div>';
   const group = key => settled.reduce((g, b) => ((g[key(b)] ||= []).push(b), g), {});
   const band = b => b.ev >= .3 ? '30%+' : `${Math.floor(b.ev * 10) * 10}–${Math.floor(b.ev * 10) * 10 + 10}%`;
   h += recordTable('Record by market', group(b => b.stat === 'result' ? 'Result' : L[b.stat]),
@@ -552,9 +555,7 @@ function renderValue(){
   h += recordTable('Record by side', group(b => b.stat === 'result' ? 'Result' : b.side === 'over' ? 'Overs' : 'Unders'));
   h += recordTable('Record by market and side', group(b => b.stat === 'result' ? 'Result' : `${L[b.stat]} ${b.side}`));
   h += recordTable('Record by EV', group(band), 'If the model finds real value, bigger EV should mean bigger returns.', true);
-  h += `<h2>Settled bets</h2><div class="scroll"><table class="mk"><thead><tr><th>Date</th><th>Match</th><th>Bet</th><th class="n">Odds</th><th class="n" title="The bookie's last odds before kick-off">Close</th><th class="n">EV</th><th class="n" title="Closing-line value: our odds x the closing chance (margin out) - 1">CLV</th><th class="n" title="What happened: the final score for 1X2 bets, the match total for the rest">Actual</th><th class="n">Result</th></tr></thead><tbody>`;
-  for (const b of settled) h += `<tr><td class="muted">${dayName(b.date)}</td><td>${b.home} – ${b.away}</td><td>${betName(b)}</td><td class="n">${b.odds.toFixed(2)}</td>${closeCell(b)}<td class="n">${evPct(b.ev)}</td>${clvCell(b)}<td class="n"><b>${b.actual ?? '–'}</b></td><td class="n ${b.result === 'won' ? 'w' : 'l'}">${b.result === 'won' ? 'Won +' + (b.odds - 1).toFixed(2) : 'Lost −1'}</td></tr>`;
-  return h + '</tbody></table></div>';
+  return h;
 }
 
 // Referees: card averages by referee and by the home team's odds, and the 2026-27 referee reports (referees.js)
