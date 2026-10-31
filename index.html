@@ -307,39 +307,6 @@ body { overflow-x: clip; }  /* safety net */
   </div>
 
 
-  <!-- unders:start -->
-  <section id="unders" aria-labelledby="h-unders">
-    <style>
-#unders .sec-intro { max-width: 60ch; }
-.ucards { list-style: none; margin: 1.75rem 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr)); gap: 1rem; }
-.uc { display: grid; gap: .3rem; padding: 1rem 1.1rem; border: 1px solid var(--rule); border-radius: 14px; background: var(--paper); text-decoration: none; color: inherit; transition: border-color .2s ease; }
-.uc:hover { border-color: var(--accent); }
-.uc-meta { font-size: .7rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
-.uc-match { font-family: var(--display); font-size: 1.3rem; line-height: 1.15; }
-.uc-bet { font-size: .95rem; } .uc-bet b { font-size: 1.15rem; }
-.uc-sub { font-size: .82rem; color: var(--muted); }
-.uc-more { margin: 1.25rem 0 0; font-size: .9rem; }
-</style>
-    <div class="wrap">
-      <p class="kicker">Betting picks</p>
-      <h2 id="h-unders">Picks this round</h2>
-      <p class="sec-intro">Under 2.5 goals or both teams to score: no, in Greece's Division A Women: one bet per game, on the bigger edge of the two when the best Greek price beats the model by at least 20%. Same rule on the 42 played games it picked since 2024: 62% won, +44% return at closing odds. A small sample, so treat it as a lead, not proof.</p>
-      <ul class="ucards">
-        <li data-ko="2026-11-01 15:00"><a class="uc" href="/greek-lower/#view=market&amp;league=women"><span class="uc-meta">Division A Women · Sun 1 Nov 15:00</span><span class="uc-match">OFI Crete W – Panathinaikos W</span><span class="uc-bet">Under 2.5 at <b>2.30</b></span><span class="uc-sub">Model odds 1.79 · edge +22%</span></a></li>
-      </ul>
-      <p class="uc-more"><a href="/greek-lower/#view=record">Every game, odds and the full record →</a></p>
-    </div>
-    <script>
-    (() => {                                       // hide games that have kicked off (times are Athens)
-      const p = Object.fromEntries(new Intl.DateTimeFormat('en-CA', {timeZone: 'Europe/Athens', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hourCycle: 'h23'}).formatToParts(new Date()).map(x => [x.type, x.value]));
-      const now = `${p.year}-${p.month}-${p.day} ${p.hour}:${p.minute}`;
-      document.querySelectorAll('#unders [data-ko]').forEach(li => { if (li.dataset.ko <= now) li.remove(); });
-      if (!document.querySelector('#unders [data-ko]')) document.getElementById('unders').remove();
-    })();
-    </script>
-  </section>
-  <!-- unders:end -->
-
   <section id="latest" aria-labelledby="h-latest">
     <div class="wrap">
       <p class="kicker">Latest</p>

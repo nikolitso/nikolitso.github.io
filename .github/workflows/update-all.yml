@@ -4,7 +4,7 @@ name: Update all sites
 # every update job in order, waiting for each one:
 #   1. PAOK Basketball stats (nikolitso/paok-basketball "Update stats"), then waits for its deploy
 #   2. Wine music, latest posts, FIBA Europe Cup (results, odds, fixtures), then handball, basketball,
-#      EuroCup, volleyball, Challenge Cup Women, Greek lower leagues, Greek Cup and PAOK Hub side by side
+#      EuroCup, volleyball, Challenge Cup Women, Greek Cup and PAOK Hub side by side
 #   3. Project pills and screenshots last, so they read the freshly updated sites
 # Step 1 is in another repo, so it needs the SITES_TOKEN secret: a fine-grained token with
 # Actions read & write on nikolitso/paok-basketball. Without it that step is skipped.
@@ -71,11 +71,11 @@ jobs:
         if: ${{ !cancelled() }}
         run: /tmp/run.sh ${{ github.repository }} fiba-europe-cup.yml
 
-      - name: Handball, basketball, EuroCup, volleyball, Challenge Cup Women, Greek lower leagues, Greek Cup, PAOK Hub
+      - name: Handball, basketball, EuroCup, volleyball, Challenge Cup Women, Greek Cup, PAOK Hub
         if: ${{ !cancelled() }}
         run: |
           # independent pipelines: run them side by side, fail if any failed
-          pids=(); for wf in handball.yml basketball.yml eurocup.yml volleyball.yml challenge-cup.yml greek-lower.yml greek-cup.yml paok-hub.yml; do
+          pids=(); for wf in handball.yml basketball.yml eurocup.yml volleyball.yml challenge-cup.yml greek-cup.yml paok-hub.yml; do
             /tmp/run.sh ${{ github.repository }} $wf > /tmp/$wf.log 2>&1 & pids+=($!)
           done
           rc=0; for p in "${pids[@]}"; do wait $p || rc=1; done
