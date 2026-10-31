@@ -741,7 +741,8 @@ function openRef(name){
     // every game this referee took since 2024-25 (and older Big-4 derbies), with the report where there is one
     const gs = all.filter(g => g.ref === name), rep = r => R.report.find(x => x[3] === name && x[0] === r.date && x[1].split(' - ').map(teamName).join('|') === `${r.home}|${r.away}`);
     const rec = gs.filter(g => g.season >= '2024-25'), rt = avg(rec.map(g => (rep(g) || [])[4]).filter(x => x != null));
-    h += `<div class="metrics">${metric('Games since 2024–25', rec.length)}${metric('Cards per game', rec.length ? avgOf(rec.map(g => g.hc + g.ac)).toFixed(2) : '–')}
+    const nB = g => BIG4.includes(g.home) + BIG4.includes(g.away), one = rec.filter(g => nB(g) === 1).length, two = rec.filter(g => nB(g) === 2).length;
+    h += `<div class="metrics">${metric('All games since 2024–25', rec.length, `${one} with one Big-4 team${two ? ` · ${two} Big-4 derb${two === 1 ? 'y' : 'ies'}` : ''}`)}${metric('Cards per game', rec.length ? avgOf(rec.map(g => g.hc + g.ac)).toFixed(2) : '–')}
       ${metric('Home · away', rec.length ? `${avgOf(rec.map(g => g.hc)).toFixed(1)} · ${avgOf(rec.map(g => g.ac)).toFixed(1)}` : '–')}${metric('Rating 2026–27', rt == null ? '–' : round1(rt))}
       ${favMetrics(rec, all.filter(g => g.season >= '2024-25'))}</div>${favNote}`;
     const cur = gs.filter(g => g.season === '2026-27');
@@ -755,7 +756,7 @@ function openRef(name){
     }
     // every game with a Big-4 side since 2024-25, the Big-4 side's result first
     const big = rec.filter(g => BIG4.includes(g.home) || BIG4.includes(g.away));
-    h += `<h3 class="refsub">Games with a Big-4 team since 2024–25</h3>`;
+    h += `<h3 class="refsub">Games with a Big-4 team since 2024–25${big.length ? ` (${big.length})` : ''}</h3>${two ? `<p class="muted" style="font-size:13px;margin:-6px 0 10px">Big-4 derbies are listed here but not in the Greek referees table, which counts games with exactly one Big-4 team.</p>` : ''}`;
     if (!big.length) h += '<p class="empty">No games with a Big-4 team since 2024–25.</p>';
     else {
       const res = g => { const home = BIG4.includes(g.home), [f, a] = home ? [g.hg, g.ag] : [g.ag, g.hg];
