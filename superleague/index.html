@@ -125,6 +125,16 @@ table.rp td{vertical-align:top}
 .rate{display:inline-block;min-width:40px;text-align:center;border-radius:999px;padding:1px 8px;font:500 12.5px var(--mono)}
 .r-good{background:rgba(111,207,151,.14);color:var(--win)} .r-mid{background:rgba(154,164,186,.13);color:var(--text)}
 .r-warn{background:rgba(212,175,55,.15);color:var(--gold)} .r-bad{background:rgba(217,105,90,.18);color:var(--loss)}
+button.reflink{background:none;border:0;padding:0;margin:0;color:inherit;font:inherit;text-align:left;cursor:pointer;text-decoration:underline dotted color-mix(in srgb,var(--muted) 70%,transparent);text-underline-offset:3px}
+button.reflink:hover{color:var(--gold);text-decoration-color:var(--gold)}
+dialog#refdlg{background:var(--bg);color:var(--text);border:1px solid var(--line);border-radius:12px;padding:0;width:min(1100px,96vw);max-height:90vh}
+dialog#refdlg::backdrop{background:rgba(5,9,18,.72)}
+#refdlg .dh{position:sticky;top:0;background:var(--bg);display:flex;justify-content:space-between;align-items:center;gap:12px;padding:16px 20px 12px;border-bottom:1px solid var(--line);z-index:1}
+#refdlg .dh h2{margin:0}
+#refdlg .db{padding:16px 20px 20px}
+#refdlg .x{background:none;border:1px solid var(--line);border-radius:6px;color:var(--muted);font:500 13px var(--mono);padding:6px 12px;cursor:pointer}
+#refdlg .x:hover{color:var(--text)}
+#refdlg .metrics{grid-template-columns:repeat(auto-fit,minmax(min(140px,40vw),1fr))}
 th.rs{cursor:pointer;user-select:none} th.rs:hover,th.rs.on{color:var(--gold)}
 .jump{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 8px}
 @media(max-width:600px){.grid{grid-template-columns:1fr}.ln span{min-width:0;margin-left:8px}.card{padding:14px 10px 8px}td,th{padding:6px 4px}
@@ -159,6 +169,7 @@ th.rs{cursor:pointer;user-select:none} th.rs:hover,th.rs.on{color:var(--gold)}
   <div id="out"></div>
 </div>
 <div class="tip" id="tip"></div>
+<dialog id="refdlg" aria-labelledby="refdlg-h"><div class="dh"><h2 id="refdlg-h"></h2><button class="x" id="refdlg-x">Close ✕</button></div><div class="db" id="refdlg-b"></div></dialog>
 <script src="data.js?v=f2c45017"></script>
 <script src="referees.js?v=743861ca"></script>
 <script>
@@ -590,6 +601,40 @@ function oddsBlock(rows, sum, capTotal, capHcp){
     <div class="chart"><h3>Card handicap (home − away)<span class="key"><span><i style="background:${HOME_MORE}"></i>Home more</span><span><i style="background:${AWAY_MORE}"></i>Away more</span></span></h3>${oddsChart(rows, 'hcp')}<p class="cap">${capHcp}</p></div></div>`;
   return h;
 }
+// a referee's name links to the list of their 2026-27 games (from the reports, with the cards and fouls from the results)
+const refLink = name => /average|^Average$/i.test(name) ? name : `<button class="reflink" data-ref="${name}">${name}</button>`;
+const teamName = t => t === 'Panaitolikos' ? 'Panetolikos' : t;
+function refGames(name){
+  return window.SLREF.report.filter(r => r[3] === name).map(r => {
+    const [h, a] = r[1].split(' - ').map(teamName);
+    const g = D.results.find(x => x.home === h && x.away === a && x.date === r[0]);
+    return {r, cards: g ? g.stats.cards.slice(2) : [null, null], fouls: g ? g.stats.fouls.slice(2) : [null, null]};
+  });
+}
+function openRef(name){
+  const R = window.SLREF, gs = refGames(name), row = R.cards.find(c => c[0] === name);
+  const avg = xs => { const v = xs.filter(x => x != null); return v.length ? v.reduce((a, b) => a + b, 0) / v.length : null; };
+  const tot = p => p[0] == null || p[1] == null ? null : p[0] + p[1];
+  $('refdlg-h').textContent = name;
+  let h = row ? `<p class="note">Since 2024–25: <b>${row[1]}</b> games, <b>${n2(row[2])}</b> cards a game (home ${n2(row[3])}, away ${n2(row[4])}). The games listed below are this season's only: earlier games aren't in the data.</p>` : '';
+  if (!gs.length) h += '<p class="empty">No 2026–27 games in the referee reports yet.</p>';
+  else {
+    const c = avg(gs.map(g => tot(g.cards))), f = avg(gs.map(g => tot(g.fouls))), rt = avg(gs.map(g => g.r[4]));
+    h += `<div class="metrics"><div class="metric"><div class="lbl">Games 2026–27</div><div class="big">${gs.length}</div></div>
+      <div class="metric"><div class="lbl">Cards per game</div><div class="big">${c == null ? '–' : c.toFixed(2)}</div></div>
+      <div class="metric"><div class="lbl">Fouls per game</div><div class="big">${f == null ? '–' : f.toFixed(1)}</div></div>
+      <div class="metric"><div class="lbl">Average rating</div><div class="big">${rt == null ? '–' : round1(rt)}</div></div></div>
+      <div class="scroll"><table class="mk rp"><thead><tr><th>Date</th><th>Match</th><th class="n">Score</th><th class="n">Cards</th><th class="n">Total</th><th class="n">Fouls</th><th class="n">Rating</th><th>Favoured</th><th>Comment</th></tr></thead><tbody>`;
+    for (const {r, cards, fouls} of gs) h += `<tr><td class="muted">${ddmm(r[0])}</td><td>${r[1].replace(' - ', ' – ')}</td><td class="n">${r[2].replace('-', '–')}</td><td class="n">${cards[0] == null ? '–' : `${cards[0]}–${cards[1]}`}</td><td class="n tot">${tot(cards) ?? '–'}</td><td class="n">${tot(fouls) ?? '–'}</td><td class="n">${rate(r[4])}</td><td>${r[5] ?? '<span class="muted">–</span>'}</td><td class="cm">${r[6]}</td></tr>`;
+    h += '</tbody></table></div>';
+  }
+  $('refdlg-b').innerHTML = h;
+  $('refdlg').showModal();
+  $('refdlg-b').scrollTop = 0;
+}
+$('refdlg-x').onclick = () => $('refdlg').close();
+$('refdlg').onclick = e => { if (e.target === $('refdlg')) $('refdlg').close(); };
+
 function refRatings(R){
   const g = {};
   for (const r of R.report) if (r[4] != null && !R.foreign.includes(r[3])) (g[r[3]] ||= []).push(r[4]);
@@ -600,11 +645,11 @@ function renderRefs(){
   const R = window.SLREF;
   if (!R) return '<p class="empty">Referee data is not available.</p>';
   const sec = [['rf-cards', 'Card averages'], ['rf-odds', 'By the odds'], ['rf-big4', 'Big-4 games'], ['rf-small', 'Other games'], ['rf-report', 'Referee reports'], ['rf-rating', 'Ratings']];
-  let h = `<p class="note">How many cards each referee shows, how cards follow the odds, and how each referee did this season. Card numbers cover league games since 2024–25 (Big-4 against Big-4 since 2021–22); ratings and comments are from diaititis.gr's referee reports. A snapshot from ${dayName(R.updated)}: it is not updated with each round.</p>
+  let h = `<p class="note">How many cards each referee shows, how cards follow the odds, and how each referee did this season. Card numbers cover league games since 2024–25 (Big-4 against Big-4 since 2021–22); ratings and comments are from diaititis.gr's referee reports. A snapshot from ${dayName(R.updated)}: it is not updated with each round. Click a referee's name to see their games this season.</p>
     <div class="jump">${sec.map(([id, t]) => `<button class="chip" data-jump="${id}">${t}</button>`).join('')}</div>`;
 
   h += `<h2 id="rf-cards">Cards per game by referee</h2><div class="scroll"><table class="mk sortable" style="max-width:620px"><thead><tr><th>Referee</th><th class="n">Games</th><th class="n">Cards</th><th class="n">Home</th><th class="n">Away</th></tr></thead><tbody>`;
-  for (const r of R.cards) h += `<tr class="${/avg$/.test(r[0]) ? 'avg' : ''}"><td>${r[0].replace(/ avg$/, ' (average)')}</td><td class="n">${r[1]}</td><td class="n tot">${n2(r[2])}</td><td class="n">${n2(r[3])}</td><td class="n">${n2(r[4])}</td></tr>`;
+  for (const r of R.cards) h += `<tr class="${/avg$/.test(r[0]) ? 'avg' : ''}"><td>${/avg$/.test(r[0]) ? r[0].replace(/ avg$/, ' (average)') : refLink(r[0])}</td><td class="n">${r[1]}</td><td class="n tot">${n2(r[2])}</td><td class="n">${n2(r[3])}</td><td class="n">${n2(r[4])}</td></tr>`;
   h += '</tbody></table></div>';
 
   h += `<h2 id="rf-odds">Cards by the home team's odds</h2><p class="note">Games grouped by the home team's win odds. <b>Handicap</b> is home cards minus away cards; <b>Home more</b> and <b>Away more</b> are the share of games where that side got more cards (the rest were level).</p>`;
@@ -622,25 +667,25 @@ function renderRefs(){
 
   h += `<h2>Greek referees in games with a Big-4 team</h2><p class="note">Games involving Olympiakos, Panathinaikos, AEK or PAOK, since 2024–25, for referees with 5 or more. <b>Big-4</b> is the cards the Big-4 side got, <b>Against</b> its opponent's; <b>Handicap</b> is Big-4 minus opponent. The last columns are the Big-4 side's results with that referee.</p>
     <div class="scroll"><table class="mk sortable"><thead><tr><th>Referee</th><th class="n">Games</th><th class="n">Big-4</th><th class="n">Against</th><th class="n">Total</th><th class="n">Handicap</th><th class="n">Big-4 %</th><th class="n">Against %</th><th class="n" title="Games where the Big-4 side got more cards">Big-4 more</th><th class="n" title="Games where the opponent got more cards">Against more</th><th class="n">W</th><th class="n">D</th><th class="n">L</th><th class="n">Big-4 win %</th></tr></thead><tbody>`;
-  const b4 = (r, cls = '') => `<tr class="${cls}"><td>${r[0]}</td><td class="n">${r[1]}</td><td class="n">${n2(r[2])}</td><td class="n">${n2(r[3])}</td><td class="n tot">${n2(r[4])}</td><td class="n">${sg(r[5])}</td><td class="n">${pc(r[6])}</td><td class="n">${pc(r[7])}</td><td class="n">${pc(r[8])}</td><td class="n">${pc(r[9])}</td><td class="n">${r[10]}</td><td class="n">${r[11]}</td><td class="n">${r[12]}</td><td class="n">${pc(r[13])}</td></tr>`;
+  const b4 = (r, cls = '') => `<tr class="${cls}"><td>${refLink(r[0])}</td><td class="n">${r[1]}</td><td class="n">${n2(r[2])}</td><td class="n">${n2(r[3])}</td><td class="n tot">${n2(r[4])}</td><td class="n">${sg(r[5])}</td><td class="n">${pc(r[6])}</td><td class="n">${pc(r[7])}</td><td class="n">${pc(r[8])}</td><td class="n">${pc(r[9])}</td><td class="n">${r[10]}</td><td class="n">${r[11]}</td><td class="n">${r[12]}</td><td class="n">${pc(r[13])}</td></tr>`;
   R.big4.forEach(r => h += b4(r)); h += b4(R.big4_avg, 'sum');
   h += `</tbody></table></div><p class="muted" style="font-size:14px;margin:6px 0 0">The average row covers all ${R.big4_avg[1]} games, including referees with fewer than 5.</p>`;
 
   h += `<h2 id="rf-small">Greek referees in games with no Big-4 team</h2><p class="note">Since 2024–25, for referees with 5 or more such games. <b>Home %</b> and <b>Away %</b> are each side's share of the cards.</p>
     <div class="scroll"><table class="mk sortable" style="max-width:720px"><thead><tr><th>Referee</th><th class="n">Games</th><th class="n">Home</th><th class="n">Away</th><th class="n">Total</th><th class="n">Home %</th><th class="n">Away %</th></tr></thead><tbody>`;
-  const sm = (r, cls = '') => `<tr class="${cls}"><td>${r[0]}</td><td class="n">${r[1]}</td><td class="n">${n2(r[2])}</td><td class="n">${n2(r[3])}</td><td class="n tot">${n2(r[4])}</td><td class="n">${pc(r[5])}</td><td class="n">${pc(r[6])}</td></tr>`;
+  const sm = (r, cls = '') => `<tr class="${cls}"><td>${refLink(r[0])}</td><td class="n">${r[1]}</td><td class="n">${n2(r[2])}</td><td class="n">${n2(r[3])}</td><td class="n tot">${n2(r[4])}</td><td class="n">${pc(r[5])}</td><td class="n">${pc(r[6])}</td></tr>`;
   R.small.forEach(r => h += sm(r)); h += sm(R.small_avg, 'sum');
   h += `</tbody></table></div><p class="muted" style="font-size:14px;margin:6px 0 0">The average row covers all ${R.small_avg[1]} games, including referees with fewer than 5.</p>`;
 
   h += `<h2 id="rf-report">Referee reports 2026–27</h2><p class="note">Each game's referee, rated out of 10 by diaititis.gr, with a short summary. <b>Favoured</b> names the team that the key mistakes went for, where there was one.</p>
     <div class="scroll"><table class="mk rp sortable"><thead><tr><th data-ord>Date</th><th>Match</th><th class="n">Score</th><th>Referee</th><th class="n">Rating</th><th>Favoured</th><th data-nosort>Comment</th></tr></thead><tbody>`;
-  for (const r of R.report) h += `<tr><td class="muted">${ddmm(r[0])}</td><td>${r[1].replace(' - ', ' – ')}</td><td class="n">${r[2].replace('-', '–')}</td><td>${r[3]}</td><td class="n">${rate(r[4])}</td><td>${r[5] ?? '<span class="muted">–</span>'}</td><td class="cm">${r[6]}</td></tr>`;
+  for (const r of R.report) h += `<tr><td class="muted">${ddmm(r[0])}</td><td>${r[1].replace(' - ', ' – ')}</td><td class="n">${r[2].replace('-', '–')}</td><td>${refLink(r[3])}</td><td class="n">${rate(r[4])}</td><td>${r[5] ?? '<span class="muted">–</span>'}</td><td class="cm">${r[6]}</td></tr>`;
   h += '</tbody></table></div>';
 
   const rt = refRatings(R);
   h += `<h2 id="rf-rating">Referee ratings 2026–27</h2><p class="note">Average diaititis.gr rating per Greek referee this season, worked out from the reports above (referees from abroad left out).</p>
     <div class="scroll"><table class="mk sortable" style="max-width:520px"><thead><tr><th>Referee</th><th class="n">Games</th><th class="n">Rating</th><th class="n">Best</th><th class="n">Worst</th></tr></thead><tbody>`;
-  for (const r of rt) h += `<tr><td>${r.ref}</td><td class="n">${r.n}</td><td class="n">${rate(r.avg)}</td><td class="n">${r.best.toFixed(1)}</td><td class="n">${r.worst.toFixed(1)}</td></tr>`;
+  for (const r of rt) h += `<tr><td>${refLink(r.ref)}</td><td class="n">${r.n}</td><td class="n">${rate(r.avg)}</td><td class="n">${r.best.toFixed(1)}</td><td class="n">${r.worst.toFixed(1)}</td></tr>`;
   return h + '</tbody></table></div>';
 }
 // click a column header to sort; averages stay on top, totals at the bottom; data-ord columns sort in the original order
@@ -671,6 +716,7 @@ function makeSortable(tbl){
 }
 function bindRefs(){
   document.querySelectorAll('table.sortable').forEach(makeSortable);
+  document.querySelectorAll('button.reflink').forEach(b => b.onclick = () => openRef(b.dataset.ref));
   document.querySelectorAll('[data-jump]').forEach(b => b.onclick = () => $(b.dataset.jump).scrollIntoView({behavior: 'smooth', block: 'start'}));
   const tip = $('tip');
   document.querySelectorAll('.chart .hit').forEach(el => {
