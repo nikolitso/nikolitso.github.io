@@ -693,7 +693,7 @@ function capHcp(rows){
 }
 
 // a referee's name links to the list of their games
-const refLink = name => /average|^Average$/i.test(name) ? name : `<button class="reflink" data-ref="${name}">${name}</button>`;
+const refLink = (name, scope) => /average|^Average$/i.test(name) ? name : `<button class="reflink" data-ref="${name}"${scope ? ` data-scope="${scope}"` : ''}>${name}</button>`;
 const teamName = t => t === 'Panaitolikos' ? 'Panetolikos' : t;
 function refGames(name){
   return window.SLREF.report.filter(r => r[3] === name).map(r => {
@@ -723,7 +723,7 @@ function refRows(){
   const G = window.SLREFGAMES;
   return G ? G.games.map(r => Object.fromEntries(G.cols.map((k, i) => [k, r[i]]))) : [];
 }
-function openRef(name){
+function openRef(name, scope = 'all'){
   const R = window.SLREF, all = refGameList();
   const avg = xs => { const v = xs.filter(x => x != null); return v.length ? v.reduce((a, b) => a + b, 0) / v.length : null; };
   const tot = p => p[0] == null || p[1] == null ? null : p[0] + p[1];
@@ -740,15 +740,24 @@ function openRef(name){
   if (all){
     // every game this referee took since 2024-25 (and older Big-4 derbies), with the report where there is one
     const gs = all.filter(g => g.ref === name), rep = r => R.report.find(x => x[3] === name && x[0] === r.date && x[1].split(' - ').map(teamName).join('|') === `${r.home}|${r.away}`);
-    const rec = gs.filter(g => g.season >= '2024-25'), rt = avg(rec.map(g => (rep(g) || [])[4]).filter(x => x != null));
+    const rec = gs.filter(g => g.season >= '2024-25');
     const nB = g => BIG4.includes(g.home) + BIG4.includes(g.away), two = rec.filter(g => nB(g) === 2).length;
-    // the boxes cover the same games as the Greek referees table: exactly one Big-4 team, since 2024-25
-    const b4 = rec.filter(g => nB(g) === 1), side = g => BIG4.includes(g.home) ? [g.hc, g.ac] : [g.ac, g.hc];
-    const b4rt = avg(b4.filter(g => g.season === '2026-27').map(g => (rep(g) || [])[4]).filter(x => x != null));
-    h += `<div class="metrics">${metric('Big-4 games since 2024–25', b4.length, `of ${rec.length} games in all${two ? ` · ${two} derb${two === 1 ? 'y' : 'ies'} not counted` : ''}`)}${metric('Cards per game', b4.length ? avgOf(b4.map(g => g.hc + g.ac)).toFixed(2) : '–')}
-      ${metric('Big-4 · Opp', b4.length ? `${avgOf(b4.map(g => side(g)[0])).toFixed(1)} · ${avgOf(b4.map(g => side(g)[1])).toFixed(1)}` : '–')}${metric('Rating 2026–27', b4rt == null ? '–' : round1(b4rt), 'in these games')}
-      ${favMetrics(b4, all.filter(g => g.season >= '2024-25' && nB(g) === 1))}</div>
-      <p class="muted" style="font-size:13px;margin:-6px 0 12px">The boxes cover this referee's games with exactly one Big-4 team since 2024–25, the same games as the Greek referees table (listed at the bottom); the first list below is all of this season's games. <b>Big-4 · Opp</b> is cards per game for the Big-4 side and its opponent. Favourite and outsider by the bookmakers' 1X2 odds (the shorter win price); a draw counts as the favourite not winning, level cards as the outsider not getting more. <b>All refs</b> is the same over every referee's games with one Big-4 team since 2024–25.</p>`;
+    // the boxes follow the table the name was clicked in: games with exactly one Big-4 team (Greek referees
+    // with a Big-4 team), with none (no Big-4 team), or every game (anywhere else); since 2024-25
+    const S = {big4: {test: g => nB(g) === 1, what: 'with one Big-4 team', title: 'Big-4 games since 2024–25', table: 'the Greek referees in games with a Big-4 team table'},
+               small: {test: g => nB(g) === 0, what: 'with no Big-4 team', title: 'No-Big-4 games since 2024–25', table: 'the Greek referees in games with no Big-4 team table'},
+               all: {test: () => true, what: '', title: 'Games since 2024–25', table: ''}}[scope] || null;
+    const sc = S || {test: () => true, what: '', title: 'Games since 2024–25', table: ''};
+    const sel = rec.filter(sc.test), side = g => BIG4.includes(g.home) ? [g.hc, g.ac] : [g.ac, g.hc];
+    const srt = avg(sel.filter(g => g.season === '2026-27').map(g => (rep(g) || [])[4]).filter(x => x != null));
+    const split = scope === 'big4'
+      ? metric('Big-4 · Opp', sel.length ? `${avgOf(sel.map(g => side(g)[0])).toFixed(1)} · ${avgOf(sel.map(g => side(g)[1])).toFixed(1)}` : '–')
+      : metric('Home · away', sel.length ? `${avgOf(sel.map(g => g.hc)).toFixed(1)} · ${avgOf(sel.map(g => g.ac)).toFixed(1)}` : '–');
+    const sub = sc.what ? `of ${rec.length} games in all${scope === 'big4' && two ? ` · ${two} derb${two === 1 ? 'y' : 'ies'} not counted` : ''}` : (two ? `${two} Big-4 derb${two === 1 ? 'y' : 'ies'}` : '');
+    h += `<div class="metrics">${metric(sc.title, sel.length, sub)}${metric('Cards per game', sel.length ? avgOf(sel.map(g => g.hc + g.ac)).toFixed(2) : '–')}
+      ${split}${metric('Rating 2026–27', srt == null ? '–' : round1(srt), sc.what ? 'in these games' : '')}
+      ${favMetrics(sel, all.filter(g => g.season >= '2024-25' && sc.test(g)))}</div>
+      <p class="muted" style="font-size:13px;margin:-6px 0 12px">The boxes cover this referee's games ${sc.what ? sc.what + ' ' : ''}since 2024–25${sc.table ? `, the same games as ${sc.table}` : ''} (listed at the bottom); the first list below is all of this season's games. ${scope === 'big4' ? '<b>Big-4 · Opp</b> is cards per game for the Big-4 side and its opponent. ' : ''}Favourite and outsider by the bookmakers' 1X2 odds (the shorter win price); a draw counts as the favourite not winning, level cards as the outsider not getting more. <b>All refs</b> is the same over every referee's games ${sc.what ? sc.what + ' ' : ''}since 2024–25.</p>`;
     const cur = gs.filter(g => g.season === '2026-27');
     h += `<h3 class="refsub">This season's games</h3>`;
     if (!cur.length) h += '<p class="empty">No 2026–27 games with this referee yet.</p>';
@@ -758,15 +767,17 @@ function openRef(name){
         h += `<tr><td class="muted">${ddmm(g.date)}</td><td>${g.home} – ${g.away}</td><td class="n">${g.hg}–${g.ag}</td><td class="n">${g.hc}–${g.ac}</td><td class="n tot">${g.hc + g.ac}</td><td class="n">${g.odds ? g.odds.toFixed(2) : '–'}</td><td class="n">${r ? rate(r[4]) : '<span class="muted">–</span>'}</td><td class="cm">${r ? r[6] : ''}</td></tr>`; }
       h += '</tbody></table></div>';
     }
-    // every game with a Big-4 side since 2024-25, the Big-4 side's result first
-    const big = rec.filter(g => BIG4.includes(g.home) || BIG4.includes(g.away));
-    h += `<h3 class="refsub">Games with a Big-4 team since 2024–25${big.length ? ` (${big.length})` : ''}</h3>${two ? `<p class="muted" style="font-size:13px;margin:-6px 0 10px">Big-4 derbies are listed here but not in the Greek referees table, which counts games with exactly one Big-4 team.</p>` : ''}`;
-    if (!big.length) h += '<p class="empty">No games with a Big-4 team since 2024–25.</p>';
+    // the games behind the boxes (from a Big-4 table: every game with a Big-4 side, derbies marked)
+    const list = scope === 'big4' ? rec.filter(g => nB(g) > 0) : sel;
+    const lt = scope === 'big4' ? 'Games with a Big-4 team since 2024–25' : scope === 'small' ? 'Games with no Big-4 team since 2024–25' : 'All games since 2024–25';
+    h += `<h3 class="refsub">${lt}${list.length ? ` (${list.length})` : ''}</h3>${scope === 'big4' && two ? `<p class="muted" style="font-size:13px;margin:-6px 0 10px">Big-4 derbies are listed here but not in the boxes or the Greek referees table, which count games with exactly one Big-4 team.</p>` : ''}`;
+    if (!list.length) h += '<p class="empty">No such games since 2024–25.</p>';
     else {
       const res = g => { const home = BIG4.includes(g.home), [f, a] = home ? [g.hg, g.ag] : [g.ag, g.hg];
-        return BIG4.includes(g.home) && BIG4.includes(g.away) ? '<span class="muted">derby</span>' : f > a ? '<span class="w">W</span>' : f < a ? '<span class="l">L</span>' : 'D'; };
-      h += `<div class="scroll"><table class="mk"><thead><tr><th>Date</th><th>Match</th><th class="n">Score</th><th class="n" title="Result for the Big-4 side">Big-4</th><th class="n">Cards</th><th class="n">Fouls</th></tr></thead><tbody>`;
-      for (const g of big) h += `<tr><td class="muted">${ddmm(g.date)}</td><td>${g.home} – ${g.away}</td><td class="n">${g.hg}–${g.ag}</td><td class="n">${res(g)}</td><td class="n">${g.hc}–${g.ac}</td><td class="n">${g.hf == null ? '–' : `${g.hf}–${g.af}`}</td></tr>`;
+        return nB(g) === 2 ? '<span class="muted">derby</span>' : f > a ? '<span class="w">W</span>' : f < a ? '<span class="l">L</span>' : 'D'; };
+      const b4col = scope === 'big4';
+      h += `<div class="scroll"><table class="mk"><thead><tr><th>Date</th><th>Match</th><th class="n">Score</th>${b4col ? '<th class="n" title="Result for the Big-4 side">Big-4</th>' : ''}<th class="n">Cards</th><th class="n">Fouls</th></tr></thead><tbody>`;
+      for (const g of list) h += `<tr><td class="muted">${ddmm(g.date)}</td><td>${g.home} – ${g.away}</td><td class="n">${g.hg}–${g.ag}</td>${b4col ? `<td class="n">${res(g)}</td>` : ''}<td class="n">${g.hc}–${g.ac}</td><td class="n">${g.hf == null ? '–' : `${g.hf}–${g.af}`}</td></tr>`;
       h += '</tbody></table></div>';
     }
   } else {
@@ -789,7 +800,7 @@ function openRef(name){
 }
 $('refdlg-x').onclick = () => $('refdlg').close();
 // any referee name on the page (Referees tab, the referee line on Projections) opens their pop-up
-document.addEventListener('click', e => { const b = e.target.closest('button.reflink'); if (b) openRef(b.dataset.ref); });
+document.addEventListener('click', e => { const b = e.target.closest('button.reflink'); if (b) openRef(b.dataset.ref, b.dataset.scope); });
 $('refdlg').onclick = e => { if (e.target === $('refdlg')) $('refdlg').close(); };
 
 function refRatings(R){
@@ -821,13 +832,13 @@ function renderRefs(){
 
   h += `<h2>Greek referees in games with a Big-4 team</h2><p class="note">Games involving Olympiakos, Panathinaikos, AEK or PAOK, since 2024–25${T.live ? ', every referee' : ', for referees with 5 or more'}. <b>Big-4</b> is the cards the Big-4 side got per game, <b>Opp</b> its opponent's; <b>Handicap</b> is Big-4 minus opponent; <b>Big-4 fouls</b> and <b>Opp fouls</b> are fouls committed per game; <b>Win %</b> is the Big-4 side's. The last columns are the Big-4 side's results with that referee.</p>
     <div class="scroll"><table class="mk sortable"><thead><tr><th>Referee</th><th class="n">Games</th><th class="n" title="Cards the Big-4 side got per game">Big-4</th><th class="n" title="Cards its opponent got per game">Opp</th><th class="n">Total</th><th class="n">Handicap</th><th class="n" title="Fouls by the Big-4 side per game">Big-4 fouls</th><th class="n" title="Fouls by its opponent per game">Opp fouls</th><th class="n" title="Games where the Big-4 side got more cards">Big-4 more</th><th class="n" title="Games where the opponent got more cards">Opp more</th><th class="n">W</th><th class="n">D</th><th class="n">L</th><th class="n" title="Big-4 side's win %">Win %</th></tr></thead><tbody>`;
-  const b4 = (r, cls = '') => `<tr class="${cls}"><td>${refLink(r[0])}</td><td class="n">${r[1]}</td><td class="n">${n2(r[2])}</td><td class="n">${n2(r[3])}</td><td class="n tot">${n2(r[4])}</td><td class="n">${sg(r[5])}</td><td class="n">${r[6] == null ? '–' : n2(r[6])}</td><td class="n">${r[7] == null ? '–' : n2(r[7])}</td><td class="n">${pc(r[8])}</td><td class="n">${pc(r[9])}</td><td class="n">${r[10]}</td><td class="n">${r[11]}</td><td class="n">${r[12]}</td><td class="n">${pc(r[13])}</td></tr>`;
+  const b4 = (r, cls = '') => `<tr class="${cls}"><td>${refLink(r[0], 'big4')}</td><td class="n">${r[1]}</td><td class="n">${n2(r[2])}</td><td class="n">${n2(r[3])}</td><td class="n tot">${n2(r[4])}</td><td class="n">${sg(r[5])}</td><td class="n">${r[6] == null ? '–' : n2(r[6])}</td><td class="n">${r[7] == null ? '–' : n2(r[7])}</td><td class="n">${pc(r[8])}</td><td class="n">${pc(r[9])}</td><td class="n">${r[10]}</td><td class="n">${r[11]}</td><td class="n">${r[12]}</td><td class="n">${pc(r[13])}</td></tr>`;
   T.big4.forEach(r => h += b4(r, r[1] < 5 ? 'few' : '')); h += b4(T.big4_avg, 'sum');
   h += `</tbody></table></div><p class="muted" style="font-size:14px;margin:6px 0 0">${T.live ? 'Referees with fewer than 5 games are in grey: too few to read much into.' : `The average row covers all ${T.big4_avg[1]} games, including the referees with fewer than 5 games, who aren't in the snapshot.`}</p>`;
 
   h += `<h2 id="rf-small">Greek referees in games with no Big-4 team</h2><p class="note">Since 2024–25${T.live ? ', every referee' : ', for referees with 5 or more such games'}. <b>Home %</b> and <b>Away %</b> are each side's share of the cards.</p>
     <div class="scroll"><table class="mk sortable" style="max-width:720px"><thead><tr><th>Referee</th><th class="n">Games</th><th class="n">Home</th><th class="n">Away</th><th class="n">Total</th><th class="n">Home %</th><th class="n">Away %</th></tr></thead><tbody>`;
-  const sm = (r, cls = '') => `<tr class="${cls}"><td>${refLink(r[0])}</td><td class="n">${r[1]}</td><td class="n">${n2(r[2])}</td><td class="n">${n2(r[3])}</td><td class="n tot">${n2(r[4])}</td><td class="n">${pc(r[5])}</td><td class="n">${pc(r[6])}</td></tr>`;
+  const sm = (r, cls = '') => `<tr class="${cls}"><td>${refLink(r[0], 'small')}</td><td class="n">${r[1]}</td><td class="n">${n2(r[2])}</td><td class="n">${n2(r[3])}</td><td class="n tot">${n2(r[4])}</td><td class="n">${pc(r[5])}</td><td class="n">${pc(r[6])}</td></tr>`;
   T.small.forEach(r => h += sm(r, r[1] < 5 ? 'few' : '')); h += sm(T.small_avg, 'sum');
   h += `</tbody></table></div><p class="muted" style="font-size:14px;margin:6px 0 0">${T.live ? 'Referees with fewer than 5 games are in grey: too few to read much into.' : `The average row covers all ${T.small_avg[1]} games, including the referees with fewer than 5 games, who aren't in the snapshot.`}</p>`;
 
