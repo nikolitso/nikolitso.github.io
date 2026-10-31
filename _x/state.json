@@ -623,7 +623,8 @@
       "victoria",
       "perfect-strangers",
       "life-in-a-fishbowl",
-      "smuggling-hendrix"
+      "smuggling-hendrix",
+      "crossing"
     ],
     "log": [
       {
@@ -813,11 +814,17 @@
         "slot": "2026-10-31 08",
         "slug": "smuggling-hendrix",
         "id": "2116410023614267868"
+      },
+      {
+        "day": "2026-10-31",
+        "slot": "2026-10-31 20",
+        "slug": "crossing",
+        "id": "2116591260001829126"
       }
     ],
     "last_day": "2026-10-31"
   },
-  "last_slot": "2026-10-31 14",
+  "last_slot": "2026-10-31 20",
   "quote": {
     "seen": [
       "1",
