@@ -741,10 +741,14 @@ function openRef(name){
     // every game this referee took since 2024-25 (and older Big-4 derbies), with the report where there is one
     const gs = all.filter(g => g.ref === name), rep = r => R.report.find(x => x[3] === name && x[0] === r.date && x[1].split(' - ').map(teamName).join('|') === `${r.home}|${r.away}`);
     const rec = gs.filter(g => g.season >= '2024-25'), rt = avg(rec.map(g => (rep(g) || [])[4]).filter(x => x != null));
-    const nB = g => BIG4.includes(g.home) + BIG4.includes(g.away), one = rec.filter(g => nB(g) === 1).length, two = rec.filter(g => nB(g) === 2).length;
-    h += `<div class="metrics">${metric('All games since 2024–25', rec.length, `${one} with one Big-4 team${two ? ` · ${two} Big-4 derb${two === 1 ? 'y' : 'ies'}` : ''}`)}${metric('Cards per game', rec.length ? avgOf(rec.map(g => g.hc + g.ac)).toFixed(2) : '–')}
-      ${metric('Home · away', rec.length ? `${avgOf(rec.map(g => g.hc)).toFixed(1)} · ${avgOf(rec.map(g => g.ac)).toFixed(1)}` : '–')}${metric('Rating 2026–27', rt == null ? '–' : round1(rt))}
-      ${favMetrics(rec, all.filter(g => g.season >= '2024-25'))}</div>${favNote}`;
+    const nB = g => BIG4.includes(g.home) + BIG4.includes(g.away), two = rec.filter(g => nB(g) === 2).length;
+    // the boxes cover the same games as the Greek referees table: exactly one Big-4 team, since 2024-25
+    const b4 = rec.filter(g => nB(g) === 1), side = g => BIG4.includes(g.home) ? [g.hc, g.ac] : [g.ac, g.hc];
+    const b4rt = avg(b4.filter(g => g.season === '2026-27').map(g => (rep(g) || [])[4]).filter(x => x != null));
+    h += `<div class="metrics">${metric('Big-4 games since 2024–25', b4.length, `of ${rec.length} games in all${two ? ` · ${two} derb${two === 1 ? 'y' : 'ies'} not counted` : ''}`)}${metric('Cards per game', b4.length ? avgOf(b4.map(g => g.hc + g.ac)).toFixed(2) : '–')}
+      ${metric('Big-4 · Opp', b4.length ? `${avgOf(b4.map(g => side(g)[0])).toFixed(1)} · ${avgOf(b4.map(g => side(g)[1])).toFixed(1)}` : '–')}${metric('Rating 2026–27', b4rt == null ? '–' : round1(b4rt), 'in these games')}
+      ${favMetrics(b4, all.filter(g => g.season >= '2024-25' && nB(g) === 1))}</div>
+      <p class="muted" style="font-size:13px;margin:-6px 0 12px">The boxes cover this referee's games with exactly one Big-4 team since 2024–25, the same games as the Greek referees table (listed at the bottom); the first list below is all of this season's games. <b>Big-4 · Opp</b> is cards per game for the Big-4 side and its opponent. Favourite and outsider by the bookmakers' 1X2 odds (the shorter win price); a draw counts as the favourite not winning, level cards as the outsider not getting more. <b>All refs</b> is the same over every referee's games with one Big-4 team since 2024–25.</p>`;
     const cur = gs.filter(g => g.season === '2026-27');
     h += `<h3 class="refsub">This season's games</h3>`;
     if (!cur.length) h += '<p class="empty">No 2026–27 games with this referee yet.</p>';
