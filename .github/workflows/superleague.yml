@@ -8,6 +8,9 @@ on:
   schedule:
     - cron: "0 7,12,16 * * *"   # 09:00, 14:00 and 18:00 Athens in winter (10:00, 15:00, 19:00 in summer)
   workflow_dispatch:            # Run workflow button: Actions tab, or the GitHub mobile app
+  push:                         # a change to this file runs it once
+    branches: [main]
+    paths: [".github/workflows/superleague.yml"]
 
 permissions:
   contents: write
