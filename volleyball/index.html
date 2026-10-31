@@ -107,6 +107,36 @@ th.sort{cursor:pointer;user-select:none} th.sort:hover,th.sort.on{color:var(--go
 .calc b{color:var(--gold);font-weight:500}
 table.mini{margin:0 0 16px}
 .abbr{display:none}
+.charts{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(440px,100%),1fr));gap:18px;margin:6px 0 10px}
+.chart{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px 12px;min-width:0}
+.chart h3{font:600 17px var(--serif);margin:0 0 4px;display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+.chart svg{display:block;width:100%;height:auto}
+.chart .cap{font:400 14px/1.5 var(--body);color:var(--muted);margin:6px 0 0}
+.key{font:400 12px var(--mono);color:var(--muted);display:flex;gap:14px}
+.key i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+.chart .hit{fill:transparent;cursor:default}
+.chart .bar.hl{opacity:.75}
+.tip{position:fixed;pointer-events:none;background:#0d1220;border:1px solid var(--line);border-radius:6px;padding:6px 10px;font:400 12.5px/1.5 var(--mono);color:var(--text);z-index:10;display:none;white-space:nowrap}
+.tip b{color:var(--gold);font-weight:500}
+tr.avg td,tr.few td{color:var(--muted)} tr.avg td:first-child{font-style:italic}
+tr.sum td{border-top:1px solid var(--line);font-weight:600}
+table.rp td.cm{white-space:normal;min-width:320px;font-size:14.5px;line-height:1.45;color:var(--muted)}
+table.rp td{vertical-align:top}
+.rate{display:inline-block;min-width:40px;text-align:center;border-radius:999px;padding:1px 8px;font:500 12.5px var(--mono)}
+.r-good{background:rgba(111,207,151,.14);color:var(--win)} .r-mid{background:rgba(154,164,186,.13);color:var(--text)}
+.r-warn{background:rgba(212,175,55,.15);color:var(--gold)} .r-bad{background:rgba(217,105,90,.18);color:var(--loss)}
+button.reflink{background:none;border:0;padding:0;margin:0;color:inherit;font:inherit;text-align:left;cursor:pointer;text-decoration:underline dotted color-mix(in srgb,var(--muted) 70%,transparent);text-underline-offset:3px}
+button.reflink:hover{color:var(--gold);text-decoration-color:var(--gold)}
+dialog#refdlg{background:var(--bg);color:var(--text);border:1px solid var(--line);border-radius:12px;padding:0;width:min(1100px,96vw);max-height:90vh}
+dialog#refdlg::backdrop{background:rgba(5,9,18,.72)}
+#refdlg .dh{position:sticky;top:0;background:var(--bg);display:flex;justify-content:space-between;align-items:center;gap:12px;padding:16px 20px 12px;border-bottom:1px solid var(--line);z-index:1}
+#refdlg .dh h2{margin:0}
+#refdlg .db{padding:16px 20px 20px}
+#refdlg .x{background:none;border:1px solid var(--line);border-radius:6px;color:var(--muted);font:500 13px var(--mono);padding:6px 12px;cursor:pointer}
+#refdlg .x:hover{color:var(--text)}
+#refdlg .metrics{grid-template-columns:repeat(auto-fit,minmax(min(140px,40vw),1fr))}
+th.rs{cursor:pointer;user-select:none} th.rs:hover,th.rs.on{color:var(--gold)}
+.jump{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 8px}
 @media(max-width:600px){.grid{grid-template-columns:1fr}.ln span{min-width:0;margin-left:8px}.card{padding:14px 10px 8px}td,th{padding:6px 4px}
   .card td{font-size:14px}.card td.n{font-size:12.5px}.full{display:none}.abbr{display:inline}.wdlt{flex-wrap:wrap;gap:2px 12px}}
 </style>
@@ -162,7 +192,7 @@ tr.srow{cursor:pointer} tr.srow:hover td,tr.srow.on td{background:color-mix(in s
   <div class="chips" id="chips"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=a08dfa67"></script>
+<script src="data.js?v=84ccb2dd"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
