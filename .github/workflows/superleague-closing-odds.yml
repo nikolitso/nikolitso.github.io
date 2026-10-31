@@ -4,11 +4,16 @@ name: Super League
 # games kicking off within 45 minutes, saved on the "odds" branch (see close.py there). The site
 # pipeline on the PC copies them in as each game's closing odds, to score the value bets (CLV).
 # GitHub often runs schedules late or skips them, so the Cloudflare Worker x-daily-scheduler also
-# triggers it every 30 minutes (workflow_dispatch). A push of this file runs it once with a week-wide window, as a test that the feed answers.
+# triggers it every 30 minutes (workflow_dispatch). Run it by hand with minutes=10080 to pull the
+# whole round's odds for the Vs Bookie tab. A push of this file runs it once with a week-wide window, as a test that the feed answers.
 on:
   schedule:
     - cron: "*/15 10-21 * * *"
   workflow_dispatch:
+    inputs:
+      minutes:
+        description: Pull the games kicking off within this many minutes (10080 = the whole week)
+        default: "45"
   push:
     branches: [main]
     paths: [".github/workflows/superleague-closing-odds.yml"]
@@ -31,7 +36,7 @@ jobs:
         with:
           python-version: "3.12"
       - name: Pull the odds
-        run: python close.py ${{ github.event_name == 'push' && '10080' || '45' }}
+        run: python close.py ${{ github.event.inputs.minutes || (github.event_name == 'push' && '10080' || '45') }}
       - name: Save
         run: |
           git add data/odds
