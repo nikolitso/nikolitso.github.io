@@ -560,16 +560,25 @@ function renderValue(mode){
   }
   return h;
 }
+// market picked on Settled bets ('all' or a stat); the pills list the markets with settled bets, with their count
+let stMkt = 'all';
+try { stMkt = localStorage.getItem('sl-stmkt') || 'all'; } catch (e) {}
+const mktName = s => s === 'result' ? 'Result' : L[s];
 function renderSettled(settled, all, evBar){
-  let h = `<p class="note">Every value bet that has been settled, with what happened, and the running record (1 unit staked on each). The minimum EV you pick filters both.</p>
-  ${evBar}`;
+  const counts = settled.reduce((c, b) => (c[b.stat] = (c[b.stat] || 0) + 1, c), {});
+  const mkts = Object.keys(counts).sort((a, b) => counts[b] - counts[a] || mktName(a).localeCompare(mktName(b)));
+  if (stMkt !== 'all' && !counts[stMkt]) stMkt = 'all';
+  if (stMkt !== 'all'){ settled = settled.filter(b => b.stat === stMkt); all = summary(settled); }
+  let h = `<p class="note">Every value bet that has been settled, with what happened, and the running record (1 unit staked on each). The minimum EV and the market you pick filter both.</p>
+  ${evBar}<div class="chips" id="stmk" style="margin:-4px 0 18px">${[['all', `All ${Object.values(counts).reduce((a, b) => a + b, 0)}`], ...mkts.map(m => [m, `${mktName(m)} ${counts[m]}`])]
+    .map(([m, t]) => `<button class="chip${m === stMkt ? ' on' : ''}" data-s="${m}">${t}</button>`).join('')}</div>`;
   h += `<div class="metrics">
     <div class="metric"><div class="lbl">Settled so far</div><div class="big">${all.n}</div></div>
     <div class="metric"><div class="lbl">Hit rate</div><div class="big">${all.n ? pct(all.hit) : '–'}</div></div>
     <div class="metric"><div class="lbl">Profit (1 unit each)</div><div class="big">${all.n ? (all.profit > 0 ? '+' : '') + all.profit.toFixed(2) : '–'}</div></div>
     <div class="metric"><div class="lbl">Return per bet</div><div class="big">${all.n ? evPct(all.roi) : '–'}</div></div></div>`;
   if (!settled.length) return h + `<p class="muted" style="margin-top:18px">No settled bets yet at this EV level: the record starts once results for logged bets are in the data.</p>`;
-  h += `<h2>All settled bets</h2><p class="muted" style="margin:-4px 0 10px;font-size:14px">Every bet from EV +${Math.round(valMin * 100)}% with its result, newest first; the record by market, side and EV follows below.</p><div class="scroll"><table class="mk"><thead><tr><th>Date</th><th>Match</th><th>Bet</th><th class="n">Odds</th><th class="n">EV</th><th class="n" title="What happened: the final score for 1X2 bets, the match total for the rest">Actual</th><th class="n">Result</th></tr></thead><tbody>`;
+  h += `<h2>${stMkt === 'all' ? 'All settled bets' : `Settled ${mktName(stMkt).toLowerCase()} bets`}</h2><p class="muted" style="margin:-4px 0 10px;font-size:14px">Every bet from EV +${Math.round(valMin * 100)}% with its result, newest first; the record by market, side and EV follows below.</p><div class="scroll"><table class="mk"><thead><tr><th>Date</th><th>Match</th><th>Bet</th><th class="n">Odds</th><th class="n">EV</th><th class="n" title="What happened: the final score for 1X2 bets, the match total for the rest">Actual</th><th class="n">Result</th></tr></thead><tbody>`;
   for (const b of settled) h += `<tr><td class="muted">${dayName(b.date)}</td><td>${b.home} – ${b.away}</td><td>${betName(b)}</td><td class="n">${b.odds.toFixed(2)}</td><td class="n">${evPct(b.ev)}</td><td class="n"><b>${b.actual ?? '–'}</b></td><td class="n ${b.result === 'won' ? 'w' : 'l'}">${b.result === 'won' ? 'Won +' + (b.odds - 1).toFixed(2) : 'Lost −1'}</td></tr>`;
   h += '</tbody></table></div>';
   const group = key => settled.reduce((g, b) => ((g[key(b)] ||= []).push(b), g), {});
@@ -905,6 +914,7 @@ function render(){
   document.querySelectorAll('#pjmode button').forEach(b => b.onclick = () => { pjMode = b.dataset.m; render(); });
   const chips = (id, set) => document.querySelectorAll(`#${id} .chip`).forEach(b => b.onclick = () => { set(b.dataset.s); render(); });
   chips('pjstat', s => pjStat = s); chips('rsstat', s => rsStat = s); chips('tmstat', s => tmStat = s);
+  document.querySelectorAll('#stmk .chip').forEach(b => b.onclick = () => { stMkt = b.dataset.s; try { localStorage.setItem('sl-stmkt', stMkt); } catch (e) {} render(); });
   document.querySelectorAll('#valmin button').forEach(b => b.onclick = () => { valMin = +b.dataset.v; try { localStorage.setItem('sl-valmin', valMin); } catch (e) {} render(); });
   document.querySelectorAll('th.sort').forEach(t => t.onclick = () => { const k = t.dataset.k; tmSort = [k, tmSort[0] === k ? -tmSort[1] : (k === 'team' ? 1 : -1)]; render(); });
 }
