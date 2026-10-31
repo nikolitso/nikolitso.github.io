@@ -36,19 +36,21 @@ TEAMS = {"Olympiacos Piraeus": "Olympiakos", "Olympiacos": "Olympiakos", "AEK At
          "PAOK": "PAOK", "Panathinaikos": "Panathinaikos", "Aris": "Aris", "Asteras Tripolis": "Asteras",
          "Asteras Aktor": "Asteras", "Atromitos": "Atromitos", "Panetolikos": "Panetolikos", "OFI Crete": "OFI",
          "Volos": "Volos", "Volos NFC": "Volos", "Kifisia": "Kifisia", "Levadiakos": "Levadiakos",
-         "Iraklis": "Iraklis", "Kalamata": "Kalamata", "Larisa": "Larisa", "AEL Larissa": "Larisa",
+         "Iraklis": "Iraklis", "Iraklis 1908": "Iraklis", "Kalamata": "Kalamata", "Larisa": "Larisa", "AEL Larissa": "Larisa",
          "Lamia": "Lamia", "Panserraikos": "Panserraikos", "Athens Kallithea": "Kallithea"}
 BIG4 = {"Olympiakos", "Panathinaikos", "AEK", "PAOK"}
 # referee labels shown on the site, by surname (UEFA category)
 LABELS = {"Fotias": "UEFA A", "Papapetrou": "UEFA A", "Matsoukas": "UEFA B", "Moschou": "UEFA B",
           "Polychronis": "UEFA B", "Tsakalidis": "UEFA B", "Vergetis": "UEFA B"}
-ALIASES = {"Hernandez Hernandez": "Hernández", "Hernandez": "Hernández"}
+# Flashscore spellings -> the ones in the diaititis.gr reports (Katopis is listed as "Eleftherios K.")
+ALIASES = {"Hernandez Hernandez": "Hernández", "Hernandez": "Hernández", "Daoulas": "Ntaoulas",
+           "Katoikos": "Katikos", "Eleftherios": "Katopis"}
 CARD_ICONS = {"yellow-card", "red-card", "yellow-red-card", "red-yellow-card"}   # each one counts as a card
 SKIP_FLAGS = ("Postponed", "Cancelled", "Awarded", "Abandoned")
 
 LIST_JS = r"""() => [...document.querySelectorAll('.event__match')].map(e => {
   const t = e.innerText.split('\n').map(x => x.trim()).filter(Boolean);
-  const q = s => e.querySelector(s)?.innerText.trim() || '';
+  const q = s => (e.querySelector(s)?.innerText || '').split('\n')[0].trim();   // first line: no red-card count
   const a = e.querySelector('a');
   return {id: e.id.replace(/^g_\d+_/, ''), when: t[0], href: a ? a.href : '',
           flag: t.find(x => /^(AET|Pen|After|Postponed|Cancelled|Awarded|Abandoned)/.test(x)) || '',
@@ -78,7 +80,24 @@ def load():
         return {}, False
     txt = OUT.read_text(encoding="utf-8")
     d = json.loads(txt[txt.index("{"):txt.rstrip().rstrip(";").rindex("}") + 1])
-    return {g[0]: g for g in d["games"]}, bool(d.get("complete"))
+    games = {g[0]: tidy(g) for g in d["games"]}
+    return games, bool(d.get("complete"))
+
+
+def team(name):
+    name = name.split("\n")[0].strip()
+    return TEAMS.get(name, name)
+
+
+def tidy(g):
+    """Apply the current team and referee names to a saved game, so fixes here reach old rows too."""
+    g[3], g[4] = team(g[3]), team(g[4])
+    if g[7]:
+        base = re.sub(r" \(UEFA [AB]\)$", "", g[7])
+        base = ALIASES.get(base, base)
+        surname = base.split()[-1]
+        g[7] = f"{base} ({LABELS[surname]})" if surname in LABELS and not g[8] else base
+    return g
 
 
 def save(games, complete):
@@ -154,7 +173,7 @@ def read_game(page, g, season):
     open_page(page, f"{base}/?mid={mid}", "() => document.querySelector('.smv__participantRow') || /REFEREE:/i.test(document.body.innerText)")
     sm = page.evaluate(SUMMARY_JS)
     ref, foreign = referee(sm["ref"]) if sm["ref"] else (None, False)
-    home, away = TEAMS.get(g["home"], g["home"]), TEAMS.get(g["away"], g["away"])
+    home, away = team(g["home"]), team(g["away"])
     return [mid, season[:5] + season[7:], iso_date(g["when"], season), home, away, int(g["hs"]), int(g["as"]),
             ref, 1 if foreign else 0, sm["cards"][0], sm["cards"][1], home_odds(page, base, mid)]
 
@@ -180,7 +199,7 @@ def main():
             todo = [g for g in lst if g["id"] not in games and g["href"] and "/?mid=" in g["href"] and g["hs"] != ""
                     and not g["flag"].startswith(SKIP_FLAGS)]
             if which == "big4":
-                todo = [g for g in todo if TEAMS.get(g["home"], g["home"]) in BIG4 and TEAMS.get(g["away"], g["away"]) in BIG4]
+                todo = [g for g in todo if team(g["home"]) in BIG4 and team(g["away"]) in BIG4]
             print(f"{season}: {len(lst)} results, {len(todo)} to read", flush=True)
             for g in todo:
                 if done >= limit:
