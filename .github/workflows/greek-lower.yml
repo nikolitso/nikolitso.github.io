@@ -1,7 +1,8 @@
 name: Greek lower leagues
 
-# /greek-lower/: this season's results and fixtures from Flashscore, 1X2 and O/U models, bookmaker odds, the
-# page and the homepage block. Scripts and data in nikolitso/BettingSignal (greek-lower/). Nightly; "Update all
+# /greek-lower/: this season's results and fixtures from Flashscore, 1X2 and O/U models, bookmaker odds and the
+# page. The pipeline also writes a "Picks this round" block into index.html; that is discarded, not published,
+# so betting picks stay off the homepage. Scripts and data in nikolitso/BettingSignal (greek-lower/). Nightly; "Update all
 # sites" runs it too. Hand-added odds go in the BettingSignal checkout (git pull first).
 on:
   schedule:
@@ -25,7 +26,9 @@ jobs:
           dir: greek-lower
           requirements: -r _bs/greek-lower/requirements.txt
           browser: "true"
-          run: python -u update.py
-          pages: greek-lower index.html
+          run: |
+            python -u update.py
+            git -C "$GITHUB_WORKSPACE" checkout -- index.html   # keep the picks block off the homepage
+          pages: greek-lower
           label: Greek lower leagues
           token: ${{ secrets.SITES_TOKEN }}
