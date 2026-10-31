@@ -26,6 +26,8 @@ jobs:
           run: |
             python -W ignore run_update.py | tee /tmp/update.log
             python ../site/make_site.py "$GITHUB_WORKSPACE/handball"
+            # match times come from Flashscore in UTC: show them in Athens time
+            python "$GITHUB_WORKSPACE/scripts/handball_athens_times.py" "$GITHUB_WORKSPACE/handball"
           pages: handball
           label: Handball
           token: ${{ secrets.SITES_TOKEN }}
