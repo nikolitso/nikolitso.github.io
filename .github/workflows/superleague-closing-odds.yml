@@ -2,7 +2,7 @@ name: Super League
 
 # Every 15 minutes from 12:00 to 23:45 Athens (winter time): Superbet's odds for the Super League
 # games kicking off within 45 minutes, saved on the "odds" branch (see close.py there). The site
-# pipeline on the PC copies them in as each game's closing odds, to score the value bets (CLV).
+# pipeline (superleague.yml) copies them in as each game's closing odds, to score the value bets (CLV).
 # GitHub often runs schedules late or skips them, so the Cloudflare Worker x-daily-scheduler also
 # triggers it every 30 minutes (workflow_dispatch). Run it by hand with minutes=10080 to pull the
 # whole round's odds for the Vs Bookie tab. A push of this file runs it once with a week-wide window, as a test that the feed answers.

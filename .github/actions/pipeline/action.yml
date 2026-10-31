@@ -2,7 +2,7 @@ name: Run a BettingSignal pipeline
 description: >
   Check out the private repo nikolitso/BettingSignal, run one of its pipelines, publish the pages it wrote
   here, and save its refreshed data back to BettingSignal. Used by the Handball, Basketball, EuroCup,
-  Volleyball, Challenge Cup Women, Greek Cup and PAOK Hub workflows (the last one
+  Volleyball, Challenge Cup Women, Greek Cup, Super League and PAOK Hub workflows (the last one
   publishes to nikolitso/paok-hub through `site`). If the pipeline fails nothing is published or saved.
 inputs:
   dir:

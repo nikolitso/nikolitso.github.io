@@ -1,0 +1,31 @@
+name: Super League site
+
+# /superleague/: results from ESPN and the season files, ratings, projections for the coming round,
+# odds and value bets (closing odds from the "odds" branch, see superleague-closing-odds.yml).
+# Scripts and data in nikolitso/BettingSignal (superleague/): refs.txt and new data files are edited
+# there. Three times a day; "Update all sites" too.
+on:
+  schedule:
+    - cron: "0 7,12,16 * * *"   # 09:00, 14:00 and 18:00 Athens in winter (10:00, 15:00, 19:00 in summer)
+  workflow_dispatch:            # Run workflow button: Actions tab, or the GitHub mobile app
+
+permissions:
+  contents: write
+
+concurrency:
+  group: superleague
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: ./.github/actions/pipeline
+        with:
+          dir: superleague
+          requirements: -r _bs/superleague/requirements.txt
+          run: python -u update.py
+          pages: superleague/data.js superleague/index.html
+          label: Super League
+          token: ${{ secrets.SITES_TOKEN }}
