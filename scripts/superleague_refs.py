@@ -128,13 +128,13 @@ def save(games, complete):
                    encoding="utf-8")
 
 
-def open_page(page, url, ready):
+def open_page(page, url, ready, timeout=30000):
     page.goto(url, wait_until="domcontentloaded", timeout=60000)
     try:
         page.click("#onetrust-reject-all-handler", timeout=3000)
     except Exception:
         pass
-    page.wait_for_function(ready, timeout=30000)
+    page.wait_for_function(ready, timeout=timeout)
     page.wait_for_timeout(1200)
 
 
@@ -185,17 +185,42 @@ def referee(raw):
     return name or None, foreign
 
 
+# odds pages this run: Flashscore hides odds from some places (the runner's IP), and then every
+# odds page times out. After 5 misses in a row with none found, stop asking for this run; games are
+# saved without odds and a later run fills them in (see main).
+ODDS = {"ok": 0, "miss": 0}
+
+
+def odds_off():
+    return ODDS["ok"] == 0 and ODDS["miss"] >= 5
+
+
 def home_odds(page, base, mid):
-    try:
-        open_page(page, f"{base}/odds/1x2-odds/full-time/?mid={mid}", "() => document.querySelector('.ui-table__row')")
-    except Exception:
+    if odds_off():
         return None
     vals = []
-    for row in page.evaluate(ODDS_JS):
-        nums = [x for x in row if re.fullmatch(r"\d+\.\d+", x)]
-        if len(nums) >= 3:
-            vals.append(float(nums[-3]))
-    return round(statistics.median(vals), 2) if vals else None
+    try:
+        open_page(page, f"{base}/odds/1x2-odds/full-time/?mid={mid}", "() => document.querySelector('.ui-table__row')", 10000)
+        for row in page.evaluate(ODDS_JS):
+            nums = [x for x in row if re.fullmatch(r"\d+\.\d+", x)]
+            if len(nums) >= 3:
+                vals.append(float(nums[-3]))
+    except Exception:
+        pass
+    if not vals:
+        ODDS["miss"] += 1
+        if ODDS["miss"] == 1:                              # once a run: what the page showed instead
+            try:
+                txt = re.sub(r"\s+", " ", page.evaluate("() => document.body.innerText"))[:300]
+            except Exception:
+                txt = "?"
+            print(f"   no odds at {page.url}: {txt}", flush=True)
+        if odds_off():
+            print("   odds pages answer nothing from here: no more odds this run", flush=True)
+        return None
+    ODDS["ok"] += 1
+    ODDS["miss"] = 0
+    return round(statistics.median(vals), 2)
 
 
 def read_game(page, g, season):
@@ -214,7 +239,7 @@ def main():
     stop_at = time.monotonic() + minutes * 60          # the workflow is cut off at 120 min and would lose the run
     games, complete = load()
     print(f"{len(games)} games saved")
-    done, left, failed = 0, 0, False
+    done, left, failed, filled = 0, 0, False, 0
     with sync_playwright() as p:
         b = p.chromium.launch()
         page = b.new_page(locale="en-GB", timezone_id="Europe/Athens")
@@ -252,11 +277,20 @@ def main():
                 if done % 20 == 0:
                     save(games, complete)
                 time.sleep(0.5)
+            # games saved without odds (their odds page didn't answer): try again
+            for g in lst:
+                row = games.get(g["id"])
+                if row is None or row[11] is not None or odds_off() or time.monotonic() > stop_at or "/?mid=" not in g["href"]:
+                    continue
+                row[11] = home_odds(page, *g["href"].split("/?mid="))
+                if row[11] is not None:
+                    filled += 1
         b.close()
     # the backfill is done once a run has seen every season's list and left nothing unread; it stays done
     complete = complete or (not failed and left == 0)
     save(games, complete)
-    print(f"read {done} new game(s); {len(games)} saved; {left} still to read; complete: {complete}")
+    print(f"read {done} new game(s), odds added to {filled}; {len(games)} saved; {left} still to read; "
+          f"{sum(r[11] is None for r in games.values())} without odds; complete: {complete}")
 
 
 if __name__ == "__main__":
