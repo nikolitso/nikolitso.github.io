@@ -682,11 +682,39 @@ function refGames(name){
     return {r, cards: g ? g.stats.cards.slice(2) : [null, null], fouls: g ? g.stats.fouls.slice(2) : [null, null]};
   });
 }
+// favourite and outsider by the 1X2 odds: the side with the shorter win price. Games read before away
+// odds were kept have the home price only; there the home side is the favourite below 2.70, about where
+// home and away chances are level once the draw is allowed for.
+const FAV_CUT = 2.70;
+const favSide = g => g.aodds ? (g.odds < g.aodds ? 'h' : g.odds > g.aodds ? 'a' : null) : g.odds ? (g.odds < FAV_CUT ? 'h' : 'a') : null;
+// games as {hg, ag, hc, ac, odds, aodds}: n with a favourite, share the favourite won, share the outsider got more cards
+function favStats(gs){
+  let n = 0, win = 0, out = 0;
+  for (const g of gs){
+    const f = favSide(g);
+    if (!f || g.hg == null || g.hc == null) continue;
+    const [fg, og, fc, oc] = f === 'h' ? [g.hg, g.ag, g.hc, g.ac] : [g.ag, g.hg, g.ac, g.hc];
+    n++; if (fg > og) win++; if (oc > fc) out++;
+  }
+  return {n, win: n ? win / n : null, out: n ? out / n : null};
+}
+// every game read so far, as objects (the tables wait for the full list; the pop-up's odds stats don't need to)
+function refRows(){
+  const G = window.SLREFGAMES;
+  return G ? G.games.map(r => Object.fromEntries(G.cols.map((k, i) => [k, r[i]]))) : [];
+}
 function openRef(name){
   const R = window.SLREF, all = refGameList();
   const avg = xs => { const v = xs.filter(x => x != null); return v.length ? v.reduce((a, b) => a + b, 0) / v.length : null; };
   const tot = p => p[0] == null || p[1] == null ? null : p[0] + p[1];
-  const metric = (l, v) => `<div class="metric"><div class="lbl">${l}</div><div class="big">${v}</div></div>`;
+  const metric = (l, v, sub) => `<div class="metric"><div class="lbl">${l}</div><div class="big">${v}</div>${sub ? `<div class="muted" style="font:400 12px var(--mono);margin-top:4px">${sub}</div>` : ''}</div>`;
+  // favourite wins % and outsider-more-cards %, next to the same for every referee over the same games
+  const favMetrics = (gs, base) => {
+    const s = favStats(gs), b = favStats(base), p = x => x == null ? '–' : Math.round(x * 100) + '%';
+    return metric('Favourite wins', p(s.win), s.n ? `${Math.round(s.win * s.n)} of ${s.n} · all refs ${p(b.win)}` : `no odds yet`)
+      + metric('Outsider more cards', p(s.out), s.n ? `${Math.round(s.out * s.n)} of ${s.n} · all refs ${p(b.out)}` : `no odds yet`);
+  };
+  const favNote = `<p class="muted" style="font-size:13px;margin:-6px 0 12px">Favourite and outsider by the bookmakers' 1X2 odds (the shorter win price). A draw counts as the favourite not winning; level cards count as the outsider not getting more. <b>All refs</b> is the same over every referee's games in the same span.</p>`;
   $('refdlg-h').textContent = name;
   let h = '';
   if (all){
@@ -694,7 +722,8 @@ function openRef(name){
     const gs = all.filter(g => g.ref === name), rep = r => R.report.find(x => x[3] === name && x[0] === r.date && x[1].split(' - ').map(teamName).join('|') === `${r.home}|${r.away}`);
     const rec = gs.filter(g => g.season >= '2024-25'), rt = avg(rec.map(g => (rep(g) || [])[4]).filter(x => x != null));
     h += `<div class="metrics">${metric('Games since 2024–25', rec.length)}${metric('Cards per game', rec.length ? avgOf(rec.map(g => g.hc + g.ac)).toFixed(2) : '–')}
-      ${metric('Home · away', rec.length ? `${avgOf(rec.map(g => g.hc)).toFixed(1)} · ${avgOf(rec.map(g => g.ac)).toFixed(1)}` : '–')}${metric('Rating 2026–27', rt == null ? '–' : round1(rt))}</div>`;
+      ${metric('Home · away', rec.length ? `${avgOf(rec.map(g => g.hc)).toFixed(1)} · ${avgOf(rec.map(g => g.ac)).toFixed(1)}` : '–')}${metric('Rating 2026–27', rt == null ? '–' : round1(rt))}
+      ${favMetrics(rec, all.filter(g => g.season >= '2024-25'))}</div>${favNote}`;
     if (!gs.length) h += '<p class="empty">No league games with this referee in the data.</p>';
     else {
       h += `<div class="scroll"><table class="mk rp"><thead><tr><th>Date</th><th>Match</th><th class="n">Score</th><th class="n">Cards</th><th class="n">Total</th><th class="n" title="Bookmakers' median home-win odds">Home odds</th><th class="n">Rating</th><th>Comment</th></tr></thead><tbody>`;
@@ -708,7 +737,14 @@ function openRef(name){
     if (!gs.length) h += '<p class="empty">No 2026–27 games in the referee reports yet.</p>';
     else {
       const c = avg(gs.map(g => tot(g.cards))), f = avg(gs.map(g => tot(g.fouls))), rt = avg(gs.map(g => g.r[4]));
-      h += `<div class="metrics">${metric('Games 2026–27', gs.length)}${metric('Cards per game', c == null ? '–' : c.toFixed(2))}${metric('Fouls per game', f == null ? '–' : f.toFixed(1))}${metric('Average rating', rt == null ? '–' : round1(rt))}</div>
+      // odds from the game list (read after each round), score from the report, cards from the results
+      const rows = refRows().filter(g => g.season === '2026-27');
+      const withOdds = gs.map(({r, cards}) => {
+        const [hm, aw] = r[1].split(' - ').map(teamName), x = rows.find(g => g.date === r[0] && g.home === hm && g.away === aw);
+        const [hg, ag] = r[2].split('-').map(Number);
+        return {hg, ag, hc: cards[0] ?? x?.hc, ac: cards[1] ?? x?.ac, odds: x?.odds, aodds: x?.aodds};
+      });
+      h += `<div class="metrics">${metric('Games 2026–27', gs.length)}${metric('Cards per game', c == null ? '–' : c.toFixed(2))}${metric('Fouls per game', f == null ? '–' : f.toFixed(1))}${metric('Average rating', rt == null ? '–' : round1(rt))}${favMetrics(withOdds, rows)}</div>${favNote}
         <div class="scroll"><table class="mk rp"><thead><tr><th>Date</th><th>Match</th><th class="n">Score</th><th class="n">Cards</th><th class="n">Total</th><th class="n">Fouls</th><th class="n">Rating</th><th>Favoured</th><th>Comment</th></tr></thead><tbody>`;
       for (const {r, cards, fouls} of gs) h += `<tr><td class="muted">${ddmm(r[0])}</td><td>${r[1].replace(' - ', ' – ')}</td><td class="n">${r[2].replace('-', '–')}</td><td class="n">${cards[0] == null ? '–' : `${cards[0]}–${cards[1]}`}</td><td class="n tot">${tot(cards) ?? '–'}</td><td class="n">${tot(fouls) ?? '–'}</td><td class="n">${rate(r[4])}</td><td>${r[5] ?? '<span class="muted">–</span>'}</td><td class="cm">${r[6]}</td></tr>`;
       h += '</tbody></table></div>';

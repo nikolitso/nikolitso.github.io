@@ -30,7 +30,7 @@ BASE = "https://www.flashscore.com/football/greece/"
 SEASONS = [("2026-2027", "super-league", "all"), ("2025-2026", "super-league-2025-2026", "all"),
            ("2024-2025", "super-league-2024-2025", "all"), ("2023-2024", "super-league-2023-2024", "big4"),
            ("2022-2023", "super-league-2022-2023", "big4"), ("2021-2022", "super-league-2021-2022", "big4")]
-COLS = ["mid", "season", "date", "home", "away", "hg", "ag", "ref", "foreign", "hc", "ac", "odds"]
+COLS = ["mid", "season", "date", "home", "away", "hg", "ag", "ref", "foreign", "hc", "ac", "odds", "aodds"]
 
 # Flashscore team names -> the names used on the site (others are kept as they are)
 TEAMS = {"Olympiacos Piraeus": "Olympiakos", "Olympiacos": "Olympiakos", "AEK Athens FC": "AEK", "AEK Athens": "AEK",
@@ -109,6 +109,7 @@ def team(name):
 
 def tidy(g):
     """Apply the current team and referee names to a saved game, so fixes here reach old rows too."""
+    g += [None] * (len(COLS) - len(g))                     # rows saved before a column was added
     g[3], g[4] = team(g[3]), team(g[4])
     if g[7]:
         base = re.sub(r" \(UEFA [AB]\)$", "", g[7])
@@ -195,16 +196,17 @@ def odds_off():
     return ODDS["ok"] == 0 and ODDS["miss"] >= 5
 
 
-def home_odds(page, base, mid):
+def odds_1x2(page, base, mid):
+    """(home, away): the bookmakers' median win odds, or (None, None)."""
     if odds_off():
-        return None
+        return None, None
     vals = []
     try:
         open_page(page, f"{base}/odds/1x2-odds/full-time/?mid={mid}", "() => document.querySelector('.ui-table__row')", 10000)
         for row in page.evaluate(ODDS_JS):
             nums = [x for x in row if re.fullmatch(r"\d+\.\d+", x)]
             if len(nums) >= 3:
-                vals.append(float(nums[-3]))
+                vals.append((float(nums[-3]), float(nums[-1])))
     except Exception:
         pass
     if not vals:
@@ -217,10 +219,10 @@ def home_odds(page, base, mid):
             print(f"   no odds at {page.url}: {txt}", flush=True)
         if odds_off():
             print("   odds pages answer nothing from here: no more odds this run", flush=True)
-        return None
+        return None, None
     ODDS["ok"] += 1
     ODDS["miss"] = 0
-    return round(statistics.median(vals), 2)
+    return round(statistics.median(v[0] for v in vals), 2), round(statistics.median(v[1] for v in vals), 2)
 
 
 def read_game(page, g, season):
@@ -230,7 +232,7 @@ def read_game(page, g, season):
     ref, foreign = referee(sm["ref"]) if sm["ref"] else (None, False)
     home, away = team(g["home"]), team(g["away"])
     return [mid, season[:5] + season[7:], iso_date(g["when"], season), home, away, int(g["hs"]), int(g["as"]),
-            ref, 1 if foreign else 0, sm["cards"][0], sm["cards"][1], home_odds(page, base, mid)]
+            ref, 1 if foreign else 0, sm["cards"][0], sm["cards"][1], *odds_1x2(page, base, mid)]
 
 
 def main():
@@ -239,7 +241,7 @@ def main():
     stop_at = time.monotonic() + minutes * 60          # the workflow is cut off at 120 min and would lose the run
     games, complete = load()
     print(f"{len(games)} games saved")
-    done, left, failed, filled = 0, 0, False, 0
+    done, left, failed, filled, lists = 0, 0, False, 0, []
     with sync_playwright() as p:
         b = p.chromium.launch()
         page = b.new_page(locale="en-GB", timezone_id="Europe/Athens")
@@ -261,6 +263,7 @@ def main():
             if which == "big4":
                 todo = [g for g in todo if team(g["home"]) in BIG4 and team(g["away"]) in BIG4]
             print(f"{season}: {len(lst)} results, {len(todo)} to read", flush=True)
+            lists.append(lst)
             for g in todo:
                 if done >= limit or time.monotonic() > stop_at:
                     left += 1
@@ -273,24 +276,27 @@ def main():
                     continue
                 games[row[0]] = row
                 done += 1
-                print(f"   {row[2]} {row[3]} {row[5]}-{row[6]} {row[4]} | {row[7]} | cards {row[9]}-{row[10]} | odds {row[11]}", flush=True)
+                print(f"   {row[2]} {row[3]} {row[5]}-{row[6]} {row[4]} | {row[7]} | cards {row[9]}-{row[10]} | odds {row[11]} / {row[12]}", flush=True)
                 if done % 20 == 0:
                     save(games, complete)
                 time.sleep(0.5)
-            # games saved without odds (their odds page didn't answer): try again
-            for g in lst:
-                row = games.get(g["id"])
-                if row is None or row[11] is not None or odds_off() or time.monotonic() > stop_at or "/?mid=" not in g["href"]:
-                    continue
-                row[11] = home_odds(page, *g["href"].split("/?mid="))
-                if row[11] is not None:
-                    filled += 1
+        # then games saved without odds (their odds page didn't answer, or saved before away odds were kept)
+        for g in [g for lst in lists for g in lst]:
+            row = games.get(g["id"])
+            if row is None or row[12] is not None or odds_off() or time.monotonic() > stop_at or "/?mid=" not in g["href"]:
+                continue
+            h, a = odds_1x2(page, *g["href"].split("/?mid="))
+            if a is not None:
+                row[11], row[12] = h, a
+                filled += 1
+                if filled % 20 == 0:
+                    save(games, complete)
         b.close()
     # the backfill is done once a run has seen every season's list and left nothing unread; it stays done
     complete = complete or (not failed and left == 0)
     save(games, complete)
     print(f"read {done} new game(s), odds added to {filled}; {len(games)} saved; {left} still to read; "
-          f"{sum(r[11] is None for r in games.values())} without odds; complete: {complete}")
+          f"{sum(r[12] is None for r in games.values())} without both odds; complete: {complete}")
 
 
 if __name__ == "__main__":
