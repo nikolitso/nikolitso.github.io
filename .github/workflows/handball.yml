@@ -1,10 +1,10 @@
 name: Handball
 
 # /handball/: refresh from Flashscore, rebuild the pages, publish them, save the ledgers to nikolitso/BettingSignal
-# (scripts in handball/projector there). Twice a day; the "Update all sites" button runs it too.
+# (scripts in handball/projector there). Every 6 hours; the "Update all sites" button runs it too.
 on:
   schedule:
-    - cron: "0 7,14 * * *"   # 09:00 and 16:00 Athens in winter (10:00 and 17:00 in summer)
+    - cron: "0 1,7,13,19 * * *"   # every 6 hours: 03:00, 09:00, 15:00, 21:00 Athens in winter (an hour later in summer)
   workflow_dispatch:          # Run workflow button: Actions tab, or the GitHub mobile app
 
 permissions:
