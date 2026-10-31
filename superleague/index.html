@@ -160,7 +160,8 @@ th.rs{cursor:pointer;user-select:none} th.rs:hover,th.rs.on{color:var(--gold)}
 
   <div class="tabs" id="tabs">
     <a href="#view=projections" data-view="projections" class="on">Projections</a>
-    <a href="#view=value" data-view="value">Value bets</a>
+    <a href="#view=open" data-view="open">Open bets</a>
+    <a href="#view=settled" data-view="settled">Settled bets</a>
     <a href="#view=market" data-view="market">Vs Bookie</a>
     <a href="#view=results" data-view="results">Results</a>
     <a href="#view=teams" data-view="teams">Teams</a>
@@ -394,7 +395,7 @@ function renderMethod(){
       ${H} goals = ${g.mu_home.toFixed(2)} × ${g.home_for.toFixed(2)} × ${g.away_against.toFixed(2)} = <b>${E.model_goals[0].toFixed(2)}</b><br>
       ${W} goals = ${g.mu_away.toFixed(2)} × ${g.away_for.toFixed(2)} × ${g.home_against.toFixed(2)} = <b>${E.model_goals[1].toFixed(2)}</b>
     </div>
-    ${E.market_goals ? `<p>For comparison, the bookie's odds imply ${H} <b>${E.market_goals[0].toFixed(2)}</b> and ${W} <b>${E.market_goals[1].toFixed(2)}</b> goals. We keep our own numbers so they can be compared with the market (see Value bets), but on goals the market has been the more accurate of the two in testing, so treat goal and result differences with caution.</p>` : ''}
+    ${E.market_goals ? `<p>For comparison, the bookie's odds imply ${H} <b>${E.market_goals[0].toFixed(2)}</b> and ${W} <b>${E.market_goals[1].toFixed(2)}</b> goals. We keep our own numbers so they can be compared with the market (see Open bets), but on goals the market has been the more accurate of the two in testing, so treat goal and result differences with caution.</p>` : ''}
     <p>Goals are rare, random events. A team expected to score ${g.proj.home.toFixed(2)} scores 0 in ${pct(ph[0])} of games, 1 in ${pct(ph[1])} and 2 in ${pct(ph[2])}. Doing this for both teams gives a chance for every score, and the most likely is <b>${best[0]}–${best[1]}</b> (${pct(best[2])}). Adding up all the scores: <b>${H} win ${pct(E.result.home)}</b>, <b>draw ${pct(E.result.draw)}</b>, <b>${W} win ${pct(E.result.away)}</b>.</p>
 
     <h3><span class="num">8</span>Possession</h3>
@@ -468,7 +469,7 @@ function renderMarket(){
   const games = D.fixtures.filter(g => g.market);
   if (!games.length) return '<p class="empty">No bookie odds for this round yet.</p>';
   const T = D.market_test;
-  let h = `<p class="note">The bookie's odds for this round next to the model, for every stat${D.odds_pulled ? ` (Superbet, pulled ${dayName(D.odds_pulled.slice(0,10))} ${D.odds_pulled.slice(11)} Athens)` : ''}. For each stat the line is the bookie's main one (closest to 50/50). <b>Bookie %</b> is the bookie's chance of over with its margin taken out; <b>Model %</b> is the model's chance on the same line, and <b>Model odds</b> are those chances turned into odds with a ${Math.round((MARGIN - 1) * 100)}% margin, comparable with the bookie's. Differences of 10 points or more are highlighted. This is the full comparison, including markets we don't trust for betting; the short list of bets worth considering, with their record, is on <a href="#view=value" style="color:var(--gold)" onclick="setView('value')">Value bets</a>.</p>
+  let h = `<p class="note">The bookie's odds for this round next to the model, for every stat${D.odds_pulled ? ` (pulled ${dayName(D.odds_pulled.slice(0,10))} ${D.odds_pulled.slice(11)} Athens)` : ''}. For each stat the line is the bookie's main one (closest to 50/50). <b>Bookie %</b> is the bookie's chance of over with its margin taken out; <b>Model %</b> is the model's chance on the same line, and <b>Model odds</b> are those chances turned into odds with a ${Math.round((MARGIN - 1) * 100)}% margin, comparable with the bookie's. Differences of 10 points or more are highlighted. This is the full comparison, including markets we don't trust for betting; the short list of bets worth considering, with their record, is on <a href="#view=open" style="color:var(--gold)" onclick="setView('open')">Open bets</a>, the record on <a href="#view=settled" style="color:var(--gold)" onclick="setView('settled')">Settled bets</a>.</p>
   <p class="note"><b>On result and goals the market has been sharper than the model:</b> over ${T.games} games since ${T.since}, its closing odds predicted results better (log loss ${T.ll_market.toFixed(3)} vs ${T.ll_ours.toFixed(3)}), and backing the model's disagreements lost ${Math.round(-T.roi_1x2 * 100)}% per bet on 1X2 and ${Math.round(-T.roi_ou * 100 * 10) / 10}% on over/under 2.5. For the other stats, read the differences with care: the bookie's shots lines run about 2 shots above the model in every game, which looks like a different way of counting shots rather than value. Every pull of the bookie's odds is saved so this can be checked after a few rounds.</p>`;
   const all = [];
   games.forEach(g => marketRows(g).forEach(r => all.push({...r, g})));
@@ -507,7 +508,7 @@ const lc = s => ({sot: 'SoT', saves: 'GK saves', xg: 'xG', result: 'match result
 const betName = b => b.stat === 'result' ? ({1: 'Home win', X: 'Draw', 2: 'Away win'})[b.side] : `${b.side === 'over' ? 'Over' : 'Under'} ${b.line} ${lc(b.stat)}`;
 const evPct = x => `${x >= 0 ? '+' : ''}${Math.round(x * 100)}%`;
 
-// minimum EV picked on the Value bets tab (10%, 20%, 30%+; default 10%)
+// minimum EV picked on the Open bets / Settled bets tabs (10%, 20%, 30%+; default 10%)
 const EV_STEPS = [.10, .20, .30];
 let valMin = .10;
 try { const v = +localStorage.getItem('sl-valmin'); if (EV_STEPS.includes(v)) valMin = v; } catch (e) {}
@@ -531,24 +532,26 @@ function recordTable(title, groups, note, byEv){
   return h + '</tbody></table></div>';
 }
 
-function renderValue(){
+// Value bets in two tabs: Open bets (coming games and started ones waiting for a result) and Settled bets
+// (every settled bet and the record). The minimum EV picked applies to both.
+function renderValue(mode){
   const V = D.value, R = V.record;
   // coming bets in kick-off order, biggest EV first within a game
   const bets = V.bets.filter(b => b.ev >= valMin - 1e-9).sort((a, b) => a.kickoff.localeCompare(b.kickoff) || a.home.localeCompare(b.home) || b.ev - a.ev);
   const settled = R.settled.filter(b => b.ev >= valMin - 1e-9);
   const all = summary(settled);
   const label = x => x >= .3 ? '30%+' : Math.round(x * 100) + '%';
+  const evBar = `<div class="bar"><span class="muted" style="font:400 13px var(--mono)">Minimum EV</span><div class="seg" id="valmin">${EV_STEPS.map(x => `<button data-v="${x}" class="${x === valMin ? 'on' : ''}">${label(x)}</button>`).join('')}</div></div>`;
+  const started = (R.started || []).filter(b => b.ev >= valMin - 1e-9);
+  if (mode === 'settled') return renderSettled(settled, all, evBar);
   let h = `<p class="note">A bet is <b>value</b> when the model's chance of it winning, times the bookie's odds, comes to more than 1: on average it would return more than the stake. <b>EV</b> = model chance × bookie odds − 1, the expected return per 1 staked (EV +20% = 1.20 back per 1, on average). The bookie's own chance is shown for comparison only. Level lines only: for each game and stat, the bookie's main line (the one it prices closest to 50-50, odds around 2.00 each side), and only when its own chance is between ${Math.round(V.fair_range[0] * 100)}% and ${Math.round(V.fair_range[1] * 100)}%.</p>
-  <p class="note"><b>Not listed:</b> ${Object.entries(V.skip).map(([s, why]) => `<b>${lc(s)}</b>: ${why}`).join('; ')}. A very large EV usually means the model is missing something (a new coach, injuries, a change of style) rather than a gift, so check those first. Every bet from EV +5% is recorded (the list starts at +10%) with its odds at the last update before kick-off and settled when the results come in; the record below follows the minimum EV you pick.</p>
-  <p class="note"><b>CLV</b> (closing-line value) checks the price rather than the result: our odds × the bookie's chance in its last odds before kick-off, margin taken out, − 1. Positive CLV means the market moved our way after the bet, the best early sign of a real edge: it needs far fewer bets to read than profit. Because the bookie's margin on these markets is large, unchanged odds score about −7%, so a bet only shows positive CLV when the line moved clearly in its favour. Closing odds are pulled in the last 45 minutes before each game, from 27 Oct 2026; earlier bets have none.</p>
-  <div class="bar"><span class="muted" style="font:400 13px var(--mono)">Minimum EV</span><div class="seg" id="valmin">${EV_STEPS.map(x => `<button data-v="${x}" class="${x === valMin ? 'on' : ''}">${label(x)}</button>`).join('')}</div></div>`;
+  <p class="note"><b>Not listed:</b> ${Object.entries(V.skip).map(([s, why]) => `<b>${lc(s)}</b>: ${why}`).join('; ')}. A very large EV usually means the model is missing something (a new coach, injuries, a change of style) rather than a gift, so check those first. Every bet from EV +5% is recorded with its odds at the last update before kick-off and settled when the results come in; results and the record are on <a href="#view=settled" style="color:var(--gold)" onclick="setView('settled')">Settled bets</a>.</p>
+  ${evBar}`;
   h += `<div class="metrics">
     <div class="metric"><div class="lbl">Value bets coming up</div><div class="big">${bets.length}</div></div>
+    <div class="metric"><div class="lbl">Started, waiting for result</div><div class="big">${started.length}</div></div>
     <div class="metric"><div class="lbl">Settled so far</div><div class="big">${all.n}</div></div>
-    <div class="metric"><div class="lbl">Hit rate</div><div class="big">${all.n ? pct(all.hit) : '–'}</div></div>
-    <div class="metric"><div class="lbl">Profit (1 unit each)</div><div class="big">${all.n ? (all.profit > 0 ? '+' : '') + all.profit.toFixed(2) : '–'}</div></div>
-    <div class="metric"><div class="lbl">Return per bet</div><div class="big">${all.n ? evPct(all.roi) : '–'}</div></div>
-    <div class="metric"><div class="lbl">CLV per bet${all.nClv ? ` (${all.nClv})` : ''}</div><div class="big">${all.nClv ? clvPct(all.clv) : '–'}</div></div></div>`;
+    <div class="metric"><div class="lbl">Return per bet</div><div class="big">${all.n ? evPct(all.roi) : '–'}</div></div></div>`;
   if (!bets.length) h += `<p class="empty">No bets at EV ${label(valMin)} or more for the coming games.</p>`;
   else {
     h += `<h2>Coming games</h2><div class="scroll"><table class="mk"><thead><tr><th>Kick-off</th><th>Match</th><th>Bet</th><th class="n">Bookie odds</th><th class="n">Model odds</th><th class="n">Bookie %</th><th class="n">Model %</th><th class="n">EV</th></tr></thead><tbody>`;
@@ -556,14 +559,25 @@ function renderValue(){
     h += '</tbody></table></div>';
   }
   // kicked off, result not in the data yet (settled on the next update after the stats arrive)
-  const started = (R.started || []).filter(b => b.ev >= valMin - 1e-9);
   if (started.length){
     h += `<h2>Started, waiting for result</h2><p class="muted" style="margin:-4px 0 10px;font-size:14px">These games have kicked off. Each bet is settled when the game's stats arrive in the data, usually a day or two after.</p><div class="scroll"><table class="mk"><thead><tr><th>Kick-off</th><th>Match</th><th>Bet</th><th class="n">Bookie odds</th><th class="n">Close</th><th class="n">Model %</th><th class="n">EV</th><th class="n">CLV</th></tr></thead><tbody>`;
     for (const b of started) h += `<tr><td class="muted">${dayName(b.kickoff)} ${b.kickoff.slice(11)}</td><td>${b.home} – ${b.away}</td><td><b>${betName(b)}</b></td><td class="n">${b.odds.toFixed(2)}</td>${closeCell(b)}<td class="n tot">${pct(b.ours)}</td><td class="n">${evPct(b.ev)}</td>${clvCell(b)}</tr>`;
     h += '</tbody></table></div>';
   }
+  return h;
+}
+function renderSettled(settled, all, evBar){
+  let h = `<p class="note">Every value bet that has been settled, with what happened, and the running record (1 unit staked on each). The minimum EV you pick filters both.</p>
+  <p class="note"><b>CLV</b> (closing-line value) checks the price rather than the result: our odds × the bookie's chance in its last odds before kick-off, margin taken out, − 1. Positive CLV means the market moved our way after the bet, the best early sign of a real edge: it needs far fewer bets to read than profit. Because the bookie's margin on these markets is large, unchanged odds score about −7%, so a bet only shows positive CLV when the line moved clearly in its favour. Closing odds are pulled in the last 45 minutes before each game, from 27 Oct 2026; earlier bets have none.</p>
+  ${evBar}`;
+  h += `<div class="metrics">
+    <div class="metric"><div class="lbl">Settled so far</div><div class="big">${all.n}</div></div>
+    <div class="metric"><div class="lbl">Hit rate</div><div class="big">${all.n ? pct(all.hit) : '–'}</div></div>
+    <div class="metric"><div class="lbl">Profit (1 unit each)</div><div class="big">${all.n ? (all.profit > 0 ? '+' : '') + all.profit.toFixed(2) : '–'}</div></div>
+    <div class="metric"><div class="lbl">Return per bet</div><div class="big">${all.n ? evPct(all.roi) : '–'}</div></div>
+    <div class="metric"><div class="lbl">CLV per bet${all.nClv ? ` (${all.nClv})` : ''}</div><div class="big">${all.nClv ? clvPct(all.clv) : '–'}</div></div></div>`;
   if (!settled.length) return h + `<p class="muted" style="margin-top:18px">No settled bets yet at this EV level: the record starts once results for logged bets are in the data.</p>`;
-  h += `<h2>Settled bets</h2><p class="muted" style="margin:-4px 0 10px;font-size:14px">Every bet from EV +${Math.round(valMin * 100)}% with its result, newest first; the record by market, side and EV follows below.</p><div class="scroll"><table class="mk"><thead><tr><th>Date</th><th>Match</th><th>Bet</th><th class="n">Odds</th><th class="n" title="The bookie's last odds before kick-off">Close</th><th class="n">EV</th><th class="n" title="Closing-line value: our odds x the closing chance (margin out) - 1">CLV</th><th class="n" title="What happened: the final score for 1X2 bets, the match total for the rest">Actual</th><th class="n">Result</th></tr></thead><tbody>`;
+  h += `<h2>All settled bets</h2><p class="muted" style="margin:-4px 0 10px;font-size:14px">Every bet from EV +${Math.round(valMin * 100)}% with its result, newest first; the record by market, side and EV follows below.</p><div class="scroll"><table class="mk"><thead><tr><th>Date</th><th>Match</th><th>Bet</th><th class="n">Odds</th><th class="n" title="The bookie's last odds before kick-off">Close</th><th class="n">EV</th><th class="n" title="Closing-line value: our odds x the closing chance (margin out) - 1">CLV</th><th class="n" title="What happened: the final score for 1X2 bets, the match total for the rest">Actual</th><th class="n">Result</th></tr></thead><tbody>`;
   for (const b of settled) h += `<tr><td class="muted">${dayName(b.date)}</td><td>${b.home} – ${b.away}</td><td>${betName(b)}</td><td class="n">${b.odds.toFixed(2)}</td>${closeCell(b)}<td class="n">${evPct(b.ev)}</td>${clvCell(b)}<td class="n"><b>${b.actual ?? '–'}</b></td><td class="n ${b.result === 'won' ? 'w' : 'l'}">${b.result === 'won' ? 'Won +' + (b.odds - 1).toFixed(2) : 'Lost −1'}</td></tr>`;
   h += '</tbody></table></div>';
   const group = key => settled.reduce((g, b) => ((g[key(b)] ||= []).push(b), g), {});
@@ -894,7 +908,7 @@ function bindRefs(){
 
 function render(){
   $('tip').style.display = 'none';
-  $('out').innerHTML = {projections: renderProjections, value: renderValue, market: renderMarket, results: renderResults, teams: renderTeams, refs: renderRefs, method: renderMethod}[view]();
+  $('out').innerHTML = {projections: renderProjections, open: () => renderValue('open'), settled: () => renderValue('settled'), market: renderMarket, results: renderResults, teams: renderTeams, refs: renderRefs, method: renderMethod}[view]();
   if (view === 'refs') bindRefs();
   document.querySelectorAll('#pjmode button').forEach(b => b.onclick = () => { pjMode = b.dataset.m; render(); });
   const chips = (id, set) => document.querySelectorAll(`#${id} .chip`).forEach(b => b.onclick = () => { set(b.dataset.s); render(); });
@@ -903,7 +917,8 @@ function render(){
   document.querySelectorAll('th.sort').forEach(t => t.onclick = () => { const k = t.dataset.k; tmSort = [k, tmSort[0] === k ? -tmSort[1] : (k === 'team' ? 1 : -1)]; render(); });
 }
 function setView(v){
-  view = ['projections','value','market','results','teams','refs','method'].includes(v) ? v : 'projections';
+  if (v === 'value') v = 'open';   // old links
+  view = ['projections','open','settled','market','results','teams','refs','method'].includes(v) ? v : 'projections';
   document.querySelectorAll('#tabs a').forEach(a => a.classList.toggle('on', a.dataset.view === view));
   render();
 }
