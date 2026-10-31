@@ -1,7 +1,8 @@
 name: Super League site
 
 # /superleague/: results from ESPN and the season files, ratings, projections for the coming round,
-# odds and value bets (closing odds from the "odds" branch, see superleague-closing-odds.yml).
+# odds and value bets (closing odds from the "odds" branch, see superleague-closing-odds.yml), and the
+# Referees tab's game list (referee-games.js, from our own match data).
 # Scripts and data in nikolitso/BettingSignal (superleague/): refs.txt and new data files are edited
 # there. Three times a day; "Update all sites" too.
 on:
@@ -29,6 +30,6 @@ jobs:
           dir: superleague
           requirements: -r _bs/superleague/requirements.txt
           run: python -u update.py
-          pages: superleague/data.js superleague/index.html
+          pages: superleague/data.js superleague/index.html superleague/referee-games.js
           label: Super League
           token: ${{ secrets.SITES_TOKEN }}
