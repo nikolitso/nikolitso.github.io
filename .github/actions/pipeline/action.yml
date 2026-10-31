@@ -65,6 +65,11 @@ runs:
       run: |
         git config user.name "github-actions[bot]"
         git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        # never publish betting picks on the antonisnikolitsopoulos.com homepage (see CLAUDE.md)
+        if [ -z "${{ inputs.site }}" ] && [ -f index.html ] && grep -qiE 'betting picks|picks this round|unders:start|model odds' index.html; then
+          echo "::warning::index.html has betting picks: its changes are dropped, not published"
+          git checkout HEAD -- index.html
+        fi
         git add ${{ inputs.pages }}
         if git diff --cached --quiet; then echo "pages unchanged"; exit 0; fi
         git commit -q -m "${{ inputs.label }}: refresh $(TZ=Europe/Athens date '+%Y-%m-%d %H:%M')"
