@@ -93,6 +93,10 @@ window.SLREF = {
   "foreign": ["Hernández", "Colombo", "Zwayer"],
   // 2026-27 match reports, newest first: [date, match, score, referee, rating (null: no report), favoured, comment]
   "report": [
+    ["2026-10-25", "Olympiakos - Kalamata", "5-0", "Zampalas", null, null, "Went very well at Karaiskaki and rightly disallowed Strouggis' goal with help from VAR (Tsakalidis, Koukoulas). No rating in the headline."],
+    ["2026-10-25", "Volos - Panathinaikos", "0-1", "Tsetsilas", null, null, "Excellent; Furtado's goal was rightly disallowed (VAR Gioumatzidis). No rating in the headline."],
+    ["2026-10-25", "Aris - Atromitos", "3-1", "Tsimenteridis", null, null, "Questioned over a Magnusson handball at Harilaou. No rating in the headline."],
+    ["2026-10-24", "AEK - Panaitolikos", "5-0", "Fitsas", null, null, "His first game at AEK; went to the VAR monitor for a Vargas penalty. A good evening of correct refereeing and plenty of VAR. No rating in the headline."],
     ["2026-10-18", "Panathinaikos - Asteras", "5-1", "Evangelou", 8.3, null, "No goal was wrongly ruled out: the assistant flagged Desers offside too early, and the semi-automatic offside check rightly gave the goal."],
     ["2026-10-18", "Panaitolikos - Olympiakos", "0-2", "Matsoukas (UEFA B)", 8.4, null, "Correct and solid in Agrinio; did his job well."],
     ["2026-10-18", "Kalamata - OFI", "4-3", "Katopis", 8.2, null, "Gave a penalty for Karachalios' challenge on Hamza that most referees would have given; VAR (Tsakalidis) rightly overturned it."],

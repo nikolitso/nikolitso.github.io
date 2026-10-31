@@ -73,19 +73,20 @@ ODDS_JS = r"""() => [...document.querySelectorAll('.ui-table__row')].map(r => r.
 
 
 def load():
+    """(games by match id, complete): complete once every game of every season has been read."""
     if not OUT.exists():
-        return {}
+        return {}, False
     txt = OUT.read_text(encoding="utf-8")
     d = json.loads(txt[txt.index("{"):txt.rstrip().rstrip(";").rindex("}") + 1])
-    return {g[0]: g for g in d["games"]}
+    return {g[0]: g for g in d["games"]}, bool(d.get("complete"))
 
 
-def save(games):
+def save(games, complete):
     rows = sorted(games.values(), key=lambda g: (g[2], g[3]), reverse=True)
     now = dt.datetime.now(dt.timezone(dt.timedelta(hours=2))).strftime("%Y-%m-%d %H:%M")
     body = ",\n".join(json.dumps(r, ensure_ascii=False, separators=(",", ":")) for r in rows)
     OUT.write_text("// Written by scripts/superleague_refs.py from Flashscore: one row per league game.\n"
-                   f"window.SLREFGAMES = {{\"updated\":\"{now}\",\"cols\":{json.dumps(COLS)},\"games\":[\n{body}\n]}};\n",
+                   f"window.SLREFGAMES = {{\"updated\":\"{now}\",\"complete\":{json.dumps(complete)},\"cols\":{json.dumps(COLS)},\"games\":[\n{body}\n]}};\n",
                    encoding="utf-8")
 
 
@@ -160,20 +161,21 @@ def read_game(page, g, season):
 
 def main():
     limit = int(sys.argv[sys.argv.index("--limit") + 1]) if "--limit" in sys.argv else 150
-    games = load()
+    games, complete = load()
     print(f"{len(games)} games saved")
-    done = 0
+    done, left, failed = 0, 0, False
     with sync_playwright() as p:
         b = p.chromium.launch()
         page = b.new_page(locale="en-GB", timezone_id="Europe/Athens")
         page.set_default_timeout(30000)
         for season, slug, which in SEASONS:
-            if done >= limit:
+            if done >= limit and complete:
                 break
             try:
                 lst = read_list(page, slug)
             except Exception as e:
                 print(f"{season}: list failed ({e.__class__.__name__}: {str(e)[:100]})")
+                failed = True
                 continue
             todo = [g for g in lst if g["id"] not in games and g["href"] and "/?mid=" in g["href"] and g["hs"] != ""
                     and not g["flag"].startswith(SKIP_FLAGS)]
@@ -182,21 +184,25 @@ def main():
             print(f"{season}: {len(lst)} results, {len(todo)} to read", flush=True)
             for g in todo:
                 if done >= limit:
-                    break
+                    left += 1
+                    continue
                 try:
                     row = read_game(page, g, season)
                 except Exception as e:                       # not ready yet or a page change: next run tries again
                     print(f"   skipped {g['home']} - {g['away']}: {e.__class__.__name__} {str(e)[:100]}")
+                    left += 1
                     continue
                 games[row[0]] = row
                 done += 1
                 print(f"   {row[2]} {row[3]} {row[5]}-{row[6]} {row[4]} | {row[7]} | cards {row[9]}-{row[10]} | odds {row[11]}", flush=True)
                 if done % 20 == 0:
-                    save(games)
+                    save(games, complete)
                 time.sleep(0.5)
         b.close()
-    save(games)
-    print(f"read {done} new game(s); {len(games)} saved")
+    # the backfill is done once a run has seen every season's list and left nothing unread; it stays done
+    complete = complete or (not failed and left == 0)
+    save(games, complete)
+    print(f"read {done} new game(s); {len(games)} saved; {left} still to read; complete: {complete}")
 
 
 if __name__ == "__main__":
