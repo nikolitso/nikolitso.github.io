@@ -217,8 +217,19 @@ const sampleHtml = g => g.sample ? `<div class="coach sample" title="${sampleTip
 // compact coach tenure under a match in tables: "Mazzarri 7 · Leto 43 games in charge"
 const tenureOne = c => c ? `${surname(c[0])} ${c[2]}` : '–';
 const tenureLine = g => g && g.coaches ? `<div class="tenure" title="League games in charge of the current coach">${tenureOne(g.coaches.home)} · ${tenureOne(g.coaches.away)} games in charge</div>` : '';
+// a referee appointed after the last model update: named, with his record since 2024-25, but not in the projections
+function refRecord(name){
+  const row = window.SLREF && window.SLREF.cards.find(c => c[0] === name);
+  if (row) return {games: row[1], cards: row[2]};
+  const gs = refRows().filter(g => g.ref === name && g.season >= '2024-25' && g.hc != null);
+  return gs.length ? {games: gs.length, cards: avgOf(gs.map(g => g.hc + g.ac)), partial: !(window.SLREFGAMES || {}).complete} : null;
+}
 function refHtml(r){
   if (!r) return '<div class="ref">Referee <b>not announced</b></div>';
+  if (r.pending){
+    const x = refRecord(r.name);
+    return `<div class="ref">Referee <b>${refLink(r.name)}</b>${r.from ? ` (${r.from})` : ''} · ${x ? `${x.games} league game${x.games === 1 ? '' : 's'} since 2024–25${x.partial ? ' read so far' : ''}, <b>${x.cards.toFixed(1)}</b> cards per game` : 'no league games since 2024–25 in the data'} · appointed after the last model update, not in these projections yet</div>`;
+  }
   if (!r.games) return `<div class="ref">Referee <b>${r.name}</b> · no league games since ${r.from.replace('-', '–')} · no adjustment</div>`;
   return `<div class="ref">Referee <b>${r.name}</b> · ${refWindow(r)} · <b>${r.avg.cards.toFixed(1)}</b> cards (${mult(r.cards)}) · <b>${r.avg.fouls.toFixed(1)}</b> fouls (${mult(r.fouls)}) per game</div>`;
 }
@@ -257,7 +268,7 @@ function renderProjections(){
   h += `<div class="scroll"><table><thead><tr><th>Kick-off</th><th>Match</th><th class="n">Home</th><th class="n">Away</th>${s==='possession'?'':'<th class="n">Total</th>'}<th class="n">${s==='possession'||s==='xg'?'':'Over'}</th></tr></thead><tbody>`;
   for (const g of D.fixtures){
     const x = g.stats[s];
-    const rf = (s === 'cards' || s === 'fouls') && g.ref ? ` <span class="muted" style="font-size:12px">· ${g.ref.name}${g.ref.games ? ' ' + mult(g.ref[s]) : ''}</span>` : '';
+    const rf = (s === 'cards' || s === 'fouls') && g.ref && !g.ref.pending ? ` <span class="muted" style="font-size:12px">· ${g.ref.name}${g.ref.games ? ' ' + mult(g.ref[s]) : ''}</span>` : '';
     h += `<tr><td class="muted">${dayName(g.kickoff)} ${g.kickoff.slice(11)}${g.started ? ' <span class="live">Started</span>' : ''}</td><td>${g.home} – ${g.away}${rf}${tenureLine(g)}</td><td class="n">${f(x.home,s)}</td><td class="n">${f(x.away,s)}</td>${s==='possession'?'':`<td class="n tot">${f(x.total,s)}</td>`}<td class="ln">${linesHtml(x.lines)}</td></tr>`;
   }
   return h + '</tbody></table></div>';
@@ -753,6 +764,8 @@ function openRef(name){
   $('refdlg-b').scrollTop = 0;
 }
 $('refdlg-x').onclick = () => $('refdlg').close();
+// any referee name on the page (Referees tab, the referee line on Projections) opens their pop-up
+document.addEventListener('click', e => { const b = e.target.closest('button.reflink'); if (b) openRef(b.dataset.ref); });
 $('refdlg').onclick = e => { if (e.target === $('refdlg')) $('refdlg').close(); };
 
 function refRatings(R){
@@ -833,7 +846,6 @@ function makeSortable(tbl){
 }
 function bindRefs(){
   document.querySelectorAll('table.sortable').forEach(makeSortable);
-  document.querySelectorAll('button.reflink').forEach(b => b.onclick = () => openRef(b.dataset.ref));
   document.querySelectorAll('[data-jump]').forEach(b => b.onclick = () => $(b.dataset.jump).scrollIntoView({behavior: 'smooth', block: 'start'}));
   const tip = $('tip');
   document.querySelectorAll('.chart .hit').forEach(el => {
