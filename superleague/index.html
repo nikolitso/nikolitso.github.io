@@ -4,10 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Greek Super League</title>
-<meta name="description" content="Greek Super League projections for every game: goals, xG, shots, shots on target, corners, cards, fouls, goal kicks, throw-ins, possession and goalkeeper saves.">
+<meta name="description" content="Greek Super League projections for every game: goals, xG, shots, shots on target, corners, cards, fouls, possession and goalkeeper saves.">
 <link rel="canonical" href="https://antonisnikolitsopoulos.com/superleague/">
 <meta property="og:title" content="Greek Super League">
-<meta property="og:description" content="Greek Super League projections for every game: goals, xG, shots, corners, cards, fouls, goal kicks, throw-ins, possession and saves.">
+<meta property="og:description" content="Greek Super League projections for every game: goals, xG, shots, corners, cards, fouls, possession and saves.">
 <meta property="og:url" content="https://antonisnikolitsopoulos.com/superleague/">
 <meta property="og:image" content="https://antonisnikolitsopoulos.com/superleague.jpg">
 <meta name="twitter:card" content="summary_large_image">
@@ -401,7 +401,7 @@ function renderMethod(){
     <h3><span class="num">8</span>Possession</h3>
     <p>Possession is a split that always adds to 100%, so it can't be multiplied like the counts. Each team has one possession strength (points above or below an even split), and the home side gets a small edge:</p>
     <div class="calc">${H} possession = 50 ${sgn(P.edge)} <i>home edge</i> ${sgn(P.home)} <i>${H}</i> ${sgn(-P.away)} <i>${W}</i> = <b>${P.proj.toFixed(1)}%</b> · ${W} ${(100 - P.proj).toFixed(1)}%</div>
-    <p>Shots, SoT, xG, fouls, goal kicks, throw-ins and saves all work like corners, each with its own averages and ratings. Shots, SoT and goalkeeper saves then get a small adjustment from the match odds: favourites take more shots and force more saves than their ratings alone suggest. In testing on 284 games since 2025–26 this made them about 1% more accurate (shots 1.4%, SoT 1.0%, saves 0.9%). I tested the same for xG, corners, fouls, goal kicks, throw-ins and possession, but the odds didn't help there, so those come from the ratings alone.</p>`;
+    <p>Shots, SoT, xG, fouls, goal kicks, throw-ins and saves all work like corners, each with its own averages and ratings. Shots, SoT and goalkeeper saves then get a small adjustment from the match odds: favourites take more shots and force more saves than their ratings alone suggest. In testing on 284 games since 2025–26 this made them about 1% more accurate (shots 1.4%, SoT 1.0%, saves 0.9%). I tested the same for xG, corners, fouls and possession, but the odds didn't help there, so those come from the ratings alone.</p>`;
   }
   h += `<h2>Where the ratings come from</h2>
   <ul>
@@ -449,7 +449,7 @@ function renderMethod(){
 
 // Vs Bookie: the bookmaker's main line for each stat (the one closest to 50/50), its fair
 // over chance with the margin removed, and ours on the same line
-const BOOK_STATS = ['goals','corners','cards','sot','shots','fouls','goal_kicks','throw_ins','saves'];
+const BOOK_STATS = ['goals','corners','cards','sot','shots','fouls','saves'];
 const pts = d => `${d > 0 ? '+' : ''}${Math.round(d * 100)}`;
 // Vs Bookie shows a difference only from 10 points (as displayed, after rounding)
 const big10 = d => Math.abs(Math.round(d * 100)) >= 10;
