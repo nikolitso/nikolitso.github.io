@@ -193,7 +193,7 @@ tr.srow{cursor:pointer} tr.srow:hover td,tr.srow.on td{background:color-mix(in s
   <div class="chips" id="chips"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=8f9c6395"></script>
+<script src="data.js?v=63bf70a7"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -212,18 +212,18 @@ const one = () => lg === 'all' ? DATA.leagues[0].key : lg;      // tabs that sho
 $('sub').textContent = `Women's top leagues · ${DATA.season.replace('-','–')} · updated ${DATA.updated} (Athens)`;
 
 function renderProjections(){
-  let h = `<p class="note">Every match in the next 7 days: the chance it goes 3, 4 or 5 sets, the projected total points and the model's own fair line. Once a bookmaker posts a line, the row shows the line, the average over price and the model's over chance against it. Only <b>picks</b> are highlighted (gold); they are backed and recorded: overs on lines ${DATA.min_line}.5 to ${DATA.low - 0.5}, except ${DATA.skip[0]}.5 to ${DATA.skip[1]}.5 this season (the backtest returned under 8% there), the matches the market expects to end 3-0, where the edge is above ${DATA.edge*100}%.</p>`;
+  let h = `<p class="note">Every match in the next 7 days: the chance it goes 3, 4 or 5 sets, the model's line on total points (where over and under are even). Once a bookmaker posts a line, the row shows the book line, the average over price and the model's over chance against it. Only <b>picks</b> are highlighted (gold); they are backed and recorded: overs on lines ${DATA.min_line}.5 to ${DATA.low - 0.5}, except ${DATA.skip[0]}.5 to ${DATA.skip[1]}.5 this season (the backtest returned under 8% there), the matches the market expects to end 3-0, where the edge is above ${DATA.edge*100}%.</p>`;
   const fx = DATA.fixtures.filter(inLg);
   if (!fx.length) return h + '<p class="empty">No matches in the next 7 days.</p>';
   const byDay = {};
   fx.forEach(g => (byDay[g.dt.slice(0,10)] ||= []).push(g));
-  const head = `<thead><tr><th>Time</th>${lg === 'all' ? '<th>League</th>' : ''}<th>Match</th><th class="n">3 sets</th><th class="n">4 sets</th><th class="n">5 sets</th><th class="n">Proj.</th><th class="n">Fair</th><th class="n">Line</th><th class="n">Over</th><th class="n">Model</th><th class="n">Edge</th></tr></thead>`;
+  const head = `<thead><tr><th>Time</th>${lg === 'all' ? '<th>League</th>' : ''}<th>Match</th><th class="n">3 sets</th><th class="n">4 sets</th><th class="n">5 sets</th><th class="n">Model</th><th class="n">Book line</th><th class="n">Over</th><th class="n">Over chance</th><th class="n">Edge</th></tr></thead>`;
   for (const [d, gs] of Object.entries(byDay)){
     h += `<h2 class="day">${dayName(d)}</h2><div class="scroll"><table class="proj">${head}<tbody>`;
     for (const g of gs){
       h += `<tr${g.pick ? ' class="pk"' : ''}><td>${g.dt.slice(11)}</td>${lg === 'all' ? `<td>${LG[g.lg].country}</td>` : ''}
       <td class="wr">${g.home} – ${g.away}${g.pick ? `<span class="badge">Over ${g.mk.line}</span>` : ''}${g.note ? `<div class="flag">${g.note}</div>` : ''}</td>
-      <td class="n">${pct(g.p3)}</td><td class="n">${pct(g.p4)}</td><td class="n">${pct(g.p5)}</td><td class="n"><b>${g.med}</b></td><td class="n muted">${g.fair}</td>
+      <td class="n">${pct(g.p3)}</td><td class="n">${pct(g.p4)}</td><td class="n">${pct(g.p5)}</td><td class="n"><b>${g.fair}</b></td>
       ${g.mk ? `<td class="n">${g.mk.line}</td><td class="n">${g.mk.over.toFixed(2)}</td><td class="n">${pct(g.p_over)}</td>${g.edge > 0 ? `<td class="n ${cls(g.edge)}">${sgn(g.edge*100, 0)}%</td>` : '<td class="n muted">–</td>'}` : '<td class="n muted" colspan="4">no line yet</td>'}</tr>`;
     }
     h += '</tbody></table></div>';
