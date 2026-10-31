@@ -118,7 +118,7 @@ table.mini{margin:0 0 16px}
 .chart .bar.hl{opacity:.75}
 .tip{position:fixed;pointer-events:none;background:#0d1220;border:1px solid var(--line);border-radius:6px;padding:6px 10px;font:400 12.5px/1.5 var(--mono);color:var(--text);z-index:10;display:none;white-space:nowrap}
 .tip b{color:var(--gold);font-weight:500}
-tr.avg td{color:var(--muted)} tr.avg td:first-child{font-style:italic}
+tr.avg td,tr.few td{color:var(--muted)} tr.avg td:first-child{font-style:italic}
 tr.sum td{border-top:1px solid var(--line);font-weight:600}
 table.rp td.cm{white-space:normal;min-width:320px;font-size:14.5px;line-height:1.45;color:var(--muted)}
 table.rp td{vertical-align:top}
@@ -653,9 +653,9 @@ function refTables(all){
     live: true, games: recent.length, cards,
     odds_all: oddsBins(recent), odds_small: oddsBins(small), odds_small_all: ['All matches', ...cardRow(small.filter(g => g.odds))],
     big4_v_big4: [seasons.length ? `${refSeason(seasons[0])} to ${refSeason(seasons[seasons.length - 1])}` : '–', ...cardRow(bb)],
-    big4: Object.entries(oneBy).filter(([, gs]) => gs.length >= 5).map(([r, gs]) => b4row(r, gs)).sort((a, b) => a[5] - b[5]),
+    big4: Object.entries(oneBy).map(([r, gs]) => b4row(r, gs)).sort((a, b) => a[5] - b[5]),
     big4_avg: b4row('Average', one),
-    small: Object.entries(smallBy).filter(([, gs]) => gs.length >= 5).map(([r, gs]) => smrow(r, gs)).sort((a, b) => b[1] - a[1]),
+    small: Object.entries(smallBy).map(([r, gs]) => smrow(r, gs)).sort((a, b) => b[1] - a[1]),
     small_avg: smrow('Average', smallG)
   };
 }
@@ -747,17 +747,17 @@ function renderRefs(){
   h += `<h2 id="rf-big4">Big-4 against Big-4</h2><div class="scroll"><table class="mk" style="max-width:820px"><thead><tr><th>Seasons</th><th class="n">Games</th><th class="n">Home cards</th><th class="n">Away cards</th><th class="n">Total</th><th class="n">Handicap</th><th class="n">Home more</th><th class="n">Away more</th></tr></thead><tbody>
     <tr><td>${b[0]}</td><td class="n">${b[1]}</td><td class="n">${n2(b[2])}</td><td class="n">${n2(b[3])}</td><td class="n tot">${n2(b[4])}</td><td class="n">${sg(b[5])}</td><td class="n">${pc(b[6])}</td><td class="n">${pc(b[7])}</td></tr></tbody></table></div>`;
 
-  h += `<h2>Greek referees in games with a Big-4 team</h2><p class="note">Games involving Olympiakos, Panathinaikos, AEK or PAOK, since 2024–25, for referees with 5 or more. <b>Big-4</b> is the cards the Big-4 side got, <b>Against</b> its opponent's; <b>Handicap</b> is Big-4 minus opponent. The last columns are the Big-4 side's results with that referee.</p>
+  h += `<h2>Greek referees in games with a Big-4 team</h2><p class="note">Games involving Olympiakos, Panathinaikos, AEK or PAOK, since 2024–25${T.live ? ', every referee' : ', for referees with 5 or more'}. <b>Big-4</b> is the cards the Big-4 side got, <b>Against</b> its opponent's; <b>Handicap</b> is Big-4 minus opponent. The last columns are the Big-4 side's results with that referee.</p>
     <div class="scroll"><table class="mk sortable"><thead><tr><th>Referee</th><th class="n">Games</th><th class="n">Big-4</th><th class="n">Against</th><th class="n">Total</th><th class="n">Handicap</th><th class="n">Big-4 %</th><th class="n">Against %</th><th class="n" title="Games where the Big-4 side got more cards">Big-4 more</th><th class="n" title="Games where the opponent got more cards">Against more</th><th class="n">W</th><th class="n">D</th><th class="n">L</th><th class="n">Big-4 win %</th></tr></thead><tbody>`;
   const b4 = (r, cls = '') => `<tr class="${cls}"><td>${refLink(r[0])}</td><td class="n">${r[1]}</td><td class="n">${n2(r[2])}</td><td class="n">${n2(r[3])}</td><td class="n tot">${n2(r[4])}</td><td class="n">${sg(r[5])}</td><td class="n">${pc(r[6])}</td><td class="n">${pc(r[7])}</td><td class="n">${pc(r[8])}</td><td class="n">${pc(r[9])}</td><td class="n">${r[10]}</td><td class="n">${r[11]}</td><td class="n">${r[12]}</td><td class="n">${pc(r[13])}</td></tr>`;
-  T.big4.forEach(r => h += b4(r)); h += b4(T.big4_avg, 'sum');
-  h += `</tbody></table></div><p class="muted" style="font-size:14px;margin:6px 0 0">The average row covers all ${T.big4_avg[1]} games, including referees with fewer than 5.</p>`;
+  T.big4.forEach(r => h += b4(r, r[1] < 5 ? 'few' : '')); h += b4(T.big4_avg, 'sum');
+  h += `</tbody></table></div><p class="muted" style="font-size:14px;margin:6px 0 0">${T.live ? 'Referees with fewer than 5 games are in grey: too few to read much into.' : `The average row covers all ${T.big4_avg[1]} games, including the referees with fewer than 5 games, who aren't in the snapshot.`}</p>`;
 
-  h += `<h2 id="rf-small">Greek referees in games with no Big-4 team</h2><p class="note">Since 2024–25, for referees with 5 or more such games. <b>Home %</b> and <b>Away %</b> are each side's share of the cards.</p>
+  h += `<h2 id="rf-small">Greek referees in games with no Big-4 team</h2><p class="note">Since 2024–25${T.live ? ', every referee' : ', for referees with 5 or more such games'}. <b>Home %</b> and <b>Away %</b> are each side's share of the cards.</p>
     <div class="scroll"><table class="mk sortable" style="max-width:720px"><thead><tr><th>Referee</th><th class="n">Games</th><th class="n">Home</th><th class="n">Away</th><th class="n">Total</th><th class="n">Home %</th><th class="n">Away %</th></tr></thead><tbody>`;
   const sm = (r, cls = '') => `<tr class="${cls}"><td>${refLink(r[0])}</td><td class="n">${r[1]}</td><td class="n">${n2(r[2])}</td><td class="n">${n2(r[3])}</td><td class="n tot">${n2(r[4])}</td><td class="n">${pc(r[5])}</td><td class="n">${pc(r[6])}</td></tr>`;
-  T.small.forEach(r => h += sm(r)); h += sm(T.small_avg, 'sum');
-  h += `</tbody></table></div><p class="muted" style="font-size:14px;margin:6px 0 0">The average row covers all ${T.small_avg[1]} games, including referees with fewer than 5.</p>`;
+  T.small.forEach(r => h += sm(r, r[1] < 5 ? 'few' : '')); h += sm(T.small_avg, 'sum');
+  h += `</tbody></table></div><p class="muted" style="font-size:14px;margin:6px 0 0">${T.live ? 'Referees with fewer than 5 games are in grey: too few to read much into.' : `The average row covers all ${T.small_avg[1]} games, including the referees with fewer than 5 games, who aren't in the snapshot.`}</p>`;
 
   h += `<h2 id="rf-report">Referee reports 2026–27</h2><p class="note">Each game's referee, rated out of 10 by diaititis.gr, with a short summary. <b>Favoured</b> names the team that the key mistakes went for, where there was one.</p>
     <div class="scroll"><table class="mk rp sortable"><thead><tr><th data-ord>Date</th><th>Match</th><th class="n">Score</th><th>Referee</th><th class="n">Rating</th><th>Favoured</th><th data-nosort>Comment</th></tr></thead><tbody>`;
