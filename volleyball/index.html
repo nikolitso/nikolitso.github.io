@@ -170,7 +170,7 @@ th.rs{cursor:pointer;user-select:none} th.rs:hover,th.rs.on{color:var(--gold)}
 .cols{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:28px;align-items:start}
 @media(max-width:900px){.cols{grid-template-columns:minmax(0,1fr)}}
 td.wr{white-space:normal}
-table.proj tr.ed td{background:rgba(74,222,128,.07)}table.proj tr.ed td:first-child{box-shadow:inset 3px 0 #4ade80}table.proj tr.pk td{background:rgba(212,175,55,.08)}table.proj tr.pk td:first-child{box-shadow:inset 3px 0 var(--gold)}table.proj .flag{margin-top:4px;font-size:12px}
+table.proj tr.pk td{background:rgba(212,175,55,.08)}table.proj tr.pk td:first-child{box-shadow:inset 3px 0 var(--gold)}table.proj .flag{margin-top:4px;font-size:12px}
 .pos{color:var(--win)} .neg{color:var(--loss)}
 tr.srow{cursor:pointer} tr.srow:hover td,tr.srow.on td{background:color-mix(in srgb,var(--gold) 10%,transparent)}
 .caret{color:var(--gold);display:inline-block;width:1em}
@@ -193,7 +193,7 @@ tr.srow{cursor:pointer} tr.srow:hover td,tr.srow.on td{background:color-mix(in s
   <div class="chips" id="chips"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=e074f007"></script>
+<script src="data.js?v=8f9c6395"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -212,7 +212,7 @@ const one = () => lg === 'all' ? DATA.leagues[0].key : lg;      // tabs that sho
 $('sub').textContent = `Women's top leagues · ${DATA.season.replace('-','–')} · updated ${DATA.updated} (Athens)`;
 
 function renderProjections(){
-  let h = `<p class="note">Every match in the next 7 days: the chance it goes 3, 4 or 5 sets, the projected total points and the model's own fair line. Once a bookmaker posts a line, the row shows the line, the average over price and the model's over chance against it. Rows in green have an edge of more than ${DATA.edge*100}% on the over; only <b>picks</b> (gold) are backed and recorded: overs on lines ${DATA.min_line}.5 to ${DATA.low - 0.5}, except ${DATA.skip[0]}.5 to ${DATA.skip[1]}.5 this season (the backtest returned under 8% there), the matches the market expects to end 3-0, where the edge is above ${DATA.edge*100}%.</p>`;
+  let h = `<p class="note">Every match in the next 7 days: the chance it goes 3, 4 or 5 sets, the projected total points and the model's own fair line. Once a bookmaker posts a line, the row shows the line, the average over price and the model's over chance against it. Only <b>picks</b> are highlighted (gold); they are backed and recorded: overs on lines ${DATA.min_line}.5 to ${DATA.low - 0.5}, except ${DATA.skip[0]}.5 to ${DATA.skip[1]}.5 this season (the backtest returned under 8% there), the matches the market expects to end 3-0, where the edge is above ${DATA.edge*100}%.</p>`;
   const fx = DATA.fixtures.filter(inLg);
   if (!fx.length) return h + '<p class="empty">No matches in the next 7 days.</p>';
   const byDay = {};
@@ -221,7 +221,7 @@ function renderProjections(){
   for (const [d, gs] of Object.entries(byDay)){
     h += `<h2 class="day">${dayName(d)}</h2><div class="scroll"><table class="proj">${head}<tbody>`;
     for (const g of gs){
-      h += `<tr${g.pick ? ' class="pk"' : g.mk && g.edge > DATA.edge ? ' class="ed"' : ''}><td>${g.dt.slice(11)}</td>${lg === 'all' ? `<td>${LG[g.lg].country}</td>` : ''}
+      h += `<tr${g.pick ? ' class="pk"' : ''}><td>${g.dt.slice(11)}</td>${lg === 'all' ? `<td>${LG[g.lg].country}</td>` : ''}
       <td class="wr">${g.home} – ${g.away}${g.pick ? `<span class="badge">Over ${g.mk.line}</span>` : ''}${g.note ? `<div class="flag">${g.note}</div>` : ''}</td>
       <td class="n">${pct(g.p3)}</td><td class="n">${pct(g.p4)}</td><td class="n">${pct(g.p5)}</td><td class="n"><b>${g.med}</b></td><td class="n muted">${g.fair}</td>
       ${g.mk ? `<td class="n">${g.mk.line}</td><td class="n">${g.mk.over.toFixed(2)}</td><td class="n">${pct(g.p_over)}</td>${g.edge > 0 ? `<td class="n ${cls(g.edge)}">${sgn(g.edge*100, 0)}%</td>` : '<td class="n muted">–</td>'}` : '<td class="n muted" colspan="4">no line yet</td>'}</tr>`;
