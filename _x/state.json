@@ -149,7 +149,8 @@
       "how-to-find-the-right-words",
       "everything-is-predictable",
       "storytelling-with-data-a-data-visualization",
-      "games-people-play"
+      "games-people-play",
+      "how-to-be-a-leader"
     ],
     "log": [
       {
@@ -373,6 +374,12 @@
         "slot": "2026-10-31 02",
         "slug": "games-people-play",
         "id": "2116322721005207665"
+      },
+      {
+        "day": "2026-10-31",
+        "slot": "2026-10-31 14",
+        "slug": "how-to-be-a-leader",
+        "id": "2116500619561164908"
       }
     ],
     "last_day": "2026-10-31"
@@ -810,7 +817,7 @@
     ],
     "last_day": "2026-10-31"
   },
-  "last_slot": "2026-10-31 11",
+  "last_slot": "2026-10-31 14",
   "quote": {
     "seen": [
       "1",
