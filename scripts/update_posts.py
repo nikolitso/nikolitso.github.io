@@ -3,7 +3,7 @@
 Rewrites everything between <!-- posts:start --> and <!-- posts:end -->.
 Run locally with `python scripts/update_posts.py`; a GitHub Action runs it daily.
 
-- Books: newest posts first.
+- Books: the most recently added to the site first (the feed is in that order).
 - What Algo Missed: the most recently posted first, whatever the film's year; films
   posted the same day are ordered newest release first.
 - Each card uses the image of the item's own page (its og:image).

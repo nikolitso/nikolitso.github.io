@@ -157,8 +157,22 @@ def cover_for(slug, url):
 
 
 # ---------------------------------------------------------------- load
+def added_dates():
+    """slug -> when its .md was first committed (ISO); books not committed yet count as added now"""
+    import subprocess
+    out = subprocess.run(["git", "log", "--diff-filter=A", "--name-only", "--format=@%aI", "--", str(SRC)],
+                         cwd=ROOT, capture_output=True, text=True).stdout
+    added, when = {}, None
+    for line in out.splitlines():
+        if line.startswith("@"): when = line[1:]
+        elif line.endswith(".md"): added[Path(line).stem] = when   # log is newest first: the last hit is the first add
+    return added
+
+
 def load():
     books = []
+    ADDED = added_dates()
+    NOW = datetime.now(timezone.utc).isoformat(timespec="seconds")
     for p in sorted(SRC.glob("*.md")):
         meta, body = parse(p)
         if str(meta.get("draft", "")).lower() == "true":
@@ -177,6 +191,7 @@ def load():
             topic=tname, tslug=tslug, tcol=tcol,
             cover=cover_for(slug, str(meta.get("cover") or "")),
             body=body_html, excerpt=plain(body_html, 220), url=f"{BASE}{slug}/",
+            added=ADDED.get(slug) or NOW,
         ))
     books.sort(key=lambda b: (b["date"], b["title"]), reverse=True)
     return books
@@ -464,16 +479,14 @@ def page_authors(books):
 
 
 def feed(books):
-    def rfc(d):
-        try:
-            y, m, dd = (int(x) for x in d.split("-"))
-            return format_datetime(datetime(y, m, dd, 9, 0, tzinfo=timezone.utc))
-        except Exception:
-            return format_datetime(datetime.now(timezone.utc))
+    """newest additions to the site first (the homepage's Latest row reads this), pubDate = when it was added"""
+    def rfc(iso):
+        return format_datetime(datetime.fromisoformat(iso).astimezone(timezone.utc))
+    newest = sorted(books, key=lambda b: (b["added"], b["date"], b["title"]), reverse=True)
     items = "".join(
         f"<item><title>{esc(b['title'])}</title><link>{SITE}{b['url']}</link><guid>{SITE}{b['url']}</guid>"
-        f"<pubDate>{rfc(b['date'])}</pubDate><description>{esc(b['subtitle'] or b['excerpt'])}</description></item>"
-        for b in books[:20])
+        f"<pubDate>{rfc(b['added'])}</pubDate><description>{esc(b['subtitle'] or b['excerpt'])}</description></item>"
+        for b in newest[:20])
     (OUT / "feed.xml").write_text(
         f'<?xml version="1.0" encoding="UTF-8"?><rss version="2.0"><channel><title>Books — Antonis Nikolitsopoulos</title>'
         f"<link>{SITE}{BASE}</link><description>Book takeaways by Antonis Nikolitsopoulos</description>{items}</channel></rss>",
