@@ -1,0 +1,48 @@
+name: Basketball totals live test
+
+# Live test of the basketball totals rule (40 European leagues): this season's results and odds, projections for
+# the next 7 days, picks logged at the line on offer and settled after the game. Scripts and data in
+# nikolitso/BettingSignal (basketball-overs/); the record is basketball-overs/data/live/report.md there.
+# Publishes nothing on the site. Every 3 hours, plus the Run workflow button.
+on:
+  schedule:
+    - cron: "20 */3 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: basketball-overs
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          repository: nikolitso/BettingSignal
+          token: ${{ secrets.SITES_TOKEN }}
+          path: _bs
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.14"
+      - name: Install
+        run: pip install --quiet -r _bs/basketball-overs/requirements.txt
+      - name: Update
+        working-directory: _bs/basketball-overs
+        env:
+          TZ: Europe/Athens
+          PYTHONIOENCODING: utf-8
+        run: python -u livetest.py
+      - name: Save the data
+        working-directory: _bs
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then echo "data unchanged"; exit 0; fi
+          git commit -q -m "Basketball totals: live test $(TZ=Europe/Athens date '+%Y-%m-%d %H:%M')"
+          for i in 1 2 3 4 5; do git pull -q --rebase && git push -q && exit 0; sleep $((RANDOM % 10 + 5)); done
+          exit 1
