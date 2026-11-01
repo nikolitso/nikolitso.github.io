@@ -192,7 +192,7 @@ table.proj tr.pk td{background:rgba(212,175,55,.08)}table.proj tr.pk td:first-ch
   <div class="chips" id="chips"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=4cadb4f6"></script>
+<script src="data.js?v=1272ee14"></script>
 <script src="live.js"></script>
 <script>
 const $ = id => document.getElementById(id);
@@ -232,7 +232,7 @@ function renderFindings(){
 }
 
 function renderLeagues(){
-  let h = `<p class="note">Every league from ${sn(DATA.first)} on (2020–21 only warms the ratings up). The model column starts in 2022–23 and is all out of sample. <b>Over %</b>: how often the final score (overtime included) went over the closing line. Blind over / under: backing every game at the average price. Model overs: overs the rule bet at the opening line (edge above ${Math.round(R.edge*100)}%), count and ROI. Click a league for its seasons. Leagues marked live are the ones the live test bets: Over % 52% or more and blind over −2.5% or better.</p>`;
+  let h = `<p class="note">Every league from ${sn(DATA.first)} on (2020–21 only warms the ratings up). The model column starts in 2022–23 and is all out of sample. <b>Over %</b>: how often the final score (overtime included) went over the closing line. Blind over / under: backing every game at the average price. Model overs: overs the rule bet at the opening line (edge above ${Math.round(R.edge*100)}%), count and ROI. Click a league for its seasons.</p>`;
   h += `<div class="scroll"><table><thead><tr><th>League</th><th class="n">Games</th><th class="n">Total / line</th><th class="n">Over %</th><th class="n">Blind over</th><th class="n">Blind under</th><th class="n">Model overs</th></tr></thead><tbody>`;
   const mod = g => g.n ? `${g.n} <span class="${cls(g.roi)}">${roi(g.roi)}</span>` : '<span class="muted">–</span>';
   const row = (label, s, attrs='') => `<tr${attrs}><td>${label}</td><td class="n">${s.games}</td><td class="n">${s.avg_total.toFixed(1)} / ${s.avg_line.toFixed(1)}</td><td class="n">${pct(s.over, 1)}</td>
@@ -243,7 +243,7 @@ function renderLeagues(){
     h += `<tr><td colspan="7" class="tier" style="padding-top:18px">${tierName[tier]}</td></tr>`;
     for (const l of DATA.leagues.filter(l => l.tier === tier)){
       const on = open === l.key;
-      h += row(`<span class="caret">${on ? '▾' : '▸'}</span> ${l.country} <span class="muted">${l.name}</span>${LIVE.leagues && LIVE.leagues.includes(l.key) ? '<span class="badge">live</span>' : ''}`, l.all, ` class="srow${on ? ' on' : ''}" data-open="${l.key}"`);
+      h += row(`<span class="caret">${on ? '▾' : '▸'}</span> ${l.country} <span class="muted">${l.name}</span>${LIVE.leagues && LIVE.leagues.length < DATA.leagues.length && LIVE.leagues.includes(l.key) ? '<span class="badge">live</span>' : ''}`, l.all, ` class="srow${on ? ' on' : ''}" data-open="${l.key}"`);
       if (on) for (const s of l.seasons) h += row(sn(s.season) + (s.season === DATA.tuned ? ' (tuned on)' : '') + (s.season === DATA.season ? ' (so far)' : ''), s, ' class="sub"');
     }
   }
@@ -282,7 +282,7 @@ function bets(){
 }
 
 function renderProjections(){
-  let h = `<p class="note">Games in the next 7 days with the model's projected total (fitted on earlier games only) next to the bookmakers' consensus line. Only overs that meet the rule (live-test league, regular season, both teams 6+ games) get an edge here; highlighted games are logged in the Live test tab at the line and price shown when they were first seen. Click a column heading to sort.</p>`;
+  let h = `<p class="note">Games in the next 7 days with the model's projected total (fitted on earlier games only) next to the bookmakers' consensus line. Only overs that meet the rule (regular season, both teams 6+ games) get an edge here; highlighted games are logged in the Live test tab at the line and price shown when they were first seen. Click a column heading to sort.</p>`;
   const fx = LIVE.fixtures.filter(inLg);
   if (!fx.length) return h + '<p class="empty">No games in the next 7 days.</p>';
   const byDay = {};
@@ -304,7 +304,8 @@ function renderProjections(){
 function renderLive(){
   const T = LIVE.taken, st = x => x.settled ? `${x.settled} settled, ${x.w} won, ROI <b class="${cls(x.roi)}">${roi(x.roi)}</b>` : 'none settled yet';
   const lgs = (LIVE.leagues || []).map(k => LG[k].country + ' ' + LG[k].name).join(', '), B = LIVE.bt;
-  let h = `<p class="note"><b>The rule: overs only</b>, edge above ${Math.round(LE()*100)}%, regular season only, once both teams have played at least ${LIVE.min_gp ?? 6} games, in the ${(LIVE.leagues || []).length} leagues where the over has come in most against the closing line (Over % 52% or more and blind over −2.5% or better, Leagues tab): ${lgs}. ${B ? `Backtest of this rule: ${B.n} bets, ${pct(B.w / B.n, 1)} hit, ROI ${roi(B.roi)}.` : ''}</p>`;
+  const all = (LIVE.leagues || []).length >= DATA.leagues.length;
+  let h = `<p class="note"><b>The rule: overs only</b>, edge above ${Math.round(LE()*100)}%, regular season only, once both teams have played at least ${LIVE.min_gp ?? 6} games, ${all ? `in all ${DATA.leagues.length} leagues` : `in ${(LIVE.leagues || []).length} leagues: ${lgs}`}. ${B ? `Backtest of this rule: ${B.n.toLocaleString()} bets, ${pct(B.w / B.n, 1)} hit, ROI ${roi(B.roi)}.` : ''}</p>`;
   h += `<p class="note">Followed for real from ${LIVE.start}: every 3 hours the model checks every game in the next 7 days, and the first time the over's edge is above ${Math.round(LE()*100)}% at the line on offer, that bet is logged at that line and the average price, and never changed. ${LIVE.tracked.toLocaleString()} games with a line seen so far.</p>`;
   h += tiles([['Bets logged', String(T.n)], ['Settled', String(T.settled || 0)], ['Hit rate', T.settled ? pct(T.w / T.settled, 1) : '–'],
               ['ROI', roi(T.roi), cls(T.roi)], ['ROI at the best price', roi(T.roi_best), cls(T.roi_best)],
