@@ -195,7 +195,7 @@ th.tsort{cursor:pointer;user-select:none} th.tsort:hover{color:var(--gold)}
   <div class="chips" id="chips"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=6faf4162"></script>
+<script src="data.js?v=806b059d"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -423,7 +423,7 @@ function renderMethod(){
   return `<div class="doc">
   <h3>What we do</h3>
   <p>We bet one thing: the <b>over on low total-points lines</b> in volleyball, when the model gives a fourth set a clearly better chance than the bookmaker's price does. Every bet is 1 unit, logged before the first serve and settled on the result, and the <b>Results</b> tab keeps the record.</p>
-  <p>The model was tested on every season of ${DATA.backtest.tested.length} leagues, women's and men's. A league is on this page only if, on the seasons the model never saw, it passed three tests: <b>backing every low-line over without the model lost 3% or less</b> (a fair market to start from, where a small edge is enough), <b>the model's bets made more than +10%</b>, and <b>there were at least 50 of them</b>. Five passed: ${liveNames()}. The rest, including Turkey and Poland (women), which had live picks until 1 Nov 2026, are left out; the <b>Backtest</b> tab lists them all.</p>
+  <p>The model was tested on every season of ${DATA.backtest.tested.length} leagues, women's and men's. A league is on this page only if, on the seasons the model never saw, it passed three tests: <b>backing every low-line over without the model lost 3% or less</b> (a fair market to start from, where a small edge is enough), <b>the model's bets made more than +10%</b>, and <b>there were at least 50 of them</b>. Five passed: ${liveNames()}. The rest, including Turkey and Poland (women), which had live picks until 1 Nov 2026, are left out. The <b>Backtest</b> tab shows the five side by side.</p>
   <h3><span class="num">1</span>One number per team</h3>
   <p>Every team gets one rating: its chance of winning a rally against an average side of its own league. It is fitted on the points of every past match, with recent matches weighted more, plus a small home edge. Each league is rated on its own, with its own home edge; the settings that control the fit are the same everywhere, tuned once on Turkey's women's Sultanlar Ligi.</p>
   <h3><span class="num">2</span>From rallies to the whole match</h3>
