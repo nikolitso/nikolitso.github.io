@@ -194,7 +194,7 @@ tr.srow{cursor:pointer} tr.srow:hover td,tr.srow.on td{background:color-mix(in s
   <div class="chips" id="chips"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=c82d4493"></script>
+<script src="data.js?v=3616f430"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -306,7 +306,7 @@ function renderBacktest(){
       const s = B.leagues[l.key];
       h += `<tr class="srow" data-lg="${l.key}"><td><span class="caret">▸</span> ${l.country} <span class="muted">${l.name}${l.live ? '' : ' · no picks'}</span></td><td class="n">${s.n}</td><td class="n">${s.n ? pct(s.w/s.n) : '–'}</td><td class="n ${cls(s.roi)}">${sgn(s.roi*100, 1)}%</td><td class="n ${cls(s.blind_roi)}">${sgn(s.blind_roi*100, 1)}%</td></tr>`;
     }
-    h += '</tbody></table></div>';
+    h += '</tbody></table></div>' + testedTable();
     // the same bets by season, the live leagues together (the tuned-on season left out, as in the totals)
     const live = new Set(DATA.leagues.filter(l => l.live).map(l => l.key)), by = {};
     for (const x of B.seasons.filter(x => live.has(x.lg) && !x.tuned)){
@@ -326,6 +326,19 @@ function renderBacktest(){
   h += '</tbody></table>' + byMonth() + byLine();
   if (btSeason) h += seasonBets(btSeason);
   return h;
+}
+
+// every league the backtest ran on, women's and men's, the same rule and unseen seasons (most are not on the page)
+function testedTable(){
+  const T = [...DATA.backtest.tested].sort((a, b) => b.women - a.women || b.roi - a.roi);
+  let h = `<h2>All tested leagues</h2><p class="note">Every league the backtest was run on, with the same rule (lines ${DATA.min_line}.5 to ${DATA.low - 1}.5, edge above ${DATA.edge * 100}%) and only the seasons the settings never saw. Only the leagues marked live have picks; the others were left off the page. Women's leagues first, then men's, best ROI first. The 90% range is how far the ROI could be off by chance.</p>`;
+  h += `<div class="scroll"><table style="max-width:980px"><thead><tr><th>League</th><th class="n">Seasons</th><th class="n">Bets</th><th class="n">Hit</th><th class="n">ROI</th><th class="n">90% range</th><th class="n">No model</th></tr></thead><tbody>`;
+  let sex = null;
+  for (const t of T){
+    if (t.women !== sex){ sex = t.women; h += `<tr><td colspan="7"><b>${sex ? 'Women' : 'Men'}</b></td></tr>`; }
+    h += `<tr><td>${t.country} <span class="muted">${t.name}${t.live ? ' · live' : ''}</span></td><td class="n">${t.seasons}</td><td class="n">${t.n}</td><td class="n">${t.n ? pct(t.w / t.n) : '–'}</td><td class="n ${t.n ? cls(t.roi) : ''}">${t.n ? sgn(t.roi * 100, 1) + '%' : '–'}</td><td class="n">${t.n ? sgn(t.ci[0] * 100, 0) + ' to ' + sgn(t.ci[1] * 100, 0) + '%' : '–'}</td><td class="n ${cls(t.blind_roi)}">${t.blind_n ? sgn(t.blind_roi * 100, 1) + '%' : '–'}</td></tr>`;
+  }
+  return h + '</tbody></table></div>';
 }
 
 // P/L by the bookmaker's total line: the live rule's bets in unseen seasons, in 10-point bands (bands of the line's whole part)
