@@ -410,6 +410,7 @@
       "adam",
       "after-love",
       "after-the-wedding",
+      "aicha",
       "all-about-my-mother",
       "all-we-imagine-as-light",
       "alone",
@@ -631,7 +632,8 @@
       "perfect-strangers",
       "life-in-a-fishbowl",
       "smuggling-hendrix",
-      "crossing"
+      "crossing",
+      "aicha"
     ],
     "log": [
       {
@@ -827,11 +829,17 @@
         "slot": "2026-10-31 20",
         "slug": "crossing",
         "id": "2116591260001829126"
+      },
+      {
+        "day": "2026-11-01",
+        "slot": "2026-11-01 08",
+        "slug": "aicha",
+        "id": "2116772403711824061"
       }
     ],
-    "last_day": "2026-10-31"
+    "last_day": "2026-11-01"
   },
-  "last_slot": "2026-11-01 02",
+  "last_slot": "2026-11-01 08",
   "quote": {
     "seen": [
       "1",
