@@ -151,7 +151,8 @@
       "storytelling-with-data-a-data-visualization",
       "games-people-play",
       "how-to-be-a-leader",
-      "the-definitive-guide-to-betting-exchanges"
+      "the-definitive-guide-to-betting-exchanges",
+      "how-to-win-the-world-cup"
     ],
     "log": [
       {
@@ -387,6 +388,12 @@
         "slot": "2026-11-01 02",
         "slug": "the-definitive-guide-to-betting-exchanges",
         "id": "2116681807278256400"
+      },
+      {
+        "day": "2026-11-01",
+        "slot": "2026-11-01 14",
+        "slug": "how-to-win-the-world-cup",
+        "id": "2116862992520270320"
       }
     ],
     "last_day": "2026-11-01"
@@ -839,7 +846,7 @@
     ],
     "last_day": "2026-11-01"
   },
-  "last_slot": "2026-11-01 11",
+  "last_slot": "2026-11-01 14",
   "quote": {
     "seen": [
       "1",
