@@ -195,7 +195,7 @@ th.tsort{cursor:pointer;user-select:none} th.tsort:hover{color:var(--gold)}
   <div class="chips" id="chips"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=d2f7b802"></script>
+<script src="data.js?v=6faf4162"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -265,10 +265,10 @@ function renderResults(){
   if (!done.length) return h + '<p class="empty">No settled picks yet. Each pick is added here once its match is played.</p>';
   if (lg === 'all'){
     h += `<h2>By league</h2><div class="scroll"><table style="max-width:820px"><thead><tr><th>League</th><th class="n">Picks</th><th class="n">Won</th><th class="n">Hit</th><th class="n">Avg book line</th><th class="n">Avg model line</th><th class="n">Units</th><th class="n">ROI</th></tr></thead><tbody>`;
-    for (const l of DATA.leagues){
+    for (const l of [...DATA.leagues, ...(DATA.former || [])]){
       const g = done.filter(p => p.lg === l.key); if (!g.length) continue;
       const gw = g.filter(p => p.won).length, gu = g.reduce((s, p) => s + p.profit, 0);
-      h += `<tr><td>${l.country} <span class="muted">${l.name}</span></td><td class="n">${g.length}</td><td class="n">${gw}</td><td class="n">${pct(gw / g.length)}</td><td class="n">${avgLine(g, 'line')}</td><td class="n">${avgLine(g, 'fair')}</td><td class="n ${cls(gu)}">${sgn(gu, 2)}</td><td class="n ${cls(gu)}">${sgn(gu / g.length * 100, 1)}%</td></tr>`;
+      h += `<tr><td>${l.country} <span class="muted">${l.name} (${sexOf(l)})${l.live ? '' : ' · no longer bet'}</span></td><td class="n">${g.length}</td><td class="n">${gw}</td><td class="n">${pct(gw / g.length)}</td><td class="n">${avgLine(g, 'line')}</td><td class="n">${avgLine(g, 'fair')}</td><td class="n ${cls(gu)}">${sgn(gu, 2)}</td><td class="n ${cls(gu)}">${sgn(gu / g.length * 100, 1)}%</td></tr>`;
     }
     h += '</tbody></table></div>';
   }
@@ -421,7 +421,7 @@ document.addEventListener('click', e => {
 
 function renderMethod(){
   return `<div class="doc">
-  <h3><span class="num">0</span>What we do</h3>
+  <h3>What we do</h3>
   <p>We bet one thing: the <b>over on low total-points lines</b> in volleyball, when the model gives a fourth set a clearly better chance than the bookmaker's price does. Every bet is 1 unit, logged before the first serve and settled on the result, and the <b>Results</b> tab keeps the record.</p>
   <p>The model was tested on every season of ${DATA.backtest.tested.length} leagues, women's and men's. A league is on this page only if, on the seasons the model never saw, it passed three tests: <b>backing every low-line over without the model lost 3% or less</b> (a fair market to start from, where a small edge is enough), <b>the model's bets made more than +10%</b>, and <b>there were at least 50 of them</b>. Five passed: ${liveNames()}. The rest, including Turkey and Poland (women), which had live picks until 1 Nov 2026, are left out; the <b>Backtest</b> tab lists them all.</p>
   <h3><span class="num">1</span>One number per team</h3>
