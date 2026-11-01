@@ -4,8 +4,8 @@ Rewrites everything between <!-- posts:start --> and <!-- posts:end -->.
 Run locally with `python scripts/update_posts.py`; a GitHub Action runs it daily.
 
 - Books: newest posts first.
-- What Algo Missed: newest releases first (2026, then 2025, ...), and within a year
-  the most recently posted first, so a new film beats an older one posted the same week.
+- What Algo Missed: the most recently posted first, whatever the film's year; films
+  posted the same day are ordered newest release first.
 - Each card uses the image of the item's own page (its og:image).
 """
 import html
@@ -61,7 +61,7 @@ def latest(feed):
             title, year = m.group(1), m.group(2)
         posts.append(dict(title=title, year=year, link=link, date=parsedate_to_datetime(date)))
     if feed["kind"] == "film":
-        posts.sort(key=lambda p: (p["year"], p["date"]), reverse=True)
+        posts.sort(key=lambda p: (p["date"], p["year"]), reverse=True)
     else:
         posts.sort(key=lambda p: p["date"], reverse=True)
     posts = posts[:PER_FEED]
