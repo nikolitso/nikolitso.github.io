@@ -192,7 +192,7 @@ table.proj tr.pk td{background:rgba(212,175,55,.08)}table.proj tr.pk td:first-ch
   <div class="chips" id="chips"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=3b40d326"></script>
+<script src="data.js?v=f483c534"></script>
 <script src="live.js"></script>
 <script>
 const $ = id => document.getElementById(id);
@@ -214,6 +214,7 @@ const RL = k => !LIVE.leagues || LIVE.leagues.includes(k);
 const LIVE = window.LIVE || {updated: DATA.updated, fixtures: DATA.fixtures, picks: [], tracked: 0, start: '1 Nov 2026', taken: {n: 0}, over: {n: 0}, under: {n: 0}, rule: {n: 0}};
 LIVE.fixtures = LIVE.fixtures.filter(g => LG[g.lg]);                       // leagues no longer on the page
 LIVE.picks = (LIVE.picks || []).filter(b => LG[b.lg]);
+if (LIVE.leagues) LIVE.leagues = LIVE.leagues.filter(k => LG[k]);
 
 $('sub').textContent = `${DATA.leagues.length} European leagues · 2020–21 (warm-up) to ${sn(DATA.season)} · live test since ${LIVE.start} · updated ${LIVE.updated} (Athens)`;
 
