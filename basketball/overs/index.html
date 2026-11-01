@@ -192,7 +192,7 @@ table.proj tr.pk td{background:rgba(212,175,55,.08)}table.proj tr.pk td:first-ch
   <div class="chips" id="chips"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=e5252765"></script>
+<script src="data.js?v=92a8a07b"></script>
 <script src="live.js"></script>
 <script>
 const $ = id => document.getElementById(id);
@@ -304,13 +304,13 @@ function renderProjections(){
 function renderLive(){
   const T = LIVE.taken, st = x => x.settled ? `${x.settled} settled, ${x.w} won, ROI <b class="${cls(x.roi)}">${roi(x.roi)}</b>` : 'none settled yet';
   const lgs = (LIVE.leagues || []).map(k => LG[k].country + ' ' + LG[k].name).join(', '), B = LIVE.bt;
-  let h = `<p class="note"><b>The rule: overs only</b>, edge above ${Math.round(LE()*100)}%, in the ${(LIVE.leagues || []).length} leagues whose backtest bets at that edge made +15% or more: ${lgs}. ${B ? `Backtest of this rule: ${B.n} bets, ${pct(B.w / B.n, 1)} hit, ROI ${roi(B.roi)}. The leagues were picked after seeing those results, so expect less live.` : ''}</p>
+  let h = `<p class="note"><b>The rule: overs only</b>, edge above ${Math.round(LE()*100)}%, in the ${(LIVE.leagues || []).length} leagues whose backtest bets at that edge made more than +20%: ${lgs}. ${B ? `Backtest of this rule: ${B.n} bets, ${pct(B.w / B.n, 1)} hit, ROI ${roi(B.roi)}. The leagues were picked after seeing those results, so expect less live.` : ''}</p>
     <p class="note">Followed for real from ${LIVE.start}: every 3 hours the model checks every game in the next 7 days, and the first time the over's edge is above ${Math.round(LE()*100)}% at the line on offer, that bet is logged at that line and the average price, and never changed. ${LIVE.tracked.toLocaleString()} games with a line seen so far.</p>`;
   h += tiles([['Bets logged', String(T.n)], ['Settled', String(T.settled || 0)], ['Hit rate', T.settled ? pct(T.w / T.settled, 1) : '–'],
               ['ROI', roi(T.roi), cls(T.roi)], ['ROI at the best price', roi(T.roi_best), cls(T.roi_best)],
               ['Close moved our way', T.clv_pos == null ? '–' : pct(T.clv_pos)], ['Against us', T.clv_neg == null ? '–' : pct(T.clv_neg)]]);
   h += `<p class="note">Backtest version (the opening line the books report, judged when first seen): ${LIVE.rule.n} bets, ${st(LIVE.rule)}. A few hundred bets are needed before the record says much. Click a column heading to sort.</p>`;
-  if (!LIVE.picks.length) return h + '<p class="empty">No bets yet. The rule fires on about one game in a hundred.</p>';
+  if (!LIVE.picks.length) return h + '<p class="empty">No bets yet. The rule fires rarely: a few times a month across these leagues.</p>';
   let run = 0;
   const rows = LIVE.picks.map(b => {
     if (b.ret != null) run += b.ret;
