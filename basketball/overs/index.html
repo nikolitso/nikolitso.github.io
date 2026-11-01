@@ -1,0 +1,350 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Basketball totals</title>
+<meta name="description" content="Basketball totals across 40 European leagues: five seasons of backtests against the opening and closing lines, findings and projections.">
+<link rel="canonical" href="https://antonisnikolitsopoulos.com/basketball/overs/">
+<meta property="og:title" content="Basketball totals">
+<meta property="og:description" content="Basketball totals across 40 European leagues: five seasons of backtests against the opening and closing lines, findings and projections.">
+<meta property="og:url" content="https://antonisnikolitsopoulos.com/basketball/overs/">
+<meta property="og:image" content="https://antonisnikolitsopoulos.com/basketball.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.png" type="image/png" sizes="64x64">
+<!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "b67bbb76d0e24af196b24ded3ab71ad0"}'></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Playfair+Display:wght@600;700&family=Source+Serif+4:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0c1424; --panel:#131d33; --line:#26334f; --text:#f1ead9; --muted:#9aa4ba;
+  --gold:#d4af37; --win:#6fcf97; --loss:#eb7a6c;
+  --serif:'Playfair Display',Georgia,serif; --body:'Source Serif 4',Georgia,serif; --mono:'IBM Plex Mono',ui-monospace,monospace;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:17px/1.5 var(--body)}
+.wrap{max-width:1180px;margin:0 auto;padding:40px 16px 80px}
+h1{font:700 clamp(30px,5vw,46px)/1.1 var(--serif);margin:0 0 6px}
+h1 a{color:inherit;text-decoration:none}
+h1 a:hover{color:var(--gold)}
+.home-link{display:inline-block;margin-bottom:14px;font:500 12px var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);text-decoration:none}
+.home-link:hover{color:var(--gold)}
+.sub{font:400 13px var(--mono);color:var(--muted);letter-spacing:.04em;margin-bottom:32px}
+.tabs{display:flex;flex-wrap:wrap;gap:10px 28px;border-bottom:1px solid var(--line);margin:0 0 26px}
+.tabs a{border-bottom:2px solid transparent;color:var(--muted);font:600 18px var(--serif);padding:0 0 10px;margin-bottom:-1px;cursor:pointer;text-decoration:none}
+.tabs a.on{color:var(--text);border-color:var(--gold)}
+.tabs a:hover{color:var(--text)}
+.bar{display:flex;flex-wrap:wrap;align-items:center;gap:10px 18px;margin:0 0 18px}
+.seg{display:flex;border:1px solid var(--line);border-radius:6px;overflow:hidden;width:max-content}
+.seg button{background:none;border:0;color:var(--muted);font:500 13px var(--mono);padding:8px 16px;cursor:pointer;letter-spacing:.06em;text-transform:uppercase}
+.seg button.on{background:var(--gold);color:#0c1424}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{background:none;border:1px solid var(--line);border-radius:999px;color:var(--muted);font:500 12px var(--mono);padding:5px 12px;cursor:pointer}
+.chip:hover{color:var(--text)}
+.chip.on{background:var(--gold);border-color:var(--gold);color:#0c1424}
+h2{font:600 22px var(--serif);margin:30px 0 12px}
+h2.day{font-size:20px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(520px,100%),1fr));gap:18px}
+.grid>.card{min-width:0}
+.grid>.mcard{display:grid;grid-row:span 3;grid-template-rows:subgrid;row-gap:0;align-content:start}
+.mcard .top{padding-bottom:4px}
+.card td:first-child{white-space:normal}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px 18px 10px}
+.card h3{font:600 24px var(--serif);margin:0}
+.live{font:500 11px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--bg);background:var(--gold);border-radius:4px;padding:1px 6px;margin-left:8px;vertical-align:1px}
+.card .ko{font:500 14px var(--mono);color:var(--text);letter-spacing:.06em}
+.wdl{display:flex;height:8px;border-radius:4px;overflow:hidden;margin:12px 0 6px;background:var(--line)}
+.wdl i{display:block} .wdl i:nth-child(1){background:var(--gold)} .wdl i:nth-child(2){background:#59657f} .wdl i:nth-child(3){background:#5b7bd5}
+.wdlt{display:flex;justify-content:space-between;font:400 14px var(--mono);color:var(--muted)}
+.wdlt b{color:var(--text);font-weight:500}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+th{font:400 11px var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.08em;text-align:left;padding:8px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:7px 8px;border-bottom:1px solid color-mix(in srgb,var(--line) 60%,transparent);font-size:15px;white-space:nowrap}
+td.n,th.n{text-align:right;font-family:var(--mono);font-size:13.5px}
+td.tot{color:var(--gold);font-weight:500}
+.card table{margin-top:6px}
+table.mk{margin-bottom:6px}table.mk td,table.mk th{padding:6px 7px}
+.stack{display:grid;gap:18px}
+.mkcols{display:grid;grid-template-columns:minmax(0,300px) minmax(0,1fr);gap:24px;align-items:start;margin-top:8px}
+@media(max-width:900px){.mkcols{grid-template-columns:1fr}.mkcols table{display:block;overflow-x:auto}}
+.stack>.card{min-width:0}
+.wdlt i{font-style:normal;color:var(--gold)}
+.wdlt span:nth-child(2){text-align:center}.wdlt span:last-child{text-align:right}
+.coach .who{display:inline-block;min-width:118px;color:var(--muted)}
+.tenure{font:400 12px/1.4 var(--mono);color:var(--muted);margin-top:2px}
+.coach{font:400 13.5px/1.55 var(--mono);color:var(--muted);margin-top:2px}
+.coach b{color:var(--text);font-weight:500}
+.coach .wc{display:inline-block;width:7ch;text-align:right}
+table.tm{max-width:1000px}table.tm .gl{border-left:1px solid var(--line);padding-left:12px}
+table.tm tr.grp th{color:var(--gold);border-bottom:0;padding-bottom:0}
+.head{display:flex;justify-content:space-between;align-items:flex-start;gap:6px 14px;flex-wrap:wrap}
+.ref{font:400 13.5px/1.55 var(--mono);color:var(--muted);margin-top:6px}
+.ref b{color:var(--text);font-weight:500}
+.card tr:last-child td{border-bottom:0}
+.ln{font:400 12px var(--mono);color:var(--muted);text-align:right}
+.ln span{display:inline-block;min-width:92px}
+.ln b{color:var(--text);font-weight:500}
+.ln .hi{color:var(--win)} .ln .lo{color:var(--loss)}
+th.sort{cursor:pointer;user-select:none} th.sort:hover,th.sort.on{color:var(--gold)}
+.w{color:var(--win)} .l{color:var(--loss)}
+.muted{color:var(--muted)}
+.empty{color:var(--muted);padding:30px 0;text-align:center}
+.note{font:400 15px/1.55 var(--body);color:var(--muted);border-left:2px solid var(--gold);padding:2px 0 2px 14px;margin:0 0 14px;max-width:820px}
+.note b{color:var(--text);font-weight:600}
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin:0 0 18px}
+.refsub{font:600 18px var(--serif);margin:8px 0 8px}
+.metric{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.metric .lbl{font:400 11px var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}
+.metric .big{font:500 24px var(--mono);color:var(--gold)}
+.scroll{overflow-x:auto}
+.doc{max-width:860px}
+.doc p,.doc li{font-size:16.5px;line-height:1.65;margin:0 0 14px}
+.doc ul{padding-left:20px;margin:0 0 14px}
+.doc h3{font:600 18px var(--serif);margin:28px 0 8px;display:flex;align-items:center;gap:10px}
+.doc .num{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--gold);color:#0c1424;font:600 13px var(--mono);flex:none}
+.calc{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:8px;padding:12px 16px;margin:0 0 14px;font:400 14px/2 var(--mono);overflow-x:auto}
+.calc i{font-style:normal;color:var(--muted);font-size:12px}
+.calc b{color:var(--gold);font-weight:500}
+table.mini{margin:0 0 16px}
+.abbr{display:none}
+.charts{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(440px,100%),1fr));gap:18px;margin:6px 0 10px}
+.chart{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px 12px;min-width:0}
+.chart h3{font:600 17px var(--serif);margin:0 0 4px;display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+.chart svg{display:block;width:100%;height:auto}
+.chart .cap{font:400 14px/1.5 var(--body);color:var(--muted);margin:6px 0 0}
+.key{font:400 12px var(--mono);color:var(--muted);display:flex;gap:14px}
+.key i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+.chart .hit{fill:transparent;cursor:default}
+.chart .bar.hl{opacity:.75}
+.tip{position:fixed;pointer-events:none;background:#0d1220;border:1px solid var(--line);border-radius:6px;padding:6px 10px;font:400 12.5px/1.5 var(--mono);color:var(--text);z-index:10;display:none;white-space:nowrap}
+.tip b{color:var(--gold);font-weight:500}
+tr.avg td,tr.few td{color:var(--muted)} tr.avg td:first-child{font-style:italic}
+tr.sum td{border-top:1px solid var(--line);font-weight:600}
+table.rp td.cm{white-space:normal;min-width:320px;font-size:14.5px;line-height:1.45;color:var(--muted)}
+table.rp td{vertical-align:top}
+.rate{display:inline-block;min-width:40px;text-align:center;border-radius:999px;padding:1px 8px;font:500 12.5px var(--mono)}
+.r-good{background:rgba(111,207,151,.14);color:var(--win)} .r-mid{background:rgba(154,164,186,.13);color:var(--text)}
+.r-warn{background:rgba(212,175,55,.15);color:var(--gold)} .r-bad{background:rgba(217,105,90,.18);color:var(--loss)}
+button.reflink{background:none;border:0;padding:0;margin:0;color:inherit;font:inherit;text-align:left;cursor:pointer;text-decoration:underline dotted color-mix(in srgb,var(--muted) 70%,transparent);text-underline-offset:3px}
+button.reflink:hover{color:var(--gold);text-decoration-color:var(--gold)}
+dialog#refdlg{background:var(--bg);color:var(--text);border:1px solid var(--line);border-radius:12px;padding:0;width:min(1100px,96vw);max-height:90vh}
+dialog#refdlg::backdrop{background:rgba(5,9,18,.72)}
+#refdlg .dh{position:sticky;top:0;background:var(--bg);display:flex;justify-content:space-between;align-items:center;gap:12px;padding:16px 20px 12px;border-bottom:1px solid var(--line);z-index:1}
+#refdlg .dh h2{margin:0}
+#refdlg .db{padding:16px 20px 20px}
+#refdlg .x{background:none;border:1px solid var(--line);border-radius:6px;color:var(--muted);font:500 13px var(--mono);padding:6px 12px;cursor:pointer}
+#refdlg .x:hover{color:var(--text)}
+#refdlg .metrics{grid-template-columns:repeat(auto-fit,minmax(min(140px,40vw),1fr))}
+th.rs{cursor:pointer;user-select:none} th.rs:hover,th.rs.on{color:var(--gold)}
+.jump{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 8px}
+@media(max-width:600px){.grid{grid-template-columns:1fr}.ln span{min-width:0;margin-left:8px}.card{padding:14px 10px 8px}td,th{padding:6px 4px}
+  .card td{font-size:14px}.card td.n{font-size:12.5px}.full{display:none}.abbr{display:inline}.wdlt{flex-wrap:wrap;gap:2px 12px}}
+</style>
+</head>
+<body>
+<!-- sitebar:start (link back to antonisnikolitsopoulos.com; keep on every page) -->
+<style>
+.an-sitebar{background:#0d1220;border-bottom:1px solid rgba(255,255,255,.09);font:500 13px/1.2 "Segoe UI",system-ui,-apple-system,sans-serif;letter-spacing:.02em}
+.an-sitebar>div{max-width:72rem;margin:0 auto;padding:6px 16px;display:flex;justify-content:flex-end;align-items:center;gap:18px}
+.an-sitebar a{color:#9aa1b2;text-decoration:none;display:inline-flex;align-items:center;min-height:24px}.an-sitebar a:hover{color:#fff}
+.an-sitebar svg{width:17px;height:17px;fill:currentColor}
+.an-sitebar a[href="/"]{padding:6px 8px;margin:-6px -8px -6px -4px;border-radius:6px}.an-sitebar a[href="/"]:hover{background:rgba(255,255,255,.08)}
+</style>
+<nav class="an-sitebar" aria-label="Main site"><div><a href="/books/">Books</a><a href="/#projects">Projects</a><a href="/about/">About</a><a href="/" title="Main site: antonisnikolitsopoulos.com" aria-label="Main site"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 2 11.5h3V21h5.5v-6h3v6H19v-9.5h3z"/></svg></a></div></nav>
+<!-- sitebar:end -->
+<style>
+.pos{color:var(--win)} .neg{color:var(--loss)}
+tr.srow{cursor:pointer} tr.srow:hover td,tr.srow.on td{background:color-mix(in srgb,var(--gold) 10%,transparent)}
+tr.sub td{background:color-mix(in srgb,var(--panel) 70%,transparent);font-size:13.5px}
+tr.sub td:first-child{padding-left:28px;color:var(--muted)}
+.caret{color:var(--gold);display:inline-block;width:1em}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:14px 0 4px}
+.chips a{font:400 13px var(--mono);color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:4px 11px;text-decoration:none}
+.chips a.on{color:#0c1424;background:var(--gold);border-color:var(--gold)}
+td.wr{white-space:normal}
+table.proj tr.pk td{background:rgba(212,175,55,.08)}table.proj tr.pk td:first-child{box-shadow:inset 3px 0 var(--gold)}
+.badge{display:inline-block;font:500 11px var(--mono);letter-spacing:.06em;text-transform:uppercase;background:var(--gold);color:#0c1424;border-radius:4px;padding:2px 7px;margin-left:8px;vertical-align:2px}
+.find{border-left:3px solid var(--gold);padding:2px 0 2px 16px;margin:0 0 22px;max-width:860px}
+.find h3{font:600 20px var(--serif);margin:0 0 4px}
+.find p{margin:0;color:var(--text)}
+.find .num{font:500 12px var(--mono);color:var(--gold);letter-spacing:.06em;margin-right:8px}
+.verdict{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px 20px;margin:0 0 30px;max-width:860px}
+.verdict h2{margin:0 0 8px}
+.tier{font:400 11px var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.scroll{overflow-x:auto}
+.cols2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:28px;align-items:start}
+@media(max-width:900px){.cols2{grid-template-columns:minmax(0,1fr)}}
+</style>
+<div class="wrap">
+  <a class="home-link" href="/">&#8962; Home</a>
+  <h1><a href="/basketball/overs/">Basketball totals</a></h1>
+  <div class="sub" id="sub"></div>
+  <div class="tabs" id="tabs">
+    <a href="#view=findings" data-view="findings" class="on">Findings</a>
+    <a href="#view=leagues" data-view="leagues">Leagues</a>
+    <a href="#view=backtest" data-view="backtest">Backtest</a>
+    <a href="#view=live" data-view="live">Live test</a>
+    <a href="#view=projections" data-view="projections">Projections</a>
+    <a href="#view=method" data-view="method">How it works</a>
+  </div>
+  <div class="chips" id="chips"></div>
+  <div id="out"></div>
+</div>
+<script src="data.js?v=d9b18d3f"></script>
+<script src="live.js"></script>
+<script>
+const $ = id => document.getElementById(id);
+const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const dayName = s => { const d = new Date(s.slice(0,10)+'T12:00'); return `${DAYS[d.getDay()]} ${d.getDate()} ${MON[d.getMonth()]}`; };
+const short = s => { const d = new Date(s.slice(0,10)+'T12:00'); return `${d.getDate()} ${MON[d.getMonth()]}`; };
+const pct = (x, d=0) => x == null ? '–' : (x*100).toFixed(d) + '%';
+const sgn = (x, d=1) => x == null ? '–' : (x > 0 ? '+' : x < 0 ? '−' : '') + Math.abs(x).toFixed(d);
+const roi = x => x == null ? '–' : sgn(x*100, 1) + '%';
+const cls = x => x > 0 ? 'pos' : x < 0 ? 'neg' : '';
+const sn = s => s.replace('-', '–');
+let view = 'findings', lg = 'all', open = null;
+const LG = Object.fromEntries(DATA.leagues.map(l => [l.key, l]));
+const lgName = k => `${LG[k].country} · ${LG[k].name}`;
+const inLg = x => lg === 'all' || x.lg === lg;
+const R = DATA.rule;
+const LIVE = window.LIVE || {updated: DATA.updated, fixtures: DATA.fixtures, picks: [], tracked: 0, start: '1 Nov 2026', taken: {n: 0}, over: {n: 0}, under: {n: 0}, rule: {n: 0}};
+
+$('sub').textContent = `${DATA.leagues.length} European leagues · 2020–21 (warm-up) to ${sn(DATA.season)} · live test since ${LIVE.start} · updated ${LIVE.updated} (Athens)`;
+
+function tiles(list){
+  return `<div class="metrics">${list.map(([l, v, c]) => `<div class="metric"><div class="lbl">${l}</div><div class="big ${c||''}">${v}</div></div>`).join('')}</div>`;
+}
+
+// one table row from a {n, w, roi} group
+const grp = (label, g, extra='') => g && g.n ? `<tr${extra}><td>${label}</td><td class="n">${g.n}</td><td class="n">${pct(g.w / g.n, 1)}</td><td class="n">${g.px ? g.px.toFixed(2) : '–'}</td><td class="n ${cls(g.roi)}">${roi(g.roi)}</td>${'lo' in g ? `<td class="n muted">${roi(g.lo)} to ${roi(g.hi)}</td>` : '<td></td>'}</tr>` : '';
+const GHEAD = (first, ci=true) => `<thead><tr><th>${first}</th><th class="n">Bets</th><th class="n">Hit</th><th class="n">Avg price</th><th class="n">ROI</th><th class="n">${ci ? '90% range' : ''}</th></tr></thead>`;
+
+function renderFindings(){
+  const F = DATA.findings;
+  let h = `<div class="verdict"><h2>The short answer</h2><p>${F.verdict}</p></div>`;
+  h += tiles(F.tiles.map(t => [t[0], t[1], t[2]]));
+  F.items.forEach((f, i) => { h += `<div class="find"><h3><span class="num">${String(i + 1).padStart(2, '0')}</span>${f.h}</h3><p>${f.p}</p></div>`; });
+  return h;
+}
+
+function renderLeagues(){
+  let h = `<p class="note">Every league from ${sn(DATA.first)} on (2020–21 only warms the ratings up). The model columns start in 2022–23 and are all out of sample. <b>Over %</b>: how often the final score (overtime included) went over the closing line. Blind over / under: backing every game at the average price. Model columns: bets the rule placed at the opening line (edge above ${R.edge*100}%), count and ROI. Click a league for its seasons.</p>`;
+  h += `<div class="scroll"><table><thead><tr><th>League</th><th class="n">Games</th><th class="n">Total / line</th><th class="n">Over %</th><th class="n">Blind over</th><th class="n">Blind under</th><th class="n">Model overs</th><th class="n">Model unders</th></tr></thead><tbody>`;
+  const mod = g => g.n ? `${g.n} <span class="${cls(g.roi)}">${roi(g.roi)}</span>` : '<span class="muted">–</span>';
+  const row = (label, s, attrs='') => `<tr${attrs}><td>${label}</td><td class="n">${s.games}</td><td class="n">${s.avg_total.toFixed(1)} / ${s.avg_line.toFixed(1)}</td><td class="n">${pct(s.over, 1)}</td>
+    <td class="n ${cls(s.blind_over)}">${roi(s.blind_over)}</td><td class="n ${cls(s.blind_under)}">${roi(s.blind_under)}</td>
+    <td class="n">${mod(s.mo)}</td><td class="n">${mod(s.mu)}</td></tr>`;
+  const tierName = {europe: 'European competitions', top: 'Top divisions', second: 'Second divisions'};
+  for (const tier of ['europe', 'top', 'second']){
+    h += `<tr><td colspan="8" class="tier" style="padding-top:18px">${tierName[tier]}</td></tr>`;
+    for (const l of DATA.leagues.filter(l => l.tier === tier)){
+      const on = open === l.key;
+      h += row(`<span class="caret">${on ? '▾' : '▸'}</span> ${l.country} <span class="muted">${l.name}</span>`, l.all, ` class="srow${on ? ' on' : ''}" data-open="${l.key}"`);
+      if (on) for (const s of l.seasons) h += row(sn(s.season) + (s.season === DATA.tuned ? ' (tuned on)' : '') + (s.season === DATA.season ? ' (so far)' : ''), s, ' class="sub"');
+    }
+  }
+  return h + '</tbody></table></div>';
+}
+
+function renderBacktest(){
+  const B = DATA.backtest, S = lg === 'all' ? B.all : B.leagues[lg];
+  let h = `<p class="note">${B.note}</p>`;
+  if (!S || !S.rule.n) return h + '<p class="empty">The rule placed no bets in this league.</p>';
+  h += tiles([['Bets', S.rule.n], ['Hit rate', pct(S.rule.w / S.rule.n, 1)], ['ROI', roi(S.rule.roi), cls(S.rule.roi)], ['Units', sgn(S.rule.roi * S.rule.n, 1), cls(S.rule.roi)], ['90% range', `${roi(S.rule.lo)} to ${roi(S.rule.hi)}`]]);
+  h += `<h2>By season</h2><div class="scroll"><table style="max-width:820px">${GHEAD('Season')}<tbody>`;
+  for (const s of S.seasons) h += grp(sn(s.season) + (s.season === DATA.tuned ? ' <span class="muted">(tuned on)</span>' : '') + (s.season === DATA.season ? ' <span class="muted">(so far)</span>' : ''), s);
+  h += '</tbody></table></div>';
+  if (lg === 'all'){
+    h += `<h2>By league</h2><p class="note">Unseen seasons. Click a league to see it alone.</p><div class="scroll"><table style="max-width:820px">${GHEAD('League')}<tbody>`;
+    for (const l of DATA.leagues.filter(l => B.leagues[l.key] && B.leagues[l.key].rule.n).sort((a, b) => B.leagues[b.key].rule.roi - B.leagues[a.key].rule.roi))
+      h += grp(`<a href="#view=backtest&lg=${l.key}" style="color:inherit;text-decoration:none">${l.country} <span class="muted">${l.name}</span></a>`, B.leagues[l.key].rule);
+    h += '</tbody></table></div>';
+  }
+  h += `<div class="cols2"><div><h2>By edge</h2><div class="scroll"><table>${GHEAD('Edge above', false)}<tbody>`;
+  for (const e of S.edges) h += grp(`${Math.round(e.edge * 100)}%`, e);
+  h += `</tbody></table></div></div><div><h2>By month</h2><div class="scroll"><table>${GHEAD('Month', false)}<tbody>`;
+  for (const m of S.months) h += grp(MON[m.m - 1], m);
+  h += '</tbody></table></div></div></div>';
+  return h + bets();
+}
+
+function bets(){
+  const list = DATA.bets.filter(inLg);
+  if (!list.length) return '';
+  let run = 0;
+  const rows = list.map(b => { run += b.ret;
+    return `<tr><td>${short(b.dt)} ${b.dt.slice(0,4)}</td>${lg === 'all' ? `<td>${LG[b.lg].country}</td>` : ''}<td class="wr">${b.home} – ${b.away}</td><td class="n">${b.side === 'o' ? 'Over' : 'Under'} ${b.line}</td><td class="n">${b.px.toFixed(2)}</td><td class="n">${b.mu.toFixed(1)}</td><td class="n">${pct(b.p)}</td><td class="n">${sgn(b.edge*100, 0)}%</td><td class="n ${b.ret > 0 ? 'w' : b.ret < 0 ? 'l' : ''}">${b.total}</td><td class="n ${cls(b.ret)}">${sgn(b.ret, 2)}</td><td class="n ${cls(run)}">${sgn(run, 1)}</td></tr>`; });
+  return `<h2>Every bet, latest first</h2><p class="note">${list.length} bets in unseen seasons${list.length > 400 ? ', the latest 400 shown' : ''}.</p><div class="scroll"><table><thead><tr><th>Date</th>${lg === 'all' ? '<th>League</th>' : ''}<th>Match</th><th class="n">Bet</th><th class="n">Price</th><th class="n">Model</th><th class="n">Chance</th><th class="n">Edge</th><th class="n">Total</th><th class="n">Units</th><th class="n">Running</th></tr></thead><tbody>${rows.reverse().slice(0, 400).join('')}</tbody></table></div>`;
+}
+
+function renderProjections(){
+  let h = `<p class="note">Games in the next 7 days with the model's projected total (fitted on earlier games only) next to the bookmakers' consensus line. ${R.text} Rows that match it are highlighted. Highlighted games are logged in the Live test tab at the line and price shown when they were first seen.</p>`;
+  const fx = LIVE.fixtures.filter(inLg);
+  if (!fx.length) return h + '<p class="empty">No games in the next 7 days.</p>';
+  const byDay = {};
+  fx.forEach(g => (byDay[g.dt.slice(0,10)] ||= []).push(g));
+  const head = `<thead><tr><th>Time</th>${lg === 'all' ? '<th>League</th>' : ''}<th>Match</th><th class="n">Model</th><th class="n">Line</th><th class="n">Over</th><th class="n">Under</th><th class="n">Over chance</th><th class="n">Edge</th></tr></thead>`;
+  for (const [d, gs] of Object.entries(byDay)){
+    h += `<h2 class="day">${dayName(d)}</h2><div class="scroll"><table class="proj">${head}<tbody>`;
+    for (const g of gs){
+      const e = g.line == null ? null : Math.max(g.eo, g.eu), side = g.line == null ? '' : g.eo > g.eu ? 'Over' : 'Under';
+      h += `<tr${g.pick ? ' class="pk"' : ''}><td>${g.dt.slice(11)}</td>${lg === 'all' ? `<td>${LG[g.lg].country}</td>` : ''}
+        <td class="wr">${g.home} – ${g.away}${g.pick ? `<span class="badge">${g.pick}</span>` : ''}</td><td class="n"><b>${g.mu.toFixed(1)}</b></td>
+        ${g.line == null ? '<td class="n muted" colspan="5">no line yet</td>' : `<td class="n">${g.line}</td><td class="n">${g.op.toFixed(2)}</td><td class="n">${g.up.toFixed(2)}</td><td class="n">${pct(g.p)}</td><td class="n ${cls(e)}">${e > 0 ? side + ' ' + sgn(e*100, 0) + '%' : '–'}</td>`}</tr>`;
+    }
+    h += '</tbody></table></div>';
+  }
+  return h;
+}
+
+function renderLive(){
+  const T = LIVE.taken, st = x => x.settled ? `${x.settled} settled, ${x.w} won, ROI <b class="${cls(x.roi)}">${roi(x.roi)}</b>` : 'none settled yet';
+  let h = `<p class="note">The rule, followed for real from ${LIVE.start}: every 3 hours the model checks every game in the next 7 days, and the first time a side's edge is above ${Math.round(R.edge*100)}% at the line on offer, that bet is logged at that line and the average price, and never changed. ${LIVE.tracked.toLocaleString()} games with a line seen so far.</p>`;
+  h += tiles([['Bets logged', String(T.n)], ['Settled', String(T.settled || 0)], ['Hit rate', T.settled ? pct(T.w / T.settled, 1) : '–'],
+              ['ROI', roi(T.roi), cls(T.roi)], ['ROI at the best price', roi(T.roi_best), cls(T.roi_best)],
+              ['Close moved our way', T.clv_pos == null ? '–' : pct(T.clv_pos)], ['Against us', T.clv_neg == null ? '–' : pct(T.clv_neg)]]);
+  h += `<p class="note">Overs: ${st(LIVE.over)}. Unders: ${st(LIVE.under)}. Backtest version (the opening line the books report, judged when first seen): ${LIVE.rule.n} bets, ${st(LIVE.rule)}. The backtest expects about +10% and the line moving our way more than half the time; a few hundred bets are needed before the record says much.</p>`;
+  if (!LIVE.picks.length) return h + '<p class="empty">No bets yet. The rule fires on about one game in a hundred.</p>';
+  let run = 0;
+  const rows = LIVE.picks.map(b => {
+    if (b.ret != null) run += b.ret;
+    const res = !b.done ? '<td class="n muted" colspan="3">to play</td>' : b.ret == null ? '<td class="n muted" colspan="3">void</td>' :
+      `<td class="n">${b.total}</td><td class="n ${cls(b.ret)}">${sgn(b.ret, 2)}</td><td class="n ${cls(run)}">${sgn(run, 2)}</td>`;
+    return `<tr><td>${short(b.dt)} ${b.dt.slice(11)}</td><td>${LG[b.lg].country}</td><td class="wr">${b.home} – ${b.away}</td><td class="n"><b>${b.side === 'o' ? 'Over' : 'Under'} ${b.line}</b></td>
+      <td class="n">${b.px.toFixed(2)}</td><td class="n pos">${sgn(b.edge*100, 0)}%</td><td class="n">${Math.round(b.hours)}h</td><td class="n">${b.close ?? '–'}</td>${res}</tr>`;
+  });
+  return h + `<h2>Every bet, latest first</h2><div class="scroll"><table><thead><tr><th>Tip-off</th><th>League</th><th>Match</th><th class="n">Bet</th><th class="n">Price</th><th class="n">Edge</th><th class="n">Before</th><th class="n">Close</th><th class="n">Total</th><th class="n">Units</th><th class="n">Running</th></tr></thead><tbody>${rows.reverse().join('')}</tbody></table></div>`;
+}
+
+function renderMethod(){ return `<div class="doc">${DATA.method}</div>`; }
+
+document.addEventListener('click', e => {
+  const r = e.target.closest('tr.srow');
+  if (!r || !r.dataset.open) return;
+  open = open === r.dataset.open ? null : r.dataset.open;
+  render();
+});
+
+const RENDER = {findings: renderFindings, leagues: renderLeagues, backtest: renderBacktest, live: renderLive, projections: renderProjections, method: renderMethod};
+const CHIPS = {backtest: 1, projections: 1};
+function render(){
+  document.querySelectorAll('#tabs a').forEach(a => { a.classList.toggle('on', a.dataset.view === view); a.href = `#view=${a.dataset.view}${lg === 'all' || !CHIPS[a.dataset.view] ? '' : '&lg=' + lg}`; });
+  let keys = DATA.leagues.map(l => l.key);
+  if (view === 'backtest') keys = keys.filter(k => DATA.backtest.leagues[k] && DATA.backtest.leagues[k].rule.n);
+  if (view === 'projections') keys = keys.filter(k => LIVE.fixtures.some(g => g.lg === k));
+  const chips = CHIPS[view] ? [['all', 'All leagues'], ...keys.map(k => [k, LG[k].country + (DATA.leagues.filter(l => l.country === LG[k].country).length > 1 ? ' ' + LG[k].name : '')])] : [];
+  $('chips').innerHTML = chips.map(([k, t]) => `<a href="#view=${view}${k === 'all' ? '' : '&lg=' + k}" class="${k === lg ? 'on' : ''}">${t}</a>`).join('');
+  $('out').innerHTML = RENDER[view]();
+}
+function fromHash(){
+  const m = location.hash.match(/view=(\w+)/), l = location.hash.match(/lg=([\w-]+)/);
+  view = m && RENDER[m[1]] ? m[1] : 'findings';
+  lg = l && LG[l[1]] ? l[1] : 'all';
+  render();
+}
+window.addEventListener('hashchange', fromHash);
+fromHash();
+</script>
+</body>
+</html>

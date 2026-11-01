@@ -3,14 +3,15 @@ name: Basketball totals live test
 # Live test of the basketball totals rule (40 European leagues): this season's results and odds, projections for
 # the next 7 days, picks logged at the line on offer and settled after the game. Scripts and data in
 # nikolitso/BettingSignal (basketball-overs/); the record is basketball-overs/data/live/report.md there.
-# Publishes nothing on the site. Every 3 hours, plus the Run workflow button.
+# Publishes basketball/overs/live.js (projections + live record; the backtest part of the page is fixed).
+# Every 3 hours, plus the Run workflow button.
 on:
   schedule:
     - cron: "20 */3 * * *"
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 concurrency:
   group: basketball-overs
@@ -20,6 +21,7 @@ jobs:
   run:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v5
       - uses: actions/checkout@v5
         with:
           repository: nikolitso/BettingSignal
@@ -35,7 +37,17 @@ jobs:
         env:
           TZ: Europe/Athens
           PYTHONIOENCODING: utf-8
+          SITE_REPO: ${{ github.workspace }}
         run: python -u livetest.py
+      - name: Publish the page data
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add basketball/overs/live.js
+          if git diff --cached --quiet; then echo "page unchanged"; exit 0; fi
+          git commit -q -m "Basketball totals: refresh $(TZ=Europe/Athens date '+%Y-%m-%d %H:%M')"
+          for i in 1 2 3 4 5; do git pull -q --rebase && git push -q && exit 0; sleep $((RANDOM % 10 + 5)); done
+          exit 1
       - name: Save the data
         working-directory: _bs
         run: |
