@@ -195,7 +195,7 @@ th.tsort{cursor:pointer;user-select:none} th.tsort:hover{color:var(--gold)}
   <div class="chips" id="chips"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=bad9758f"></script>
+<script src="data.js?v=1320b035"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -302,7 +302,7 @@ function renderSeason(){
 
 function renderBacktest(){
   const B = DATA.backtest, S = lg === 'all' ? B.all : B.leagues[lg];
-  let h = `<p class="note">The live rule run on every season since ${B.first.slice(0,4)}, each match projected only from earlier matches of its own league, at the closing line and the average price. The settings were tuned on Turkey's women's Sultanlar Ligi 2024-25 alone, a league not on this page, so every season here is a test the model never saw. Lines of ${DATA.min_line - 1}.5 or lower are left out. ${S.blind_n ? `<b>Backing every low-line over without the model</b> returned ${sgn(S.blind_roi*100, 1)}% over ${S.blind_n} matches.` : `<b>This league never has a line below ${DATA.low}</b> (its totals run higher), so the rule has had nothing to bet on.`}</p>`;
+  let h = `<p class="note">The live rule run on every past season since ${B.first.slice(0,4)} (the ${DATA.season.replace('-','–')} season is live: its picks are in <b>Picks</b> and <b>Results</b>), each match projected only from earlier matches of its own league, at the closing line and the average price. The settings were tuned on Turkey's women's Sultanlar Ligi 2024-25 alone, a league not on this page, so every season here is a test the model never saw. Lines of ${DATA.min_line - 1}.5 or lower are left out. ${S.blind_n ? `<b>Backing every low-line over without the model</b> returned ${sgn(S.blind_roi*100, 1)}% over ${S.blind_n} matches.` : `<b>This league never has a line below ${DATA.low}</b> (its totals run higher), so the rule has had nothing to bet on.`}</p>`;
   h += tiles([['Bets', S.n], ['Hit rate', S.n ? pct(S.w / S.n) : '–'], ['ROI', sgn(S.roi*100, 1) + '%', cls(S.roi)]]);
   if (lg === 'all'){
     h += `<p class="note">${lg === 'all' && DATA.leagues.some(l => !l.live) ? 'The totals above count the leagues with live picks only. ' : ''}Click a league to see its seasons and bets.</p>`;
