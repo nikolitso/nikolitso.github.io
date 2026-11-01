@@ -186,6 +186,7 @@ tr.srow{cursor:pointer} tr.srow:hover td,tr.srow.on td{background:color-mix(in s
   <div class="tabs" id="tabs">
     <a href="#view=projections" data-view="projections" class="on">Projections</a>
     <a href="#view=picks" data-view="picks">Picks</a>
+    <a href="#view=results" data-view="results">Results</a>
     <a href="#view=season" data-view="season">Season</a>
     <a href="#view=backtest" data-view="backtest">Backtest</a>
     <a href="#view=method" data-view="method">How it works</a>
@@ -193,7 +194,7 @@ tr.srow{cursor:pointer} tr.srow:hover td,tr.srow.on td{background:color-mix(in s
   <div class="chips" id="chips"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=dc1381a5"></script>
+<script src="data.js?v=73bdb0a5"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -235,21 +236,41 @@ function tiles(list){
   return `<div class="metrics">${list.map(([l, v, c]) => `<div class="metric"><div class="lbl">${l}</div><div class="big ${c||''}">${v}</div></div>`).join('')}</div>`;
 }
 
+const fairCell = p => p.fair == null ? '<td class="n muted">–</td>' : `<td class="n">${p.fair}</td>`;
+
 function renderPicks(){
-  const picks = DATA.picks.filter(inLg), done = picks.filter(p => 'won' in p), open = picks.filter(p => !('won' in p));
-  const w = done.filter(p => p.won).length, units = done.reduce((s, p) => s + p.profit, 0);
-  let h = `<p class="note">Every pick since the page went live, logged before the first serve: an over on a line from ${DATA.min_line}.5 to ${DATA.low - 0.5}, when the model's chance × the average price is more than ${DATA.edge*100}% above 1. Leagues: ${liveNames()}. Stake 1 unit each. The page judges itself at <b>100 settled picks</b>; before that, the record is mostly noise.</p>`;
-  h += tiles([['Settled picks', done.length], ['Record', `${w}–${done.length - w}`], ['Units', sgn(units, 2), cls(units)],
-              ['ROI', done.length ? sgn(units / done.length * 100, 1) + '%' : '–', cls(units)], ['Open picks', open.length]]);
-  if (!picks.length) return h + '<p class="empty">No picks yet. The first ones appear once bookmakers post lines for a match that qualifies.</p>';
-  h += `<div class="scroll"><table><thead><tr><th>Date</th>${lg === 'all' ? '<th>League</th>' : ''}<th>Match</th><th class="n">Line</th><th class="n">Price</th><th class="n">Best</th><th class="n">Model</th><th class="n">Edge</th><th class="n">Sets</th><th class="n">Total</th><th class="n">Units</th></tr></thead><tbody>`;
-  for (const p of picks){
-    const res = 'won' in p ? `<td class="n">${p.sets}</td><td class="n ${p.won ? 'w' : 'l'}">${p.total}</td><td class="n ${cls(p.profit)}">${sgn(p.profit, 2)}</td>`
-      : '<td class="n muted" colspan="3">to play</td>';
-    h += `<tr><td>${short(p.dt)}</td>${lg === 'all' ? `<td>${LG[p.lg].country}</td>` : ''}<td class="wr">${p.home} – ${p.away}</td><td class="n">Over ${p.line}</td><td class="n">${p.px.toFixed(2)}</td>
-      <td class="n muted">${p.best.toFixed(2)}</td><td class="n">${pct(p.p)}</td><td class="n">${sgn(p.edge*100, 0)}%</td>${res}</tr>`;
-  }
+  const open = DATA.picks.filter(inLg).filter(p => !('won' in p)).sort((a, b) => a.dt.localeCompare(b.dt));
+  let h = `<p class="note">The picks still to play, logged before the first serve: an over on a line from ${DATA.min_line}.5 to ${DATA.low - 0.5}, when the model's chance × the average price is more than ${DATA.edge*100}% above 1. Leagues: ${liveNames()}. Stake 1 unit each. Until the start a pick follows the latest line. Once played it moves to <b>Results</b>.</p>`;
+  if (!open.length) return h + '<p class="empty">No open picks. New ones appear once bookmakers post lines for a match that qualifies.</p>';
+  h += `<div class="scroll"><table><thead><tr><th>Date</th>${lg === 'all' ? '<th>League</th>' : ''}<th>Match</th><th class="n">Book line</th><th class="n">Price</th><th class="n">Model line</th><th class="n">Over chance</th><th class="n">Edge</th></tr></thead><tbody>`;
+  for (const p of open)
+    h += `<tr><td>${short(p.dt)} ${p.dt.slice(11)}</td>${lg === 'all' ? `<td>${LG[p.lg].country}</td>` : ''}<td class="wr">${p.home} – ${p.away}</td><td class="n">Over ${p.line}</td><td class="n">${p.px.toFixed(2)}</td>
+      ${fairCell(p)}<td class="n">${pct(p.p)}</td><td class="n ${cls(p.edge)}">${sgn(p.edge*100, 0)}%</td></tr>`;
   return h + '</tbody></table></div>';
+}
+
+function renderResults(){
+  const done = DATA.picks.filter(inLg).filter(p => 'won' in p).sort((a, b) => a.dt.localeCompare(b.dt));
+  const w = done.filter(p => p.won).length, units = done.reduce((s, p) => s + p.profit, 0);
+  let h = `<p class="note">How the picks did: every settled pick since the page went live, at the price logged before the first serve, stake 1 unit. The page judges itself at <b>100 settled picks</b>; before that, the record is mostly noise.</p>`;
+  h += tiles([['Settled picks', done.length], ['Record', `${w}–${done.length - w}`], ['Hit rate', done.length ? pct(w / done.length) : '–'],
+              ['Units', sgn(units, 2), cls(units)], ['ROI', done.length ? sgn(units / done.length * 100, 1) + '%' : '–', cls(units)]]);
+  if (!done.length) return h + '<p class="empty">No settled picks yet. Each pick is added here once its match is played.</p>';
+  if (lg === 'all'){
+    h += `<h2>By league</h2><div class="scroll"><table style="max-width:620px"><thead><tr><th>League</th><th class="n">Picks</th><th class="n">Won</th><th class="n">Hit</th><th class="n">Units</th><th class="n">ROI</th></tr></thead><tbody>`;
+    for (const l of DATA.leagues){
+      const g = done.filter(p => p.lg === l.key); if (!g.length) continue;
+      const gw = g.filter(p => p.won).length, gu = g.reduce((s, p) => s + p.profit, 0);
+      h += `<tr><td>${l.country} <span class="muted">${l.name}</span></td><td class="n">${g.length}</td><td class="n">${gw}</td><td class="n">${pct(gw / g.length)}</td><td class="n ${cls(gu)}">${sgn(gu, 2)}</td><td class="n ${cls(gu)}">${sgn(gu / g.length * 100, 1)}%</td></tr>`;
+    }
+    h += '</tbody></table></div>';
+  }
+  h += `<h2>Every pick</h2><div class="scroll"><table><thead><tr><th>Date</th>${lg === 'all' ? '<th>League</th>' : ''}<th>Match</th><th class="n">Book line</th><th class="n">Price</th><th class="n">Model line</th><th class="n">Over chance</th><th class="n">Edge</th><th class="n">Sets</th><th class="n">Total</th><th class="n">Units</th><th class="n">Running</th></tr></thead><tbody>`;
+  let run = 0;
+  const rows = done.map(p => { run += p.profit;
+    return `<tr><td>${short(p.dt)}</td>${lg === 'all' ? `<td>${LG[p.lg].country}</td>` : ''}<td class="wr">${p.home} – ${p.away}</td><td class="n">Over ${p.line}</td><td class="n">${p.px.toFixed(2)}</td>
+      ${fairCell(p)}<td class="n">${pct(p.p)}</td><td class="n">${sgn(p.edge*100, 0)}%</td><td class="n">${p.sets}</td><td class="n ${p.won ? 'w' : 'l'}">${p.total}</td><td class="n ${cls(p.profit)}">${sgn(p.profit, 2)}</td><td class="n ${cls(run)}">${sgn(run, 2)}</td></tr>`; });
+  return h + rows.reverse().join('') + '</tbody></table></div>';
 }
 
 function renderSeason(){
@@ -413,7 +434,7 @@ function worked(){
   <p>${e.won ? 'A' : 'Even a'} ${p1(e.p_over)} bet ${e.won ? 'still loses' : 'loses'} ${p1(1 - e.p_over)} of the time. The edge only shows over many bets, which is why the page judges itself at 100 picks. This example always shows the latest bet, win or loss.</p>`;
 }
 
-const RENDER = {projections: renderProjections, picks: renderPicks, season: renderSeason, backtest: renderBacktest, method: renderMethod};
+const RENDER = {projections: renderProjections, picks: renderPicks, results: renderResults, season: renderSeason, backtest: renderBacktest, method: renderMethod};
 function render(){
   document.querySelectorAll('#tabs a').forEach(a => { a.classList.toggle('on', a.dataset.view === view); a.href = `#view=${a.dataset.view}${lg === 'all' ? '' : '&lg=' + lg}`; });
   const chips = view === 'method' ? [] : [['all', 'All leagues'], ...DATA.leagues.map(l => [l.key, l.country])];
