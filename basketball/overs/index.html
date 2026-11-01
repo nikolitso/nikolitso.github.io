@@ -192,7 +192,7 @@ table.proj tr.pk td{background:rgba(212,175,55,.08)}table.proj tr.pk td:first-ch
   <div class="chips" id="chips"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=dba44ef0"></script>
+<script src="data.js?v=62fd1107"></script>
 <script src="live.js"></script>
 <script>
 const $ = id => document.getElementById(id);
@@ -313,7 +313,7 @@ function renderLive(){
   const set = all.filter(b => b.done && b.ret != null), won = set.filter(b => b.ret > 0).length;
   const units = set.reduce((a, b) => a + b.ret, 0), R_ = set.length ? units / set.length : null;
   let h = `<p class="note"><b>The rule: overs only</b>, edge above ${Math.round(LE()*100)}%, regular season only, once both teams have played at least ${LIVE.min_gp ?? 6} games, ${allLg ? `in all ${DATA.leagues.length} leagues` : LIVE.rule_text || `in ${(LIVE.leagues || []).length} leagues: ${lgs}`}, level stakes (1 unit a bet). ${B ? `Backtest of this rule (2022–23 to 2025–26): ${B.n.toLocaleString()} bets, ${pct(B.w / B.n, 1)} hit, ROI ${roi(B.roi)}.` : ''}</p>`;
-  h += `<p class="note">The ${sn(DATA.season)} record. Bets before ${LIVE.start} (marked <i>before</i>) were worked out afterwards from the results, the way the backtest is. From ${LIVE.start} on, every 3 hours the model checks every game in the next 7 days, and the first time the over's edge is above ${Math.round(LE()*100)}% at the line on offer, that bet is logged at that line and the average price, and never changed.</p>`;
+  h += `<p class="note">The ${sn(DATA.season)} record. Bets before ${LIVE.start} were worked out afterwards from the results, the way the backtest is. From ${LIVE.start} on, every 3 hours the model checks every game in the next 7 days, and the first time the over's edge is above ${Math.round(LE()*100)}% at the line on offer, that bet is logged at that line and the average price, and never changed.</p>`;
   h += tiles([['Bets', String(all.length)], ['Settled', String(set.length)], ['Hit rate', set.length ? pct(won / set.length, 1) : '–'],
               ['ROI', roi(R_), cls(R_)], ['Units', set.length ? sgn(units, 2) : '–', cls(units)],
               ['Close moved our way', T.clv_pos == null ? '–' : pct(T.clv_pos)], ['Against us', T.clv_neg == null ? '–' : pct(T.clv_neg)]]);
@@ -325,9 +325,9 @@ function renderLive(){
     const res = !b.done ? '<td class="n muted" colspan="3">to play</td>' : b.ret == null ? '<td class="n muted" colspan="3">void</td>' :
       `<td class="n">${b.total}</td><td class="n ${cls(b.ret)}">${sgn(b.ret, 2)}</td><td class="n ${cls(run)}">${sgn(run, 2)}</td>`;
     return `<tr><td data-s="${b.dt}">${short(b.dt)}${b.dt.length > 10 ? ' ' + b.dt.slice(11) : ''}</td><td>${LG[b.lg].country}</td><td class="wr">${b.home} – ${b.away}</td><td class="n"><b>Over ${b.line}</b></td>
-      <td class="n">${b.px.toFixed(2)}</td><td class="n pos">${sgn(b.edge*100, 0)}%</td><td class="n${b.pre ? ' muted' : ''}">${b.pre ? 'before' : Math.round(b.hours) + 'h'}</td><td class="n">${b.close ?? '–'}</td>${res}</tr>`;
+      <td class="n">${b.px.toFixed(2)}</td><td class="n pos">${sgn(b.edge*100, 0)}%</td><td class="n">${b.close ?? '–'}</td>${res}</tr>`;
   });
-  return h + `<h2>Every bet, latest first</h2><div class="scroll"><table><thead><tr><th>Tip-off</th><th>League</th><th>Match</th><th class="n">Bet</th><th class="n">Price</th><th class="n">Edge</th><th class="n">Logged</th><th class="n">Close</th><th class="n">Total</th><th class="n">Units</th><th class="n">Running</th></tr></thead><tbody>${rows.reverse().join('')}</tbody></table></div>`;
+  return h + `<h2>Every bet, latest first</h2><div class="scroll"><table><thead><tr><th>Tip-off</th><th>League</th><th>Match</th><th class="n">Bet</th><th class="n">Price</th><th class="n">Edge</th><th class="n">Close</th><th class="n">Total</th><th class="n">Units</th><th class="n">Running</th></tr></thead><tbody>${rows.reverse().join('')}</tbody></table></div>`;
 }
 
 // click a column heading to sort its table (again to reverse); league groups keep their season rows
