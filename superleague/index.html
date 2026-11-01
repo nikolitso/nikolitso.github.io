@@ -523,7 +523,7 @@ function summary(bs){
 function recordTable(title, groups, note, byEv){
   const rows = Object.entries(groups).map(([k, bs]) => [k, summary(bs)]).sort(byEv ? (a, b) => parseInt(a[0]) - parseInt(b[0]) : (a, b) => b[1].n - a[1].n);
   if (!rows.length) return '';
-  let h = `<h2>${title}</h2>${note ? `<p class="muted" style="margin:-4px 0 10px;font-size:14px">${note}</p>` : ''}<div class="scroll"><table class="mk" style="max-width:820px"><thead><tr><th></th><th class="n">Bets</th><th class="n">Won</th><th class="n">Hit rate</th><th class="n">Avg odds</th><th class="n">Profit</th><th class="n">Per bet</th></tr></thead><tbody>`;
+  let h = `<h2>${title}</h2>${note ? `<p class="muted" style="margin:-4px 0 10px;font-size:14px">${note}</p>` : ''}<div class="scroll"><table class="mk" style="max-width:820px"><thead><tr><th></th><th class="n">Bets</th><th class="n">Won</th><th class="n">Hit rate</th><th class="n">Avg odds</th><th class="n">Profit</th><th class="n">ROI</th></tr></thead><tbody>`;
   for (const [k, r] of rows) h += `<tr><td>${k}</td><td class="n">${r.n}</td><td class="n">${r.won}</td><td class="n">${pct(r.hit)}</td><td class="n muted">${r.odds.toFixed(2)}</td><td class="n ${r.profit >= 0 ? 'w' : 'l'}">${r.profit > 0 ? '+' : ''}${r.profit.toFixed(2)}</td><td class="n ${r.roi >= 0 ? 'w' : 'l'}">${evPct(r.roi)}</td></tr>`;
   return h + '</tbody></table></div>';
 }
@@ -547,7 +547,7 @@ function renderValue(mode){
     <div class="metric"><div class="lbl">Value bets coming up</div><div class="big">${bets.length}</div></div>
     <div class="metric"><div class="lbl">Started, waiting for result</div><div class="big">${started.length}</div></div>
     <div class="metric"><div class="lbl">Settled so far</div><div class="big">${all.n}</div></div>
-    <div class="metric"><div class="lbl">Return per bet</div><div class="big">${all.n ? evPct(all.roi) : '–'}</div></div></div>`;
+    <div class="metric"><div class="lbl">ROI</div><div class="big">${all.n ? evPct(all.roi) : '–'}</div></div></div>`;
   if (!bets.length) h += `<p class="empty">No bets at EV ${label(valMin)} or more for the coming games.</p>`;
   else {
     h += `<h2>Coming games</h2><div class="scroll"><table class="mk"><thead><tr><th>Kick-off</th><th>Match</th><th>Bet</th><th class="n">Bookie odds</th><th class="n">Model odds</th><th class="n">Bookie %</th><th class="n">Model %</th><th class="n">EV</th></tr></thead><tbody>`;
@@ -578,7 +578,7 @@ function renderSettled(settled, all, evBar){
     <div class="metric"><div class="lbl">Settled so far</div><div class="big">${all.n}</div></div>
     <div class="metric"><div class="lbl">Hit rate</div><div class="big">${all.n ? pct(all.hit) : '–'}</div></div>
     <div class="metric"><div class="lbl">Profit (1 unit each)</div><div class="big">${all.n ? (all.profit > 0 ? '+' : '') + all.profit.toFixed(2) : '–'}</div></div>
-    <div class="metric"><div class="lbl">Return per bet</div><div class="big">${all.n ? evPct(all.roi) : '–'}</div></div></div>`;
+    <div class="metric"><div class="lbl">ROI</div><div class="big">${all.n ? evPct(all.roi) : '–'}</div></div></div>`;
   if (!settled.length) return h + `<p class="muted" style="margin-top:18px">No settled bets yet at this EV level: the record starts once results for logged bets are in the data.</p>`;
   h += `<h2>${stMkt === 'all' ? 'All settled bets' : `Settled ${mktName(stMkt).toLowerCase()} bets`}</h2><p class="muted" style="margin:-4px 0 10px;font-size:14px">Every bet from EV +${Math.round(valMin * 100)}% with its result, newest first; the record by market, side and EV follows below.</p><div class="scroll"><table class="mk"><thead><tr><th>Date</th><th>Match</th><th>Bet</th><th class="n">Odds</th><th class="n">EV</th><th class="n" title="What happened: the final score for 1X2 bets, the match total for the rest">Actual</th><th class="n">Result</th></tr></thead><tbody>`;
   for (const b of settled) h += `<tr><td class="muted">${dayName(b.date)}</td><td>${b.home} – ${b.away}</td><td>${betName(b)}</td><td class="n">${b.odds.toFixed(2)}</td><td class="n">${evPct(b.ev)}</td><td class="n"><b>${b.actual ?? '–'}</b></td><td class="n ${b.result === 'won' ? 'w' : 'l'}">${b.result === 'won' ? 'Won +' + (b.odds - 1).toFixed(2) : 'Lost −1'}</td></tr>`;
