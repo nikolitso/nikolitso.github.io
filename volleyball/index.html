@@ -195,7 +195,7 @@ th.tsort{cursor:pointer;user-select:none} th.tsort:hover{color:var(--gold)}
   <div class="chips" id="chips"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=1320b035"></script>
+<script src="data.js?v=237925ad"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -309,7 +309,7 @@ function renderBacktest(){
     h += `<div class="scroll"><table style="max-width:760px"><thead><tr><th>League</th><th class="n">Bets</th><th class="n">Hit</th><th class="n">ROI</th><th class="n">No model</th></tr></thead><tbody>`;
     for (const l of DATA.leagues){
       const s = B.leagues[l.key];
-      h += `<tr class="srow" data-lg="${l.key}"><td><span class="caret">▸</span> ${l.country} <span class="muted">${l.name}${l.live ? '' : ' · no picks'}</span></td><td class="n">${s.n}</td><td class="n">${s.n ? pct(s.w/s.n) : '–'}</td><td class="n ${cls(s.roi)}">${sgn(s.roi*100, 1)}%</td><td class="n ${cls(s.blind_roi)}">${sgn(s.blind_roi*100, 1)}%</td></tr>`;
+      h += `<tr class="srow" data-lg="${l.key}"><td><span class="caret">▸</span> ${l.country} <span class="muted">${l.name} ${sexAb(l)}${l.live ? '' : ' · no picks'}</span></td><td class="n">${s.n}</td><td class="n">${s.n ? pct(s.w/s.n) : '–'}</td><td class="n ${cls(s.roi)}">${sgn(s.roi*100, 1)}%</td><td class="n ${cls(s.blind_roi)}">${sgn(s.blind_roi*100, 1)}%</td></tr>`;
     }
     h += '</tbody></table></div>' + testedTable();
     // the same bets by season, the live leagues together (the tuned-on season left out, as in the totals)
