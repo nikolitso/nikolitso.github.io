@@ -177,15 +177,16 @@ html{scroll-behavior:smooth}section{scroll-margin-top:60px}
 
 <section id="backtesting">
   <div><h2>Backtesting</h2><p class="muted">Every match where the model's total was 2+ goals off the bookmakers' line, 1 unit per pick.</p></div>
-  <p class="small muted">Settings were fit on 2022-25 (backtest); 2025-26 is an independent test the model never saw. “Beat the line by” = goals the real total landed past the line in the model's direction.</p>
+  <p class="small muted">Seasons 2022-23 to 2025-26, each match projected only from games played before it. “Beat the line by” = goals the real total landed past the line in the model's direction.</p>
   <div class="chips" id="arSide"></div>
   <div class="chips" id="arLeague"></div>
+  <div class="chips" id="arMonth"></div>
+  <div class="chips" id="arLine"></div>
   <div class="tiles" id="arSum"></div>
   <div class="tbl"><table id="btLg"></table></div>
   <div class="tbl"><table id="sgBeat"></table></div>
   <details class="more" id="arBox"><summary>Every flagged match <span class="muted" id="arN"></span></summary>
     <p class="small muted">Each one uses only the games played before it that season. Lines and odds are the bookmakers' average at the time.</p>
-    <div class="chips" id="arPeriod"></div>
     <div class="tbl" id="arTbl"></div></details>
   <details class="more"><summary>Were the lines off in general? <span class="muted">all matches, not only flagged</span></summary>
     <p class="small muted">The bookmakers' average line against the real total. Positive = lines were too high.</p>
@@ -280,25 +281,33 @@ const day=d=>{if(!d)return '–';const [y,m,dd]=d.split('-');return new Date(+y,
   $('#sgLeagues').innerHTML=L.map(l=>{const open=S.filter(x=>x.league===l.key&&x.status==='open').length,n=(l.proj||[]).length;const st=S.filter(x=>x.league===l.key&&(x.status==='won'||x.status==='lost')),w=st.filter(x=>x.status==='won').length,pl=st.reduce((t,x)=>t+(x.profit||0),0);return `<a class="tile" href="${lgHref(l.key)}"><span class="stat" style="font-size:1.3rem">${l.name.split(' · ').slice(0,1).join(' · ')}</span><span class="small muted">${n} projection${n===1?'':'s'} · ${open} flagged now · ${l.gamesMin}+ games played</span><span>${st.length?`<span class="pill ${pl>0?'pos':pl<0?'neg':''}">${w}–${st.length-w} · ${pl>0?'+':''}${pl.toFixed(2)} units</span>`:'<span class="small muted">no settled picks yet</span>'}</span></a>`}).join('');
   const AR=G.archive||[], arName=k=>(L.find(l=>l.key===k)||{name:k}).name.split(' · ')[0];
   const arDay=d=>{const [y,m,dd]=d.split('-');return new Date(+y,+m-1,+dd).toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'})};
-  const arState={lg:'all',pd:'all',sd:'all'}, lgOk=l=>arState.sd==='all'||sides(l).includes(arState.sd);
+  const arState={lg:'all',pd:'all',sd:'all',mo:'all',ln:'all'}, lgOk=l=>arState.sd==='all'||sides(l).includes(arState.sd);
   const arHref=v=>{const sl=v==='all'?'':SL[v];return BASE?BASE+'backtesting/'+(sl?sl+'/':''):'#'+(sl?'bt-'+sl:'backtesting')};
   const arLg=[['all','All leagues'],...L.map(l=>[l.key,l.name.split(' · ')[0]])], arPd=[['all','Backtest and test'],['backtest','Backtest 2022-25'],['test','Independent test 2025-26']];
   function arRender(){
     if(arState.lg!=='all'&&!lgOk(L.find(l=>l.key===arState.lg)||{side:'both'})) arState.lg='all';
-    const sdOk=a=>arState.sd==='all'||a.side===arState.sd;
+    const sdOk0=a=>arState.sd==='all'||a.side===arState.sd;
+    const MO=['Sep','Oct','Nov','Dec','Jan','Feb','Mar','Apr','May','Jun'], moOf=a=>MO[(+a.date.slice(5,7)+3)%12], BANDS=[['lt50','Below 50',0,50],['50','50–54.5',50,55],['55','55–59.5',55,60],['60','60–64.5',60,65],['65','65+',65,99]], lnOf=a=>(BANDS.find(b=>a.line>=b[2]&&a.line<b[3])||[''])[0];
+    const moOk=a=>arState.mo==='all'||moOf(a)===arState.mo, lnOk=a=>arState.ln==='all'||lnOf(a)===arState.ln, sdOk=a=>sdOk0(a)&&moOk(a)&&lnOk(a);
+    const lgSd=a=>(arState.lg==='all'||a.league===arState.lg)&&sdOk0(a)&&(arState.pd==='all'||a.period===arState.pd);
+    const roiChip=R=>{if(!R.length)return '';const p=R.reduce((t,a)=>t+a.profit,0)/R.length*100;return ` <span class="${cls(p)}">${p>0?'+':''}${p.toFixed(0)}%</span> <span class="muted">${R.length}</span>`};
+    const fchips=(id,key,lab,list,R)=>{$(id).innerHTML=`<span class="small muted" style="align-self:center;min-width:44px">${lab}</span>`+[['all','All',R],...list.map(([v,t])=>[v,t,R.filter(a=>(key==='mo'?moOf(a):lnOf(a))===v)])].filter(x=>x[0]==='all'||x[2].length).map(([v,t,X])=>`<button type="button" class="chip${arState[key]===v?' on':''}" data-v="${v}">${t}${v==='all'?'':roiChip(X)}</button>`).join('');$(id).querySelectorAll('button').forEach(b=>b.onclick=()=>{arState[key]=b.dataset.v;arRender()})};
+    fchips('#arMonth','mo','Month',MO.map(m=>[m,m]),AR.filter(a=>lgSd(a)&&lnOk(a)));
+    fchips('#arLine','ln','Line',BANDS.map(b=>[b[0],b[1]]),AR.filter(a=>lgSd(a)&&moOk(a)));
     const rows=AR.filter(a=>(arState.lg==='all'||a.league===arState.lg)&&(arState.pd==='all'||a.period===arState.pd)&&sdOk(a));
     const chips=(id,list,key)=>{$(id).innerHTML=list.map(([v,t])=>`<button type="button" class="chip${arState[key]===v?' on':''}" data-v="${v}">${t}</button>`).join('');$(id).querySelectorAll('button').forEach(b=>b.onclick=()=>{arState[key]=b.dataset.v;arRender()})};
     chips('#arSide',[['all','All'],['over','Overs'],['under','Unders']],'sd');
-    $('#arLeague').innerHTML=arLg.filter(([v])=>v==='all'||lgOk(L.find(l=>l.key===v))).map(([v,t])=>`<a class="chip${arState.lg===v?' on':''}" href="${arHref(v)}">${t}</a>`).join('');chips('#arPeriod',arPd,'pd');
+    $('#arLeague').innerHTML=arLg.filter(([v])=>v==='all'||lgOk(L.find(l=>l.key===v))).map(([v,t])=>`<a class="chip${arState.lg===v?' on':''}" href="${arHref(v)}">${t}</a>`).join('');
     [...$('#sgBeat').tBodies].forEach((tb,i)=>{tb.style.display=((arState.lg==='all'&&(!L[i]||lgOk(L[i])))||(L[i]&&L[i].key===arState.lg))?'':'none';tb.querySelectorAll('tr:not(.grp):not(.tot):not(.testrow)').forEach(r=>{r.style.display=arState.lg==='all'?'none':''})});
     const lgRows=AR.filter(a=>(arState.lg==='all'||a.league===arState.lg)&&sdOk(a));
     const stat=R=>{const n=R.length,w=R.filter(a=>a.status==='won').length,lo=R.filter(a=>a.status==='lost').length,pu=n-w-lo,pr=R.reduce((t,a)=>t+a.profit,0);return {n,w,lo,pu,pr,hit:n?w/n*100:null,roi:n?pr/n*100:null,od:n?R.reduce((t,a)=>t+a.odds,0)/n:null,beat:n?R.reduce((t,a)=>t+a.beat,0)/n:null,line:n?R.reduce((t,a)=>t+a.line,0)/n:null,ours:n?R.reduce((t,a)=>t+a.ours,0)/n:null,act:n?R.reduce((t,a)=>t+a.act,0)/n:null}};
-    const sumRows=[['backtest','Backtest 2022-25',lgRows.filter(a=>a.period==='backtest')],['test','Independent test 2025-26',lgRows.filter(a=>a.period==='test')],['all','Both periods',lgRows]].filter(r=>r[2].length);
-    $('#arSum').innerHTML=sumRows.length?sumRows.map(([k,lab,R])=>{const t=stat(R);return `<div class="tile${k==='test'?' testrow':''}"><span class="klabel">${lab}</span><span class="stat"><span class="${cls(t.pr)}">${pct(t.roi)}</span> <span class="small muted">return</span></span><span class="small"><b>${t.w}–${t.lo}</b>${t.pu?` (${t.pu} push)`:''} · ${f(t.hit,0)}% wins · <b class="${cls(t.pr)}">${sg(t.pr,1)}</b> units</span><span class="small muted">${t.n} picks · beat the line by <b class="${cls(t.beat)}">${sg(t.beat,1)}</b> · avg odds ${f(t.od)}</span></div>`}).join(''):'<p class="small muted">Nothing flagged in this league.</p>';
+    const ssn=a=>{const y=+a.date.slice(0,4),m=+a.date.slice(5,7),y0=m>=7?y:y-1;return `${y0}-${String(y0+1).slice(2)}`}, SS=[...new Set(lgRows.map(ssn))].sort();
+    const sumRows=lgRows.length?[['all','All 2022-26',lgRows],...SS.map(z=>[z,z,lgRows.filter(a=>ssn(a)===z)])]:[];
+    $('#arSum').innerHTML=sumRows.length?sumRows.map(([k,lab,R])=>{const t=stat(R);return `<div class="tile"${k==='all'?' style="grid-column:span 2"':''}><span class="klabel">${lab}</span><span class="stat"><span class="${cls(t.pr)}">${pct(t.roi)}</span> <span class="small muted">return</span></span><span class="small"><b>${t.w}–${t.lo}</b>${t.pu?` (${t.pu} push)`:''} · ${f(t.hit,0)}% wins · <b class="${cls(t.pr)}">${sg(t.pr,1)}</b> units</span><span class="small muted">${t.n} picks · beat the line by <b class="${cls(t.beat)}">${sg(t.beat,1)}</b> · avg odds ${f(t.od)}</span></div>`}).join(''):'<p class="small muted">Nothing flagged in this league.</p>';
     const one=arState.lg!=='all', lgs=L.flatMap(l=>sides(l).map(sd=>({l,sd}))).filter(({l,sd})=>arState.sd==='all'||sd===arState.sd);
-    const cell=R=>{if(!R.length)return '<td class="muted">–</td><td></td><td></td>';const t=stat(R);return `<td>${t.w}–${t.lo} <span class="muted">(${f(t.hit,0)}%)</span></td><td class="${cls(t.beat)}">${sg(t.beat,1)}</td><td class="${cls(t.pr)}"><b>${pct(t.roi)}</b></td>`};
-    $('#btLg').parentElement.style.display=one?'none':'';$('#sgBeat').parentElement.style.display=one?'':'none';
-    $('#btLg').innerHTML=`<thead><tr><th class="l" rowspan="2">League</th><th class="l" rowspan="2">Call</th><th colspan="3" style="text-align:center">Backtest 2022-25</th><th colspan="3" style="text-align:center">Independent test 2025-26</th></tr><tr><th>Win – loss</th><th>Beat line by</th><th>Return</th><th>Win – loss</th><th>Beat line by</th><th>Return</th></tr></thead><tbody>${lgs.map(({l,sd})=>{const R=AR.filter(a=>a.league===l.key&&a.side===sd);return `<tr><td class="l"><a href="${arHref(l.key)}"><b>${l.name.split(' · ')[0]}</b></a></td><td class="l">${side(sd)}</td>${cell(R.filter(a=>a.period==='backtest'))}${cell(R.filter(a=>a.period==='test'))}</tr>`}).join('')}</tbody>`;
+    const cell=R=>{if(!R.length)return '<td class="muted">–</td><td></td><td></td><td></td><td></td>';const t=stat(R);return `<td>${t.n}</td><td>${t.w}–${t.lo} <span class="muted">(${f(t.hit,0)}%)</span></td><td class="${cls(t.beat)}">${sg(t.beat,1)}</td><td class="${cls(t.pr)}">${sg(t.pr,1)}</td><td class="${cls(t.pr)}"><b>${pct(t.roi)}</b></td>`};
+    $('#sgBeat').parentElement.style.display='none';
+    $('#btLg').innerHTML=`<thead><tr><th class="l">League</th><th class="l">Call</th><th>Picks</th><th>Win – loss</th><th>Beat line by</th><th>Units</th><th>Return</th></tr></thead><tbody>${lgs.filter(({l})=>!one||l.key===arState.lg).map(({l,sd})=>{const R=AR.filter(a=>a.league===l.key&&a.side===sd&&moOk(a)&&lnOk(a));return `<tr><td class="l"><a href="${arHref(l.key)}"><b>${l.name.split(' · ')[0]}</b></a></td><td class="l">${side(sd)}</td>${cell(R)}</tr>`}).join('')}</tbody>`;
     $('#arN').textContent=`(${rows.length})`;
     $('#sgBeatNote').innerHTML=`<table><thead><tr><th class="l">League</th><th>Backtest 2022-25: avg line</th><th>real avg</th><th>difference</th><th>Test 2025-26: avg line</th><th>real avg</th><th>difference</th></tr></thead><tbody>${L.filter(l=>(arState.lg==='all'&&lgOk(l))||l.key===arState.lg).map(l=>{const a=(SM[l.key]||{}).backtest||{},b=(SM[l.key]||{}).test||{};const d=(x,y)=>x==null?'–':`<span class="${cls(x-y)}"><b>${sg(x-y,1)}</b></span>`;return `<tr><td class="l"><b>${l.name.split(' · ')[0]}</b></td><td>${f(a.allLine,1)}</td><td>${f(a.allActual,1)}</td><td>${d(a.allLine,a.allActual)}</td><td>${f(b.allLine,1)}</td><td>${f(b.allActual,1)}</td><td>${d(b.allLine,b.allActual)}</td></tr>`}).join('')}</tbody></table>`;
     let run=0;
