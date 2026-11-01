@@ -174,6 +174,7 @@ table.proj tr.pk td{background:rgba(212,175,55,.08)}table.proj tr.pk td:first-ch
 .pos{color:var(--win)} .neg{color:var(--loss)}
 tr.srow{cursor:pointer} tr.srow:hover td,tr.srow.on td{background:color-mix(in srgb,var(--gold) 10%,transparent)}
 .caret{color:var(--gold);display:inline-block;width:1em}
+th.tsort{cursor:pointer;user-select:none} th.tsort:hover{color:var(--gold)}
 .chips{display:flex;flex-wrap:wrap;gap:6px;margin:14px 0 4px}
 .chips a{font:400 13px var(--mono);color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:4px 11px;text-decoration:none}
 .chips a.on{color:#0c1424;background:var(--gold);border-color:var(--gold)}
@@ -194,7 +195,7 @@ tr.srow{cursor:pointer} tr.srow:hover td,tr.srow.on td{background:color-mix(in s
   <div class="chips" id="chips"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=3616f430"></script>
+<script src="data.js?v=7a4a0420"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -328,18 +329,28 @@ function renderBacktest(){
   return h;
 }
 
-// every league the backtest ran on, women's and men's, the same rule and unseen seasons (most are not on the page)
+// every league the backtest ran on, women's and men's, the same rule and unseen seasons (most are not on the page);
+// click a header to sort by it, again to flip the order
+let tSort = {k: 'roi', d: -1};
+const tKey = {league: t => t.country + ' ' + t.name, type: t => t.women ? 0 : 1, seasons: t => t.seasons, n: t => t.n,
+              hit: t => t.n ? t.w / t.n : -1, roi: t => t.n ? t.roi : -9, blind: t => t.blind_n ? t.blind_roi : -9};
 function testedTable(){
-  const T = [...DATA.backtest.tested].sort((a, b) => b.women - a.women || b.roi - a.roi);
-  let h = `<h2>All tested leagues</h2><p class="note">Every league the backtest was run on, with the same rule (lines ${DATA.min_line}.5 to ${DATA.low - 1}.5, edge above ${DATA.edge * 100}%) and only the seasons the settings never saw. Only the leagues marked live have picks; the others were left off the page. Women's leagues first, then men's, best ROI first. The 90% range is how far the ROI could be off by chance.</p>`;
-  h += `<div class="scroll"><table style="max-width:980px"><thead><tr><th>League</th><th class="n">Seasons</th><th class="n">Bets</th><th class="n">Hit</th><th class="n">ROI</th><th class="n">90% range</th><th class="n">No model</th></tr></thead><tbody>`;
-  let sex = null;
-  for (const t of T){
-    if (t.women !== sex){ sex = t.women; h += `<tr><td colspan="7"><b>${sex ? 'Women' : 'Men'}</b></td></tr>`; }
-    h += `<tr><td>${t.country} <span class="muted">${t.name}${t.live ? ' · live' : ''}</span></td><td class="n">${t.seasons}</td><td class="n">${t.n}</td><td class="n">${t.n ? pct(t.w / t.n) : '–'}</td><td class="n ${t.n ? cls(t.roi) : ''}">${t.n ? sgn(t.roi * 100, 1) + '%' : '–'}</td><td class="n">${t.n ? sgn(t.ci[0] * 100, 0) + ' to ' + sgn(t.ci[1] * 100, 0) + '%' : '–'}</td><td class="n ${cls(t.blind_roi)}">${t.blind_n ? sgn(t.blind_roi * 100, 1) + '%' : '–'}</td></tr>`;
-  }
+  const f = tKey[tSort.k];
+  const T = [...DATA.backtest.tested].sort((a, b) => { const x = f(a), y = f(b); return (x < y ? -1 : x > y ? 1 : 0) * tSort.d || b.roi - a.roi; });
+  const th = (k, lab, n = true) => `<th class="${n ? 'n ' : ''}tsort" data-tsort="${k}">${lab}${tSort.k === k ? (tSort.d > 0 ? ' ▴' : ' ▾') : ''}</th>`;
+  let h = `<h2>All tested leagues</h2><p class="note">Every league the backtest was run on, with the same rule (lines ${DATA.min_line}.5 to ${DATA.low - 1}.5, edge above ${DATA.edge * 100}%) and only the seasons the settings never saw. Only the leagues marked live have picks; the others were left off the page. Click a column to sort by it.</p>`;
+  h += `<div class="scroll"><table style="max-width:900px"><thead><tr>${th('league', 'League', false)}${th('type', 'Type', false)}${th('seasons', 'Seasons')}${th('n', 'Bets')}${th('hit', 'Hit')}${th('roi', 'ROI')}${th('blind', 'No model')}</tr></thead><tbody>`;
+  for (const t of T)
+    h += `<tr><td>${t.country} <span class="muted">${t.name}${t.live ? ' · live' : ''}</span></td><td>${t.women ? 'Women' : 'Men'}</td><td class="n">${t.seasons}</td><td class="n">${t.n}</td><td class="n">${t.n ? pct(t.w / t.n) : '–'}</td><td class="n ${t.n ? cls(t.roi) : ''}">${t.n ? sgn(t.roi * 100, 1) + '%' : '–'}</td><td class="n ${cls(t.blind_roi)}">${t.blind_n ? sgn(t.blind_roi * 100, 1) + '%' : '–'}</td></tr>`;
   return h + '</tbody></table></div>';
 }
+document.addEventListener('click', e => {
+  const c = e.target.closest('th.tsort');
+  if (!c) return;
+  const k = c.dataset.tsort;
+  tSort = tSort.k === k ? {k, d: -tSort.d} : {k, d: k === 'league' || k === 'type' ? 1 : -1};
+  render();
+});
 
 // P/L by the bookmaker's total line: the live rule's bets in unseen seasons, in 10-point bands (bands of the line's whole part)
 function byLine(){
