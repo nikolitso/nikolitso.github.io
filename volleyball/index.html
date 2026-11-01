@@ -194,7 +194,7 @@ tr.srow{cursor:pointer} tr.srow:hover td,tr.srow.on td{background:color-mix(in s
   <div class="chips" id="chips"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=ae6c0d8b"></script>
+<script src="data.js?v=3a4b53b2"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -249,19 +249,22 @@ function renderPicks(){
   return h + '</tbody></table></div>';
 }
 
+const avgLine = (g, k) => { const v = g.map(p => p[k]).filter(x => x != null); return v.length ? (v.reduce((s, x) => s + x, 0) / v.length).toFixed(1) : '–'; };
+
 function renderResults(){
   const done = DATA.picks.filter(inLg).filter(p => 'won' in p).sort((a, b) => a.dt.localeCompare(b.dt));
   const w = done.filter(p => p.won).length, units = done.reduce((s, p) => s + p.profit, 0);
   let h = `<p class="note">How the picks did: every settled pick since the page went live, at the price logged before the first serve, stake 1 unit. The page judges itself at <b>100 settled picks</b>; before that, the record is mostly noise.</p>`;
   h += tiles([['Settled picks', done.length], ['Record', `${w}–${done.length - w}`], ['Hit rate', done.length ? pct(w / done.length) : '–'],
-              ['Units', sgn(units, 2), cls(units)], ['ROI', done.length ? sgn(units / done.length * 100, 1) + '%' : '–', cls(units)]]);
+              ['Units', sgn(units, 2), cls(units)], ['ROI', done.length ? sgn(units / done.length * 100, 1) + '%' : '–', cls(units)],
+              ['Avg book line', avgLine(done, 'line')], ['Avg model line', avgLine(done, 'fair')]]);
   if (!done.length) return h + '<p class="empty">No settled picks yet. Each pick is added here once its match is played.</p>';
   if (lg === 'all'){
-    h += `<h2>By league</h2><div class="scroll"><table style="max-width:620px"><thead><tr><th>League</th><th class="n">Picks</th><th class="n">Won</th><th class="n">Hit</th><th class="n">Units</th><th class="n">ROI</th></tr></thead><tbody>`;
+    h += `<h2>By league</h2><div class="scroll"><table style="max-width:820px"><thead><tr><th>League</th><th class="n">Picks</th><th class="n">Won</th><th class="n">Hit</th><th class="n">Avg book line</th><th class="n">Avg model line</th><th class="n">Units</th><th class="n">ROI</th></tr></thead><tbody>`;
     for (const l of DATA.leagues){
       const g = done.filter(p => p.lg === l.key); if (!g.length) continue;
       const gw = g.filter(p => p.won).length, gu = g.reduce((s, p) => s + p.profit, 0);
-      h += `<tr><td>${l.country} <span class="muted">${l.name}</span></td><td class="n">${g.length}</td><td class="n">${gw}</td><td class="n">${pct(gw / g.length)}</td><td class="n ${cls(gu)}">${sgn(gu, 2)}</td><td class="n ${cls(gu)}">${sgn(gu / g.length * 100, 1)}%</td></tr>`;
+      h += `<tr><td>${l.country} <span class="muted">${l.name}</span></td><td class="n">${g.length}</td><td class="n">${gw}</td><td class="n">${pct(gw / g.length)}</td><td class="n">${avgLine(g, 'line')}</td><td class="n">${avgLine(g, 'fair')}</td><td class="n ${cls(gu)}">${sgn(gu, 2)}</td><td class="n ${cls(gu)}">${sgn(gu / g.length * 100, 1)}%</td></tr>`;
     }
     h += '</tbody></table></div>';
   }
