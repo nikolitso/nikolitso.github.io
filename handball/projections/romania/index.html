@@ -127,7 +127,7 @@ a{color:var(--accent)}
 .pks a:hover{border-color:var(--accent);color:var(--accent)}
 .pks a.on{background:var(--accent);border-color:var(--accent);color:#fff}
 .tabs a:hover{border-color:var(--accent);color:var(--accent)}
-a.tile{text-decoration:none;color:inherit}a.tile:hover{border-color:var(--accent)}
+details.more{margin-top:14px;border-top:1px solid var(--line);padding-top:6px}details.more>summary{cursor:pointer;font-weight:600;padding:8px 0}a.tile{text-decoration:none;color:inherit}a.tile:hover{border-color:var(--accent)}
 .crumb{font-size:.9rem}
 th.srt{cursor:pointer;user-select:none}th.srt:hover{color:var(--ink)}
 th[aria-sort=ascending]::after{content:" \25B2";font-size:.7em}th[aria-sort=descending]::after{content:" \25BC";font-size:.7em}
@@ -176,19 +176,20 @@ html{scroll-behavior:smooth}section{scroll-margin-top:60px}
 </section>
 
 <section id="backtesting">
-  <div><h2>Backtesting</h2><p class="muted">The model's projections against the bookmakers' lines, season by season.</p></div>
-  <p class="small muted">Matches where the model's total was 2+ goals beyond the bookmaker's line. “Beat the line by” is how many goals the real total landed past that line in the model's direction (positive = the model's projection was right).</p>
+  <div><h2>Backtesting</h2><p class="muted">Every match where the model's total was 2+ goals off the bookmakers' line, 1 unit per pick.</p></div>
+  <p class="small muted">Settings were fit on 2022-25 (backtest); 2025-26 is an independent test the model never saw. “Beat the line by” = goals the real total landed past the line in the model's direction.</p>
   <div class="chips" id="arSide"></div>
   <div class="chips" id="arLeague"></div>
+  <div class="tiles" id="arSum"></div>
+  <div class="tbl"><table id="btLg"></table></div>
   <div class="tbl"><table id="sgBeat"></table></div>
-  <h3>Every match in the league</h3>
-  <p class="small muted">Not only the flagged ones: the bookmakers' average line against the real total. A positive difference means the lines were too high.</p>
-  <div class="tbl" id="sgBeatNote"></div>
-  <h3>Archive: every flagged match</h3>
-  <p class="small muted">Each match below is one where, using only the games played before it that season, the model's total was 2+ goals beyond the bookmakers' average line. Lines and odds are the bookmakers' average at the time. 2022-25 is the backtest and 2025-26 the independent test.</p>
-  <div class="chips" id="arPeriod"></div>
-  <div class="tbl" id="arSum"></div>
-  <div class="tbl" id="arTbl"></div>
+  <details class="more" id="arBox"><summary>Every flagged match <span class="muted" id="arN"></span></summary>
+    <p class="small muted">Each one uses only the games played before it that season. Lines and odds are the bookmakers' average at the time.</p>
+    <div class="chips" id="arPeriod"></div>
+    <div class="tbl" id="arTbl"></div></details>
+  <details class="more"><summary>Were the lines off in general? <span class="muted">all matches, not only flagged</span></summary>
+    <p class="small muted">The bookmakers' average line against the real total. Positive = lines were too high.</p>
+    <div class="tbl" id="sgBeatNote"></div></details>
 </section>
 
 <section id="league"></section>
@@ -293,9 +294,14 @@ const day=d=>{if(!d)return '–';const [y,m,dd]=d.split('-');return new Date(+y,
     const lgRows=AR.filter(a=>(arState.lg==='all'||a.league===arState.lg)&&sdOk(a));
     const stat=R=>{const n=R.length,w=R.filter(a=>a.status==='won').length,lo=R.filter(a=>a.status==='lost').length,pu=n-w-lo,pr=R.reduce((t,a)=>t+a.profit,0);return {n,w,lo,pu,pr,hit:n?w/n*100:null,roi:n?pr/n*100:null,od:n?R.reduce((t,a)=>t+a.odds,0)/n:null,beat:n?R.reduce((t,a)=>t+a.beat,0)/n:null,line:n?R.reduce((t,a)=>t+a.line,0)/n:null,ours:n?R.reduce((t,a)=>t+a.ours,0)/n:null,act:n?R.reduce((t,a)=>t+a.act,0)/n:null}};
     const sumRows=[['backtest','Backtest 2022-25',lgRows.filter(a=>a.period==='backtest')],['test','Independent test 2025-26',lgRows.filter(a=>a.period==='test')],['all','Both periods',lgRows]].filter(r=>r[2].length);
-    $('#arSum').innerHTML=sumRows.length?`<table><thead><tr><th class="l">Period</th><th>Matches</th><th>Wins</th><th>Losses</th><th>Pushes</th><th>Win %</th><th>Avg line</th><th>Model avg</th><th>Real avg</th><th>Beat the line by</th><th>Avg odds</th><th>Return (units)</th><th>Return %</th></tr></thead><tbody>${sumRows.map(([k,lab,R])=>{const t=stat(R);return `<tr class="${k==='all'?'tot':k==='test'?'testrow':''}${arState.pd===k?' hot':''}"><td class="l"><b>${lab}</b></td><td>${t.n}</td><td>${t.w}</td><td>${t.lo}</td><td>${t.pu}</td><td>${f(t.hit,0)}%</td><td>${f(t.line,1)}</td><td>${f(t.ours,1)}</td><td><b>${f(t.act,1)}</b></td><td class="${cls(t.beat)}"><b>${sg(t.beat,1)}</b></td><td>${f(t.od)}</td><td class="${cls(t.pr)}"><b>${sg(t.pr,1)}</b></td><td class="${cls(t.pr)}"><b>${pct(t.roi)}</b></td></tr>`}).join('')}</tbody></table>`:'<p class="small muted">Nothing flagged in this league.</p>';
+    $('#arSum').innerHTML=sumRows.length?sumRows.map(([k,lab,R])=>{const t=stat(R);return `<div class="tile${k==='test'?' testrow':''}"><span class="klabel">${lab}</span><span class="stat"><span class="${cls(t.pr)}">${pct(t.roi)}</span> <span class="small muted">return</span></span><span class="small"><b>${t.w}–${t.lo}</b>${t.pu?` (${t.pu} push)`:''} · ${f(t.hit,0)}% wins · <b class="${cls(t.pr)}">${sg(t.pr,1)}</b> units</span><span class="small muted">${t.n} picks · beat the line by <b class="${cls(t.beat)}">${sg(t.beat,1)}</b> · avg odds ${f(t.od)}</span></div>`}).join(''):'<p class="small muted">Nothing flagged in this league.</p>';
+    const one=arState.lg!=='all', lgs=L.flatMap(l=>sides(l).map(sd=>({l,sd}))).filter(({l,sd})=>arState.sd==='all'||sd===arState.sd);
+    const cell=R=>{if(!R.length)return '<td class="muted">–</td><td></td><td></td>';const t=stat(R);return `<td>${t.w}–${t.lo} <span class="muted">(${f(t.hit,0)}%)</span></td><td class="${cls(t.beat)}">${sg(t.beat,1)}</td><td class="${cls(t.pr)}"><b>${pct(t.roi)}</b></td>`};
+    $('#btLg').parentElement.style.display=one?'none':'';$('#sgBeat').parentElement.style.display=one?'':'none';
+    $('#btLg').innerHTML=`<thead><tr><th class="l" rowspan="2">League</th><th class="l" rowspan="2">Call</th><th colspan="3" style="text-align:center">Backtest 2022-25</th><th colspan="3" style="text-align:center">Independent test 2025-26</th></tr><tr><th>Win – loss</th><th>Beat line by</th><th>Return</th><th>Win – loss</th><th>Beat line by</th><th>Return</th></tr></thead><tbody>${lgs.map(({l,sd})=>{const R=AR.filter(a=>a.league===l.key&&a.side===sd);return `<tr><td class="l"><a href="${arHref(l.key)}"><b>${l.name.split(' · ')[0]}</b></a></td><td class="l">${side(sd)}</td>${cell(R.filter(a=>a.period==='backtest'))}${cell(R.filter(a=>a.period==='test'))}</tr>`}).join('')}</tbody>`;
+    $('#arN').textContent=`(${rows.length})`;
     $('#sgBeatNote').innerHTML=`<table><thead><tr><th class="l">League</th><th>Backtest 2022-25: avg line</th><th>real avg</th><th>difference</th><th>Test 2025-26: avg line</th><th>real avg</th><th>difference</th></tr></thead><tbody>${L.filter(l=>(arState.lg==='all'&&lgOk(l))||l.key===arState.lg).map(l=>{const a=(SM[l.key]||{}).backtest||{},b=(SM[l.key]||{}).test||{};const d=(x,y)=>x==null?'–':`<span class="${cls(x-y)}"><b>${sg(x-y,1)}</b></span>`;return `<tr><td class="l"><b>${l.name.split(' · ')[0]}</b></td><td>${f(a.allLine,1)}</td><td>${f(a.allActual,1)}</td><td>${d(a.allLine,a.allActual)}</td><td>${f(b.allLine,1)}</td><td>${f(b.allActual,1)}</td><td>${d(b.allLine,b.allActual)}</td></tr>`}).join('')}</tbody></table>`;
-    let run=0;const one=arState.lg!=='all';
+    let run=0;
     $('#arTbl').innerHTML=rows.length?`<table><thead><tr><th class="l">Date</th>${one?'':'<th class="l">League</th>'}<th class="l">Match</th><th>Call</th><th>Odds</th><th>Model total</th><th>Real total</th><th>Beat the line by</th><th class="l">Result</th><th>Return</th><th>Running total</th></tr></thead><tbody>${rows.map(a=>{run+=a.profit;return `<tr><td class="l">${arDay(a.date)}</td>${one?'':`<td class="l muted">${arName(a.league)}</td>`}<td class="l m"><b>${a.home}</b> – ${a.away}</td><td><b>${a.side==='over'?'Over':'Under'} ${f(a.line,1)}</b></td><td>${f(a.odds)}</td><td>${f(a.ours,1)}</td><td>${a.act}</td><td class="${cls(a.beat)}">${sg(a.beat,1)}</td><td class="l">${st[a.status]}</td><td class="${cls(a.profit)}">${sg(a.profit,2)}</td><td class="${cls(run)}">${sg(run,2)}</td></tr>`}).join('')}</tbody></table>`:'';
     makeSortable();
   }
