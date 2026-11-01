@@ -687,7 +687,16 @@ function refTables(all){
   const smrow = (name, gs) => { const H = gs.reduce((a, g) => a + g.hc, 0), A = gs.reduce((a, g) => a + g.ac, 0), n = gs.length || 1;
     return [name, gs.length, H / n, A / n, (H + A) / n, 100 * H / (H + A || 1), 100 * A / (H + A || 1)]; };
   const smallG = greek.filter(g => nB4(g) === 0), smallBy = byRef(smallG);
+  // head to head for each Big-4 fixture, home and away kept apart (Panathinaikos – AEK, then AEK – Panathinaikos)
+  const h2h = [];
+  BIG4.forEach((a, i) => BIG4.slice(i + 1).forEach(b => [[a, b], [b, a]].forEach(([home, away]) => {
+    const gs = bb.filter(g => g.home === home && g.away === away).sort((x, y) => y.date.localeCompare(x.date));
+    const f = gs.filter(g => g.hf != null && g.af != null), av = (xs, k) => xs.length ? avgOf(xs.map(x => x[k])) : null;
+    h2h.push({a: home, b: away, games: gs, n: gs.length, w: gs.filter(g => g.hg > g.ag).length, d: gs.filter(g => g.hg === g.ag).length, l: gs.filter(g => g.hg < g.ag).length,
+      gf: av(gs, 'hg'), ga: av(gs, 'ag'), cf: av(gs, 'hc'), ca: av(gs, 'ac'), ff: av(f, 'hf'), fa: av(f, 'af')});
+  })));
   return {
+    h2h,
     live: true, games: recent.length, cards,
     odds_all: oddsBins(recent), odds_small: oddsBins(small), odds_small_all: ['All matches', ...cardRow(small.filter(g => g.odds))],
     big4_v_big4: [seasons.length ? `${refSeason(seasons[0])} to ${refSeason(seasons[seasons.length - 1])}` : '–', ...cardRow(bb)],
@@ -818,6 +827,12 @@ function openRef(name, scope = 'all'){
 $('refdlg-x').onclick = () => $('refdlg').close();
 // any referee name on the page (Referees tab, the referee line on Projections) opens their pop-up
 document.addEventListener('click', e => { const b = e.target.closest('button.reflink'); if (b) openRef(b.dataset.ref, b.dataset.scope); });
+// Big-4 head to head: a pairing's row opens its games underneath
+document.addEventListener('click', e => {
+  const r = e.target.closest('tr.h2hrow'); if (!r) return;
+  const g = document.querySelector(`tr.h2hgames[data-h2h="${r.dataset.h2h}"]`);
+  g.hidden = !g.hidden; r.querySelector('.h2harrow').textContent = g.hidden ? '▸' : '▾';
+});
 $('refdlg').onclick = e => { if (e.target === $('refdlg')) $('refdlg').close(); };
 
 function refRatings(R){
@@ -846,6 +861,18 @@ function renderRefs(){
   const b = T.big4_v_big4;
   h += `<h2 id="rf-big4">Big-4 against Big-4</h2><div class="scroll"><table class="mk" style="max-width:820px"><thead><tr><th>Seasons</th><th class="n">Games</th><th class="n">Home cards</th><th class="n">Away cards</th><th class="n">Total</th><th class="n">Handicap</th><th class="n">Home more</th><th class="n">Away more</th></tr></thead><tbody>
     <tr><td>${b[0]}</td><td class="n">${b[1]}</td><td class="n">${n2(b[2])}</td><td class="n">${n2(b[3])}</td><td class="n tot">${n2(b[4])}</td><td class="n">${sg(b[5])}</td><td class="n">${pc(b[6])}</td><td class="n">${pc(b[7])}</td></tr></tbody></table></div>`;
+  if (T.h2h){
+    h += `<h3 class="refsub">Head to head</h3><p class="note">Every league game between two Big-4 teams in the same span, one row per fixture: Panathinaikos – AEK is Panathinaikos at home, AEK – Panathinaikos the return game. <b>W–D–L</b> is the home side's; goals, cards and fouls are per game, home first. Click a row to see its games.</p>
+      <div class="scroll"><table class="mk h2h" style="max-width:900px"><thead><tr><th>Home – away</th><th class="n">Games</th><th class="n">W–D–L</th><th class="n">Goals</th><th class="n">Cards</th><th class="n">Total cards</th><th class="n">Fouls</th></tr></thead><tbody>`;
+    const pair = (x, y) => x == null || y == null ? '–' : `${x.toFixed(1)} · ${y.toFixed(1)}`;
+    T.h2h.forEach((p, i) => {
+      h += `<tr class="h2hrow" data-h2h="${i}" style="cursor:pointer"><td><span class="h2harrow">▸</span> ${p.a} – ${p.b}</td><td class="n">${p.n}</td><td class="n">${p.n ? `${p.w}–${p.d}–${p.l}` : '–'}</td><td class="n">${pair(p.gf, p.ga)}</td><td class="n">${pair(p.cf, p.ca)}</td><td class="n tot">${p.n ? n2(p.cf + p.ca) : '–'}</td><td class="n">${pair(p.ff, p.fa)}</td></tr>
+        <tr class="h2hgames" data-h2h="${i}" hidden><td colspan="7"><table class="mk" style="margin:4px 0 10px"><thead><tr><th>Date</th><th>Season</th><th>Match</th><th class="n">Score</th><th class="n">Cards</th><th class="n">Fouls</th><th>Referee</th></tr></thead><tbody>${
+          p.games.map(g => `<tr><td class="muted">${ddmm(g.date)}</td><td class="muted">${refSeason(g.season)}</td><td>${g.home} – ${g.away}</td><td class="n">${g.hg}–${g.ag}</td><td class="n">${g.hc}–${g.ac}</td><td class="n">${g.hf == null ? '–' : `${g.hf}–${g.af}`}</td><td>${g.ref ? refLink(g.ref) : '<span class="muted">–</span>'}</td></tr>`).join('')
+        }</tbody></table></td></tr>`;
+    });
+    h += '</tbody></table></div>';
+  }
 
   h += `<h2>Greek referees in games with a Big-4 team</h2><p class="note">Games involving Olympiakos, Panathinaikos, AEK or PAOK, since 2024–25${T.live ? ', every referee' : ', for referees with 5 or more'}. <b>Big-4</b> is the cards the Big-4 side got per game, <b>Opp</b> its opponent's; <b>Handicap</b> is Big-4 minus opponent; <b>Big-4 fouls</b> and <b>Opp fouls</b> are fouls committed per game; <b>Win %</b> is the Big-4 side's. The last columns are the Big-4 side's results with that referee.</p>
     <div class="scroll"><table class="mk sortable"><thead><tr><th>Referee</th><th class="n">Games</th><th class="n" title="Cards the Big-4 side got per game">Big-4</th><th class="n" title="Cards its opponent got per game">Opp</th><th class="n">Total</th><th class="n">Handicap</th><th class="n" title="Fouls by the Big-4 side per game">Big-4 fouls</th><th class="n" title="Fouls by its opponent per game">Opp fouls</th><th class="n" title="Games where the Big-4 side got more cards">Big-4 more</th><th class="n" title="Games where the opponent got more cards">Opp more</th><th class="n">W</th><th class="n">D</th><th class="n">L</th><th class="n" title="Big-4 side's win %">Win %</th></tr></thead><tbody>`;
