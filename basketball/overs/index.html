@@ -192,7 +192,7 @@ table.proj tr.pk td{background:rgba(212,175,55,.08)}table.proj tr.pk td:first-ch
   <div class="chips" id="chips"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=504e7fde"></script>
+<script src="data.js?v=48d22e57"></script>
 <script src="live.js"></script>
 <script>
 const $ = id => document.getElementById(id);
@@ -272,6 +272,9 @@ function renderBacktest(){
   h += `</tbody></table></div></div><div><h2>By month</h2><div class="scroll"><table>${GHEAD('Month')}<tbody>`;
   for (const m of S.months) h += grp(MON[m.m - 1], m);
   h += '</tbody></table></div></div></div>';
+  h += `<h2>By line</h2><p class="note">The opening line in 10-point bands.</p><div class="scroll"><table style="max-width:820px">${GHEAD('Opening line')}<tbody>`;
+  for (const b of S.lines || []) h += grp(`${b.lo}–${b.lo + 9.5}`, b);
+  h += '</tbody></table></div>';
   return h + bets();
 }
 
