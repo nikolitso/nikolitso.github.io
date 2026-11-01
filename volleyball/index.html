@@ -195,7 +195,7 @@ th.tsort{cursor:pointer;user-select:none} th.tsort:hover{color:var(--gold)}
   <div class="chips" id="chips"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=270ec86a"></script>
+<script src="data.js?v=e386fe7d"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -334,14 +334,14 @@ function renderBacktest(){
 let tSort = {k: 'roi', d: -1};
 const BLIND_MIN = -0.03;   // backing every over without the model must lose 3% or less: a good base to beat (user, 1 Nov 2026; was 2%)
 const ROI_MIN = 0.10;      // and the rule must have made more than 10% there (user, 1 Nov 2026)
-const N_MIN = 100;        // on at least 100 backtest bets (user, 1 Nov 2026)
+const N_MIN = 50;         // on at least 50 backtest bets (user, 1 Nov 2026; was 100)
 const tKey = {league: t => (t.women ? 0 : 1) + t.country + ' ' + t.name, seasons: t => t.seasons, n: t => t.n,
               hit: t => t.n ? t.w / t.n : -1, roi: t => t.n ? t.roi : -9, blind: t => t.blind_n ? t.blind_roi : -9};
 function testedTable(){
   const f = tKey[tSort.k];
   const T = DATA.backtest.tested.filter(t => t.blind_n && t.blind_roi >= BLIND_MIN && t.roi > ROI_MIN && t.n >= N_MIN).sort((a, b) => { const x = f(a), y = f(b); return (x < y ? -1 : x > y ? 1 : 0) * tSort.d || b.roi - a.roi; });
   const th = (k, lab, n = true) => `<th class="${n ? 'n ' : ''}tsort" data-tsort="${k}">${lab}${tSort.k === k ? (tSort.d > 0 ? ' ▴' : ' ▾') : ''}</th>`;
-  let h = `<h2>All tested leagues</h2><p class="note">Every league the backtest was run on, with the same rule (lines ${DATA.min_line}.5 to ${DATA.low - 1}.5, edge above ${DATA.edge * 100}%) and only the seasons the settings never saw. Only leagues where backing every over without the model (No model) did −3.0% or better, a good base the model has to beat, and where the rule made more than +10% over at least 100 bets are shown. Of those, only the ones marked live have picks. ${DATA.backtest.tested.length - T.length} of the ${DATA.backtest.tested.length} tested leagues are left out. Click a column to sort by it.</p>`;
+  let h = `<h2>All tested leagues</h2><p class="note">Every league the backtest was run on, with the same rule (lines ${DATA.min_line}.5 to ${DATA.low - 1}.5, edge above ${DATA.edge * 100}%) and only the seasons the settings never saw. Only leagues where backing every over without the model (No model) did −3.0% or better, a good base the model has to beat, and where the rule made more than +10% over at least 50 bets are shown. Of those, only the ones marked live have picks. ${DATA.backtest.tested.length - T.length} of the ${DATA.backtest.tested.length} tested leagues are left out. Click a column to sort by it.</p>`;
   h += `<div class="scroll"><table style="max-width:900px"><thead><tr>${th('league', 'League', false)}${th('seasons', 'Seasons')}${th('n', 'Bets')}${th('hit', 'Hit')}${th('roi', 'ROI')}${th('blind', 'No model')}</tr></thead><tbody>`;
   for (const t of T)
     h += `<tr><td>${t.country} <span class="muted">${t.name}</span> <b>${t.women ? 'Women' : 'Men'}</b>${t.live ? ' <span class="muted">· live</span>' : ''}</td><td class="n">${t.seasons}</td><td class="n">${t.n}</td><td class="n">${t.n ? pct(t.w / t.n) : '–'}</td><td class="n ${t.n ? cls(t.roi) : ''}">${t.n ? sgn(t.roi * 100, 1) + '%' : '–'}</td><td class="n ${cls(t.blind_roi)}">${t.blind_n ? sgn(t.blind_roi * 100, 1) + '%' : '–'}</td></tr>`;
