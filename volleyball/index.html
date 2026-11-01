@@ -195,7 +195,7 @@ th.tsort{cursor:pointer;user-select:none} th.tsort:hover{color:var(--gold)}
   <div class="chips" id="chips"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=16cf3d85"></script>
+<script src="data.js?v=bad9758f"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -207,8 +207,9 @@ const cls = x => x > 0 ? 'pos' : x < 0 ? 'neg' : '';
 let view = 'projections', lg = 'all';
 const LG = Object.fromEntries([...(DATA.former || []), ...DATA.leagues].map(l => [l.key, l]));   // former: settled picks only
 const sexOf = l => l.women ? 'women' : 'men';
+const sexAb = l => l.women ? '(W)' : '(M)';   // short label: chips, league cells
 const inLg = x => lg === 'all' || x.lg === lg;
-const lgName = k => `${LG[k].country} · ${LG[k].name} (${sexOf(LG[k])})`;
+const lgName = k => `${LG[k].country} · ${LG[k].name} ${sexAb(LG[k])}`;
 const andList = a => a.join(', ').replace(/, ([^,]*)$/, ' and $1');
 const liveNames = () => [true, false].map(w => DATA.leagues.filter(l => l.live && l.women === w)).filter(a => a.length)
   .map(a => `${andList(a.map(l => l.country))} (${sexOf(a[0])})`).join(', ');
@@ -268,7 +269,7 @@ function renderResults(){
     for (const l of [...DATA.leagues, ...(DATA.former || [])]){
       const g = done.filter(p => p.lg === l.key); if (!g.length) continue;
       const gw = g.filter(p => p.won).length, gu = g.reduce((s, p) => s + p.profit, 0);
-      h += `<tr><td>${l.country} <span class="muted">${l.name} (${sexOf(l)})${l.live ? '' : ' · no longer bet'}</span></td><td class="n">${g.length}</td><td class="n">${gw}</td><td class="n">${pct(gw / g.length)}</td><td class="n">${avgLine(g, 'line')}</td><td class="n">${avgLine(g, 'fair')}</td><td class="n ${cls(gu)}">${sgn(gu, 2)}</td><td class="n ${cls(gu)}">${sgn(gu / g.length * 100, 1)}%</td></tr>`;
+      h += `<tr><td>${l.country} <span class="muted">${l.name} ${sexAb(l)}${l.live ? '' : ' · no longer bet'}</span></td><td class="n">${g.length}</td><td class="n">${gw}</td><td class="n">${pct(gw / g.length)}</td><td class="n">${avgLine(g, 'line')}</td><td class="n">${avgLine(g, 'fair')}</td><td class="n ${cls(gu)}">${sgn(gu, 2)}</td><td class="n ${cls(gu)}">${sgn(gu / g.length * 100, 1)}%</td></tr>`;
     }
     h += '</tbody></table></div>';
   }
@@ -347,7 +348,7 @@ function testedTable(){
   let h = `<h2>All tested leagues</h2><p class="note">Every league the backtest was run on, with the same rule (lines ${DATA.min_line}.5 to ${DATA.low - 1}.5, edge above ${DATA.edge * 100}%) and only the seasons the settings never saw. Only leagues that pass the three tests for being on this page are shown: backing every over without the model (No model) did −3.0% or better, a good base the model has to beat, and the rule made more than +10% over at least 50 bets. Those are the leagues with live picks. ${DATA.backtest.tested.length - T.length} of the ${DATA.backtest.tested.length} tested leagues are left out. Click a column to sort by it.</p>`;
   h += `<div class="scroll"><table style="max-width:900px"><thead><tr>${th('league', 'League', false)}${th('seasons', 'Seasons')}${th('n', 'Bets')}${th('hit', 'Hit')}${th('roi', 'ROI')}${th('blind', 'No model')}</tr></thead><tbody>`;
   for (const t of T)
-    h += `<tr><td>${t.country} <span class="muted">${t.name}</span> <b>${t.women ? 'Women' : 'Men'}</b>${t.live ? ' <span class="muted">· live</span>' : ''}</td><td class="n">${t.seasons}</td><td class="n">${t.n}</td><td class="n">${t.n ? pct(t.w / t.n) : '–'}</td><td class="n ${t.n ? cls(t.roi) : ''}">${t.n ? sgn(t.roi * 100, 1) + '%' : '–'}</td><td class="n ${cls(t.blind_roi)}">${t.blind_n ? sgn(t.blind_roi * 100, 1) + '%' : '–'}</td></tr>`;
+    h += `<tr><td>${t.country} <span class="muted">${t.name}</span> <b>${sexAb(t)}</b>${t.live ? ' <span class="muted">· live</span>' : ''}</td><td class="n">${t.seasons}</td><td class="n">${t.n}</td><td class="n">${t.n ? pct(t.w / t.n) : '–'}</td><td class="n ${t.n ? cls(t.roi) : ''}">${t.n ? sgn(t.roi * 100, 1) + '%' : '–'}</td><td class="n ${cls(t.blind_roi)}">${t.blind_n ? sgn(t.blind_roi * 100, 1) + '%' : '–'}</td></tr>`;
   return h + '</tbody></table></div>';
 }
 document.addEventListener('click', e => {
@@ -473,7 +474,7 @@ function worked(){
 const RENDER = {projections: renderProjections, picks: renderPicks, results: renderResults, season: renderSeason, backtest: renderBacktest, method: renderMethod};
 function render(){
   document.querySelectorAll('#tabs a').forEach(a => { a.classList.toggle('on', a.dataset.view === view); a.href = `#view=${a.dataset.view}${lg === 'all' ? '' : '&lg=' + lg}`; });
-  const chips = view === 'method' ? [] : [['all', 'All leagues'], ...DATA.leagues.map(l => [l.key, `${l.country} (${sexOf(l)})`])];
+  const chips = view === 'method' ? [] : [['all', 'All leagues'], ...DATA.leagues.map(l => [l.key, `${l.country} ${sexAb(l)}`])];
   $('chips').innerHTML = chips.map(([k, t]) => `<a href="#view=${view}${k === 'all' ? '' : '&lg=' + k}" class="${k === lg ? 'on' : ''}">${t}</a>`).join('');
   $('out').innerHTML = RENDER[view]();
 }
