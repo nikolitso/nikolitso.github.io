@@ -183,6 +183,7 @@ table.proj tr.pk td{background:rgba(212,175,55,.08)}table.proj tr.pk td:first-ch
   <div class="sub" id="sub"></div>
   <div class="tabs" id="tabs">
     <a href="#view=findings" data-view="findings" class="on">Findings</a>
+    <a href="#view=picks" data-view="picks">Picks</a>
     <a href="#view=leagues" data-view="leagues">Leagues</a>
     <a href="#view=backtest" data-view="backtest">Backtest</a>
     <a href="#view=live" data-view="live">Live test</a>
@@ -192,7 +193,7 @@ table.proj tr.pk td{background:rgba(212,175,55,.08)}table.proj tr.pk td:first-ch
   <div class="chips" id="chips"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=244ba24a"></script>
+<script src="data.js?v=43266419"></script>
 <script src="live.js"></script>
 <script>
 const $ = id => document.getElementById(id);
@@ -307,6 +308,25 @@ function renderProjections(){
   return h;
 }
 
+function renderPicks(){
+  const open = LIVE.picks.filter(b => !b.done).sort((a, b) => a.dt < b.dt ? -1 : 1);
+  const fx = Object.fromEntries(LIVE.fixtures.map(g => [g.home + '|' + g.away, g]));
+  let h = `<p class="note">Bets to place: overs where the model's edge is above ${Math.round(LE()*100)}% at the line on offer, regular season, both teams ${LIVE.min_gp ?? 3}+ games${LIVE.max_line && LIVE.max_line < 999 ? `, line under ${LIVE.max_line}` : ''}, 1 unit each. Each is logged the first time a check (every 3 hours) sees it, at that line and the average price; take it as early as possible, as the line tends to move toward it. Updated ${LIVE.updated} (Athens).</p>`;
+  if (!open.length) h += '<p class="empty">No open picks right now. New ones appear here as lines open.</p>';
+  else {
+    h += `<h2>Open picks</h2><div class="scroll"><table class="proj"><thead><tr><th>Tip-off</th><th>League</th><th>Match</th><th class="n">Bet</th><th class="n">Price</th><th class="n">Model total</th><th class="n">Edge</th><th class="n">Line now</th></tr></thead><tbody>` +
+      open.map(b => { const g = fx[b.home + '|' + b.away] || {};
+        return `<tr class="pk"><td data-s="${b.dt}">${dayName(b.dt)} ${b.dt.slice(11)}</td><td>${LG[b.lg].country}</td><td class="wr">${b.home} – ${b.away}</td><td class="n"><b>Over ${b.line}</b></td><td class="n">${b.px.toFixed(2)}</td><td class="n">${g.mu != null ? g.mu.toFixed(1) : '–'}</td><td class="n pos">${sgn(b.edge*100, 0)}%</td><td class="n">${g.line ?? '–'}</td></tr>`; }).join('') +
+      '</tbody></table></div>';
+  }
+  const pre = ((DATA.cur || {}).bets || []).map(b => ({...b, done: true}));
+  const done = [...pre, ...LIVE.picks.filter(b => b.done && b.ret != null)].sort((a, b) => a.dt < b.dt ? 1 : -1).slice(0, 10);
+  if (done.length) h += `<h2>Latest results</h2><div class="scroll"><table><thead><tr><th>Date</th><th>League</th><th>Match</th><th class="n">Bet</th><th class="n">Price</th><th class="n">Total</th><th class="n">Units</th></tr></thead><tbody>` +
+    done.map(b => `<tr><td data-s="${b.dt}">${short(b.dt)}</td><td>${LG[b.lg].country}</td><td class="wr">${b.home} – ${b.away}</td><td class="n">Over ${b.line}</td><td class="n">${b.px.toFixed(2)}</td><td class="n">${b.total}</td><td class="n ${cls(b.ret)}">${sgn(b.ret, 2)}</td></tr>`).join('') +
+    '</tbody></table></div><p class="note">The full season record is in the Live test tab.</p>';
+  return h;
+}
+
 function renderLive(){
   const lgs = (LIVE.leagues || []).map(k => LG[k].country + ' ' + LG[k].name).join(', '), B = LIVE.bt, T = LIVE.taken;
   const allLg = (LIVE.leagues || []).length >= DATA.leagues.length;
@@ -315,7 +335,7 @@ function renderLive(){
   const all = [...pre, ...LIVE.picks].sort((a, b) => a.dt < b.dt ? -1 : 1);
   const set = all.filter(b => b.done && b.ret != null), won = set.filter(b => b.ret > 0).length;
   const units = set.reduce((a, b) => a + b.ret, 0), R_ = set.length ? units / set.length : null;
-  let h = `<p class="note"><b>The rule: overs only</b>, edge above ${Math.round(LE()*100)}%, regular season only, once both teams have played at least ${LIVE.min_gp ?? 6} games, ${allLg ? `in all ${DATA.leagues.length} leagues` : LIVE.rule_text || `in ${(LIVE.leagues || []).length} leagues: ${lgs}`}, level stakes (1 unit a bet). ${B ? `Backtest of this rule (2022–23 to 2025–26): ${B.n.toLocaleString()} bets, ${pct(B.w / B.n, 1)} hit, ROI ${roi(B.roi)}.` : ''}</p>`;
+  let h = `<p class="note"><b>The rule: overs only</b>, edge above ${Math.round(LE()*100)}%, regular season only, once both teams have played at least ${LIVE.min_gp ?? 6} games${LIVE.max_line && LIVE.max_line < 999 ? `, opening line under ${LIVE.max_line}` : ''}, ${allLg ? `in all ${DATA.leagues.length} leagues` : LIVE.rule_text || `in ${(LIVE.leagues || []).length} leagues: ${lgs}`}, level stakes (1 unit a bet). ${B ? `Backtest of this rule (2022–23 to 2025–26): ${B.n.toLocaleString()} bets, ${pct(B.w / B.n, 1)} hit, ROI ${roi(B.roi)}.` : ''}</p>`;
   h += `<p class="note">The ${sn(DATA.season)} record. Bets before ${LIVE.start} were worked out afterwards from the results, the way the backtest is. From ${LIVE.start} on, every 3 hours the model checks every game in the next 7 days, and the first time the over's edge is above ${Math.round(LE()*100)}% at the line on offer, that bet is logged at that line and the average price, and never changed.</p>`;
   h += tiles([['Bets', String(all.length)], ['Settled', String(set.length)], ['Hit rate', set.length ? pct(won / set.length, 1) : '–'],
               ['ROI', roi(R_), cls(R_)], ['Units', set.length ? sgn(units, 2) : '–', cls(units)],
@@ -364,7 +384,7 @@ document.addEventListener('click', e => {
   render();
 });
 
-const RENDER = {findings: renderFindings, leagues: renderLeagues, backtest: renderBacktest, live: renderLive, projections: renderProjections, method: renderMethod};
+const RENDER = {findings: renderFindings, picks: renderPicks, leagues: renderLeagues, backtest: renderBacktest, live: renderLive, projections: renderProjections, method: renderMethod};
 const CHIPS = {backtest: 1, projections: 1};
 function render(){
   document.querySelectorAll('#tabs a').forEach(a => { a.classList.toggle('on', a.dataset.view === view); a.href = `#view=${a.dataset.view}${lg === 'all' || !CHIPS[a.dataset.view] ? '' : '&lg=' + lg}`; });
