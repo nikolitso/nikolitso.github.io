@@ -4,10 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Volleyball</title>
-<meta name="description" content="Women's volleyball projections for five top leagues, Turkey, France, Germany, Poland and Japan: set count, total points and over picks against the bookmaker lines.">
+<meta name="description" content="Volleyball projections and over picks for the five leagues where the model beat the price in testing: Japan, Germany and France (women), Italy and Argentina (men). Set count, total points and the bookmaker line.">
 <link rel="canonical" href="https://antonisnikolitsopoulos.com/volleyball/">
 <meta property="og:title" content="Volleyball">
-<meta property="og:description" content="Women's volleyball projections for five top leagues, Turkey, France, Germany, Poland and Japan: set count, total points and over picks against the bookmaker lines.">
+<meta property="og:description" content="Volleyball projections and over picks for the five leagues where the model beat the price in testing: Japan, Germany and France (women), Italy and Argentina (men). Set count, total points and the bookmaker line.">
 <meta property="og:url" content="https://antonisnikolitsopoulos.com/volleyball/">
 <meta property="og:image" content="https://antonisnikolitsopoulos.com/volleyball.jpg">
 <meta name="twitter:card" content="summary_large_image">
@@ -195,7 +195,7 @@ th.tsort{cursor:pointer;user-select:none} th.tsort:hover{color:var(--gold)}
   <div class="chips" id="chips"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=e386fe7d"></script>
+<script src="data.js?v=d2f7b802"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -205,13 +205,16 @@ const pct = x => Math.round(x*100) + '%';
 const sgn = (x, d=1) => (x > 0 ? '+' : x < 0 ? '−' : '') + Math.abs(x).toFixed(d);
 const cls = x => x > 0 ? 'pos' : x < 0 ? 'neg' : '';
 let view = 'projections', lg = 'all';
-const LG = Object.fromEntries(DATA.leagues.map(l => [l.key, l]));
+const LG = Object.fromEntries([...(DATA.former || []), ...DATA.leagues].map(l => [l.key, l]));   // former: settled picks only
+const sexOf = l => l.women ? 'women' : 'men';
 const inLg = x => lg === 'all' || x.lg === lg;
-const lgName = k => `${LG[k].country} · ${LG[k].name}`;
-const liveNames = () => DATA.leagues.filter(l => l.live).map(l => l.country).join(', ').replace(/, ([^,]*)$/, ' and $1');
+const lgName = k => `${LG[k].country} · ${LG[k].name} (${sexOf(LG[k])})`;
+const andList = a => a.join(', ').replace(/, ([^,]*)$/, ' and $1');
+const liveNames = () => [true, false].map(w => DATA.leagues.filter(l => l.live && l.women === w)).filter(a => a.length)
+  .map(a => `${andList(a.map(l => l.country))} (${sexOf(a[0])})`).join(', ');
 const one = () => lg === 'all' ? DATA.leagues[0].key : lg;      // tabs that show one league at a time
 
-$('sub').textContent = `Women's top leagues · ${DATA.season.replace('-','–')} · updated ${DATA.updated} (Athens)`;
+$('sub').textContent = `${DATA.leagues.length} leagues, women's and men's · ${DATA.season.replace('-','–')} · updated ${DATA.updated} (Athens)`;
 
 function renderProjections(){
   let h = `<p class="note">Every match in the next 7 days: the chance it goes 3, 4 or 5 sets, the model's line on total points (where over and under are even). Once a bookmaker posts a line, the row shows the book line, the average over price and the model's over chance against it. Only <b>picks</b> are highlighted (gold); they are backed and recorded: overs on lines ${DATA.min_line}.5 to ${DATA.low - 0.5}, the matches the market expects to end 3-0, where the edge is above ${DATA.edge*100}%.</p>`;
@@ -298,7 +301,7 @@ function renderSeason(){
 
 function renderBacktest(){
   const B = DATA.backtest, S = lg === 'all' ? B.all : B.leagues[lg];
-  let h = `<p class="note">The live rule run on every season since ${B.first.slice(0,4)}, each match projected only from earlier matches of its own league, at the closing line and the average price. The settings were tuned on the Sultanlar Ligi's 2024-25 alone, so the totals leave that season out and every other league is a test the model never saw. Lines of ${DATA.min_line - 1}.5 or lower are left out. ${S.blind_n ? `<b>Backing every low-line over without the model</b> returned ${sgn(S.blind_roi*100, 1)}% over ${S.blind_n} matches.` : `<b>This league never has a line below ${DATA.low}</b> (its totals run higher), so the rule has had nothing to bet on.`}</p>`;
+  let h = `<p class="note">The live rule run on every season since ${B.first.slice(0,4)}, each match projected only from earlier matches of its own league, at the closing line and the average price. The settings were tuned on Turkey's women's Sultanlar Ligi 2024-25 alone, a league not on this page, so every season here is a test the model never saw. Lines of ${DATA.min_line - 1}.5 or lower are left out. ${S.blind_n ? `<b>Backing every low-line over without the model</b> returned ${sgn(S.blind_roi*100, 1)}% over ${S.blind_n} matches.` : `<b>This league never has a line below ${DATA.low}</b> (its totals run higher), so the rule has had nothing to bet on.`}</p>`;
   h += tiles([['Bets', S.n], ['Hit rate', S.n ? pct(S.w / S.n) : '–'], ['ROI', sgn(S.roi*100, 1) + '%', cls(S.roi)]]);
   if (lg === 'all'){
     h += `<p class="note">${lg === 'all' && DATA.leagues.some(l => !l.live) ? 'The totals above count the leagues with live picks only. ' : ''}Click a league to see its seasons and bets.</p>`;
@@ -341,7 +344,7 @@ function testedTable(){
   const f = tKey[tSort.k];
   const T = DATA.backtest.tested.filter(t => t.blind_n && t.blind_roi >= BLIND_MIN && t.roi > ROI_MIN && t.n >= N_MIN).sort((a, b) => { const x = f(a), y = f(b); return (x < y ? -1 : x > y ? 1 : 0) * tSort.d || b.roi - a.roi; });
   const th = (k, lab, n = true) => `<th class="${n ? 'n ' : ''}tsort" data-tsort="${k}">${lab}${tSort.k === k ? (tSort.d > 0 ? ' ▴' : ' ▾') : ''}</th>`;
-  let h = `<h2>All tested leagues</h2><p class="note">Every league the backtest was run on, with the same rule (lines ${DATA.min_line}.5 to ${DATA.low - 1}.5, edge above ${DATA.edge * 100}%) and only the seasons the settings never saw. Only leagues where backing every over without the model (No model) did −3.0% or better, a good base the model has to beat, and where the rule made more than +10% over at least 50 bets are shown. Of those, only the ones marked live have picks. ${DATA.backtest.tested.length - T.length} of the ${DATA.backtest.tested.length} tested leagues are left out. Click a column to sort by it.</p>`;
+  let h = `<h2>All tested leagues</h2><p class="note">Every league the backtest was run on, with the same rule (lines ${DATA.min_line}.5 to ${DATA.low - 1}.5, edge above ${DATA.edge * 100}%) and only the seasons the settings never saw. Only leagues that pass the three tests for being on this page are shown: backing every over without the model (No model) did −3.0% or better, a good base the model has to beat, and the rule made more than +10% over at least 50 bets. Those are the leagues with live picks. ${DATA.backtest.tested.length - T.length} of the ${DATA.backtest.tested.length} tested leagues are left out. Click a column to sort by it.</p>`;
   h += `<div class="scroll"><table style="max-width:900px"><thead><tr>${th('league', 'League', false)}${th('seasons', 'Seasons')}${th('n', 'Bets')}${th('hit', 'Hit')}${th('roi', 'ROI')}${th('blind', 'No model')}</tr></thead><tbody>`;
   for (const t of T)
     h += `<tr><td>${t.country} <span class="muted">${t.name}</span> <b>${t.women ? 'Women' : 'Men'}</b>${t.live ? ' <span class="muted">· live</span>' : ''}</td><td class="n">${t.seasons}</td><td class="n">${t.n}</td><td class="n">${t.n ? pct(t.w / t.n) : '–'}</td><td class="n ${t.n ? cls(t.roi) : ''}">${t.n ? sgn(t.roi * 100, 1) + '%' : '–'}</td><td class="n ${cls(t.blind_roi)}">${t.blind_n ? sgn(t.blind_roi * 100, 1) + '%' : '–'}</td></tr>`;
@@ -418,8 +421,11 @@ document.addEventListener('click', e => {
 
 function renderMethod(){
   return `<div class="doc">
+  <h3><span class="num">0</span>What we do</h3>
+  <p>We bet one thing: the <b>over on low total-points lines</b> in volleyball, when the model gives a fourth set a clearly better chance than the bookmaker's price does. Every bet is 1 unit, logged before the first serve and settled on the result, and the <b>Results</b> tab keeps the record.</p>
+  <p>The model was tested on every season of ${DATA.backtest.tested.length} leagues, women's and men's. A league is on this page only if, on the seasons the model never saw, it passed three tests: <b>backing every low-line over without the model lost 3% or less</b> (a fair market to start from, where a small edge is enough), <b>the model's bets made more than +10%</b>, and <b>there were at least 50 of them</b>. Five passed: ${liveNames()}. The rest, including Turkey and Poland (women), which had live picks until 1 Nov 2026, are left out; the <b>Backtest</b> tab lists them all.</p>
   <h3><span class="num">1</span>One number per team</h3>
-  <p>Every team gets one rating: its chance of winning a rally against an average side of its own league. It is fitted on the points of every past match, with recent matches weighted more, plus a small home edge. Each league is rated on its own, with its own home edge; the settings that control the fit are the same everywhere, tuned once on the Sultanlar Ligi.</p>
+  <p>Every team gets one rating: its chance of winning a rally against an average side of its own league. It is fitted on the points of every past match, with recent matches weighted more, plus a small home edge. Each league is rated on its own, with its own home edge; the settings that control the fit are the same everywhere, tuned once on Turkey's women's Sultanlar Ligi.</p>
   <h3><span class="num">2</span>From rallies to the whole match</h3>
   <p>A set runs to 25 points (the fifth to 15) and must be won by two, and the match is best of five. From the two ratings the model works out the exact chance of every set score and every points total, allowing for some day-to-day variation in form.</p>
   <h3><span class="num">3</span>Why totals have two humps</h3>
@@ -467,7 +473,7 @@ function worked(){
 const RENDER = {projections: renderProjections, picks: renderPicks, results: renderResults, season: renderSeason, backtest: renderBacktest, method: renderMethod};
 function render(){
   document.querySelectorAll('#tabs a').forEach(a => { a.classList.toggle('on', a.dataset.view === view); a.href = `#view=${a.dataset.view}${lg === 'all' ? '' : '&lg=' + lg}`; });
-  const chips = view === 'method' ? [] : [['all', 'All leagues'], ...DATA.leagues.map(l => [l.key, l.country])];
+  const chips = view === 'method' ? [] : [['all', 'All leagues'], ...DATA.leagues.map(l => [l.key, `${l.country} (${sexOf(l)})`])];
   $('chips').innerHTML = chips.map(([k, t]) => `<a href="#view=${view}${k === 'all' ? '' : '&lg=' + k}" class="${k === lg ? 'on' : ''}">${t}</a>`).join('');
   $('out').innerHTML = RENDER[view]();
 }
