@@ -192,7 +192,7 @@ table.proj tr.pk td{background:rgba(212,175,55,.08)}table.proj tr.pk td:first-ch
   <div class="chips" id="chips"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=1272ee14"></script>
+<script src="data.js?v=9ffd9446"></script>
 <script src="live.js"></script>
 <script>
 const $ = id => document.getElementById(id);
@@ -238,12 +238,12 @@ function renderLeagues(){
   const row = (label, s, attrs='') => `<tr${attrs}><td>${label}</td><td class="n">${s.games}</td><td class="n">${s.avg_total.toFixed(1)} / ${s.avg_line.toFixed(1)}</td><td class="n">${pct(s.over, 1)}</td>
     <td class="n ${cls(s.blind_over)}">${roi(s.blind_over)}</td><td class="n ${cls(s.blind_under)}">${roi(s.blind_under)}</td>
     <td class="n">${mod(s.mo)}</td></tr>`;
-  const tierName = {europe: 'European competitions', top: 'Top divisions', second: 'Second divisions'};
+  const tierName = {europe: 'European competitions', top: 'Top divisions', second: 'Second divisions · not bet'};
   for (const tier of ['europe', 'top', 'second']){
     h += `<tr><td colspan="7" class="tier" style="padding-top:18px">${tierName[tier]}</td></tr>`;
     for (const l of DATA.leagues.filter(l => l.tier === tier)){
       const on = open === l.key;
-      h += row(`<span class="caret">${on ? '▾' : '▸'}</span> ${l.country} <span class="muted">${l.name}</span>${LIVE.leagues && LIVE.leagues.length < DATA.leagues.length && LIVE.leagues.includes(l.key) ? '<span class="badge">live</span>' : ''}`, l.all, ` class="srow${on ? ' on' : ''}" data-open="${l.key}"`);
+      h += row(`<span class="caret">${on ? '▾' : '▸'}</span> ${l.country} <span class="muted">${l.name}</span>`, l.all, ` class="srow${on ? ' on' : ''}" data-open="${l.key}"`);
       if (on) for (const s of l.seasons) h += row(sn(s.season) + (s.season === DATA.tuned ? ' (tuned on)' : '') + (s.season === DATA.season ? ' (so far)' : ''), s, ' class="sub"');
     }
   }
@@ -305,7 +305,7 @@ function renderLive(){
   const T = LIVE.taken, st = x => x.settled ? `${x.settled} settled, ${x.w} won, ROI <b class="${cls(x.roi)}">${roi(x.roi)}</b>` : 'none settled yet';
   const lgs = (LIVE.leagues || []).map(k => LG[k].country + ' ' + LG[k].name).join(', '), B = LIVE.bt;
   const all = (LIVE.leagues || []).length >= DATA.leagues.length;
-  let h = `<p class="note"><b>The rule: overs only</b>, edge above ${Math.round(LE()*100)}%, regular season only, once both teams have played at least ${LIVE.min_gp ?? 6} games, ${all ? `in all ${DATA.leagues.length} leagues` : `in ${(LIVE.leagues || []).length} leagues: ${lgs}`}. ${B ? `Backtest of this rule: ${B.n.toLocaleString()} bets, ${pct(B.w / B.n, 1)} hit, ROI ${roi(B.roi)}.` : ''}</p>`;
+  let h = `<p class="note"><b>The rule: overs only</b>, edge above ${Math.round(LE()*100)}%, regular season only, once both teams have played at least ${LIVE.min_gp ?? 6} games, ${all ? `in all ${DATA.leagues.length} leagues` : LIVE.rule_text || `in ${(LIVE.leagues || []).length} leagues: ${lgs}`}, level stakes (1 unit a bet). ${B ? `Backtest of this rule: ${B.n.toLocaleString()} bets, ${pct(B.w / B.n, 1)} hit, ROI ${roi(B.roi)}.` : ''}</p>`;
   h += `<p class="note">Followed for real from ${LIVE.start}: every 3 hours the model checks every game in the next 7 days, and the first time the over's edge is above ${Math.round(LE()*100)}% at the line on offer, that bet is logged at that line and the average price, and never changed. ${LIVE.tracked.toLocaleString()} games with a line seen so far.</p>`;
   h += tiles([['Bets logged', String(T.n)], ['Settled', String(T.settled || 0)], ['Hit rate', T.settled ? pct(T.w / T.settled, 1) : '–'],
               ['ROI', roi(T.roi), cls(T.roi)], ['ROI at the best price', roi(T.roi_best), cls(T.roi_best)],
