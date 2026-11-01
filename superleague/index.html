@@ -261,21 +261,25 @@ function chipsHtml(id, cur, list){
   return `<div class="chips" id="${id}">` + list.map(s => `<button class="chip${s === cur ? ' on' : ''}" data-s="${s}">${L[s]}</button>`).join('') + '</div>';
 }
 
+// kick-offs are Athens time; a game leaves Projections 2 hours after it starts
+const athensAgo = ms => new Date(Date.now() - ms).toLocaleString('sv-SE', {timeZone: 'Europe/Athens'}).replace(' ', 'T').slice(0, 16);
+
 function renderProjections(){
-  if (!D.fixtures.length) return '<p class="empty">No fixtures scheduled in the next two weeks.</p>';
+  const cut = athensAgo(2 * 3600e3), fixtures = D.fixtures.filter(g => g.kickoff > cut);
+  if (!fixtures.length) return '<p class="empty">No fixtures scheduled in the next two weeks.</p>';
   let h = `<div class="bar"><div class="seg" id="pjmode"><button data-m="match" class="${pjMode==='match'?'on':''}">By match</button><button data-m="stat" class="${pjMode==='stat'?'on':''}">By stat</button></div>`;
   if (pjMode === 'stat') h += chipsHtml('pjstat', pjStat, PROJ_ORDER);
   h += '</div>';
-  if (D.fixtures.some(g => g.ref && g.ref.est)) h += `<p class="note">This round's referees were appointed after the last model update, so their effect on cards and fouls is estimated here: each referee's cards per game since 2024–25 (fouls: this season's games against the model's projection) next to the league's, pulled hard toward ×1.00, because in testing a referee's past said little about his next game's cards. The model's own referee factors replace these at its next update. Bookie comparisons and value bets use the adjusted numbers.</p>`;
+  if (fixtures.some(g => g.ref && g.ref.est)) h += `<p class="note">This round's referees were appointed after the last model update, so their effect on cards and fouls is estimated here: each referee's cards per game since 2024–25 (fouls: this season's games against the model's projection) next to the league's, pulled hard toward ×1.00, because in testing a referee's past said little about his next game's cards. The model's own referee factors replace these at its next update. Bookie comparisons and value bets use the adjusted numbers.</p>`;
   const byDay = {};
-  D.fixtures.forEach(g => (byDay[g.kickoff.slice(0,10)] ||= []).push(g));
+  fixtures.forEach(g => (byDay[g.kickoff.slice(0,10)] ||= []).push(g));
   if (pjMode === 'match'){
     for (const [d, gs] of Object.entries(byDay)) h += `<h2 class="day">${dayName(d)}</h2><div class="grid">${gs.map(matchCard).join('')}</div>`;
     return h;
   }
   const s = pjStat;
   h += `<div class="scroll"><table><thead><tr><th>Kick-off</th><th>Match</th><th class="n">Home</th><th class="n">Away</th>${s==='possession'?'':'<th class="n">Total</th>'}<th class="n">${s==='possession'||s==='xg'?'':'Over'}</th></tr></thead><tbody>`;
-  for (const g of D.fixtures){
+  for (const g of fixtures){
     const x = g.stats[s];
     const rf = (s === 'cards' || s === 'fouls') && g.ref && !g.ref.pending ? ` <span class="muted" style="font-size:12px">· ${g.ref.name}${g.ref.games ? ' ' + mult(g.ref[s]) : ''}</span>` : '';
     h += `<tr><td class="muted">${dayName(g.kickoff)} ${g.kickoff.slice(11)}${g.started ? ' <span class="live">Started</span>' : ''}</td><td>${g.home} – ${g.away}${rf}${tenureLine(g)}</td><td class="n">${f(x.home,s)}</td><td class="n">${f(x.away,s)}</td>${s==='possession'?'':`<td class="n tot">${f(x.total,s)}</td>`}<td class="ln">${linesHtml(x.lines)}</td></tr>`;
