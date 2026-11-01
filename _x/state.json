@@ -640,7 +640,8 @@
       "life-in-a-fishbowl",
       "smuggling-hendrix",
       "crossing",
-      "aicha"
+      "aicha",
+      "mondays-in-the-sun"
     ],
     "log": [
       {
@@ -842,11 +843,17 @@
         "slot": "2026-11-01 08",
         "slug": "aicha",
         "id": "2116772403711824061"
+      },
+      {
+        "day": "2026-11-01",
+        "slot": "2026-11-01 20",
+        "slug": "mondays-in-the-sun",
+        "id": "2116953593865449969"
       }
     ],
     "last_day": "2026-11-01"
   },
-  "last_slot": "2026-11-01 14",
+  "last_slot": "2026-11-01 20",
   "quote": {
     "seen": [
       "1",
