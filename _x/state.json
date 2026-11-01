@@ -150,7 +150,8 @@
       "everything-is-predictable",
       "storytelling-with-data-a-data-visualization",
       "games-people-play",
-      "how-to-be-a-leader"
+      "how-to-be-a-leader",
+      "the-definitive-guide-to-betting-exchanges"
     ],
     "log": [
       {
@@ -380,9 +381,15 @@
         "slot": "2026-10-31 14",
         "slug": "how-to-be-a-leader",
         "id": "2116500619561164908"
+      },
+      {
+        "day": "2026-11-01",
+        "slot": "2026-11-01 02",
+        "slug": "the-definitive-guide-to-betting-exchanges",
+        "id": "2116681807278256400"
       }
     ],
-    "last_day": "2026-10-31"
+    "last_day": "2026-11-01"
   },
   "film": {
     "seen": [
@@ -824,7 +831,7 @@
     ],
     "last_day": "2026-10-31"
   },
-  "last_slot": "2026-10-31 20",
+  "last_slot": "2026-11-01 02",
   "quote": {
     "seen": [
       "1",
