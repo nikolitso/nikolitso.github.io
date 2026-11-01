@@ -862,12 +862,12 @@ function renderRefs(){
   h += `<h2 id="rf-big4">Big-4 against Big-4</h2><div class="scroll"><table class="mk" style="max-width:820px"><thead><tr><th>Seasons</th><th class="n">Games</th><th class="n">Home cards</th><th class="n">Away cards</th><th class="n">Total</th><th class="n">Handicap</th><th class="n">Home more</th><th class="n">Away more</th></tr></thead><tbody>
     <tr><td>${b[0]}</td><td class="n">${b[1]}</td><td class="n">${n2(b[2])}</td><td class="n">${n2(b[3])}</td><td class="n tot">${n2(b[4])}</td><td class="n">${sg(b[5])}</td><td class="n">${pc(b[6])}</td><td class="n">${pc(b[7])}</td></tr></tbody></table></div>`;
   if (T.h2h){
-    h += `<h3 class="refsub">Head to head</h3><p class="note">Every league game between two Big-4 teams in the same span, one row per fixture: Panathinaikos – AEK is Panathinaikos at home, AEK – Panathinaikos the return game. <b>W–D–L</b> is the home side's; goals, cards and fouls are per game, home first. Click a row to see its games.</p>
-      <div class="scroll"><table class="mk h2h" style="max-width:900px"><thead><tr><th>Home – away</th><th class="n">Games</th><th class="n">W–D–L</th><th class="n">Goals</th><th class="n">Cards</th><th class="n">Total cards</th><th class="n">Fouls</th></tr></thead><tbody>`;
-    const pair = (x, y) => x == null || y == null ? '–' : `${x.toFixed(1)} · ${y.toFixed(1)}`;
+    h += `<h3 class="refsub">Head to head</h3><p class="note">Every league game between two Big-4 teams in the same span, one row per fixture: Panathinaikos – AEK is Panathinaikos at home, AEK – Panathinaikos the return game. <b>W</b>, <b>D</b>, <b>L</b> and <b>Win %</b> are the home side's; goals, cards and fouls are per game for the home (H) and away (A) side. Click a column to sort, a row to see its games.</p>
+      <div class="scroll"><table class="mk h2h sortable" style="max-width:1100px"><thead><tr><th>Home – away</th><th class="n">Games</th><th class="n">W</th><th class="n">D</th><th class="n">L</th><th class="n" title="Home side's win %">Win %</th><th class="n" title="Home goals per game">Goals H</th><th class="n" title="Away goals per game">Goals A</th><th class="n" title="Home cards per game">Cards H</th><th class="n" title="Away cards per game">Cards A</th><th class="n">Total cards</th><th class="n" title="Home fouls per game">Fouls H</th><th class="n" title="Away fouls per game">Fouls A</th></tr></thead><tbody>`;
+    const one = x => x == null ? '–' : x.toFixed(1);
     T.h2h.forEach((p, i) => {
-      h += `<tr class="h2hrow" data-h2h="${i}" style="cursor:pointer"><td><span class="h2harrow">▸</span> ${p.a} – ${p.b}</td><td class="n">${p.n}</td><td class="n">${p.n ? `${p.w}–${p.d}–${p.l}` : '–'}</td><td class="n">${pair(p.gf, p.ga)}</td><td class="n">${pair(p.cf, p.ca)}</td><td class="n tot">${p.n ? n2(p.cf + p.ca) : '–'}</td><td class="n">${pair(p.ff, p.fa)}</td></tr>
-        <tr class="h2hgames" data-h2h="${i}" hidden><td colspan="7"><table class="mk" style="margin:4px 0 10px"><thead><tr><th>Date</th><th>Season</th><th>Match</th><th class="n">Score</th><th class="n">Cards</th><th class="n">Fouls</th><th>Referee</th></tr></thead><tbody>${
+      h += `<tr class="h2hrow" data-h2h="${i}" style="cursor:pointer"><td><span class="h2harrow">▸</span> ${p.a} – ${p.b}</td><td class="n">${p.n}</td><td class="n">${p.w}</td><td class="n">${p.d}</td><td class="n">${p.l}</td><td class="n">${p.n ? pc(100 * p.w / p.n) : '–'}</td><td class="n">${one(p.gf)}</td><td class="n">${one(p.ga)}</td><td class="n">${one(p.cf)}</td><td class="n">${one(p.ca)}</td><td class="n tot">${p.n ? n2(p.cf + p.ca) : '–'}</td><td class="n">${one(p.ff)}</td><td class="n">${one(p.fa)}</td></tr>
+        <tr class="h2hgames follow" data-h2h="${i}" hidden><td colspan="13"><table class="mk" style="margin:4px 0 10px"><thead><tr><th>Date</th><th>Season</th><th>Match</th><th class="n">Score</th><th class="n">Cards</th><th class="n">Fouls</th><th>Referee</th></tr></thead><tbody>${
           p.games.map(g => `<tr><td class="muted">${ddmm(g.date)}</td><td class="muted">${refSeason(g.season)}</td><td>${g.home} – ${g.away}</td><td class="n">${g.hg}–${g.ag}</td><td class="n">${g.hc}–${g.ac}</td><td class="n">${g.hf == null ? '–' : `${g.hf}–${g.af}`}</td><td>${g.ref ? refLink(g.ref) : '<span class="muted">–</span>'}</td></tr>`).join('')
         }</tbody></table></td></tr>`;
     });
@@ -908,6 +908,9 @@ function sortKey(td, ord, i){
 function makeSortable(tbl){
   const body = tbl.tBodies[0], ths = [...tbl.tHead.rows[0].cells];
   [...body.rows].forEach((r, i) => r.dataset.i = i);
+  // a "follow" row (the Big-4 head to head's game list) stays under the row above it
+  const lead = [...body.rows].filter(r => !r.classList.contains('follow'));
+  lead.forEach(r => { const n = r.nextElementSibling; if (n && n.classList.contains('follow')) r._follow = n; });
   ths.forEach((th, c) => {
     if ('nosort' in th.dataset) return;
     th.classList.add('rs'); th.dataset.label = th.textContent;
@@ -916,10 +919,10 @@ function makeSortable(tbl){
       const dir = th.dataset.dir ? -th.dataset.dir : (ord || !num ? 1 : -1);
       ths.forEach(h => { if (h.dataset.label != null) { h.textContent = h.dataset.label; h.classList.remove('on'); delete h.dataset.dir; } });
       th.dataset.dir = dir; th.classList.add('on'); th.textContent = th.dataset.label + (dir > 0 ? ' ▲' : ' ▼');
-      const rows = [...body.rows], top = rows.filter(r => r.classList.contains('avg')), bottom = rows.filter(r => r.classList.contains('sum'));
+      const rows = lead, top = rows.filter(r => r.classList.contains('avg')), bottom = rows.filter(r => r.classList.contains('sum'));
       const mid = rows.filter(r => !top.includes(r) && !bottom.includes(r)).map(r => [r, sortKey(r.cells[c], ord, +r.dataset.i)]);
       mid.sort(([, a], [, b]) => a == null ? 1 : b == null ? -1 : typeof a === 'number' && typeof b === 'number' ? dir * (a - b) : dir * String(a).localeCompare(String(b)));
-      [...top, ...mid.map(m => m[0]), ...bottom].forEach(r => body.appendChild(r));
+      [...top, ...mid.map(m => m[0]), ...bottom].forEach(r => { body.appendChild(r); if (r._follow) body.appendChild(r._follow); });
     };
   });
 }
