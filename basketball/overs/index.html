@@ -194,7 +194,7 @@ table.proj tr.pk td{background:rgba(212,175,55,.08)}table.proj tr.pk td:first-ch
   <div class="chips" id="chips"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=c12360e3"></script>
+<script src="data.js?v=203083ab"></script>
 <script src="live.js"></script>
 <script>
 const $ = id => document.getElementById(id);
@@ -218,7 +218,7 @@ LIVE.fixtures = LIVE.fixtures.filter(g => LG[g.lg]);                       // le
 LIVE.picks = (LIVE.picks || []).filter(b => LG[b.lg]);
 if (LIVE.leagues) LIVE.leagues = LIVE.leagues.filter(k => LG[k]);
 
-$('sub').textContent = `${DATA.leagues.length} European leagues · 2020–21 (warm-up) to ${sn(DATA.season)} · live test since ${LIVE.start} · updated ${LIVE.updated} (Athens)`;
+$('sub').textContent = `${DATA.leagues.length} Leagues · backtest 2022–23 to 2025–26 · live test since ${LIVE.start} · updated ${LIVE.updated} (Athens)`;
 
 function tiles(list){
   return `<div class="metrics">${list.map(([l, v, c]) => `<div class="metric"><div class="lbl">${l}</div><div class="big ${c||''}">${v}</div></div>`).join('')}</div>`;
