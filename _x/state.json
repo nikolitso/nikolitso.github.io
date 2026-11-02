@@ -656,7 +656,8 @@
       "crossing",
       "aicha",
       "mondays-in-the-sun",
-      "the-good-life"
+      "the-good-life",
+      "the-man-who-copied"
     ],
     "log": [
       {
@@ -870,11 +871,17 @@
         "slot": "2026-11-02 08",
         "slug": "the-good-life",
         "id": "2117134789195010051"
+      },
+      {
+        "day": "2026-11-02",
+        "slot": "2026-11-02 20",
+        "slug": "the-man-who-copied",
+        "id": "2117315987888390613"
       }
     ],
     "last_day": "2026-11-02"
   },
-  "last_slot": "2026-11-02 14",
+  "last_slot": "2026-11-02 20",
   "quote": {
     "seen": [
       "1",
