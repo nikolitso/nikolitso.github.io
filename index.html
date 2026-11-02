@@ -187,6 +187,8 @@ h2 { font-family: var(--display); font-weight: 400; font-size: clamp(2.2rem, 4.6
 .card:hover { transform: translateY(-3px); box-shadow: 0 18px 40px -22px rgba(13,18,32,.35); border-color: transparent; }
 .tag { font-size: .68rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); }
 .tag.film { color: var(--film); }
+.tag .an-mark-sm { width: 15px; height: 15px; vertical-align: -3px; margin-right: 6px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.card[href="/paok-hub/"] .tag, .card[href="/paok-basketball/"] .tag { color: var(--ink); }
 .card h3 { font-family: var(--display); font-weight: 400; font-size: clamp(1.9rem, 3.2vw, 2.4rem); line-height: 1.1; margin: .6rem 0 0; }
 .card p { color: var(--muted); margin: .8rem 0 0; }
 .card .meta { font-size: .8rem; margin-top: 1.25rem; display: flex; flex-wrap: wrap; gap: .4rem; }
@@ -259,6 +261,7 @@ section.alt .card .meta span { background: var(--paper-2); }
 body { overflow-x: clip; }  /* safety net */
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } html { scroll-behavior: auto; } }
 </style>
+<link rel="stylesheet" href="/assets/an.css?v=1">
 </head>
 <body>
 
@@ -342,7 +345,7 @@ body { overflow-x: clip; }  /* safety net */
       <div class="cards">
         <a class="card" href="/books/">
           <div class="card-shot"><img src="books.jpg" width="1200" height="675" loading="lazy" alt="Antonis's shelf of books on sports analytics, betting and decision-making"></div>
-          <span class="tag">Book takeaways</span>
+          <span class="tag"><svg class="an-mark-sm" aria-hidden="true"><use href="/assets/marks.svg#book"/></svg>Book takeaways</span>
           <h3>Books</h3>
           <p>Every good book leaves a few ideas worth keeping. These notes keep them: practical takeaways on sports analytics, decision-making and personal development, for anyone trying to think a little more clearly, at work and in life.</p>
           <div class="meta"><span>Sports analytics</span><span>Decision-making</span><span>Personal development</span></div>
@@ -366,7 +369,7 @@ body { overflow-x: clip; }  /* safety net */
         </a>
         <a class="card" href="/wine/">
           <div class="card-shot"><img src="wine.jpg?v=ef1697e7" width="1200" height="675" loading="lazy" alt="The Pairing Finder: Greek wines matched to dishes"></div>
-          <span class="tag">Wine &amp; food pairing</span>
+          <span class="tag"><svg class="an-mark-sm" aria-hidden="true"><use href="/assets/marks.svg#wine"/></svg>Wine &amp; food pairing</span>
           <h3>Wine</h3>
           <p>Greek wine, matched to the table. Choose a dish, an ingredient or a grape and see which of more than 160 bottles suit it, in English and Greek.</p>
           <div class="meta"><span>Pairing finder</span><span>By grape</span><span>Wine list</span></div>
@@ -385,7 +388,7 @@ body { overflow-x: clip; }  /* safety net */
       <div class="cards">
         <a class="card" href="/superleague/">
           <div class="card-shot"><img src="superleague.jpg?v=5f5d338d" width="1200" height="675" loading="lazy" alt="Greek Super League projections for one game"></div>
-          <span class="tag">Model · Football</span>
+          <span class="tag"><svg class="an-mark-sm" aria-hidden="true"><use href="/assets/marks.svg#football"/></svg>Model · Football</span>
           <h3>Greek Super League</h3>
           <p>Projections for every Super League game: goals, xG, shots, corners, cards, fouls, goal kicks, throw-ins, possession and saves, compared with the bookie's lines to find value bets.</p>
           <!-- live:superleague:start --><div class="meta"><span>Updated 2 Nov</span><span>Next: Volos – Kifisia, Sat 7 Nov</span><span>7 games projected</span></div><!-- live:superleague:end -->
@@ -393,7 +396,7 @@ body { overflow-x: clip; }  /* safety net */
         </a>
         <a class="card" href="/football/greek-cup/">
           <div class="card-shot"><img src="greek-cup.jpg?v=f2a9d19c" width="1200" height="675" loading="lazy" alt="Greek Cup match stats by round"></div>
-          <span class="tag">Stats · Football</span>
+          <span class="tag"><svg class="an-mark-sm" aria-hidden="true"><use href="/assets/marks.svg#cup"/></svg>Stats · Football</span>
           <h3>Greek Cup</h3>
           <p>Every Greek Cup game this season: goals, shots, shots on target, fouls, goal kicks and cards, with team averages, game totals and Super League v Super League 2 splits.</p>
           <!-- live:greek-cup:start --><div class="meta"><span>Updated 2 Nov</span><span>Last: Volos 1–3 Atromitos</span><span>24 games</span></div><!-- live:greek-cup:end -->
@@ -401,7 +404,7 @@ body { overflow-x: clip; }  /* safety net */
         </a>
         <a class="card" href="/eurocup/">
           <div class="card-shot"><img src="eurocup.jpg?v=70a46982" width="1200" height="675" loading="lazy" alt="EuroCup tool: every club against the bookmaker lines"></div>
-          <span class="tag">Model · Basketball</span>
+          <span class="tag"><svg class="an-mark-sm" aria-hidden="true"><use href="/assets/marks.svg#basketball"/></svg>Model · Basketball</span>
           <h3>EuroCup</h3>
           <p>Every EuroCup club against the bookmaker lines this season, head-to-heads by country and club since 2015-16, key players and Elo power rankings.</p>
           <!-- live:eurocup:start --><div class="meta"><span>Updated 2 Nov</span><span>Next: Round 6, from Tue 3 Nov</span><span>16 games projected</span></div><!-- live:eurocup:end -->
@@ -409,7 +412,7 @@ body { overflow-x: clip; }  /* safety net */
         </a>
         <a class="card" href="/fibaeuropecup/">
           <div class="card-shot"><img src="fibaeuropecup.jpg?v=f96cbce5" width="1200" height="675" loading="lazy" alt="FIBA Europe Cup tool: head-to-head table"></div>
-          <span class="tag">Model · Basketball</span>
+          <span class="tag"><svg class="an-mark-sm" aria-hidden="true"><use href="/assets/marks.svg#basketball"/></svg>Model · Basketball</span>
           <h3>FIBA Europe Cup</h3>
           <p>Twelve seasons of the competition in one tool: head-to-heads by country and club, next-round fixtures with handicaps, projections and Elo power rankings.</p>
           <!-- live:fibaeuropecup:start --><div class="meta"><span>Updated 2 Nov</span><span>Next: Round 5, from Tue 3 Nov</span><span>23 games projected</span></div><!-- live:fibaeuropecup:end -->
@@ -417,7 +420,7 @@ body { overflow-x: clip; }  /* safety net */
         </a>
         <a class="card" href="/handball/projections/">
           <div class="card-shot"><img src="handball.jpg?v=335e2169" width="1200" height="675" loading="lazy" alt="Handball value signals: projections page"></div>
-          <span class="tag">Model · Handball</span>
+          <span class="tag"><svg class="an-mark-sm" aria-hidden="true"><use href="/assets/marks.svg#handball"/></svg>Model · Handball</span>
           <h3>Handball</h3>
           <p>Goal projections for seven women's leagues and the men's 2. Bundesliga, tested against the bookmakers' lines, plus Magdeburg's first-half pattern as a heavy home favourite.</p>
           <!-- live:handball:start --><div class="meta"><span>Updated 2 Nov</span><span>No open signals</span><span>Signals 11–4</span></div><!-- live:handball:end -->
@@ -425,7 +428,7 @@ body { overflow-x: clip; }  /* safety net */
         </a>
         <a class="card" href="/volleyball/">
           <div class="card-shot"><img src="volleyball.jpg?v=3cb1c492" width="1200" height="675" loading="lazy" alt="Volleyball projections: set count and total points for every match"></div>
-          <span class="tag">Model · Volleyball</span>
+          <span class="tag"><svg class="an-mark-sm" aria-hidden="true"><use href="/assets/marks.svg#volleyball"/></svg>Model · Volleyball</span>
           <h3>Volleyball</h3>
           <p>Japan, Germany and France (women), Italy and Argentina (men): the five leagues where the over picks beat the price in testing. The chance of 3, 4 or 5 sets, total points against the bookmaker line, and the picks' record.</p>
           <!-- live:volleyball:start --><div class="meta"><span>Updated 3 Nov</span><span>Next: Cuneo Volley – Monza, Wed 4 Nov</span><span>Picks 1–0</span></div><!-- live:volleyball:end -->
@@ -433,7 +436,7 @@ body { overflow-x: clip; }  /* safety net */
         </a>
         <a class="card" href="/basketball/">
           <div class="card-shot"><img src="basketball.jpg?v=964634e6" width="1200" height="675" loading="lazy" alt="Basketball projections and team strength"></div>
-          <span class="tag">Model · Basketball</span>
+          <span class="tag"><svg class="an-mark-sm" aria-hidden="true"><use href="/assets/marks.svg#basketball"/></svg>Model · Basketball</span>
           <h3>Basketball projections</h3>
           <p>Greek Basket League and Cyprus: projections against the book line, team strength from players and availability, and a fatigue factor for European weeks.</p>
           <!-- live:basketball:start --><div class="meta"><span>Updated 2 Nov</span><span>55 games this season</span></div><!-- live:basketball:end -->
@@ -441,7 +444,7 @@ body { overflow-x: clip; }  /* safety net */
         </a>
         <a class="card" href="/basketball/overs/">
           <div class="card-shot"><img src="basketball-overs.jpg?v=063eeca8" width="1200" height="675" loading="lazy" alt="Basketball totals: the over picks and their record"></div>
-          <span class="tag">Model · Basketball</span>
+          <span class="tag"><svg class="an-mark-sm" aria-hidden="true"><use href="/assets/marks.svg#basketball"/></svg>Model · Basketball</span>
           <h3>Basketball totals</h3>
           <p>Overs at the opening line in seven European leagues: EuroLeague, EuroCup, ACB, BBL, Lega A, the Greek Basket League and NKL. Four seasons of backtest, this week's picks and the live record.</p>
           <!-- live:basketball-overs:start --><div class="meta"><span>Updated 2 Nov</span><span>2 open picks</span><span>Backtest +21.3%</span></div><!-- live:basketball-overs:end -->
@@ -449,7 +452,7 @@ body { overflow-x: clip; }  /* safety net */
         </a>
         <a class="card" href="/paok-hub/">
           <div class="card-shot"><img src="paok-hub.jpg?v=d3a6c811" width="1200" height="675" loading="lazy" alt="PAOK Hub: the Expected Table"></div>
-          <span class="tag">Stats hub · PAOK FC</span>
+          <span class="tag"><svg class="an-mark-sm" aria-hidden="true"><use href="/assets/marks.svg#paok"/></svg>Stats hub · PAOK FC</span>
           <h3>PAOK Hub</h3>
           <p>PAOK's football seasons told through data: how the team plays, how the players perform, and how results compare with what the numbers expected.</p>
           <!-- live:paok-hub:start --><div class="meta"><span>After matchday 9</span><span>Next: Olympiakos – PAOK, Sun 8 Nov</span><span>Super League MD 10</span></div><!-- live:paok-hub:end -->
@@ -457,7 +460,7 @@ body { overflow-x: clip; }  /* safety net */
         </a>
         <a class="card" href="/paok-basketball/">
           <div class="card-shot"><img src="paok-basketball.jpg?v=df859dee" width="1200" height="675" loading="lazy" alt="PAOK Basketball hub: next game and season leaders"></div>
-          <span class="tag">Stats hub · PAOK Basketball</span>
+          <span class="tag"><svg class="an-mark-sm" aria-hidden="true"><use href="/assets/marks.svg#paok"/></svg>Stats hub · PAOK Basketball</span>
           <h3>PAOK Basketball</h3>
           <p>Everything about PAOK's basketball season in one place: roster, schedule, team and player stats, and standings.</p>
           <!-- live:paok-basketball:start --><div class="meta"><span>Updated 2 Nov</span><span>Next: PAOK – Roma, Tue 3 Nov</span><span>EuroCup 3–2</span></div><!-- live:paok-basketball:end -->
