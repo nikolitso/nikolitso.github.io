@@ -150,7 +150,9 @@ select.peer:focus{outline:2px solid var(--gold)}
 .pjc{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px 12px;scroll-margin-top:16px}
 .pjc.hot{border-color:color-mix(in srgb,var(--gold) 60%,transparent)}
 .pjc .when{font:400 12px var(--mono);color:var(--muted);display:flex;justify-content:space-between;gap:8px}
-.pjc .teams{font:600 18px/1.3 var(--serif);margin:4px 0 10px}
+.pjc .teams{font:600 18px/1.3 var(--serif);margin:4px 0 10px;min-height:2.6em;display:flex;flex-wrap:wrap;align-content:flex-end}
+.pjc table{table-layout:fixed}
+.pjc .nm{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .pjc .teams span{font:400 13px var(--body);color:var(--muted);margin:0 6px}
 .pjc table{width:100%;border-collapse:collapse;font-size:14px}
 .pjc th{font:400 10.5px var(--mono);padding:0 4px 5px;border-bottom:1px solid var(--line);text-align:left}
@@ -539,8 +541,8 @@ function pjCard(g, MK){
   const o = ODDS[g.h + '|' + g.a];
   const bh = o ? -o.sp : null, bt = o && o.tot != null ? o.tot : null, pb = bookWin(o);
   const fav = (v, h, a) => v > 0 ? h : a;
-  const winner = (ph, cls) => `<b${cls}>${esc(fav(ph - 0.5, g.h, g.a))}</b> ${pct(Math.max(ph, 1 - ph))}`;
-  const bookHcp = !o ? '–' : o.sp === 0 ? 'Level (pick\'em)' : `<b>${esc(o.sp < 0 ? g.h : g.a)}</b> −${Math.abs(o.sp).toFixed(1)}`;
+  const winner = ph => `<b class="nm" title="${esc(fav(ph - 0.5, g.h, g.a))}">${esc(fav(ph - 0.5, g.h, g.a))}</b>${pct(Math.max(ph, 1 - ph))}`;
+  const bookHcp = !o ? '–' : o.sp === 0 ? '<b class="nm">Level</b>pick\'em' : `<b class="nm" title="${esc(o.sp < 0 ? g.h : g.a)}">${esc(o.sp < 0 ? g.h : g.a)}</b>−${Math.abs(o.sp).toFixed(1)}`;
   const xh = MK.get(g.h), xa = MK.get(g.a);
   const okS = xh && xa && xh.n >= MK_MIN && xa.n >= MK_MIN, okT = xh && xa && xh.tn >= MK_MIN && xa.tn >= MK_MIN;
   // whether the two clubs' record against the lines this season points the same way as the lean
@@ -567,8 +569,8 @@ function pjCard(g, MK){
     <div class="when"><span>${g.when.slice(11)} · ${esc(g.round)}</span><span>${esc(code(teams[g.h]))} – ${esc(code(teams[g.a]))}</span></div>
     <div class="teams">${esc(g.h)}<span>vs</span>${esc(g.a)}</div>
     <table><tr><th></th><th>Model</th><th>Bookmaker</th></tr>
-      <tr><td title="Chance to win the game">Winner</td><td>${winner(g.ph, '')}</td><td>${pb === null ? '<span class="tag">–</span>' : winner(pb, '')}</td></tr>
-      <tr><td title="Winning margin: the model's expected margin, the bookmaker's handicap line">Margin</td><td><b>${esc(fav(g.mh, g.h, g.a))}</b> by ${Math.abs(g.mh).toFixed(1)}${g.adj ? '<span class="tag" title="Includes the absences below"> *</span>' : ''}</td><td>${bookHcp}</td></tr>
+      <tr><td title="Chance to win the game">Winner</td><td>${winner(g.ph)}</td><td>${pb === null ? '<span class="tag">–</span>' : winner(pb)}</td></tr>
+      <tr><td title="Winning margin: the model's expected margin, the bookmaker's handicap line">Margin</td><td><b class="nm" title="${esc(fav(g.mh, g.h, g.a))}">${esc(fav(g.mh, g.h, g.a))}</b>by ${Math.abs(g.mh).toFixed(1)}${g.adj ? '<span class="tag" title="Includes the absences below"> *</span>' : ''}</td><td>${bookHcp}</td></tr>
       <tr><td title="Points scored by both teams together">Total</td><td>${g.mt.toFixed(1)}</td><td>${bt === null ? '<span class="tag">–</span>' : bt.toFixed(1)}</td></tr>
     </table>
     ${o ? `<div class="leans"><div class="lh">Model leans</div>${leans.join('')}</div>` : '<div class="noline">No bookmaker line yet: it usually appears a day or two before the game.</div>'}
