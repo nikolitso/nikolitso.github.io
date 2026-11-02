@@ -164,6 +164,8 @@ tr.sub td:first-child{padding-left:28px;color:var(--muted)}
 .chips a.on{color:#0c1424;background:var(--gold);border-color:var(--gold)}
 td.wr{white-space:normal}
 table.proj tr.pk td{background:rgba(212,175,55,.08)}table.proj tr.pk td:first-child{box-shadow:inset 3px 0 var(--gold)}
+/* seven tiles in one row at desktop width */
+.metrics{grid-template-columns:repeat(auto-fit,minmax(min(140px,40vw),1fr))}
 .badge{display:inline-block;font:500 11px var(--mono);letter-spacing:.06em;text-transform:uppercase;background:var(--gold);color:#0c1424;border-radius:4px;padding:2px 7px;margin-left:8px;vertical-align:2px}
 .find{border-left:3px solid var(--gold);padding:2px 0 2px 16px;margin:0 0 22px;max-width:860px}
 .find h3{font:600 20px var(--serif);margin:0 0 4px}
@@ -192,7 +194,7 @@ table.proj tr.pk td{background:rgba(212,175,55,.08)}table.proj tr.pk td:first-ch
   <div class="chips" id="chips"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=f37ebf12"></script>
+<script src="data.js?v=47ca4aef"></script>
 <script src="live.js"></script>
 <script>
 const $ = id => document.getElementById(id);
