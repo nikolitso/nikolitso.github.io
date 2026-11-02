@@ -257,7 +257,7 @@ def layout(title, body, path, desc, image=None, active="books"):
     subnav = (f'<nav class="subnav" aria-label="Books"><div class="wrap">{sub("books", BASE, "All books")}'
               f'{sub("authors", BASE + "authors/", "Authors")}<a href="{BASE}feed.xml">RSS</a></div></nav>') if active else ""
     return f"""<!doctype html>
-<html lang="en">
+<html lang="en" data-site="books">
 <head>
 <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{{"token": "{CF_BEACON}"}}'></script>
 <meta charset="utf-8">
@@ -280,6 +280,7 @@ def layout(title, body, path, desc, image=None, active="books"):
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Hanken+Grotesk:ital,wght@0,300..700;1,400&display=swap">
 <link rel="stylesheet" href="{BASE}edge.css?v={CSS_V}">
+<link rel="stylesheet" href="/assets/an.css?v=1">
 </head>
 <body>
 {ICONS}

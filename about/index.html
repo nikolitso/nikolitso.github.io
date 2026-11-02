@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-site="books">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -37,16 +37,9 @@
   --film: #c0662f;
   --display: "Instrument Serif", "Iowan Old Style", Georgia, serif;
   --body: "Hanken Grotesk", "Segoe UI", system-ui, -apple-system, sans-serif;
-}
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --paper: #10141f; --paper-2: #161b28; --ink: #eceef3; --muted: #9aa1b2; --rule: #262c3b;
-    --accent: #7c9bff; --film: #e59a6b; color-scheme: dark;
-  }
-}
-:root[data-theme="dark"] {
-  --paper: #10141f; --paper-2: #161b28; --ink: #eceef3; --muted: #9aa1b2; --rule: #262c3b;
-  --accent: #7c9bff; --film: #e59a6b; color-scheme: dark;
+  /* shared base (/assets/an.css): the night everywhere */
+  --paper: var(--an-paper); --paper-2: var(--an-soft); --card: var(--an-soft); --ink: var(--an-ink); --muted: var(--an-muted);
+  --rule: var(--an-rule); --accent: var(--an-accent); --night-2: var(--an-soft);
 }
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
@@ -228,6 +221,7 @@ section.alt .card .meta span { background: var(--paper-2); }
 body { overflow-x: clip; }  /* safety net */
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } html { scroll-behavior: auto; } }
 </style>
+<link rel="stylesheet" href="/assets/an.css?v=1">
 </head>
 <body>
 

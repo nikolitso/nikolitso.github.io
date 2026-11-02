@@ -11,13 +11,10 @@
   --accent: #3d6bff;
   --display: "Instrument Serif", "Iowan Old Style", Georgia, serif;
   --body: "Hanken Grotesk", "Segoe UI", system-ui, -apple-system, sans-serif;
+  /* shared base (/assets/an.css): the night everywhere */
+  --paper: var(--an-paper); --paper-2: var(--an-soft); --ink: var(--an-ink); --muted: var(--an-muted);
+  --rule: var(--an-rule); --accent: var(--an-accent); --night-2: var(--an-soft);
 }
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --paper: #10141f; --paper-2: #161b28; --ink: #eceef3; --muted: #9aa1b2; --rule: #262c3b; --accent: #7c9bff; color-scheme: dark;
-  }
-}
-:root[data-theme="dark"] { --paper: #10141f; --paper-2: #161b28; --ink: #eceef3; --muted: #9aa1b2; --rule: #262c3b; --accent: #7c9bff; color-scheme: dark; }
 * { box-sizing: border-box; }
 body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--body); font-size: 1.0625rem; line-height: 1.7; -webkit-font-smoothing: antialiased; }
 a { color: inherit; }
