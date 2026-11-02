@@ -1,13 +1,13 @@
 name: Basketball totals live test
 
-# Live test of the basketball totals rule (40 European leagues): this season's results and odds, projections for
+# Live test of the basketball totals rule (the leagues in data/live_leagues.json): this season's results and odds, projections for
 # the next 7 days, picks logged at the line on offer and settled after the game. Scripts and data in
 # nikolitso/BettingSignal (basketball-overs/); the record is basketball-overs/data/live/report.md there.
 # Publishes basketball/overs/live.js (projections + live record; the backtest part of the page is fixed).
-# Every 3 hours, plus the Run workflow button.
+# Every hour (:20 UTC), plus the Run workflow button.
 on:
   schedule:
-    - cron: "20 */3 * * *"
+    - cron: "20 * * * *"
   workflow_dispatch:
 
 permissions:
