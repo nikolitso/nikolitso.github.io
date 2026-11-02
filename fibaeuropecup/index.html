@@ -570,7 +570,7 @@ function pjCard(g, MK){
     <div class="teams">${esc(g.h)}<span>vs</span>${esc(g.a)}</div>
     <table><tr><th></th><th>Model</th><th>Bookmaker</th></tr>
       <tr><td title="Chance to win the game">Winner</td><td>${winner(g.ph)}</td><td>${pb === null ? '<span class="tag">–</span>' : winner(pb)}</td></tr>
-      <tr><td title="Winning margin: the model's expected margin, the bookmaker's handicap line">Margin</td><td><b class="nm" title="${esc(fav(g.mh, g.h, g.a))}">${esc(fav(g.mh, g.h, g.a))}</b>by ${Math.abs(g.mh).toFixed(1)}${g.adj ? '<span class="tag" title="Includes the absences below"> *</span>' : ''}</td><td>${bookHcp}</td></tr>
+      <tr><td title="Both as a handicap: Mykonos −8.3 = Mykonos expected to win by 8.3">Handicap</td><td><b class="nm" title="${esc(fav(g.mh, g.h, g.a))}">${esc(fav(g.mh, g.h, g.a))}</b>−${Math.abs(g.mh).toFixed(1)}${g.adj ? '<span class="tag" title="Includes the absences below"> *</span>' : ''}</td><td>${bookHcp}</td></tr>
       <tr><td title="Points scored by both teams together">Total</td><td>${g.mt.toFixed(1)}</td><td>${bt === null ? '<span class="tag">–</span>' : bt.toFixed(1)}</td></tr>
     </table>
     ${o ? `<div class="leans"><div class="lh">Model leans</div>${leans.join('')}</div>` : '<div class="noline">No bookmaker line yet: it usually appears a day or two before the game.</div>'}
@@ -646,14 +646,14 @@ function renderPjCards(P){
   box.innerHTML = pjModeBar() + `<div class="pjintro"><h3>What to expect this week</h3>
       For every game: who the model expects to win, by how much and how many points, next to the bookmaker's numbers.
       <ul><li><b>Winner</b>: each side's chance to win (the bookmaker's from its odds, margin removed).</li>
-        <li><b>Margin</b>: the expected winning margin; for the bookmaker, its handicap line.</li>
+        <li><b>Handicap</b>: the expected winning margin, written like the bookmaker's line (Mykonos −8.3 = Mykonos by 8.3), next to the bookmaker's own.</li>
         <li><b>Total</b>: points scored by both teams together.</li>
         <li><b>Lean</b>: the side of the bookmaker's line the model prefers, and how far apart they are. Gaps over ${gapMin} points are in gold. A ✓ means both clubs' results against the lines this season point the same way.</li></ul>
       <div class="warn"><b>Read with care.</b> The model uses only past results, no news, and it has not beaten the bookmaker so far: in the 2025-26 test the bookmaker was the more accurate, and games where the two were 6+ points apart went the bookmaker's way more often than the model's. A lean is a reason to look closer, not a tip. Every projection is kept, with its result, in the <a class="back" href="#view=archive" data-go="archive">Archive</a>.</div></div>
     ${top ? `<h2 style="margin-top:6px">Biggest gaps to the bookmaker</h2><div class="pjtop">${top}</div>` : ''}` +
     Object.entries(days).map(([d, list]) => `<h2>${dayName(d)} <span class="tag">${esc(list[0].round)} · ${list.length} game${list.length === 1 ? '' : 's'}</span></h2>
       <div class="pjgrid">${list.map(g => pjCard(g, MK)).join('')}</div>`).join('') +
-    `<div class="tag" style="margin-top:18px">Projections updated ${esc(P.updated)} (Athens time). The model rates every club from this season's results, starting from last season's rating and its country's; absences from the injury list come off the club (a margin marked * includes them). Win chance = the margin on a normal curve with the backtest's spread of misses (${P.spread} points). Details: <a class="back" href="#view=ratings" data-go="ratings">Club Ratings</a>.</div>`;
+    `<div class="tag" style="margin-top:18px">Projections updated ${esc(P.updated)} (Athens time). The model rates every club from this season's results, starting from last season's rating and its country's; absences from the injury list come off the club (a handicap marked * includes them). Win chance = the margin on a normal curve with the backtest's spread of misses (${P.spread} points). Details: <a class="back" href="#view=ratings" data-go="ratings">Club Ratings</a>.</div>`;
   bindPj(box);
   box.querySelectorAll('[data-jump]').forEach(a => a.onclick = e => { e.preventDefault(); document.getElementById(a.dataset.jump)?.scrollIntoView({behavior: 'smooth', block: 'start'}); });
 }
