@@ -193,7 +193,7 @@ table.proj tr.pk td{background:rgba(212,175,55,.08)}table.proj tr.pk td:first-ch
   <div class="chips" id="chips"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=e0ff713e"></script>
+<script src="data.js?v=9d25d7d7"></script>
 <script src="live.js"></script>
 <script>
 const $ = id => document.getElementById(id);
@@ -331,16 +331,17 @@ function renderLive(){
   const lgs = (LIVE.leagues || []).map(k => LG[k].country + ' ' + LG[k].name).join(', '), B = LIVE.bt, T = LIVE.taken;
   const allLg = (LIVE.leagues || []).length >= DATA.leagues.length;
   // the record: this season's games before the live test (worked out from results) + bets logged live
-  const pre = ((DATA.cur || {}).bets || []).map(b => ({...b, side: 'o', pre: true, done: true, hours: null, close: null}));
+  const pre = ((DATA.cur || {}).bets || []).map(b => ({...b, side: 'o', pre: true, done: true, hours: null, close: b.close ?? null}));
   const all = [...pre, ...LIVE.picks].sort((a, b) => a.dt < b.dt ? -1 : 1);
   const set = all.filter(b => b.done && b.ret != null), won = set.filter(b => b.ret > 0).length;
   const units = set.reduce((a, b) => a + b.ret, 0), R_ = set.length ? units / set.length : null;
+  const cl = all.filter(b => b.close != null), up = cl.filter(b => b.close > b.line).length, dn = cl.filter(b => b.close < b.line).length;
   let h = `<p class="note"><b>The rule: overs only</b>, edge above ${Math.round(LE()*100)}%, regular season only, once both teams have played at least ${LIVE.min_gp ?? 6} games${LIVE.max_line && LIVE.max_line < 999 ? `, opening line under ${LIVE.max_line}` : ''}, ${allLg ? `in all ${DATA.leagues.length} leagues` : LIVE.rule_text || `in ${(LIVE.leagues || []).length} leagues: ${lgs}`}, level stakes (1 unit a bet). ${B ? `Backtest of this rule (2022–23 to 2025–26): ${B.n.toLocaleString()} bets, ${pct(B.w / B.n, 1)} hit, ROI ${roi(B.roi)}.` : ''}</p>`;
   h += `<p class="note">The ${sn(DATA.season)} record. Bets before ${LIVE.start} were worked out afterwards from the results, the way the backtest is. From ${LIVE.start} on, every 3 hours the model checks every game in the next 7 days, and the first time the over's edge is above ${Math.round(LE()*100)}% at the line on offer, that bet is logged at that line and the average price, and never changed.</p>`;
   h += tiles([['Bets', String(all.length)], ['Settled', String(set.length)], ['Hit rate', set.length ? pct(won / set.length, 1) : '–'],
               ['ROI', roi(R_), cls(R_)], ['Units', set.length ? sgn(units, 2) : '–', cls(units)],
-              ['Close moved our way', T.clv_pos == null ? '–' : pct(T.clv_pos)], ['Against us', T.clv_neg == null ? '–' : pct(T.clv_neg)]]);
-  h += `<p class="note">Closing-line figures cover the bets logged live (${LIVE.picks.length} so far, ${T.settled || 0} settled). A few hundred bets are needed before the record says much. Click a column heading to sort.</p>`;
+              ['Close moved our way', cl.length ? pct(up / cl.length) : '–'], ['Against us', cl.length ? pct(dn / cl.length) : '–']]);
+  h += `<p class="note">Close is the closing line; it moved our way when it ended above the line we bet (${cl.length} bets with a close so far). A few hundred bets are needed before the record says much. Click a column heading to sort.</p>`;
   if (!all.length) return h + '<p class="empty">No bets yet.</p>';
   let run = 0;
   const rows = all.map(b => {
