@@ -152,7 +152,8 @@
       "games-people-play",
       "how-to-be-a-leader",
       "the-definitive-guide-to-betting-exchanges",
-      "how-to-win-the-world-cup"
+      "how-to-win-the-world-cup",
+      "remote-office-not-required"
     ],
     "log": [
       {
@@ -394,9 +395,15 @@
         "slot": "2026-11-01 14",
         "slug": "how-to-win-the-world-cup",
         "id": "2116862992520270320"
+      },
+      {
+        "day": "2026-11-02",
+        "slot": "2026-11-02 02",
+        "slug": "remote-office-not-required",
+        "id": "2117044200231596171"
       }
     ],
-    "last_day": "2026-11-01"
+    "last_day": "2026-11-02"
   },
   "film": {
     "seen": [
@@ -853,7 +860,7 @@
     ],
     "last_day": "2026-11-01"
   },
-  "last_slot": "2026-11-01 20",
+  "last_slot": "2026-11-02 02",
   "quote": {
     "seen": [
       "1",
