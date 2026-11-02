@@ -193,7 +193,7 @@ table.proj tr.pk td{background:rgba(212,175,55,.08)}table.proj tr.pk td:first-ch
   <div class="chips" id="chips"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=1c514862"></script>
+<script src="data.js?v=1dd92647"></script>
 <script src="live.js"></script>
 <script>
 const $ = id => document.getElementById(id);
@@ -340,8 +340,8 @@ function renderLive(){
   h += `<p class="note">The ${sn(DATA.season)} record. Bets before ${LIVE.start} were worked out afterwards from the results, the way the backtest is. From ${LIVE.start} on, every 3 hours the model checks every game in the next 7 days, and the first time the over's edge is above ${Math.round(LE()*100)}% at the line on offer, that bet is logged at that line and the average price, and never changed.</p>`;
   h += tiles([['Bets', String(all.length)], ['Settled', String(set.length)], ['Hit rate', set.length ? pct(won / set.length, 1) : '–'],
               ['ROI', roi(R_), cls(R_)], ['Units', set.length ? sgn(units, 2) : '–', cls(units)],
-              ['Close moved our way', cl.length ? pct(up / cl.length) : '–'], ['Against us', cl.length ? pct(dn / cl.length) : '–']]);
-  h += `<p class="note">Close is the closing line; it moved our way when it ended above the line we bet (${cl.length} bets with a close so far). A few hundred bets are needed before the record says much. Click a column heading to sort.</p>`;
+              ['Close moved toward the bet', cl.length ? pct(up / cl.length) : '–'], ['Close moved against it', cl.length ? pct(dn / cl.length) : '–']]);
+  h += `<p class="note">Close is the closing line; it moved toward the bet when it ended above the line bet (${cl.length} bets with a close so far). A few hundred bets are needed before the record says much. Click a column heading to sort.</p>`;
   if (!all.length) return h + '<p class="empty">No bets yet.</p>';
   let run = 0;
   const rows = all.map(b => {
