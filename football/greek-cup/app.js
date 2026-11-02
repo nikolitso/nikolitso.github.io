@@ -49,7 +49,7 @@
   function dates() { var r = {}; G.forEach(function (g) { r[g.date] = 1; }); return Object.keys(r).sort().reverse(); }
 
   var last = GF.reduce(function (m, g) { return g.date > m ? g.date : m; }, "");
-  document.getElementById("sub").textContent = "Season " + D.season + " · " + GF.length + " games · last game " + day(last);
+  document.getElementById("sub").textContent = "Season " + D.season + " · " + GF.length +  " games · last game " + day(last) + " · last update " + day(D.updated);
 
   // ---------- matches ----------
   function matches() {
