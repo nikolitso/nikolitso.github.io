@@ -68,8 +68,16 @@ runs:
         git add ${{ inputs.pages }}
         if git diff --cached --quiet; then echo "pages unchanged"; exit 0; fi
         git commit -q -m "${{ inputs.label }}: refresh $(TZ=Europe/Athens date '+%Y-%m-%d %H:%M')"
-        # several pipelines push at once: on a rejected push, rebase and try again
-        for i in 1 2 3 4 5; do git pull -q --rebase && git push -q && exit 0; sleep $((RANDOM % 10 + 5)); done
+        # several pipelines push at once: on a rejected push, rebase and try again. If the rebase hits a
+        # conflict it is in generated files, and this run's copy is the fresh one: keep it and go on.
+        for i in 1 2 3 4 5; do
+          if git pull -q --rebase; then git push -q && exit 0
+          else
+            git checkout --theirs -- . && git add -A && GIT_EDITOR=true git rebase --continue || git rebase --abort
+            git push -q && exit 0
+          fi
+          sleep $((RANDOM % 10 + 5))
+        done
         exit 1
     - name: Save the data
       shell: bash
@@ -80,6 +88,14 @@ runs:
         git add -A
         if git diff --cached --quiet; then echo "data unchanged"; exit 0; fi
         git commit -q -m "${{ inputs.label }}: refresh $(TZ=Europe/Athens date '+%Y-%m-%d %H:%M')"
-        # several pipelines push at once: on a rejected push, rebase and try again
-        for i in 1 2 3 4 5; do git pull -q --rebase && git push -q && exit 0; sleep $((RANDOM % 10 + 5)); done
+        # several pipelines push at once: on a rejected push, rebase and try again. If the rebase hits a
+        # conflict it is in generated files, and this run's copy is the fresh one: keep it and go on.
+        for i in 1 2 3 4 5; do
+          if git pull -q --rebase; then git push -q && exit 0
+          else
+            git checkout --theirs -- . && git add -A && GIT_EDITOR=true git rebase --continue || git rebase --abort
+            git push -q && exit 0
+          fi
+          sleep $((RANDOM % 10 + 5))
+        done
         exit 1
