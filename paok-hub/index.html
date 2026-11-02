@@ -1,10 +1,10 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-site="paok">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>PAOK Hub &mdash; Reference</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Hanken+Grotesk:ital,wght@0,300..700;1,400&display=swap">
 <style>
   :root {
     --bg: #f4f4f2;
@@ -15,35 +15,26 @@
     --line: #d9d9d5;
     --accent: #1c1f6b;
     --accent-soft: #e7e8f5;
+  
+    /* shared base (assets/an.css): the page's dark palette, with the common names mapped onto the tokens */
+    --bg: var(--an-paper);
+    --surface: var(--an-soft);
+    --surface-2: color-mix(in srgb,var(--an-soft) 60%,var(--an-rule));
+    --ink: var(--an-ink);
+    --ink-dim: var(--an-muted);
+    --line: var(--an-rule);
+    --accent: var(--an-accent);
+    --accent-soft: var(--an-accent-soft);
+    --card: var(--an-soft);
+    --sub: var(--an-muted);
+    --an-wrap: 820px;
   }
-  @media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) {
-      --bg: #101114;
-      --surface: #17181c;
-      --surface-2: #1d1f24;
-      --ink: #edeeef;
-      --ink-dim: #9a9ca3;
-      --line: #2b2d33;
-      --accent: #8f96ff;
-      --accent-soft: #232650;
-    }
-  }
-  :root[data-theme="dark"] {
-    --bg: #101114;
-    --surface: #17181c;
-    --surface-2: #1d1f24;
-    --ink: #edeeef;
-    --ink-dim: #9a9ca3;
-    --line: #2b2d33;
-    --accent: #8f96ff;
-    --accent-soft: #232650;
-  }
-  * { box-sizing: border-box; }
+      * { box-sizing: border-box; }
   body {
     margin: 0;
     background: var(--bg);
     color: var(--ink);
-    font-family: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+    font-family:var(--an-body);
     line-height: 1.5;
   }
   .wrap { max-width: 820px; margin: 0 auto; padding: 56px 24px 96px; }
@@ -53,19 +44,19 @@
     filter: drop-shadow(0 2px 6px rgba(0,0,0,0.12));
   }
   .eyebrow {
-    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-family:var(--an-mono);
     font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase;
     color: var(--accent); font-weight: 600; margin: 0 0 4px;
   }
   .site-head h1 {
-    font-family: "Archivo", ui-sans-serif, sans-serif;
+    font-family:var(--an-body);
     font-weight: 800; font-size: clamp(24px, 3.6vw, 32px);
     letter-spacing: -0.01em; margin: 0;
   }
   .sub { color: var(--ink-dim); font-size: 15.5px; max-width: 60ch; margin: 0 0 40px; }
   .section-head {
     margin: 40px 0 14px;
-    font-family: "IBM Plex Mono", monospace;
+    font-family:var(--an-mono);
     font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase;
     color: var(--ink-dim); font-weight: 600;
     border-bottom: 2px solid var(--ink); padding-bottom: 10px;
@@ -82,41 +73,25 @@
     border-color: var(--accent); outline: none;
     box-shadow: 0 4px 16px rgba(0,0,0,0.06); transform: translateY(-1px);
   }
-  :root[data-theme="dark"] .card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.3); }
-  @media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) .card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.3); }
-  }
-  .card .name { font-weight: 600; font-size: 14.5px; }
+      .card .name { font-weight: 600; font-size: 14.5px; }
   .card .desc { font-size: 12px; color: var(--ink-dim); margin-top: 3px; }
-  .card .go { flex: none; font-family: "IBM Plex Mono", monospace; color: var(--ink-dim); font-size: 12.5px; }
+  .card .go { flex: none; font-family:var(--an-mono); color: var(--ink-dim); font-size: 12.5px; }
   footer.page-foot {
     margin-top: 48px; padding-top: 20px; border-top: 1px solid var(--line);
     font-size: 12.5px; color: var(--ink-dim);
   }
 </style>
+<link rel="stylesheet" href="/assets/an.css?v=1">
 </head>
 <body>
 <!-- sitebar:start (link back to antonisnikolitsopoulos.com; keep on every page) -->
-<style>
-.an-sitebar{background:#0d1220;border-bottom:1px solid rgba(255,255,255,.09);font:500 13px/1.2 "Segoe UI",system-ui,-apple-system,sans-serif;letter-spacing:.02em}
-.an-sitebar>div{max-width:72rem;margin:0 auto;padding:6px 16px;display:flex;justify-content:flex-end;align-items:center;gap:18px}
-.an-sitebar a{color:#9aa1b2;text-decoration:none;display:inline-flex;align-items:center;min-height:24px}.an-sitebar a:hover{color:#fff}
-.an-sitebar svg{width:17px;height:17px;fill:currentColor}
-.an-sitebar a[href="/"]{padding:6px 8px;margin:-6px -8px -6px -4px;border-radius:6px}.an-sitebar a[href="/"]:hover{background:rgba(255,255,255,.08)}
-</style>
 <nav class="an-sitebar" aria-label="Main site"><div><a href="/books/">Books</a><a href="/#projects">Projects</a><a href="/about/">About</a><a href="/" title="Main site: antonisnikolitsopoulos.com" aria-label="Main site"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 2 11.5h3V21h5.5v-6h3v6H19v-9.5h3z"/></svg></a></div></nav>
 <!-- sitebar:end -->
+<header class="an-head"><div>
+  <a class="an-brand" href="index.html"><svg class="an-mark" aria-hidden="true"><use href="/assets/marks.svg#paok"/></svg><span><small class="an-kicker">PAOK · Reference</small><h1>PAOK Hub</h1></span></a>
+</div></header>
 <div class="wrap">
-
-  <header class="site-head">
-    <img class="site-logo" src="https://www.paokfc.gr/wp-content/themes/paokv2/images/paok-logo1.png" alt="PAOK FC crest" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.display='none'">
-    <div>
-      <p class="eyebrow">PAOK Hub</p>
-      <h1>Data &amp; more</h1>
-      <p class="hub-intro" style="margin:.4rem 0 0;color:inherit;opacity:.75;max-width:52ch">PAOK FC's seasons in numbers: player stats and ratings, opponents, standings, and results against what the data expected.</p>
-      <p class="hub-updated" id="hub-updated" style="margin:.5rem 0 0;color:inherit;opacity:.6;font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:12px" hidden></p>
-    </div>
-  </header>
+<div class="hub-lead"><p class="hub-intro" style="margin:.4rem 0 0;color:inherit;opacity:.75;max-width:52ch">PAOK FC's seasons in numbers: player stats and ratings, opponents, standings, and results against what the data expected.</p><p class="hub-updated" id="hub-updated" style="margin:.5rem 0 0;color:inherit;opacity:.6;font-family:var(--an-mono);font-size:12px" hidden></p></div>
 
   <p class="section-head">2026&ndash;27 season</p>
   <div class="grid">

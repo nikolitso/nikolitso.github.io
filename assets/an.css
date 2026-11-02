@@ -41,7 +41,7 @@ html[data-site="books"]{--an-accent:#6d8dff}
 .an-tabs{display:flex;gap:22px;margin-top:16px;border-bottom:2px solid var(--an-rule);font-size:14px;overflow-x:auto;scrollbar-width:none}
 .an-tabs a{color:var(--an-muted);text-decoration:none;padding:0 0 10px;margin-bottom:-2px;border-bottom:2px solid transparent;white-space:nowrap;background:none;border-radius:0}
 .an-tabs a:hover{color:var(--an-ink)}
-.an-tabs a.on,.an-tabs a[aria-current]{color:var(--an-ink);border-color:var(--an-accent)}
+.an-tabs a.on,.an-tabs a.active,.an-tabs a[aria-current]{color:var(--an-ink);border-color:var(--an-accent)}
 .an-head:has(.an-tabs)>div{padding-bottom:0}
 .an-head:not(:has(.an-tabs))>div{padding-bottom:20px}
 

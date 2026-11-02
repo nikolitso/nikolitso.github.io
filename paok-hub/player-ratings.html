@@ -1,9 +1,10 @@
 ﻿<!doctype html>
-<html lang="en">
+<html lang="en" data-site="paok">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Player Ratings 2026-27</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Hanken+Grotesk:ital,wght@0,300..700;1,400&display=swap">
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
   :root{
@@ -11,42 +12,45 @@
     --accent:#1c1f6b; --accent-soft:#eceeff;
     --hi-bg:#eaf3ec; --hi-fg:#2c6e45;
     --lo-bg:#fbe9e7; --lo-fg:#9c3a2e;
+  
+    /* shared base (assets/an.css): the page's dark palette, with the common names mapped onto the tokens */
+    --ink: var(--an-ink);
+    --sub: var(--an-muted);
+    --line: var(--an-rule);
+    --bg: var(--an-paper);
+    --card: var(--an-soft);
+    --accent: var(--an-accent);
+    --accent-soft: var(--an-accent-soft);
+    --hi-bg: #1f3226;
+    --hi-fg: #7fd39d;
+    --lo-bg: #3a2422;
+    --lo-fg: #f0a396;
+    --surface: var(--an-soft);
+    --surface-2: color-mix(in srgb,var(--an-soft) 60%,var(--an-rule));
+    --ink-dim: var(--an-muted);
+    --an-wrap: 760px;
   }
-  @media (prefers-color-scheme: dark){
-    :root:not([data-theme="light"]){
-      --ink:#e7e6e1; --sub:#a2a7b3; --line:#33353c; --bg:#15161a; --card:#1c1e24;
-      --accent:#8f96ff; --accent-soft:#242850;
-      --hi-bg:#1f3226; --hi-fg:#7fd39d;
-      --lo-bg:#3a2422; --lo-fg:#f0a396;
-    }
-  }
-  :root[data-theme="dark"]{
-    --ink:#e7e6e1; --sub:#a2a7b3; --line:#33353c; --bg:#15161a; --card:#1c1e24;
-    --accent:#8f96ff; --accent-soft:#242850;
-    --hi-bg:#1f3226; --hi-fg:#7fd39d;
-    --lo-bg:#3a2422; --lo-fg:#f0a396;
-  }
-  *{box-sizing:border-box;}
+      *{box-sizing:border-box;}
   body{margin:0;padding:44px 24px 72px;background:var(--bg);color:var(--ink);
-       font-family:'IBM Plex Sans',system-ui,sans-serif;}
+       font-family:var(--an-body);}
   .wrap{max-width:760px;margin:0 auto;}
-  .overline{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.14em;
+  .overline{font-family:var(--an-mono);font-size:12px;letter-spacing:.14em;
        color:var(--accent);font-weight:600;text-transform:uppercase;margin-bottom:12px;}
-  h1{font-family:'Archivo',sans-serif;font-size:38px;font-weight:800;margin:0 0 8px;letter-spacing:-.01em;}
+  h1{font-family:var(--an-body);font-size:38px;font-weight:800;margin:0 0 8px;letter-spacing:-.01em;}
   .subtitle{color:var(--sub);font-size:15px;margin:0 0 20px;line-height:1.55;max-width:620px;}
 
   .method{background:var(--card);border:1px solid var(--line);border-radius:10px;
        padding:14px 16px;font-size:12.5px;color:var(--sub);line-height:1.6;margin-bottom:34px;}
   .method b{color:var(--ink);}
-  .method code{font-family:'IBM Plex Mono',monospace;font-size:11.5px;background:var(--accent-soft);
+  .method code{font-family:var(--an-mono);font-size:11.5px;background:var(--accent-soft);
        color:var(--accent);padding:1px 5px;border-radius:4px;}
 
-  .section-title{font-family:'Archivo',sans-serif;font-size:20px;font-weight:800;margin:0 0 4px;}
-  .section-sub{font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--sub);
+  .section-title{font-family:var(--an-body);font-size:20px;font-weight:800;margin:0 0 4px;}
+  .section-sub{font-family:var(--an-mono);font-size:11.5px;color:var(--sub);
        margin:0 0 14px;letter-spacing:.03em;}
 
   table{width:100%;border-collapse:collapse;table-layout:fixed;margin-bottom:38px;}
-  th{font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.06em;
+  th{font-family:var(--an-mono);font-size:10.5px;letter-spacing:.06em;
        text-transform:uppercase;color:var(--sub);font-weight:500;text-align:left;
        padding:8px 10px;border-bottom:1px solid var(--line);}
   th.num, td.num{text-align:right;}
@@ -54,10 +58,10 @@
   th:nth-child(2), td:nth-child(2){width:18%;}
   td{padding:9px 10px;border-bottom:1px solid var(--line);font-size:13.5px;}
   td.name{font-weight:600;}
-  td.rating{font-variant-numeric:tabular-nums;font-weight:700;font-family:'IBM Plex Mono',monospace;}
+  td.rating{font-variant-numeric:tabular-nums;font-weight:700;font-family:var(--an-mono);}
   .apps{color:var(--sub);font-size:13.5px;}
 
-  .group-row td{padding:12px 10px 8px;border-bottom:none;font-family:'IBM Plex Mono',monospace;
+  .group-row td{padding:12px 10px 8px;border-bottom:none;font-family:var(--an-mono);
        font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--sub);}
   .group-row:first-child td{padding-top:8px;}
   .group-row .dot{width:6px;height:6px;border-radius:50%;background:var(--accent);
@@ -70,28 +74,23 @@
   tr.pos-hidden{display:none;}
   .footer{margin-top:6px;padding-top:16px;border-top:1px solid var(--line);color:var(--sub);font-size:12px;}
 </style>
+<link rel="stylesheet" href="/assets/an.css?v=1">
 </head>
 <body>
 <!-- sitebar:start (link back to antonisnikolitsopoulos.com; keep on every page) -->
-<style>
-.an-sitebar{background:#0d1220;border-bottom:1px solid rgba(255,255,255,.09);font:500 13px/1.2 "Segoe UI",system-ui,-apple-system,sans-serif;letter-spacing:.02em}
-.an-sitebar>div{max-width:72rem;margin:0 auto;padding:6px 16px;display:flex;justify-content:flex-end;align-items:center;gap:18px}
-.an-sitebar a{color:#9aa1b2;text-decoration:none;display:inline-flex;align-items:center;min-height:24px}.an-sitebar a:hover{color:#fff}
-.an-sitebar svg{width:17px;height:17px;fill:currentColor}
-.an-sitebar a[href="/"]{padding:6px 8px;margin:-6px -8px -6px -4px;border-radius:6px}.an-sitebar a[href="/"]:hover{background:rgba(255,255,255,.08)}
-</style>
 <nav class="an-sitebar" aria-label="Main site"><div><a href="/books/">Books</a><a href="/#projects">Projects</a><a href="/about/">About</a><a href="/" title="Main site: antonisnikolitsopoulos.com" aria-label="Main site"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 2 11.5h3V21h5.5v-6h3v6H19v-9.5h3z"/></svg></a></div></nav>
 <!-- sitebar:end -->
 
 
+<header class="an-head"><div>
+  <a class="an-brand" href="index.html"><svg class="an-mark" aria-hidden="true"><use href="/assets/marks.svg#paok"/></svg><span><small class="an-kicker">PAOK Hub</small><h1>Player Ratings 2026&ndash;27</h1></span></a>
+</div></header>
 <div class="wrap">
-<div class="overline"><a href="index.html" style="color:inherit;text-decoration:none;">PAOK HUB</a> &middot; PLAYER RATINGS</div>
-<h1>Player Ratings 2026&ndash;27</h1>
 
 <div class="section-title">Season average</div>
 <p class="section-sub">After matchday 9</p>
 <div class="method" style="margin-bottom:20px;display:flex;align-items:baseline;gap:10px;">
-  <span style="font-family:'Archivo',sans-serif;font-weight:800;font-size:28px;color:var(--accent);">7.1</span>
+  <span style="font-family:var(--an-body);font-weight:800;font-size:28px;color:var(--accent);">7.1</span>
   <span>Team average &mdash; the weighted mean of every player's rating across every match they appeared in (142 appearances over 9 matchdays).</span>
 </div>
 <table>

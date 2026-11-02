@@ -1,11 +1,11 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-site="paok">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>The Expected Table 2025-26 (Archive)</title>
 
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Hanken+Grotesk:ital,wght@0,300..700;1,400&display=swap">
 
 <style>
   :root {
@@ -22,49 +22,35 @@
     --cyan: #0e7f9c;
     --champion: #D4AF37;
     --relegated: #DC2626;
-  }
-
-  @media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) {
-      --bg: #101114;
-      --surface: #17181c;
-      --surface-2: #1d1f24;
-      --ink: #edeeef;
-      --ink-dim: #9a9ca3;
-      --line: #2b2d33;
-      --accent: #8f96ff;
-      --accent-soft: #232650;
-      --good: #4fce94;
-      --bad: #e8917c;
-      --cyan: #3cc6e6;
-      --champion: #C9A227;
-      --relegated: #D64545;
-    }
-  }
-
-  :root[data-theme="dark"] {
-    --bg: #101114;
-    --surface: #17181c;
-    --surface-2: #1d1f24;
-    --ink: #edeeef;
-    --ink-dim: #9a9ca3;
-    --line: #2b2d33;
-    --accent: #8f96ff;
-    --accent-soft: #232650;
+  
+    /* shared base (assets/an.css): the page's dark palette, with the common names mapped onto the tokens */
+    --bg: var(--an-paper);
+    --surface: var(--an-soft);
+    --surface-2: color-mix(in srgb,var(--an-soft) 60%,var(--an-rule));
+    --ink: var(--an-ink);
+    --ink-dim: var(--an-muted);
+    --line: var(--an-rule);
+    --accent: var(--an-accent);
+    --accent-soft: var(--an-accent-soft);
     --good: #4fce94;
     --bad: #e8917c;
     --cyan: #3cc6e6;
     --champion: #C9A227;
     --relegated: #D64545;
+    --card: var(--an-soft);
+    --sub: var(--an-muted);
+    --an-wrap: 1040px;
   }
 
+  
+  
   * { box-sizing: border-box; }
 
   body {
     margin: 0;
     background: var(--bg);
     color: var(--ink);
-    font-family: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+    font-family:var(--an-body);
     line-height: 1.5;
   }
 
@@ -73,13 +59,13 @@
   header.page-head { margin-bottom: 32px; }
 
   .eyebrow {
-    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-family:var(--an-mono);
     font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase;
     color: var(--accent); font-weight: 600; margin: 0 0 10px;
   }
 
   h1 {
-    font-family: "Archivo", ui-sans-serif, sans-serif;
+    font-family:var(--an-body);
     font-weight: 800; font-size: clamp(28px, 4.5vw, 40px);
     letter-spacing: -0.01em; margin: 0 0 8px; text-wrap: balance;
   }
@@ -87,7 +73,7 @@
   .meta-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
 
   .meta-pill {
-    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-family:var(--an-mono);
     font-size: 12px; color: var(--ink-dim);
     background: var(--surface-2); border: 1px solid var(--line);
     border-radius: 999px; padding: 5px 12px;
@@ -95,25 +81,25 @@
 
   section.group { margin-top: 40px; }
 
-  .section-title { font-family: "Archivo", sans-serif; font-size: 19px; font-weight: 800; margin: 0 0 14px; }
+  .section-title { font-family:var(--an-body); font-size: 19px; font-weight: 800; margin: 0 0 14px; }
   .section-title.has-note { margin-bottom: 4px; }
 
   .champ-note {
-    font-family: "IBM Plex Mono", monospace; font-size: 12.5px; font-weight: 600;
+    font-family:var(--an-mono); font-size: 12.5px; font-weight: 600;
     color: var(--accent); background: var(--accent-soft);
     display: inline-block; padding: 5px 12px; border-radius: 999px;
     margin: 0 0 14px;
   }
 
   .paok-note {
-    font-family: "IBM Plex Mono", monospace; font-size: 12.5px; font-weight: 600;
+    font-family:var(--an-mono); font-size: 12.5px; font-weight: 600;
     color: var(--accent); background: var(--accent-soft);
     display: inline-block; padding: 5px 12px; border-radius: 999px;
     margin: 0 0 14px;
   }
 
   .releg-note {
-    font-family: "IBM Plex Mono", monospace; font-size: 12.5px; font-weight: 600;
+    font-family:var(--an-mono); font-size: 12.5px; font-weight: 600;
     color: var(--bad); background: color-mix(in srgb, var(--bad) 15%, transparent);
     display: inline-block; padding: 5px 12px; border-radius: 999px;
     margin: 0 0 14px;
@@ -126,7 +112,7 @@
   th, td { text-align: left; padding: 9px 8px; white-space: nowrap; }
 
   thead th {
-    font-family: "IBM Plex Mono", monospace; font-size: 10.5px;
+    font-family:var(--an-mono); font-size: 10.5px;
     letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-dim);
     font-weight: 600; background: var(--surface-2); border-bottom: 1px solid var(--line);
   }
@@ -135,9 +121,9 @@
 
   tbody tr:not(:last-child) td { border-bottom: 1px solid var(--line); }
 
-  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; font-family: "IBM Plex Mono", monospace; font-size: 13px; }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; font-family:var(--an-mono); font-size: 13px; }
 
-  td.pos { font-family: "IBM Plex Mono", monospace; color: var(--ink-dim); width: 30px; }
+  td.pos { font-family:var(--an-mono); color: var(--ink-dim); width: 30px; }
 
   td.team { font-weight: 600; }
   .team-cell { display: flex; align-items: center; gap: 8px; }
@@ -158,7 +144,7 @@
   .dpos-badge {
     display: inline-flex; align-items: center; gap: 3px;
     padding: 3px 8px; border-radius: 999px;
-    font-family: "IBM Plex Mono", monospace; font-weight: 700; font-size: 12.5px;
+    font-family:var(--an-mono); font-weight: 700; font-size: 12.5px;
   }
   .dpos-badge.pos-num { background: color-mix(in srgb, var(--good) 18%, transparent); color: var(--good); }
   .dpos-badge.neg-num { background: color-mix(in srgb, var(--bad) 18%, transparent); color: var(--bad); }
@@ -187,14 +173,14 @@
   .spotlight-card.xgd { --edge: var(--cyan); }
   .spotlight-card.xgd .value { color: var(--cyan); }
   .spotlight-card .label {
-    font-family: "IBM Plex Mono", monospace; font-size: 10.5px; letter-spacing: 0.08em;
+    font-family:var(--an-mono); font-size: 10.5px; letter-spacing: 0.08em;
     text-transform: uppercase; color: var(--ink-dim); margin-bottom: 6px;
   }
   .spotlight-card .team {
-    font-family: "Archivo", sans-serif; font-weight: 700; font-size: 17px; margin-bottom: 4px;
+    font-family:var(--an-body); font-weight: 700; font-size: 17px; margin-bottom: 4px;
   }
   .spotlight-card .value {
-    font-family: "IBM Plex Mono", monospace; font-size: 13px; font-weight: 600;
+    font-family:var(--an-mono); font-size: 13px; font-weight: 600;
   }
   .spotlight-card.luck .value { color: var(--good); }
   .spotlight-card.hard .value { color: var(--bad); }
@@ -202,7 +188,7 @@
   .pm-badge {
     display: inline-flex; align-items: center;
     padding: 3px 9px; border-radius: 999px;
-    font-family: "IBM Plex Mono", monospace; font-weight: 700; font-size: 13px;
+    font-family:var(--an-mono); font-weight: 700; font-size: 13px;
   }
   .pm-badge.pos-num { background: color-mix(in srgb, var(--good) 20%, transparent); color: var(--good); }
   .pm-badge.neg-num { background: color-mix(in srgb, var(--bad) 20%, transparent); color: var(--bad); }
@@ -212,25 +198,18 @@
     color: var(--accent);
   }
 </style>
+<link rel="stylesheet" href="/assets/an.css?v=1">
 </head>
 <body>
 <!-- sitebar:start (link back to antonisnikolitsopoulos.com; keep on every page) -->
-<style>
-.an-sitebar{background:#0d1220;border-bottom:1px solid rgba(255,255,255,.09);font:500 13px/1.2 "Segoe UI",system-ui,-apple-system,sans-serif;letter-spacing:.02em}
-.an-sitebar>div{max-width:72rem;margin:0 auto;padding:6px 16px;display:flex;justify-content:flex-end;align-items:center;gap:18px}
-.an-sitebar a{color:#9aa1b2;text-decoration:none;display:inline-flex;align-items:center;min-height:24px}.an-sitebar a:hover{color:#fff}
-.an-sitebar svg{width:17px;height:17px;fill:currentColor}
-.an-sitebar a[href="/"]{padding:6px 8px;margin:-6px -8px -6px -4px;border-radius:6px}.an-sitebar a[href="/"]:hover{background:rgba(255,255,255,.08)}
-</style>
 <nav class="an-sitebar" aria-label="Main site"><div><a href="/books/">Books</a><a href="/#projects">Projects</a><a href="/about/">About</a><a href="/" title="Main site: antonisnikolitsopoulos.com" aria-label="Main site"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 2 11.5h3V21h5.5v-6h3v6H19v-9.5h3z"/></svg></a></div></nav>
 <!-- sitebar:end -->
 
+<header class="an-head"><div>
+  <a class="an-brand" href="index.html"><svg class="an-mark" aria-hidden="true"><use href="/assets/marks.svg#paok"/></svg><span><small class="an-kicker">PAOK Hub</small><h1>The Expected Table, 2025&ndash;26</h1></span></a>
+</div></header>
 <div class="wrap">
-
-  <header class="page-head">
-    <p class="eyebrow"><a href="index.html" style="color:inherit;text-decoration:none;">PAOK Hub</a></p>
-    <h1>The Expected Table, 2025&ndash;26</h1>
-    <div class="spotlight-grid">
+<div class="spotlight-grid">
       <div class="spotlight-card luck">
         <div class="label">Above expectation</div>
         <div class="team">AEK</div>
@@ -247,7 +226,6 @@
         <div class="value">+1.51 per match</div>
       </div>
     </div>
-  </header>
 
   <section class="group">
     <p class="section-title has-note">Championship Round</p>

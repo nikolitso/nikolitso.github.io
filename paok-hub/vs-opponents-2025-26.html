@@ -1,17 +1,24 @@
-﻿<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1"><style>:root{color-scheme:light}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+﻿<!doctype html><html lang="en" data-site="paok"><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1"><style>:root{color-scheme:light
+    /* shared base (assets/an.css): the page's dark palette, with the common names mapped onto the tokens */
+    --bg: var(--an-paper);
+    --surface: var(--an-soft);
+    --surface-2: color-mix(in srgb,var(--an-soft) 60%,var(--an-rule));
+    --ink: var(--an-ink);
+    --ink-dim: var(--an-muted);
+    --line: var(--an-rule);
+    --accent: var(--an-accent);
+    --accent-soft: var(--an-accent-soft);
+    --card: var(--an-soft);
+    --sub: var(--an-muted);
+    --an-wrap: 720px;
+  }body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:var(--an-paper);color:var(--an-ink)}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style><link rel="stylesheet" href="/assets/an.css?v=1">
+</head><body>
 <!-- sitebar:start (link back to antonisnikolitsopoulos.com; keep on every page) -->
-<style>
-.an-sitebar{background:#0d1220;border-bottom:1px solid rgba(255,255,255,.09);font:500 13px/1.2 "Segoe UI",system-ui,-apple-system,sans-serif;letter-spacing:.02em}
-.an-sitebar>div{max-width:72rem;margin:0 auto;padding:6px 16px;display:flex;justify-content:flex-end;align-items:center;gap:18px}
-.an-sitebar a{color:#9aa1b2;text-decoration:none;display:inline-flex;align-items:center;min-height:24px}.an-sitebar a:hover{color:#fff}
-.an-sitebar svg{width:17px;height:17px;fill:currentColor}
-.an-sitebar a[href="/"]{padding:6px 8px;margin:-6px -8px -6px -4px;border-radius:6px}.an-sitebar a[href="/"]:hover{background:rgba(255,255,255,.08)}
-</style>
 <nav class="an-sitebar" aria-label="Main site"><div><a href="/books/">Books</a><a href="/#projects">Projects</a><a href="/about/">About</a><a href="/" title="Main site: antonisnikolitsopoulos.com" aria-label="Main site"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 2 11.5h3V21h5.5v-6h3v6H19v-9.5h3z"/></svg></a></div></nav>
 <!-- sitebar:end -->
 <title>PAOK vs Opponents 2025-26</title>
 
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Hanken+Grotesk:ital,wght@0,300..700;1,400&display=swap">
 
 <style>
   :root {
@@ -27,41 +34,15 @@
     --opp-soft: #f6e7e2;
   }
 
-  @media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) {
-      --bg: #101114;
-      --surface: #17181c;
-      --surface-2: #1d1f24;
-      --ink: #edeeef;
-      --ink-dim: #9a9ca3;
-      --line: #2b2d33;
-      --accent: #8f96ff;
-      --accent-soft: #232650;
-      --opp: #e08066;
-      --opp-soft: #3a231e;
-    }
-  }
-
-  :root[data-theme="dark"] {
-    --bg: #101114;
-    --surface: #17181c;
-    --surface-2: #1d1f24;
-    --ink: #edeeef;
-    --ink-dim: #9a9ca3;
-    --line: #2b2d33;
-    --accent: #8f96ff;
-    --accent-soft: #232650;
-    --opp: #e08066;
-    --opp-soft: #3a231e;
-  }
-
+  
+  
   * { box-sizing: border-box; }
 
   body {
     margin: 0;
     background: var(--bg);
     color: var(--ink);
-    font-family: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+    font-family:var(--an-body);
     line-height: 1.5;
   }
 
@@ -74,7 +55,7 @@
   header.page-head { margin-bottom: 32px; }
 
   .eyebrow {
-    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-family:var(--an-mono);
     font-size: 12px;
     letter-spacing: 0.14em;
     text-transform: uppercase;
@@ -84,7 +65,7 @@
   }
 
   h1 {
-    font-family: "Archivo", ui-sans-serif, sans-serif;
+    font-family:var(--an-body);
     font-weight: 800;
     font-size: clamp(28px, 4.5vw, 40px);
     letter-spacing: -0.01em;
@@ -97,7 +78,7 @@
   .meta-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
 
   .meta-pill {
-    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-family:var(--an-mono);
     font-size: 12px;
     color: var(--ink-dim);
     background: var(--surface-2);
@@ -111,7 +92,7 @@
     justify-content: space-between;
     align-items: baseline;
     margin: 36px 0 14px;
-    font-family: "IBM Plex Mono", monospace;
+    font-family:var(--an-mono);
     font-size: 12px;
     letter-spacing: 0.06em;
     text-transform: uppercase;
@@ -139,7 +120,7 @@
   .stat-row:not(:last-child) { border-bottom: 1px solid var(--line); }
 
   .stat-row .val {
-    font-family: "IBM Plex Mono", monospace;
+    font-family:var(--an-mono);
     font-variant-numeric: tabular-nums;
     font-size: 13.5px;
     font-weight: 600;
@@ -169,7 +150,7 @@
   .bar-fill.opp-fill { background: var(--opp); }
 
   .stat-label {
-    font-family: "IBM Plex Mono", monospace;
+    font-family:var(--an-mono);
     font-size: 11px;
     letter-spacing: 0.05em;
     text-transform: uppercase;
@@ -180,7 +161,7 @@
 
   .section-head {
     margin: 44px 0 4px;
-    font-family: "IBM Plex Mono", monospace;
+    font-family:var(--an-mono);
     font-size: 12px;
     letter-spacing: 0.08em;
     text-transform: uppercase;
@@ -201,17 +182,15 @@
   }
 </style>
 
+<header class="an-head"><div>
+  <a class="an-brand" href="index.html"><svg class="an-mark" aria-hidden="true"><use href="/assets/marks.svg#paok"/></svg><span><small class="an-kicker">PAOK Hub</small><h1>PAOK vs Opponents, 2025&ndash;26</h1></span></a>
+</div></header>
 <div class="wrap">
-
-  <header class="page-head">
-    <p class="eyebrow"><a href="index.html" style="color:inherit;text-decoration:none;">PAOK Hub</a> &middot; 2025-26 Season</p>
-    <h1>PAOK vs Opponents, 2025&ndash;26</h1>
-    <div class="meta-row">
+<div class="meta-row">
       <span class="meta-pill">26 regular season + 6 play-off = 32 matches</span>
       <span class="meta-pill">Record: 18W 10D 4L</span>
       <span class="meta-pill">GF 59 &ndash; GA 25</span>
     </div>
-  </header>
 
   <p class="section-head" style="margin-top:0;border-bottom-color:var(--accent);">Regular Season</p>
   <p class="section-head">Overall</p>

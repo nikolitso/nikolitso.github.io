@@ -1,11 +1,11 @@
 ﻿<!doctype html>
-<html lang="en">
+<html lang="en" data-site="paok">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>PAOK Player Profiles 2026-27</title>
 
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Hanken+Grotesk:ital,wght@0,300..700;1,400&display=swap">
 
 <style>
   :root {
@@ -21,47 +21,34 @@
     --good-soft: #e5f3ec;
     --bad: #a4402a;
     --bad-soft: #f7e9e5;
-  }
-
-  @media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) {
-      --bg: #101114;
-      --surface: #17181c;
-      --surface-2: #1d1f24;
-      --ink: #edeeef;
-      --ink-dim: #9a9ca3;
-      --line: #2b2d33;
-      --accent: #8f96ff;
-      --accent-soft: #232650;
-      --good: #4fce94;
-      --good-soft: #163227;
-      --bad: #e8917c;
-      --bad-soft: #3a231e;
-    }
-  }
-
-  :root[data-theme="dark"] {
-    --bg: #101114;
-    --surface: #17181c;
-    --surface-2: #1d1f24;
-    --ink: #edeeef;
-    --ink-dim: #9a9ca3;
-    --line: #2b2d33;
-    --accent: #8f96ff;
-    --accent-soft: #232650;
+  
+    /* shared base (assets/an.css): the page's dark palette, with the common names mapped onto the tokens */
+    --bg: var(--an-paper);
+    --surface: var(--an-soft);
+    --surface-2: color-mix(in srgb,var(--an-soft) 60%,var(--an-rule));
+    --ink: var(--an-ink);
+    --ink-dim: var(--an-muted);
+    --line: var(--an-rule);
+    --accent: var(--an-accent);
+    --accent-soft: var(--an-accent-soft);
     --good: #4fce94;
     --good-soft: #163227;
     --bad: #e8917c;
     --bad-soft: #3a231e;
+    --card: var(--an-soft);
+    --sub: var(--an-muted);
+    --an-wrap: 980px;
   }
 
+  
+  
   * { box-sizing: border-box; }
 
   body {
     margin: 0;
     background: var(--bg);
     color: var(--ink);
-    font-family: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+    font-family:var(--an-body);
     line-height: 1.5;
   }
 
@@ -86,7 +73,7 @@
   }
 
   .jump-nav a {
-    font-family: "IBM Plex Mono", monospace;
+    font-family:var(--an-mono);
     font-size: 11.5px;
     letter-spacing: 0.04em;
     color: var(--ink-dim);
@@ -110,7 +97,7 @@
   }
 
   .eyebrow {
-    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-family:var(--an-mono);
     font-size: 12px;
     letter-spacing: 0.14em;
     text-transform: uppercase;
@@ -120,7 +107,7 @@
   }
 
   h1 {
-    font-family: "Archivo", ui-sans-serif, sans-serif;
+    font-family:var(--an-body);
     font-weight: 800;
     font-size: clamp(30px, 4.5vw, 42px);
     letter-spacing: -0.01em;
@@ -143,7 +130,7 @@
   }
 
   .meta-pill {
-    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-family:var(--an-mono);
     font-size: 12px;
     color: var(--ink-dim);
     background: var(--surface-2);
@@ -161,7 +148,7 @@
     display: flex;
     align-items: baseline;
     gap: 8px;
-    font-family: "IBM Plex Mono", monospace;
+    font-family:var(--an-mono);
     font-size: 12px;
     letter-spacing: 0.08em;
     text-transform: uppercase;
@@ -234,14 +221,14 @@
   }
 
   .p-card h3 {
-    font-family: "Archivo", sans-serif;
+    font-family:var(--an-body);
     font-size: 17px;
     font-weight: 700;
     margin: 0;
   }
 
   .p-pos {
-    font-family: "IBM Plex Mono", monospace;
+    font-family:var(--an-mono);
     font-size: 10.5px;
     letter-spacing: 0.04em;
     color: var(--accent);
@@ -270,7 +257,7 @@
   }
 
   .p-bio-label {
-    font-family: "IBM Plex Mono", monospace;
+    font-family:var(--an-mono);
     font-size: 9.5px;
     letter-spacing: 0.04em;
     text-transform: uppercase;
@@ -290,7 +277,7 @@
   }
 
   .p-row-label {
-    font-family: "IBM Plex Mono", monospace;
+    font-family:var(--an-mono);
     font-size: 10px;
     letter-spacing: 0.06em;
     text-transform: uppercase;
@@ -319,7 +306,7 @@
   .chip.good { background: var(--good-soft); color: var(--good); }
   .chip.bad { background: var(--bad-soft); color: var(--bad); }
   .chip .tier {
-    font-family: "IBM Plex Mono", monospace;
+    font-family:var(--an-mono);
     font-size: 9.5px;
     opacity: 0.75;
   }
@@ -348,7 +335,7 @@
   .p-style::before {
     content: "Style of play";
     display: block;
-    font-family: "IBM Plex Mono", monospace;
+    font-family:var(--an-mono);
     font-size: 10px;
     letter-spacing: 0.06em;
     text-transform: uppercase;
@@ -379,11 +366,7 @@
 
   .legend .chip { pointer-events: none; }
 
-  @media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) .p-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.3); }
-  }
-  :root[data-theme="dark"] .p-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.3); }
-
+    
   footer.page-foot {
     margin-top: 48px;
     padding-top: 20px;
@@ -392,33 +375,25 @@
     color: var(--ink-dim);
   }
 </style>
+<link rel="stylesheet" href="/assets/an.css?v=1">
 </head>
 <body>
 <!-- sitebar:start (link back to antonisnikolitsopoulos.com; keep on every page) -->
-<style>
-.an-sitebar{background:#0d1220;border-bottom:1px solid rgba(255,255,255,.09);font:500 13px/1.2 "Segoe UI",system-ui,-apple-system,sans-serif;letter-spacing:.02em}
-.an-sitebar>div{max-width:72rem;margin:0 auto;padding:6px 16px;display:flex;justify-content:flex-end;align-items:center;gap:18px}
-.an-sitebar a{color:#9aa1b2;text-decoration:none;display:inline-flex;align-items:center;min-height:24px}.an-sitebar a:hover{color:#fff}
-.an-sitebar svg{width:17px;height:17px;fill:currentColor}
-.an-sitebar a[href="/"]{padding:6px 8px;margin:-6px -8px -6px -4px;border-radius:6px}.an-sitebar a[href="/"]:hover{background:rgba(255,255,255,.08)}
-</style>
 <nav class="an-sitebar" aria-label="Main site"><div><a href="/books/">Books</a><a href="/#projects">Projects</a><a href="/about/">About</a><a href="/" title="Main site: antonisnikolitsopoulos.com" aria-label="Main site"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 2 11.5h3V21h5.5v-6h3v6H19v-9.5h3z"/></svg></a></div></nav>
 <!-- sitebar:end -->
 
 
+<header class="an-head"><div>
+  <a class="an-brand" href="index.html"><svg class="an-mark" aria-hidden="true"><use href="/assets/marks.svg#paok"/></svg><span><small class="an-kicker">PAOK Hub</small><h1>Player Profiles</h1></span></a>
+</div></header>
 <div class="wrap">
-
-  <header class="page-head">
-    <p class="eyebrow"><a href="index.html" style="color:inherit;text-decoration:none;">PAOK Hub</a></p>
-    <h1>Player Profiles</h1>
-    <div class="meta-row">
+<div class="meta-row">
       <span class="meta-pill">28 players</span>
     </div>
     <div class="legend">
       <span class="chip good">Strong <span class="tier">/ Very Strong</span></span>
       <span class="chip bad">Weak <span class="tier">/ Very Weak</span></span>
     </div>
-  </header>
 
   <nav class="jump-nav">
     <a href="#goalkeepers">Goalkeepers</a>
