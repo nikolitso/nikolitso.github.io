@@ -172,6 +172,16 @@ def basketball():
     return pills
 
 
+
+def basketball_overs():
+    d = js_object("/basketball/overs/live.js", r"window\.LIVE\s*=")
+    pills = [updated(datetime.strptime(d["updated"], "%d %b %Y %H:%M").strftime("%Y-%m-%d %H:%M"))]
+    open_ = [p for p in d.get("picks", []) if not p.get("done")]
+    pills.append(f"{len(open_)} open pick{'s' if len(open_) != 1 else ''}" if open_ else "No open picks")
+    if d.get("bt"):
+        pills.append(f"Backtest {d['bt']['roi'] * 100:+.1f}%")
+    return pills
+
 CARDS = {                    # slug -> (card href on the homepage, reader)
     "superleague": ("/superleague/", superleague),
     "greek-cup": ("/football/greek-cup/", greek_cup),
@@ -179,6 +189,7 @@ CARDS = {                    # slug -> (card href on the homepage, reader)
     "fibaeuropecup": ("/fibaeuropecup/", lambda: basketball_cup("fibaeuropecup")),
     "handball": ("/handball/projections/", handball),
     "basketball": ("/basketball/", basketball),
+    "basketball-overs": ("/basketball/overs/", basketball_overs),
     "paok-hub": ("/paok-hub/", paok_hub),
     "paok-basketball": ("/paok-basketball/", paok_basketball),
 }

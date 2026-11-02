@@ -34,6 +34,7 @@ SHOTS = [
     ("/fibaeuropecup/", "fibaeuropecup"),
     ("/handball/projections/", "handball"),
     ("/basketball/", "basketball"),
+    ("/basketball/overs/", "basketball-overs"),
     ("/paok-hub/", "paok-hub"),
     ("/paok-basketball/", "paok-basketball"),
 ]
