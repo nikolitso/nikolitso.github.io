@@ -1,9 +1,11 @@
 name: FIBA Europe Cup
 
 # The /fibaeuropecup/ pipeline (scripts in nikolitso/FIBA-Europe-Cup), on GitHub instead of the PC:
-#   07:35 Athens   update.py          results (Flashscore), odds and fixtures (BetExplorer), projections
-#   hourly 10-21   matchday_odds.py   today's games: Flashscore lines (Bwin.gr, else Stoiximan.gr ...), projections
+#   07:35 Athens   update.py          results, fixtures and odds (Flashscore), projections
+#   hourly 10-21   matchday_odds.py   today's games: Flashscore lines, projections
 # Both commit and push the fibaeuropecup/ files here. The "Update all sites" button runs the full update.
+# scripts/fiba_runner.py starts them: Flashscore shows a runner outside Greece other bookmakers than the Greek ones
+# the pipeline looks for, so the runner lets it take the line from those (Stake.com, 1xBet ...) when no Greek book is listed.
 on:
   schedule:
     - cron: "35 5 * * *"      # full update (UTC; 07:35 Athens in winter, 08:35 in summer)
@@ -11,9 +13,9 @@ on:
   workflow_dispatch:
     inputs:
       job:
-        description: "update = results, odds, fixtures; odds = today's matchday lines"
+        description: "update = results, odds, fixtures; odds = today's matchday lines; probe = print what Flashscore shows the runner, publish nothing"
         type: choice
-        options: [update, odds]
+        options: [update, odds, probe]
         default: update
 
 permissions:
@@ -43,14 +45,12 @@ jobs:
         env:
           FIBA_SITE: ${{ github.workspace }}/fibaeuropecup
           FIBA_NO_MIRROR: "1"
+          FIBA_PIPELINE: ${{ github.workspace }}/_fiba
           PYTHONIOENCODING: utf-8
           TZ: Europe/Athens          # time stamps and commit messages in Athens time, as on the PC
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          cd _fiba
-          if [ "${{ github.event.schedule }}" = "5 7-18 * * *" ] || [ "${{ inputs.job }}" = "odds" ]; then
-            python -u matchday_odds.py
-          else
-            python -u update.py
-          fi
+          job="${{ inputs.job }}"
+          [ "${{ github.event.schedule }}" = "5 7-18 * * *" ] && job=odds
+          python -u scripts/fiba_runner.py "${job:-update}"
