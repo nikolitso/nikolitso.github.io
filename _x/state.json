@@ -648,7 +648,8 @@
       "smuggling-hendrix",
       "crossing",
       "aicha",
-      "mondays-in-the-sun"
+      "mondays-in-the-sun",
+      "the-good-life"
     ],
     "log": [
       {
@@ -856,11 +857,17 @@
         "slot": "2026-11-01 20",
         "slug": "mondays-in-the-sun",
         "id": "2116953593865449969"
+      },
+      {
+        "day": "2026-11-02",
+        "slot": "2026-11-02 08",
+        "slug": "the-good-life",
+        "id": "2117134789195010051"
       }
     ],
-    "last_day": "2026-11-01"
+    "last_day": "2026-11-02"
   },
-  "last_slot": "2026-11-02 02",
+  "last_slot": "2026-11-02 08",
   "quote": {
     "seen": [
       "1",
