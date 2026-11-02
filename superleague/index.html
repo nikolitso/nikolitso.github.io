@@ -4,10 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Greek Super League</title>
-<meta name="description" content="Greek Super League projections for every game: goals, xG, shots, shots on target, corners, cards, fouls, goal kicks, throw-ins, possession and goalkeeper saves.">
+<meta name="description" content="Greek Super League projections for every game: goals, xG, shots, shots on target, corners, cards, fouls, possession and goalkeeper saves.">
 <link rel="canonical" href="https://antonisnikolitsopoulos.com/superleague/">
 <meta property="og:title" content="Greek Super League">
-<meta property="og:description" content="Greek Super League projections for every game: goals, xG, shots, corners, cards, fouls, goal kicks, throw-ins, possession and saves.">
+<meta property="og:description" content="Greek Super League projections for every game: goals, xG, shots, corners, cards, fouls, possession and saves.">
 <meta property="og:url" content="https://antonisnikolitsopoulos.com/superleague/">
 <meta property="og:image" content="https://antonisnikolitsopoulos.com/superleague.jpg">
 <meta name="twitter:card" content="summary_large_image">
@@ -166,9 +166,7 @@ th.rs{cursor:pointer;user-select:none} th.rs:hover,th.rs.on{color:var(--gold)}
 <script src="referee-games.js?v=0a5f405d" onerror="window.SLREFGAMES=null"></script>
 <script>
 const D = window.SL, $ = id => document.getElementById(id);
-// goal kicks and throw-ins show on Projections only (user, 1 Nov 2026)
-const PROJ_ONLY = ['goal_kicks', 'throw_ins'];
-const L = D.labels, PROJ_ORDER = D.order, ORDER = D.order.filter(s => !PROJ_ONLY.includes(s));
+const L = D.labels, ORDER = D.order;
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 const dayName = s => { const d = new Date(s.slice(0,10)+'T12:00'); return `${DAYS[d.getDay()]} ${d.getDate()} ${MON[d.getMonth()]}`; };
 const pct = x => Math.round(x*100) + '%';
@@ -235,7 +233,7 @@ function refHtml(r){
 
 function matchCard(g){
   const r = g.result, t = g.kickoff.slice(11) + (g.started ? ' <span class="live">Started</span>' : '');
-  const rows = PROJ_ORDER.map(s => {
+  const rows = ORDER.map(s => {
     const x = g.stats[s];
     return `<tr><td>${L[s]}</td><td class="n">${f(x.home, s)}</td><td class="n">${f(x.away, s)}</td>`+
       `<td class="n tot">${x.total == null ? '' : f(x.total, s)}</td></tr>`;
@@ -257,7 +255,7 @@ function renderProjections(){
   const cut = athensAgo(2 * 3600e3), fixtures = D.fixtures.filter(g => g.kickoff > cut);
   if (!fixtures.length) return '<p class="empty">No fixtures scheduled in the next two weeks.</p>';
   let h = `<div class="bar"><div class="seg" id="pjmode"><button data-m="match" class="${pjMode==='match'?'on':''}">By match</button><button data-m="stat" class="${pjMode==='stat'?'on':''}">By stat</button></div>`;
-  if (pjMode === 'stat') h += chipsHtml('pjstat', pjStat, PROJ_ORDER);
+  if (pjMode === 'stat') h += chipsHtml('pjstat', pjStat, ORDER);
   h += '</div>';
   if (fixtures.some(g => g.ref && g.ref.est)) h += `<p class="note">This round's referees were appointed after the last model update, so their effect on cards and fouls is estimated here: each referee's cards per game since 2024–25 (fouls: this season's games against the model's projection) next to the league's, pulled hard toward ×1.00, because in testing a referee's past said little about his next game's cards. The model's own referee factors replace these at its next update. Bookie comparisons and value bets use the adjusted numbers.</p>`;
   const byDay = {};
@@ -396,7 +394,7 @@ function renderMethod(){
     <h3><span class="num">8</span>Possession</h3>
     <p>Possession is a split that always adds to 100%, so it can't be multiplied like the counts. Each team has one possession strength (points above or below an even split), and the home side gets a small edge:</p>
     <div class="calc">${H} possession = 50 ${sgn(P.edge)} <i>home edge</i> ${sgn(P.home)} <i>${H}</i> ${sgn(-P.away)} <i>${W}</i> = <b>${P.proj.toFixed(1)}%</b> · ${W} ${(100 - P.proj).toFixed(1)}%</div>
-    <p>Shots, SoT, xG, fouls, goal kicks, throw-ins and saves all work like corners, each with its own averages and ratings. Shots, SoT and goalkeeper saves then get a small adjustment from the match odds: favourites take more shots and force more saves than their ratings alone suggest. In testing on 284 games since 2025–26 this made them about 1% more accurate (shots 1.4%, SoT 1.0%, saves 0.9%). I tested the same for xG, corners, fouls, goal kicks, throw-ins and possession, but the odds didn't help there, so those come from the ratings alone.</p>`;
+    <p>Shots, SoT, xG, fouls and saves all work like corners, each with its own averages and ratings. Shots, SoT and goalkeeper saves then get a small adjustment from the match odds: favourites take more shots and force more saves than their ratings alone suggest. In testing on 284 games since 2025–26 this made them about 1% more accurate (shots 1.4%, SoT 1.0%, saves 0.9%). I tested the same for xG, corners, fouls and possession, but the odds didn't help there, so those come from the ratings alone.</p>`;
   }
   h += `<h2>Where the ratings come from</h2>
   <ul>
@@ -415,12 +413,12 @@ function renderMethod(){
   }
   h += `
   <ul>
-    <li><b>Small samples are pulled toward the club's usual level.</b> After four games a team isn't really a corner machine because it won 9 in one of them. In Greece the Big 4 stay big and the small clubs stay small, so a team is pulled toward its own long-run level (every season since 2019), not toward the league average: Olympiakos toward Olympiakos, a promoted side toward a typical promoted side. Before this, the model under-rated the Big 4: they scored 9% more goals than it projected. Fouls and throw-ins follow the coach more than the club, so they are still pulled toward the league average.</li>
+    <li><b>Small samples are pulled toward the club's usual level.</b> After four games a team isn't really a corner machine because it won 9 in one of them. In Greece the Big 4 stay big and the small clubs stay small, so a team is pulled toward its own long-run level (every season since 2019), not toward the league average: Olympiakos toward Olympiakos, a promoted side toward a typical promoted side. Before this, the model under-rated the Big 4: they scored 9% more goals than it projected. Fouls follow the coach more than the club, so they are still pulled toward the league average.</li>
     <li><b>The Big 4 against the small clubs.</b> Even with that, a small club facing Olympiakos, PAOK, AEK or Panathinaikos has scored 15–20% fewer goals than projected in every season since 2019. So in those games the small club's goals are multiplied by ×${D.matchup['small v big'].toFixed(2)} and the big club's by ×${D.matchup['big v small'].toFixed(2)} (half of the gap seen so far, which tested best season by season). This feeds the goals line and the 1X2 chances.</li>
     <li><b>Promoted teams</b> start from how promoted sides have usually done. For corners that's ${E ? Math.round((1 - E.newcomer[0])*100) : 15}% fewer won and ${E ? Math.round((E.newcomer[1] - 1)*100) : 12}% more conceded than average. Their own results take over as games come in.</li>
-    ${(D.coach_window || []).length ? `<li><b>Same coach only.</b> For ${D.coach_window.map(s => lc(s)).join(', ')}, a team's own numbers start this season, or at its current coach's first game if he was already there before. Games under an earlier coach don't count. Until a new coach has enough games, the team is pulled toward the club's usual level, not the league average: replaying 2023–24 and 2024–25, this was as accurate as using every game, while dropping the club level as well made projections miss 2–6% more. Shots, fouls, throw-ins and possession lost a little with this rule, so they still use every game, faded.</li>` : ''}
+    ${(D.coach_window || []).length ? `<li><b>Same coach only.</b> For ${D.coach_window.map(s => lc(s)).join(', ')}, a team's own numbers start this season, or at its current coach's first game if he was already there before. Games under an earlier coach don't count. Until a new coach has enough games, the team is pulled toward the club's usual level, not the league average: replaying 2023–24 and 2024–25, this was as accurate as using every game, while dropping the club level as well made projections miss 2–6% more. Shots, fouls and possession lost a little with this rule, so they still use every game, faded.</li>` : ''}
     ${Object.keys(D.rebuilt || {}).length ? `<li><b>Rebuilt clubs.</b> Sometimes a club's past says little about it now: a new coach and a new squad. For these teams the earlier games are dropped altogether, and the rating isn't pulled toward the club's usual level, only toward the league average until enough new games are in. ${Object.entries(D.rebuilt).map(([t, x]) => `<b>${t}</b>: only games since ${longDate(x.since)} (${x.why}).`).join(' ')} This is a judgement call, set by hand, not something the model finds by itself.</li>` : ''}
-    <li><b>How these were picked.</b> For every stat I replayed each game since 2023–24 with 20 combinations of fade speed and earlier-season cut, and took the one that gives this season the most weight while missing no more than 0.05% more than the old setting (in practice, no difference). Pushing further did cost accuracy: for goals, giving this season more than about 55% made the projections miss more, because 7–10 games of one season are still mostly luck. Throw-ins already fade fastest, so they stay as they were.</li>
+    <li><b>How these were picked.</b> For every stat I replayed each game since 2023–24 with 20 combinations of fade speed and earlier-season cut, and took the one that gives this season the most weight while missing no more than 0.05% more than the old setting (in practice, no difference). Pushing further did cost accuracy: for goals, giving this season more than about 55% made the projections miss more, because 7–10 games of one season are still mostly luck.</li>
     <li><b>None of these settings are guesses.</b> For each stat I tried several combinations on every game since 2023–24, each time using only games played before that date, and kept the one that missed least.</li>
   </ul>
 
