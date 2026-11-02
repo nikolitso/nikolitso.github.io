@@ -1,0 +1,57 @@
+{
+ "GBL:28F71477": {
+  "paok_out": [
+   "Calathes",
+   "Osman"
+  ],
+  "opp_out": [],
+  "note": "Official 12s: PAOK without Calathes (rested), Osman and Omoruyi (left out), Motiejunas not yet registered; Doxa Lefkadas at full strength."
+ },
+ "EuroCup:45": {
+  "paok_out": [
+   "Kaklamanakis",
+   "Fillios"
+  ],
+  "opp_out": [],
+  "note": "PAOK's 13 for the trip: everyone except Kaklamanakis and Fillios (Motiejunas travels). Lietkabelis without center Veljko Ilic (shoulder, about five months), who hasn't played this season. Lietkabelis come in on three straight defeats, the last 65-71 at home to Jonava in their domestic league."
+ },
+ "GBL:4A05E464": {
+  "paok_out": [
+   "Calathes",
+   "Alexander"
+  ],
+  "opp_out": [
+   "Eustathiadis"
+  ],
+  "note": "PAOK's 13 for Rhodes: without Calathes (rested, minor knock) and Alexander (finger injury, saved for Ulm on 21 Oct). Motiejunas travels and is expected to make his league debut; one of the seven other foreign players will be left out of the 12. Kolossos without Eustathiadis and likely with 11 (only six foreign players allowed, so one American sits out); they are back from a long trip to Azerbaijan (won 80-62 at Gence), unbeaten at home, three wins in four games so far.",
+  "minutes": {
+   "Motiejunas": 18
+  }
+ },
+ "GBL:BD2162B8": {
+  "paok_out": [
+   "Mitrou-Long",
+   "Hudgins",
+   "Motiejunas"
+  ],
+  "opp_out": [
+   "Heurtel",
+   "Pinckney",
+   "Gymnopoulos"
+  ],
+  "note": "PAOK's 12 for AEK: Calathes back; Mitrou-Long out with a knock; Hudgins and Motiejunas are the two foreign players left out. AEK without Heurtel and Feazell (injured); Pinckney not in their 12; Bartley returns."
+ },
+ "EuroCup:78": {
+  "paok_out": [],
+  "opp_out": [],
+  "note": "PAOK travel to Istanbul with everyone available; Mitrou-Long (missed Saturday with a knock) is doubtful, decision on match day, counted as available for now. Bahcesehir beat Besiktas 100-96 at the weekend but lost to Bosna in the EuroCup last week. Djordjevic calls it their biggest group game so far and expects a physical game against an experienced, athletic PAOK; Flynn is set to play."
+ },
+ "GBL:29CD5AD8": {
+  "paok_out": [
+   "Moore",
+   "Motiejunas"
+  ],
+  "opp_out": [],
+  "note": "PAOK's foreign six for the Iraklis derby: Gray, Tyree, Osman, Alexander, Hudgins and Foster. Moore and Motiejunas are the two foreign players left out; Hudgins returns after sitting out the AEK game. Iraklis with Lekiou doubtful. PAOK come in 4-0 and top of the table, on their second straight away game after losing in Istanbul."
+ }
+}
