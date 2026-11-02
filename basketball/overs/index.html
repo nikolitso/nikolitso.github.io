@@ -193,7 +193,7 @@ table.proj tr.pk td{background:rgba(212,175,55,.08)}table.proj tr.pk td:first-ch
   <div class="chips" id="chips"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=9d25d7d7"></script>
+<script src="data.js?v=e59ef3d7"></script>
 <script src="live.js"></script>
 <script>
 const $ = id => document.getElementById(id);
@@ -284,8 +284,8 @@ function bets(){
   if (!list.length) return '';
   let run = 0;
   const rows = list.map(b => { run += b.ret;
-    return `<tr><td data-s="${b.dt}">${short(b.dt)} ${b.dt.slice(0,4)}</td>${lg === 'all' ? `<td>${LG[b.lg].country}</td>` : ''}<td class="wr">${b.home} – ${b.away}</td><td class="n">${b.side === 'o' ? 'Over' : 'Under'} ${b.line}</td><td class="n">${b.px.toFixed(2)}</td><td class="n">${b.mu.toFixed(1)}</td><td class="n">${pct(b.p)}</td><td class="n">${sgn(b.edge*100, 0)}%</td><td class="n ${b.ret > 0 ? 'w' : b.ret < 0 ? 'l' : ''}">${b.total}</td><td class="n ${cls(b.ret)}">${sgn(b.ret, 2)}</td><td class="n ${cls(run)}">${sgn(run, 1)}</td></tr>`; });
-  return `<h2>Every bet, latest first</h2><p class="note">${list.length} bets in unseen seasons${list.length > 400 ? ', the latest 400 shown' : ''}.</p><div class="scroll"><table><thead><tr><th>Date</th>${lg === 'all' ? '<th>League</th>' : ''}<th>Match</th><th class="n">Bet</th><th class="n">Price</th><th class="n">Model</th><th class="n">Chance</th><th class="n">Edge</th><th class="n">Total</th><th class="n">Units</th><th class="n">Running</th></tr></thead><tbody>${rows.reverse().slice(0, 400).join('')}</tbody></table></div>`;
+    return `<tr><td data-s="${b.dt}">${short(b.dt)} ${b.dt.slice(0,4)}</td>${lg === 'all' ? `<td>${LG[b.lg].country}</td>` : ''}<td class="wr">${b.home} – ${b.away}</td><td class="n">${b.side === 'o' ? 'Over' : 'Under'} ${b.line}</td><td class="n">${b.px.toFixed(2)}</td><td class="n">${b.mu.toFixed(1)}</td><td class="n">${pct(b.p)}</td><td class="n">${sgn(b.edge*100, 0)}%</td><td class="n">${b.close ?? '–'}</td><td class="n ${b.ret > 0 ? 'w' : b.ret < 0 ? 'l' : ''}">${b.total}</td><td class="n ${cls(b.ret)}">${sgn(b.ret, 2)}</td><td class="n ${cls(run)}">${sgn(run, 1)}</td></tr>`; });
+  return `<h2>Every bet, latest first</h2><p class="note">${list.length} bets in unseen seasons${list.length > 400 ? ', the latest 400 shown' : ''}.</p><div class="scroll"><table><thead><tr><th>Date</th>${lg === 'all' ? '<th>League</th>' : ''}<th>Match</th><th class="n">Bet</th><th class="n">Price</th><th class="n">Model</th><th class="n">Chance</th><th class="n">Edge</th><th class="n">Close</th><th class="n">Total</th><th class="n">Units</th><th class="n">Running</th></tr></thead><tbody>${rows.reverse().slice(0, 400).join('')}</tbody></table></div>`;
 }
 
 function renderProjections(){
