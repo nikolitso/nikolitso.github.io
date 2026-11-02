@@ -1,9 +1,11 @@
 name: FIBA Europe Cup
 
 # The /fibaeuropecup/ pipeline (scripts in nikolitso/FIBA-Europe-Cup), on GitHub instead of the PC:
-#   07:35 Athens   update.py          results (Flashscore), odds and fixtures (BetExplorer), projections
-#   hourly 10-21   matchday_odds.py   today's games: Flashscore lines (Bwin.gr, else Stoiximan.gr ...), projections
+#   07:35 Athens   update.py          results, fixtures and odds (Flashscore), projections
+#   hourly 10-21   matchday_odds.py   today's games: Flashscore lines, projections
 # Both commit and push the fibaeuropecup/ files here. The "Update all sites" button runs the full update.
+# scripts/fiba_runner.py starts them: Flashscore shows a runner outside Greece other bookmakers than the Greek ones
+# the pipeline looks for, so the runner lets it take the line from those (Stake.com, 1xBet ...) when no Greek book is listed.
 on:
   schedule:
     - cron: "35 5 * * *"      # full update (UTC; 07:35 Athens in winter, 08:35 in summer)
@@ -43,47 +45,12 @@ jobs:
         env:
           FIBA_SITE: ${{ github.workspace }}/fibaeuropecup
           FIBA_NO_MIRROR: "1"
+          FIBA_PIPELINE: ${{ github.workspace }}/_fiba
           PYTHONIOENCODING: utf-8
           TZ: Europe/Athens          # time stamps and commit messages in Athens time, as on the PC
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          cd _fiba
-          if [ "${{ inputs.job }}" = "probe" ]; then
-            echo "runner country: $(curl -s --max-time 10 https://ipinfo.io/country || echo unknown)"
-            python -u - <<'PY'
-          import os
-          import matchday_odds as m
-          from playwright.sync_api import sync_playwright
-          fx = m.read_js(m.SITE / "fixtures.js")["list"]
-          with sync_playwright() as p:
-              br = p.chromium.launch()
-              pg = br.new_page(locale="en-GB", timezone_id="Europe/Athens")
-              pg.goto(m.FIXTURES_URL, wait_until="domcontentloaded", timeout=60000)
-              try:
-                  pg.wait_for_selector(".event__match", timeout=20000)
-              except Exception as e:
-                  print("fixtures page:", type(e).__name__, str(e)[:200])
-              al = lambda t: m.ALIASES.get(t, t)
-              links = {(al(h), al(a)): (b, mid) for h, a, b, mid in pg.evaluate(m.LINKS) if b}
-              print(len(links), "games with a match link on the fixtures page")
-              for f in fx[:4]:
-                  if (f[2], f[3]) not in links:
-                      print(f, "not on the fixtures page")
-                      continue
-                  base, mid = links[(f[2], f[3])]
-                  for mk in ("asian-handicap", "over-under", "home-away"):
-                      url = f"https://www.flashscore.com/match/basketball/{base}/odds/{mk}/ft-including-ot/?mid={mid}"
-                      rows = m.rows(pg, url)
-                      print(f"{f[0]} {f[2]} - {f[3]} {mk}: {len(rows)} rows, books {sorted({r[0] for r in rows})}")
-                      for r in rows[:8]:
-                          print("    ", r)
-                  print("     page title:", pg.title(), "| url:", pg.url)
-                  print("     text sample:", pg.evaluate("() => document.body.innerText.slice(0, 600).replace(/\n+/g, ' | ')"))
-              br.close()
-          PY
-          elif [ "${{ github.event.schedule }}" = "5 7-18 * * *" ] || [ "${{ inputs.job }}" = "odds" ]; then
-            python -u matchday_odds.py
-          else
-            python -u update.py
-          fi
+          job="${{ inputs.job }}"
+          [ "${{ github.event.schedule }}" = "5 7-18 * * *" ] && job=odds
+          python -u scripts/fiba_runner.py "${job:-update}"
