@@ -153,7 +153,8 @@
       "how-to-be-a-leader",
       "the-definitive-guide-to-betting-exchanges",
       "how-to-win-the-world-cup",
-      "remote-office-not-required"
+      "remote-office-not-required",
+      "measure-what-matters"
     ],
     "log": [
       {
@@ -401,6 +402,12 @@
         "slot": "2026-11-02 02",
         "slug": "remote-office-not-required",
         "id": "2117044200231596171"
+      },
+      {
+        "day": "2026-11-02",
+        "slot": "2026-11-02 14",
+        "slug": "measure-what-matters",
+        "id": "2117225397079384223"
       }
     ],
     "last_day": "2026-11-02"
@@ -867,7 +874,7 @@
     ],
     "last_day": "2026-11-02"
   },
-  "last_slot": "2026-11-02 11",
+  "last_slot": "2026-11-02 14",
   "quote": {
     "seen": [
       "1",
