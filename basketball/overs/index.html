@@ -194,7 +194,7 @@ table.proj tr.pk td{background:rgba(212,175,55,.08)}table.proj tr.pk td:first-ch
   <div class="chips" id="chips"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=aed932bd"></script>
+<script src="data.js?v=9dd6d022"></script>
 <script src="live.js"></script>
 <script>
 const $ = id => document.getElementById(id);
@@ -331,7 +331,7 @@ function renderPicks(){
   h += tiles([['Bets', String(all.length)], ['Settled', String(set.length)], ['Hit rate', set.length ? pct(won / set.length, 1) : '–'],
               ['ROI', roi(R_), cls(R_)], ['Units', set.length ? sgn(units, 2) : '–', cls(units)],
               ['Close moved toward the bet', cl.length ? pct(up / cl.length) : '–'], ['Close moved against it', cl.length ? pct(dn / cl.length) : '–']]);
-  h += `<p class="note">The record starts in October; bets before ${LIVE.start} come from the same rules applied to those games. Close is the closing line; it moved toward the bet when it ended above the line bet. A few hundred bets are needed before the record says much. Click a column heading to sort.</p>`;
+  h += `<p class="note">Close is the closing line; it moved toward the bet when it ended above the line bet. A few hundred bets are needed before the record says much. Click a column heading to sort.</p>`;
   if (!set.length) return h + '<p class="empty">No settled bets yet.</p>';
   let run = 0;
   const rows = all.filter(b => b.done).map(b => {   // open picks are in the table above
