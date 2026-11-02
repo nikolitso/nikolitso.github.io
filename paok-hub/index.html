@@ -114,6 +114,7 @@
       <p class="eyebrow">PAOK Hub</p>
       <h1>Data &amp; more</h1>
       <p class="hub-intro" style="margin:.4rem 0 0;color:inherit;opacity:.75;max-width:52ch">PAOK FC's seasons in numbers: player stats and ratings, opponents, standings, and results against what the data expected.</p>
+      <p class="hub-updated" id="hub-updated" style="margin:.5rem 0 0;color:inherit;opacity:.6;font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:12px" hidden></p>
     </div>
   </header>
 
@@ -247,6 +248,26 @@
 
 
 </div>
+<script>
+(function () {
+  // Last change to the paok-hub folder (every manual or automatic update is a commit there) + the current matchday.
+  var el = document.getElementById('hub-updated');
+  var when = fetch('https://api.github.com/repos/nikolitso/nikolitso.github.io/commits?path=paok-hub&per_page=1')
+    .then(function (r) { return r.ok ? r.json() : null; })
+    .then(function (c) { return c && c[0] ? new Date(c[0].commit.committer.date) : null; });
+  var md = fetch('league-standings.html', { cache: 'no-store' })
+    .then(function (r) { return r.ok ? r.text() : ''; })
+    .then(function (t) { var m = t.match(/After matchday \d+/); return m ? m[0] : ''; });
+  Promise.all([when.catch(function () { return null; }), md.catch(function () { return ''; })]).then(function (v) {
+    if (!v[0]) return;
+    var s = v[0].toLocaleString('en-GB', { timeZone: 'Europe/Athens', weekday: 'short', day: 'numeric', month: 'short',
+                                           year: 'numeric', hour: '2-digit', minute: '2-digit' });
+    el.textContent = 'Last update: ' + s.replace(',', '') + (v[1] ? ' · ' + v[1] : '');
+    el.hidden = false;
+  });
+})();
+</script>
+
 <!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "b67bbb76d0e24af196b24ded3ab71ad0"}'></script><!-- End Cloudflare Web Analytics -->
 </body>
 </html>
