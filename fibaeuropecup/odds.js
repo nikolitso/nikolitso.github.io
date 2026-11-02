@@ -43,5 +43,10 @@ window.ODDS = {"updated": "2026-11-02", "source": "pre-game lines, earlier ones 
   {"h": "Manchester Basketball", "a": "BC Kalev/Cramo", "sp": 1.5, "spH": 1.83, "spA": 1.83, "tot": 164.5, "ov": 1.83, "un": 1.83, "mlH": 1.95, "mlA": 1.74},
   {"h": "Geneva Lions", "a": "Benfica", "sp": 3.5, "spH": 1.83, "spA": 1.83, "tot": 168.5, "ov": 1.83, "un": 1.83, "mlH": 2.3, "mlA": 1.55},
   {"h": "Gence", "a": "Sporting CP", "sp": 8.5, "spH": 1.85, "spA": 1.8, "tot": 155.5, "ov": 1.7, "un": 2.0, "mlH": 3.7, "mlA": 1.22},
-  {"h": "Wurzburg", "a": "Tartu Ulikool", "sp": -14.5, "spH": 1.9, "spA": 1.78, "tot": 166.5, "ov": 1.8, "un": 1.87, "mlH": 1.1, "mlA": 5.5}
+  {"h": "Wurzburg", "a": "Tartu Ulikool", "sp": -14.5, "spH": 1.9, "spA": 1.78, "tot": 166.5, "ov": 1.8, "un": 1.87, "mlH": 1.1, "mlA": 5.5},
+  {"h": "Denizli Basket", "a": "Bakken Bears", "sp": -9.5, "spH": 1.83, "spA": 1.83, "tot": 169.5, "ov": 1.83, "un": 1.83, "mlH": 1.22, "mlA": 3.7},
+  {"h": "Mykonos", "a": "CSM Oradea", "sp": -4.5, "spH": 1.83, "spA": 1.85, "tot": 166.5, "ov": 1.83, "un": 1.83, "mlH": 1.48, "mlA": 2.4},
+  {"h": "Rilski Sportist", "a": "Kolossos Rhodes", "sp": 12.5, "spH": 1.83, "spA": 1.83, "tot": 159.5, "ov": 1.83, "un": 1.85, "mlH": 5.0, "mlA": 1.12},
+  {"h": "Basquet Girona", "a": "Levice", "sp": -18.5, "spH": 1.8, "spA": 1.87, "tot": 169.5, "ov": 1.83, "un": 1.85, "mlH": 1.03, "mlA": 8.5},
+  {"h": "Nancy", "a": "Keravnos", "sp": -17.5, "spH": 1.8, "spA": 1.87, "tot": 163.5, "ov": 1.87, "un": 1.8, "mlH": 1.04, "mlA": 8.0}
 ]};
