@@ -40,10 +40,15 @@ def js_object(path, start):
     return json.JSONDecoder().raw_decode(s[m.end():].lstrip())[0]
 
 
-def when(dt, time=True):
+def when(dt, time=False):
     dt = dt.astimezone(ATHENS) if dt.tzinfo else dt
     day = f"{dt:%a} {dt.day} {dt:%b}"
     return f"{day}, {dt:%H:%M}" if time and (dt.hour or dt.minute) else day
+
+
+def nxt(home, away, dt):
+    """The 'Next' pill every card shares: 'Next: A – B, Sat 7 Nov'."""
+    return f"Next: {home} – {away}, {when(dt)}"
 
 
 def parse(s):
@@ -68,6 +73,8 @@ def short(team):
 
 
 # ---- one function per card: returns a list of pill texts ------------------------------------------
+# Every card reads the same way: when it was last refreshed (or the site's own status stamp), what comes
+# next, and one number. Three pills, in that order.
 
 def paok_hub():
     s = get("/paok-hub/fixtures.html")
@@ -86,34 +93,38 @@ def paok_hub():
             continue
         home, away = [short(x) for x in html.unescape(teams.group(1)).split(" vs ")]
         games.append((dt, home, away, html.unescape(comp.group(1)).strip() if comp else ""))
-    if not games:
-        return []
-    dt, home, away, comp = min(games)
-    pills = [f"Next: {home} – {away}", when(dt)]
-    if comp:
-        pills.append(comp.replace("SL · ", "Super League ").replace("MD", "MD "))
+    stamp = re.search(r'meta-pill">(After matchday \d+)', get("/paok-hub/league-standings.html"))
+    pills = [stamp.group(1)] if stamp else []
+    if games:
+        dt, home, away, comp = min(games)
+        pills.append(nxt(home, away, dt))
+        if comp:
+            pills.append(comp.replace("SL · ", "Super League ").replace("MD", "MD "))
     return pills
 
 
 def paok_basketball():
-    games, records = [], {}
+    games, records, stamps = [], {}, []
     for name, f in (("Basket League", "gbl"), ("EuroCup", "eurocup")):
         d = json.loads(get(f"/paok-basketball/data/{f}.json"))
+        if d.get("updated"):
+            stamps.append(d["updated"])
         for g in d.get("games", []):
             if not g.get("played"):
                 games.append((parse(g["date"]), g["home"], g["opp"], name))
         me = next((t for t in d.get("standings", []) if t.get("paok")), None)
         if me:
             records[name] = f"{name} {me['w']}–{me['l']}"
-    pills = []
-    nxt = [g for g in games if g[0] >= NOW - timedelta(hours=2)]
-    if nxt:
-        dt, home, opp, comp = min(nxt)
-        pills.append(f"Next: {'PAOK – ' + opp if home else opp + ' – PAOK'}")
-        pills.append(when(dt, time=comp == "EuroCup"))        # Basket League tip-offs are often TBC
+    pills = [updated(max(stamps))] if stamps else []
+    coming = [g for g in games if g[0] >= NOW - timedelta(hours=2)]
+    if coming:
+        dt, home, opp, comp = min(coming)
+        pills.append(nxt("PAOK", opp, dt) if home else nxt(opp, "PAOK", dt))
         if comp in records:                                 # the record in the competition of the next game
             pills.append(records[comp])
-    return pills or list(records.values())
+    else:
+        pills += list(records.values())
+    return pills
 
 
 def superleague():
@@ -121,16 +132,16 @@ def superleague():
     fx = upcoming(d.get("fixtures", []), lambda f: f["kickoff"])
     pills = [updated(d["updated"])]
     if fx:
+        pills.append(nxt(fx[0]["home"], fx[0]["away"], parse(fx[0]["kickoff"])))
         pills.append(f"{len(fx)} games projected")
-        pills.append(f"Next: {fx[0]['home']} – {fx[0]['away']}")
     return pills
 
 
 def greek_cup():
     d = js_object("/football/greek-cup/data.js", r"window\.CUP\s*=")
     g = max(d["games"], key=lambda g: g["date"])
-    return [updated(d["updated"]), f"{len(d['games'])} games",
-            f"Last: {g['home']} {g['goals'][0]}–{g['goals'][1]} {g['away']}"]
+    return [updated(d["updated"]), f"Last: {g['home']} {g['goals'][0]}–{g['goals'][1]} {g['away']}",
+            f"{len(d['games'])} games"]
 
 
 def basketball_cup(folder):
@@ -140,7 +151,7 @@ def basketball_cup(folder):
     if games:
         rnd = games[0]["round"]
         n = sum(1 for g in games if g["round"] == rnd)
-        pills += [f"{rnd}: {n} games projected", "From " + when(parse(games[0]["when"]), time=False)]
+        pills += [f"Next: {rnd}, from {when(parse(games[0]['when']))}", f"{n} games projected"]
     return pills
 
 
