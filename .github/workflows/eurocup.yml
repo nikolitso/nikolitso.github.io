@@ -1,4 +1,4 @@
-name: EuroCup
+name: Site · EuroCup
 
 # /eurocup/: results, groups, lines and rosters from Flashscore and the Euroleague API, projections, publish.
 # Scripts and data in nikolitso/BettingSignal (eurocup/). Mon-Thu mornings; "Update all sites" runs it too.

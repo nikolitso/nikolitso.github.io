@@ -1,4 +1,4 @@
-name: Super League site
+name: Site · Super League
 
 # /superleague/: results from ESPN and the season files, ratings, projections for the coming round,
 # odds and value bets (markets left out in value.py: SKIP, HIDE, NO_BETS; closing odds from the "odds" branch, see superleague-closing-odds.yml), and the

@@ -1,4 +1,4 @@
-name: Handball
+name: Site · Handball
 
 # /handball/: refresh from Flashscore, rebuild the pages, publish them, save the ledgers to nikolitso/BettingSignal
 # (scripts in handball/projector there). Every 6 hours; the "Update all sites" button runs it too.

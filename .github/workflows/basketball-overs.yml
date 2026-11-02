@@ -1,4 +1,4 @@
-name: Basketball totals live test
+name: Feed · Basketball totals live test
 
 # Live test of the basketball totals rule (the leagues in data/live_leagues.json): this season's results and odds, projections for
 # the next 7 days, picks logged at the line on offer and settled after the game. Scripts and data in

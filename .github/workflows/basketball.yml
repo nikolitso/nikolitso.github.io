@@ -1,4 +1,4 @@
-name: Basketball
+name: Site · Basketball
 
 # /basketball/ (Greek leagues): refresh from Flashscore, rebuild the pages, publish them, save the ledgers to
 # nikolitso/BettingSignal (scripts in basketball/projector there). Twice a day; "Update all sites" runs it too.

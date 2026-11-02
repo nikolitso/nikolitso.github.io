@@ -1,4 +1,4 @@
-name: PAOK Hub
+name: Site · PAOK Hub
 
 # PAOK Hub (nikolitso/paok-hub): every finished Super League match is read once from Flashscore (the same Opta
 # statistics as Scoresway, plus xG, big chances, referee, attendance) into the season file, then the league-wide

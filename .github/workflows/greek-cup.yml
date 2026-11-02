@@ -1,4 +1,4 @@
-name: Greek Cup
+name: Site · Greek Cup
 
 # /football/greek-cup/: each finished game read once from Flashscore (stats, xG, cards, referee, odds), then the
 # page data is rebuilt. Scripts and data in nikolitso/BettingSignal (greek-cup/). Twice a day; "Update all
