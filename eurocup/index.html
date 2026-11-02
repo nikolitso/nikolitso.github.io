@@ -218,7 +218,8 @@ const ent = t => mode === 'team' ? t : teams[t];
 const fmtDate = d => d.split('-').reverse().join('.');
 const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 
-$('sub').textContent = `${matches.length} games · seasons ${matches[0][0].slice(0,4)}–${matches[matches.length-1][0].slice(-4)} · ${Object.keys(teams).length} teams · ${new Set(Object.values(teams)).size} countries`;
+$('sub').textContent = `${matches.length} games · seasons ${matches[0][0].slice(0,4)}–${matches[matches.length-1][0].slice(-4)} · ${Object.keys(teams).length} teams · ${new Set(Object.values(teams)).size} countries` +
+  (window.PROJ ? ` · last update ${fmtDate(PROJ.updated.slice(0, 10))} ${PROJ.updated.slice(11)}` : '');   // every update run rewrites projections.js
 
 function names(){ return mode === 'team' ? Object.keys(teams).sort() : [...new Set(Object.values(teams))].sort(); }
 function fillOptions(){ $('opts').innerHTML = names().map(n => `<option value="${esc(n)}">`).join(''); }
