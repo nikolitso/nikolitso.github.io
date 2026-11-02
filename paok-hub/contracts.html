@@ -1,0 +1,388 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PAOK Contracts and Salaries</title>
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap">
+
+<style>
+  :root {
+    --bg: #f4f4f2;
+    --surface: #ffffff;
+    --surface-2: #ececea;
+    --ink: #16171a;
+    --ink-dim: #55585f;
+    --line: #d9d9d5;
+    --accent: #1c1f6b;
+    --accent-soft: #e7e8f5;
+    --good: #1a7a4c;
+    --warn: #a15b00;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #101114;
+      --surface: #17181c;
+      --surface-2: #1d1f24;
+      --ink: #edeeef;
+      --ink-dim: #9a9ca3;
+      --line: #2b2d33;
+      --accent: #8f96ff;
+      --accent-soft: #232650;
+      --good: #4fce94;
+      --warn: #e0a94f;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --bg: #101114;
+    --surface: #17181c;
+    --surface-2: #1d1f24;
+    --ink: #edeeef;
+    --ink-dim: #9a9ca3;
+    --line: #2b2d33;
+    --accent: #8f96ff;
+    --accent-soft: #232650;
+    --good: #4fce94;
+    --warn: #e0a94f;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+    line-height: 1.5;
+  }
+
+  .wrap {
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 56px 24px 96px;
+  }
+
+  header.page-head {
+    margin-bottom: 44px;
+  }
+
+  .eyebrow {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 600;
+    margin: 0 0 10px;
+  }
+
+  h1 {
+    font-family: "Archivo", ui-sans-serif, sans-serif;
+    font-weight: 800;
+    font-size: clamp(30px, 4.5vw, 42px);
+    letter-spacing: -0.01em;
+    margin: 0 0 8px;
+    text-wrap: balance;
+  }
+
+  .sub {
+    color: var(--ink-dim);
+    font-size: 15px;
+    max-width: 60ch;
+    margin: 0;
+  }
+
+  .meta-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 18px;
+  }
+
+  .meta-pill {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 12px;
+    color: var(--ink-dim);
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 5px 12px;
+  }
+
+  section.block {
+    margin-top: 52px;
+  }
+
+  .block-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+    border-bottom: 2px solid var(--ink);
+    padding-bottom: 10px;
+    margin-bottom: 4px;
+  }
+
+  .block-head h2 {
+    font-family: "Archivo", sans-serif;
+    font-weight: 700;
+    font-size: 21px;
+    margin: 0;
+    letter-spacing: -0.005em;
+  }
+
+  .block-head .note {
+    font-size: 12.5px;
+    color: var(--ink-dim);
+    font-family: "IBM Plex Mono", monospace;
+  }
+
+  .pos-group {
+    margin-top: 26px;
+  }
+
+  .pos-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    font-weight: 600;
+    margin: 0 0 8px;
+  }
+
+  .pos-label .dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--accent);
+    display: inline-block;
+  }
+
+  .table-scroll {
+    overflow-x: auto;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--surface);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+    font-size: 14px;
+    min-width: 480px;
+  }
+
+  th:first-child, td:first-child { width: 32%; }
+  th:nth-child(2), td:nth-child(2) { width: 26%; }
+  th:nth-child(3), td:nth-child(3) { width: 22%; }
+  th:nth-child(4), td:nth-child(4) { width: 20%; }
+
+  th, td {
+    text-align: left;
+    padding: 9px 14px;
+    white-space: nowrap;
+  }
+
+  thead th {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    font-weight: 600;
+    background: var(--surface-2);
+    border-bottom: 1px solid var(--line);
+  }
+
+  tbody tr:not(:last-child) td {
+    border-bottom: 1px solid var(--line);
+  }
+
+  td.num, th.num {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 13px;
+  }
+
+  td.player {
+    font-weight: 600;
+  }
+
+  td.player a {
+    color: inherit;
+    text-decoration: none;
+    border-bottom: 1px dotted var(--ink-dim);
+  }
+
+  td.player a:hover {
+    border-bottom-style: solid;
+  }
+
+  .dash { color: var(--ink-dim); }
+
+  .g-pos { color: var(--good); font-weight: 600; }
+  .a-pos { color: var(--accent); font-weight: 600; }
+
+  .no-cap {
+    text-align: center;
+    color: var(--ink-dim);
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 12px;
+    padding: 8px 0 0;
+  }
+
+  footer.page-foot {
+    margin-top: 60px;
+    padding-top: 20px;
+    border-top: 1px solid var(--line);
+    font-size: 12.5px;
+    color: var(--ink-dim);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 18px;
+  }
+
+  footer.page-foot a { color: var(--ink-dim); }
+
+  @media (prefers-reduced-motion: no-preference) {
+    section.block { animation: rise 0.4s ease both; }
+    section.block:nth-of-type(2) { animation-delay: 0.05s; }
+  }
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
+</head>
+<body>
+<!-- sitebar:start (link back to antonisnikolitsopoulos.com; keep on every page) -->
+<style>
+.an-sitebar{background:#0d1220;border-bottom:1px solid rgba(255,255,255,.09);font:500 13px/1.2 "Segoe UI",system-ui,-apple-system,sans-serif;letter-spacing:.02em}
+.an-sitebar>div{max-width:72rem;margin:0 auto;padding:6px 16px;display:flex;justify-content:flex-end;align-items:center;gap:18px}
+.an-sitebar a{color:#9aa1b2;text-decoration:none;display:inline-flex;align-items:center;min-height:24px}.an-sitebar a:hover{color:#fff}
+.an-sitebar svg{width:17px;height:17px;fill:currentColor}
+.an-sitebar a[href="/"]{padding:6px 8px;margin:-6px -8px -6px -4px;border-radius:6px}.an-sitebar a[href="/"]:hover{background:rgba(255,255,255,.08)}
+</style>
+<nav class="an-sitebar" aria-label="Main site"><div><a href="/books/">Books</a><a href="/#projects">Projects</a><a href="/about/">About</a><a href="/" title="Main site: antonisnikolitsopoulos.com" aria-label="Main site"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 2 11.5h3V21h5.5v-6h3v6H19v-9.5h3z"/></svg></a></div></nav>
+<!-- sitebar:end -->
+
+
+<div class="wrap">
+
+  <header class="page-head">
+    <p class="eyebrow"><a href="index.html" style="color:inherit;text-decoration:none;">PAOK Hub</a></p>
+    <h1>Contracts and Salaries, 2026&ndash;27</h1>
+    <div class="meta-row">
+      <span class="meta-pill">28 players</span>
+      <span class="meta-pill">Updated Oct 23, 2026</span>
+    </div>
+  </header>
+
+  <section class="block">
+    <div class="block-head">
+      <h2>Contracts &amp; Salaries</h2>
+    </div>
+
+    <div class="pos-group">
+      <p class="pos-label"><span class="dot"></span>Goalkeepers</p>
+      <div class="table-scroll">
+        <table>
+          <thead><tr><th>Player</th><th>Born</th><th>Contract until</th><th class="num">Annual salary</th></tr></thead>
+          <tbody>
+            <tr><td class="player">Tsiftsis</td><td>21/07/1999 (27 yo)</td><td>30/06/28</td><td class="num dash">&mdash;</td></tr>
+            <tr><td class="player"><a href="https://inpaok.com/865816/afto-einai-to-deal-paok-pavlenka/" target="_blank" rel="noopener">Pavlenka</a></td><td>14/04/1992 (34 yo)</td><td>30/06/27</td><td class="num">&euro;600,000</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="pos-group">
+      <p class="pos-label"><span class="dot"></span>Defenders</p>
+      <div class="table-scroll">
+        <table>
+          <thead><tr><th>Player</th><th>Born</th><th>Contract until</th><th class="num">Annual salary</th></tr></thead>
+          <tbody>
+            <tr><td class="player"><a href="https://www.youtube.com/live/p3JjJmYji98?t=3654" target="_blank" rel="noopener">Michailidis</a></td><td>18/02/2000 (26 yo)</td><td>30/06/30</td><td class="num">&euro;900,000</td></tr>
+            <tr><td class="player"><a href="https://sportime.gr/paok/paok-oles-oi-leptomereies-ghia-to-simvolaio-me-xatzidiako" target="_blank" rel="noopener">Chatzidiakos</a></td><td>18/01/1997 (29 yo)</td><td>30/06/29</td><td class="num">&euro;1,000,000</td></tr>
+            <tr><td class="player"><a href="https://paoktoday.gr/football/transfers/ariz-eloustonto-oi-apolaves-kai-i-diarkeia-tou-symvolaiou-tou-me-ton-paok/" target="_blank" rel="noopener">Elustondo</a></td><td>28/03/1994 (32 yo)</td><td>30/06/28</td><td class="num">&euro;1,200,000</td></tr>
+            <tr><td class="player"><a href="https://www.newsbeast.gr/sports/arthro/13275598/deal-tou-paok-gia-giannouli-ta-posa-tis-symfonias-me-tin-aougksbourgk" target="_blank" rel="noopener">Giannoulis</a></td><td>17/10/1995 (30 yo)</td><td>30/06/29</td><td class="num">&euro;1,200,000</td></tr>
+            <tr><td class="player"><a href="https://www.paok24.com/podosfairo/430563/tria-ekatommyria-ston-mpampa-rachman/" target="_blank" rel="noopener">Baba</a></td><td>02/07/1994 (32 yo)</td><td>30/06/27</td><td class="num">&euro;1,000,000</td></tr>
+            <tr><td class="player"><a href="https://www.sdna.gr/podosfairo/1323067_bild-o-keni-epelexe-ton-paok-giati-toy-edose-ena-exairetiko-paketo-kai-ena-poly" target="_blank" rel="noopener">Kenny</a></td><td>15/03/1997 (29 yo)</td><td>30/06/28</td><td class="num">&euro;1,600,000</td></tr>
+            <tr><td class="player"><a href="https://www.paok24.com/podosfairo/640089/ta-oikonomika-dedomena-gia-ntiegko-kosta/" target="_blank" rel="noopener">Diego Costa</a></td><td>21/07/1999 (27 yo)</td><td>30/06/27</td><td class="num">&euro;1,500,000</td></tr>
+            <tr><td class="player">Bataoulas</td><td>14/03/2007 (19 yo)</td><td>30/06/28</td><td class="num dash">&mdash;</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="pos-group">
+      <p class="pos-label"><span class="dot"></span>Midfielders</p>
+      <div class="table-scroll">
+        <table>
+          <thead><tr><th>Player</th><th>Born</th><th>Contract until</th><th class="num">Annual salary</th></tr></thead>
+          <tbody>
+            <tr><td class="player">Santamaria</td><td>09/03/1995 (31 yo)</td><td>30/06/27</td><td class="num">&euro;600,000</td></tr>
+            <tr><td class="player"><a href="https://www.metrosport.gr/33-1749278677-8bw4re1ygi-1186720" target="_blank" rel="noopener">Meite</a></td><td>17/03/1994 (32 yo)</td><td>30/06/27</td><td class="num">&euro;1,300,000</td></tr>
+            <tr><td class="player"><a href="https://www.sport24.gr/football/paok-afto-einai-to-xriso-simvolaio-tou-zafeiri-ston-paok/" target="_blank" rel="noopener">Zafeiris</a></td><td>23/02/2003 (23 yo)</td><td>31/12/29</td><td class="num">&euro;1,500,000</td></tr>
+            <tr><td class="player">Ugresic</td><td>15/07/2006 (20 yo)</td><td>30/06/31</td><td class="num dash">&mdash;</td></tr>
+            <tr><td class="player"><a href="https://www.sportal.gr/podosfairo/article/paok-to-neo-stoixeio-sto-deal-me-ton-kamara-2024062010142040620" target="_blank" rel="noopener">Camara</a></td><td>28/02/1997 (29 yo)</td><td>30/06/27</td><td class="num">&euro;1,200,000</td></tr>
+            <tr><td class="player"><a href="https://www.sport24.gr/football/paok-metagrafes-afto-einai-to-deal-me-tin-nis-gia-ton-tom-louse/" target="_blank" rel="noopener">Louchet</a></td><td>04/05/2003 (23 yo)</td><td>30/06/30</td><td class="num">&euro;1,000,000</td></tr>
+            <tr><td class="player"><a href="https://www.youtube.com/watch?v=TJhjuIqNT6A" target="_blank" rel="noopener">Taylor</a></td><td>05/11/1997 (28 yo)</td><td>30/06/28</td><td class="num">&euro;800,000</td></tr>
+            <tr><td class="player"><a href="https://www.paok24.com/podosfairo/640089/ta-oikonomika-dedomena-gia-ntiegko-kosta/" target="_blank" rel="noopener">Jakic</a></td><td>14/05/1997 (29 yo)</td><td>30/06/27</td><td class="num">&euro;1,000,000</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="pos-group">
+      <p class="pos-label"><span class="dot"></span>Attacking midfielders</p>
+      <div class="table-scroll">
+        <table>
+          <thead><tr><th>Player</th><th>Born</th><th>Contract until</th><th class="num">Annual salary</th></tr></thead>
+          <tbody>
+            <tr><td class="player"><a href="https://paoktoday.gr/football/transfers/dimitris-pelkas-afto-tha-einai-to-symvolaio-tou-ston-paok/" target="_blank" rel="noopener">Pelkas</a></td><td>26/10/1993 (32 yo)</td><td>30/06/27</td><td class="num">&euro;650,000</td></tr>
+            <tr><td class="player">Shoretire</td><td>02/02/2004 (22 yo)</td><td>30/06/28</td><td class="num">&euro;300,000</td></tr>
+            <tr><td class="player">Ali</td><td>01/07/1998 (28 yo)</td><td>30/06/29</td><td class="num dash">&mdash;</td></tr>
+            <tr><td class="player">Taison</td><td>13/01/1988 (38 yo)</td><td>30/06/27</td><td class="num">&euro;650,000</td></tr>
+            <tr><td class="player">Zivkovic</td><td>11/07/1996 (30 yo)</td><td>30/06/27</td><td class="num">&euro;1,500,000</td></tr>
+            <tr><td class="player">Despodov</td><td>11/11/1996 (29 yo)</td><td>30/06/27</td><td class="num">&euro;1,000,000</td></tr>
+            <tr><td class="player">Chatsidis</td><td>14/06/2006 (20 yo)</td><td>30/06/28</td><td class="num dash">&mdash;</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="pos-group">
+      <p class="pos-label"><span class="dot"></span>Forwards</p>
+      <div class="table-scroll">
+        <table>
+          <thead><tr><th>Player</th><th>Born</th><th>Contract until</th><th class="num">Annual salary</th></tr></thead>
+          <tbody>
+            <tr><td class="player">Ndiaye</td><td>23/01/1996 (30 yo)</td><td>30/06/27</td><td class="num">&euro;1,000,000</td></tr>
+            <tr><td class="player">Mythou</td><td>22/05/2007 (19 yo)</td><td>30/06/28</td><td class="num dash">&mdash;</td></tr>
+            <tr><td class="player"><a href="https://www.sport24.gr/football/paok-metagrafes-i-ritra-agoras-kai-to-etisio-simvolaio-tou-simon-banza/" target="_blank" rel="noopener">Banza</a></td><td>13/08/1996 (30 yo)</td><td>30/06/27</td><td class="num">&euro;1,700,000</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+
+  <footer class="page-foot">
+    <span>Sources: Greek sports news outlets (linked per player).</span>
+  </footer>
+
+</div>
+
+<!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "b67bbb76d0e24af196b24ded3ab71ad0"}'></script><!-- End Cloudflare Web Analytics -->
+</body>
+</html>

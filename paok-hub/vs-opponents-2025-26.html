@@ -1,0 +1,786 @@
+﻿<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1"><style>:root{color-scheme:light}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<!-- sitebar:start (link back to antonisnikolitsopoulos.com; keep on every page) -->
+<style>
+.an-sitebar{background:#0d1220;border-bottom:1px solid rgba(255,255,255,.09);font:500 13px/1.2 "Segoe UI",system-ui,-apple-system,sans-serif;letter-spacing:.02em}
+.an-sitebar>div{max-width:72rem;margin:0 auto;padding:6px 16px;display:flex;justify-content:flex-end;align-items:center;gap:18px}
+.an-sitebar a{color:#9aa1b2;text-decoration:none;display:inline-flex;align-items:center;min-height:24px}.an-sitebar a:hover{color:#fff}
+.an-sitebar svg{width:17px;height:17px;fill:currentColor}
+.an-sitebar a[href="/"]{padding:6px 8px;margin:-6px -8px -6px -4px;border-radius:6px}.an-sitebar a[href="/"]:hover{background:rgba(255,255,255,.08)}
+</style>
+<nav class="an-sitebar" aria-label="Main site"><div><a href="/books/">Books</a><a href="/#projects">Projects</a><a href="/about/">About</a><a href="/" title="Main site: antonisnikolitsopoulos.com" aria-label="Main site"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 2 11.5h3V21h5.5v-6h3v6H19v-9.5h3z"/></svg></a></div></nav>
+<!-- sitebar:end -->
+<title>PAOK vs Opponents 2025-26</title>
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap">
+
+<style>
+  :root {
+    --bg: #f4f4f2;
+    --surface: #ffffff;
+    --surface-2: #ececea;
+    --ink: #16171a;
+    --ink-dim: #55585f;
+    --line: #d9d9d5;
+    --accent: #1c1f6b;
+    --accent-soft: #e7e8f5;
+    --opp: #b5482e;
+    --opp-soft: #f6e7e2;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #101114;
+      --surface: #17181c;
+      --surface-2: #1d1f24;
+      --ink: #edeeef;
+      --ink-dim: #9a9ca3;
+      --line: #2b2d33;
+      --accent: #8f96ff;
+      --accent-soft: #232650;
+      --opp: #e08066;
+      --opp-soft: #3a231e;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --bg: #101114;
+    --surface: #17181c;
+    --surface-2: #1d1f24;
+    --ink: #edeeef;
+    --ink-dim: #9a9ca3;
+    --line: #2b2d33;
+    --accent: #8f96ff;
+    --accent-soft: #232650;
+    --opp: #e08066;
+    --opp-soft: #3a231e;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+    line-height: 1.5;
+  }
+
+  .wrap {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 56px 24px 96px;
+  }
+
+  header.page-head { margin-bottom: 32px; }
+
+  .eyebrow {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 600;
+    margin: 0 0 10px;
+  }
+
+  h1 {
+    font-family: "Archivo", ui-sans-serif, sans-serif;
+    font-weight: 800;
+    font-size: clamp(28px, 4.5vw, 40px);
+    letter-spacing: -0.01em;
+    margin: 0 0 8px;
+    text-wrap: balance;
+  }
+
+  .sub { color: var(--ink-dim); font-size: 15px; max-width: 60ch; margin: 0; }
+
+  .meta-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+
+  .meta-pill {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 12px;
+    color: var(--ink-dim);
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 5px 12px;
+  }
+
+  .legend {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin: 36px 0 14px;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+
+  .legend .paok { color: var(--accent); }
+  .legend .opp { color: var(--opp); }
+
+  .comparison {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--surface);
+    overflow: hidden;
+  }
+
+  .stat-row {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+  }
+
+  .stat-row:not(:last-child) { border-bottom: 1px solid var(--line); }
+
+  .stat-row .val {
+    font-family: "IBM Plex Mono", monospace;
+    font-variant-numeric: tabular-nums;
+    font-size: 13.5px;
+    font-weight: 600;
+    width: 52px;
+    flex: none;
+  }
+
+  .stat-row .val.paok { color: var(--accent); text-align: right; }
+  .stat-row .val.opp { color: var(--opp); text-align: left; }
+
+  .side { display: flex; align-items: center; gap: 8px; }
+  .side.paok-side { justify-content: flex-end; }
+  .side.opp-side { justify-content: flex-start; }
+
+  .bar-track {
+    flex: 1;
+    height: 8px;
+    background: var(--surface-2);
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .bar-track.paok-track { direction: rtl; }
+  .bar-fill { height: 100%; border-radius: 4px; }
+  .bar-fill.paok-fill { background: var(--accent); }
+  .bar-fill.opp-fill { background: var(--opp); }
+
+  .stat-label {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 11px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  .section-head {
+    margin: 44px 0 4px;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    font-weight: 600;
+    border-bottom: 2px solid var(--ink);
+    padding-bottom: 10px;
+  }
+
+  .section-sub { font-size: 12.5px; color: var(--ink-dim); margin: 8px 0 0; }
+
+  footer.page-foot {
+    margin-top: 32px;
+    padding-top: 20px;
+    border-top: 1px solid var(--line);
+    font-size: 12.5px;
+    color: var(--ink-dim);
+  }
+</style>
+
+<div class="wrap">
+
+  <header class="page-head">
+    <p class="eyebrow"><a href="index.html" style="color:inherit;text-decoration:none;">PAOK Hub</a> &middot; 2025-26 Season</p>
+    <h1>PAOK vs Opponents, 2025&ndash;26</h1>
+    <div class="meta-row">
+      <span class="meta-pill">26 regular season + 6 play-off = 32 matches</span>
+      <span class="meta-pill">Record: 18W 10D 4L</span>
+      <span class="meta-pill">GF 59 &ndash; GA 25</span>
+    </div>
+  </header>
+
+  <p class="section-head" style="margin-top:0;border-bottom-color:var(--accent);">Regular Season</p>
+  <p class="section-head">Overall</p>
+  <p class="section-sub">26 matches played</p>
+  <div class="legend">
+    <span class="paok">&larr; PAOK</span>
+    <span class="opp">Opponents &rarr;</span>
+  </div>
+  <div class="comparison">
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">1.92</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:100%"></div></div></div>
+      <div class="stat-label">Goals</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:34%"></div></div><span class="val opp">0.65</span></div>
+    </div>
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">1.85</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:100%"></div></div></div>
+      <div class="stat-label">xG</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:38%"></div></div><span class="val opp">0.70</span></div>
+    </div>
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">1.27</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:100%"></div></div></div>
+      <div class="stat-label">Assists</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:30%"></div></div><span class="val opp">0.38</span></div>
+    </div>
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">13.88</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:100%"></div></div></div>
+      <div class="stat-label">Shots</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:50%"></div></div><span class="val opp">6.88</span></div>
+    </div>
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">4.88</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:100%"></div></div></div>
+      <div class="stat-label">Shots on target</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:46%"></div></div><span class="val opp">2.23</span></div>
+    </div>
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">509</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:100%"></div></div></div>
+      <div class="stat-label">Passes</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:61%"></div></div><span class="val opp">312</span></div>
+    </div>
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">20.31</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:100%"></div></div></div>
+      <div class="stat-label">Crosses</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:58%"></div></div><span class="val opp">11.81</span></div>
+    </div>
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">12.27</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:90%"></div></div></div>
+      <div class="stat-label">Tackles</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:100%"></div></div><span class="val opp">13.65</span></div>
+    </div>
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">5.77</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:100%"></div></div></div>
+      <div class="stat-label">Corners</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:51%"></div></div><span class="val opp">2.96</span></div>
+    </div>
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">2.38</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:100%"></div></div></div>
+      <div class="stat-label">Offsides</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:92%"></div></div><span class="val opp">2.19</span></div>
+    </div>
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">12.08</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:92%"></div></div></div>
+      <div class="stat-label">Fouls committed</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:100%"></div></div><span class="val opp">13.08</span></div>
+    </div>
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">1.50</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:52%"></div></div></div>
+      <div class="stat-label">Yellow cards</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:100%"></div></div><span class="val opp">2.88</span></div>
+    </div>
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">1.58</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:54%"></div></div></div>
+      <div class="stat-label">Saves</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:100%"></div></div><span class="val opp">2.92</span></div>
+    </div>
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">6.08</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:78%"></div></div></div>
+      <div class="stat-label">Goal kicks</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:100%"></div></div><span class="val opp">7.77</span></div>
+    </div>
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">23.46</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:100%"></div></div></div>
+      <div class="stat-label">Throw-ins</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:90%"></div></div><span class="val opp">21.08</span></div>
+    </div>
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">0.27</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:100%"></div></div></div>
+      <div class="stat-label">Hit woodwork</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:43%"></div></div><span class="val opp">0.12</span></div>
+    </div>
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">0.00</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:0%"></div></div></div>
+      <div class="stat-label">Own goals</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:100%"></div></div><span class="val opp">0.08</span></div>
+    </div>
+  </div>
+
+  <p class="section-head">Home matches</p>
+  <p class="section-sub">13 matches played</p>
+  <div class="legend">
+    <span class="paok">&larr; PAOK</span>
+    <span class="opp">Opponents &rarr;</span>
+  </div>
+  <div class="comparison">
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">2.00</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:100%"></div></div></div>
+      <div class="stat-label">Goals</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:12%"></div></div><span class="val opp">0.23</span></div>
+    </div>
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">2.05</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:100%"></div></div></div>
+      <div class="stat-label">xG</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:14%"></div></div><span class="val opp">0.29</span></div>
+    </div>
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">1.46</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:100%"></div></div></div>
+      <div class="stat-label">Assists</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:5%"></div></div><span class="val opp">0.08</span></div>
+    </div>
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">15.85</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:100%"></div></div></div>
+      <div class="stat-label">Shots</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:32%"></div></div><span class="val opp">5.00</span></div>
+    </div>
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">5.85</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:100%"></div></div></div>
+      <div class="stat-label">Shots on target</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:25%"></div></div><span class="val opp">1.46</span></div>
+    </div>
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">526</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:100%"></div></div></div>
+      <div class="stat-label">Passes</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:58%"></div></div><span class="val opp">305</span></div>
+    </div>
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">23.85</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:100%"></div></div></div>
+      <div class="stat-label">Crosses</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:36%"></div></div><span class="val opp">8.62</span></div>
+    </div>
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">11.77</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:91%"></div></div></div>
+      <div class="stat-label">Tackles</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:100%"></div></div><span class="val opp">13.00</span></div>
+    </div>
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">6.92</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:100%"></div></div></div>
+      <div class="stat-label">Corners</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:31%"></div></div><span class="val opp">2.15</span></div>
+    </div>
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">2.31</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:100%"></div></div></div>
+      <div class="stat-label">Offsides</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:87%"></div></div><span class="val opp">2.00</span></div>
+    </div>
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">11.31</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:88%"></div></div></div>
+      <div class="stat-label">Fouls committed</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:100%"></div></div><span class="val opp">12.92</span></div>
+    </div>
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">1.54</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:51%"></div></div></div>
+      <div class="stat-label">Yellow cards</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:100%"></div></div><span class="val opp">3.00</span></div>
+    </div>
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">1.23</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:32%"></div></div></div>
+      <div class="stat-label">Saves</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:100%"></div></div><span class="val opp">3.85</span></div>
+    </div>
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">4.08</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:42%"></div></div></div>
+      <div class="stat-label">Goal kicks</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:100%"></div></div><span class="val opp">9.77</span></div>
+    </div>
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">24.31</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:100%"></div></div></div>
+      <div class="stat-label">Throw-ins</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:73%"></div></div><span class="val opp">17.77</span></div>
+    </div>
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">0.23</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:100%"></div></div></div>
+      <div class="stat-label">Hit woodwork</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:67%"></div></div><span class="val opp">0.15</span></div>
+    </div>
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">0.00</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:0%"></div></div></div>
+      <div class="stat-label">Own goals</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:100%"></div></div><span class="val opp">0.08</span></div>
+    </div>
+  </div>
+
+  <p class="section-head">Away matches</p>
+  <p class="section-sub">13 matches played</p>
+  <div class="legend">
+    <span class="paok">&larr; PAOK</span>
+    <span class="opp">Opponents &rarr;</span>
+  </div>
+  <div class="comparison">
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">1.85</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:100%"></div></div></div>
+      <div class="stat-label">Goals</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:58%"></div></div><span class="val opp">1.08</span></div>
+    </div>
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">1.66</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:100%"></div></div></div>
+      <div class="stat-label">xG</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:66%"></div></div><span class="val opp">1.10</span></div>
+    </div>
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">1.08</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:100%"></div></div></div>
+      <div class="stat-label">Assists</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:64%"></div></div><span class="val opp">0.69</span></div>
+    </div>
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">11.92</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:100%"></div></div></div>
+      <div class="stat-label">Shots</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:74%"></div></div><span class="val opp">8.77</span></div>
+    </div>
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">3.92</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:100%"></div></div></div>
+      <div class="stat-label">Shots on target</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:76%"></div></div><span class="val opp">3.00</span></div>
+    </div>
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">492</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:100%"></div></div></div>
+      <div class="stat-label">Passes</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:65%"></div></div><span class="val opp">319</span></div>
+    </div>
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">16.77</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:100%"></div></div></div>
+      <div class="stat-label">Crosses</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:89%"></div></div><span class="val opp">15.00</span></div>
+    </div>
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">12.77</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:89%"></div></div></div>
+      <div class="stat-label">Tackles</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:100%"></div></div><span class="val opp">14.31</span></div>
+    </div>
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">4.62</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:100%"></div></div></div>
+      <div class="stat-label">Corners</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:82%"></div></div><span class="val opp">3.77</span></div>
+    </div>
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">2.46</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:100%"></div></div></div>
+      <div class="stat-label">Offsides</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:97%"></div></div><span class="val opp">2.38</span></div>
+    </div>
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">12.85</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:97%"></div></div></div>
+      <div class="stat-label">Fouls committed</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:100%"></div></div><span class="val opp">13.23</span></div>
+    </div>
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">1.46</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:53%"></div></div></div>
+      <div class="stat-label">Yellow cards</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:100%"></div></div><span class="val opp">2.77</span></div>
+    </div>
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">1.92</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:96%"></div></div></div>
+      <div class="stat-label">Saves</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:100%"></div></div><span class="val opp">2.00</span></div>
+    </div>
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">8.08</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:100%"></div></div></div>
+      <div class="stat-label">Goal kicks</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:71%"></div></div><span class="val opp">5.77</span></div>
+    </div>
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">22.62</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:93%"></div></div></div>
+      <div class="stat-label">Throw-ins</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:100%"></div></div><span class="val opp">24.38</span></div>
+    </div>
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">0.31</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:100%"></div></div></div>
+      <div class="stat-label">Hit woodwork</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:25%"></div></div><span class="val opp">0.08</span></div>
+    </div>
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">0.00</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:0%"></div></div></div>
+      <div class="stat-label">Own goals</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:100%"></div></div><span class="val opp">0.08</span></div>
+    </div>
+  </div>
+
+  <p class="section-head" style="border-bottom-color:var(--accent);">Play-offs</p>
+  <p class="section-head">Overall</p>
+  <p class="section-sub">6 matches played</p>
+  <div class="legend">
+    <span class="paok">&larr; PAOK</span>
+    <span class="opp">Opponents &rarr;</span>
+  </div>
+  <div class="comparison">
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">1.17</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:100%"></div></div></div>
+      <div class="stat-label">Goals</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:100%"></div></div><span class="val opp">1.17</span></div>
+    </div>
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">1.31</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:81%"></div></div></div>
+      <div class="stat-label">xG</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:100%"></div></div><span class="val opp">1.63</span></div>
+    </div>
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">1.00</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:100%"></div></div></div>
+      <div class="stat-label">Assists</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:83%"></div></div><span class="val opp">0.83</span></div>
+    </div>
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">10.33</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:61%"></div></div></div>
+      <div class="stat-label">Shots</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:100%"></div></div><span class="val opp">16.83</span></div>
+    </div>
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">3.00</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:58%"></div></div></div>
+      <div class="stat-label">Shots on target</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:100%"></div></div><span class="val opp">5.17</span></div>
+    </div>
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">413</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:100%"></div></div></div>
+      <div class="stat-label">Passes</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:93%"></div></div><span class="val opp">384</span></div>
+    </div>
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">12.67</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:56%"></div></div></div>
+      <div class="stat-label">Crosses</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:100%"></div></div><span class="val opp">22.50</span></div>
+    </div>
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">17.33</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:100%"></div></div></div>
+      <div class="stat-label">Tackles</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:82%"></div></div><span class="val opp">14.17</span></div>
+    </div>
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">3.83</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:59%"></div></div></div>
+      <div class="stat-label">Corners</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:100%"></div></div><span class="val opp">6.50</span></div>
+    </div>
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">2.00</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:100%"></div></div></div>
+      <div class="stat-label">Offsides</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:92%"></div></div><span class="val opp">1.83</span></div>
+    </div>
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">12.00</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:94%"></div></div></div>
+      <div class="stat-label">Fouls committed</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:100%"></div></div><span class="val opp">12.83</span></div>
+    </div>
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">2.83</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:100%"></div></div></div>
+      <div class="stat-label">Yellow cards</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:41%"></div></div><span class="val opp">1.17</span></div>
+    </div>
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">3.83</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:100%"></div></div></div>
+      <div class="stat-label">Saves</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:48%"></div></div><span class="val opp">1.83</span></div>
+    </div>
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">8.00</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:100%"></div></div></div>
+      <div class="stat-label">Goal kicks</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:98%"></div></div><span class="val opp">7.83</span></div>
+    </div>
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">24.17</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:100%"></div></div></div>
+      <div class="stat-label">Throw-ins</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:80%"></div></div><span class="val opp">19.33</span></div>
+    </div>
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">0.17</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:100%"></div></div></div>
+      <div class="stat-label">Hit woodwork</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:100%"></div></div><span class="val opp">0.17</span></div>
+    </div>
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">0.17</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:100%"></div></div></div>
+      <div class="stat-label">Own goals</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:0%"></div></div><span class="val opp">0.00</span></div>
+    </div>
+  </div>
+
+  <p class="section-head">Home matches</p>
+  <p class="section-sub">3 matches played</p>
+  <div class="legend">
+    <span class="paok">&larr; PAOK</span>
+    <span class="opp">Opponents &rarr;</span>
+  </div>
+  <div class="comparison">
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">1.33</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:100%"></div></div></div>
+      <div class="stat-label">Goals</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:50%"></div></div><span class="val opp">0.67</span></div>
+    </div>
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">1.32</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:100%"></div></div></div>
+      <div class="stat-label">xG</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:92%"></div></div><span class="val opp">1.21</span></div>
+    </div>
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">1.00</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:100%"></div></div></div>
+      <div class="stat-label">Assists</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:67%"></div></div><span class="val opp">0.67</span></div>
+    </div>
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">9.67</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:74%"></div></div></div>
+      <div class="stat-label">Shots</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:100%"></div></div><span class="val opp">13.00</span></div>
+    </div>
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">3.67</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:100%"></div></div></div>
+      <div class="stat-label">Shots on target</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:100%"></div></div><span class="val opp">3.67</span></div>
+    </div>
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">442</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:100%"></div></div></div>
+      <div class="stat-label">Passes</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:91%"></div></div><span class="val opp">402</span></div>
+    </div>
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">13.00</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:75%"></div></div></div>
+      <div class="stat-label">Crosses</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:100%"></div></div><span class="val opp">17.33</span></div>
+    </div>
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">16.67</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:100%"></div></div></div>
+      <div class="stat-label">Tackles</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:74%"></div></div><span class="val opp">12.33</span></div>
+    </div>
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">4.33</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:72%"></div></div></div>
+      <div class="stat-label">Corners</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:100%"></div></div><span class="val opp">6.00</span></div>
+    </div>
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">2.00</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:100%"></div></div></div>
+      <div class="stat-label">Offsides</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:83%"></div></div><span class="val opp">1.67</span></div>
+    </div>
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">14.00</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:100%"></div></div></div>
+      <div class="stat-label">Fouls committed</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:79%"></div></div><span class="val opp">11.00</span></div>
+    </div>
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">2.00</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:100%"></div></div></div>
+      <div class="stat-label">Yellow cards</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:50%"></div></div><span class="val opp">1.00</span></div>
+    </div>
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">3.00</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:100%"></div></div></div>
+      <div class="stat-label">Saves</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:78%"></div></div><span class="val opp">2.33</span></div>
+    </div>
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">8.00</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:100%"></div></div></div>
+      <div class="stat-label">Goal kicks</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:54%"></div></div><span class="val opp">4.33</span></div>
+    </div>
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">25.00</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:100%"></div></div></div>
+      <div class="stat-label">Throw-ins</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:71%"></div></div><span class="val opp">17.67</span></div>
+    </div>
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">0.00</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:0%"></div></div></div>
+      <div class="stat-label">Hit woodwork</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:100%"></div></div><span class="val opp">0.33</span></div>
+    </div>
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">0.00</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:0%"></div></div></div>
+      <div class="stat-label">Own goals</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:0%"></div></div><span class="val opp">0.00</span></div>
+    </div>
+  </div>
+
+  <p class="section-head">Away matches</p>
+  <p class="section-sub">3 matches played</p>
+  <div class="legend">
+    <span class="paok">&larr; PAOK</span>
+    <span class="opp">Opponents &rarr;</span>
+  </div>
+  <div class="comparison">
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">1.00</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:60%"></div></div></div>
+      <div class="stat-label">Goals</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:100%"></div></div><span class="val opp">1.67</span></div>
+    </div>
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">1.31</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:64%"></div></div></div>
+      <div class="stat-label">xG</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:100%"></div></div><span class="val opp">2.05</span></div>
+    </div>
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">1.00</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:100%"></div></div></div>
+      <div class="stat-label">Assists</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:100%"></div></div><span class="val opp">1.00</span></div>
+    </div>
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">11.00</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:53%"></div></div></div>
+      <div class="stat-label">Shots</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:100%"></div></div><span class="val opp">20.67</span></div>
+    </div>
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">2.33</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:35%"></div></div></div>
+      <div class="stat-label">Shots on target</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:100%"></div></div><span class="val opp">6.67</span></div>
+    </div>
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">384</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:100%"></div></div></div>
+      <div class="stat-label">Passes</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:95%"></div></div><span class="val opp">367</span></div>
+    </div>
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">12.33</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:45%"></div></div></div>
+      <div class="stat-label">Crosses</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:100%"></div></div><span class="val opp">27.67</span></div>
+    </div>
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">18.00</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:100%"></div></div></div>
+      <div class="stat-label">Tackles</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:89%"></div></div><span class="val opp">16.00</span></div>
+    </div>
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">3.33</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:48%"></div></div></div>
+      <div class="stat-label">Corners</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:100%"></div></div><span class="val opp">7.00</span></div>
+    </div>
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">2.00</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:100%"></div></div></div>
+      <div class="stat-label">Offsides</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:100%"></div></div><span class="val opp">2.00</span></div>
+    </div>
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">10.00</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:68%"></div></div></div>
+      <div class="stat-label">Fouls committed</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:100%"></div></div><span class="val opp">14.67</span></div>
+    </div>
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">3.67</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:100%"></div></div></div>
+      <div class="stat-label">Yellow cards</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:36%"></div></div><span class="val opp">1.33</span></div>
+    </div>
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">4.67</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:100%"></div></div></div>
+      <div class="stat-label">Saves</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:29%"></div></div><span class="val opp">1.33</span></div>
+    </div>
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">8.00</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:71%"></div></div></div>
+      <div class="stat-label">Goal kicks</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:100%"></div></div><span class="val opp">11.33</span></div>
+    </div>
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">23.33</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:100%"></div></div></div>
+      <div class="stat-label">Throw-ins</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:90%"></div></div><span class="val opp">21.00</span></div>
+    </div>
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">0.33</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:100%"></div></div></div>
+      <div class="stat-label">Hit woodwork</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:0%"></div></div><span class="val opp">0.00</span></div>
+    </div>
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">0.33</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:100%"></div></div></div>
+      <div class="stat-label">Own goals</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:0%"></div></div><span class="val opp">0.00</span></div>
+    </div>
+  </div>
+
+
+</div>
+
+<!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "b67bbb76d0e24af196b24ded3ab71ad0"}'></script><!-- End Cloudflare Web Analytics -->
+</body></html>

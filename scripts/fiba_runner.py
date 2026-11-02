@@ -1,4 +1,4 @@
-"""Run the FIBA Europe Cup pipeline (nikolitso/FIBA-Europe-Cup) from a GitHub runner.
+"""Run the FIBA Europe Cup pipeline (nikolitso/BettingSignal, fibaeuropecup/) from a GitHub runner.
 
     python fiba_runner.py update    # update.py: results, fixtures, odds, projections, publish
     python fiba_runner.py odds      # matchday_odds.py: today's lines, projections, publish
@@ -12,14 +12,14 @@ books first and, when none of them is on the page, takes the line from the first
 then from any other book but bet365 (which quotes 1.83 / 1.83 on every line). Of a book's lines the main one is
 still the one with the most even pair of odds, as in the pipeline.
 
-FIBA_PIPELINE names the pipeline checkout (default: the _fiba folder next to the site repo, as in the workflow).
+FIBA_PIPELINE names the pipeline checkout (default: _bs/fibaeuropecup next to the site repo, as in the workflow).
 """
 import os
 import sys
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
-PIPELINE = Path(os.environ.get("FIBA_PIPELINE", HERE.parent / "_fiba"))
+PIPELINE = Path(os.environ.get("FIBA_PIPELINE", HERE.parent / "_bs" / "fibaeuropecup"))
 PREFER = ["Stake.com", "bwin", "Betsson", "1xBet", "Sports Interaction", "Unibet", "Betway", "Pinnacle"]
 SKIP = {"bet365"}
 

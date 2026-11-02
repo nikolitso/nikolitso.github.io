@@ -1,0 +1,374 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Expected Table 2020-21 (Archive)</title>
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap">
+
+<style>
+  :root {
+    --bg: #f4f4f2;
+    --surface: #ffffff;
+    --surface-2: #ececea;
+    --ink: #16171a;
+    --ink-dim: #55585f;
+    --line: #d9d9d5;
+    --accent: #1c1f6b;
+    --accent-soft: #e7e8f5;
+    --good: #1a7a4c;
+    --bad: #a4402a;
+    --cyan: #0e7f9c;
+    --champion: #D4AF37;
+    --relegated: #DC2626;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #101114;
+      --surface: #17181c;
+      --surface-2: #1d1f24;
+      --ink: #edeeef;
+      --ink-dim: #9a9ca3;
+      --line: #2b2d33;
+      --accent: #8f96ff;
+      --accent-soft: #232650;
+      --good: #4fce94;
+      --bad: #e8917c;
+      --cyan: #3cc6e6;
+      --champion: #C9A227;
+      --relegated: #D64545;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --bg: #101114;
+    --surface: #17181c;
+    --surface-2: #1d1f24;
+    --ink: #edeeef;
+    --ink-dim: #9a9ca3;
+    --line: #2b2d33;
+    --accent: #8f96ff;
+    --accent-soft: #232650;
+    --good: #4fce94;
+    --bad: #e8917c;
+    --cyan: #3cc6e6;
+    --champion: #C9A227;
+    --relegated: #D64545;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+    line-height: 1.5;
+  }
+
+  .wrap { max-width: 1040px; margin: 0 auto; padding: 56px 24px 96px; }
+
+  header.page-head { margin-bottom: 32px; }
+
+  .eyebrow {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--accent); font-weight: 600; margin: 0 0 10px;
+  }
+
+  h1 {
+    font-family: "Archivo", ui-sans-serif, sans-serif;
+    font-weight: 800; font-size: clamp(28px, 4.5vw, 40px);
+    letter-spacing: -0.01em; margin: 0 0 8px; text-wrap: balance;
+  }
+
+  .meta-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+
+  .meta-pill {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 12px; color: var(--ink-dim);
+    background: var(--surface-2); border: 1px solid var(--line);
+    border-radius: 999px; padding: 5px 12px;
+  }
+
+  section.group { margin-top: 40px; }
+
+  .section-title { font-family: "Archivo", sans-serif; font-size: 19px; font-weight: 800; margin: 0 0 14px; }
+  .section-title.has-note { margin-bottom: 4px; }
+
+  .champ-note {
+    font-family: "IBM Plex Mono", monospace; font-size: 12.5px; font-weight: 600;
+    color: var(--accent); background: var(--accent-soft);
+    display: inline-block; padding: 5px 12px; border-radius: 999px;
+    margin: 0 0 14px;
+  }
+
+  .paok-note {
+    font-family: "IBM Plex Mono", monospace; font-size: 12.5px; font-weight: 600;
+    color: var(--accent); background: var(--accent-soft);
+    display: inline-block; padding: 5px 12px; border-radius: 999px;
+    margin: 0 0 14px;
+  }
+
+  .table-scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
+
+  table { width: 100%; border-collapse: collapse; font-size: 13.5px; min-width: 780px; }
+
+  th, td { text-align: left; padding: 9px 8px; white-space: nowrap; }
+
+  thead th {
+    font-family: "IBM Plex Mono", monospace; font-size: 10.5px;
+    letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-dim);
+    font-weight: 600; background: var(--surface-2); border-bottom: 1px solid var(--line);
+  }
+
+  th.no-caps { text-transform: none; }
+
+  tbody tr:not(:last-child) td { border-bottom: 1px solid var(--line); }
+
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; font-family: "IBM Plex Mono", monospace; font-size: 13px; }
+
+  td.pos { font-family: "IBM Plex Mono", monospace; color: var(--ink-dim); width: 30px; }
+
+  td.team { font-weight: 600; }
+  .team-cell { display: flex; align-items: center; gap: 8px; }
+  .crest { width: 20px; height: 20px; flex: none; object-fit: contain; }
+
+  tr.paok td { background: var(--accent-soft); }
+  tr.paok td.team { color: var(--accent); }
+
+  tr.champion td { background: color-mix(in srgb, var(--champion) 20%, var(--surface)); }
+  tr.champion td.team { color: color-mix(in srgb, var(--champion) 65%, var(--ink)); font-weight: 700; }
+  tr.relegated td { background: color-mix(in srgb, var(--relegated) 14%, var(--surface)); }
+  tr.relegated td.team { color: var(--relegated); }
+
+  td.gd.pos-num { color: var(--good); }
+  td.gd.neg-num { color: var(--bad); }
+  td.xgd.pos-num { color: var(--good); }
+  td.xgd.neg-num { color: var(--bad); }
+  .dpos-badge {
+    display: inline-flex; align-items: center; gap: 3px;
+    padding: 3px 8px; border-radius: 999px;
+    font-family: "IBM Plex Mono", monospace; font-weight: 700; font-size: 12.5px;
+  }
+  .dpos-badge.pos-num { background: color-mix(in srgb, var(--good) 18%, transparent); color: var(--good); }
+  .dpos-badge.neg-num { background: color-mix(in srgb, var(--bad) 18%, transparent); color: var(--bad); }
+  .dpos-badge.zero { background: var(--surface-2); color: var(--ink-dim); }
+
+  .delta { font-size: 10px; font-weight: 600; margin-left: 3px; vertical-align: super; }
+  .delta.good { color: var(--good); }
+  .delta.bad { color: var(--bad); }
+
+  .n-flag { font-size: 9px; color: var(--ink-dim); margin-left: 2px; cursor: help; }
+
+  footer.page-foot {
+    margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--line);
+    font-size: 12.5px; color: var(--ink-dim);
+  }
+
+  .spotlight-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 12px; margin-top: 24px;
+  }
+  @media (max-width: 640px) { .spotlight-grid { grid-template-columns: 1fr; } }
+  .spotlight-card {
+    background: var(--surface); border: 1px solid var(--line); border-left: 4px solid var(--edge);
+    border-radius: 6px; padding: 14px 16px;
+  }
+  .spotlight-card.luck { --edge: var(--good); }
+  .spotlight-card.hard { --edge: var(--bad); }
+  .spotlight-card.xgd { --edge: var(--cyan); }
+  .spotlight-card.xgd .value { color: var(--cyan); }
+  .spotlight-card .label {
+    font-family: "IBM Plex Mono", monospace; font-size: 10.5px; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--ink-dim); margin-bottom: 6px;
+  }
+  .spotlight-card .team {
+    font-family: "Archivo", sans-serif; font-weight: 700; font-size: 17px; margin-bottom: 4px;
+  }
+  .spotlight-card .value {
+    font-family: "IBM Plex Mono", monospace; font-size: 13px; font-weight: 600;
+  }
+  .spotlight-card.luck .value { color: var(--good); }
+  .spotlight-card.hard .value { color: var(--bad); }
+
+  .pm-badge {
+    display: inline-flex; align-items: center;
+    padding: 3px 9px; border-radius: 999px;
+    font-family: "IBM Plex Mono", monospace; font-weight: 700; font-size: 13px;
+  }
+  .pm-badge.pos-num { background: color-mix(in srgb, var(--good) 20%, transparent); color: var(--good); }
+  .pm-badge.neg-num { background: color-mix(in srgb, var(--bad) 20%, transparent); color: var(--bad); }
+
+  th.group-head {
+    text-align: center; border-bottom: 1px solid var(--line);
+    color: var(--accent);
+  }
+</style>
+</head>
+<body>
+<!-- sitebar:start (link back to antonisnikolitsopoulos.com; keep on every page) -->
+<style>
+.an-sitebar{background:#0d1220;border-bottom:1px solid rgba(255,255,255,.09);font:500 13px/1.2 "Segoe UI",system-ui,-apple-system,sans-serif;letter-spacing:.02em}
+.an-sitebar>div{max-width:72rem;margin:0 auto;padding:6px 16px;display:flex;justify-content:flex-end;align-items:center;gap:18px}
+.an-sitebar a{color:#9aa1b2;text-decoration:none;display:inline-flex;align-items:center;min-height:24px}.an-sitebar a:hover{color:#fff}
+.an-sitebar svg{width:17px;height:17px;fill:currentColor}
+.an-sitebar a[href="/"]{padding:6px 8px;margin:-6px -8px -6px -4px;border-radius:6px}.an-sitebar a[href="/"]:hover{background:rgba(255,255,255,.08)}
+</style>
+<nav class="an-sitebar" aria-label="Main site"><div><a href="/books/">Books</a><a href="/#projects">Projects</a><a href="/about/">About</a><a href="/" title="Main site: antonisnikolitsopoulos.com" aria-label="Main site"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 2 11.5h3V21h5.5v-6h3v6H19v-9.5h3z"/></svg></a></div></nav>
+<!-- sitebar:end -->
+
+<div class="wrap">
+
+  <header class="page-head">
+    <p class="eyebrow"><a href="index.html" style="color:inherit;text-decoration:none;">PAOK Hub</a></p>
+    <h1>The Expected Table, 2020&ndash;21</h1>
+    <div class="meta-row">
+      <span class="meta-pill">Final standings</span>
+    </div>
+    <div class="spotlight-grid">
+      <div class="spotlight-card luck">
+        <div class="label">Above expectation</div>
+        <div class="team">Olympiakos</div>
+        <div class="value">+13.7 pts vs xPts</div>
+      </div>
+      <div class="spotlight-card hard">
+        <div class="label">Below expectation</div>
+        <div class="team">OFI</div>
+        <div class="value">&minus;10.7 pts vs xPts</div>
+      </div>
+      <div class="spotlight-card xgd">
+        <div class="label">Best xG difference</div>
+        <div class="team">Olympiakos</div>
+        <div class="value">+1.15 per match</div>
+      </div>
+    </div>
+  </header>
+
+  <section class="group">
+    <p class="section-title has-note">Championship Round</p>
+    <p class="champ-note">&#127942; Olympiakos are champions &mdash; instead of 2nd on xPts</p>
+    <p class="paok-note">&#9917; PAOK finished 2nd &mdash; 1st on xPts</p>
+    <div class="table-scroll">
+      <table>
+        <thead>
+        <tr>
+          <th class="pos" rowspan="2">Pos</th><th rowspan="2">Team</th>
+          <th class="num" rowspan="2" title="Played">P</th>
+          <th class="num" rowspan="2">W</th><th class="num" rowspan="2">D</th><th class="num" rowspan="2">L</th>
+          <th class="num group-head" colspan="3" title="Points, expected points and the difference between them">Points</th>
+          <th class="num" rowspan="2" title="Position deviation: xPts-ranked position minus real-points-ranked position. Positive (▲) means the team's real position is better than its underlying numbers suggest; negative (▼) means worse.">&Delta;Pos</th>
+          <th class="num no-caps" rowspan="2" title="Expected goals for, total across the season">xG</th>
+          <th class="num" rowspan="2" title="Goals for">GF</th>
+          <th class="num no-caps" rowspan="2" title="Expected goals against, total across the season">xGA</th>
+          <th class="num" rowspan="2" title="Goals against">GA</th>
+          <th class="num no-caps" rowspan="2" title="Expected goal difference (xG minus xGA)">xGD</th>
+          <th class="num" rowspan="2" title="Goal difference">GD</th>
+        </tr>
+        <tr>
+          <th class="num" title="Points">Pts</th>
+          <th class="num no-caps" title="Expected points, sum across matches (Poisson model from each match xG). Ranked by this column.">xP</th>
+          <th class="num" title="Points minus expected points">+/&minus;</th>
+        </tr>
+      </thead>
+        <tbody>
+        <tr class="paok"><td class="pos">1</td><td class="team"><div class="team-cell"><img class="crest" src="https://omo.akamai.opta.net/image.php?secure=true&h=omo.akamai.opta.net&sport=football&entity=team&description=badges&dimensions=20&id=deazflnflqmejndo05gviznzd" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.display='none'">PAOK</div></td><td class="num">36</td><td class="num">18</td><td class="num">10</td><td class="num">8</td><td class="num">64</td><td class="num no-caps">70.9</td><td class="num"><span class="pm-badge neg-num">&minus;6.9</span></td><td class="num"><span class="dpos-badge neg-num">&#9660;1</span></td><td class="num">59.5</td><td class="num">60</td><td class="num">25.0</td><td class="num">34</td><td class="num xgd pos-num">+34.5</td><td class="num gd pos-num">+26</td></tr>
+        <tr class="champion"><td class="pos">2</td><td class="team"><div class="team-cell"><img class="crest" src="https://omo.akamai.opta.net/image.php?secure=true&h=omo.akamai.opta.net&sport=football&entity=team&description=badges&dimensions=20&id=9ghx7vbghs3628n5chm9r8ig3" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.display='none'">Olympiakos</div></td><td class="num">36</td><td class="num">28</td><td class="num">6</td><td class="num">2</td><td class="num">90</td><td class="num no-caps">68.3</td><td class="num"><span class="pm-badge pos-num">+21.7</span></td><td class="num"><span class="dpos-badge pos-num">&#9650;1</span></td><td class="num">59.0</td><td class="num">82</td><td class="num">27.1</td><td class="num">19</td><td class="num xgd pos-num">+31.9</td><td class="num gd pos-num">+63</td></tr>
+        <tr><td class="pos">3</td><td class="team"><div class="team-cell"><img class="crest" src="https://omo.akamai.opta.net/image.php?secure=true&h=omo.akamai.opta.net&sport=football&entity=team&description=badges&dimensions=20&id=90z9l1k46z46ep9oupipgganh" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.display='none'">Aris</div></td><td class="num">36</td><td class="num">17</td><td class="num">10</td><td class="num">9</td><td class="num">61</td><td class="num no-caps">57.0</td><td class="num"><span class="pm-badge pos-num">+4.0</span></td><td class="num"><span class="dpos-badge zero">0</span></td><td class="num">40.5</td><td class="num">41</td><td class="num">29.1</td><td class="num">26</td><td class="num xgd pos-num">+11.4</td><td class="num gd pos-num">+15</td></tr>
+        <tr><td class="pos">4</td><td class="team"><div class="team-cell"><img class="crest" src="https://omo.akamai.opta.net/image.php?secure=true&h=omo.akamai.opta.net&sport=football&entity=team&description=badges&dimensions=20&id=7ruua9q5rtswwi5d6xtquuto5" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.display='none'">AEK</div></td><td class="num">36</td><td class="num">17</td><td class="num">9</td><td class="num">10</td><td class="num">60</td><td class="num no-caps">56.3</td><td class="num"><span class="pm-badge pos-num">+3.7</span></td><td class="num"><span class="dpos-badge zero">0</span></td><td class="num">47.0</td><td class="num">53</td><td class="num">34.0</td><td class="num">45</td><td class="num xgd pos-num">+13.0</td><td class="num gd pos-num">+8</td></tr>
+        <tr><td class="pos">5</td><td class="team"><div class="team-cell"><img class="crest" src="https://omo.akamai.opta.net/image.php?secure=true&h=omo.akamai.opta.net&sport=football&entity=team&description=badges&dimensions=20&id=4ws3k9155net1ydbvr8c940dy" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.display='none'">Panathinaikos</div></td><td class="num">36</td><td class="num">14</td><td class="num">11</td><td class="num">11</td><td class="num">53</td><td class="num no-caps">50.3</td><td class="num"><span class="pm-badge pos-num">+2.7</span></td><td class="num"><span class="dpos-badge zero">0</span></td><td class="num">39.6</td><td class="num">41</td><td class="num">38.1</td><td class="num">34</td><td class="num xgd pos-num">+1.5</td><td class="num gd pos-num">+7</td></tr>
+        <tr><td class="pos">6</td><td class="team"><div class="team-cell"><img class="crest" src="https://omo.akamai.opta.net/image.php?secure=true&h=omo.akamai.opta.net&sport=football&entity=team&description=badges&dimensions=20&id=c53eublb5ds9v1rlscm8x39pq" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.display='none'">Asteras</div></td><td class="num">36</td><td class="num">12</td><td class="num">15</td><td class="num">9</td><td class="num">51</td><td class="num no-caps">46.8</td><td class="num"><span class="pm-badge pos-num">+4.2</span></td><td class="num"><span class="dpos-badge zero">0</span></td><td class="num">33.4</td><td class="num">36</td><td class="num">35.6</td><td class="num">38</td><td class="num xgd neg-num">&minus;2.2</td><td class="num gd neg-num">&minus;2</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="group">
+    <p class="section-title">Relegation Round</p>
+    <div class="table-scroll">
+      <table>
+        <thead>
+        <tr>
+          <th class="pos" rowspan="2">Pos</th><th rowspan="2">Team</th>
+          <th class="num" rowspan="2" title="Played">P</th>
+          <th class="num" rowspan="2">W</th><th class="num" rowspan="2">D</th><th class="num" rowspan="2">L</th>
+          <th class="num group-head" colspan="3" title="Points, expected points and the difference between them">Points</th>
+          <th class="num" rowspan="2" title="Position deviation: xPts-ranked position minus real-points-ranked position. Positive (▲) means the team's real position is better than its underlying numbers suggest; negative (▼) means worse.">&Delta;Pos</th>
+          <th class="num no-caps" rowspan="2" title="Expected goals for, total across the season">xG</th>
+          <th class="num" rowspan="2" title="Goals for">GF</th>
+          <th class="num no-caps" rowspan="2" title="Expected goals against, total across the season">xGA</th>
+          <th class="num" rowspan="2" title="Goals against">GA</th>
+          <th class="num no-caps" rowspan="2" title="Expected goal difference (xG minus xGA)">xGD</th>
+          <th class="num" rowspan="2" title="Goal difference">GD</th>
+        </tr>
+        <tr>
+          <th class="num" title="Points">Pts</th>
+          <th class="num no-caps" title="Expected points, sum across matches (Poisson model from each match xG). Ranked by this column.">xP</th>
+          <th class="num" title="Points minus expected points">+/&minus;</th>
+        </tr>
+      </thead>
+        <tbody>
+        <tr><td class="pos">1</td><td class="team"><div class="team-cell"><img class="crest" src="https://omo.akamai.opta.net/image.php?secure=true&h=omo.akamai.opta.net&sport=football&entity=team&description=badges&dimensions=20&id=1kij1j9oyr97sxtd0hvgnre10" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.display='none'">PAS Giannina</div></td><td class="num">33</td><td class="num">9</td><td class="num">8</td><td class="num">16</td><td class="num">35</td><td class="num no-caps">42.8</td><td class="num"><span class="pm-badge neg-num">&minus;7.8</span></td><td class="num"><span class="dpos-badge neg-num">&#9660;2</span></td><td class="num">32.5</td><td class="num">27</td><td class="num">36.7</td><td class="num">36</td><td class="num xgd neg-num">&minus;4.2</td><td class="num gd neg-num">&minus;9</td></tr>
+        <tr><td class="pos">2</td><td class="team"><div class="team-cell"><img class="crest" src="https://omo.akamai.opta.net/image.php?secure=true&h=omo.akamai.opta.net&sport=football&entity=team&description=badges&dimensions=20&id=8f2ud0np10grf6a1ke620ma4s" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.display='none'">Lamia</div></td><td class="num">33</td><td class="num">8</td><td class="num">11</td><td class="num">14</td><td class="num">35</td><td class="num no-caps">40.6</td><td class="num"><span class="pm-badge neg-num">&minus;5.6</span></td><td class="num"><span class="dpos-badge neg-num">&#9660;2</span></td><td class="num">28.2</td><td class="num">21</td><td class="num">35.3</td><td class="num">42</td><td class="num xgd neg-num">&minus;7.2</td><td class="num gd neg-num">&minus;21</td></tr>
+        <tr><td class="pos">3</td><td class="team"><div class="team-cell"><img class="crest" src="https://omo.akamai.opta.net/image.php?secure=true&h=omo.akamai.opta.net&sport=football&entity=team&description=badges&dimensions=20&id=dr4emys1xpm2h54oid0q5y2nx" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.display='none'">OFI</div></td><td class="num">33</td><td class="num">8</td><td class="num">8</td><td class="num">17</td><td class="num">32</td><td class="num no-caps">39.8</td><td class="num"><span class="pm-badge neg-num">&minus;7.8</span></td><td class="num"><span class="dpos-badge neg-num">&#9660;3</span></td><td class="num">31.9</td><td class="num">30</td><td class="num">40.9</td><td class="num">47</td><td class="num xgd neg-num">&minus;9.0</td><td class="num gd neg-num">&minus;17</td></tr>
+        <tr><td class="pos">4</td><td class="team"><div class="team-cell"><img class="crest" src="https://omo.akamai.opta.net/image.php?secure=true&h=omo.akamai.opta.net&sport=football&entity=team&description=badges&dimensions=20&id=4gex5os8jassavy6lopipbcz3" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.display='none'">Atromitos</div></td><td class="num">33</td><td class="num">8</td><td class="num">13</td><td class="num">12</td><td class="num">37</td><td class="num no-caps">36.7</td><td class="num"><span class="pm-badge pos-num">+0.3</span></td><td class="num"><span class="dpos-badge pos-num">&#9650;2</span></td><td class="num">28.5</td><td class="num">30</td><td class="num">40.6</td><td class="num">40</td><td class="num xgd neg-num">&minus;12.1</td><td class="num gd neg-num">&minus;10</td></tr>
+        <tr><td class="pos">5</td><td class="team"><div class="team-cell"><img class="crest" src="https://upload.wikimedia.org/wikipedia/en/thumb/7/77/Apollon_Smyrnis_F.C._logo.svg/250px-Apollon_Smyrnis_F.C._logo.svg.png" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.display='none'">Apollon Smirnis</div></td><td class="num">33</td><td class="num">9</td><td class="num">7</td><td class="num">17</td><td class="num">34</td><td class="num no-caps">36.5</td><td class="num"><span class="pm-badge neg-num">&minus;2.5</span></td><td class="num"><span class="dpos-badge zero">0</span></td><td class="num">30.6</td><td class="num">29</td><td class="num">43.4</td><td class="num">40</td><td class="num xgd neg-num">&minus;12.8</td><td class="num gd neg-num">&minus;11</td></tr>
+        <tr><td class="pos">6</td><td class="team"><div class="team-cell"><img class="crest" src="https://omo.akamai.opta.net/image.php?secure=true&h=omo.akamai.opta.net&sport=football&entity=team&description=badges&dimensions=20&id=937i26v5naqzhwxcelwtgou3u" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.display='none'">Volos</div></td><td class="num">33</td><td class="num">10</td><td class="num">13</td><td class="num">10</td><td class="num">43</td><td class="num no-caps">35.4</td><td class="num"><span class="pm-badge pos-num">+7.6</span></td><td class="num"><span class="dpos-badge pos-num">&#9650;5</span></td><td class="num">31.0</td><td class="num">34</td><td class="num">46.6</td><td class="num">37</td><td class="num xgd neg-num">&minus;15.6</td><td class="num gd neg-num">&minus;3</td></tr>
+        <tr><td class="pos">7</td><td class="team"><div class="team-cell"><img class="crest" src="https://omo.akamai.opta.net/image.php?secure=true&h=omo.akamai.opta.net&sport=football&entity=team&description=badges&dimensions=20&id=3e1v5aemi3afarlqm4raxf7fc" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.display='none'">Larissa</div></td><td class="num">33</td><td class="num">6</td><td class="num">9</td><td class="num">18</td><td class="num">27</td><td class="num no-caps">35.2</td><td class="num"><span class="pm-badge neg-num">&minus;8.2</span></td><td class="num"><span class="dpos-badge neg-num">&#9660;1</span></td><td class="num">25.5</td><td class="num">25</td><td class="num">38.9</td><td class="num">47</td><td class="num xgd neg-num">&minus;13.4</td><td class="num gd neg-num">&minus;22</td></tr>
+        <tr><td class="pos">8</td><td class="team"><div class="team-cell"><img class="crest" src="https://omo.akamai.opta.net/image.php?secure=true&h=omo.akamai.opta.net&sport=football&entity=team&description=badges&dimensions=20&id=dozhxtpww3paixmvttljtduge" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.display='none'">Panaitolikos</div></td><td class="num">33</td><td class="num">6</td><td class="num">10</td><td class="num">17</td><td class="num">28</td><td class="num no-caps">33.8</td><td class="num"><span class="pm-badge neg-num">&minus;5.8</span></td><td class="num"><span class="dpos-badge pos-num">&#9650;1</span></td><td class="num">24.3</td><td class="num">20</td><td class="num">40.4</td><td class="num">44</td><td class="num xgd neg-num">&minus;16.1</td><td class="num gd neg-num">&minus;24</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="group">
+    <p class="section-title">Regular Season</p>
+    <div class="table-scroll">
+      <table>
+        <thead>
+        <tr>
+          <th class="pos" rowspan="2">Pos</th><th rowspan="2">Team</th>
+          <th class="num" rowspan="2" title="Played">P</th>
+          <th class="num" rowspan="2">W</th><th class="num" rowspan="2">D</th><th class="num" rowspan="2">L</th>
+          <th class="num group-head" colspan="3" title="Points, expected points and the difference between them">Points</th>
+          <th class="num" rowspan="2" title="Position deviation: xPts-ranked position minus real-points-ranked position. Positive (▲) means the team's real position is better than its underlying numbers suggest; negative (▼) means worse.">&Delta;Pos</th>
+          <th class="num no-caps" rowspan="2" title="Expected goals for, total across the season">xG</th>
+          <th class="num" rowspan="2" title="Goals for">GF</th>
+          <th class="num no-caps" rowspan="2" title="Expected goals against, total across the season">xGA</th>
+          <th class="num" rowspan="2" title="Goals against">GA</th>
+          <th class="num no-caps" rowspan="2" title="Expected goal difference (xG minus xGA)">xGD</th>
+          <th class="num" rowspan="2" title="Goal difference">GD</th>
+        </tr>
+        <tr>
+          <th class="num" title="Points">Pts</th>
+          <th class="num no-caps" title="Expected points, sum across matches (Poisson model from each match xG). Ranked by this column.">xP</th>
+          <th class="num" title="Points minus expected points">+/&minus;</th>
+        </tr>
+      </thead>
+        <tbody>
+        <tr><td class="pos">1</td><td class="team"><div class="team-cell"><img class="crest" src="https://omo.akamai.opta.net/image.php?secure=true&h=omo.akamai.opta.net&sport=football&entity=team&description=badges&dimensions=20&id=9ghx7vbghs3628n5chm9r8ig3" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.display='none'">Olympiakos</div></td><td class="num">26</td><td class="num">21</td><td class="num">4</td><td class="num">1</td><td class="num">67</td><td class="num no-caps">53.3</td><td class="num"><span class="pm-badge pos-num">+13.7</span></td><td class="num"><span class="dpos-badge zero">0</span></td><td class="num">47.2</td><td class="num">64</td><td class="num">17.4</td><td class="num">13</td><td class="num xgd pos-num">+29.9</td><td class="num gd pos-num">+51</td></tr>
+        <tr class="paok"><td class="pos">2</td><td class="team"><div class="team-cell"><img class="crest" src="https://omo.akamai.opta.net/image.php?secure=true&h=omo.akamai.opta.net&sport=football&entity=team&description=badges&dimensions=20&id=deazflnflqmejndo05gviznzd" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.display='none'">PAOK</div></td><td class="num">26</td><td class="num">13</td><td class="num">8</td><td class="num">5</td><td class="num">47</td><td class="num no-caps">53.3</td><td class="num"><span class="pm-badge neg-num">&minus;6.3</span></td><td class="num"><span class="dpos-badge neg-num">&#9660;2</span></td><td class="num">46.7</td><td class="num">49</td><td class="num">18.2</td><td class="num">26</td><td class="num xgd pos-num">+28.5</td><td class="num gd pos-num">+23</td></tr>
+        <tr><td class="pos">3</td><td class="team"><div class="team-cell"><img class="crest" src="https://omo.akamai.opta.net/image.php?secure=true&h=omo.akamai.opta.net&sport=football&entity=team&description=badges&dimensions=20&id=7ruua9q5rtswwi5d6xtquuto5" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.display='none'">AEK</div></td><td class="num">26</td><td class="num">14</td><td class="num">6</td><td class="num">6</td><td class="num">48</td><td class="num no-caps">43.4</td><td class="num"><span class="pm-badge pos-num">+4.6</span></td><td class="num"><span class="dpos-badge zero">0</span></td><td class="num">35.4</td><td class="num">41</td><td class="num">21.7</td><td class="num">29</td><td class="num xgd pos-num">+13.8</td><td class="num gd pos-num">+12</td></tr>
+        <tr><td class="pos">4</td><td class="team"><div class="team-cell"><img class="crest" src="https://omo.akamai.opta.net/image.php?secure=true&h=omo.akamai.opta.net&sport=football&entity=team&description=badges&dimensions=20&id=90z9l1k46z46ep9oupipgganh" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.display='none'">Aris</div></td><td class="num">26</td><td class="num">15</td><td class="num">6</td><td class="num">5</td><td class="num">51</td><td class="num no-caps">42.2</td><td class="num"><span class="pm-badge pos-num">+8.8</span></td><td class="num"><span class="dpos-badge pos-num">&#9650;2</span></td><td class="num">28.7</td><td class="num">34</td><td class="num">18.8</td><td class="num">16</td><td class="num xgd pos-num">+10.0</td><td class="num gd pos-num">+18</td></tr>
+        <tr><td class="pos">5</td><td class="team"><div class="team-cell"><img class="crest" src="https://omo.akamai.opta.net/image.php?secure=true&h=omo.akamai.opta.net&sport=football&entity=team&description=badges&dimensions=20&id=4ws3k9155net1ydbvr8c940dy" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.display='none'">Panathinaikos</div></td><td class="num">26</td><td class="num">13</td><td class="num">6</td><td class="num">7</td><td class="num">45</td><td class="num no-caps">39.8</td><td class="num"><span class="pm-badge pos-num">+5.2</span></td><td class="num"><span class="dpos-badge zero">0</span></td><td class="num">30.5</td><td class="num">30</td><td class="num">24.1</td><td class="num">19</td><td class="num xgd pos-num">+6.5</td><td class="num gd pos-num">+11</td></tr>
+        <tr><td class="pos">6</td><td class="team"><div class="team-cell"><img class="crest" src="https://omo.akamai.opta.net/image.php?secure=true&h=omo.akamai.opta.net&sport=football&entity=team&description=badges&dimensions=20&id=c53eublb5ds9v1rlscm8x39pq" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.display='none'">Asteras</div></td><td class="num">26</td><td class="num">11</td><td class="num">9</td><td class="num">6</td><td class="num">42</td><td class="num no-caps">36.0</td><td class="num"><span class="pm-badge pos-num">+6.0</span></td><td class="num"><span class="dpos-badge zero">0</span></td><td class="num">25.6</td><td class="num">27</td><td class="num">24.0</td><td class="num">25</td><td class="num xgd pos-num">+1.6</td><td class="num gd pos-num">+2</td></tr>
+        <tr><td class="pos">7</td><td class="team"><div class="team-cell"><img class="crest" src="https://omo.akamai.opta.net/image.php?secure=true&h=omo.akamai.opta.net&sport=football&entity=team&description=badges&dimensions=20&id=1kij1j9oyr97sxtd0hvgnre10" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.display='none'">PAS Giannina</div></td><td class="num">26</td><td class="num">8</td><td class="num">7</td><td class="num">11</td><td class="num">31</td><td class="num no-caps">33.2</td><td class="num"><span class="pm-badge neg-num">&minus;2.2</span></td><td class="num"><span class="dpos-badge neg-num">&#9660;1</span></td><td class="num">25.1</td><td class="num">23</td><td class="num">29.1</td><td class="num">26</td><td class="num xgd neg-num">&minus;4.0</td><td class="num gd neg-num">&minus;3</td></tr>
+        <tr><td class="pos">8</td><td class="team"><div class="team-cell"><img class="crest" src="https://omo.akamai.opta.net/image.php?secure=true&h=omo.akamai.opta.net&sport=football&entity=team&description=badges&dimensions=20&id=8f2ud0np10grf6a1ke620ma4s" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.display='none'">Lamia</div></td><td class="num">26</td><td class="num">5</td><td class="num">8</td><td class="num">13</td><td class="num">23</td><td class="num no-caps">31.4</td><td class="num"><span class="pm-badge neg-num">&minus;8.4</span></td><td class="num"><span class="dpos-badge neg-num">&#9660;3</span></td><td class="num">23.3</td><td class="num">14</td><td class="num">30.4</td><td class="num">38</td><td class="num xgd neg-num">&minus;7.1</td><td class="num gd neg-num">&minus;24</td></tr>
+        <tr><td class="pos">9</td><td class="team"><div class="team-cell"><img class="crest" src="https://omo.akamai.opta.net/image.php?secure=true&h=omo.akamai.opta.net&sport=football&entity=team&description=badges&dimensions=20&id=dr4emys1xpm2h54oid0q5y2nx" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.display='none'">OFI</div></td><td class="num">26</td><td class="num">5</td><td class="num">4</td><td class="num">17</td><td class="num">19</td><td class="num no-caps">29.7</td><td class="num"><span class="pm-badge neg-num">&minus;10.7</span></td><td class="num"><span class="dpos-badge neg-num">&#9660;4</span></td><td class="num">25.7</td><td class="num">22</td><td class="num">36.3</td><td class="num">43</td><td class="num xgd neg-num">&minus;10.7</td><td class="num gd neg-num">&minus;21</td></tr>
+        <tr><td class="pos">10</td><td class="team"><div class="team-cell"><img class="crest" src="https://omo.akamai.opta.net/image.php?secure=true&h=omo.akamai.opta.net&sport=football&entity=team&description=badges&dimensions=20&id=937i26v5naqzhwxcelwtgou3u" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.display='none'">Volos</div></td><td class="num">26</td><td class="num">8</td><td class="num">9</td><td class="num">9</td><td class="num">33</td><td class="num no-caps">28.1</td><td class="num"><span class="pm-badge pos-num">+4.9</span></td><td class="num"><span class="dpos-badge pos-num">&#9650;3</span></td><td class="num">25.9</td><td class="num">26</td><td class="num">39.2</td><td class="num">32</td><td class="num xgd neg-num">&minus;13.4</td><td class="num gd neg-num">&minus;6</td></tr>
+        <tr><td class="pos">11</td><td class="team"><div class="team-cell"><img class="crest" src="https://upload.wikimedia.org/wikipedia/en/thumb/7/77/Apollon_Smyrnis_F.C._logo.svg/250px-Apollon_Smyrnis_F.C._logo.svg.png" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.display='none'">Apollon Smirnis</div></td><td class="num">26</td><td class="num">8</td><td class="num">4</td><td class="num">14</td><td class="num">28</td><td class="num no-caps">27.5</td><td class="num"><span class="pm-badge pos-num">+0.5</span></td><td class="num"><span class="dpos-badge pos-num">&#9650;2</span></td><td class="num">25.2</td><td class="num">26</td><td class="num">38.3</td><td class="num">35</td><td class="num xgd neg-num">&minus;13.0</td><td class="num gd neg-num">&minus;9</td></tr>
+        <tr><td class="pos">12</td><td class="team"><div class="team-cell"><img class="crest" src="https://omo.akamai.opta.net/image.php?secure=true&h=omo.akamai.opta.net&sport=football&entity=team&description=badges&dimensions=20&id=4gex5os8jassavy6lopipbcz3" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.display='none'">Atromitos</div></td><td class="num">26</td><td class="num">6</td><td class="num">10</td><td class="num">10</td><td class="num">28</td><td class="num no-caps">27.4</td><td class="num"><span class="pm-badge pos-num">+0.6</span></td><td class="num"><span class="dpos-badge pos-num">&#9650;2</span></td><td class="num">21.7</td><td class="num">24</td><td class="num">33.8</td><td class="num">35</td><td class="num xgd neg-num">&minus;12.1</td><td class="num gd neg-num">&minus;11</td></tr>
+        <tr><td class="pos">13</td><td class="team"><div class="team-cell"><img class="crest" src="https://omo.akamai.opta.net/image.php?secure=true&h=omo.akamai.opta.net&sport=football&entity=team&description=badges&dimensions=20&id=3e1v5aemi3afarlqm4raxf7fc" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.display='none'">Larissa</div></td><td class="num">26</td><td class="num">3</td><td class="num">7</td><td class="num">16</td><td class="num">16</td><td class="num no-caps">25.8</td><td class="num"><span class="pm-badge neg-num">&minus;9.8</span></td><td class="num"><span class="dpos-badge neg-num">&#9660;1</span></td><td class="num">19.5</td><td class="num">18</td><td class="num">33.2</td><td class="num">42</td><td class="num xgd neg-num">&minus;13.7</td><td class="num gd neg-num">&minus;24</td></tr>
+        <tr><td class="pos">14</td><td class="team"><div class="team-cell"><img class="crest" src="https://omo.akamai.opta.net/image.php?secure=true&h=omo.akamai.opta.net&sport=football&entity=team&description=badges&dimensions=20&id=dozhxtpww3paixmvttljtduge" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.display='none'">Panaitolikos</div></td><td class="num">26</td><td class="num">4</td><td class="num">8</td><td class="num">14</td><td class="num">20</td><td class="num no-caps">24.1</td><td class="num"><span class="pm-badge neg-num">&minus;4.1</span></td><td class="num"><span class="dpos-badge pos-num">&#9650;2</span></td><td class="num">17.0</td><td class="num">13</td><td class="num">33.2</td><td class="num">32</td><td class="num xgd neg-num">&minus;16.2</td><td class="num gd neg-num">&minus;19</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+</div>
+
+<!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "b67bbb76d0e24af196b24ded3ab71ad0"}'></script><!-- End Cloudflare Web Analytics -->
+</body>
+</html>

@@ -1,0 +1,349 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Match Reports 2026-27</title>
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap">
+
+<style>
+  :root {
+    --bg: #f4f4f2;
+    --surface: #ffffff;
+    --surface-2: #ececea;
+    --ink: #16171a;
+    --ink-dim: #55585f;
+    --line: #d9d9d5;
+    --accent: #1c1f6b;
+    --accent-soft: #e7e8f5;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #101114;
+      --surface: #17181c;
+      --surface-2: #1d1f24;
+      --ink: #edeeef;
+      --ink-dim: #9a9ca3;
+      --line: #2b2d33;
+      --accent: #8f96ff;
+      --accent-soft: #232650;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --bg: #101114;
+    --surface: #17181c;
+    --surface-2: #1d1f24;
+    --ink: #edeeef;
+    --ink-dim: #9a9ca3;
+    --line: #2b2d33;
+    --accent: #8f96ff;
+    --accent-soft: #232650;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+    line-height: 1.5;
+  }
+
+  .wrap {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 56px 24px 96px;
+  }
+
+  header.page-head {
+    margin-bottom: 40px;
+  }
+
+  .eyebrow {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 600;
+    margin: 0 0 10px;
+  }
+
+  h1 {
+    font-family: "Archivo", ui-sans-serif, sans-serif;
+    font-weight: 800;
+    font-size: clamp(30px, 4.5vw, 42px);
+    letter-spacing: -0.01em;
+    margin: 0 0 8px;
+    text-wrap: balance;
+  }
+
+  .sub {
+    color: var(--ink-dim);
+    font-size: 15px;
+    max-width: 60ch;
+    margin: 0;
+  }
+
+  .match-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .match-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 18px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--surface);
+    color: var(--ink);
+    transition: border-color 0.15s ease;
+  }
+
+  .match-card:hover, .match-card:focus-within {
+    border-color: var(--accent);
+    outline: none;
+  }
+
+  .match-card .md-badge {
+    flex: none;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: var(--accent);
+    background: var(--accent-soft);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 5px 11px;
+  }
+
+  .match-card .match-body {
+    flex: 1;
+    min-width: 0;
+    display: block;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .match-card .teams {
+    font-weight: 600;
+    font-size: 15px;
+  }
+
+  .match-card .match-meta {
+    margin-top: 4px;
+    font-size: 12.5px;
+    color: var(--ink-dim);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 12px;
+  }
+
+  .match-card .match-actions {
+    flex: none;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 6px;
+  }
+
+  .match-card .go, .match-card .highlights {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 12.5px;
+    text-decoration: none;
+  }
+
+  .match-card .go { color: var(--ink-dim); }
+  .match-card .highlights {
+    color: var(--accent);
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .match-card .highlights:hover { text-decoration: underline; }
+
+  footer.page-foot {
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid var(--line);
+    font-size: 12.5px;
+    color: var(--ink-dim);
+  }
+</style>
+</head>
+<body>
+<!-- sitebar:start (link back to antonisnikolitsopoulos.com; keep on every page) -->
+<style>
+.an-sitebar{background:#0d1220;border-bottom:1px solid rgba(255,255,255,.09);font:500 13px/1.2 "Segoe UI",system-ui,-apple-system,sans-serif;letter-spacing:.02em}
+.an-sitebar>div{max-width:72rem;margin:0 auto;padding:6px 16px;display:flex;justify-content:flex-end;align-items:center;gap:18px}
+.an-sitebar a{color:#9aa1b2;text-decoration:none;display:inline-flex;align-items:center;min-height:24px}.an-sitebar a:hover{color:#fff}
+.an-sitebar svg{width:17px;height:17px;fill:currentColor}
+.an-sitebar a[href="/"]{padding:6px 8px;margin:-6px -8px -6px -4px;border-radius:6px}.an-sitebar a[href="/"]:hover{background:rgba(255,255,255,.08)}
+</style>
+<nav class="an-sitebar" aria-label="Main site"><div><a href="/books/">Books</a><a href="/#projects">Projects</a><a href="/about/">About</a><a href="/" title="Main site: antonisnikolitsopoulos.com" aria-label="Main site"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 2 11.5h3V21h5.5v-6h3v6H19v-9.5h3z"/></svg></a></div></nav>
+<!-- sitebar:end -->
+
+
+<div class="wrap">
+
+  <header class="page-head">
+    <p class="eyebrow"><a href="index.html" style="color:inherit;text-decoration:none;">PAOK Hub</a></p>
+    <h1>Match Reports</h1>
+  </header>
+
+  <div class="match-list">
+    <div class="match-card">
+      <span class="md-badge">MD1</span>
+      <a class="match-body" href="https://www.scoresway.com/en_GB/soccer/super-league-1-2026-2027/13prgjp0qzce661j00a3jy3o4/match/view/arp91qlwyijg2axqln9n179w/match-summary" target="_blank" rel="noopener">
+        <span class="teams">PAOK Thessaloniki FC 4&ndash;0 Levadiakos FC</span>
+        <span class="match-meta">
+          <span>23 August 2026, 21:00</span>
+          <span>Venue: Stadio Toumbas</span>
+          <span>Attendance: 9,014</span>
+          <span>Referee: Angelos Evangelou</span>
+        </span>
+      </a>
+      <span class="match-actions">
+        <a class="go" href="https://www.scoresway.com/en_GB/soccer/super-league-1-2026-2027/13prgjp0qzce661j00a3jy3o4/match/view/arp91qlwyijg2axqln9n179w/match-summary" target="_blank" rel="noopener">Full report &rarr;</a>
+        <a class="highlights" href="https://www.youtube.com/watch?v=UuzX9lzROWE" target="_blank" rel="noopener">&#9654; Highlights</a>
+      </span>
+    </div>
+    <div class="match-card">
+      <span class="md-badge">MD2</span>
+      <a class="match-body" href="https://www.scoresway.com/en_GB/soccer/super-league-1-2026-2027/13prgjp0qzce661j00a3jy3o4/match/view/bsgyue4otiqanailrpukgduc/match-summary" target="_blank" rel="noopener">
+        <span class="teams">Atromitos 1&ndash;2 PAOK Thessaloniki FC</span>
+        <span class="match-meta">
+          <span>30 August 2026, 20:15</span>
+          <span>Venue: Dimotiko Stadio Peristeriou</span>
+          <span>Attendance: 2,398</span>
+          <span>Referee: Athanasios Tzilos</span>
+        </span>
+      </a>
+      <span class="match-actions">
+        <a class="go" href="https://www.scoresway.com/en_GB/soccer/super-league-1-2026-2027/13prgjp0qzce661j00a3jy3o4/match/view/bsgyue4otiqanailrpukgduc/match-summary" target="_blank" rel="noopener">Full report &rarr;</a>
+        <a class="highlights" href="https://www.youtube.com/watch?v=3SNsL-nrpUs" target="_blank" rel="noopener">&#9654; Highlights</a>
+      </span>
+    </div>
+    <div class="match-card">
+      <span class="md-badge">MD3</span>
+      <a class="match-body" href="https://www.scoresway.com/en_GB/soccer/super-league-1-2026-2027/13prgjp0qzce661j00a3jy3o4/match/view/f7l0y4yk5gz1txk51fktn85w/match-summary" target="_blank" rel="noopener">
+        <span class="teams">Panathinaikos 3&ndash;1 PAOK Thessaloniki FC</span>
+        <span class="match-meta">
+          <span>6 September 2026, 21:30</span>
+          <span>Venue: Olympiako Stadio Spyros Louis</span>
+          <span>Attendance: 23,086</span>
+          <span>Referee: Felix Zwayer</span>
+        </span>
+      </a>
+      <span class="match-actions">
+        <a class="go" href="https://www.scoresway.com/en_GB/soccer/super-league-1-2026-2027/13prgjp0qzce661j00a3jy3o4/match/view/f7l0y4yk5gz1txk51fktn85w/match-summary" target="_blank" rel="noopener">Full report &rarr;</a>
+        <a class="highlights" href="https://www.youtube.com/watch?v=Id9CWDroXPY" target="_blank" rel="noopener">&#9654; Highlights</a>
+      </span>
+    </div>
+    <div class="match-card">
+      <span class="md-badge">MD4</span>
+      <a class="match-body" href="https://www.scoresway.com/en_GB/soccer/super-league-1-2026-2027/13prgjp0qzce661j00a3jy3o4/match/view/hlqgxh9zgz19c91ogfob96vo/match-summary" target="_blank" rel="noopener">
+        <span class="teams">PAOK Thessaloniki FC 2&ndash;0 Aris Thessaloniki FC</span>
+        <span class="match-meta">
+          <span>13 September 2026, 21:00</span>
+          <span>Venue: Stadio Toumbas</span>
+          <span>Attendance: 19,545</span>
+          <span>Referee: Andrea Colombo</span>
+        </span>
+      </a>
+      <span class="match-actions">
+        <a class="go" href="https://www.scoresway.com/en_GB/soccer/super-league-1-2026-2027/13prgjp0qzce661j00a3jy3o4/match/view/hlqgxh9zgz19c91ogfob96vo/match-summary" target="_blank" rel="noopener">Full report &rarr;</a>
+        <a class="highlights" href="https://www.youtube.com/watch?v=g4gO67Hy6iM" target="_blank" rel="noopener">&#9654; Highlights</a>
+      </span>
+    </div>
+    <div class="match-card">
+      <span class="md-badge">MD5</span>
+      <a class="match-body" href="https://www.scoresway.com/en_GB/soccer/super-league-1-2026-2027/13prgjp0qzce661j00a3jy3o4/match/view/kcpgi7o0r2st3lrt9ydces5w/match-summary" target="_blank" rel="noopener">
+        <span class="teams">Panaitolikos 1&ndash;3 PAOK Thessaloniki FC</span>
+        <span class="match-meta">
+          <span>20 September 2026, 21:00</span>
+          <span>Venue: Gipedo Panetolikou</span>
+          <span>Referee: Konstantinos Katikos</span>
+        </span>
+      </a>
+      <span class="match-actions">
+        <a class="go" href="https://www.scoresway.com/en_GB/soccer/super-league-1-2026-2027/13prgjp0qzce661j00a3jy3o4/match/view/kcpgi7o0r2st3lrt9ydces5w/match-summary" target="_blank" rel="noopener">Full report &rarr;</a>
+        <a class="highlights" href="https://www.youtube.com/watch?v=kXvORot9sis" target="_blank" rel="noopener">&#9654; Highlights</a>
+      </span>
+    </div>
+    <div class="match-card">
+      <span class="md-badge">MD6</span>
+      <a class="match-body" href="https://www.scoresway.com/en_GB/soccer/super-league-1-2026-2027/13prgjp0qzce661j00a3jy3o4/match/view/memveugx5rvg7hhzoh0swg7o/match-summary" target="_blank" rel="noopener">
+        <span class="teams">PAOK Thessaloniki FC 1&ndash;3 Kalamata</span>
+        <span class="match-meta">
+          <span>12 October 2026, 18:00</span>
+          <span>Venue: Stadio Toumbas</span>
+          <span>Referee: Alexandros Katsikogiannis</span>
+        </span>
+      </a>
+      <span class="match-actions">
+        <a class="go" href="https://www.scoresway.com/en_GB/soccer/super-league-1-2026-2027/13prgjp0qzce661j00a3jy3o4/match/view/memveugx5rvg7hhzoh0swg7o/match-summary" target="_blank" rel="noopener">Full report &rarr;</a>
+        <a class="highlights" href="https://www.youtube.com/watch?v=uE2ZmoXH7Cs" target="_blank" rel="noopener">&#9654; Highlights</a>
+      </span>
+    </div>
+    <div class="match-card">
+      <span class="md-badge">MD7</span>
+      <a class="match-body" href="https://www.scoresway.com/en_GB/soccer/super-league-1-2026-2027/13prgjp0qzce661j00a3jy3o4/match/view/p4u2s7v706lysnqxnqhdwrv8/match-summary" target="_blank" rel="noopener">
+        <span class="teams">PAOK Thessaloniki FC 2&ndash;1 Iraklis</span>
+        <span class="match-meta">
+          <span>18 October 2026, 21:00</span>
+          <span>Venue: Stadio Toumbas</span>
+          <span>Referee: Vassilios Fotias</span>
+        </span>
+      </a>
+      <span class="match-actions">
+        <a class="go" href="https://www.scoresway.com/en_GB/soccer/super-league-1-2026-2027/13prgjp0qzce661j00a3jy3o4/match/view/p4u2s7v706lysnqxnqhdwrv8/match-summary" target="_blank" rel="noopener">Full report &rarr;</a>
+        <a class="highlights" href="https://www.youtube.com/watch?v=V6g_Kf6pY-k" target="_blank" rel="noopener">&#9654; Highlights</a>
+      </span>
+    </div>
+    <div class="match-card">
+      <span class="md-badge">MD8</span>
+      <a class="match-body" href="https://www.scoresway.com/en_GB/soccer/super-league-1-2026-2027/13prgjp0qzce661j00a3jy3o4/match/view/r6tu3npcr4nb2rdk4eyjihw4/match-summary" target="_blank" rel="noopener">
+        <span class="teams">OFI 2&ndash;1 PAOK Thessaloniki FC</span>
+        <span class="match-meta">
+          <span>25 October 2026, 20:00</span>
+          <span>Venue: Pankritio Stadio</span>
+          <span>Referee: Christos Vergetis</span>
+        </span>
+      </a>
+      <span class="match-actions">
+        <a class="go" href="https://www.scoresway.com/en_GB/soccer/super-league-1-2026-2027/13prgjp0qzce661j00a3jy3o4/match/view/r6tu3npcr4nb2rdk4eyjihw4/match-summary" target="_blank" rel="noopener">Full report &rarr;</a>
+        <a class="highlights" href="https://www.youtube.com/watch?v=WlYlgB0Zk6A" target="_blank" rel="noopener">&#9654; Highlights</a>
+      </span>
+    </div>
+    <div class="match-card">
+      <span class="md-badge">MD9</span>
+      <a class="match-body" href="https://www.scoresway.com/en_GB/soccer/super-league-1-2026-2027/13prgjp0qzce661j00a3jy3o4/match/view/txgohu8yd2oz4avtd62butxw/match-summary" target="_blank" rel="noopener">
+        <span class="teams">PAOK Thessaloniki FC 2&ndash;1 Asteras</span>
+        <span class="match-meta">
+          <span>1 November 2026, 19:00</span>
+          <span>Venue: Stadio Toumbas</span>
+          <span>Referee: Michalis Matsoukas</span>
+        </span>
+      </a>
+      <span class="match-actions">
+        <a class="go" href="https://www.scoresway.com/en_GB/soccer/super-league-1-2026-2027/13prgjp0qzce661j00a3jy3o4/match/view/txgohu8yd2oz4avtd62butxw/match-summary" target="_blank" rel="noopener">Full report &rarr;</a>
+        <a class="highlights" href="https://www.youtube.com/watch?v=G4BC8MGY8I4" target="_blank" rel="noopener">&#9654; Highlights</a>
+      </span>
+    </div>
+  </div>
+
+
+</div>
+
+<!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "b67bbb76d0e24af196b24ded3ab71ad0"}'></script><!-- End Cloudflare Web Analytics -->
+</body>
+</html>

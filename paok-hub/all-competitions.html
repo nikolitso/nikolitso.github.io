@@ -1,0 +1,413 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PAOK All Competitions Player Stats 2026-27</title>
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap">
+
+<style>
+  :root {
+    --bg: #f4f4f2;
+    --surface: #ffffff;
+    --surface-2: #ececea;
+    --ink: #16171a;
+    --ink-dim: #55585f;
+    --line: #d9d9d5;
+    --accent: #1c1f6b;
+    --accent-soft: #e7e8f5;
+    --good: #1a7a4c;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #101114;
+      --surface: #17181c;
+      --surface-2: #1d1f24;
+      --ink: #edeeef;
+      --ink-dim: #9a9ca3;
+      --line: #2b2d33;
+      --accent: #8f96ff;
+      --good: #4fce94;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --bg: #101114;
+    --surface: #17181c;
+    --surface-2: #1d1f24;
+    --ink: #edeeef;
+    --ink-dim: #9a9ca3;
+    --line: #2b2d33;
+    --accent: #8f96ff;
+    --good: #4fce94;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+    line-height: 1.5;
+  }
+
+  .wrap {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 56px 24px 96px;
+  }
+
+  header.page-head {
+    margin-bottom: 40px;
+  }
+
+  .eyebrow {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 600;
+    margin: 0 0 10px;
+  }
+
+  h1 {
+    font-family: "Archivo", ui-sans-serif, sans-serif;
+    font-weight: 800;
+    font-size: clamp(30px, 4.5vw, 42px);
+    letter-spacing: -0.01em;
+    margin: 0 0 8px;
+    text-wrap: balance;
+  }
+
+  .sub {
+    color: var(--ink-dim);
+    font-size: 15px;
+    max-width: 62ch;
+    margin: 0;
+  }
+
+  .meta-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 18px;
+  }
+
+  .meta-pill {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 12px;
+    color: var(--ink-dim);
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 5px 12px;
+  }
+
+  .pos-group {
+    margin-top: 30px;
+  }
+
+  .pos-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    font-weight: 600;
+    margin: 0 0 8px;
+  }
+
+  .pos-label .dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--accent);
+    display: inline-block;
+  }
+
+  .table-scroll {
+    overflow-x: auto;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--surface);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    min-width: 560px;
+  }
+
+  th, td {
+    text-align: left;
+    padding: 11px 14px;
+    white-space: nowrap;
+  }
+
+  thead th {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    font-weight: 600;
+    background: var(--surface-2);
+    border-bottom: 1px solid var(--line);
+  }
+
+  tbody tr:not(:last-child) td {
+    border-bottom: 1px solid var(--line);
+  }
+
+  tbody tr:nth-child(even) td {
+    background: var(--surface-2);
+  }
+
+  tbody tr:hover td {
+    background: var(--accent-soft, var(--surface-2));
+    filter: brightness(0.97);
+  }
+
+  td.num, th.num {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 13px;
+  }
+
+  td.player, th:first-child {
+    position: sticky;
+    left: 0;
+    z-index: 1;
+    background: var(--surface);
+    box-shadow: 1px 0 0 var(--line);
+  }
+
+  thead th:first-child {
+    z-index: 2;
+    background: var(--surface-2);
+  }
+
+  tbody tr:nth-child(even) td.player {
+    background: var(--surface-2);
+  }
+
+  td.player {
+    font-weight: 600;
+  }
+
+  th.no-caps {
+    text-transform: none;
+  }
+
+  .g-pos { color: var(--good); font-weight: 600; }
+
+  .repeat-head th {
+    text-align: left; padding: 11px 14px; white-space: nowrap;
+    font-family: "IBM Plex Mono", monospace; font-size: 10.5px;
+    letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-dim);
+    font-weight: 600; background: var(--surface-2);
+    border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
+  }
+  .repeat-head th.num { text-align: right; font-variant-numeric: tabular-nums; font-size: 13px; }
+  .repeat-head th.no-caps { text-transform: none; }
+  .repeat-head th:first-child { position: sticky; left: 0; z-index: 2; background: var(--surface-2); }
+
+  .group-row td {
+    padding: 12px 14px 8px;
+    border-bottom: none;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    background: var(--surface);
+  }
+  .group-row:first-child td { padding-top: 8px; }
+  .group-row .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    display: inline-block;
+    margin-right: 8px;
+  }
+
+  .glossary {
+    margin-top: 48px;
+    padding-top: 24px;
+    border-top: 1px solid var(--line);
+  }
+
+  .glossary h2 {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    font-weight: 600;
+    margin: 0 0 14px;
+  }
+
+  .glossary dl {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 10px 24px;
+    margin: 0;
+  }
+
+  .glossary dt {
+    display: inline;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--ink);
+  }
+
+  .glossary dd {
+    display: inline;
+    margin: 0;
+    font-size: 12.5px;
+    color: var(--ink-dim);
+  }
+
+  .glossary dd::before {
+    content: " \2014 ";
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .pos-group { animation: rise 0.35s ease both; }
+  }
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
+</head>
+<body>
+<!-- sitebar:start (link back to antonisnikolitsopoulos.com; keep on every page) -->
+<style>
+.an-sitebar{background:#0d1220;border-bottom:1px solid rgba(255,255,255,.09);font:500 13px/1.2 "Segoe UI",system-ui,-apple-system,sans-serif;letter-spacing:.02em}
+.an-sitebar>div{max-width:72rem;margin:0 auto;padding:6px 16px;display:flex;justify-content:flex-end;align-items:center;gap:18px}
+.an-sitebar a{color:#9aa1b2;text-decoration:none;display:inline-flex;align-items:center;min-height:24px}.an-sitebar a:hover{color:#fff}
+.an-sitebar svg{width:17px;height:17px;fill:currentColor}
+.an-sitebar a[href="/"]{padding:6px 8px;margin:-6px -8px -6px -4px;border-radius:6px}.an-sitebar a[href="/"]:hover{background:rgba(255,255,255,.08)}
+</style>
+<nav class="an-sitebar" aria-label="Main site"><div><a href="/books/">Books</a><a href="/#projects">Projects</a><a href="/about/">About</a><a href="/" title="Main site: antonisnikolitsopoulos.com" aria-label="Main site"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 2 11.5h3V21h5.5v-6h3v6H19v-9.5h3z"/></svg></a></div></nav>
+<!-- sitebar:end -->
+
+<div class="wrap">
+
+  <header class="page-head">
+    <p class="eyebrow"><a href="index.html" style="color:inherit;text-decoration:none;">PAOK Hub</a></p>
+    <h1>All Competitions Player Stats, 2026&ndash;27</h1>
+    <p class="sub">Individual PAOK player stats combined across the Super League, Greek Cup and European competitions this season.</p>
+    <div class="meta-row">
+      <span class="meta-pill">Super League + Greek Cup + Europe</span>
+      <span class="meta-pill">18 matches played</span>
+      <span class="meta-pill">26 of 28 roster players have played</span>
+    </div>
+  </header>
+
+  <div class="pos-group">
+    <p class="pos-label"><span class="dot"></span>Goalkeepers</p>
+    <div class="table-scroll">
+      <table>
+        <thead><tr>
+          <th>Player</th><th class="num" title="Matches played">MP</th><th class="num" title="Minutes played">MIN</th><th class="num" title="Goals conceded">GC</th><th class="num" title="Goalkeeper saves">S</th><th class="num" title="Yellow cards">Y</th><th class="num" title="Red cards">R</th>
+        </tr></thead>
+        <tbody>
+          <tr><td class="player">Pavlenka</td><td class="num">11</td><td class="num">973</td><td class="num">15</td><td class="num">33</td><td class="num">0</td><td class="num">0</td></tr>
+          <tr><td class="player">Tsiftsis</td><td class="num">5</td><td class="num">349</td><td class="num">4</td><td class="num">12</td><td class="num">1</td><td class="num">0</td></tr>
+          <tr><td class="player">Monastirlis</td><td class="num">4</td><td class="num">297</td><td class="num">4</td><td class="num">9</td><td class="num">0</td><td class="num">0</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="pos-group">
+    <div class="table-scroll">
+      <table>
+        <thead><tr>
+          <th>Player</th><th class="num" title="Matches played">MP</th><th class="num" title="Minutes played">MIN</th><th class="num" title="Goals scored">GS</th>
+          <th class="num no-caps" title="Expected goals">xG</th><th class="num" title="Assists">A</th><th class="num" title="Total shot attempts">S</th><th class="num" title="Shots on target">SoT</th><th class="num" title="Passes">P</th><th class="num" title="Yellow cards">Y</th><th class="num" title="Red cards">R</th><th class="num" title="Fouls won">FW</th><th class="num" title="Fouls conceded">FC</th><th class="num" title="Offsides">O</th><th class="num" title="Shots created (assists + key passes)">SCA</th>
+        </tr></thead>
+        <tbody>
+          <tr class="group-row"><td colspan="15"><span class="dot"></span>Defenders</td></tr>
+          <tr><td class="player">Elustondo</td><td class="num">13</td><td class="num">666</td><td class="num">0</td><td class="num">0.16</td><td class="num">0</td><td class="num">2</td><td class="num">1</td><td class="num">397</td><td class="num">2</td><td class="num">1</td><td class="num">9</td><td class="num">6</td><td class="num">1</td><td class="num">1</td></tr>
+          <tr><td class="player">Kenny</td><td class="num">18</td><td class="num">1593</td><td class="num">0</td><td class="num">0.34</td><td class="num g-pos">3</td><td class="num">7</td><td class="num">2</td><td class="num">642</td><td class="num">3</td><td class="num">1</td><td class="num">18</td><td class="num">19</td><td class="num">1</td><td class="num">16</td></tr>
+          <tr><td class="player">Michailidis</td><td class="num">14</td><td class="num">1134</td><td class="num g-pos">1</td><td class="num">1.61</td><td class="num g-pos">1</td><td class="num">9</td><td class="num">4</td><td class="num">625</td><td class="num">1</td><td class="num">0</td><td class="num">8</td><td class="num">5</td><td class="num">0</td><td class="num">2</td></tr>
+          <tr><td class="player">Baba</td><td class="num">13</td><td class="num">782</td><td class="num g-pos">1</td><td class="num">0.96</td><td class="num g-pos">1</td><td class="num">11</td><td class="num">1</td><td class="num">347</td><td class="num">2</td><td class="num">0</td><td class="num">7</td><td class="num">10</td><td class="num">2</td><td class="num">4</td></tr>
+          <tr><td class="player">Chatzidiakos</td><td class="num">9</td><td class="num">647</td><td class="num">0</td><td class="num">0.21</td><td class="num g-pos">1</td><td class="num">3</td><td class="num">2</td><td class="num">280</td><td class="num">4</td><td class="num">0</td><td class="num">3</td><td class="num">12</td><td class="num">0</td><td class="num">1</td></tr>
+          <tr><td class="player">Giannoulis</td><td class="num">7</td><td class="num">532</td><td class="num">0</td><td class="num">0.00</td><td class="num">0</td><td class="num">0</td><td class="num">0</td><td class="num">215</td><td class="num">3</td><td class="num">0</td><td class="num">7</td><td class="num">7</td><td class="num">0</td><td class="num">3</td></tr>
+          <tr><td class="player">Bataoulas</td><td class="num">4</td><td class="num">203</td><td class="num">0</td><td class="num">0.12</td><td class="num">0</td><td class="num">2</td><td class="num">0</td><td class="num">81</td><td class="num">1</td><td class="num">0</td><td class="num">2</td><td class="num">1</td><td class="num">0</td><td class="num">1</td></tr>
+          <tr><td class="player">Diego Costa</td><td class="num">7</td><td class="num">603</td><td class="num">0</td><td class="num">0.07</td><td class="num">0</td><td class="num">2</td><td class="num">0</td><td class="num">374</td><td class="num">1</td><td class="num">0</td><td class="num">3</td><td class="num">9</td><td class="num">0</td><td class="num">1</td></tr>
+          <tr><td class="player">Gomez</td><td class="num">3</td><td class="num">243</td><td class="num">0</td><td class="num">0.05</td><td class="num g-pos">1</td><td class="num">2</td><td class="num">0</td><td class="num">126</td><td class="num">0</td><td class="num">0</td><td class="num">4</td><td class="num">2</td><td class="num">0</td><td class="num">1</td></tr>
+
+          <tr class="repeat-head"><th></th><th class="num" title="Matches played">MP</th><th class="num" title="Minutes played">MIN</th><th class="num" title="Goals scored">GS</th><th class="num no-caps" title="Expected goals">xG</th><th class="num" title="Assists">A</th><th class="num" title="Total shot attempts">S</th><th class="num" title="Shots on target">SoT</th><th class="num" title="Passes">P</th><th class="num" title="Yellow cards">Y</th><th class="num" title="Red cards">R</th><th class="num" title="Fouls won">FW</th><th class="num" title="Fouls conceded">FC</th><th class="num" title="Offsides">O</th><th class="num" title="Shots created (assists + key passes)">SCA</th></tr>
+          <tr class="group-row"><td colspan="15"><span class="dot"></span>Midfielders</td></tr>
+          <tr><td class="player">Santamaria</td><td class="num">15</td><td class="num">742</td><td class="num g-pos">1</td><td class="num">0.35</td><td class="num">0</td><td class="num">8</td><td class="num">3</td><td class="num">307</td><td class="num">0</td><td class="num">0</td><td class="num">8</td><td class="num">5</td><td class="num">0</td><td class="num">3</td></tr>
+          <tr><td class="player">Taylor</td><td class="num">11</td><td class="num">450</td><td class="num">0</td><td class="num">0.10</td><td class="num">0</td><td class="num">2</td><td class="num">0</td><td class="num">276</td><td class="num">2</td><td class="num">1</td><td class="num">7</td><td class="num">15</td><td class="num">0</td><td class="num">3</td></tr>
+          <tr><td class="player">Louchet</td><td class="num">5</td><td class="num">211</td><td class="num">0</td><td class="num">0.07</td><td class="num g-pos">1</td><td class="num">2</td><td class="num">0</td><td class="num">66</td><td class="num">2</td><td class="num">0</td><td class="num">1</td><td class="num">6</td><td class="num">0</td><td class="num">1</td></tr>
+          <tr><td class="player">Zafeiris</td><td class="num">16</td><td class="num">1213</td><td class="num g-pos">2</td><td class="num">1.79</td><td class="num">0</td><td class="num">20</td><td class="num">4</td><td class="num">512</td><td class="num">4</td><td class="num">0</td><td class="num">18</td><td class="num">28</td><td class="num">1</td><td class="num">5</td></tr>
+          <tr><td class="player">Camara</td><td class="num">11</td><td class="num">280</td><td class="num">0</td><td class="num">0.96</td><td class="num">0</td><td class="num">12</td><td class="num">1</td><td class="num">105</td><td class="num">0</td><td class="num">0</td><td class="num">3</td><td class="num">4</td><td class="num">3</td><td class="num">2</td></tr>
+          <tr><td class="player">Jakic</td><td class="num">8</td><td class="num">513</td><td class="num">0</td><td class="num">0.09</td><td class="num g-pos">1</td><td class="num">3</td><td class="num">1</td><td class="num">273</td><td class="num">2</td><td class="num">0</td><td class="num">7</td><td class="num">10</td><td class="num">0</td><td class="num">2</td></tr>
+          <tr><td class="player">Ugresic</td><td class="num">8</td><td class="num">412</td><td class="num g-pos">1</td><td class="num">2.22</td><td class="num g-pos">1</td><td class="num">14</td><td class="num">4</td><td class="num">139</td><td class="num">0</td><td class="num">0</td><td class="num">3</td><td class="num">5</td><td class="num">1</td><td class="num">2</td></tr>
+
+          <tr class="repeat-head"><th></th><th class="num" title="Matches played">MP</th><th class="num" title="Minutes played">MIN</th><th class="num" title="Goals scored">GS</th><th class="num no-caps" title="Expected goals">xG</th><th class="num" title="Assists">A</th><th class="num" title="Total shot attempts">S</th><th class="num" title="Shots on target">SoT</th><th class="num" title="Passes">P</th><th class="num" title="Yellow cards">Y</th><th class="num" title="Red cards">R</th><th class="num" title="Fouls won">FW</th><th class="num" title="Fouls conceded">FC</th><th class="num" title="Offsides">O</th><th class="num" title="Shots created (assists + key passes)">SCA</th></tr>
+          <tr class="group-row"><td colspan="15"><span class="dot"></span>Attacking midfielders</td></tr>
+          <tr><td class="player">Zivkovic</td><td class="num">15</td><td class="num">1197</td><td class="num g-pos">3</td><td class="num">3.46</td><td class="num g-pos">7</td><td class="num">31</td><td class="num">8</td><td class="num">486</td><td class="num">1</td><td class="num">1</td><td class="num">12</td><td class="num">22</td><td class="num">5</td><td class="num">22</td></tr>
+          <tr><td class="player">Konstantelias</td><td class="num">4</td><td class="num">353</td><td class="num g-pos">3</td><td class="num">1.40</td><td class="num g-pos">1</td><td class="num">11</td><td class="num">5</td><td class="num">124</td><td class="num">1</td><td class="num">0</td><td class="num">8</td><td class="num">4</td><td class="num">3</td><td class="num">10</td></tr>
+          <tr><td class="player">Pelkas</td><td class="num">10</td><td class="num">460</td><td class="num g-pos">3</td><td class="num">1.73</td><td class="num g-pos">1</td><td class="num">21</td><td class="num">6</td><td class="num">155</td><td class="num">1</td><td class="num">0</td><td class="num">10</td><td class="num">7</td><td class="num">3</td><td class="num">5</td></tr>
+          <tr><td class="player">Shoretire</td><td class="num">8</td><td class="num">341</td><td class="num g-pos">3</td><td class="num">0.99</td><td class="num">0</td><td class="num">6</td><td class="num">5</td><td class="num">115</td><td class="num">1</td><td class="num">0</td><td class="num">6</td><td class="num">6</td><td class="num">1</td><td class="num">1</td></tr>
+          <tr><td class="player">Chatsidis</td><td class="num">12</td><td class="num">522</td><td class="num">0</td><td class="num">0.60</td><td class="num g-pos">1</td><td class="num">6</td><td class="num">1</td><td class="num">88</td><td class="num">0</td><td class="num">0</td><td class="num">9</td><td class="num">8</td><td class="num">1</td><td class="num">6</td></tr>
+          <tr><td class="player">Taison</td><td class="num">13</td><td class="num">777</td><td class="num">0</td><td class="num">1.71</td><td class="num g-pos">1</td><td class="num">19</td><td class="num">5</td><td class="num">374</td><td class="num">0</td><td class="num">0</td><td class="num">13</td><td class="num">3</td><td class="num">0</td><td class="num">10</td></tr>
+          <tr><td class="player">Ali</td><td class="num">7</td><td class="num">299</td><td class="num g-pos">1</td><td class="num">0.42</td><td class="num g-pos">1</td><td class="num">4</td><td class="num">2</td><td class="num">73</td><td class="num">0</td><td class="num">0</td><td class="num">4</td><td class="num">3</td><td class="num">0</td><td class="num">6</td></tr>
+
+          <tr class="repeat-head"><th></th><th class="num" title="Matches played">MP</th><th class="num" title="Minutes played">MIN</th><th class="num" title="Goals scored">GS</th><th class="num no-caps" title="Expected goals">xG</th><th class="num" title="Assists">A</th><th class="num" title="Total shot attempts">S</th><th class="num" title="Shots on target">SoT</th><th class="num" title="Passes">P</th><th class="num" title="Yellow cards">Y</th><th class="num" title="Red cards">R</th><th class="num" title="Fouls won">FW</th><th class="num" title="Fouls conceded">FC</th><th class="num" title="Offsides">O</th><th class="num" title="Shots created (assists + key passes)">SCA</th></tr>
+          <tr class="group-row"><td colspan="15"><span class="dot"></span>Forwards</td></tr>
+          <tr><td class="player">Mythou</td><td class="num">13</td><td class="num">599</td><td class="num g-pos">3</td><td class="num">3.31</td><td class="num">0</td><td class="num">18</td><td class="num">7</td><td class="num">122</td><td class="num">0</td><td class="num">0</td><td class="num">16</td><td class="num">18</td><td class="num">2</td><td class="num">5</td></tr>
+          <tr><td class="player">Ndiaye</td><td class="num">14</td><td class="num">995</td><td class="num g-pos">6</td><td class="num">4.66</td><td class="num">0</td><td class="num">27</td><td class="num">11</td><td class="num">169</td><td class="num">1</td><td class="num">0</td><td class="num">30</td><td class="num">18</td><td class="num">5</td><td class="num">4</td></tr>
+          <tr><td class="player">Jeremejeff</td><td class="num">3</td><td class="num">55</td><td class="num g-pos">1</td><td class="num">1.01</td><td class="num">0</td><td class="num">3</td><td class="num">3</td><td class="num">10</td><td class="num">1</td><td class="num">1</td><td class="num">3</td><td class="num">2</td><td class="num">1</td><td class="num">2</td></tr>
+          <tr><td class="player">Banza</td><td class="num">5</td><td class="num">228</td><td class="num g-pos">3</td><td class="num">1.94</td><td class="num">0</td><td class="num">10</td><td class="num">7</td><td class="num">41</td><td class="num">0</td><td class="num">0</td><td class="num">8</td><td class="num">5</td><td class="num">1</td><td class="num">2</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <section class="glossary">
+    <h2>Glossary</h2>
+    <dl>
+      <div><dt>MP</dt><dd>Matches played</dd></div>
+      <div><dt>MIN</dt><dd>Minutes played</dd></div>
+      <div><dt>GS</dt><dd>Goals scored</dd></div>
+      <div><dt>xG</dt><dd>Expected goals</dd></div>
+      <div><dt>A</dt><dd>Assists</dd></div>
+      <div><dt>S</dt><dd>Total shot attempts</dd></div>
+      <div><dt>SoT</dt><dd>Shots on target</dd></div>
+      <div><dt>P</dt><dd>Passes</dd></div>
+      <div><dt>Y</dt><dd>Yellow cards</dd></div>
+      <div><dt>R</dt><dd>Red cards</dd></div>
+      <div><dt>FW</dt><dd>Fouls won</dd></div>
+      <div><dt>FC</dt><dd>Fouls conceded</dd></div>
+      <div><dt>O</dt><dd>Offsides</dd></div>
+      <div><dt>GC</dt><dd>Goals conceded (goalkeepers)</dd></div>
+      <div><dt>S</dt><dd>Goalkeeper saves</dd></div>
+      <div><dt>SCA</dt><dd>Shots created (assists + key passes)</dd></div>
+    </dl>
+  </section>
+
+</div>
+
+<!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "b67bbb76d0e24af196b24ded3ab71ad0"}'></script><!-- End Cloudflare Web Analytics -->
+</body>
+</html>

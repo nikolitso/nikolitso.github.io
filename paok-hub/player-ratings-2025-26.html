@@ -1,0 +1,147 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1"><style>:root{color-scheme:light}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<!-- sitebar:start (link back to antonisnikolitsopoulos.com; keep on every page) -->
+<style>
+.an-sitebar{background:#0d1220;border-bottom:1px solid rgba(255,255,255,.09);font:500 13px/1.2 "Segoe UI",system-ui,-apple-system,sans-serif;letter-spacing:.02em}
+.an-sitebar>div{max-width:72rem;margin:0 auto;padding:6px 16px;display:flex;justify-content:flex-end;align-items:center;gap:18px}
+.an-sitebar a{color:#9aa1b2;text-decoration:none;display:inline-flex;align-items:center;min-height:24px}.an-sitebar a:hover{color:#fff}
+.an-sitebar svg{width:17px;height:17px;fill:currentColor}
+.an-sitebar a[href="/"]{padding:6px 8px;margin:-6px -8px -6px -4px;border-radius:6px}.an-sitebar a[href="/"]:hover{background:rgba(255,255,255,.08)}
+</style>
+<nav class="an-sitebar" aria-label="Main site"><div><a href="/books/">Books</a><a href="/#projects">Projects</a><a href="/about/">About</a><a href="/" title="Main site: antonisnikolitsopoulos.com" aria-label="Main site"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 2 11.5h3V21h5.5v-6h3v6H19v-9.5h3z"/></svg></a></div></nav>
+<!-- sitebar:end -->
+<title>Player Ratings 2025-26</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+  :root{
+    --ink:#16181d; --sub:#5b6270; --line:#e6e4de; --bg:#fdfcfa; --card:#ffffff;
+    --accent:#1c1f6b; --accent-soft:#eceeff;
+    --hi-bg:#eaf3ec; --hi-fg:#2c6e45;
+    --lo-bg:#fbe9e7; --lo-fg:#9c3a2e;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --ink:#e7e6e1; --sub:#a2a7b3; --line:#33353c; --bg:#15161a; --card:#1c1e24;
+      --accent:#8f96ff; --accent-soft:#242850;
+      --hi-bg:#1f3226; --hi-fg:#7fd39d;
+      --lo-bg:#3a2422; --lo-fg:#f0a396;
+    }
+  }
+  :root[data-theme="dark"]{
+    --ink:#e7e6e1; --sub:#a2a7b3; --line:#33353c; --bg:#15161a; --card:#1c1e24;
+    --accent:#8f96ff; --accent-soft:#242850;
+    --hi-bg:#1f3226; --hi-fg:#7fd39d;
+    --lo-bg:#3a2422; --lo-fg:#f0a396;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;padding:44px 24px 72px;background:var(--bg);color:var(--ink);
+       font-family:'IBM Plex Sans',system-ui,sans-serif;}
+  .wrap{max-width:760px;margin:0 auto;}
+  .overline{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.14em;
+       color:var(--accent);font-weight:600;text-transform:uppercase;margin-bottom:12px;}
+  h1{font-family:'Archivo',sans-serif;font-size:38px;font-weight:800;margin:0 0 8px;letter-spacing:-.01em;}
+  .subtitle{color:var(--sub);font-size:15px;margin:0 0 20px;line-height:1.55;max-width:620px;}
+
+  .method{background:var(--card);border:1px solid var(--line);border-radius:10px;
+       padding:14px 16px;font-size:12.5px;color:var(--sub);line-height:1.6;margin-bottom:34px;}
+  .method b{color:var(--ink);}
+  .method code{font-family:'IBM Plex Mono',monospace;font-size:11.5px;background:var(--accent-soft);
+       color:var(--accent);padding:1px 5px;border-radius:4px;}
+
+  .section-title{font-family:'Archivo',sans-serif;font-size:20px;font-weight:800;margin:0 0 4px;}
+  .section-sub{font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--sub);
+       margin:0 0 14px;letter-spacing:.03em;}
+
+  table{width:100%;border-collapse:collapse;table-layout:fixed;margin-bottom:38px;}
+  th{font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.06em;
+       text-transform:uppercase;color:var(--sub);font-weight:500;text-align:left;
+       padding:8px 10px;border-bottom:1px solid var(--line);}
+  th.num, td.num{text-align:right;}
+  th:first-child, td:first-child{width:36%;}
+  th:nth-child(2), td:nth-child(2){width:18%;}
+  td{padding:9px 10px;border-bottom:1px solid var(--line);font-size:13.5px;}
+  td.name{font-weight:600;}
+  td.rating{font-variant-numeric:tabular-nums;font-weight:700;font-family:'IBM Plex Mono',monospace;}
+  .apps{color:var(--sub);font-size:13.5px;}
+
+  .group-row td{padding:12px 10px 8px;border-bottom:none;font-family:'IBM Plex Mono',monospace;
+       font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--sub);}
+  .group-row:first-child td{padding-top:8px;}
+  .group-row .dot{width:6px;height:6px;border-radius:50%;background:var(--accent);
+       display:inline-block;margin-right:8px;}
+
+  .footer{margin-top:6px;padding-top:16px;border-top:1px solid var(--line);color:var(--sub);font-size:12px;}
+</style>
+
+<div class="wrap">
+<div class="overline"><a href="index.html" style="color:inherit;text-decoration:none;">PAOK HUB</a> &middot; PLAYER RATINGS &middot; 2025-26</div>
+<h1>Player Ratings 2025&ndash;26</h1>
+
+<div class="method" style="margin-bottom:20px;">
+  <b>Team average rating:</b> <span style="font-family:'IBM Plex Mono',monospace;font-size:20px;font-weight:700;color:var(--accent);">7.0</span> &mdash; weighted mean across 489 player-appearances over the full season (32 matches).
+</div>
+
+<div class="section-title">Season average</div>
+<p class="section-sub">Full 2025&ndash;26 season &middot; 32 matches (26 regular season + 6 play-off)</p>
+<table>
+  <thead><tr><th>Player</th><th class="num">Min</th><th class="num">Avg</th><th class="num">Apps</th></tr></thead>
+  <tbody>
+    <tr class="group-row"><td colspan="4"><span class="dot"></span>Goalkeepers</td></tr>
+    <tr><td class="name">Pavlenka</td><td class="num">1671</td><td class="num">7.3</td><td class="num apps">20</td></tr>
+    <tr><td class="name">Tsiftsis</td><td class="num">1209</td><td class="num">7.3</td><td class="num apps">16</td></tr>
+
+    <tr class="group-row"><td colspan="4"><span class="dot"></span>Defenders</td></tr>
+    <tr><td class="name">Sastre</td><td class="num">564</td><td class="num">7.5</td><td class="num apps">8</td></tr>
+    <tr><td class="name">Vogliacco</td><td class="num">613</td><td class="num">7.2</td><td class="num apps">8</td></tr>
+    <tr><td class="name">Baba</td><td class="num">1915</td><td class="num">7.1</td><td class="num apps">25</td></tr>
+    <tr><td class="name">Taylor</td><td class="num">965</td><td class="num">7.2</td><td class="num apps">12</td></tr>
+    <tr><td class="name">Michailidis</td><td class="num">1661</td><td class="num">7.2</td><td class="num apps">21</td></tr>
+    <tr><td class="name">Kenny</td><td class="num">1685</td><td class="num">7.1</td><td class="num apps">23</td></tr>
+    <tr><td class="name">Sánchez</td><td class="num">633</td><td class="num">6.9</td><td class="num apps">10</td></tr>
+    <tr><td class="name">Lovren</td><td class="num">1432</td><td class="num">6.9</td><td class="num apps">17</td></tr>
+    <tr><td class="name">Kędziora</td><td class="num">2041</td><td class="num">6.9</td><td class="num apps">23</td></tr>
+
+    <tr class="group-row"><td colspan="4"><span class="dot"></span>Midfielders</td></tr>
+    <tr><td class="name">Ozdoev</td><td class="num">2002</td><td class="num">7.2</td><td class="num apps">30</td></tr>
+    <tr><td class="name">Zafeiris</td><td class="num">1324</td><td class="num">7.1</td><td class="num apps">16</td></tr>
+    <tr><td class="name">Meïté</td><td class="num">1687</td><td class="num">6.9</td><td class="num apps">22</td></tr>
+    <tr><td class="name">Camara</td><td class="num">604</td><td class="num">6.7</td><td class="num apps">23</td></tr>
+    <tr><td class="name">Bianco</td><td class="num">383</td><td class="num">6.6</td><td class="num apps">13</td></tr>
+    <tr><td class="name">Thymianis</td><td class="num">21</td><td class="num">6.6</td><td class="num apps">3</td></tr>
+
+    <tr class="group-row"><td colspan="4"><span class="dot"></span>Attacking midfielders</td></tr>
+    <tr><td class="name">Chatsidis</td><td class="num">776</td><td class="num">7.2</td><td class="num apps">12</td></tr>
+    <tr><td class="name">Živković</td><td class="num">1911</td><td class="num">7.3</td><td class="num apps">24</td></tr>
+    <tr><td class="name">Taison</td><td class="num">2016</td><td class="num">7.2</td><td class="num apps">29</td></tr>
+    <tr><td class="name">Konstantelias</td><td class="num">1682</td><td class="num">7.2</td><td class="num apps">24</td></tr>
+    <tr><td class="name">Pelkas</td><td class="num">542</td><td class="num">7.0</td><td class="num apps">14</td></tr>
+    <tr><td class="name">Despodov</td><td class="num">807</td><td class="num">6.9</td><td class="num apps">18</td></tr>
+    <tr><td class="name">Ivanušec</td><td class="num">594</td><td class="num">6.7</td><td class="num apps">20</td></tr>
+
+    <tr class="group-row"><td colspan="4"><span class="dot"></span>Forwards</td></tr>
+    <tr><td class="name">Jeremejeff</td><td class="num">973</td><td class="num">7.1</td><td class="num apps">16</td></tr>
+    <tr><td class="name">Giakoumakis</td><td class="num">1328</td><td class="num">7.0</td><td class="num apps">22</td></tr>
+    <tr><td class="name">Mythou</td><td class="num">272</td><td class="num">7.0</td><td class="num apps">10</td></tr>
+    <tr><td class="name">Chalov</td><td class="num">349</td><td class="num">6.8</td><td class="num apps">10</td></tr>
+  </tbody>
+</table>
+
+<div class="method">
+  Scale: 3.0&ndash;10.0. Base: 6.5.
+  <br><br>
+  All positions: Goal +0.8, Assist +0.5, Yellow card &minus;0.4, Red card &minus;2.0, Offside &minus;0.05, Foul conceded &minus;0.05, Foul won +0.03, Corner won +0.03.
+  <br><br>
+  Goalkeepers: Save +0.2, Clean sheet +0.3, (Opponent xG &minus; goals conceded) &times; 1.0, Passes +0.01 each up to +0.2.
+  <br><br>
+  Defenders: Tackle +0.15, Blocked shot +0.15, Clean sheet +0.6, else Goals conceded &minus;0.25 each up to a maximum of &minus;0.50 per match, Passes +0.01 each up to +0.3, Shot on target +0.05, Shot off target +0.02.
+  <br><br>
+  Midfielders: Passes +0.01 each up to +0.7, Tackle +0.12, Blocked shot +0.08, Shot created +0.05.
+  <br><br>
+  Attacking midfielders &amp; forwards: Shot on target +0.08, Shot off target +0.03, Passes +0.01 each up to +0.4, Tackle +0.06, Blocked shot +0.06, Shot created +0.05.
+  <br><br>
+  Season average = mean of a player's own per-match ratings across matches played, not a season total.
+</div>
+
+</div>
+
+<!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "b67bbb76d0e24af196b24ded3ab71ad0"}'></script><!-- End Cloudflare Web Analytics -->
+</body></html>

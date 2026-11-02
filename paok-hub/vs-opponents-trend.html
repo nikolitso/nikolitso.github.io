@@ -1,0 +1,373 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PAOK vs Opponents, Year on Year</title>
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap">
+
+<style>
+  :root {
+    --bg: #f4f4f2;
+    --surface: #ffffff;
+    --surface-2: #ececea;
+    --ink: #16171a;
+    --ink-dim: #55585f;
+    --line: #d9d9d5;
+    --accent: #1c1f6b;
+    --accent-soft: #e7e8f5;
+    --opp: #b5482e;
+    --opp-soft: #f6e7e2;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #101114;
+      --surface: #17181c;
+      --surface-2: #1d1f24;
+      --ink: #edeeef;
+      --ink-dim: #9a9ca3;
+      --line: #2b2d33;
+      --accent: #8f96ff;
+      --accent-soft: #232650;
+      --opp: #e08066;
+      --opp-soft: #3a231e;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --bg: #101114;
+    --surface: #17181c;
+    --surface-2: #1d1f24;
+    --ink: #edeeef;
+    --ink-dim: #9a9ca3;
+    --line: #2b2d33;
+    --accent: #8f96ff;
+    --accent-soft: #232650;
+    --opp: #e08066;
+    --opp-soft: #3a231e;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+    line-height: 1.5;
+  }
+
+  .wrap {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 56px 24px 96px;
+  }
+
+  header.page-head {
+    margin-bottom: 32px;
+  }
+
+  .eyebrow {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 600;
+    margin: 0 0 10px;
+  }
+
+  h1 {
+    font-family: "Archivo", ui-sans-serif, sans-serif;
+    font-weight: 800;
+    font-size: clamp(28px, 4.5vw, 40px);
+    letter-spacing: -0.01em;
+    margin: 0 0 8px;
+    text-wrap: balance;
+  }
+
+  .sub {
+    color: var(--ink-dim);
+    font-size: 15px;
+    max-width: 60ch;
+    margin: 0;
+  }
+
+  .legend {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin: 0 0 14px;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+
+  .legend .paok { color: var(--accent); }
+  .legend .opp { color: var(--opp); }
+
+  .comparison {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--surface);
+    overflow: hidden;
+  }
+
+  .stat-row {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+  }
+
+  .stat-row:not(:last-child) {
+    border-bottom: 1px solid var(--line);
+  }
+
+  .stat-row .val {
+    font-family: "IBM Plex Mono", monospace;
+    font-variant-numeric: tabular-nums;
+    font-size: 13.5px;
+    font-weight: 600;
+    width: 42px;
+    flex: none;
+  }
+
+  .stat-row .val.paok { color: var(--accent); text-align: right; }
+  .stat-row .val.opp { color: var(--opp); text-align: left; }
+
+  .side {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .side.paok-side { justify-content: flex-end; }
+  .side.opp-side { justify-content: flex-start; }
+
+  .bar-track {
+    flex: 1;
+    height: 8px;
+    background: var(--surface-2);
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .bar-track.paok-track { direction: rtl; }
+
+  .bar-fill {
+    height: 100%;
+    border-radius: 4px;
+  }
+
+  .bar-fill.paok-fill { background: var(--accent); }
+  .bar-fill.opp-fill { background: var(--opp); }
+
+  .stat-label {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 11px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  .season-head {
+    margin: 36px 0 10px;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    border-bottom: 2px solid var(--ink);
+    padding-bottom: 10px;
+  }
+
+  .season-head:first-of-type { margin-top: 44px; }
+
+  .season-head .season-name {
+    font-family: "Archivo", sans-serif;
+    font-weight: 800;
+    font-size: 17px;
+  }
+
+  .season-head .season-meta {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 11.5px;
+    color: var(--ink-dim);
+  }
+
+  .current-badge {
+    display: inline-block;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 10px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: var(--accent-soft);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 2px 8px;
+    margin-left: 8px;
+    vertical-align: middle;
+  }
+
+  .method {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 14px 16px;
+    font-size: 12.5px;
+    color: var(--ink-dim);
+    line-height: 1.6;
+    margin-top: 40px;
+  }
+  .method b { color: var(--ink); }
+
+  footer.page-foot {
+    margin-top: 32px;
+    padding-top: 20px;
+    border-top: 1px solid var(--line);
+    font-size: 12.5px;
+    color: var(--ink-dim);
+  }
+</style>
+</head>
+<body>
+<!-- sitebar:start (link back to antonisnikolitsopoulos.com; keep on every page) -->
+<style>
+.an-sitebar{background:#0d1220;border-bottom:1px solid rgba(255,255,255,.09);font:500 13px/1.2 "Segoe UI",system-ui,-apple-system,sans-serif;letter-spacing:.02em}
+.an-sitebar>div{max-width:72rem;margin:0 auto;padding:6px 16px;display:flex;justify-content:flex-end;align-items:center;gap:18px}
+.an-sitebar a{color:#9aa1b2;text-decoration:none;display:inline-flex;align-items:center;min-height:24px}.an-sitebar a:hover{color:#fff}
+.an-sitebar svg{width:17px;height:17px;fill:currentColor}
+.an-sitebar a[href="/"]{padding:6px 8px;margin:-6px -8px -6px -4px;border-radius:6px}.an-sitebar a[href="/"]:hover{background:rgba(255,255,255,.08)}
+</style>
+<nav class="an-sitebar" aria-label="Main site"><div><a href="/books/">Books</a><a href="/#projects">Projects</a><a href="/about/">About</a><a href="/" title="Main site: antonisnikolitsopoulos.com" aria-label="Main site"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 2 11.5h3V21h5.5v-6h3v6H19v-9.5h3z"/></svg></a></div></nav>
+<!-- sitebar:end -->
+
+
+<div class="wrap">
+
+  <header class="page-head">
+    <p class="eyebrow"><a href="index.html" style="color:inherit;text-decoration:none;">PAOK Hub</a></p>
+    <h1>PAOK vs Opponents, Year on Year</h1>
+    <p class="sub">Per-match Goals and Expected Goals (xG) for PAOK against the average of their Super League opponents, one season at a time.</p>
+  </header>
+
+  <div class="legend">
+    <span class="paok">&larr; PAOK</span>
+    <span class="opp">Opponents &rarr;</span>
+  </div>
+
+  <div class="season-head" style="margin-top:0;">
+    <span class="season-name">2025&ndash;26</span>
+    <span class="season-meta">32 matches &middot; finished 3rd</span>
+  </div>
+  <div class="comparison">
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">1.84</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:100%"></div></div></div>
+      <div class="stat-label">Goals</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:42%"></div></div><span class="val opp">0.78</span></div>
+    </div>
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">1.73</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:100%"></div></div></div>
+      <div class="stat-label">xG</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:51%"></div></div><span class="val opp">0.88</span></div>
+    </div>
+  </div>
+
+  <div class="season-head">
+    <span class="season-name">2024&ndash;25</span>
+    <span class="season-meta">32 matches &middot; finished 3rd</span>
+  </div>
+  <div class="comparison">
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">1.94</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:100%"></div></div></div>
+      <div class="stat-label">Goals</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:60%"></div></div><span class="val opp">1.16</span></div>
+    </div>
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">1.62</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:100%"></div></div></div>
+      <div class="stat-label">xG</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:67%"></div></div><span class="val opp">1.09</span></div>
+    </div>
+  </div>
+
+  <div class="season-head">
+    <span class="season-name">2023&ndash;24</span>
+    <span class="season-meta">36 matches &middot; champions</span>
+  </div>
+  <div class="comparison">
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">2.44</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:100%"></div></div></div>
+      <div class="stat-label">Goals</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:39%"></div></div><span class="val opp">0.94</span></div>
+    </div>
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">1.60</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:100%"></div></div></div>
+      <div class="stat-label">xG</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:49%"></div></div><span class="val opp">0.79</span></div>
+    </div>
+  </div>
+
+  <div class="season-head">
+    <span class="season-name">2022&ndash;23</span>
+    <span class="season-meta">36 matches &middot; finished 4th</span>
+  </div>
+  <div class="comparison">
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">1.58</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:100%"></div></div></div>
+      <div class="stat-label">Goals</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:56%"></div></div><span class="val opp">0.89</span></div>
+    </div>
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">1.33</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:100%"></div></div></div>
+      <div class="stat-label">xG</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:56%"></div></div><span class="val opp">0.74</span></div>
+    </div>
+  </div>
+
+  <div class="season-head">
+    <span class="season-name">2021&ndash;22</span>
+    <span class="season-meta">36 matches &middot; finished 2nd</span>
+  </div>
+  <div class="comparison">
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">1.61</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:100%"></div></div></div>
+      <div class="stat-label">Goals</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:57%"></div></div><span class="val opp">0.92</span></div>
+    </div>
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">1.40</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:100%"></div></div></div>
+      <div class="stat-label">xG</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:55%"></div></div><span class="val opp">0.77</span></div>
+    </div>
+  </div>
+
+  <div class="season-head">
+    <span class="season-name">2020&ndash;21</span>
+    <span class="season-meta">36 matches &middot; finished 2nd</span>
+  </div>
+  <div class="comparison">
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">1.67</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:100%"></div></div></div>
+      <div class="stat-label">Goals</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:56%"></div></div><span class="val opp">0.94</span></div>
+    </div>
+    <div class="stat-row">
+      <div class="side paok-side"><span class="val paok">1.65</span><div class="bar-track paok-track"><div class="bar-fill paok-fill" style="width:100%"></div></div></div>
+      <div class="stat-label">xG</div>
+      <div class="side opp-side"><div class="bar-track"><div class="bar-fill opp-fill" style="width:42%"></div></div><span class="val opp">0.69</span></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "b67bbb76d0e24af196b24ded3ab71ad0"}'></script><!-- End Cloudflare Web Analytics -->
+</body>
+</html>

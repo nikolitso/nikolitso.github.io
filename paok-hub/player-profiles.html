@@ -1,0 +1,977 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PAOK Player Profiles 2026-27</title>
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap">
+
+<style>
+  :root {
+    --bg: #f4f4f2;
+    --surface: #ffffff;
+    --surface-2: #ececea;
+    --ink: #16171a;
+    --ink-dim: #55585f;
+    --line: #d9d9d5;
+    --accent: #1c1f6b;
+    --accent-soft: #e7e8f5;
+    --good: #1a7a4c;
+    --good-soft: #e5f3ec;
+    --bad: #a4402a;
+    --bad-soft: #f7e9e5;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #101114;
+      --surface: #17181c;
+      --surface-2: #1d1f24;
+      --ink: #edeeef;
+      --ink-dim: #9a9ca3;
+      --line: #2b2d33;
+      --accent: #8f96ff;
+      --accent-soft: #232650;
+      --good: #4fce94;
+      --good-soft: #163227;
+      --bad: #e8917c;
+      --bad-soft: #3a231e;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --bg: #101114;
+    --surface: #17181c;
+    --surface-2: #1d1f24;
+    --ink: #edeeef;
+    --ink-dim: #9a9ca3;
+    --line: #2b2d33;
+    --accent: #8f96ff;
+    --accent-soft: #232650;
+    --good: #4fce94;
+    --good-soft: #163227;
+    --bad: #e8917c;
+    --bad-soft: #3a231e;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+    line-height: 1.5;
+  }
+
+  .wrap {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 56px 24px 96px;
+  }
+
+  .jump-nav {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 0 -24px 32px;
+    padding: 12px 24px;
+    background: color-mix(in srgb, var(--bg) 88%, transparent);
+    backdrop-filter: blur(6px);
+    border-bottom: 1px solid var(--line);
+  }
+
+  .jump-nav a {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 11.5px;
+    letter-spacing: 0.04em;
+    color: var(--ink-dim);
+    text-decoration: none;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 5px 12px;
+    transition: color 0.15s ease, border-color 0.15s ease;
+    white-space: nowrap;
+  }
+
+  .jump-nav a:hover, .jump-nav a:focus-visible {
+    color: var(--accent);
+    border-color: var(--accent);
+    outline: none;
+  }
+
+  header.page-head {
+    margin-bottom: 40px;
+  }
+
+  .eyebrow {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 600;
+    margin: 0 0 10px;
+  }
+
+  h1 {
+    font-family: "Archivo", ui-sans-serif, sans-serif;
+    font-weight: 800;
+    font-size: clamp(30px, 4.5vw, 42px);
+    letter-spacing: -0.01em;
+    margin: 0 0 8px;
+    text-wrap: balance;
+  }
+
+  .sub {
+    color: var(--ink-dim);
+    font-size: 15px;
+    max-width: 66ch;
+    margin: 0;
+  }
+
+  .meta-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 18px;
+  }
+
+  .meta-pill {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 12px;
+    color: var(--ink-dim);
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 5px 12px;
+  }
+
+  .pos-group {
+    margin-top: 44px;
+    scroll-margin-top: 64px;
+  }
+
+  .pos-label {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    font-weight: 600;
+    margin: 0 0 16px;
+    border-bottom: 2px solid var(--ink);
+    padding-bottom: 10px;
+  }
+
+  .pos-label .dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--accent);
+    display: inline-block;
+  }
+
+  .pos-label .count {
+    margin-left: auto;
+    font-weight: 500;
+    color: var(--ink-dim);
+    opacity: 0.7;
+  }
+
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+    gap: 16px;
+  }
+
+  .p-card {
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--accent-soft);
+    border-radius: 12px;
+    background: var(--surface);
+    padding: 18px 20px;
+    transition: border-left-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+  }
+
+  .p-card:hover {
+    border-left-color: var(--accent);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+    transform: translateY(-1px);
+  }
+
+  .p-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 0 0 12px;
+  }
+
+  .p-thumb {
+    width: 60px;
+    height: 60px;
+    flex: none;
+    border-radius: 50%;
+    object-fit: cover;
+    object-position: 50% 20%;
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+  }
+
+  .p-name {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  .p-card h3 {
+    font-family: "Archivo", sans-serif;
+    font-size: 17px;
+    font-weight: 700;
+    margin: 0;
+  }
+
+  .p-pos {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.04em;
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  .p-bio {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 0 0 14px;
+    padding-bottom: 14px;
+    border-bottom: 1px dashed var(--line);
+  }
+
+  .p-bio-pill {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 5px;
+    flex-shrink: 0;
+    white-space: nowrap;
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 4px 10px;
+  }
+
+  .p-bio-label {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 9.5px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+  }
+
+  .p-bio-val {
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  .p-row {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 10px;
+  }
+
+  .p-row-label {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+  }
+
+  .p-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .chip {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: baseline;
+    gap: 4px;
+    font-size: 12.5px;
+    font-weight: 500;
+    padding: 4px 10px;
+    border-radius: 999px;
+    line-height: 1.4;
+    white-space: nowrap;
+  }
+
+  .chip.good { background: var(--good-soft); color: var(--good); }
+  .chip.bad { background: var(--bad-soft); color: var(--bad); }
+  .chip .tier {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 9.5px;
+    opacity: 0.75;
+  }
+
+  .chip-none {
+    display: inline-flex;
+    flex-shrink: 0;
+    font-size: 11.5px;
+    color: var(--ink-dim);
+    opacity: 0.6;
+    padding: 4px 10px;
+    border: 1px dashed var(--line);
+    border-radius: 999px;
+  }
+
+  .p-style {
+    margin: 10px 0 0;
+    padding-top: 10px;
+    border-top: 1px dashed var(--line);
+    list-style: none;
+    font-size: 12.5px;
+    color: var(--ink-dim);
+    line-height: 1.6;
+  }
+
+  .p-style::before {
+    content: "Style of play";
+    display: block;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    margin-bottom: 6px;
+  }
+
+  .p-style li {
+    padding-left: 14px;
+    position: relative;
+    margin-bottom: 4px;
+  }
+
+  .p-style li::before {
+    content: "\2013";
+    position: absolute;
+    left: 0;
+  }
+
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px;
+    margin: 20px 0 0;
+    font-size: 12.5px;
+    color: var(--ink-dim);
+  }
+
+  .legend .chip { pointer-events: none; }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) .p-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.3); }
+  }
+  :root[data-theme="dark"] .p-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.3); }
+
+  footer.page-foot {
+    margin-top: 48px;
+    padding-top: 20px;
+    border-top: 1px solid var(--line);
+    font-size: 12.5px;
+    color: var(--ink-dim);
+  }
+</style>
+</head>
+<body>
+<!-- sitebar:start (link back to antonisnikolitsopoulos.com; keep on every page) -->
+<style>
+.an-sitebar{background:#0d1220;border-bottom:1px solid rgba(255,255,255,.09);font:500 13px/1.2 "Segoe UI",system-ui,-apple-system,sans-serif;letter-spacing:.02em}
+.an-sitebar>div{max-width:72rem;margin:0 auto;padding:6px 16px;display:flex;justify-content:flex-end;align-items:center;gap:18px}
+.an-sitebar a{color:#9aa1b2;text-decoration:none;display:inline-flex;align-items:center;min-height:24px}.an-sitebar a:hover{color:#fff}
+.an-sitebar svg{width:17px;height:17px;fill:currentColor}
+.an-sitebar a[href="/"]{padding:6px 8px;margin:-6px -8px -6px -4px;border-radius:6px}.an-sitebar a[href="/"]:hover{background:rgba(255,255,255,.08)}
+</style>
+<nav class="an-sitebar" aria-label="Main site"><div><a href="/books/">Books</a><a href="/#projects">Projects</a><a href="/about/">About</a><a href="/" title="Main site: antonisnikolitsopoulos.com" aria-label="Main site"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 2 11.5h3V21h5.5v-6h3v6H19v-9.5h3z"/></svg></a></div></nav>
+<!-- sitebar:end -->
+
+
+<div class="wrap">
+
+  <header class="page-head">
+    <p class="eyebrow"><a href="index.html" style="color:inherit;text-decoration:none;">PAOK Hub</a></p>
+    <h1>Player Profiles</h1>
+    <div class="meta-row">
+      <span class="meta-pill">28 players</span>
+    </div>
+    <div class="legend">
+      <span class="chip good">Strong <span class="tier">/ Very Strong</span></span>
+      <span class="chip bad">Weak <span class="tier">/ Very Weak</span></span>
+    </div>
+  </header>
+
+  <nav class="jump-nav">
+    <a href="#goalkeepers">Goalkeepers</a>
+    <a href="#defenders">Defenders</a>
+    <a href="#midfielders">Midfielders</a>
+    <a href="#attacking-midfielders">Attacking midfielders</a>
+    <a href="#forwards">Forwards</a>
+  </nav>
+
+  <div class="pos-group" id="goalkeepers">
+    <p class="pos-label"><span class="dot"></span>Goalkeepers</p>
+    <div class="card-grid">
+
+      <div class="p-card">
+        <div class="p-head"><img class="p-thumb" src="https://www.paokfc.gr/wp-content/uploads/2026/08/1_Pavlenka_Roster_27.png" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.display='none'"><div class="p-name"><h3>Pavlenka</h3></div></div>
+        <div class="p-bio"><span class="p-bio-pill"><span class="p-bio-label">Born</span><span class="p-bio-val">14 April 1992 (34 yo)</span></span><span class="p-bio-pill"><span class="p-bio-label">Birthplace</span><span class="p-bio-val">Hlučín, Czech Republic</span></span><span class="p-bio-pill"><span class="p-bio-label">Shirt No</span><span class="p-bio-val">1</span></span><span class="p-bio-pill"><span class="p-bio-label">Height</span><span class="p-bio-val">1.96m</span></span></div>
+        <div class="p-row"><span class="p-row-label">Strengths</span><div class="p-chips">
+          <span class="chip good">Concentration</span>
+          <span class="chip good">Penalty saving</span>
+          </div>
+        </div>
+        <div class="p-row"><span class="p-row-label">Weaknesses</span><div class="p-chips">
+          <span class="chip-none">No significant weaknesses</span>
+          </div>
+        </div>
+        <ul class="p-style">
+          <li>Likes to punch the ball clear</li>
+        </ul>
+      </div>
+      <div class="p-card">
+        <div class="p-head"><img class="p-thumb" src="https://www.paokfc.gr/wp-content/uploads/2026/08/99_Tsiftsis_Roster_27.png" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.display='none'"><div class="p-name"><h3>Tsiftsis</h3></div></div>
+        <div class="p-bio"><span class="p-bio-pill"><span class="p-bio-label">Born</span><span class="p-bio-val">21 July 1999 (27 yo)</span></span><span class="p-bio-pill"><span class="p-bio-label">Birthplace</span><span class="p-bio-val">Giannitsa, Greece</span></span><span class="p-bio-pill"><span class="p-bio-label">Shirt No</span><span class="p-bio-val">99</span></span><span class="p-bio-pill"><span class="p-bio-label">Height</span><span class="p-bio-val">1.91m</span></span></div>
+        <div class="p-row"><span class="p-row-label">Strengths</span><div class="p-chips">
+          <span class="chip good">Defensive blocks &amp; reflexes</span>
+          <span class="chip good">Aerial claiming / concentration</span>
+          </div>
+        </div>
+        <div class="p-row"><span class="p-row-label">Weaknesses</span><div class="p-chips">
+          <span class="chip bad">Long-ball accuracy</span>
+          </div>
+        </div>
+        <ul class="p-style">
+          <li>Likes to play short passes out of the back</li>
+          <li>Active clearing inside the box</li>
+          <li>Disciplined positioning, rarely fouls</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="pos-group" id="defenders">
+    <p class="pos-label"><span class="dot"></span>Defenders</p>
+    <div class="card-grid">
+
+      <div class="p-card">
+        <div class="p-head"><img class="p-thumb" src="https://www.paokfc.gr/wp-content/uploads/2025/06/3_Kenny_Roster_27.png" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.display='none'"><div class="p-name"><h3>Kenny</h3><span class="p-pos">Right-back</span></div></div>
+        <div class="p-bio"><span class="p-bio-pill"><span class="p-bio-label">Born</span><span class="p-bio-val">15 March 1997 (29 yo)</span></span><span class="p-bio-pill"><span class="p-bio-label">Birthplace</span><span class="p-bio-val">Liverpool, England</span></span><span class="p-bio-pill"><span class="p-bio-label">Shirt No</span><span class="p-bio-val">3</span></span><span class="p-bio-pill"><span class="p-bio-label">Height</span><span class="p-bio-val">1.76m</span></span></div>
+        <div class="p-row"><span class="p-row-label">Strengths</span><div class="p-chips">
+          <span class="chip good"><span class="tier">Very Strong</span> Defensive contribution</span>
+          <span class="chip good">Holding on to the ball</span>
+          <span class="chip good">Passing</span>
+          <span class="chip good">Tackling</span>
+          <span class="chip good">Blocking the ball</span>
+          </div>
+        </div>
+        <div class="p-row"><span class="p-row-label">Weaknesses</span><div class="p-chips">
+          <span class="chip bad">Finishing</span>
+          </div>
+        </div>
+        <ul class="p-style">
+          <li>Likes to shoot from distance</li>
+          <li>Likes to play long balls</li>
+        </ul>
+      </div>
+      <div class="p-card">
+        <div class="p-head"><img class="p-thumb" src="https://www.paokfc.gr/wp-content/uploads/2025/06/5_Michailidis_Roster_27.png" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.display='none'"><div class="p-name"><h3>Michailidis</h3><span class="p-pos">Centre-back</span></div></div>
+        <div class="p-bio"><span class="p-bio-pill"><span class="p-bio-label">Born</span><span class="p-bio-val">18 February 2000 (26 yo)</span></span><span class="p-bio-pill"><span class="p-bio-label">Birthplace</span><span class="p-bio-val">Giannitsa, Greece</span></span><span class="p-bio-pill"><span class="p-bio-label">Shirt No</span><span class="p-bio-val">5</span></span><span class="p-bio-pill"><span class="p-bio-label">Height</span><span class="p-bio-val">1.88m</span></span></div>
+        <div class="p-row"><span class="p-row-label">Strengths</span><div class="p-chips">
+          <span class="chip good"><span class="tier">Very Strong</span> Passing / distribution</span>
+          <span class="chip good">Interceptions / aerial duels</span>
+          </div>
+        </div>
+        <div class="p-row"><span class="p-row-label">Weaknesses</span><div class="p-chips">
+          <span class="chip bad">Discipline</span>
+          </div>
+        </div>
+        <ul class="p-style">
+          <li>Likes to play long crossfield balls to switch play</li>
+          <li>Prefers positional containment over diving into tackles</li>
+        </ul>
+      </div>
+      <div class="p-card">
+        <div class="p-head"><img class="p-thumb" src="https://www.paokfc.gr/wp-content/uploads/2021/01/21_Baba_Roster_27.png" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.display='none'"><div class="p-name"><h3>Baba</h3><span class="p-pos">Left-back</span></div></div>
+        <div class="p-bio"><span class="p-bio-pill"><span class="p-bio-label">Born</span><span class="p-bio-val">2 July 1994 (32 yo)</span></span><span class="p-bio-pill"><span class="p-bio-label">Birthplace</span><span class="p-bio-val">Tamale, Ghana</span></span><span class="p-bio-pill"><span class="p-bio-label">Shirt No</span><span class="p-bio-val">21</span></span><span class="p-bio-pill"><span class="p-bio-label">Height</span><span class="p-bio-val">1.79m</span></span></div>
+        <div class="p-row"><span class="p-row-label">Strengths</span><div class="p-chips">
+          <span class="chip good"><span class="tier">Very Strong</span> Defensive contribution</span>
+          <span class="chip good">Tackling</span>
+          <span class="chip good">Concentration</span>
+          </div>
+        </div>
+        <div class="p-row"><span class="p-row-label">Weaknesses</span><div class="p-chips">
+          <span class="chip-none">No significant weaknesses</span>
+          </div>
+        </div>
+        <ul class="p-style">
+          <li>Likes to shoot from distance</li>
+          <li>Likes to tackle</li>
+        </ul>
+      </div>
+      <div class="p-card">
+        <div class="p-head"><img class="p-thumb" src="https://www.paokfc.gr/wp-content/uploads/2025/06/6_Elustondo_Roster_27.png" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.display='none'"><div class="p-name"><h3>Elustondo</h3><span class="p-pos">Centre-back</span></div></div>
+        <div class="p-bio"><span class="p-bio-pill"><span class="p-bio-label">Born</span><span class="p-bio-val">28 March 1994 (32 yo)</span></span><span class="p-bio-pill"><span class="p-bio-label">Birthplace</span><span class="p-bio-val">Beasain, Spain</span></span><span class="p-bio-pill"><span class="p-bio-label">Shirt No</span><span class="p-bio-val">6</span></span><span class="p-bio-pill"><span class="p-bio-label">Height</span><span class="p-bio-val">1.80m</span></span></div>
+        <div class="p-row"><span class="p-row-label">Strengths</span><div class="p-chips">
+          <span class="chip-none">No significant strengths</span>
+          </div>
+        </div>
+        <div class="p-row"><span class="p-row-label">Weaknesses</span><div class="p-chips">
+          <span class="chip bad">Aerial duels</span>
+          <span class="chip bad">Discipline</span>
+          <span class="chip bad">Tackling</span>
+          </div>
+        </div>
+        <ul class="p-style">
+          <li>Does not dive into tackles</li>
+          <li>Clears the ball out of defence often</li>
+        </ul>
+      </div>
+      <div class="p-card">
+        <div class="p-head"><img class="p-thumb" src="https://www.paokfc.gr/wp-content/uploads/2026/09/Diego-Costa_Profile_27-2.png" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.display='none'"><div class="p-name"><h3>Diego Costa</h3><span class="p-pos">Centre-back</span></div></div>
+        <div class="p-bio"><span class="p-bio-pill"><span class="p-bio-label">Born</span><span class="p-bio-val">21 July 1999 (27 yo)</span></span><span class="p-bio-pill"><span class="p-bio-label">Birthplace</span><span class="p-bio-val">Campo Grande, Brazil</span></span><span class="p-bio-pill"><span class="p-bio-label">Shirt No</span><span class="p-bio-val">19</span></span><span class="p-bio-pill"><span class="p-bio-label">Height</span><span class="p-bio-val">1.83m</span></span></div>
+        <div class="p-row"><span class="p-row-label">Strengths</span><div class="p-chips">
+          <span class="chip good">Aerial duels</span>
+          <span class="chip good">Passing</span>
+          </div>
+        </div>
+        <div class="p-row"><span class="p-row-label">Weaknesses</span><div class="p-chips">
+          <span class="chip-none">No significant weaknesses</span>
+          </div>
+        </div>
+        <ul class="p-style">
+          <li>Indirect set-piece threat</li>
+          <li>Clears the ball out of defence often</li>
+        </ul>
+      </div>
+      <div class="p-card">
+        <div class="p-head"><img class="p-thumb" src="https://www.paokfc.gr/wp-content/uploads/2016/06/13_Giannoulis_Roster_27.png" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.display='none'"><div class="p-name"><h3>Giannoulis</h3><span class="p-pos">Left-back</span></div></div>
+        <div class="p-bio"><span class="p-bio-pill"><span class="p-bio-label">Born</span><span class="p-bio-val">17 October 1995 (30 yo)</span></span><span class="p-bio-pill"><span class="p-bio-label">Birthplace</span><span class="p-bio-val">Katerini, Greece</span></span><span class="p-bio-pill"><span class="p-bio-label">Shirt No</span><span class="p-bio-val">13</span></span><span class="p-bio-pill"><span class="p-bio-label">Height</span><span class="p-bio-val">1.78m</span></span></div>
+        <div class="p-row"><span class="p-row-label">Strengths</span><div class="p-chips">
+          <span class="chip good">Key passes</span>
+          <span class="chip good">Crossing</span>
+          <span class="chip good">Ball interception</span>
+          <span class="chip good">Concentration</span>
+          </div>
+        </div>
+        <div class="p-row"><span class="p-row-label">Weaknesses</span><div class="p-chips">
+          <span class="chip bad">Aerial duels</span>
+          </div>
+        </div>
+        <ul class="p-style">
+          <li>Likes to dribble</li>
+          <li>Does not dive into tackles</li>
+        </ul>
+      </div>
+      <div class="p-card">
+        <div class="p-head"><img class="p-thumb" src="https://www.paokfc.gr/wp-content/uploads/2025/06/97_Bataoulas_Roster_27.png" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.display='none'"><div class="p-name"><h3>Bataoulas</h3><span class="p-pos">Centre-back</span></div></div>
+        <div class="p-bio"><span class="p-bio-pill"><span class="p-bio-label">Born</span><span class="p-bio-val">14 March 2007 (19 yo)</span></span><span class="p-bio-pill"><span class="p-bio-label">Birthplace</span><span class="p-bio-val">Ptolemaida, Greece</span></span><span class="p-bio-pill"><span class="p-bio-label">Shirt No</span><span class="p-bio-val">97</span></span><span class="p-bio-pill"><span class="p-bio-label">Height</span><span class="p-bio-val">1.90m</span></span></div>
+        <div class="p-row"><span class="p-row-label">Strengths</span><div class="p-chips">
+          <span class="chip good">Aerial prowess</span>
+          </div>
+        </div>
+        <div class="p-row"><span class="p-row-label">Weaknesses</span><div class="p-chips">
+          <span class="chip bad">Experience / overcommitment</span>
+          </div>
+        </div>
+        <ul class="p-style">
+          <li>Dominant box defender, clears danger early</li>
+          <li>Comfortable playing out from deep with either foot</li>
+        </ul>
+      </div>
+      <div class="p-card">
+        <div class="p-head"><img class="p-thumb" src="https://www.paokfc.gr/wp-content/uploads/2025/06/4_Hatzidiakos_Roster_27.png" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.display='none'"><div class="p-name"><h3>Chatzidiakos</h3><span class="p-pos">Centre-back</span></div></div>
+        <div class="p-bio"><span class="p-bio-pill"><span class="p-bio-label">Born</span><span class="p-bio-val">18 January 1997 (29 yo)</span></span><span class="p-bio-pill"><span class="p-bio-label">Birthplace</span><span class="p-bio-val">Kremasti, Rhodes, Greece</span></span><span class="p-bio-pill"><span class="p-bio-label">Shirt No</span><span class="p-bio-val">4</span></span><span class="p-bio-pill"><span class="p-bio-label">Height</span><span class="p-bio-val">1.85m</span></span></div>
+        <div class="p-row"><span class="p-row-label">Strengths</span><div class="p-chips">
+          <span class="chip good"><span class="tier">Very Strong</span> Key passes</span>
+          <span class="chip good">Crossing</span>
+          <span class="chip good">Passing</span>
+          </div>
+        </div>
+        <div class="p-row"><span class="p-row-label">Weaknesses</span><div class="p-chips">
+          <span class="chip bad">Aerial duels</span>
+          </div>
+        </div>
+        <ul class="p-style">
+          <li>Plays the ball off the ground often</li>
+          <li>Likes to play long balls</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="pos-group" id="midfielders">
+    <p class="pos-label"><span class="dot"></span>Midfielders</p>
+    <div class="card-grid">
+
+      <div class="p-card">
+        <div class="p-head"><img class="p-thumb" src="https://www.paokfc.gr/wp-content/uploads/2025/06/20_Zafeiris_Roster_27.png" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.display='none'"><div class="p-name"><h3>Zafeiris</h3><span class="p-pos">Central midfielder</span></div></div>
+        <div class="p-bio"><span class="p-bio-pill"><span class="p-bio-label">Born</span><span class="p-bio-val">23 February 2003 (23 yo)</span></span><span class="p-bio-pill"><span class="p-bio-label">Birthplace</span><span class="p-bio-val">Athens, Greece</span></span><span class="p-bio-pill"><span class="p-bio-label">Shirt No</span><span class="p-bio-val">20</span></span><span class="p-bio-pill"><span class="p-bio-label">Height</span><span class="p-bio-val">1.73m</span></span></div>
+        <div class="p-row"><span class="p-row-label">Strengths</span><div class="p-chips">
+          <span class="chip good"><span class="tier">Very Strong</span> Passing economy</span>
+          <span class="chip good">Ball retention</span>
+          </div>
+        </div>
+        <div class="p-row"><span class="p-row-label">Weaknesses</span><div class="p-chips">
+          <span class="chip bad">Aerial duels</span>
+          </div>
+        </div>
+        <ul class="p-style">
+          <li>Likes short, quick combination triangles</li>
+          <li>Looks to slide progressive balls into attacking pockets</li>
+        </ul>
+      </div>
+      <div class="p-card">
+        <div class="p-head"><img class="p-thumb" src="https://www.paokfc.gr/wp-content/uploads/2025/06/32_Taylor_Roster_27.png" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.display='none'"><div class="p-name"><h3>Taylor</h3><span class="p-pos">Defensive midfielder / Left-back</span></div></div>
+        <div class="p-bio"><span class="p-bio-pill"><span class="p-bio-label">Born</span><span class="p-bio-val">5 November 1997 (28 yo)</span></span><span class="p-bio-pill"><span class="p-bio-label">Birthplace</span><span class="p-bio-val">Greenock, Scotland</span></span><span class="p-bio-pill"><span class="p-bio-label">Shirt No</span><span class="p-bio-val">32</span></span><span class="p-bio-pill"><span class="p-bio-label">Height</span><span class="p-bio-val">1.71m</span></span></div>
+        <div class="p-row"><span class="p-row-label">Strengths</span><div class="p-chips">
+          <span class="chip good"><span class="tier">Very Strong</span> Holding on to the ball</span>
+          <span class="chip good"><span class="tier">Very Strong</span> Passing</span>
+          <span class="chip good">Key passes</span>
+          <span class="chip good">Concentration</span>
+          </div>
+        </div>
+        <div class="p-row"><span class="p-row-label">Weaknesses</span><div class="p-chips">
+          <span class="chip bad">Crossing</span>
+          </div>
+        </div>
+        <ul class="p-style">
+          <li>Likes to play short passes</li>
+        </ul>
+      </div>
+      <div class="p-card">
+        <div class="p-head"><img class="p-thumb" src="https://www.paokfc.gr/wp-content/uploads/2025/06/7_Santamaria_Roster_27.png" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.display='none'"><div class="p-name"><h3>Santamaria</h3><span class="p-pos">Defensive midfielder</span></div></div>
+        <div class="p-bio"><span class="p-bio-pill"><span class="p-bio-label">Born</span><span class="p-bio-val">9 March 1995 (31 yo)</span></span><span class="p-bio-pill"><span class="p-bio-label">Birthplace</span><span class="p-bio-val">Saint-Doulchard, France</span></span><span class="p-bio-pill"><span class="p-bio-label">Shirt No</span><span class="p-bio-val">7</span></span><span class="p-bio-pill"><span class="p-bio-label">Height</span><span class="p-bio-val">1.83m</span></span></div>
+        <div class="p-row"><span class="p-row-label">Strengths</span><div class="p-chips">
+          <span class="chip good"><span class="tier">Very Strong</span> Aerial duels</span>
+          <span class="chip good">Blocking the ball</span>
+          </div>
+        </div>
+        <div class="p-row"><span class="p-row-label">Weaknesses</span><div class="p-chips">
+          <span class="chip bad">Concentration</span>
+          </div>
+        </div>
+        <ul class="p-style">
+          <li>Plays the ball off the ground often</li>
+          <li>Likes to play long balls</li>
+          <li>Likes to shoot from distance</li>
+          <li>Gets fouled often</li>
+          <li>Does not dive into tackles</li>
+        </ul>
+      </div>
+      <div class="p-card">
+        <div class="p-head"><img class="p-thumb" src="https://www.paokfc.gr/wp-content/uploads/2026/08/16_Ugresic_Roster_27.png" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.display='none'"><div class="p-name"><h3>Ugresic</h3><span class="p-pos">Central midfielder</span></div></div>
+        <div class="p-bio"><span class="p-bio-pill"><span class="p-bio-label">Born</span><span class="p-bio-val">15 July 2006 (20 yo)</span></span><span class="p-bio-pill"><span class="p-bio-label">Birthplace</span><span class="p-bio-val">Kikinda, Serbia</span></span><span class="p-bio-pill"><span class="p-bio-label">Shirt No</span><span class="p-bio-val">16</span></span><span class="p-bio-pill"><span class="p-bio-label">Height</span><span class="p-bio-val">1.88m</span></span></div>
+        <div class="p-row"><span class="p-row-label">Strengths</span><div class="p-chips">
+          <span class="chip good">Off-the-ball movement</span>
+          <span class="chip good">Finishing</span>
+          </div>
+        </div>
+        <div class="p-row"><span class="p-row-label">Weaknesses</span><div class="p-chips">
+          <span class="chip bad">Defensive contribution</span>
+          </div>
+        </div>
+        <ul class="p-style">
+          <li>Likes to arrive late in the box to convert crosses</li>
+        </ul>
+      </div>
+      <div class="p-card">
+        <div class="p-head"><img class="p-thumb" src="https://www.paokfc.gr/wp-content/uploads/2026/07/23_Louchet_Roster_27.png" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.display='none'"><div class="p-name"><h3>Louchet</h3><span class="p-pos">Central midfielder</span></div></div>
+        <div class="p-bio"><span class="p-bio-pill"><span class="p-bio-label">Born</span><span class="p-bio-val">4 May 2003 (23 yo)</span></span><span class="p-bio-pill"><span class="p-bio-label">Birthplace</span><span class="p-bio-val">Manosque, France</span></span><span class="p-bio-pill"><span class="p-bio-label">Shirt No</span><span class="p-bio-val">23</span></span><span class="p-bio-pill"><span class="p-bio-label">Height</span><span class="p-bio-val">1.78m</span></span></div>
+        <div class="p-row"><span class="p-row-label">Strengths</span><div class="p-chips">
+          <span class="chip good">Aerial duels</span>
+          <span class="chip good">Direct free-kicks</span>
+          <span class="chip good">Finishing</span>
+          <span class="chip good">Tackling</span>
+          <span class="chip good">Blocking the ball</span>
+          </div>
+        </div>
+        <div class="p-row"><span class="p-row-label">Weaknesses</span><div class="p-chips">
+          <span class="chip bad">Discipline</span>
+          <span class="chip bad">Defensive contribution</span>
+          </div>
+        </div>
+        <ul class="p-style">
+          <li>Likes to shoot from distance</li>
+        </ul>
+      </div>
+      <div class="p-card">
+        <div class="p-head"><img class="p-thumb" src="https://www.paokfc.gr/wp-content/uploads/2025/06/2_Camara_Roster_27.png" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.display='none'"><div class="p-name"><h3>Camara</h3><span class="p-pos">Central midfielder</span></div></div>
+        <div class="p-bio"><span class="p-bio-pill"><span class="p-bio-label">Born</span><span class="p-bio-val">28 February 1997 (29 yo)</span></span><span class="p-bio-pill"><span class="p-bio-label">Birthplace</span><span class="p-bio-val">Matam, Guinea</span></span><span class="p-bio-pill"><span class="p-bio-label">Shirt No</span><span class="p-bio-val">2</span></span><span class="p-bio-pill"><span class="p-bio-label">Height</span><span class="p-bio-val">1.82m</span></span></div>
+        <div class="p-row"><span class="p-row-label">Strengths</span><div class="p-chips">
+          <span class="chip good">Aerial duels</span>
+          <span class="chip good">Through balls</span>
+          </div>
+        </div>
+        <div class="p-row"><span class="p-row-label">Weaknesses</span><div class="p-chips">
+          <span class="chip-none">No significant weaknesses</span>
+          </div>
+        </div>
+        <ul class="p-style">
+          <li>Likes to shoot from distance</li>
+          <li>Commits fouls often</li>
+        </ul>
+      </div>
+      <div class="p-card">
+        <div class="p-head"><img class="p-thumb" src="https://www.paokfc.gr/wp-content/uploads/2026/09/18_Jakic_Roster_27-2.png" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.display='none'"><div class="p-name"><h3>Jakic</h3><span class="p-pos">Defensive midfielder</span></div></div>
+        <div class="p-bio"><span class="p-bio-pill"><span class="p-bio-label">Born</span><span class="p-bio-val">14 May 1997 (29 yo)</span></span><span class="p-bio-pill"><span class="p-bio-label">Birthplace</span><span class="p-bio-val">Split, Croatia</span></span><span class="p-bio-pill"><span class="p-bio-label">Shirt No</span><span class="p-bio-val">18</span></span><span class="p-bio-pill"><span class="p-bio-label">Height</span><span class="p-bio-val">1.81m</span></span></div>
+        <div class="p-row"><span class="p-row-label">Strengths</span><div class="p-chips">
+          <span class="chip-none">No significant strengths</span>
+          </div>
+        </div>
+        <div class="p-row"><span class="p-row-label">Weaknesses</span><div class="p-chips">
+          <span class="chip bad">Concentration</span>
+          </div>
+        </div>
+        <ul class="p-style">
+          <li>Likes to play long balls</li>
+        </ul>
+      </div>
+      <div class="p-card">
+        <div class="p-head"><img class="p-thumb" src="https://www.paokfc.gr/wp-content/uploads/2025/06/8_Meite_Roster_27.png" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.display='none'"><div class="p-name"><h3>Meite</h3><span class="p-pos">Defensive midfielder</span></div></div>
+        <div class="p-bio"><span class="p-bio-pill"><span class="p-bio-label">Born</span><span class="p-bio-val">17 March 1994 (32 yo)</span></span><span class="p-bio-pill"><span class="p-bio-label">Birthplace</span><span class="p-bio-val">Paris, France</span></span><span class="p-bio-pill"><span class="p-bio-label">Shirt No</span><span class="p-bio-val">8</span></span><span class="p-bio-pill"><span class="p-bio-label">Height</span><span class="p-bio-val">1.87m</span></span></div>
+        <div class="p-row"><span class="p-row-label">Strengths</span><div class="p-chips">
+          <span class="chip-none">No significant strengths</span>
+          </div>
+        </div>
+        <div class="p-row"><span class="p-row-label">Weaknesses</span><div class="p-chips">
+          <span class="chip-none">No significant weaknesses</span>
+          </div>
+        </div>
+        <ul class="p-style">
+          <li>Gets fouled often</li>
+          <li>Indirect set-piece threat</li>
+          <li>Likes to dribble</li>
+          <li>Likes to shoot from distance</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="pos-group" id="attacking-midfielders">
+    <p class="pos-label"><span class="dot"></span>Attacking midfielders</p>
+    <div class="card-grid">
+
+      <div class="p-card">
+        <div class="p-head"><img class="p-thumb" src="https://www.paokfc.gr/wp-content/uploads/2025/06/14_Zivkovic_Roster_27.png" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.display='none'"><div class="p-name"><h3>Zivkovic</h3><span class="p-pos">Right winger</span></div></div>
+        <div class="p-bio"><span class="p-bio-pill"><span class="p-bio-label">Born</span><span class="p-bio-val">11 July 1996 (30 yo)</span></span><span class="p-bio-pill"><span class="p-bio-label">Birthplace</span><span class="p-bio-val">Niš, Serbia</span></span><span class="p-bio-pill"><span class="p-bio-label">Shirt No</span><span class="p-bio-val">14</span></span><span class="p-bio-pill"><span class="p-bio-label">Height</span><span class="p-bio-val">1.69m</span></span></div>
+        <div class="p-row"><span class="p-row-label">Strengths</span><div class="p-chips">
+          <span class="chip good">Passing</span>
+          <span class="chip good">Through balls</span>
+          <span class="chip good">Key passes</span>
+          <span class="chip good">Dribbling</span>
+          <span class="chip good">Holding on to the ball</span>
+          <span class="chip good">Defensive contribution</span>
+          </div>
+        </div>
+        <div class="p-row"><span class="p-row-label">Weaknesses</span><div class="p-chips">
+          <span class="chip bad">Aerial duels</span>
+          <span class="chip bad">Finishing</span>
+          </div>
+        </div>
+        <ul class="p-style">
+          <li>Likes to do layoffs</li>
+          <li>Likes to play short passes</li>
+          <li>Likes to dribble</li>
+        </ul>
+      </div>
+      <div class="p-card">
+        <div class="p-head"><img class="p-thumb" src="https://www.paokfc.gr/wp-content/uploads/2025/06/10_Pelkas_Roster_27.png" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.display='none'"><div class="p-name"><h3>Pelkas</h3><span class="p-pos">Attacking midfielder</span></div></div>
+        <div class="p-bio"><span class="p-bio-pill"><span class="p-bio-label">Born</span><span class="p-bio-val">26 October 1993 (32 yo)</span></span><span class="p-bio-pill"><span class="p-bio-label">Birthplace</span><span class="p-bio-val">Giannitsa, Greece</span></span><span class="p-bio-pill"><span class="p-bio-label">Shirt No</span><span class="p-bio-val">10</span></span><span class="p-bio-pill"><span class="p-bio-label">Height</span><span class="p-bio-val">1.77m</span></span></div>
+        <div class="p-row"><span class="p-row-label">Strengths</span><div class="p-chips">
+          <span class="chip good">Finishing</span>
+          <span class="chip good">Long shots</span>
+          <span class="chip good">Holding on to the ball</span>
+          <span class="chip good">Defensive contribution</span>
+          </div>
+        </div>
+        <div class="p-row"><span class="p-row-label">Weaknesses</span><div class="p-chips">
+          <span class="chip bad">Passing</span>
+          <span class="chip bad">Crossing</span>
+          </div>
+        </div>
+        <ul class="p-style">
+          <li>Likes to cut inside</li>
+          <li>Likes to dribble</li>
+          <li>Likes to do layoffs</li>
+          <li>Commits fouls often</li>
+        </ul>
+      </div>
+      <div class="p-card">
+        <div class="p-head"><img class="p-thumb" src="https://www.paokfc.gr/wp-content/uploads/2025/06/22_Ali_Roster_27.png" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.display='none'"><div class="p-name"><h3>Ali</h3><span class="p-pos">Left winger</span></div></div>
+        <div class="p-bio"><span class="p-bio-pill"><span class="p-bio-label">Born</span><span class="p-bio-val">1 July 1998 (28 yo)</span></span><span class="p-bio-pill"><span class="p-bio-label">Birthplace</span><span class="p-bio-val">Spånga, Sweden</span></span><span class="p-bio-pill"><span class="p-bio-label">Shirt No</span><span class="p-bio-val">22</span></span><span class="p-bio-pill"><span class="p-bio-label">Height</span><span class="p-bio-val">1.74m</span></span></div>
+        <div class="p-row"><span class="p-row-label">Strengths</span><div class="p-chips">
+          <span class="chip good"><span class="tier">Very Strong</span> Dribbling &amp; 1v1</span>
+          <span class="chip good">Chance creation</span>
+          <span class="chip good">Pace &amp; agility</span>
+          </div>
+        </div>
+        <div class="p-row"><span class="p-row-label">Weaknesses</span><div class="p-chips">
+          <span class="chip bad">Aerial duels</span>
+          <span class="chip bad">Defensive contribution</span>
+          </div>
+        </div>
+        <ul class="p-style">
+          <li>Likes to cut inside (inverted winger)</li>
+          <li>Fouled frequently</li>
+          <li>High-volume dribbler, seeks direct duels</li>
+        </ul>
+      </div>
+      <div class="p-card">
+        <div class="p-head"><img class="p-thumb" src="https://www.paokfc.gr/wp-content/uploads/2025/06/52_Chatsidis_Roster_27.png" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.display='none'"><div class="p-name"><h3>Chatsidis</h3><span class="p-pos">Right winger</span></div></div>
+        <div class="p-bio"><span class="p-bio-pill"><span class="p-bio-label">Born</span><span class="p-bio-val">14 June 2006 (20 yo)</span></span><span class="p-bio-pill"><span class="p-bio-label">Birthplace</span><span class="p-bio-val">Kozani, Greece</span></span><span class="p-bio-pill"><span class="p-bio-label">Shirt No</span><span class="p-bio-val">52</span></span><span class="p-bio-pill"><span class="p-bio-label">Height</span><span class="p-bio-val">1.84m</span></span></div>
+        <div class="p-row"><span class="p-row-label">Strengths</span><div class="p-chips">
+          <span class="chip good">Work rate / pressing</span>
+          </div>
+        </div>
+        <div class="p-row"><span class="p-row-label">Weaknesses</span><div class="p-chips">
+          <span class="chip bad">Decision making</span>
+          </div>
+        </div>
+        <ul class="p-style">
+          <li>Tries to stretch opposing lines with quick vertical runs wide</li>
+        </ul>
+      </div>
+      <div class="p-card">
+        <div class="p-head"><img class="p-thumb" src="https://www.paokfc.gr/wp-content/uploads/2025/06/11_Taison_Roster_27.png" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.display='none'"><div class="p-name"><h3>Taison</h3><span class="p-pos">Left winger</span></div></div>
+        <div class="p-bio"><span class="p-bio-pill"><span class="p-bio-label">Born</span><span class="p-bio-val">17 January 1988 (38 yo)</span></span><span class="p-bio-pill"><span class="p-bio-label">Birthplace</span><span class="p-bio-val">Pelotas, Brazil</span></span><span class="p-bio-pill"><span class="p-bio-label">Shirt No</span><span class="p-bio-val">11</span></span><span class="p-bio-pill"><span class="p-bio-label">Height</span><span class="p-bio-val">1.72m</span></span></div>
+        <div class="p-row"><span class="p-row-label">Strengths</span><div class="p-chips">
+          <span class="chip good">Finishing</span>
+          <span class="chip good">Through balls</span>
+          </div>
+        </div>
+        <div class="p-row"><span class="p-row-label">Weaknesses</span><div class="p-chips">
+          <span class="chip-none">No significant weaknesses</span>
+          </div>
+        </div>
+        <ul class="p-style">
+          <li>Likes to do layoffs</li>
+        </ul>
+      </div>
+      <div class="p-card">
+        <div class="p-head"><img class="p-thumb" src="https://www.paokfc.gr/wp-content/uploads/2025/06/47_Shoretire_Roster_27.png" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.display='none'"><div class="p-name"><h3>Shoretire</h3><span class="p-pos">Left winger / Attacking midfielder</span></div></div>
+        <div class="p-bio"><span class="p-bio-pill"><span class="p-bio-label">Born</span><span class="p-bio-val">2 February 2004 (22 yo)</span></span><span class="p-bio-pill"><span class="p-bio-label">Birthplace</span><span class="p-bio-val">Newcastle, England</span></span><span class="p-bio-pill"><span class="p-bio-label">Shirt No</span><span class="p-bio-val">47</span></span><span class="p-bio-pill"><span class="p-bio-label">Height</span><span class="p-bio-val">1.71m</span></span></div>
+        <div class="p-row"><span class="p-row-label">Strengths</span><div class="p-chips">
+          <span class="chip good">Defensive contribution</span>
+          </div>
+        </div>
+        <div class="p-row"><span class="p-row-label">Weaknesses</span><div class="p-chips">
+          <span class="chip bad">Aerial duels</span>
+          <span class="chip bad">Crossing</span>
+          </div>
+        </div>
+        <ul class="p-style">
+          <li>Gets fouled often</li>
+          <li>Commits fouls often</li>
+        </ul>
+      </div>
+      <div class="p-card">
+        <div class="p-head"><img class="p-thumb" src="https://www.paokfc.gr/wp-content/uploads/2025/06/77_Despodov_Roster_27.png" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.display='none'"><div class="p-name"><h3>Despodov</h3><span class="p-pos">Right winger</span></div></div>
+        <div class="p-bio"><span class="p-bio-pill"><span class="p-bio-label">Born</span><span class="p-bio-val">11 November 1996 (29 yo)</span></span><span class="p-bio-pill"><span class="p-bio-label">Birthplace</span><span class="p-bio-val">Kresna, Bulgaria</span></span><span class="p-bio-pill"><span class="p-bio-label">Shirt No</span><span class="p-bio-val">77</span></span><span class="p-bio-pill"><span class="p-bio-label">Height</span><span class="p-bio-val">1.80m</span></span></div>
+        <div class="p-row"><span class="p-row-label">Strengths</span><div class="p-chips">
+          <span class="chip good"><span class="tier">Very Strong</span> Key passes / crossing</span>
+          <span class="chip good">Dribbling</span>
+          </div>
+        </div>
+        <div class="p-row"><span class="p-row-label">Weaknesses</span><div class="p-chips">
+          <span class="chip bad">Defensive work rate</span>
+          </div>
+        </div>
+        <ul class="p-style">
+          <li>Likes to cut inside onto his stronger foot to shoot</li>
+          <li>Delivers dangerous set-pieces</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="pos-group" id="forwards">
+    <p class="pos-label"><span class="dot"></span>Forwards</p>
+    <div class="card-grid">
+
+      <div class="p-card">
+        <div class="p-head"><img class="p-thumb" src="https://www.paokfc.gr/wp-content/uploads/2026/08/27_Ndiaye_Roster_27.png" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.display='none'"><div class="p-name"><h3>Ndiaye</h3><span class="p-pos">Centre-forward</span></div></div>
+        <div class="p-bio"><span class="p-bio-pill"><span class="p-bio-label">Born</span><span class="p-bio-val">23 January 1996 (30 yo)</span></span><span class="p-bio-pill"><span class="p-bio-label">Birthplace</span><span class="p-bio-val">Dakar, Senegal</span></span><span class="p-bio-pill"><span class="p-bio-label">Shirt No</span><span class="p-bio-val">27</span></span><span class="p-bio-pill"><span class="p-bio-label">Height</span><span class="p-bio-val">1.90m</span></span></div>
+        <div class="p-row"><span class="p-row-label">Strengths</span><div class="p-chips">
+          <span class="chip good">Finishing</span>
+          </div>
+        </div>
+        <div class="p-row"><span class="p-row-label">Weaknesses</span><div class="p-chips">
+          <span class="chip bad"><span class="tier">Very Weak</span> Discipline</span>
+          <span class="chip bad">Aerial duels</span>
+          </div>
+        </div>
+        <ul class="p-style">
+          <li>Gets fouled often</li>
+          <li>Counter-attack threat</li>
+          <li>Commits fouls often</li>
+        </ul>
+      </div>
+      <div class="p-card">
+        <div class="p-head"><img class="p-thumb" src="https://www.paokfc.gr/wp-content/uploads/2025/06/56_Mythou_Roster_27.png" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.display='none'"><div class="p-name"><h3>Mythou</h3><span class="p-pos">Centre-forward</span></div></div>
+        <div class="p-bio"><span class="p-bio-pill"><span class="p-bio-label">Born</span><span class="p-bio-val">22 May 2007 (19 yo)</span></span><span class="p-bio-pill"><span class="p-bio-label">Birthplace</span><span class="p-bio-val">Thessaloniki, Greece</span></span><span class="p-bio-pill"><span class="p-bio-label">Shirt No</span><span class="p-bio-val">56</span></span><span class="p-bio-pill"><span class="p-bio-label">Height</span><span class="p-bio-val">1.88m</span></span></div>
+        <div class="p-row"><span class="p-row-label">Strengths</span><div class="p-chips">
+          <span class="chip good"><span class="tier">Very Strong</span> Finishing</span>
+          <span class="chip good">Attacking positioning</span>
+          </div>
+        </div>
+        <div class="p-row"><span class="p-row-label">Weaknesses</span><div class="p-chips">
+          <span class="chip bad">Hold-up play</span>
+          </div>
+        </div>
+        <ul class="p-style">
+          <li>Plays on the shoulder of the last defender</li>
+          <li>Extremely direct, shoots quickly once in the box</li>
+        </ul>
+      </div>
+      <div class="p-card">
+        <div class="p-head"><img class="p-thumb" src="https://www.paokfc.gr/wp-content/uploads/2026/09/Simon_Banza_Profile_27.png" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.style.display='none'"><div class="p-name"><h3>Banza</h3><span class="p-pos">Centre-forward</span></div></div>
+        <div class="p-bio"><span class="p-bio-pill"><span class="p-bio-label">Born</span><span class="p-bio-val">13 August 1996 (30 yo)</span></span><span class="p-bio-pill"><span class="p-bio-label">Birthplace</span><span class="p-bio-val">Creil, France</span></span><span class="p-bio-pill"><span class="p-bio-label">Shirt No</span><span class="p-bio-val">24</span></span><span class="p-bio-pill"><span class="p-bio-label">Height</span><span class="p-bio-val">1.88m</span></span></div>
+        <div class="p-row"><span class="p-row-label">Strengths</span><div class="p-chips">
+          <span class="chip good"><span class="tier">Strong</span> Finishing</span>
+          <span class="chip good"><span class="tier">Strong</span> Headed attempts</span>
+          </div>
+        </div>
+        <div class="p-row"><span class="p-row-label">Weaknesses</span><div class="p-chips">
+          <span class="chip bad"><span class="tier">Weak</span> Passing</span>
+          </div>
+        </div>
+        <ul class="p-style">
+          <li>Indirect set-piece threat</li>
+          <li>Plays the ball off the ground often</li>
+          <li>Commits fouls often</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+
+
+</div>
+
+<!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "b67bbb76d0e24af196b24ded3ab71ad0"}'></script><!-- End Cloudflare Web Analytics -->
+</body>
+</html>

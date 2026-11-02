@@ -1,6 +1,6 @@
 name: Site · FIBA Europe Cup
 
-# The /fibaeuropecup/ pipeline (scripts in nikolitso/FIBA-Europe-Cup), on GitHub instead of the PC:
+# The /fibaeuropecup/ pipeline (scripts in nikolitso/BettingSignal, fibaeuropecup/), on GitHub instead of the PC:
 #   07:35 Athens   update.py          results, fixtures and odds (Flashscore), projections
 #   hourly 10-21   matchday_odds.py   today's games: Flashscore lines, projections
 # Both commit and push the fibaeuropecup/ files here. The "Update all sites" button runs the full update.
@@ -32,20 +32,21 @@ jobs:
       - uses: actions/checkout@v5
       - uses: actions/checkout@v5
         with:
-          repository: nikolitso/FIBA-Europe-Cup
-          path: _fiba
+          repository: nikolitso/BettingSignal
+          token: ${{ secrets.SITES_TOKEN }}
+          path: _bs
       - uses: actions/setup-python@v6
         with:
           python-version: "3.14"
       - name: Install
         run: |
-          pip install --quiet -r _fiba/requirements.txt
+          pip install --quiet -r _bs/fibaeuropecup/requirements.txt
           python -m playwright install --with-deps chromium > /dev/null
       - name: Run
         env:
           FIBA_SITE: ${{ github.workspace }}/fibaeuropecup
           FIBA_NO_MIRROR: "1"
-          FIBA_PIPELINE: ${{ github.workspace }}/_fiba
+          FIBA_PIPELINE: ${{ github.workspace }}/_bs/fibaeuropecup
           PYTHONIOENCODING: utf-8
           TZ: Europe/Athens          # time stamps and commit messages in Athens time, as on the PC
         run: |

@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PAOK &amp; Referees</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+  :root{
+    --ink:#16181d; --sub:#5b6270; --line:#e6e4de; --bg:#fdfcfa; --card:#ffffff;
+    --accent:#1c1f6b; --accent-soft:#eceeff;
+    --err-bg:#fbe9e7; --err-fg:#9c3a2e; --err-line:#e3b9b0;
+    --ovr-bg:#eef0f5; --ovr-fg:#3a4257; --ovr-line:#c9cede;
+    --fault-bg:#fff4e0; --fault-fg:#8a5a10; --fault-line:#e8c98a;
+    --favor-bg:#eaf3ec; --favor-fg:#2c6e45; --favor-line:#bfdcc8;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --ink:#e7e6e1; --sub:#a2a7b3; --line:#33353c; --bg:#15161a; --card:#1c1e24;
+      --accent:#8f96ff; --accent-soft:#242850;
+      --err-bg:#3a2422; --err-fg:#f0a396; --err-line:#5c342e;
+      --ovr-bg:#22242e; --ovr-fg:#b7bdd6; --ovr-line:#3a3e52;
+      --fault-bg:#332a14; --fault-fg:#e8bd6e; --fault-line:#5c4a1e;
+      --favor-bg:#1f3226; --favor-fg:#7fd39d; --favor-line:#2f4d3a;
+    }
+  }
+  :root[data-theme="dark"]{
+    --ink:#e7e6e1; --sub:#a2a7b3; --line:#33353c; --bg:#15161a; --card:#1c1e24;
+    --accent:#8f96ff; --accent-soft:#242850;
+    --err-bg:#3a2422; --err-fg:#f0a396; --err-line:#5c342e;
+    --ovr-bg:#22242e; --ovr-fg:#b7bdd6; --ovr-line:#3a3e52;
+    --fault-bg:#332a14; --fault-fg:#e8bd6e; --fault-line:#5c4a1e;
+    --favor-bg:#1f3226; --favor-fg:#7fd39d; --favor-line:#2f4d3a;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;padding:44px 24px 72px;background:var(--bg);color:var(--ink);
+       font-family:'IBM Plex Sans',system-ui,sans-serif;}
+  .wrap{max-width:900px;margin:0 auto;}
+  .overline{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.14em;
+       color:var(--accent);font-weight:600;text-transform:uppercase;margin-bottom:12px;}
+  h1{font-family:'Archivo',sans-serif;font-size:38px;font-weight:800;margin:0 0 8px;letter-spacing:-.01em;}
+  .subtitle{color:var(--sub);font-size:15px;margin:0 0 28px;line-height:1.55;max-width:640px;}
+
+  .meta-row{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:34px;}
+  .meta-pill{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--sub);
+       background:var(--accent-soft);border:1px solid var(--line);border-radius:999px;padding:5px 12px;}
+
+  .section-title{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.1em;
+       text-transform:uppercase;color:var(--sub);font-weight:600;margin:0 0 14px;
+       display:flex;align-items:center;gap:8px;}
+  .section-title .dot{width:7px;height:7px;border-radius:50%;background:var(--accent);}
+
+  section.block{margin-bottom:48px;}
+
+  /* stats table */
+  .table-scroll{overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:var(--card);}
+  table{width:100%;border-collapse:collapse;font-size:13px;min-width:860px;table-layout:fixed;}
+  th,td{text-align:left;padding:8px 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  th:first-child,td:first-child{width:17%;white-space:normal;}
+  th:not(:first-child),td:not(:first-child){width:6.4%;}
+  thead th{font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.06em;
+       text-transform:uppercase;color:var(--sub);font-weight:600;background:var(--accent-soft);
+       border-bottom:1px solid var(--line);white-space:normal;overflow:hidden;text-overflow:clip;
+       line-height:1.3;vertical-align:bottom;}
+  tbody tr:not(:last-child) td{border-bottom:1px solid var(--line);}
+  td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;font-family:'IBM Plex Mono',monospace;font-size:12.5px;}
+  td.player{font-weight:600;}
+  td.dash{color:var(--sub);}
+  .group-row td{padding:12px 12px 8px;border-bottom:none;font-family:'IBM Plex Mono',monospace;
+       font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--sub);
+       background:var(--card);}
+  .group-row:first-child td{padding-top:8px;}
+  .group-row .dot{width:6px;height:6px;border-radius:50%;background:var(--accent);display:inline-block;margin-right:8px;}
+  .table-note{margin-top:10px;font-size:12px;color:var(--sub);line-height:1.5;}
+
+  /* VAR log */
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:34px;}
+  .stat{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 14px 12px;}
+  .stat .n{font-family:'Archivo',sans-serif;font-size:26px;font-weight:800;line-height:1;}
+  .stat .n.err{color:var(--err-fg);}
+  .stat .n.ovr{color:var(--accent);}
+  .stat .l{font-size:11.5px;color:var(--sub);margin-top:6px;line-height:1.35;}
+
+  .entry{display:flex;gap:16px;padding:16px 0;border-bottom:1px solid var(--line);}
+  .entry:last-child{border-bottom:none;}
+  .entry .date{flex:0 0 84px;font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--sub);
+       padding-top:2px;}
+  .entry .body{flex:1;min-width:0;}
+  .entry .match{font-weight:600;font-size:14.5px;margin-bottom:3px;}
+  .entry .ref{font-size:12.5px;color:var(--sub);margin-bottom:7px;}
+  .entry .ref b{color:var(--ink);font-weight:600;}
+  .entry .desc{font-size:13.5px;line-height:1.55;color:var(--ink);margin-bottom:9px;}
+  .log-note{font-size:12px;line-height:1.55;color:var(--sub);margin:0 0 14px;}
+  .tags{display:flex;gap:7px;flex-wrap:wrap;}
+  .tag{font-family:'IBM Plex Mono',monospace;font-size:10.5px;font-weight:600;letter-spacing:.04em;
+       text-transform:uppercase;padding:4px 9px;border-radius:6px;border:1px solid;}
+  .tag.error{background:var(--err-bg);color:var(--err-fg);border-color:var(--err-line);}
+  .tag.overturn{background:var(--ovr-bg);color:var(--ovr-fg);border-color:var(--ovr-line);}
+  .tag.fault{background:var(--fault-bg);color:var(--fault-fg);border-color:var(--fault-line);}
+  .tag.favor{background:var(--favor-bg);color:var(--favor-fg);border-color:var(--favor-line);}
+
+  .empty{color:var(--sub);font-size:13.5px;padding:18px 0;border-top:1px dashed var(--line);margin-top:6px;}
+  .footer{margin-top:36px;padding-top:16px;border-top:1px solid var(--line);color:var(--sub);font-size:12px;}
+
+  @media (max-width:520px){
+    .stats{grid-template-columns:repeat(2,1fr);}
+    .entry{flex-direction:column;gap:4px;}
+    .entry .date{flex:none;}
+  }
+</style>
+</head>
+<body>
+<!-- sitebar:start (link back to antonisnikolitsopoulos.com; keep on every page) -->
+<style>
+.an-sitebar{background:#0d1220;border-bottom:1px solid rgba(255,255,255,.09);font:500 13px/1.2 "Segoe UI",system-ui,-apple-system,sans-serif;letter-spacing:.02em}
+.an-sitebar>div{max-width:72rem;margin:0 auto;padding:6px 16px;display:flex;justify-content:flex-end;align-items:center;gap:18px}
+.an-sitebar a{color:#9aa1b2;text-decoration:none;display:inline-flex;align-items:center;min-height:24px}.an-sitebar a:hover{color:#fff}
+.an-sitebar svg{width:17px;height:17px;fill:currentColor}
+.an-sitebar a[href="/"]{padding:6px 8px;margin:-6px -8px -6px -4px;border-radius:6px}.an-sitebar a[href="/"]:hover{background:rgba(255,255,255,.08)}
+</style>
+<nav class="an-sitebar" aria-label="Main site"><div><a href="/books/">Books</a><a href="/#projects">Projects</a><a href="/about/">About</a><a href="/" title="Main site: antonisnikolitsopoulos.com" aria-label="Main site"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 2 11.5h3V21h5.5v-6h3v6H19v-9.5h3z"/></svg></a></div></nav>
+<!-- sitebar:end -->
+
+
+<div class="wrap">
+<div class="overline"><a href="index.html" style="color:inherit;text-decoration:none;">PAOK HUB</a> &middot; REFEREEING LOG</div>
+<h1>PAOK &amp; Referees</h1>
+
+<div class="meta-row">
+  <span class="meta-pill">73 matches &middot; 2024-25 to date</span>
+  <span class="meta-pill">Record: 42W 14D 17L</span>
+</div>
+
+<section class="block">
+  <div class="section-title"><span class="dot"></span>Record vs referees</div>
+  <div class="table-scroll">
+    <table>
+      <thead><tr>
+        <th>Referee</th><th class="num" title="Matches">MP</th><th class="num">W</th><th class="num">D</th><th class="num">L</th>
+        <th class="num" title="Win percentage">Win%</th>
+        <th class="num" title="Goals for, average">GF</th><th class="num" title="Goals against, average">GA</th>
+        <th class="num" title="Penalties for, average">Pen For</th><th class="num" title="Penalties against, average">Pen Ag.</th>
+        <th class="num" title="Reds for, average">Red For</th><th class="num" title="Reds against, average">Red Ag.</th>
+        <th class="num" title="Yellows for, average">Yel For</th><th class="num" title="Yellows against, average">Yel Ag.</th>
+        <th class="num" title="Points won, average">Pts</th>
+      </tr></thead>
+      <tbody>
+        <tr class="group-row"><td colspan="15"><span class="dot"></span>By nationality</td></tr>
+        <tr><td class="player">Greek referees</td><td class="num">43</td><td class="num">32</td><td class="num">4</td><td class="num">7</td><td class="num">74.4</td><td class="num">2.4</td><td class="num">0.9</td><td class="num">0.3</td><td class="num">0.2</td><td class="num">0.1</td><td class="num">0.2</td><td class="num">1.4</td><td class="num">3.0</td><td class="num">2.3</td></tr>
+        <tr><td class="player">Foreign referees</td><td class="num">30</td><td class="num">10</td><td class="num">10</td><td class="num">10</td><td class="num">33.3</td><td class="num">1.3</td><td class="num">1.2</td><td class="num">0.2</td><td class="num">0.1</td><td class="num">0.1</td><td class="num">0.1</td><td class="num">2.4</td><td class="num">2.2</td><td class="num">1.3</td></tr>
+        <tr class="group-row"><td colspan="15"><span class="dot"></span>Greek referees</td></tr>
+        <tr><td class="player">Fotias (UEFA A)</td><td class="num">6</td><td class="num">6</td><td class="num">0</td><td class="num">0</td><td class="num">100.0</td><td class="num">2.7</td><td class="num">0.7</td><td class="num">0.5</td><td class="num">0.3</td><td class="num">0.0</td><td class="num">0.3</td><td class="num">1.7</td><td class="num">2.8</td><td class="num">3.0</td></tr>
+        <tr><td class="player">Evangelou</td><td class="num">2</td><td class="num">2</td><td class="num">0</td><td class="num">0</td><td class="num">100.0</td><td class="num">3.0</td><td class="num">0.5</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">0.5</td><td class="num">1.0</td><td class="num">3.0</td></tr>
+        <tr><td class="player">Matsoukas (UEFA B)</td><td class="num">2</td><td class="num">2</td><td class="num">0</td><td class="num">0</td><td class="num">100.0</td><td class="num">3.0</td><td class="num">1.0</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">0.5</td><td class="num">0.5</td><td class="num">1.0</td><td class="num">1.0</td><td class="num">3.0</td></tr>
+        <tr><td class="player">Papapetrou (UEFA A)</td><td class="num">1</td><td class="num">1</td><td class="num">0</td><td class="num">0</td><td class="num">100.0</td><td class="num">2.0</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">2.0</td><td class="num">3.0</td></tr>
+        <tr><td class="player">Kokkinos</td><td class="num">1</td><td class="num">1</td><td class="num">0</td><td class="num">0</td><td class="num">100.0</td><td class="num">3.0</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">1.0</td><td class="num">1.0</td><td class="num">7.0</td><td class="num">3.0</td></tr>
+        <tr><td class="player">Gioumatzidis</td><td class="num">1</td><td class="num">1</td><td class="num">0</td><td class="num">0</td><td class="num">100.0</td><td class="num">3.0</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">1.0</td><td class="num">3.0</td><td class="num">3.0</td></tr>
+        <tr><td class="player">Zabalas</td><td class="num">1</td><td class="num">1</td><td class="num">0</td><td class="num">0</td><td class="num">100.0</td><td class="num">2.0</td><td class="num">1.0</td><td class="num">0.0</td><td class="num">1.0</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">3.0</td><td class="num">4.0</td><td class="num">3.0</td></tr>
+        <tr><td class="player">Tsagarakis</td><td class="num">1</td><td class="num">1</td><td class="num">0</td><td class="num">0</td><td class="num">100.0</td><td class="num">4.0</td><td class="num">1.0</td><td class="num">1.0</td><td class="num">1.0</td><td class="num">0.0</td><td class="num">1.0</td><td class="num">1.0</td><td class="num">2.0</td><td class="num">3.0</td></tr>
+        <tr><td class="player">Vergetis (UEFA B)</td><td class="num">6</td><td class="num">5</td><td class="num">0</td><td class="num">1</td><td class="num">83.3</td><td class="num">2.5</td><td class="num">0.5</td><td class="num">0.2</td><td class="num">0.3</td><td class="num">0.0</td><td class="num">0.2</td><td class="num">2.3</td><td class="num">3.0</td><td class="num">2.5</td></tr>
+        <tr><td class="player">Katikos</td><td class="num">4</td><td class="num">3</td><td class="num">0</td><td class="num">1</td><td class="num">75.0</td><td class="num">3.2</td><td class="num">1.0</td><td class="num">0.0</td><td class="num">0.2</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">1.0</td><td class="num">2.5</td><td class="num">2.2</td></tr>
+        <tr><td class="player">Katsikogiannis</td><td class="num">3</td><td class="num">2</td><td class="num">0</td><td class="num">1</td><td class="num">66.7</td><td class="num">1.0</td><td class="num">1.0</td><td class="num">0.0</td><td class="num">0.3</td><td class="num">0.3</td><td class="num">0.3</td><td class="num">0.7</td><td class="num">4.0</td><td class="num">2.0</td></tr>
+        <tr><td class="player">Tzilos</td><td class="num">3</td><td class="num">2</td><td class="num">1</td><td class="num">0</td><td class="num">66.7</td><td class="num">3.0</td><td class="num">1.0</td><td class="num">0.3</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">0.7</td><td class="num">2.0</td><td class="num">2.3</td></tr>
+        <tr><td class="player">Tsimenteridis</td><td class="num">3</td><td class="num">1</td><td class="num">2</td><td class="num">0</td><td class="num">33.3</td><td class="num">2.0</td><td class="num">1.7</td><td class="num">0.7</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">0.3</td><td class="num">1.7</td><td class="num">4.7</td><td class="num">1.7</td></tr>
+        <tr><td class="player">Tsakalidis (UEFA B)</td><td class="num">3</td><td class="num">1</td><td class="num">0</td><td class="num">2</td><td class="num">33.3</td><td class="num">0.7</td><td class="num">1.3</td><td class="num">0.0</td><td class="num">0.7</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">2.7</td><td class="num">3.7</td><td class="num">1.0</td></tr>
+        <tr><td class="player">Polychronis (UEFA B)</td><td class="num">3</td><td class="num">1</td><td class="num">0</td><td class="num">2</td><td class="num">33.3</td><td class="num">2.3</td><td class="num">1.3</td><td class="num">0.3</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">0.3</td><td class="num">1.7</td><td class="num">2.7</td><td class="num">1.0</td></tr>
+        <!-- Sidiropoulos omitted (retired) -- his 3 matches (2 in 2025-26, 1 in 2024-25) stay folded into the "Greek referees" nationality total above -->
+        <!-- Also on the referee list, no PAOK matches yet (kept out of the visible table until they have data; add a row here the day they do):
+             Fitsas, Katopis, Koukoulas, Moschou (UEFA B), Ntaoulas, Staikos, Tsetsilas, Zampalas -->
+        <tr class="group-row"><td colspan="15"><span class="dot"></span>Foreign referees</td></tr>
+        <tr><td class="player">Colombo (Italy)</td><td class="num">1</td><td class="num">1</td><td class="num">0</td><td class="num">0</td><td class="num">100.0</td><td class="num">2.0</td><td class="num">0.0</td><td class="num">1.0</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">3.0</td><td class="num">1.0</td><td class="num">3.0</td></tr>
+        <tr><td class="player">Peljto (Bosnia &amp; Herzegovina)</td><td class="num">1</td><td class="num">1</td><td class="num">0</td><td class="num">0</td><td class="num">100.0</td><td class="num">2.0</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">1.0</td><td class="num">3.0</td><td class="num">3.0</td></tr>
+        <tr><td class="player">Sozza (Italy)</td><td class="num">1</td><td class="num">1</td><td class="num">0</td><td class="num">0</td><td class="num">100.0</td><td class="num">3.0</td><td class="num">1.0</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">1.0</td><td class="num">1.0</td><td class="num">3.0</td></tr>
+        <tr><td class="player">Jovanović (Serbia)</td><td class="num">1</td><td class="num">1</td><td class="num">0</td><td class="num">0</td><td class="num">100.0</td><td class="num">3.0</td><td class="num">1.0</td><td class="num">1.0</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">2.0</td><td class="num">0.0</td><td class="num">3.0</td></tr>
+        <tr><td class="player">Brych (Germany)</td><td class="num">1</td><td class="num">1</td><td class="num">0</td><td class="num">0</td><td class="num">100.0</td><td class="num">3.0</td><td class="num">2.0</td><td class="num">0.0</td><td class="num">1.0</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">5.0</td><td class="num">0.0</td><td class="num">3.0</td></tr>
+        <tr><td class="player">Storks (Germany)</td><td class="num">1</td><td class="num">1</td><td class="num">0</td><td class="num">0</td><td class="num">100.0</td><td class="num">1.0</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">3.0</td><td class="num">4.0</td><td class="num">3.0</td></tr>
+        <tr><td class="player">Osmers (Germany)</td><td class="num">4</td><td class="num">2</td><td class="num">1</td><td class="num">1</td><td class="num">50.0</td><td class="num">1.0</td><td class="num">0.8</td><td class="num">0.5</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">3.0</td><td class="num">3.0</td><td class="num">1.8</td></tr>
+        <tr><td class="player">Stegemann (Germany)</td><td class="num">4</td><td class="num">2</td><td class="num">2</td><td class="num">0</td><td class="num">50.0</td><td class="num">1.0</td><td class="num">0.2</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">0.2</td><td class="num">0.2</td><td class="num">2.0</td><td class="num">2.5</td><td class="num">2.0</td></tr>
+        <tr><td class="player">Sylwestrzak (Poland)</td><td class="num">1</td><td class="num">0</td><td class="num">1</td><td class="num">0</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">2.0</td><td class="num">1.0</td><td class="num">1.0</td></tr>
+        <tr><td class="player">Kikacheishvili (Georgia)</td><td class="num">1</td><td class="num">0</td><td class="num">1</td><td class="num">0</td><td class="num">0.0</td><td class="num">2.0</td><td class="num">2.0</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">2.0</td><td class="num">2.0</td><td class="num">1.0</td></tr>
+        <tr><td class="player">Sánchez Martínez (Spain)</td><td class="num">2</td><td class="num">0</td><td class="num">2</td><td class="num">0</td><td class="num">0.0</td><td class="num">0.5</td><td class="num">0.5</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">3.5</td><td class="num">1.0</td><td class="num">1.0</td></tr>
+        <tr><td class="player">Jablonski (Germany)</td><td class="num">2</td><td class="num">0</td><td class="num">1</td><td class="num">1</td><td class="num">0.0</td><td class="num">1.5</td><td class="num">2.0</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">2.5</td><td class="num">1.0</td><td class="num">0.5</td></tr>
+        <tr><td class="player">Schlager (Germany)</td><td class="num">1</td><td class="num">0</td><td class="num">0</td><td class="num">1</td><td class="num">0.0</td><td class="num">1.0</td><td class="num">2.0</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">3.0</td><td class="num">4.0</td><td class="num">0.0</td></tr>
+        <tr><td class="player">Zwayer (Germany)</td><td class="num">3</td><td class="num">0</td><td class="num">0</td><td class="num">3</td><td class="num">0.0</td><td class="num">1.0</td><td class="num">2.7</td><td class="num">0.0</td><td class="num">0.3</td><td class="num">0.3</td><td class="num">0.3</td><td class="num">3.0</td><td class="num">4.3</td><td class="num">0.0</td></tr>
+        <tr><td class="player">Gil Manzano (Spain)</td><td class="num">1</td><td class="num">0</td><td class="num">0</td><td class="num">1</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">3.0</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">3.0</td><td class="num">1.0</td><td class="num">0.0</td></tr>
+        <tr><td class="player">Vinčić (Slovenia)</td><td class="num">1</td><td class="num">0</td><td class="num">1</td><td class="num">0</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">1.0</td><td class="num">3.0</td><td class="num">1.0</td></tr>
+        <tr><td class="player">Obrenović (Serbia)</td><td class="num">1</td><td class="num">0</td><td class="num">1</td><td class="num">0</td><td class="num">0.0</td><td class="num">1.0</td><td class="num">1.0</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">1.0</td><td class="num">2.0</td><td class="num">1.0</td></tr>
+        <tr><td class="player">Krogh (Denmark)</td><td class="num">1</td><td class="num">0</td><td class="num">0</td><td class="num">1</td><td class="num">0.0</td><td class="num">1.0</td><td class="num">2.0</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">1.0</td><td class="num">0.0</td><td class="num">3.0</td><td class="num">1.0</td><td class="num">0.0</td></tr>
+        <tr><td class="player">Stieler (Germany)</td><td class="num">1</td><td class="num">0</td><td class="num">0</td><td class="num">1</td><td class="num">0.0</td><td class="num">1.0</td><td class="num">2.0</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">2.0</td><td class="num">2.0</td><td class="num">0.0</td></tr>
+        <tr><td class="player">Aytekin (Germany)</td><td class="num">1</td><td class="num">0</td><td class="num">0</td><td class="num">1</td><td class="num">0.0</td><td class="num">2.0</td><td class="num">4.0</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">0.0</td><td class="num">1.0</td><td class="num">0.0</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<section class="block">
+  <div class="section-title"><span class="dot"></span>Refereeing log 2026-27</div>
+  <p class="log-note">From MD8 the rating is ours, turned from diaititis.gr&rsquo;s written verdict (it publishes no numbers): 8.5+ flawless or praised as excellent &middot; 8.3&ndash;8.4 big calls right, assistants good, no complaints &middot; 8.0&ndash;8.2 correct but with criticism (too strict, loose control) &middot; 7.5&ndash;7.9 one clear error &middot; below 7.5 an error that decided the result. MD1&ndash;MD7 ratings are tsimento&rsquo;s.</p>
+
+  <div class="stats">
+    <div class="stat"><div class="n">9</div><div class="l">Matches logged</div></div>
+    <div class="stat"><div class="n err">1</div><div class="l">Confirmed errors against PAOK</div></div>
+    <div class="stat"><div class="n">1</div><div class="l">Confirmed errors for PAOK</div></div>
+    <div class="stat"><div class="n ovr">1</div><div class="l">VAR overturns</div></div>
+  </div>
+
+  <div class="entry">
+    <div class="date">01/11/2026<br>MD9</div>
+    <div class="body">
+      <div class="match">PAOK 2&ndash;1 Asteras</div>
+      <div class="ref">Referee: <b>Michalis Matsoukas</b> (UEFA B) &middot; Rating 8.2/10</div>
+      <div class="desc">Strict, even over small things. Both sendings-off were correct: Kenny (PAOK) and Brorsson (Asteras), each for a second yellow. Good assistants (Armakolas, Klepetsanis).</div>
+    </div>
+  </div>
+
+  <div class="entry">
+    <div class="date">25/10/2026<br>MD8</div>
+    <div class="body">
+      <div class="match">OFI 2&ndash;1 PAOK</div>
+      <div class="ref">Referee: <b>Christos Vergetis</b> (UEFA B) &middot; VAR: Evangelou &middot; Rating 8.4/10</div>
+      <div class="desc">Arrived at the Pankritio amid suspicion and dispelled it. Correctly gave OFI a penalty when the ball hit Baba&rsquo;s hand, a hard call that VAR Evangelou confirmed (Androutsos scored it for 2&ndash;0). Rightly waved away the shoulder-to-shoulder challenge on Fountas; good assistants (Fotopoulos, Staikos). Booked Jaki&cacute; and Diego Costa for PAOK and three OFI players.</div>
+    </div>
+  </div>
+
+  <div class="entry">
+    <div class="date">18/10/2026<br>MD7</div>
+    <div class="body">
+      <div class="match">PAOK 2&ndash;1 Iraklis</div>
+      <div class="ref">Referee: <b>Vassilios Fotias</b> (UEFA A) &middot; VAR: Koukoulas &middot; Rating 8.1/10</div>
+      <div class="desc">Went to the monitor three times at VAR Koukoulas&rsquo; call. The decisive review ruled out an Iraklis goal by Ros and gave PAOK a marginal foul on Zafeiris instead, which led to the 2&ndash;1. Diaititis.gr says the criticism of Fotias is misplaced, since he acted on the VAR&rsquo;s calls. Booked Giannoulis, &Zcaron;ivkovi&cacute; and Louchet for PAOK; sent off Iraklis&rsquo; Roche for a second yellow card in the 90th minute.</div>
+      <div class="tags">
+        <span class="tag overturn">VAR overturn</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="entry">
+    <div class="date">12/10/2026<br>MD6</div>
+    <div class="body">
+      <div class="match">PAOK 1&ndash;3 Kalamata</div>
+      <div class="ref">Referee: <b>Alexandros Katsikogiannis</b> &middot; Rating 7.9/10</div>
+      <div class="desc">Allowed a PAOK goal that came from Pelkas&rsquo; foul on a Kalamata defender (VAR Koumparakis also missed it); otherwise correct: penalty for Kalamata, red for Tsiftsis, good assistants.</div>
+      <div class="tags">
+        <span class="tag error">Confirmed error</span>
+        <span class="tag fault">VAR at fault</span>
+        <span class="tag favor">Error favored PAOK</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="entry">
+    <div class="date">20/09/2026<br>MD5</div>
+    <div class="body">
+      <div class="match">Panaitolikos 1&ndash;3 PAOK</div>
+      <div class="ref">Referee: <b>Konstantinos Katikos</b> &middot; Rating 8.5/10</div>
+      <div class="desc">Coped well with a heated second half: kept discipline, showed the correct cards and rightly stopped play for Pavlenka&rsquo;s injury.</div>
+    </div>
+  </div>
+
+  <div class="entry">
+    <div class="date">13/09/2026<br>MD4</div>
+    <div class="body">
+      <div class="match">PAOK 2&ndash;0 Aris</div>
+      <div class="ref">Referee: <b>Andrea Colombo</b> (Italy) &middot; Rating 8.4/10</div>
+      <div class="desc">No shadow over the derby; both goals were clean, the first after a VAR handball check.</div>
+    </div>
+  </div>
+
+  <div class="entry">
+    <div class="date">06/09/2026<br>MD3</div>
+    <div class="body">
+      <div class="match">Panathinaikos 3&ndash;1 PAOK</div>
+      <div class="ref">Referee: <b>Felix Zwayer</b> (Germany) &middot; Rating 7.9/10</div>
+      <div class="desc">Missed a clear penalty for PAOK (Van Drongelen on Ndiaye); the referees&rsquo; committee later agreed with PAOK. His other decisions were correct.</div>
+      <div class="tags">
+        <span class="tag error">Confirmed error</span>
+        <span class="tag fault">VAR at fault</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="entry">
+    <div class="date">30/08/2026<br>MD2</div>
+    <div class="body">
+      <div class="match">Atromitos 1&ndash;2 PAOK</div>
+      <div class="ref">Referee: <b>Athanasios Tzilos</b> &middot; Rating 8.4/10</div>
+      <div class="desc">Experienced and in control at Peristeri; kept discipline with correct decisions throughout.</div>
+    </div>
+  </div>
+
+  <div class="entry">
+    <div class="date">23/08/2026<br>MD1</div>
+    <div class="body">
+      <div class="match">PAOK 4&ndash;0 Levadiakos</div>
+      <div class="ref">Referee: <b>Evangelou</b> &middot; Rating 8.4/10</div>
+      <div class="desc">Steady and correct at Toumba; got through the match comfortably without showing a single yellow card.</div>
+    </div>
+  </div>
+
+  <div class="empty">New entries added after each matchday.</div>
+
+  <div class="footer">Source: weekly referee report (ratings out of 10).</div>
+</section>
+
+</div>
+
+<!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "b67bbb76d0e24af196b24ded3ab71ad0"}'></script><!-- End Cloudflare Web Analytics -->
+</body>
+</html>

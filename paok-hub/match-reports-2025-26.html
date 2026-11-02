@@ -1,0 +1,722 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Match Reports 2025-26</title>
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500;600&display=swap">
+
+<style>
+  :root {
+    --bg: #f4f4f2;
+    --surface: #ffffff;
+    --surface-2: #ececea;
+    --ink: #16171a;
+    --ink-dim: #55585f;
+    --line: #d9d9d5;
+    --accent: #1c1f6b;
+    --accent-soft: #e7e8f5;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #101114;
+      --surface: #17181c;
+      --surface-2: #1d1f24;
+      --ink: #edeeef;
+      --ink-dim: #9a9ca3;
+      --line: #2b2d33;
+      --accent: #8f96ff;
+      --accent-soft: #232650;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --bg: #101114;
+    --surface: #17181c;
+    --surface-2: #1d1f24;
+    --ink: #edeeef;
+    --ink-dim: #9a9ca3;
+    --line: #2b2d33;
+    --accent: #8f96ff;
+    --accent-soft: #232650;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+    line-height: 1.5;
+  }
+
+  .wrap {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 56px 24px 96px;
+  }
+
+  header.page-head {
+    margin-bottom: 40px;
+  }
+
+  .eyebrow {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 600;
+    margin: 0 0 10px;
+  }
+
+  h1 {
+    font-family: "Archivo", ui-sans-serif, sans-serif;
+    font-weight: 800;
+    font-size: clamp(30px, 4.5vw, 42px);
+    letter-spacing: -0.01em;
+    margin: 0 0 8px;
+    text-wrap: balance;
+  }
+
+  .sub {
+    color: var(--ink-dim);
+    font-size: 15px;
+    max-width: 60ch;
+    margin: 0;
+  }
+
+  .match-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .match-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 18px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--surface);
+    color: var(--ink);
+    transition: border-color 0.15s ease;
+  }
+
+  .match-card:hover, .match-card:focus-within {
+    border-color: var(--accent);
+    outline: none;
+  }
+
+  .match-card .md-badge {
+    flex: none;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: var(--accent);
+    background: var(--accent-soft);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 5px 11px;
+  }
+
+  .match-card .match-body {
+    flex: 1;
+    min-width: 0;
+    display: block;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .match-card .teams {
+    font-weight: 600;
+    font-size: 15px;
+  }
+
+  .match-card .match-meta {
+    margin-top: 4px;
+    font-size: 12.5px;
+    color: var(--ink-dim);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 12px;
+  }
+
+  .match-card .match-actions {
+    flex: none;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 6px;
+  }
+
+  .match-card .go, .match-card .highlights {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 12.5px;
+    text-decoration: none;
+  }
+
+  .match-card .go { color: var(--ink-dim); }
+  .match-card .highlights {
+    color: var(--accent);
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .match-card .highlights:hover { text-decoration: underline; }
+
+  footer.page-foot {
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid var(--line);
+    font-size: 12.5px;
+    color: var(--ink-dim);
+  }
+</style>
+</head>
+<body>
+<!-- sitebar:start (link back to antonisnikolitsopoulos.com; keep on every page) -->
+<style>
+.an-sitebar{background:#0d1220;border-bottom:1px solid rgba(255,255,255,.09);font:500 13px/1.2 "Segoe UI",system-ui,-apple-system,sans-serif;letter-spacing:.02em}
+.an-sitebar>div{max-width:72rem;margin:0 auto;padding:6px 16px;display:flex;justify-content:flex-end;align-items:center;gap:18px}
+.an-sitebar a{color:#9aa1b2;text-decoration:none;display:inline-flex;align-items:center;min-height:24px}.an-sitebar a:hover{color:#fff}
+.an-sitebar svg{width:17px;height:17px;fill:currentColor}
+.an-sitebar a[href="/"]{padding:6px 8px;margin:-6px -8px -6px -4px;border-radius:6px}.an-sitebar a[href="/"]:hover{background:rgba(255,255,255,.08)}
+</style>
+<nav class="an-sitebar" aria-label="Main site"><div><a href="/books/">Books</a><a href="/#projects">Projects</a><a href="/about/">About</a><a href="/" title="Main site: antonisnikolitsopoulos.com" aria-label="Main site"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 2 11.5h3V21h5.5v-6h3v6H19v-9.5h3z"/></svg></a></div></nav>
+<!-- sitebar:end -->
+
+
+<div class="wrap">
+
+  <header class="page-head">
+    <p class="eyebrow"><a href="index.html" style="color:inherit;text-decoration:none;">PAOK Hub</a></p>
+    <h1>Match Reports 2025-26</h1>
+  </header>
+
+  <div class="match-list">
+    <div class="match-card">
+      <span class="md-badge">MD1</span>
+      <a class="match-body" href="https://www.scoresway.com/en_GB/soccer/super-league-1-2025-2026/bfxnqtcsy92klp10rbwikb47o/match/view/67ubsbl00di7sfm7cpdte8w0k/match-summary" target="_blank" rel="noopener">
+        <span class="teams">PAOK Thessaloniki FC 1&ndash;0 Larissa</span>
+        <span class="match-meta">
+          <span>24 August 2025</span>
+          <span>Venue: Stadio Toumbas</span>
+          <span>Behind closed doors</span>
+          <span>Referee: Vassilios Fotias</span>
+        </span>
+      </a>
+      <span class="match-actions">
+        <a class="go" href="https://www.scoresway.com/en_GB/soccer/super-league-1-2025-2026/bfxnqtcsy92klp10rbwikb47o/match/view/67ubsbl00di7sfm7cpdte8w0k/match-summary" target="_blank" rel="noopener">Full report &rarr;</a>
+        <a class="highlights" href="https://www.youtube.com/watch?v=2kCd6pODj-Q" target="_blank" rel="noopener">&#9654; Highlights</a>
+      </span>
+    </div>
+    <div class="match-card">
+      <span class="md-badge">MD2</span>
+      <a class="match-body" href="https://www.scoresway.com/en_GB/soccer/super-league-1-2025-2026/bfxnqtcsy92klp10rbwikb47o/match/view/6ajr57g3qq212sm4pbcq03od0/match-summary" target="_blank" rel="noopener">
+        <span class="teams">PAOK Thessaloniki FC 1&ndash;0 Atromitos</span>
+        <span class="match-meta">
+          <span>31 August 2025</span>
+          <span>Venue: Stadio Toumbas</span>
+          <span>Attendance: 16,687</span>
+          <span>Referee: Alexandros Katsikogiannis</span>
+        </span>
+      </a>
+      <span class="match-actions">
+        <a class="go" href="https://www.scoresway.com/en_GB/soccer/super-league-1-2025-2026/bfxnqtcsy92klp10rbwikb47o/match/view/6ajr57g3qq212sm4pbcq03od0/match-summary" target="_blank" rel="noopener">Full report &rarr;</a>
+        <a class="highlights" href="https://www.youtube.com/watch?v=Kt27cspKdwo" target="_blank" rel="noopener">&#9654; Highlights</a>
+      </span>
+    </div>
+    <div class="match-card">
+      <span class="md-badge">MD3</span>
+      <a class="match-body" href="https://www.scoresway.com/en_GB/soccer/super-league-1-2025-2026/bfxnqtcsy92klp10rbwikb47o/match/view/6cu4z6v9jkzee5azbt0g0r2ms/match-summary" target="_blank" rel="noopener">
+        <span class="teams">OFI 1&ndash;2 PAOK Thessaloniki FC</span>
+        <span class="match-meta">
+          <span>14 September 2025</span>
+          <span>Venue: Stadio Ap&oacute;stolos Nikolaidis</span>
+          <span>Behind closed doors</span>
+          <span>Referee: Angelos Evangelou</span>
+        </span>
+      </a>
+      <span class="match-actions">
+        <a class="go" href="https://www.scoresway.com/en_GB/soccer/super-league-1-2025-2026/bfxnqtcsy92klp10rbwikb47o/match/view/6cu4z6v9jkzee5azbt0g0r2ms/match-summary" target="_blank" rel="noopener">Full report &rarr;</a>
+        <a class="highlights" href="https://www.youtube.com/watch?v=Y9X7_dcOUEk" target="_blank" rel="noopener">&#9654; Highlights</a>
+      </span>
+    </div>
+    <div class="match-card">
+      <span class="md-badge">MD4</span>
+      <a class="match-body" href="https://www.scoresway.com/en_GB/soccer/super-league-1-2025-2026/bfxnqtcsy92klp10rbwikb47o/match/view/6fx4g6b8afqubk9je6abdzpqs/match-summary" target="_blank" rel="noopener">
+        <span class="teams">PAOK Thessaloniki FC 0&ndash;0 Panaitolikos</span>
+        <span class="match-meta">
+          <span>20 September 2025</span>
+          <span>Venue: Stadio Toumbas</span>
+          <span>Attendance: 13,062</span>
+          <span>Referee: Anastasios Sidiropoulos</span>
+        </span>
+      </a>
+      <span class="match-actions">
+        <a class="go" href="https://www.scoresway.com/en_GB/soccer/super-league-1-2025-2026/bfxnqtcsy92klp10rbwikb47o/match/view/6fx4g6b8afqubk9je6abdzpqs/match-summary" target="_blank" rel="noopener">Full report &rarr;</a>
+        <a class="highlights" href="https://www.youtube.com/watch?v=Jizt0vk16fY" target="_blank" rel="noopener">&#9654; Highlights</a>
+      </span>
+    </div>
+    <div class="match-card">
+      <span class="md-badge">MD5</span>
+      <a class="match-body" href="https://www.scoresway.com/en_GB/soccer/super-league-1-2025-2026/bfxnqtcsy92klp10rbwikb47o/match/view/6goo5l6fh8qrpj43ainmemdxw/match-summary" target="_blank" rel="noopener">
+        <span class="teams">Asteras Tripolis 3&ndash;3 PAOK Thessaloniki FC</span>
+        <span class="match-meta">
+          <span>28 September 2025</span>
+          <span>Venue: Stadio Theodoros Kolokotronis</span>
+          <span>Attendance: 1,738</span>
+          <span>Referee: Stavros Tsimenteridis</span>
+        </span>
+      </a>
+      <span class="match-actions">
+        <a class="go" href="https://www.scoresway.com/en_GB/soccer/super-league-1-2025-2026/bfxnqtcsy92klp10rbwikb47o/match/view/6goo5l6fh8qrpj43ainmemdxw/match-summary" target="_blank" rel="noopener">Full report &rarr;</a>
+        <a class="highlights" href="https://www.youtube.com/watch?v=mzSvNXDsnhM" target="_blank" rel="noopener">&#9654; Highlights</a>
+      </span>
+    </div>
+    <div class="match-card">
+      <span class="md-badge">MD6</span>
+      <a class="match-body" href="https://www.scoresway.com/en_GB/soccer/super-league-1-2025-2026/bfxnqtcsy92klp10rbwikb47o/match/view/6lbbia54563sqvsf4trbt26fo/match-summary" target="_blank" rel="noopener">
+        <span class="teams">PAOK Thessaloniki FC 2&ndash;1 Olympiakos</span>
+        <span class="match-meta">
+          <span>5 October 2025</span>
+          <span>Venue: Stadio Toumbas</span>
+          <span>Attendance: 23,961</span>
+          <span>Referee: Harm Osmers</span>
+        </span>
+      </a>
+      <span class="match-actions">
+        <a class="go" href="https://www.scoresway.com/en_GB/soccer/super-league-1-2025-2026/bfxnqtcsy92klp10rbwikb47o/match/view/6lbbia54563sqvsf4trbt26fo/match-summary" target="_blank" rel="noopener">Full report &rarr;</a>
+        <a class="highlights" href="https://www.youtube.com/watch?v=Rl1H9r3F23I" target="_blank" rel="noopener">&#9654; Highlights</a>
+      </span>
+    </div>
+    <div class="match-card">
+      <span class="md-badge">MD7</span>
+      <a class="match-body" href="https://www.scoresway.com/en_GB/soccer/super-league-1-2025-2026/bfxnqtcsy92klp10rbwikb47o/match/view/6lp4junutxnx7yahaq8r5zl04/match-summary" target="_blank" rel="noopener">
+        <span class="teams">AEK 0&ndash;2 PAOK Thessaloniki FC</span>
+        <span class="match-meta">
+          <span>19 October 2025</span>
+          <span>Venue: ALLWYN Arena</span>
+          <span>Attendance: 29,210</span>
+          <span>Referee: Sascha Stegemann</span>
+        </span>
+      </a>
+      <span class="match-actions">
+        <a class="go" href="https://www.scoresway.com/en_GB/soccer/super-league-1-2025-2026/bfxnqtcsy92klp10rbwikb47o/match/view/6lp4junutxnx7yahaq8r5zl04/match-summary" target="_blank" rel="noopener">Full report &rarr;</a>
+        <a class="highlights" href="https://www.youtube.com/watch?v=L69YePPl42E" target="_blank" rel="noopener">&#9654; Highlights</a>
+      </span>
+    </div>
+    <div class="match-card">
+      <span class="md-badge">MD8</span>
+      <a class="match-body" href="https://www.scoresway.com/en_GB/soccer/super-league-1-2025-2026/bfxnqtcsy92klp10rbwikb47o/match/view/6qtlsv9ibgnuko9qa465rqzo4/match-summary" target="_blank" rel="noopener">
+        <span class="teams">PAOK Thessaloniki FC 3&ndash;0 Volos</span>
+        <span class="match-meta">
+          <span>26 October 2025</span>
+          <span>Venue: Stadio Toumbas</span>
+          <span>Attendance: 17,385</span>
+          <span>Referee: Christos Vergetis</span>
+        </span>
+      </a>
+      <span class="match-actions">
+        <a class="go" href="https://www.scoresway.com/en_GB/soccer/super-league-1-2025-2026/bfxnqtcsy92klp10rbwikb47o/match/view/6qtlsv9ibgnuko9qa465rqzo4/match-summary" target="_blank" rel="noopener">Full report &rarr;</a>
+        <a class="highlights" href="https://www.youtube.com/watch?v=7yEpiHI5_PE" target="_blank" rel="noopener">&#9654; Highlights</a>
+      </span>
+    </div>
+    <div class="match-card">
+      <span class="md-badge">MD9</span>
+      <a class="match-body" href="https://www.scoresway.com/en_GB/soccer/super-league-1-2025-2026/bfxnqtcsy92klp10rbwikb47o/match/view/6tl6i2q0h86wrmio5hrbgt444/match-summary" target="_blank" rel="noopener">
+        <span class="teams">Panserraikos 0&ndash;5 PAOK Thessaloniki FC</span>
+        <span class="match-meta">
+          <span>2 November 2025</span>
+          <span>Venue: Dimotiko Stadio Serron</span>
+          <span>Attendance: 5,020</span>
+          <span>Referee: Athanasios Tzilos</span>
+        </span>
+      </a>
+      <span class="match-actions">
+        <a class="go" href="https://www.scoresway.com/en_GB/soccer/super-league-1-2025-2026/bfxnqtcsy92klp10rbwikb47o/match/view/6tl6i2q0h86wrmio5hrbgt444/match-summary" target="_blank" rel="noopener">Full report &rarr;</a>
+        <a class="highlights" href="https://www.youtube.com/watch?v=YbobaI8FaFk" target="_blank" rel="noopener">&#9654; Highlights</a>
+      </span>
+    </div>
+    <div class="match-card">
+      <span class="md-badge">MD10</span>
+      <a class="match-body" href="https://www.scoresway.com/en_GB/soccer/super-league-1-2025-2026/bfxnqtcsy92klp10rbwikb47o/match/view/6vwypqg7ljod6uhyfr32ympsk/match-summary" target="_blank" rel="noopener">
+        <span class="teams">Panathinaikos 2&ndash;1 PAOK Thessaloniki FC</span>
+        <span class="match-meta">
+          <span>9 November 2025</span>
+          <span>Venue: Stadio Ap&oacute;stolos Nikolaidis</span>
+          <span>Attendance: 11,114</span>
+          <span>Referee: Daniel Schlager</span>
+        </span>
+      </a>
+      <span class="match-actions">
+        <a class="go" href="https://www.scoresway.com/en_GB/soccer/super-league-1-2025-2026/bfxnqtcsy92klp10rbwikb47o/match/view/6vwypqg7ljod6uhyfr32ympsk/match-summary" target="_blank" rel="noopener">Full report &rarr;</a>
+        <a class="highlights" href="https://www.youtube.com/watch?v=a3kbOnRlsIg" target="_blank" rel="noopener">&#9654; Highlights</a>
+      </span>
+    </div>
+    <div class="match-card">
+      <span class="md-badge">MD11</span>
+      <a class="match-body" href="https://www.scoresway.com/en_GB/soccer/super-league-1-2025-2026/bfxnqtcsy92klp10rbwikb47o/match/view/6z2srgtol5b28l52al8n0a8lw/match-summary" target="_blank" rel="noopener">
+        <span class="teams">PAOK Thessaloniki FC 3&ndash;0 Kifisia</span>
+        <span class="match-meta">
+          <span>23 November 2025</span>
+          <span>Venue: Stadio Toumbas</span>
+          <span>Attendance: 15,057</span>
+          <span>Referee: Giorgos Kokkinos</span>
+        </span>
+      </a>
+      <span class="match-actions">
+        <a class="go" href="https://www.scoresway.com/en_GB/soccer/super-league-1-2025-2026/bfxnqtcsy92klp10rbwikb47o/match/view/6z2srgtol5b28l52al8n0a8lw/match-summary" target="_blank" rel="noopener">Full report &rarr;</a>
+        <a class="highlights" href="https://www.youtube.com/watch?v=g6CSjpqdQg4" target="_blank" rel="noopener">&#9654; Highlights</a>
+      </span>
+    </div>
+    <div class="match-card">
+      <span class="md-badge">MD12</span>
+      <a class="match-body" href="https://www.scoresway.com/en_GB/soccer/super-league-1-2025-2026/bfxnqtcsy92klp10rbwikb47o/match/view/70mzfwn8kiflo1w50y5yhn5sk/match-summary" target="_blank" rel="noopener">
+        <span class="teams">Levadiakos 2&ndash;3 PAOK Thessaloniki FC</span>
+        <span class="match-meta">
+          <span>30 November 2025</span>
+          <span>Venue: Dimotiko Stadio Levadias Lambros Katsonis</span>
+          <span>Attendance: 2,198</span>
+          <span>Referee: Anastasios Sidiropoulos</span>
+        </span>
+      </a>
+      <span class="match-actions">
+        <a class="go" href="https://www.scoresway.com/en_GB/soccer/super-league-1-2025-2026/bfxnqtcsy92klp10rbwikb47o/match/view/70mzfwn8kiflo1w50y5yhn5sk/match-summary" target="_blank" rel="noopener">Full report &rarr;</a>
+        <a class="highlights" href="https://www.youtube.com/watch?v=fYGMCuZ3XPs" target="_blank" rel="noopener">&#9654; Highlights</a>
+      </span>
+    </div>
+    <div class="match-card">
+      <span class="md-badge">MD13</span>
+      <a class="match-body" href="https://www.scoresway.com/en_GB/soccer/super-league-1-2025-2026/bfxnqtcsy92klp10rbwikb47o/match/view/74knr59i0cwmgpirfn30n651w/match-summary" target="_blank" rel="noopener">
+        <span class="teams">PAOK Thessaloniki FC 3&ndash;1 Aris</span>
+        <span class="match-meta">
+          <span>7 December 2025</span>
+          <span>Venue: Stadio Toumbas</span>
+          <span>Attendance: 24,636</span>
+          <span>Referee: Sr&#273;an Jovanovi&#263;</span>
+        </span>
+      </a>
+      <span class="match-actions">
+        <a class="go" href="https://www.scoresway.com/en_GB/soccer/super-league-1-2025-2026/bfxnqtcsy92klp10rbwikb47o/match/view/74knr59i0cwmgpirfn30n651w/match-summary" target="_blank" rel="noopener">Full report &rarr;</a>
+        <a class="highlights" href="https://www.youtube.com/watch?v=NFi7f2aYhHw" target="_blank" rel="noopener">&#9654; Highlights</a>
+      </span>
+    </div>
+    <div class="match-card">
+      <span class="md-badge">MD14</span>
+      <a class="match-body" href="https://www.scoresway.com/en_GB/soccer/super-league-1-2025-2026/bfxnqtcsy92klp10rbwikb47o/match/view/75coj6qwi1yixqojxt5uo8aac/match-summary" target="_blank" rel="noopener">
+        <span class="teams">Atromitos 2&ndash;0 PAOK Thessaloniki FC</span>
+        <span class="match-meta">
+          <span>14 December 2025</span>
+          <span>Venue: Dimotiko Stadio Peristeriou</span>
+          <span>Attendance: 2,144</span>
+          <span>Referee: Alexandros Tsakalidis</span>
+        </span>
+      </a>
+      <span class="match-actions">
+        <a class="go" href="https://www.scoresway.com/en_GB/soccer/super-league-1-2025-2026/bfxnqtcsy92klp10rbwikb47o/match/view/75coj6qwi1yixqojxt5uo8aac/match-summary" target="_blank" rel="noopener">Full report &rarr;</a>
+        <a class="highlights" href="https://www.youtube.com/watch?v=XzwTls9e3Ag" target="_blank" rel="noopener">&#9654; Highlights</a>
+      </span>
+    </div>
+    <div class="match-card">
+      <span class="md-badge">MD15</span>
+      <a class="match-body" href="https://www.scoresway.com/en_GB/soccer/super-league-1-2025-2026/bfxnqtcsy92klp10rbwikb47o/match/view/7a3dzd4kayerkpey13e1qv4es/match-summary" target="_blank" rel="noopener">
+        <span class="teams">PAOK Thessaloniki FC 2&ndash;0 Panathinaikos</span>
+        <span class="match-meta">
+          <span>21 December 2025</span>
+          <span>Venue: Stadio Toumbas</span>
+          <span>Attendance: 22,938</span>
+          <span>Referee: Irfan Peljto</span>
+        </span>
+      </a>
+      <span class="match-actions">
+        <a class="go" href="https://www.scoresway.com/en_GB/soccer/super-league-1-2025-2026/bfxnqtcsy92klp10rbwikb47o/match/view/7a3dzd4kayerkpey13e1qv4es/match-summary" target="_blank" rel="noopener">Full report &rarr;</a>
+        <a class="highlights" href="https://www.youtube.com/watch?v=zQUr-JPpwCI" target="_blank" rel="noopener">&#9654; Highlights</a>
+      </span>
+    </div>
+    <div class="match-card">
+      <span class="md-badge">MD16</span>
+      <a class="match-body" href="https://www.scoresway.com/en_GB/soccer/super-league-1-2025-2026/bfxnqtcsy92klp10rbwikb47o/match/view/7cvbeictehvtk1fbephartlp0/match-summary" target="_blank" rel="noopener">
+        <span class="teams">Panaitolikos 0&ndash;3 PAOK Thessaloniki FC</span>
+        <span class="match-meta">
+          <span>10 January 2026</span>
+          <span>Venue: Gipedo Panetolikou</span>
+          <span>Attendance: 1,843</span>
+          <span>Referee: Vassilios Fotias</span>
+        </span>
+      </a>
+      <span class="match-actions">
+        <a class="go" href="https://www.scoresway.com/en_GB/soccer/super-league-1-2025-2026/bfxnqtcsy92klp10rbwikb47o/match/view/7cvbeictehvtk1fbephartlp0/match-summary" target="_blank" rel="noopener">Full report &rarr;</a>
+        <a class="highlights" href="https://www.youtube.com/watch?v=RLdnCRbM87U" target="_blank" rel="noopener">&#9654; Highlights</a>
+      </span>
+    </div>
+    <div class="match-card">
+      <span class="md-badge">MD17</span>
+      <a class="match-body" href="https://www.scoresway.com/en_GB/soccer/super-league-1-2025-2026/bfxnqtcsy92klp10rbwikb47o/match/view/7flhdln8p93zmwehecwgr6dqs/match-summary" target="_blank" rel="noopener">
+        <span class="teams">PAOK Thessaloniki FC 3&ndash;0 OFI</span>
+        <span class="match-meta">
+          <span>18 January 2026</span>
+          <span>Venue: Stadio Toumbas</span>
+          <span>Attendance: 12,816</span>
+          <span>Referee: Meletios Gioumatzidis</span>
+        </span>
+      </a>
+      <span class="match-actions">
+        <a class="go" href="https://www.scoresway.com/en_GB/soccer/super-league-1-2025-2026/bfxnqtcsy92klp10rbwikb47o/match/view/7flhdln8p93zmwehecwgr6dqs/match-summary" target="_blank" rel="noopener">Full report &rarr;</a>
+        <a class="highlights" href="https://www.youtube.com/watch?v=e8TLHH1l_3c" target="_blank" rel="noopener">&#9654; Highlights</a>
+      </span>
+    </div>
+    <div class="match-card">
+      <span class="md-badge">MD18</span>
+      <a class="match-body" href="https://www.scoresway.com/en_GB/soccer/super-league-1-2025-2026/bfxnqtcsy92klp10rbwikb47o/match/view/7hjp63uyifqvhcuuobn4lun84/match-summary" target="_blank" rel="noopener">
+        <span class="teams">Kifisia 1&ndash;4 PAOK Thessaloniki FC</span>
+        <span class="match-meta">
+          <span>4 March 2026</span>
+          <span>Venue: Dimotiko Gipedo Neapolis Nikaias</span>
+          <span>Attendance: 1,177</span>
+          <span>Referee: Vassilios Fotias</span>
+        </span>
+      </a>
+      <span class="match-actions">
+        <a class="go" href="https://www.scoresway.com/en_GB/soccer/super-league-1-2025-2026/bfxnqtcsy92klp10rbwikb47o/match/view/7hjp63uyifqvhcuuobn4lun84/match-summary" target="_blank" rel="noopener">Full report &rarr;</a>
+        <a class="highlights" href="https://www.youtube.com/watch?v=15s_7bpvxBk" target="_blank" rel="noopener">&#9654; Highlights</a>
+      </span>
+    </div>
+    <div class="match-card">
+      <span class="md-badge">MD19</span>
+      <a class="match-body" href="https://www.scoresway.com/en_GB/soccer/super-league-1-2025-2026/bfxnqtcsy92klp10rbwikb47o/match/view/7l388uobz97nt5c7e06w1lg5w/match-summary" target="_blank" rel="noopener">
+        <span class="teams">PAOK Thessaloniki FC 4&ndash;1 Panserraikos</span>
+        <span class="match-meta">
+          <span>1 February 2026</span>
+          <span>Venue: Stadio Toumbas</span>
+          <span>Attendance: 14,416</span>
+          <span>Referee: Michalis Matsoukas</span>
+        </span>
+      </a>
+      <span class="match-actions">
+        <a class="go" href="https://www.scoresway.com/en_GB/soccer/super-league-1-2025-2026/bfxnqtcsy92klp10rbwikb47o/match/view/7l388uobz97nt5c7e06w1lg5w/match-summary" target="_blank" rel="noopener">Full report &rarr;</a>
+        <a class="highlights" href="https://www.youtube.com/watch?v=s--sjW7cg1E" target="_blank" rel="noopener">&#9654; Highlights</a>
+      </span>
+    </div>
+    <div class="match-card">
+      <span class="md-badge">MD20</span>
+      <a class="match-body" href="https://www.scoresway.com/en_GB/soccer/super-league-1-2025-2026/bfxnqtcsy92klp10rbwikb47o/match/view/7m9knem34zz9825g14efw1mvo/match-summary" target="_blank" rel="noopener">
+        <span class="teams">Aris 0&ndash;0 PAOK Thessaloniki FC</span>
+        <span class="match-meta">
+          <span>8 February 2026</span>
+          <span>Venue: Stadio Harilaou Kle&aacute;nthis Vikel&iacute;dis</span>
+          <span>Attendance: 8,946</span>
+          <span>Referee: Sascha Stegemann</span>
+        </span>
+      </a>
+      <span class="match-actions">
+        <a class="go" href="https://www.scoresway.com/en_GB/soccer/super-league-1-2025-2026/bfxnqtcsy92klp10rbwikb47o/match/view/7m9knem34zz9825g14efw1mvo/match-summary" target="_blank" rel="noopener">Full report &rarr;</a>
+        <a class="highlights" href="https://www.youtube.com/watch?v=5EQkCUPGiTM" target="_blank" rel="noopener">&#9654; Highlights</a>
+      </span>
+    </div>
+    <div class="match-card">
+      <span class="md-badge">MD21</span>
+      <a class="match-body" href="https://www.scoresway.com/en_GB/soccer/super-league-1-2025-2026/bfxnqtcsy92klp10rbwikb47o/match/view/7qlr17iullpjwd8om5imraadw/match-summary" target="_blank" rel="noopener">
+        <span class="teams">PAOK Thessaloniki FC 0&ndash;0 AEK</span>
+        <span class="match-meta">
+          <span>15 February 2026</span>
+          <span>Venue: Stadio Toumbas</span>
+          <span>Attendance: 25,022</span>
+          <span>Referee: Harm Osmers</span>
+        </span>
+      </a>
+      <span class="match-actions">
+        <a class="go" href="https://www.scoresway.com/en_GB/soccer/super-league-1-2025-2026/bfxnqtcsy92klp10rbwikb47o/match/view/7qlr17iullpjwd8om5imraadw/match-summary" target="_blank" rel="noopener">Full report &rarr;</a>
+        <a class="highlights" href="https://www.youtube.com/watch?v=RUIamEE2KQk" target="_blank" rel="noopener">&#9654; Highlights</a>
+      </span>
+    </div>
+    <div class="match-card">
+      <span class="md-badge">MD22</span>
+      <a class="match-body" href="https://www.scoresway.com/en_GB/soccer/super-league-1-2025-2026/bfxnqtcsy92klp10rbwikb47o/match/view/7rrv2e9ongkyh21blx4pd9y50/match-summary" target="_blank" rel="noopener">
+        <span class="teams">Larissa 1&ndash;1 PAOK Thessaloniki FC</span>
+        <span class="match-meta">
+          <span>22 February 2026</span>
+          <span>Venue: AEL Arena</span>
+          <span>Attendance: 5,766</span>
+          <span>Referee: Stavros Tsimenteridis</span>
+        </span>
+      </a>
+      <span class="match-actions">
+        <a class="go" href="https://www.scoresway.com/en_GB/soccer/super-league-1-2025-2026/bfxnqtcsy92klp10rbwikb47o/match/view/7rrv2e9ongkyh21blx4pd9y50/match-summary" target="_blank" rel="noopener">Full report &rarr;</a>
+        <a class="highlights" href="https://www.youtube.com/watch?v=fT-u-IivG2M" target="_blank" rel="noopener">&#9654; Highlights</a>
+      </span>
+    </div>
+    <div class="match-card">
+      <span class="md-badge">MD23</span>
+      <a class="match-body" href="https://www.scoresway.com/en_GB/soccer/super-league-1-2025-2026/bfxnqtcsy92klp10rbwikb47o/match/view/7w3da8lykw1gt4wovb159fl78/match-summary" target="_blank" rel="noopener">
+        <span class="teams">PAOK Thessaloniki FC 2&ndash;0 Asteras Tripolis</span>
+        <span class="match-meta">
+          <span>1 March 2026</span>
+          <span>Venue: Stadio Toumbas</span>
+          <span>Attendance: 13,915</span>
+          <span>Referee: Anastasios Papapetrou</span>
+        </span>
+      </a>
+      <span class="match-actions">
+        <a class="go" href="https://www.scoresway.com/en_GB/soccer/super-league-1-2025-2026/bfxnqtcsy92klp10rbwikb47o/match/view/7w3da8lykw1gt4wovb159fl78/match-summary" target="_blank" rel="noopener">Full report &rarr;</a>
+        <a class="highlights" href="https://www.youtube.com/watch?v=TPi7n_1HM1M" target="_blank" rel="noopener">&#9654; Highlights</a>
+      </span>
+    </div>
+    <div class="match-card">
+      <span class="md-badge">MD24</span>
+      <a class="match-body" href="https://www.scoresway.com/en_GB/soccer/super-league-1-2025-2026/bfxnqtcsy92klp10rbwikb47o/match/view/7yhju87189y1exwkhwzlzct90/match-summary" target="_blank" rel="noopener">
+        <span class="teams">Olympiakos 0&ndash;0 PAOK Thessaloniki FC</span>
+        <span class="match-meta">
+          <span>8 March 2026</span>
+          <span>Venue: Stadio Georgios Karaisk&aacute;kis</span>
+          <span>Attendance: 32,855</span>
+          <span>Referee: Jos&eacute; Mar&iacute;a S&aacute;nchez Mart&iacute;nez</span>
+        </span>
+      </a>
+      <span class="match-actions">
+        <a class="go" href="https://www.scoresway.com/en_GB/soccer/super-league-1-2025-2026/bfxnqtcsy92klp10rbwikb47o/match/view/7yhju87189y1exwkhwzlzct90/match-summary" target="_blank" rel="noopener">Full report &rarr;</a>
+        <a class="highlights" href="https://www.youtube.com/watch?v=bxWg0_1ESj0" target="_blank" rel="noopener">&#9654; Highlights</a>
+      </span>
+    </div>
+    <div class="match-card">
+      <span class="md-badge">MD25</span>
+      <a class="match-body" href="https://www.scoresway.com/en_GB/soccer/super-league-1-2025-2026/bfxnqtcsy92klp10rbwikb47o/match/view/81lypxi5625o5gph9odcesr2s/match-summary" target="_blank" rel="noopener">
+        <span class="teams">PAOK Thessaloniki FC 3&ndash;0 Levadiakos</span>
+        <span class="match-meta">
+          <span>15 March 2026</span>
+          <span>Venue: Stadio Toumbas</span>
+          <span>Attendance: 17,420</span>
+          <span>Referee: Christos Vergetis</span>
+        </span>
+      </a>
+      <span class="match-actions">
+        <a class="go" href="https://www.scoresway.com/en_GB/soccer/super-league-1-2025-2026/bfxnqtcsy92klp10rbwikb47o/match/view/81lypxi5625o5gph9odcesr2s/match-summary" target="_blank" rel="noopener">Full report &rarr;</a>
+        <a class="highlights" href="https://www.youtube.com/watch?v=7zSSHo_kdPo" target="_blank" rel="noopener">&#9654; Highlights</a>
+      </span>
+    </div>
+    <div class="match-card">
+      <span class="md-badge">MD26</span>
+      <a class="match-body" href="https://www.scoresway.com/en_GB/soccer/super-league-1-2025-2026/bfxnqtcsy92klp10rbwikb47o/match/view/837b320si3f48rb05qucfvaj8/match-summary" target="_blank" rel="noopener">
+        <span class="teams">Volos 2&ndash;1 PAOK Thessaloniki FC</span>
+        <span class="match-meta">
+          <span>22 March 2026</span>
+          <span>Venue: Panthessaliko Stadio</span>
+          <span>Attendance: 5,435</span>
+          <span>Referee: Fotis Polychronis</span>
+        </span>
+      </a>
+      <span class="match-actions">
+        <a class="go" href="https://www.scoresway.com/en_GB/soccer/super-league-1-2025-2026/bfxnqtcsy92klp10rbwikb47o/match/view/837b320si3f48rb05qucfvaj8/match-summary" target="_blank" rel="noopener">Full report &rarr;</a>
+        <a class="highlights" href="https://www.youtube.com/watch?v=gchpg2ZH7NM" target="_blank" rel="noopener">&#9654; Highlights</a>
+      </span>
+    </div>
+    <div class="match-card">
+      <span class="md-badge">PO1</span>
+      <a class="match-body" href="https://www.scoresway.com/en_GB/soccer/super-league-1-2025-2026/bfxnqtcsy92klp10rbwikb47o/match/view/528cqqb22056bqxl7lpbgrvv8/match-summary" target="_blank" rel="noopener">
+        <span class="teams">PAOK Thessaloniki FC 0&ndash;0 Panathinaikos</span>
+        <span class="match-meta">
+          <span>5 April 2026</span>
+          <span>Venue: Stadio Toumbas</span>
+          <span>Attendance: 23,485</span>
+          <span>Referee: Damian Sylwestrzak</span>
+        </span>
+      </a>
+      <span class="match-actions">
+        <a class="go" href="https://www.scoresway.com/en_GB/soccer/super-league-1-2025-2026/bfxnqtcsy92klp10rbwikb47o/match/view/528cqqb22056bqxl7lpbgrvv8/match-summary" target="_blank" rel="noopener">Full report &rarr;</a>
+        <a class="highlights" href="https://www.youtube.com/watch?v=ebh_pr4DgQE" target="_blank" rel="noopener">&#9654; Highlights</a>
+      </span>
+    </div>
+    <div class="match-card">
+      <span class="md-badge">PO2</span>
+      <a class="match-body" href="https://www.scoresway.com/en_GB/soccer/super-league-1-2025-2026/bfxnqtcsy92klp10rbwikb47o/match/view/52htom3ny4ih7ibafqwrddrmc/match-summary" target="_blank" rel="noopener">
+        <span class="teams">AEK 3&ndash;0 PAOK Thessaloniki FC</span>
+        <span class="match-meta">
+          <span>19 April 2026</span>
+          <span>Venue: ALLWYN Arena</span>
+          <span>Attendance: 31,100</span>
+          <span>Referee: Jes&uacute;s Gil Manzano</span>
+        </span>
+      </a>
+      <span class="match-actions">
+        <a class="go" href="https://www.scoresway.com/en_GB/soccer/super-league-1-2025-2026/bfxnqtcsy92klp10rbwikb47o/match/view/52htom3ny4ih7ibafqwrddrmc/match-summary" target="_blank" rel="noopener">Full report &rarr;</a>
+        <a class="highlights" href="https://www.youtube.com/watch?v=ABfXtrDd7bo" target="_blank" rel="noopener">&#9654; Highlights</a>
+      </span>
+    </div>
+    <div class="match-card">
+      <span class="md-badge">PO3</span>
+      <a class="match-body" href="https://www.scoresway.com/en_GB/soccer/super-league-1-2025-2026/bfxnqtcsy92klp10rbwikb47o/match/view/53a286q36nxag57rgm0hpvtw4/match-summary" target="_blank" rel="noopener">
+        <span class="teams">PAOK Thessaloniki FC 3&ndash;1 Olympiakos</span>
+        <span class="match-meta">
+          <span>3 May 2026</span>
+          <span>Venue: Stadio Toumbas</span>
+          <span>Attendance: 17,705</span>
+          <span>Referee: Simone Sozza</span>
+        </span>
+      </a>
+      <span class="match-actions">
+        <a class="go" href="https://www.scoresway.com/en_GB/soccer/super-league-1-2025-2026/bfxnqtcsy92klp10rbwikb47o/match/view/53a286q36nxag57rgm0hpvtw4/match-summary" target="_blank" rel="noopener">Full report &rarr;</a>
+        <a class="highlights" href="https://www.youtube.com/watch?v=caBzvYjSPrU" target="_blank" rel="noopener">&#9654; Highlights</a>
+      </span>
+    </div>
+    <div class="match-card">
+      <span class="md-badge">PO4</span>
+      <a class="match-body" href="https://www.scoresway.com/en_GB/soccer/super-league-1-2025-2026/bfxnqtcsy92klp10rbwikb47o/match/view/53stf9dtorwux0hfjvjnf7yms/match-summary" target="_blank" rel="noopener">
+        <span class="teams">Olympiakos 1&ndash;1 PAOK Thessaloniki FC</span>
+        <span class="match-meta">
+          <span>10 May 2026</span>
+          <span>Venue: Stadio Georgios Karaisk&aacute;kis</span>
+          <span>Attendance: 32,005</span>
+          <span>Referee: Jos&eacute; Mar&iacute;a S&aacute;nchez Mart&iacute;nez</span>
+        </span>
+      </a>
+      <span class="match-actions">
+        <a class="go" href="https://www.scoresway.com/en_GB/soccer/super-league-1-2025-2026/bfxnqtcsy92klp10rbwikb47o/match/view/53stf9dtorwux0hfjvjnf7yms/match-summary" target="_blank" rel="noopener">Full report &rarr;</a>
+        <a class="highlights" href="https://www.youtube.com/watch?v=PWmu-5VNPIg" target="_blank" rel="noopener">&#9654; Highlights</a>
+      </span>
+    </div>
+    <div class="match-card">
+      <span class="md-badge">PO5</span>
+      <a class="match-body" href="https://www.scoresway.com/en_GB/soccer/super-league-1-2025-2026/bfxnqtcsy92klp10rbwikb47o/match/view/54burqwktg235xp0t0e4en7ys/match-summary" target="_blank" rel="noopener">
+        <span class="teams">PAOK Thessaloniki FC 1&ndash;1 AEK</span>
+        <span class="match-meta">
+          <span>13 May 2026</span>
+          <span>Venue: Stadio Toumbas</span>
+          <span>Attendance: 14,390</span>
+          <span>Referee: Sven Jablonski</span>
+        </span>
+      </a>
+      <span class="match-actions">
+        <a class="go" href="https://www.scoresway.com/en_GB/soccer/super-league-1-2025-2026/bfxnqtcsy92klp10rbwikb47o/match/view/54burqwktg235xp0t0e4en7ys/match-summary" target="_blank" rel="noopener">Full report &rarr;</a>
+        <a class="highlights" href="https://www.youtube.com/watch?v=HkJFY4ILDoM" target="_blank" rel="noopener">&#9654; Highlights</a>
+      </span>
+    </div>
+    <div class="match-card">
+      <span class="md-badge">PO6</span>
+      <a class="match-body" href="https://www.scoresway.com/en_GB/soccer/super-league-1-2025-2026/bfxnqtcsy92klp10rbwikb47o/match/view/54utzr3veusqzfjehi35dypec/match-summary" target="_blank" rel="noopener">
+        <span class="teams">Panathinaikos 2&ndash;2 PAOK Thessaloniki FC</span>
+        <span class="match-meta">
+          <span>17 May 2026</span>
+          <span>Venue: Stadio Ap&oacute;stolos Nikolaidis</span>
+          <span>Behind closed doors</span>
+          <span>Referee: Goga Kikacheishvili</span>
+        </span>
+      </a>
+      <span class="match-actions">
+        <a class="go" href="https://www.scoresway.com/en_GB/soccer/super-league-1-2025-2026/bfxnqtcsy92klp10rbwikb47o/match/view/54utzr3veusqzfjehi35dypec/match-summary" target="_blank" rel="noopener">Full report &rarr;</a>
+        <a class="highlights" href="https://www.youtube.com/watch?v=8rBkTVLe-tY" target="_blank" rel="noopener">&#9654; Highlights</a>
+      </span>
+    </div>
+  </div>
+
+
+</div>
+
+<!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "b67bbb76d0e24af196b24ded3ab71ad0"}'></script><!-- End Cloudflare Web Analytics -->
+</body>
+</html>
