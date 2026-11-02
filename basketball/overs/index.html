@@ -194,7 +194,7 @@ table.proj tr.pk td{background:rgba(212,175,55,.08)}table.proj tr.pk td:first-ch
   <div class="chips" id="chips"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=203083ab"></script>
+<script src="data.js?v=a6ec19d1"></script>
 <script src="live.js"></script>
 <script>
 const $ = id => document.getElementById(id);
@@ -311,7 +311,7 @@ function renderProjections(){
 }
 
 function renderPicks(){
-  // open picks first, then this season's whole record: games before the live test (worked out from results) + bets logged live
+  // open picks first, then the record of the bets logged live
   const open = LIVE.picks.filter(b => !b.done).sort((a, b) => a.dt < b.dt ? -1 : 1);
   const fx = Object.fromEntries(LIVE.fixtures.map(g => [g.home + '|' + g.away, g]));
   let h = `<p class="note">Bets to place: overs where the model's edge is above ${Math.round(LE()*100)}% at the line on offer, regular season, both teams ${LIVE.min_gp ?? 3}+ games${LIVE.max_line && LIVE.max_line < 999 ? `, line under ${LIVE.max_line}` : ''}, 1 unit each. Every hour the model checks every game in the next 7 days; a pick is logged the first time its edge clears the bar, at that line and the average price, and never changed. Take it as early as possible, as the line tends to move toward it. Updated ${LIVE.updated} (Athens).</p>`;
@@ -322,12 +322,11 @@ function renderPicks(){
         return `<tr class="pk"><td data-s="${b.dt}">${dayName(b.dt)} ${b.dt.slice(11)}</td><td>${LG[b.lg].country}</td><td class="wr">${b.home} – ${b.away}</td><td class="n"><b>Over ${b.line}</b></td><td class="n">${b.px.toFixed(2)}</td><td class="n">${g.mu != null ? g.mu.toFixed(1) : '–'}</td><td class="n pos">${sgn(b.edge*100, 0)}%</td><td class="n">${g.line ?? '–'}</td></tr>`; }).join('') +
       '</tbody></table></div>';
   }
-  const pre = ((DATA.cur || {}).bets || []).map(b => ({...b, side: 'o', pre: true, done: true, close: b.close ?? null}));
-  const all = [...pre, ...LIVE.picks].sort((a, b) => a.dt < b.dt ? -1 : 1);
+  const all = [...LIVE.picks].sort((a, b) => a.dt < b.dt ? -1 : 1);
   const set = all.filter(b => b.done && b.ret != null), won = set.filter(b => b.ret > 0).length;
   const units = set.reduce((a, b) => a + b.ret, 0), R_ = set.length ? units / set.length : null;
   const cl = all.filter(b => b.close != null), up = cl.filter(b => b.close > b.line).length, dn = cl.filter(b => b.close < b.line).length;
-  h += `<h2>The ${sn(DATA.season)} record</h2>`;
+  h += `<h2>The live record, since ${LIVE.start}</h2>`;
   h += tiles([['Bets', String(all.length)], ['Settled', String(set.length)], ['Hit rate', set.length ? pct(won / set.length, 1) : '–'],
               ['ROI', roi(R_), cls(R_)], ['Units', set.length ? sgn(units, 2) : '–', cls(units)],
               ['Close moved toward the bet', cl.length ? pct(up / cl.length) : '–'], ['Close moved against it', cl.length ? pct(dn / cl.length) : '–']]);
