@@ -212,6 +212,11 @@ const fmtDate = d => d.split('-').reverse().join('.');
 const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 
 $('sub').textContent = `${matches.length} games · seasons ${matches[0][0].slice(0,4)}–${matches[matches.length-1][0].slice(-4)} · ${Object.keys(teams).length} teams · ${new Set(Object.values(teams)).size} countries`;
+// when the data was last refreshed (Athens time, from the last update or odds run)
+if (window.PROJ?.updated){
+  const [d, t] = PROJ.updated.split(' ');
+  $('sub').textContent += ` · last update ${new Date(d + 'T12:00').toLocaleDateString('en-GB', {day: 'numeric', month: 'short', year: 'numeric'})}${t ? ' ' + t : ''}`;
+}
 
 function names(){ return mode === 'team' ? Object.keys(teams).sort() : [...new Set(Object.values(teams))].sort(); }
 function fillOptions(){ $('opts').innerHTML = names().map(n => `<option value="${esc(n)}">`).join(''); }
