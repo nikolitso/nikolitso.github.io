@@ -1,39 +1,45 @@
 /* One base for every site under antonisnikolitsopoulos.com (docs/superpowers/specs/2026-11-03-site-base-design.md).
    Tokens, the sitebar, the site header, pills, and one family accent chosen by data-site on <html>.
-   A page links this after its own <style> and remaps its own variables onto the --an-* tokens. */
+   A page links this after its own <style> and remaps its own variables onto the --an-* tokens.
+   Dark base, the homepage's night: --an-paper is the page, --an-soft the panels, --an-ink the text. */
 :root{
-  --an-paper:#ffffff;--an-ink:#141822;--an-muted:#5d6474;--an-rule:#e3e6ee;--an-soft:#f5f6f9;
+  --an-paper:#0d1220;--an-soft:#141a2b;--an-ink:#f3f4f7;--an-muted:#9aa1b2;--an-rule:#262e42;
   --an-display:"Instrument Serif","Iowan Old Style",Georgia,serif;
   --an-body:"Hanken Grotesk","Segoe UI",system-ui,-apple-system,sans-serif;
   --an-mono:ui-monospace,"Cascadia Mono",Consolas,"Liberation Mono",monospace;
-  --an-accent:#3d6bff;
-  --an-accent-soft:color-mix(in srgb,var(--an-accent) 8%,#fff);
-  --an-accent-line:color-mix(in srgb,var(--an-accent) 45%,#fff);
+  --an-accent:#6d8dff;
+  --an-accent-soft:color-mix(in srgb,var(--an-accent) 14%,var(--an-paper));
+  --an-accent-line:color-mix(in srgb,var(--an-accent) 50%,var(--an-paper));
+  --an-on-accent:#0d1220;                       /* text on a filled accent */
+  --an-bad-soft:color-mix(in srgb,#e07a7a 16%,var(--an-paper));
+  --an-bar:#3a4560;                             /* the neutral third segment of a bar */
+  --an-backdrop:rgba(3,6,14,.7);
+  color-scheme:dark;
 }
-html[data-site="football"]{--an-accent:#1f6f4a}
-html[data-site="basketball"]{--an-accent:#c2571a}
-html[data-site="handball"]{--an-accent:#8f2f3b}
-html[data-site="volleyball"]{--an-accent:#2d5bc9}
-html[data-site="paok"]{--an-accent:#141822}      /* PAOK is black and white: the accent is the ink */
-html[data-site="wine"]{--an-accent:#7d2236}
-html[data-site="books"]{--an-accent:#3d6bff}
+html[data-site="football"]{--an-accent:#5fb48a}
+html[data-site="basketball"]{--an-accent:#e58a4a}
+html[data-site="handball"]{--an-accent:#e0697a}
+html[data-site="volleyball"]{--an-accent:#7da1ff}
+html[data-site="paok"]{--an-accent:#f3f4f7}      /* PAOK is black and white: the accent is the ink */
+html[data-site="wine"]{--an-accent:#d08a9c}
+html[data-site="books"]{--an-accent:#6d8dff}
 
 /* ---- sitebar: the thin strip that links every site to the main one ---- */
 .an-sitebar{font:12.5px/1.4 var(--an-body);color:var(--an-muted);background:var(--an-paper);border-bottom:1px solid var(--an-rule)}
-.an-sitebar>div{max-width:1200px;margin:0 auto;padding:7px 20px;display:flex;gap:18px;justify-content:flex-end;align-items:center}
+.an-sitebar>div{max-width:var(--an-wrap,1200px);margin:0 auto;padding:7px 20px;display:flex;gap:18px;justify-content:flex-end;align-items:center}
 .an-sitebar a{color:inherit;text-decoration:none}
 .an-sitebar a:hover{color:var(--an-ink)}
 .an-sitebar svg{width:14px;height:14px;fill:currentColor;vertical-align:-2px}
 
 /* ---- site header: mark, kicker, title, tabs ---- */
 .an-head{background:var(--an-paper);border-bottom:1px solid var(--an-rule);font-family:var(--an-body);color:var(--an-ink)}
-.an-head>div{max-width:1200px;margin:0 auto;padding:22px 20px 0}
+.an-head>div{max-width:var(--an-wrap,1200px);margin:0 auto;padding:22px 20px 0}   /* --an-wrap: the page's own content width */
 .an-brand{display:flex;align-items:center;gap:14px;color:inherit;text-decoration:none}
 .an-mark{width:40px;height:40px;flex:none;color:var(--an-accent);fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
 .an-kicker{display:block;font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--an-accent);font-weight:600;margin-bottom:2px}
-.an-brand h1{font:400 30px/1.1 var(--an-display);margin:0;letter-spacing:0}
+.an-brand h1{font:400 30px/1.1 var(--an-display);margin:0;letter-spacing:0;color:var(--an-ink)}
 .an-tabs{display:flex;gap:22px;margin-top:16px;border-bottom:2px solid var(--an-rule);font-size:14px;overflow-x:auto;scrollbar-width:none}
-.an-tabs a{color:var(--an-muted);text-decoration:none;padding:0 0 10px;margin-bottom:-2px;border-bottom:2px solid transparent;white-space:nowrap}
+.an-tabs a{color:var(--an-muted);text-decoration:none;padding:0 0 10px;margin-bottom:-2px;border-bottom:2px solid transparent;white-space:nowrap;background:none;border-radius:0}
 .an-tabs a:hover{color:var(--an-ink)}
 .an-tabs a.on,.an-tabs a[aria-current]{color:var(--an-ink);border-color:var(--an-accent)}
 .an-head:has(.an-tabs)>div{padding-bottom:0}

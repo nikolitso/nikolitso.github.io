@@ -24,7 +24,7 @@
   /* shared base (assets/an.css): the page's own names mapped onto the tokens */
   --bg:var(--an-paper); --panel:var(--an-soft); --line:var(--an-rule); --text:var(--an-ink); --muted:var(--an-muted);
   --gold:var(--an-accent); --win:var(--an-accent); --loss:var(--an-muted);
-  --serif:var(--an-display); --body:var(--an-body); --mono:var(--an-mono);
+  --serif:var(--an-display); --body:var(--an-body); --mono:var(--an-mono); --an-wrap:1180px;
 }
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--text);font:17px/1.5 var(--body)}
@@ -33,11 +33,11 @@ body{margin:0;background:var(--bg);color:var(--text);font:17px/1.5 var(--body)}
 .bar{display:flex;flex-wrap:wrap;align-items:center;gap:10px 18px;margin:0 0 18px}
 .seg{display:flex;border:1px solid var(--line);border-radius:6px;overflow:hidden;width:max-content}
 .seg button{background:none;border:0;color:var(--muted);font:500 13px var(--mono);padding:8px 16px;cursor:pointer;letter-spacing:.06em;text-transform:uppercase}
-.seg button.on{background:var(--gold);color:#fff}
+.seg button.on{background:var(--gold);color:var(--an-on-accent)}
 .chips{display:flex;flex-wrap:wrap;gap:8px}
 .chip{background:none;border:1px solid var(--line);border-radius:999px;color:var(--muted);font:500 12px var(--mono);padding:5px 12px;cursor:pointer}
 .chip:hover{color:var(--text)}
-.chip.on{background:var(--gold);border-color:var(--gold);color:#fff}
+.chip.on{background:var(--gold);border-color:var(--gold);color:var(--an-on-accent)}
 h2{font:600 22px var(--serif);margin:30px 0 12px}
 h2.day{font-size:20px;padding-bottom:8px;border-bottom:1px solid var(--line)}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(520px,100%),1fr));gap:18px}
@@ -50,7 +50,7 @@ h2.day{font-size:20px;padding-bottom:8px;border-bottom:1px solid var(--line)}
 .live{font:500 11px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--bg);background:var(--gold);border-radius:4px;padding:1px 6px;margin-left:8px;vertical-align:1px}
 .card .ko{font:500 14px var(--mono);color:var(--text);letter-spacing:.06em}
 .wdl{display:flex;height:8px;border-radius:4px;overflow:hidden;margin:12px 0 6px;background:var(--line)}
-.wdl i{display:block} .wdl i:nth-child(1){background:var(--gold)} .wdl i:nth-child(2){background:var(--an-muted)} .wdl i:nth-child(3){background:#c3c9d4}
+.wdl i{display:block} .wdl i:nth-child(1){background:var(--gold)} .wdl i:nth-child(2){background:var(--an-muted)} .wdl i:nth-child(3){background:var(--an-bar)}
 .wdlt{display:flex;justify-content:space-between;font:400 14px var(--mono);color:var(--muted)}
 .wdlt b{color:var(--text);font-weight:500}
 table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
@@ -97,7 +97,7 @@ th.sort{cursor:pointer;user-select:none} th.sort:hover,th.sort.on{color:var(--go
 .doc p,.doc li{font-size:16.5px;line-height:1.65;margin:0 0 14px}
 .doc ul{padding-left:20px;margin:0 0 14px}
 .doc h3{font:600 18px var(--serif);margin:28px 0 8px;display:flex;align-items:center;gap:10px}
-.doc .num{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--gold);color:#fff;font:600 13px var(--mono);flex:none}
+.doc .num{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--gold);color:var(--an-on-accent);font:600 13px var(--mono);flex:none}
 .calc{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:8px;padding:12px 16px;margin:0 0 14px;font:400 14px/2 var(--mono);overflow-x:auto}
 .calc i{font-style:normal;color:var(--muted);font-size:12px}
 .calc b{color:var(--gold);font-weight:500}
@@ -112,7 +112,7 @@ table.mini{margin:0 0 16px}
 .key i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:-1px}
 .chart .hit{fill:transparent;cursor:default}
 .chart .bar.hl{opacity:.75}
-.tip{position:fixed;pointer-events:none;background:var(--an-paper);border:1px solid var(--line);box-shadow:0 6px 24px rgba(20,24,34,.12);border-radius:6px;padding:6px 10px;font:400 12.5px/1.5 var(--mono);color:var(--text);z-index:10;display:none;white-space:nowrap}
+.tip{position:fixed;pointer-events:none;background:var(--an-paper);border:1px solid var(--line);box-shadow:0 10px 30px rgba(0,0,0,.45);border-radius:6px;padding:6px 10px;font:400 12.5px/1.5 var(--mono);color:var(--text);z-index:10;display:none;white-space:nowrap}
 .tip b{color:var(--gold);font-weight:500}
 tr.avg td,tr.few td{color:var(--muted)} tr.avg td:first-child{font-style:italic}
 tr.sum td{border-top:1px solid var(--line);font-weight:600}
@@ -120,11 +120,11 @@ table.rp td.cm{white-space:normal;min-width:320px;font-size:14.5px;line-height:1
 table.rp td{vertical-align:top}
 .rate{display:inline-block;min-width:40px;text-align:center;border-radius:999px;padding:1px 8px;font:500 12.5px var(--mono)}
 .r-good{background:var(--an-accent-soft);color:var(--win)} .r-mid{background:var(--an-soft);color:var(--text)}
-.r-warn{background:var(--an-accent-soft);color:var(--gold)} .r-bad{background:#f6e9e7;color:var(--loss)}
+.r-warn{background:var(--an-accent-soft);color:var(--gold)} .r-bad{background:var(--an-bad-soft);color:var(--loss)}
 button.reflink{background:none;border:0;padding:0;margin:0;color:inherit;font:inherit;text-align:left;cursor:pointer;text-decoration:underline dotted color-mix(in srgb,var(--muted) 70%,transparent);text-underline-offset:3px}
 button.reflink:hover{color:var(--gold);text-decoration-color:var(--gold)}
 dialog#refdlg{background:var(--bg);color:var(--text);border:1px solid var(--line);border-radius:12px;padding:0;width:min(1100px,96vw);max-height:90vh}
-dialog#refdlg::backdrop{background:rgba(20,24,34,.45)}
+dialog#refdlg::backdrop{background:var(--an-backdrop)}
 #refdlg .dh{position:sticky;top:0;background:var(--bg);display:flex;justify-content:space-between;align-items:center;gap:12px;padding:16px 20px 12px;border-bottom:1px solid var(--line);z-index:1}
 #refdlg .dh h2{margin:0}
 #refdlg .db{padding:16px 20px 20px}
@@ -143,7 +143,7 @@ th.rs{cursor:pointer;user-select:none} th.rs:hover,th.rs.on{color:var(--gold)}
 <nav class="an-sitebar" aria-label="Main site"><div><a href="/books/">Books</a><a href="/#projects">Projects</a><a href="/about/">About</a><a href="/" title="Main site: antonisnikolitsopoulos.com" aria-label="Main site"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 2 11.5h3V21h5.5v-6h3v6H19v-9.5h3z"/></svg></a></div></nav>
 <!-- sitebar:end -->
 <header class="an-head"><div>
-  <a class="an-brand" href="C:/Program Files/Git/superleague/"><svg class="an-mark" aria-hidden="true"><use href="/assets/marks.svg#football"/></svg><span><small class="an-kicker">Football · Projections</small><h1>Greek Super League</h1></span></a>
+  <a class="an-brand" href="/superleague/"><svg class="an-mark" aria-hidden="true"><use href="/assets/marks.svg#football"/></svg><span><small class="an-kicker">Football · Projections</small><h1>Greek Super League</h1></span></a>
   <nav class="tabs an-tabs" id="tabs" aria-label="Sections">
     <a href="#view=projections" data-view="projections" class="on">Projections</a>
     <a href="#view=open" data-view="open">Open bets</a>

@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-site="handball">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -17,7 +17,7 @@
 <link rel="icon" href="/favicon.png" type="image/png" sizes="64x64">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@500;600;700&family=Source+Sans+3:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Hanken+Grotesk:ital,wght@0,300..700;1,400&display=swap">
 <style>
 :root{
   --bg:#dce8f4; --surface:#ffffff; --ink:#121826; --ink2:#46505f; --muted:#68758a; --line:#c9d6e4; --grid:#e3ebf4;
@@ -25,29 +25,24 @@
   --pos:#1b7f4b; --neg:#b3372f; --warn:#a86b00; --warn-bg:#fdf3dc;
   --display:"Saira Condensed","Arial Narrow",system-ui,sans-serif;
   --body:"Source Sans 3",system-ui,-apple-system,"Segoe UI",sans-serif;
+  /* shared base (assets/an.css): the page's own names mapped onto the tokens */
+  --bg:var(--an-paper); --surface:var(--an-soft); --ink:var(--an-ink); --ink2:var(--an-ink); --muted:var(--an-muted);
+  --pos:#4cc47a; --neg:#ef7a70; --warn:#f0b84a; --warn-bg:#2d2512; --md:#4cc47a; --md-soft:#16271d;
+  --line:var(--an-rule); --grid:var(--an-rule); --accent:var(--an-accent); --accent-soft:var(--an-accent-soft);
+  --display:var(--an-display); --body:var(--an-body); --an-wrap:1040px;
 }
-@media (prefers-color-scheme: dark){
-  :root:not([data-theme="light"]){color-scheme:dark;
-    --bg:#0b1726; --surface:#132235; --ink:#eef1f5; --ink2:#b9c1cc; --muted:#8a9ab0; --line:#24364c; --grid:#1b2b3f;
-    --accent:#ff5c72; --accent-soft:#2c1a1f; --md:#4cc47a; --md-soft:#16271d;
-    --pos:#4cc47a; --neg:#ef7a70; --warn:#f0b84a; --warn-bg:#2d2512;}
-}
-:root[data-theme="dark"]{color-scheme:dark;
-  --bg:#0b1726; --surface:#132235; --ink:#eef1f5; --ink2:#b9c1cc; --muted:#8a9ab0; --line:#24364c; --grid:#1b2b3f;
-  --accent:#ff5c72; --accent-soft:#2c1a1f; --md:#4cc47a; --md-soft:#16271d;
-  --pos:#4cc47a; --neg:#ef7a70; --warn:#f0b84a; --warn-bg:#2d2512;}
 *{box-sizing:border-box}
 body{background:radial-gradient(circle at 50% -380px,transparent 520px,color-mix(in srgb,var(--surface) 55%,transparent) 521px,color-mix(in srgb,var(--surface) 55%,transparent) 524px,transparent 525px) no-repeat,var(--bg);background-attachment:fixed;color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5;margin:0}
 .wrap{max-width:1040px;margin:0 auto;padding-inline:18px;padding-block:24px 56px;display:flex;flex-direction:column;gap:40px}
 h1,h2,h3{font-family:var(--display);font-weight:700;margin:0;text-wrap:balance;letter-spacing:.01em}
-h1{font-size:clamp(2.1rem,5.5vw,3rem);line-height:1}
+
 h2{font-size:1.65rem;line-height:1.1}
 h3{font-size:1.12rem}
 p{margin:0;max-width:72ch}
 .eyebrow{font-family:var(--display);font-weight:600;text-transform:uppercase;letter-spacing:.14em;font-size:.82rem;color:var(--accent)}
 .md .eyebrow{color:var(--md)}
 .muted{color:var(--muted)} .small{font-size:.86rem}
-header{display:flex;flex-direction:column;gap:10px}
+.wrap header{display:flex;flex-direction:column;gap:10px}
 section{display:flex;flex-direction:column;gap:14px}
 .rule{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:12px;overflow:hidden}
 .rule>div{background:var(--surface);padding:16px 18px;display:flex;flex-direction:column;gap:6px}
@@ -78,7 +73,7 @@ tfoot td{border-top:2px solid var(--line);background:var(--surface-2,var(--bg))}
 .md .eyebrow{color:var(--md)}
 .md #mdEv tbody tr:first-child td{background:var(--md-soft)}
 .md #mdEv tbody tr.top td{background:color-mix(in srgb,var(--pos) 9%,transparent)}
-#mdGamesPills .chip.on{background:var(--md);border-color:var(--md);color:#fff}
+#mdGamesPills .chip.on{background:var(--md);border-color:var(--md);color:var(--an-on-accent)}
 .tbl{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
 table{border-collapse:collapse;width:100%;font-size:.86rem;font-variant-numeric:tabular-nums}
 th,td{padding:7px 8px;text-align:right;white-space:nowrap;border-bottom:1px solid var(--grid)}
@@ -99,9 +94,9 @@ footer{font-size:.82rem;color:var(--muted);border-top:1px solid var(--line);padd
 
 .tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
 .tile{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px;display:flex;flex-direction:column;gap:3px;min-width:0}
-header{padding-bottom:6px}
-header h1{display:flex;align-items:center;gap:12px}
-header h1::before{content:"";width:6px;height:.85em;background:var(--accent);border-radius:2px;flex:none}
+.wrap header{padding-bottom:6px}
+.wrap header h1{display:flex;align-items:center;gap:12px}
+
 section>h3{display:flex;align-items:center;gap:10px;margin-top:10px}
 section>h3::after{content:"";flex:1;height:1px;background:var(--line)}
 .tbl{box-shadow:0 1px 2px color-mix(in srgb,var(--ink) 6%,transparent)}
@@ -120,43 +115,38 @@ tr.grp td{background:color-mix(in srgb,var(--ink) 5%,var(--surface));font-size:.
 #sgBeat th,#sgBeat td{padding:7px 9px}
 tr.testrow td{background:var(--md-soft)}
 a{color:var(--accent)}
-.tabs{display:flex;gap:8px;flex-wrap:wrap;position:sticky;top:0;z-index:5;background:var(--bg);padding:10px 0;margin-block:-14px;border-bottom:1px solid var(--line)}
-.tabs a{font-family:var(--display);font-weight:600;font-size:1.02rem;letter-spacing:.03em;text-decoration:none;color:var(--ink);padding:5px 14px;border:1px solid var(--line);border-radius:99px;background:var(--surface)}
+
+
 .pks{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:6px 0 10px}
 .pks a{font-family:var(--display);font-weight:600;font-size:.98rem;letter-spacing:.03em;text-decoration:none;color:var(--ink);padding:4px 13px;border:1px solid var(--line);border-radius:99px;background:var(--surface)}
 .pks a:hover{border-color:var(--accent);color:var(--accent)}
-.pks a.on{background:var(--accent);border-color:var(--accent);color:#fff}
-.tabs a:hover{border-color:var(--accent);color:var(--accent)}
+.pks a.on{background:var(--accent);border-color:var(--accent);color:var(--an-on-accent)}
+
 details.more{margin-top:14px;border-top:1px solid var(--line);padding-top:6px}details.more>summary{cursor:pointer;font-weight:600;padding:8px 0}a.tile{text-decoration:none;color:inherit}a.tile:hover{border-color:var(--accent)}
 .crumb{font-size:.9rem}
 th.srt{cursor:pointer;user-select:none}th.srt:hover{color:var(--ink)}
 th[aria-sort=ascending]::after{content:" \25B2";font-size:.7em}th[aria-sort=descending]::after{content:" \25BC";font-size:.7em}
-header.brand{padding-bottom:0}header.brand h1{display:flex;align-items:center;gap:18px;font-size:clamp(2.2rem,6vw,3.2rem);letter-spacing:.2em;text-transform:uppercase;font-weight:700;line-height:1}header.brand h1::before{display:none}header.brand a.home{display:flex;align-items:center;gap:18px;color:inherit;text-decoration:none}header.brand a.home:hover span{color:var(--accent)}.ball{flex:none;filter:drop-shadow(0 4px 6px color-mix(in srgb,var(--accent) 22%,transparent))}
-.chips{display:flex;gap:6px;flex-wrap:wrap}.chip{border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:3px 13px;border-radius:99px;font:inherit;font-size:.86rem;cursor:pointer}a.chip{text-decoration:none;display:inline-block}.chip:hover{border-color:var(--accent)}.chip.on{background:var(--accent);border-color:var(--accent);color:#fff}
+
+.chips{display:flex;gap:6px;flex-wrap:wrap}.chip{border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:3px 13px;border-radius:99px;font:inherit;font-size:.86rem;cursor:pointer}a.chip{text-decoration:none;display:inline-block}.chip:hover{border-color:var(--accent)}.chip.on{background:var(--accent);border-color:var(--accent);color:var(--an-on-accent)}
 .how3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.hcard{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px;font-size:.86rem;line-height:1.5;color:var(--ink2)}.hcard b.t{display:block;font-family:var(--display);font-size:1.05rem;color:var(--ink);margin-bottom:4px}@media (max-width:820px){.how3{grid-template-columns:1fr}}
-.tabs a.on{background:var(--accent);border-color:var(--accent);color:#fff}
+
 html{scroll-behavior:smooth}section{scroll-margin-top:60px}
 @media (max-width:700px){.rule{grid-template-columns:1fr}}
 </style>
+<link rel="stylesheet" href="/assets/an.css?v=1">
 
 <!-- sitebar:start (link back to antonisnikolitsopoulos.com; keep on every page) -->
-<style>
-.an-sitebar{background:#0d1220;border-bottom:1px solid rgba(255,255,255,.09);font:500 13px/1.2 "Segoe UI",system-ui,-apple-system,sans-serif;letter-spacing:.02em}
-.an-sitebar>div{max-width:72rem;margin:0 auto;padding:6px 16px;display:flex;justify-content:flex-end;align-items:center;gap:18px}
-.an-sitebar a{color:#9aa1b2;text-decoration:none;display:inline-flex;align-items:center;min-height:24px}.an-sitebar a:hover{color:#fff}
-.an-sitebar svg{width:17px;height:17px;fill:currentColor}
-.an-sitebar a[href="/"]{padding:6px 8px;margin:-6px -8px -6px -4px;border-radius:6px}.an-sitebar a[href="/"]:hover{background:rgba(255,255,255,.08)}
-</style>
 <nav class="an-sitebar" aria-label="Main site"><div><a href="/books/">Books</a><a href="/#projects">Projects</a><a href="/about/">About</a><a href="/" title="Main site: antonisnikolitsopoulos.com" aria-label="Main site"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 2 11.5h3V21h5.5v-6h3v6H19v-9.5h3z"/></svg></a></div></nav>
 <!-- sitebar:end -->
 </head>
 <body>
 <noscript><p style="max-width:60ch;margin:2rem auto;padding:0 1rem;font-family:sans-serif">This page builds its tables in the browser. Please turn on JavaScript to see the handball projections.</p></noscript>
+<header class="an-head"><div>
+  <a class="an-brand" href="/handball/projections/"><svg class="an-mark" aria-hidden="true"><use href="/assets/marks.svg#handball"/></svg><span><small class="an-kicker">Handball · Projections</small><h1>Handball</h1></span></a>
+  <nav class="tabs an-tabs" aria-label="Pages"><a data-id="projections" href="#projections">Projections</a><a data-id="backtesting" href="#backtesting">Backtesting</a><a data-id="done-by-the-break" href="#done-by-the-break">Done by the Break</a></nav>
+</div></header>
 <div class="wrap" data-page="bundesliga" data-base="/handball/">
 
-<header class="brand"><h1><a class="home" href="https://antonisnikolitsopoulos.com/handball/" aria-label="Handball home"><svg class="ball" viewBox="0 0 64 66" width="68" height="70" role="img" aria-label="Handball" xmlns="http://www.w3.org/2000/svg"><defs><radialGradient id="hbg" cx="34%" cy="28%" r="78%"><stop offset="0" stop-color="#ffffff"/><stop offset=".5" stop-color="#f6d9de"/><stop offset="1" stop-color="#c8203a"/></radialGradient></defs><ellipse cx="32" cy="62.500" rx="19" ry="2.600" fill="#000" opacity=".13"/><circle cx="32" cy="31" r="28" fill="url(#hbg)"/><g fill="none" stroke="#7a1022" stroke-opacity=".5" stroke-width="1.5" stroke-linecap="round" transform="translate(32 31) scale(1.22) translate(-24 -24)"><path d="M24 24C21 17 22 9 28 3"/><path d="M24 24C28 20 35 19 43 22"/><g transform="rotate(120 24 24)"><path d="M24 24C21 17 22 9 28 3"/><path d="M24 24C28 20 35 19 43 22"/></g><g transform="rotate(240 24 24)"><path d="M24 24C21 17 22 9 28 3"/><path d="M24 24C28 20 35 19 43 22"/></g></g><ellipse cx="22" cy="17" rx="9" ry="4.800" fill="#fff" opacity=".5" transform="rotate(-32 22 17)"/><circle cx="32" cy="31" r="28" fill="none" stroke="#7a1022" stroke-opacity=".45" stroke-width="1.2"/></svg><span>Handball</span></a></h1></header>
-
-<nav class="tabs" aria-label="Pages"><a data-id="projections" href="#projections">Projections</a><a data-id="backtesting" href="#backtesting">Backtesting</a><a data-id="done-by-the-break" href="#done-by-the-break">Done by the Break</a></nav>
 <p class="small muted" id="updTop" style="margin-top:-28px"></p>
 
 <section id="projections">
@@ -404,7 +394,6 @@ function makeSortable(){
   const ids=main.concat(slugs, slugs.map(x=>'bt-'+x));
   const wrap=document.querySelector('.wrap'), fixed=wrap.dataset.page, base=wrap.dataset.base;
   if(!base){const hm=document.querySelector('a.home');if(hm)hm.href='#projections'}
-  if(base) document.querySelectorAll('.tabs a').forEach(a=>{a.href=base+a.dataset.id+'/'});
   const cap=x=>x.charAt(0).toUpperCase()+x.slice(1);
   const cur=()=>fixed||(ids.includes(location.hash.slice(1))?location.hash.slice(1):'projections');
   function show(){const c=cur(), bt=c.startsWith('bt-'), lg=LG[c], tab=lg?'projections':bt?'backtesting':c, sec=lg?'league':bt?'backtesting':c;

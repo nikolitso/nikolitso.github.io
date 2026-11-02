@@ -23,7 +23,7 @@
   /* shared base (assets/an.css): the page's own names mapped onto the tokens */
   --bg:var(--an-paper); --panel:var(--an-soft); --line:var(--an-rule); --text:var(--an-ink); --muted:var(--an-muted);
   --gold:var(--an-accent); --win:var(--an-accent); --loss:var(--an-muted);
-  --serif:var(--an-display); --body:var(--an-body); --mono:var(--an-mono);
+  --serif:var(--an-display); --body:var(--an-body); --mono:var(--an-mono); --an-wrap:1180px;
 }
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--text);font:17px/1.5 var(--body)}
@@ -32,11 +32,11 @@ body{margin:0;background:var(--bg);color:var(--text);font:17px/1.5 var(--body)}
 .bar{display:flex;flex-wrap:wrap;align-items:center;gap:10px 18px;margin:0 0 18px}
 .seg{display:flex;border:1px solid var(--line);border-radius:6px;overflow:hidden;width:max-content}
 .seg button{background:none;border:0;color:var(--muted);font:500 13px var(--mono);padding:8px 16px;cursor:pointer;letter-spacing:.06em;text-transform:uppercase}
-.seg button.on{background:var(--gold);color:#fff}
+.seg button.on{background:var(--gold);color:var(--an-on-accent)}
 .chips{display:flex;flex-wrap:wrap;gap:8px}
 .chip{background:none;border:1px solid var(--line);border-radius:999px;color:var(--muted);font:500 12px var(--mono);padding:5px 12px;cursor:pointer}
 .chip:hover{color:var(--text)}
-.chip.on{background:var(--gold);border-color:var(--gold);color:#fff}
+.chip.on{background:var(--gold);border-color:var(--gold);color:var(--an-on-accent)}
 .facts{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 14px}
 .fact{border:1px solid var(--line);border-radius:999px;padding:6px 14px;font-size:13.5px;color:var(--muted)}
 .fact b{font:500 13.5px var(--mono);color:var(--gold);margin-right:4px}
@@ -52,7 +52,7 @@ h2.day{font-size:20px;padding-bottom:8px;border-bottom:1px solid var(--line)}
 .live{font:500 11px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--bg);background:var(--gold);border-radius:4px;padding:1px 6px;margin-left:8px;vertical-align:1px}
 .card .ko{font:500 14px var(--mono);color:var(--text);letter-spacing:.06em}
 .wdl{display:flex;height:8px;border-radius:4px;overflow:hidden;margin:12px 0 6px;background:var(--line)}
-.wdl i{display:block} .wdl i:nth-child(1){background:var(--gold)} .wdl i:nth-child(2){background:var(--an-muted)} .wdl i:nth-child(3){background:#c3c9d4}
+.wdl i{display:block} .wdl i:nth-child(1){background:var(--gold)} .wdl i:nth-child(2){background:var(--an-muted)} .wdl i:nth-child(3){background:var(--an-bar)}
 .wdlt{display:flex;justify-content:space-between;font:400 14px var(--mono);color:var(--muted)}
 .wdlt b{color:var(--text);font-weight:500}
 table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
@@ -100,7 +100,7 @@ th.sort{cursor:pointer;user-select:none} th.sort:hover,th.sort.on{color:var(--go
 .doc p,.doc li{font-size:16.5px;line-height:1.65;margin:0 0 14px}
 .doc ul{padding-left:20px;margin:0 0 14px}
 .doc h3{font:600 18px var(--serif);margin:28px 0 8px;display:flex;align-items:center;gap:10px}
-.doc .num{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--gold);color:#fff;font:600 13px var(--mono);flex:none}
+.doc .num{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--gold);color:var(--an-on-accent);font:600 13px var(--mono);flex:none}
 .calc{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:8px;padding:12px 16px;margin:0 0 14px;font:400 14px/2 var(--mono);overflow-x:auto}
 .calc i{font-style:normal;color:var(--muted);font-size:12px}
 .calc b{color:var(--gold);font-weight:500}
@@ -133,7 +133,7 @@ tr.sel td{background:color-mix(in srgb,var(--gold) 10%,transparent)}
 <nav class="an-sitebar" aria-label="Main site"><div><a href="/books/">Books</a><a href="/#projects">Projects</a><a href="/about/">About</a><a href="/" title="Main site: antonisnikolitsopoulos.com" aria-label="Main site"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 2 11.5h3V21h5.5v-6h3v6H19v-9.5h3z"/></svg></a></div></nav>
 <!-- sitebar:end -->
 <header class="an-head"><div>
-  <a class="an-brand" href="C:/Program Files/Git/football/greek-cup/"><svg class="an-mark" aria-hidden="true"><use href="/assets/marks.svg#cup"/></svg><span><small class="an-kicker">Football · Stats</small><h1>Greek Cup</h1></span></a>
+  <a class="an-brand" href="/football/greek-cup/"><svg class="an-mark" aria-hidden="true"><use href="/assets/marks.svg#cup"/></svg><span><small class="an-kicker">Football · Stats</small><h1>Greek Cup</h1></span></a>
   <nav class="tabs an-tabs" id="tabs" aria-label="Sections">
     <a href="#view=stats" data-view="stats">Stats</a>
     <a href="#view=tier" data-view="tier">By tier</a>

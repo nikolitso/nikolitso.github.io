@@ -1,10 +1,10 @@
 # One base for every site
 
-Approved 3 Nov 2026 (approach 1, "token overlay"; light base; one accent per family; PAOK in black and white).
+Approved 3 Nov 2026 (approach 1, "token overlay"; one accent per family; PAOK in black and white). Base changed to dark the same day, at the user's request, once the first pages were up: the homepage's night.
 
 ## Goal
 
-Every site under antonisnikolitsopoulos.com looks like one place: white paper, the homepage's two typefaces,
+Every site under antonisnikolitsopoulos.com looks like one place: the homepage's night blue, its two typefaces,
 the same sitebar and the same site header (mark, kicker, title, tabs), with a single muted family colour doing
 all the colouring. Layouts, tables and scripts stay as they are; only colour, type and the header change.
 Elegant, not kitsch: one accent, no gradients, no crests, marks as thin line icons.
@@ -16,27 +16,28 @@ Elegant, not kitsch: one accent, no gradients, no crests, marks as thin line ico
 
 Tokens (all sites):
 
-    --an-paper #ffffff   --an-ink #141822   --an-muted #5d6474   --an-rule #e3e6ee   --an-soft #f5f6f9
+    --an-paper #0d1220 (the page)   --an-soft #141a2b (panels)   --an-ink #f3f4f7   --an-muted #9aa1b2   --an-rule #262e42
+    --an-on-accent #0d1220 (text on a filled accent)   --an-bad-soft, --an-bar, --an-backdrop for the few remaining tints
     --an-display "Instrument Serif", "Iowan Old Style", Georgia, serif
     --an-body    "Hanken Grotesk", "Segoe UI", system-ui, sans-serif
     --an-mono    ui-monospace, "Cascadia Mono", Consolas, monospace
-    --an-accent  set by the family (below); --an-accent-soft = accent at 8 % on white
+    --an-accent  set by the family (below); --an-accent-soft = accent at 14 % on the page
 
 Families, selected with `data-site` on `<html>`:
 
 | data-site     | sites                                             | accent            | mark        |
 |---------------|---------------------------------------------------|-------------------|-------------|
-| football      | Super League, Greek Cup                           | #1f6f4a           | football, cup |
-| basketball    | Basketball, Basketball totals, EuroCup, FIBA      | #c2571a           | basketball  |
-| handball      | Handball (projections, backtesting, done-by-the-break) | #8f2f3b      | handball    |
-| volleyball    | Volleyball, Challenge Cup Women                   | #2d5bc9           | volleyball  |
-| paok          | PAOK Hub, PAOK Basketball                         | #141822 (black; no second colour) | paok "P" |
-| wine          | Wine                                              | #7d2236           | wine        |
-| books         | Books, homepage, About, Thought Bank              | #3d6bff (as today)| book        |
+| football      | Super League, Greek Cup                           | #5fb48a           | football, cup |
+| basketball    | Basketball, Basketball totals, EuroCup, FIBA      | #e58a4a           | basketball  |
+| handball      | Handball (projections, backtesting, done-by-the-break) | #e0697a      | handball    |
+| volleyball    | Volleyball, Challenge Cup Women                   | #7da1ff           | volleyball  |
+| paok          | PAOK Hub, PAOK Basketball                         | #f3f4f7 (the ink; no second colour) | paok "P" |
+| wine          | Wine                                              | #d08a9c           | wine        |
+| books         | Books, homepage, About, Thought Bank              | #6d8dff           | book        |
 
 The accent appears only on: the header kicker, the active tab's underline, links, the "on" pill, the one
 highlighted number in a row, and the row of PAOK (or the user's team) in a table. Everything else is ink,
-muted or rule grey. PAOK uses ink for all of these, so its pages are black, white and grey only.
+muted or rule grey. PAOK uses ink for all of these, so its pages are white, grey and night only.
 
 ## The header
 
@@ -50,7 +51,8 @@ muted or rule grey. PAOK uses ink for all of these, so its pages are black, whit
     </header>
 
 Kicker = family · kind (Projections, Stats, Reference, Pairing, Takeaways). Title in the serif at 30 px.
-Sites with no tabs omit `an-tabs`. The homepage's project cards show the site's mark (18 px) before the tag.
+Sites with no tabs omit `an-tabs`. The homepage's project cards show the site's mark (15 px) before the tag.
+Result colours (won/lost, positive/negative) are data, not decoration: they stay, in their dark-readable shades.
 
 ## How each site adopts it
 
@@ -80,7 +82,7 @@ head), `basketball/projector/template.html`, `handball/projector/template.html`,
 5. PAOK Hub, PAOK Basketball (black and white).
 6. Wine, Books, About, Thought Bank.
 
-One family per commit; each verified live before the next. The dark navy, the gold, Oswald/Impact and the
+One family per commit; each verified live before the next. The gold, Oswald/Impact, the light greys and the
 burgundy base go with their family.
 
 ## Out of scope
