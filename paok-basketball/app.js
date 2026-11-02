@@ -150,7 +150,11 @@ const VIEWS = {
       </ul></div>`;
     }).join('');
     const upcoming = state.games.filter((g) => !g.played && g !== next).slice(0, 5);
-    return `${nextBlock}
+    // latest refresh of any data file (Greek time)
+    const stamps = [state.ec, state.gbl, state.scout, state.league, state.power, state.coach].map((d) => d && d.updated).filter(Boolean);
+    const latest = stamps.length ? stamps.reduce((a, b) => (toDate(a) > toDate(b) ? a : b)) : null;
+    const updated = latest ? `<p class="muted last-updated">Last updated: ${fmtDate(latest, { year: 'numeric' })}${hasTime(latest) ? ', ' + fmtTime(latest) : ''}</p>` : '';
+    return `${nextBlock}${updated}
       <h2>Overview</h2>
       <div class="grid three">${lastBlock}${recBlock}${leaders}</div>
       <h2>Coming up</h2>

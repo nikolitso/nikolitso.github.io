@@ -1,6 +1,6 @@
 {
  "_note": "Andrea Trinchieri's words, translated into English and lightly shortened. games[]: linked to the schedule by comp + code; pre = before the game, post = after. ref = where it was said/reported (not shown on the site). focus (post entries): the stat he said must improve, checked on the site against PAOK's next game; stat = tovPct | drebPct | oppEfg | ortg | drtg.",
- "updated": "2026-11-01",
+ "updated": "2026-11-02",
  "themes": [
   {
    "title": "Effort is the one thing he guarantees",
@@ -281,6 +281,14 @@
      "said": "\"Defence was certainly the key.\""
     }
    ]
+  },
+  {
+   "comp": "EuroCup",
+   "code": "95",
+   "when": "pre",
+   "setting": "Pre-game press conference",
+   "quote": "We had time to prepare for another game in a row. Roma have very good talent, NBA-level players like Mannion and Olynyk, who can make life hard for our defence. It's an important game, and after the loss to Bahcesehir we want to play well in front of our fans. The aim is to improve step by step every game, on offence, on defence and in reading situations. I see progress, but we need more confidence, to know each other better and clear roles on the floor, and that takes time. On defence there is a lot to fix: these players haven't played much together and I hadn't coached all of them before. We are getting closer to a steadier defence, but Saturday's level won't be enough against Roma. They can score a lot of points, even 120: Stevenson, Strautins, Simonovic, Corey Davis and Watson can each get to 20.",
+   "ref": "https://www.sport24.gr/basket/eurocup-basketball/trinkieri-i-roma-borei-na-skorarei-120-pontous/"
   }
  ]
 }
