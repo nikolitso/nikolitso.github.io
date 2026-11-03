@@ -187,6 +187,7 @@ select.peer:focus{outline:2px solid var(--gold)}
     <a href="#view=projections" data-view="projections" class="on">Projections</a>
     <a href="#view=market" data-view="market">Vs Market</a>
     <a href="#view=archive" data-view="archive">Archive</a>
+    <a href="#view=picks" data-view="picks">Picks</a>
     <a href="#view=ratings" data-view="ratings">Club Ratings</a>
     <a href="#view=h2h" data-view="h2h">Head to Head</a>
     <a href="#view=rosters" data-view="rosters">Rosters</a>
@@ -199,6 +200,7 @@ select.peer:focus{outline:2px solid var(--gold)}
   <div id="rkView" hidden></div>
   <div id="pjView" hidden></div>
   <div id="arView" hidden></div>
+  <div id="pkView" hidden></div>
   <div id="crView" hidden></div>
   <div id="mkView"></div>
   <div id="roView" hidden></div>
@@ -645,6 +647,62 @@ function renderPjCards(P){
     `<div class="tag" style="margin-top:18px">Projections updated ${esc(P.updated)} (Athens time). The model rates every club from this season's results, starting from last season's rating and its country's; absences from the injury list come off the club (a handicap marked * includes them). Win chance = the margin on a normal curve with the backtest's spread of misses (${P.spread} points). Details: <a class="back" href="#view=ratings" data-go="ratings">Club Ratings</a>.</div>`;
   bindPj(box);
   box.querySelectorAll('[data-jump]').forEach(a => a.onclick = e => { e.preventDefault(); document.getElementById(a.dataset.jump)?.scrollIntoView({behavior: 'smooth', block: 'start'}); });
+}
+
+const PICK_PRICE = 1.83;                                       // counted where no price was logged (before 3 Nov 2026)
+const PICK_NOTE = 'Only games of the club-rating model with 8+ games behind the projection count (as in the Scorecard). Prices are logged from 3 Nov 2026; earlier picks (marked *) are counted at 1.83, the usual price on these lines.';
+const pickSource = () => ((window.ARCHIVE && ARCHIVE.list) || []).flatMap(sn => sn.games
+  .filter(g => g.model === 'club' && g.n >= MIN_GAMES && g.mh !== null)
+  .map(g => ({date: sn.date, time: g.when, round: sn.round, h: g.h, a: g.a, mh: g.mh, bh: g.bh, oh: g.oH, oa: g.oA})));
+// ---------- Picks: the rule (the model's side of the bookmaker's handicap when the two are 6+ points apart), 1 unit
+// at the logged price, settled from the results. Read from the Archive, so a pick follows the latest line until
+// tip-off and is frozen with the game after; the rule is fixed here, not by the gap selector.
+const PICK_GAP = 6;
+function pickRows(){
+  return pickSource().filter(g => g.mh != null && g.bh != null && Math.abs(g.mh - g.bh) >= PICK_GAP).map(g => {
+    const home = g.mh > g.bh, logged = home ? g.oh : g.oa, pr = logged || PICK_PRICE;
+    const r = arResult(g.date, g.h, g.a);
+    let m = null, res = null, u = null;
+    if (r){
+      m = r[6] - r[7];
+      const c = home ? m - g.bh : g.bh - m;                 // points the bet side beat the line by
+      res = c > 0 ? 'W' : c < 0 ? 'L' : 'P';
+      u = res === 'W' ? pr - 1 : res === 'L' ? -1 : 0;
+    }
+    return {...g, home, pr, logged: !!logged, r, m, res, u, bet: home ? `${g.h} ${sgn(-g.bh)}` : `${g.a} ${sgn(g.bh)}`};
+  }).sort((x, y) => (x.date + x.time).localeCompare(y.date + y.time) || x.h.localeCompare(y.h));
+}
+function renderPicks(){
+  const box = $('pkView');
+  const all = pickRows(), open = all.filter(p => !p.r), done = all.filter(p => p.r);
+  const w = done.filter(p => p.res === 'W').length, l = done.filter(p => p.res === 'L').length, pu = done.length - w - l;
+  const units = done.reduce((s, p) => s + p.u, 0);
+  const cls = v => v > 0 ? 'w' : v < 0 ? 'l' : '';
+  const u2 = v => (v > 0 ? '+' : v < 0 ? '−' : '') + Math.abs(v).toFixed(2);
+  const card = (t, v, sub) => `<div class="metric"><div class="lbl">${t}</div><div class="big2">${v}</div><div class="tag">${sub}</div></div>`;
+  const price = p => `${p.pr.toFixed(2)}${p.logged ? '' : '<span class="tag" title="No price was logged for this pick: counted at ' + PICK_PRICE.toFixed(2) + '">*</span>'}`;
+  let h = `<div class="note" style="margin-bottom:14px"><b>A pick is the model's side of the bookmaker's handicap when the two are ${PICK_GAP} or more points apart</b> (the rule), 1 unit at the price logged with the line. Until tip-off a pick follows the latest line, so it can appear or drop out as the line moves; then it is frozen with the game in the <a class="back" href="#view=archive" data-go="archive">Archive</a> and settled from the result. ${PICK_NOTE} The record judges itself at <b>100 settled picks</b>; before that it is mostly noise.</div>
+    <div class="metrics">
+      ${card('Settled picks', done.length, `${open.length} still to play`)}
+      ${card('Record', done.length ? `${w}–${l}${pu ? `<span class="tag">–${pu}</span>` : ''}` : '–', 'won – lost' + (pu ? ' – push' : ''))}
+      ${card('Hit rate', w + l ? `<span class="${w / (w + l) * 100 > 100 / PICK_PRICE ? 'w' : 'l'}">${Math.round(w / (w + l) * 100)}%</span>` : '–', `break-even about ${(100 / PICK_PRICE).toFixed(1)}% at ${PICK_PRICE.toFixed(2)}`)}
+      ${card('Units', done.length ? `<span class="${cls(units)}">${u2(units)}</span>` : '–', 'stake 1 unit a pick')}
+      ${card('ROI', done.length ? `<span class="${cls(units)}">${(units > 0 ? '+' : units < 0 ? '−' : '') + Math.abs(units / done.length * 100).toFixed(1)}%</span>` : '–', 'units won per unit staked')}
+    </div>`;
+  h += `<h2>Open picks</h2>` + (open.length ? `<div class="scroll"><table class="fx"><tr><th class="n">Tip-off</th><th>Match</th><th>Bet</th><th class="n">Price</th><th class="n" title="Model handicap, home minus away">Model</th><th class="n" title="Bookmaker handicap, home minus away">Book</th><th class="n" title="Model minus book">Gap</th></tr>` +
+    open.map(p => `<tr><td class="n">${fmtDate(p.date).slice(0, 5)} <span class="tag">${esc(p.time)}</span></td><td><b>${esc(p.h)}</b> – <b>${esc(p.a)}</b></td>
+      <td><b class="hcp">${esc(p.bet)}</b></td><td class="n">${price(p)}</td><td class="n">${sgn(p.mh)}</td><td class="n">${sgn(p.bh)}</td><td class="n big">${sgn(p.mh - p.bh)}</td></tr>`).join('') + '</table></div>'
+    : '<div class="empty">No open picks right now. They appear here once a bookmaker line is 6+ points from the model.</div>');
+  let run = 0;
+  const rows = done.map(p => { run += p.u; return `<tr><td class="n">${fmtDate(p.date)}</td><td><b>${esc(p.h)}</b> – <b>${esc(p.a)}</b></td>
+      <td><b>${esc(p.bet)}</b></td><td class="n">${price(p)}</td><td class="n">${sgn(p.mh)}</td><td class="n">${sgn(p.bh)}</td>
+      <td class="n"><b>${p.r[6]}–${p.r[7]}</b></td><td class="n">${sgn(p.m)}</td>
+      <td class="n ${p.res === 'W' ? 'w' : p.res === 'L' ? 'l' : 'tag'}"><b>${p.res === 'W' ? 'Won' : p.res === 'L' ? 'Lost' : 'Push'}</b></td>
+      <td class="n ${cls(p.u)}">${u2(p.u)}</td><td class="n ${cls(run)}">${u2(run)}</td></tr>`; }).reverse().join('');
+  h += `<h2>Every settled pick</h2>` + (done.length ? `<div class="scroll"><table class="fx"><tr><th class="n">Date</th><th>Match</th><th>Bet</th><th class="n">Price</th><th class="n">Model</th><th class="n">Book</th><th class="n">Score</th><th class="n" title="Home minus away">Margin</th><th class="n">Result</th><th class="n">Units</th><th class="n">Running</th></tr>${rows}</table></div>`
+    : '<div class="empty">No settled picks yet. Each pick is added here once its game is played.</div>');
+  box.innerHTML = h;
+  box.querySelectorAll('[data-go]').forEach(a => a.onclick = e => { e.preventDefault(); setView(a.dataset.go); sync(); window.scrollTo({top: 0}); });
 }
 
 // ---------- Archive: frozen projections and bookmaker lines per day, with the results once they are in
@@ -1155,11 +1213,13 @@ function renderRatings(){
   box.querySelectorAll('[data-go]').forEach(a => a.onclick = e => { e.preventDefault(); setView(a.dataset.go); sync(); window.scrollTo({top: 0}); });
 }
 function setView(v){
-  view = ['projections', 'archive', 'ratings', 'market', 'h2h', 'rosters', 'rankings'].includes(v) ? v : 'projections';
+  view = ['projections', 'archive', 'picks', 'ratings', 'market', 'h2h', 'rosters', 'rankings'].includes(v) ? v : 'projections';
   document.querySelectorAll('#tabs a').forEach(b => b.classList.toggle('on', b.dataset.view === view));
-  document.body.classList.toggle('wide', view === 'projections' || view === 'archive' || view === 'market' || view === 'ratings');
+  document.body.classList.toggle('wide', view === 'projections' || view === 'archive' || view === 'market' || view === 'ratings' || view === 'picks');
   $('rkView').hidden = view !== 'rankings';
   $('arView').hidden = view !== 'archive';
+  $('pkView').hidden = view !== 'picks';
+  if (view === 'picks') renderPicks();
   $('crView').hidden = view !== 'ratings';
   $('mkView').hidden = view !== 'market';
   $('pjView').hidden = view !== 'projections';
