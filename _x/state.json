@@ -155,7 +155,8 @@
       "how-to-win-the-world-cup",
       "remote-office-not-required",
       "measure-what-matters",
-      "the-definitive-guide-a-z-of-betting"
+      "the-definitive-guide-a-z-of-betting",
+      "interception-the-secrets-of-modern"
     ],
     "log": [
       {
@@ -415,6 +416,12 @@
         "slot": "2026-11-03 02",
         "slug": "the-definitive-guide-a-z-of-betting",
         "id": "2117406661786865825"
+      },
+      {
+        "day": "2026-11-03",
+        "slot": "2026-11-03 14",
+        "slug": "interception-the-secrets-of-modern",
+        "id": "2117587648374047061"
       }
     ],
     "last_day": "2026-11-03"
@@ -902,7 +909,7 @@
     ],
     "last_day": "2026-11-03"
   },
-  "last_slot": "2026-11-03 11",
+  "last_slot": "2026-11-03 14",
   "quote": {
     "seen": [
       "1",
