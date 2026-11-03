@@ -154,7 +154,8 @@
       "the-definitive-guide-to-betting-exchanges",
       "how-to-win-the-world-cup",
       "remote-office-not-required",
-      "measure-what-matters"
+      "measure-what-matters",
+      "the-definitive-guide-a-z-of-betting"
     ],
     "log": [
       {
@@ -408,9 +409,15 @@
         "slot": "2026-11-02 14",
         "slug": "measure-what-matters",
         "id": "2117225397079384223"
+      },
+      {
+        "day": "2026-11-03",
+        "slot": "2026-11-03 02",
+        "slug": "the-definitive-guide-a-z-of-betting",
+        "id": "2117406661786865825"
       }
     ],
-    "last_day": "2026-11-02"
+    "last_day": "2026-11-03"
   },
   "film": {
     "seen": [
@@ -881,7 +888,7 @@
     ],
     "last_day": "2026-11-02"
   },
-  "last_slot": "2026-11-02 20",
+  "last_slot": "2026-11-03 02",
   "quote": {
     "seen": [
       "1",
