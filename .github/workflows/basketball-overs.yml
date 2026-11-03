@@ -4,10 +4,10 @@ name: Feed · Basketball totals live test
 # the next 7 days, picks logged at the line on offer and settled after the game. Scripts and data in
 # nikolitso/BettingSignal (basketball-overs/); the record is basketball-overs/data/live/report.md there.
 # Publishes basketball/overs/live.js (projections + live record; the backtest part of the page is fixed).
-# Every hour (:20 UTC), plus the Run workflow button.
+# Every 30 minutes (:07 and :37), plus the Run workflow button.
 on:
   schedule:
-    - cron: "20 * * * *"
+    - cron: "7,37 * * * *"   # every 30 minutes: GitHub drops many scheduled runs, so about one an hour gets through
   workflow_dispatch:
 
 permissions:
