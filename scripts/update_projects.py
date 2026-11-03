@@ -68,13 +68,20 @@ def upcoming(items, key):
     return sorted((it for it in items if parse(key(it)) >= NOW - timedelta(hours=2)), key=lambda it: parse(key(it)))
 
 
+def record(won, lost, profit, n_open):
+    """The two pills every card with picks shares, in this order: past record (with ROI) and open picks."""
+    n = won + lost
+    rec = f"Record {won}–{lost} · ROI {profit / n * 100:+.1f}%" if n else "No settled picks yet"
+    return [rec, f"{n_open} open pick{'s' if n_open != 1 else ''}" if n_open else "No open picks"]
+
+
 def short(team):
     return team.replace("PAOK Thessaloniki FC", "PAOK").strip()
 
 
 # ---- one function per card: returns a list of pill texts ------------------------------------------
-# Every card reads the same way: when it was last refreshed (or the site's own status stamp), what comes
-# next, and one number. Three pills, in that order.
+# Cards with picks read the same way: past record with ROI, then open picks (record()). The other cards:
+# what comes next and one number. No "Updated" pill (user, 3 Nov 2026).
 
 def paok_hub():
     s = get("/paok-hub/fixtures.html")
@@ -115,7 +122,7 @@ def paok_basketball():
         me = next((t for t in d.get("standings", []) if t.get("paok")), None)
         if me:
             records[name] = f"{name} {me['w']}–{me['l']}"
-    pills = [updated(max(stamps))] if stamps else []
+    pills = []
     coming = [g for g in games if g[0] >= NOW - timedelta(hours=2)]
     if coming:
         dt, home, opp, comp = min(coming)
@@ -130,7 +137,7 @@ def paok_basketball():
 def superleague():
     d = js_object("/superleague/data.js", r"window\.SL\s*=")
     fx = upcoming(d.get("fixtures", []), lambda f: f["kickoff"])
-    pills = [updated(d["updated"])]
+    pills = []
     if fx:
         pills.append(nxt(fx[0]["home"], fx[0]["away"], parse(fx[0]["kickoff"])))
         pills.append(f"{len(fx)} games projected")
@@ -140,14 +147,14 @@ def superleague():
 def greek_cup():
     d = js_object("/football/greek-cup/data.js", r"window\.CUP\s*=")
     g = max(d["games"], key=lambda g: g["date"])
-    return [updated(d["updated"]), f"Last: {g['home']} {g['goals'][0]}–{g['goals'][1]} {g['away']}",
+    return [f"Last: {g['home']} {g['goals'][0]}–{g['goals'][1]} {g['away']}",
             f"{len(d['games'])} games"]
 
 
 def basketball_cup(folder):
     d = js_object(f"/{folder}/projections.js", r"window\.PROJ\s*=")
     games = upcoming(d.get("list", []), lambda g: g["when"])
-    pills = [updated(d["updated"])]
+    pills = []
     if games:
         rnd = games[0]["round"]
         n = sum(1 for g in games if g["round"] == rnd)
@@ -158,40 +165,27 @@ def basketball_cup(folder):
 def handball():
     d = js_object("/handball/projections/", r"const D\s*=")
     sig = d["sig"]["signals"]
-    pills = [updated(d["scraped"])]
-    live = [s for s in sig if s.get("status") not in ("won", "lost", "push", "void")]
-    won = sum(s.get("status") == "won" for s in sig)
-    lost = sum(s.get("status") == "lost" for s in sig)
-    pills.append(f"{len(live)} open signal{'s' if len(live) != 1 else ''}" if live else "No open signals")
-    if won or lost:
-        pills.append(f"Signals {won}–{lost}")
-    return pills
+    done = [x for x in sig if x.get("status") in ("won", "lost")]
+    return record(sum(x["status"] == "won" for x in done), sum(x["status"] == "lost" for x in done),
+                  sum(x.get("profit") or 0 for x in done), sum(x.get("status") == "open" for x in sig))
 
 
 def basketball():
     d = js_object("/basketball/", r"const D\s*=")
-    pills = [updated(d["scraped"])]
-    games = sum(L.get("nResults") or 0 for L in d.get("leagues", []))
-    if games:
-        pills.append(f"{games} games this season")
     rec = d.get("record") or {}
-    won, lost, open_ = (sum(r.get(k, 0) for r in rec.values()) for k in ("won", "lost", "open"))
-    if open_:
-        pills.append(f"{open_} open signal{'s' if open_ != 1 else ''}")
-    elif won or lost:
-        pills.append(f"Signals {won}–{lost}")
-    return pills
-
+    won, lost, open_, units = (sum(r.get(k, 0) for r in rec.values()) for k in ("won", "lost", "open", "units"))
+    if won or lost or open_:
+        return record(won, lost, units, open_)
+    games = sum(L.get("nResults") or 0 for L in d.get("leagues", []))
+    return [f"{games} games this season"] if games else []
 
 
 def basketball_overs():
     d = js_object("/basketball/overs/live.js", r"window\.LIVE\s*=")
-    pills = [updated(datetime.strptime(d["updated"], "%d %b %Y %H:%M").strftime("%Y-%m-%d %H:%M"))]
-    open_ = [p for p in d.get("picks", []) if not p.get("done")]
-    pills.append(f"{len(open_)} open pick{'s' if len(open_) != 1 else ''}" if open_ else "No open picks")
-    if d.get("bt"):
-        pills.append(f"Backtest {d['bt']['roi'] * 100:+.1f}%")
-    return pills
+    picks = d.get("picks", [])
+    done = [p for p in picks if p.get("done") and p.get("ret") is not None]
+    return record(sum(p["ret"] > 0 for p in done), sum(p["ret"] < 0 for p in done),
+                  sum(p["ret"] for p in done), sum(not p.get("done") for p in picks))
 
 CARDS = {                    # slug -> (card href on the homepage, reader)
     "superleague": ("/superleague/", superleague),
