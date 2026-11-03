@@ -1,6 +1,6 @@
 // Pre-game bookmaker lines for played EuroCup games (fs_odds.py).
 // bh = handicap home minus away, bt = points total; main line = most even odds.
-window.MARKET = {"updated": "2026-10-28", "list": [
+window.MARKET = {"updated": "2026-11-03", "list": [
 {"date": "2026-09-29", "h": "Hapoel Jerusalem", "a": "Rostock", "bh": 14.5, "bt": 170.5},
 {"date": "2026-09-29", "h": "Le Mans", "a": "Aris", "bh": -8.5, "bt": 167.5},
 {"date": "2026-09-29", "h": "Neptunas", "a": "Trento", "bh": -1.5, "bt": 171.5},
@@ -80,5 +80,9 @@ window.MARKET = {"updated": "2026-10-28", "list": [
 {"date": "2026-10-28", "h": "Siauliai", "a": "Maxima Roma", "bh": -7.5, "bt": 167.5},
 {"date": "2026-10-28", "h": "Slask Wroclaw", "a": "Tofas", "bh": -8.5, "bt": 170.5},
 {"date": "2026-10-28", "h": "Tenerife", "a": "Venezia", "bh": 10.5, "bt": 170.5},
-{"date": "2026-10-28", "h": "Tortona", "a": "Rostock", "bh": 7.5, "bt": 170.5}
+{"date": "2026-10-28", "h": "Tortona", "a": "Rostock", "bh": 7.5, "bt": 170.5},
+{"date": "2026-11-03", "h": "Basket Napoli", "a": "Trento", "bh": 10.5, "bt": 174.5},
+{"date": "2026-11-03", "h": "Buducnost", "a": "Chemnitz", "bh": 8.5, "bt": 173.5},
+{"date": "2026-11-03", "h": "PAOK", "a": "BC Roma", "bh": 10.5, "bt": 173.5},
+{"date": "2026-11-03", "h": "Ulm", "a": "Bahcesehir Kol.", "bh": -6.5, "bt": 174.5}
 ]};
