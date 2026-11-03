@@ -8,7 +8,7 @@ Usage:  python scripts/x_daily.py auto [--dry-run]                (scheduled: po
 - New additions go first, newest first; otherwise a random pick from what this
   round hasn't posted yet. When everything has been posted, a new round starts.
 - Quotes too long for one post go out as a short thread; the source and the link close it.
-- Five slots a day (SLOTS, Athens time). Each slot posts once; a late run still posts the
+- Four slots a day (SLOTS, Athens time). Each slot posts once; a late run still posts the
   current slot, but missed earlier slots are skipped rather than posted in a burst.
 - Credentials come from env: X_API_KEY, X_API_SECRET, X_ACCESS_TOKEN, X_ACCESS_TOKEN_SECRET.
   Without them (or with --dry-run) it only prints the post.
@@ -35,8 +35,8 @@ STATE = ROOT / "_x" / "state.json"
 BOOKS = ROOT / "_edge" / "books"
 FILMS = Path(os.environ.get("WAM_DIR", ROOT.parent / "whatalgomissed")) / "content" / "films"
 ATHENS = ZoneInfo("Europe/Athens")
-# Five slots a day (Athens time): book and film every 6 hours, plus one quote a day
-SLOTS = [(2, "book"), (8, "film"), (11, "quote"), (14, "book"), (20, "film")]
+# Four slots a day (Athens time): two books, one quote, one film in the evening
+SLOTS = [(2, "book"), (11, "quote"), (14, "book"), (20, "film")]
 QUOTES = ROOT / "thought-bank" / "quotes.json"
 URL_LEN = 23  # X counts every link as 23 characters
 

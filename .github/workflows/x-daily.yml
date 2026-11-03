@@ -1,6 +1,6 @@
 name: Post · Daily X
 
-# Five posts a day (Athens time): 02:00 book, 08:00 film, 11:00 quote, 14:00 book, 20:00 film.
+# Four posts a day (Athens time): 02:00 book, 11:00 quote, 14:00 book, 20:00 film.
 # A Cloudflare Worker (x-daily-scheduler) triggers this at each slot and again 30 minutes later ("auto");
 # GitHub's own hourly schedule is a backup. Each slot posts once; late runs still post the current slot, never a burst.
 on:
