@@ -122,7 +122,7 @@ const VIEWS = {
           <div class="big vs">PAOK ${vsAt(next)} ${esc(next.opp)}</div>
           <div class="muted">${fmtDate(next.date, { weekday: 'long', year: 'numeric' })} · ${fmtTime(next.date)} · ${esc(next.venue)}${next.tv ? ' · TV: ' + esc(next.tv) : ''}</div>
           ${oppContext(next)}
-          ${state.scout.reports.some((r) => String(r.code) === String(next.code)) ? `<a class="report" style="color:#fff" href="#scout" onclick="state.filters.scout='${next.comp}'">Scouting report & projections →</a>` : ''}
+          ${state.scout.reports.some((r) => String(r.code) === String(next.code)) ? `<a class="report" style="color:inherit" href="#scout" onclick="state.filters.scout='${next.comp}'">Scouting report & projections →</a>` : ''}
         </div>
         ${hasTime(next.date) ? `<div class="countdown" id="countdown" data-t="${next.date}"></div>` : ''}
       </section>` : '';
@@ -497,7 +497,7 @@ VIEWS.scout = function scout() {
         <div class="label">Projected score</div>
         <div class="big">${esc(hn)} ${Math.round(hs)} – ${Math.round(as)} ${esc(an)}</div>
         <div class="winbar"><div style="width:${pr.winProb}%"></div></div>
-        <div class="muted">PAOK win chance: <b style="color:#fff">${pr.winProb}%</b> · expected ${pr.pace ? f1(pr.pace) : '–'} possessions · ${esc(src)}${pr.note ? ' · ' + esc(pr.note) : ''}</div>
+        <div class="muted">PAOK win chance: <b style="color:inherit">${pr.winProb}%</b> · expected ${pr.pace ? f1(pr.pace) : '–'} possessions · ${esc(src)}${pr.note ? ' · ' + esc(pr.note) : ''}</div>
       </div>
       ${tstats}
       ${absent(us, 'PAOK')}${absent(them, pick.opp)}
@@ -513,7 +513,7 @@ VIEWS.scout = function scout() {
     <div class="card dark" style="margin-bottom:8px">
       <div class="label">${esc(compName(pick.comp))} · ${esc(pick.round)}</div>
       <div class="big">PAOK ${pick.home ? 'vs' : '@'} ${esc(pick.opp)}</div>
-      <div class="muted">${fmtDate(pick.date, { weekday: 'long', year: 'numeric' })} · ${fmtTime(pick.date)} · ${esc(pick.venue)}${pick.url ? ` · <a class="report" style="color:#fff" href="${esc(pick.url)}" target="_blank" rel="noopener">Game page ↗</a>` : ''}</div>
+      <div class="muted">${fmtDate(pick.date, { weekday: 'long', year: 'numeric' })} · ${fmtTime(pick.date)} · ${esc(pick.venue)}${pick.url ? ` · <a class="report" style="color:inherit" href="${esc(pick.url)}" target="_blank" rel="noopener">Game page ↗</a>` : ''}</div>
       ${clubLinks(pick.opp) ? `<div class="muted" style="margin-top:4px">${esc(pick.opp)}: ${clubLinksHtml(pick.opp, 'report club-link')}</div>` : ''}
     </div>
     <h2>Match-day projections</h2>${proj}
@@ -990,7 +990,7 @@ function oppContext(g) {
   const bits = [];
   if (row && row.gp) bits.push(`${esc(g.opp)}: ${ordinal(row.pos)} in ${g.comp === 'EuroCup' ? state.ec.group : 'GBL'} (${row.w}–${row.l})`);
   if (prev.length) bits.push('This season: ' + prev.map((x) => `${result(x)} ${x.us}–${x.them} (${compName(x.comp)})`).join(', '));
-  return bits.length ? `<div class="note" style="color:#ddd">${bits.join(' · ')}</div>` : '';
+  return bits.length ? `<div class="note" style="color:inherit">${bits.join(' · ')}</div>` : '';
 }
 const ordinal = (n) => n + (['th', 'st', 'nd', 'rd'][(n % 100 - 20) % 10] || ['th', 'st', 'nd', 'rd'][n % 100] || 'th');
 
