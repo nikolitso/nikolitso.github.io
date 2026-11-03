@@ -1,7 +1,7 @@
 {
  "competition": "BKT EuroCup",
  "season": "2026-27",
- "updated": "2026-11-03T21:56:44Z",
+ "updated": "2026-11-03T21:58:29Z",
  "source": "https://www.euroleaguebasketball.net/eurocup/",
  "group": "Group D",
  "staff": [
@@ -213,6 +213,20 @@
    "url": "https://www.euroleaguebasketball.net/en/eurocup/game-center/2026-27/game/U2026/14/",
    "us": 93,
    "them": 78,
+   "quarters": {
+    "us": [
+     21,
+     19,
+     18,
+     35
+    ],
+    "them": [
+     20,
+     21,
+     15,
+     22
+    ]
+   },
    "box": {
     "players": [
      {
@@ -541,6 +555,20 @@
    "url": "https://www.euroleaguebasketball.net/en/eurocup/game-center/2026-27/game/U2026/32/",
    "us": 75,
    "them": 72,
+   "quarters": {
+    "us": [
+     22,
+     18,
+     19,
+     16
+    ],
+    "them": [
+     18,
+     17,
+     26,
+     11
+    ]
+   },
    "box": {
     "players": [
      {
@@ -892,6 +920,20 @@
    "url": "https://www.euroleaguebasketball.net/en/eurocup/game-center/2026-27/game/U2026/45/",
    "us": 86,
    "them": 95,
+   "quarters": {
+    "us": [
+     22,
+     18,
+     24,
+     22
+    ],
+    "them": [
+     23,
+     27,
+     24,
+     21
+    ]
+   },
    "box": {
     "players": [
      {
@@ -1243,6 +1285,20 @@
    "url": "https://www.euroleaguebasketball.net/en/eurocup/game-center/2026-27/game/U2026/64/",
    "us": 87,
    "them": 78,
+   "quarters": {
+    "us": [
+     19,
+     27,
+     13,
+     28
+    ],
+    "them": [
+     20,
+     22,
+     13,
+     23
+    ]
+   },
    "box": {
     "players": [
      {
@@ -1594,6 +1650,20 @@
    "url": "https://www.euroleaguebasketball.net/en/eurocup/game-center/2026-27/game/U2026/78/",
    "us": 81,
    "them": 84,
+   "quarters": {
+    "us": [
+     23,
+     17,
+     18,
+     23
+    ],
+    "them": [
+     26,
+     26,
+     11,
+     21
+    ]
+   },
    "box": {
     "players": [
      {
@@ -1945,6 +2015,20 @@
    "url": "https://www.euroleaguebasketball.net/en/eurocup/game-center/2026-27/game/U2026/95/",
    "us": 113,
    "them": 111,
+   "quarters": {
+    "us": [
+     29,
+     32,
+     31,
+     21
+    ],
+    "them": [
+     22,
+     38,
+     26,
+     25
+    ]
+   },
    "box": {
     "players": [
      {

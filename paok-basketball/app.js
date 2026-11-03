@@ -300,6 +300,7 @@ const VIEWS = {
       ${hasLg ? `<p class="note">${leagueOf(comp).group ? `${esc(leagueOf(comp).group)} average = the average team per game across every game in PAOK's EuroCup group; ranks are among the ${leagueOf(comp).teams.length} ${esc(leagueOf(comp).group)} teams.` : `League average = the average team per game across every ${esc(compName(comp))} game this season; ranks are among all ${leagueOf(comp).teams.length} teams.`} 1st = best (for turnovers, fouls and points allowed, fewest is best). Green = top third, red = bottom third.</p>` : `<p class="note">Pick Greek League or EuroCup above to compare with the league average and see PAOK's rank.</p>`}
       ${paceSection(games, comp)}
       ${extrasSection(games)}
+      ${homeQuarters()}
       <h2>Game log</h2>
       <div class="table-wrap"><table>
         <thead><tr><th class="l">Date</th><th class="l">Comp</th><th class="l">Opponent</th><th></th><th>Score</th><th>FG%</th><th>3P%</th><th>REB</th><th>AST</th><th>TO</th><th>PIR</th><th>Poss</th><th>ORtg</th><th>DRtg</th></tr></thead>
@@ -931,6 +932,32 @@ const EXTRAS = [
   ['tovPts', 'Points from turnovers'], ['paint', 'Points in the paint'], ['second', 'Second chance points'],
   ['fastbreak', 'Fast break points'], ['bench', 'Bench points'], ['lead', 'Biggest lead'], ['run', 'Biggest scoring run'],
 ];
+const QUARTERS_LEFT_OUT = new Set(['28F71477']); // Doxa Lefkadas at home
+function homeQuarters() {
+  const games = state.games.filter((g) => g.played && g.home && !g.neutral && g.quarters && !QUARTERS_LEFT_OUT.has(String(g.code)));
+  if (!games.length) return '';
+  const n = games.length;
+  const ot = games.some((g) => g.quarters.us.length > 4);
+  const total = (a) => a.reduce((s, v) => s + v, 0);
+  const cols = (a) => [...a.slice(0, 4), ...(ot ? [total(a.slice(4))] : []), a[0] + a[1], a[2] + a[3], total(a)];
+  const heads = ['Q1', 'Q2', 'Q3', 'Q4', ...(ot ? ['OT'] : []), '1st half', '2nd half', 'Final'];
+  const us = games.map((g) => cols(g.quarters.us)), them = games.map((g) => cols(g.quarters.them));
+  const mean = (rows) => heads.map((_, i) => total(rows.map((r) => r[i])) / n);
+  const avgUs = mean(us), avgThem = mean(them);
+  const signed = (x) => `<span class="${x > 0 ? 'pos-text' : x < 0 ? 'neg-text' : ''}">${x > 0 ? '+' : ''}${f1(x)}</span>`;
+  const log = games.map((g, i) => `<tr class="click" onclick="openBox('${g.code}')"><td class="l">${esc(g.opp)} <span class="muted">· ${esc(compName(g.comp))}</span></td>
+    ${us[i].map((v, c) => `<td>${v > them[i][c] ? `<b>${v}</b>` : v}–${them[i][c]}</td>`).join('')}</tr>`).join('');
+  return `<h2>Home games by quarter</h2>
+    <div class="table-wrap" style="max-width:860px"><table>
+      <thead><tr><th class="l">Game</th>${heads.map((h) => `<th>${h}</th>`).join('')}</tr></thead>
+      <tbody>${log}
+        <tr class="section"><td class="l" colspan="${heads.length + 1}">Average per game</td></tr>
+        <tr><td class="l">PAOK</td>${avgUs.map((v) => `<td><b>${f1(v)}</b></td>`).join('')}</tr>
+        <tr><td class="l">Opponents</td>${avgThem.map((v) => `<td>${f1(v)}</td>`).join('')}</tr>
+        <tr><td class="l">Difference</td>${avgUs.map((v, i) => `<td>${signed(v - avgThem[i])}</td>`).join('')}</tr>
+      </tbody></table></div>
+    <p class="note">PAOK's score first. Greek League and EuroCup home games, whichever competition is picked above, leaving out Doxa Lefkadas. Click a game for its box score.</p>`;
+}
 function extrasSection(games) {
   const withX = games.filter((g) => g.box.extra);
   if (!withX.length) return '';
