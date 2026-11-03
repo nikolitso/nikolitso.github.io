@@ -167,6 +167,10 @@ th.tsort{cursor:pointer;user-select:none} th.tsort:hover{color:var(--gold)}
 .chips{display:flex;flex-wrap:wrap;gap:6px;margin:14px 0 4px}
 .chips a{font:400 13px var(--mono);color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:4px 11px;text-decoration:none}
 .chips a.on{color:var(--an-on-accent);background:var(--gold);border-color:var(--gold)}
+.metric .sm{font:400 12.5px var(--mono);color:var(--muted);margin-top:4px}
+.pill{display:inline-block;font:500 12px var(--mono);padding:2px 9px;border-radius:99px;border:1px solid var(--line);vertical-align:4px;margin-left:6px}
+.pill.pos{border-color:color-mix(in srgb,var(--win) 40%,transparent);background:color-mix(in srgb,var(--win) 10%,transparent)}
+.pill.neg{border-color:color-mix(in srgb,var(--loss) 40%,transparent);background:color-mix(in srgb,var(--loss) 9%,transparent)}
 .lgt{font:500 11px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--gold)}
 </style>
 <header class="an-head"><div>
@@ -185,7 +189,7 @@ th.tsort{cursor:pointer;user-select:none} th.tsort:hover{color:var(--gold)}
   <div class="chips" id="chips"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=26077ae7"></script>
+<script src="data.js?v=9c00f9f0"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -209,6 +213,7 @@ $('sub').textContent = `${DATA.leagues.length} leagues, women's and men's · ${D
 
 function renderProjections(){
   let h = `<p class="note">Every match in the next 7 days: the chance it goes 3, 4 or 5 sets, the model's line on total points (where over and under are even). Once a bookmaker posts a line, the row shows the book line, the average over price and the model's over chance against it. Only <b>picks</b> are highlighted (gold); they are backed and recorded: overs on lines ${DATA.min_line}.5 to ${DATA.low - 0.5}, the matches the market expects to end 3-0, where the edge is above ${DATA.edge*100}%.</p>`;
+  h = pickTiles() + h;
   const fx = DATA.fixtures.filter(inLg);
   if (!fx.length) return h + '<p class="empty">No matches in the next 7 days.</p>';
   const byDay = {};
@@ -225,6 +230,15 @@ function renderProjections(){
     h += '</tbody></table></div>';
   }
   return h;
+}
+
+// the pick record at a glance, the same tiles and wording as the handball projections and the homepage card
+function pickTiles(){
+  const P = DATA.picks.filter(inLg), done = P.filter(p => 'won' in p), nOpen = P.length - done.length;
+  const w = done.filter(p => p.won).length, units = done.reduce((s, p) => s + p.profit, 0);
+  const t = [['Open picks', nOpen, nOpen ? 'to play' : 'none right now'], ['Record', `${w}–${done.length - w}`, 'win – loss'],
+             ['Return', `<span class="${cls(units)}">${sgn(units, 2)}</span>${done.length ? ` <span class="pill ${cls(units)}">ROI ${sgn(units / done.length * 100, 1)}%</span>` : ''}`, 'units']];
+  return `<div class="metrics">${t.map(([l, v, n]) => `<div class="metric"><div class="lbl">${l}</div><div class="big">${v}</div><div class="sm">${n}</div></div>`).join('')}</div>`;
 }
 
 function tiles(list){
