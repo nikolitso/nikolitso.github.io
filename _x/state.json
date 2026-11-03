@@ -665,7 +665,8 @@
       "mondays-in-the-sun",
       "the-good-life",
       "the-man-who-copied",
-      "the-last-resort"
+      "the-last-resort",
+      "a-family"
     ],
     "log": [
       {
@@ -891,11 +892,17 @@
         "slot": "2026-11-03 08",
         "slug": "the-last-resort",
         "id": "2117497261290864794"
+      },
+      {
+        "day": "2026-11-03",
+        "slot": "2026-11-02 20",
+        "slug": "a-family",
+        "id": "2117506682108457160"
       }
     ],
     "last_day": "2026-11-03"
   },
-  "last_slot": "2026-11-03 08",
+  "last_slot": "2026-11-02 20",
   "quote": {
     "seen": [
       "1",
