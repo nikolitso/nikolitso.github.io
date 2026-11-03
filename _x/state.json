@@ -673,7 +673,8 @@
       "the-good-life",
       "the-man-who-copied",
       "the-last-resort",
-      "a-family"
+      "a-family",
+      "marina"
     ],
     "log": [
       {
@@ -905,11 +906,17 @@
         "slot": "2026-11-02 20",
         "slug": "a-family",
         "id": "2117506682108457160"
+      },
+      {
+        "day": "2026-11-03",
+        "slot": "2026-11-03 20",
+        "slug": "marina",
+        "id": "2117678418078679384"
       }
     ],
     "last_day": "2026-11-03"
   },
-  "last_slot": "2026-11-03 14",
+  "last_slot": "2026-11-03 20",
   "quote": {
     "seen": [
       "1",
