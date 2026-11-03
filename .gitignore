@@ -1,3 +1,6 @@
 profile large.jpg
 __pycache__/
 .superpowers/
+
+# pipeline checkout used by the site workflows, never committed
+_bs/
