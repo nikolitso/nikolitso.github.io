@@ -394,6 +394,8 @@ function makeSortable(){
   const ids=main.concat(slugs, slugs.map(x=>'bt-'+x));
   const wrap=document.querySelector('.wrap'), fixed=wrap.dataset.page, base=wrap.dataset.base;
   if(!base){const hm=document.querySelector('a.home');if(hm)hm.href='#projections'}
+  if(base) document.querySelectorAll('.tabs a').forEach(a=>{a.href=base+a.dataset.id+'/'});
+  {const h=location.hash.slice(1);if(base&&fixed&&h!==fixed&&(main.includes(h)||LG[h]||(h.startsWith('bt-')&&LG[h.slice(3)])))location.replace(base+(LG[h]?'projections/'+h:h.startsWith('bt-')?'backtesting/'+h.slice(3):h)+'/')}
   const cap=x=>x.charAt(0).toUpperCase()+x.slice(1);
   const cur=()=>fixed||(ids.includes(location.hash.slice(1))?location.hash.slice(1):'projections');
   function show(){const c=cur(), bt=c.startsWith('bt-'), lg=LG[c], tab=lg?'projections':bt?'backtesting':c, sec=lg?'league':bt?'backtesting':c;
