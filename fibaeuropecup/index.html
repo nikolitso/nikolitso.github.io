@@ -683,6 +683,19 @@ function pickRows(){
     return {...g, home, pr, logged: !!logged, r, m, res, u, rec: pickRecord({...g, home}, played), bet: home ? `${g.h} ${sgn(-g.bh)}` : `${g.a} ${sgn(g.bh)}`};
   }).sort((x, y) => (x.date + x.time).localeCompare(y.date + y.time) || x.h.localeCompare(y.h));
 }
+// a second test, apart from the rule: the favourite whenever the bookmaker's handicap is FAV_LINE or more, from FAV_FROM on.
+// Past real lines suggested it (36 of 54 covered), so only games from FAV_FROM count; every game with a line, whatever the model says.
+const FAV_LINE = 10, FAV_FROM = '2026-11-04';
+function favRows(){
+  return ((window.ARCHIVE && ARCHIVE.list) || []).filter(sn => sn.date >= FAV_FROM).flatMap(sn => sn.games
+    .filter(g => g.bh != null && Math.abs(g.bh) >= FAV_LINE).map(g => {
+      const home = g.bh > 0, logged = home ? g.oH : g.oA, pr = logged || PICK_PRICE, r = arResult(sn.date, g.h, g.a);
+      const c = r ? (r[6] - r[7] - g.bh) * (home ? 1 : -1) : null;
+      const res = !r ? null : c > 0 ? 'W' : c < 0 ? 'L' : 'P';
+      return {date: sn.date, time: g.when, h: g.h, a: g.a, bh: g.bh, pr, logged: !!logged, r, res, u: !r ? null : res === 'W' ? pr - 1 : res === 'L' ? -1 : 0,
+        bet: `${home ? g.h : g.a} ${sgn(-Math.abs(g.bh))}`};
+    })).sort((x, y) => (x.date + x.time).localeCompare(y.date + y.time) || x.h.localeCompare(y.h));
+}
 function renderPicks(){
   const box = $('pkView');
   const all = pickRows(), open = all.filter(p => !p.r), done = all.filter(p => p.r);
@@ -712,6 +725,15 @@ function renderPicks(){
   h += `<h2>By season record</h2><div class="tag" style="margin-bottom:8px;max-width:760px;line-height:1.5">Does the two clubs' record against the line before the game (Vs Market tab) point the same way as the pick? Every pick still counts in the record above: this only watches whether the agreeing picks do better. Past games suggested they might, on very few picks, so the fair count starts on ${fmtDate(PICK_SPLIT_FROM)}.</div>
     <div class="scroll"><table class="fx" style="width:auto;min-width:640px"><tr><th>Group</th><th class="n">Picks</th><th class="n">Record</th><th class="n">Hit rate</th><th class="n">Units</th><th class="n">ROI</th><th class="n" title="Won – lost since the split was set up">From ${fmtDate(PICK_SPLIT_FROM).slice(0, 5)}</th></tr>
     ${group('✓ Record agrees', true)}${group('✗ Record disagrees', false)}${group('Too early to say', null)}</table></div>`;
+  const fav = favRows(), fd = fav.filter(p => p.r), fw = fd.filter(p => p.res === 'W').length, fl = fd.filter(p => p.res === 'L').length, fu = fd.reduce((t, p) => t + p.u, 0);
+  h += `<h2>Favourite by ${FAV_LINE}+</h2><div class="tag" style="margin-bottom:8px;max-width:760px;line-height:1.5">A separate test, not part of the record above: the favourite whenever the bookmaker's handicap is ${FAV_LINE} or more, 1 unit, whatever the model says. On past real lines these covered 36 of 54 (67%), but that was found by looking through many situations and did not show on the EuroCup, so only games from ${fmtDate(FAV_FROM)} count here. Like the record above, it judges itself at 100 settled bets.</div>
+    <div class="scroll"><table class="fx" style="width:auto;min-width:640px"><tr><th class="n">Bets</th><th class="n">To play</th><th class="n">Record</th><th class="n">Hit rate</th><th class="n">Units</th><th class="n">ROI</th></tr>
+    <tr><td class="n">${fd.length}</td><td class="n">${fav.length - fd.length}</td><td class="n">${wl(fd)}</td><td class="n">${fw + fl ? Math.round(fw / (fw + fl) * 100) + '%' : '–'}</td>
+      <td class="n ${cls(fu)}">${fd.length ? u2(fu) : '–'}</td><td class="n ${cls(fu)}">${fd.length ? (fu > 0 ? '+' : fu < 0 ? '−' : '') + Math.abs(fu / fd.length * 100).toFixed(1) + '%' : '–'}</td></tr></table></div>` +
+    (fav.length ? `<div class="scroll" style="margin-top:10px"><table class="fx" style="width:auto;min-width:640px"><tr><th class="n">Date</th><th>Match</th><th>Bet</th><th class="n">Price</th><th class="n">Score</th><th class="n">Result</th><th class="n">Units</th></tr>` +
+      [...fav].reverse().map(p => `<tr><td class="n">${fmtDate(p.date).slice(0, 5)} <span class="tag">${esc(p.time)}</span></td><td><b>${esc(p.h)}</b> – <b>${esc(p.a)}</b></td><td><b class="hcp">${esc(p.bet)}</b></td><td class="n">${price(p)}</td>
+        <td class="n">${p.r ? `<b>${p.r[6]}–${p.r[7]}</b>` : '–'}</td><td class="n ${p.res === 'W' ? 'w' : p.res === 'L' ? 'l' : 'tag'}">${!p.r ? 'To play' : p.res === 'W' ? '<b>Won</b>' : p.res === 'L' ? '<b>Lost</b>' : 'Push'}</td><td class="n ${p.r ? cls(p.u) : 'tag'}">${p.r ? u2(p.u) : '–'}</td></tr>`).join('') + '</table></div>'
+      : '<div class="empty">No game yet with a line of ' + FAV_LINE + '+ from ' + fmtDate(FAV_FROM) + '.</div>');
   h += `<h2>Open picks</h2>` + (open.length ? `<div class="scroll"><table class="fx"><tr><th class="n">Tip-off</th><th>Match</th><th>Bet</th><th class="n">Price</th><th class="n" title="Model handicap, home minus away">Model</th><th class="n" title="Bookmaker handicap, home minus away">Book</th><th class="n" title="Model minus book">Gap</th><th class="n" title="The clubs' record against the line">Record</th></tr>` +
     open.map(p => `<tr><td class="n">${fmtDate(p.date).slice(0, 5)} <span class="tag">${esc(p.time)}</span></td><td><b>${esc(p.h)}</b> – <b>${esc(p.a)}</b></td>
       <td><b class="hcp">${esc(p.bet)}</b></td><td class="n">${price(p)}</td><td class="n">${sgn(p.mh)}</td><td class="n">${sgn(p.bh)}</td><td class="n big">${sgn(p.mh - p.bh)}</td>${recCell(p)}</tr>`).join('') + '</table></div>'
