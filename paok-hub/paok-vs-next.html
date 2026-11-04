@@ -421,8 +421,9 @@
 
   function render(paok, opp, oppName, meta) {
     document.querySelectorAll('.opp-col-header').forEach(function (th) { th.textContent = oppName; });
-    document.getElementById('page-title').textContent = 'PAOK vs ' + oppName;
-    document.title = 'PAOK Hub — PAOK vs ' + oppName;
+    var fixture = meta.home.replace('PAOK Thessaloniki FC', 'PAOK') + ' – ' + meta.away.replace('PAOK Thessaloniki FC', 'PAOK');   // home team first
+    document.getElementById('page-title').textContent = fixture;
+    document.title = 'PAOK Hub — ' + fixture;
     document.getElementById('meta-comp').textContent = meta.comp || 'Next match';
     document.getElementById('meta-when').textContent = meta.when || '';
     document.getElementById('meta-fixture').textContent = meta.home + ' vs ' + meta.away;
