@@ -122,11 +122,16 @@ th.sort{cursor:pointer;user-select:none}th.sort:hover,th.sort.on{color:var(--gol
 .chip:hover{color:var(--text)}
 .chip.on{background:var(--gold);border-color:var(--gold);color:var(--an-on-accent)}
 .sct{width:auto;min-width:640px}.sct td,.sct th{padding-left:14px;padding-right:14px}.sct tr.sum td{border-top:1px solid var(--gold)}
-table.crt{width:auto;min-width:1140px}table.crt .gl{border-left:1px solid var(--line)}table.crt td.crc{min-width:280px;white-space:normal;line-height:1.45;padding-top:7px;padding-bottom:7px}table.crt th.sort{cursor:pointer}
+table.crt{width:auto;min-width:1120px}table.crt .gl{border-left:1px solid var(--line)}table.crt td.crc{min-width:260px;white-space:normal;line-height:1.45;padding-top:7px;padding-bottom:7px}table.crt th.sort{cursor:pointer}
 .metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px;margin:0 0 8px}
 .metric{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
 .metric .lbl{font:400 12.5px var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}
-.metric .big2{font:500 24px var(--mono);color:var(--gold)}a.door{display:block;color:inherit;text-decoration:none}a.door:hover{border-color:var(--gold)}
+.metric .big2{font:500 24px var(--mono);color:var(--gold)}
+a.metric.hm{display:block;color:inherit;text-decoration:none}
+a.metric.hm:hover{border-color:var(--gold)}
+.hmgrid{grid-template-columns:repeat(auto-fit,minmax(250px,1fr));margin-top:16px}
+table.hmres{width:auto;min-width:680px}
+@media (max-width:720px){table.hmres{width:100%;min-width:0}table.hmres td,table.hmres th{white-space:normal;padding-left:3px;padding-right:3px;font-size:13.5px;overflow-wrap:anywhere}}
 .pjbar{display:flex;flex-wrap:wrap;align-items:center;gap:10px 22px;margin:0 0 8px}
 .pjbar label{font:400 14.5px var(--mono);color:var(--muted);text-transform:none;letter-spacing:0;margin:0;display:flex;align-items:center;gap:8px}
 select.peer{background:var(--panel);border:1px solid var(--line);border-radius:6px;color:var(--text);font:500 15.5px var(--mono);padding:4px 6px;cursor:pointer}
@@ -529,9 +534,12 @@ let pjMode = 'cards';                                              // 'cards' or
 // the side and line the model prefers against the bookmaker; small gaps count as no lean
 const PJ_LEAN = 1.5;
 // the market first: what kind of game each line makes it, and how that kind of game has gone against the lines so far
+const KINDS_FROM = '2026-11-05';
 function mkSpots(before){
   const all = mkData().games.filter(g => !before || g.date < before), games = all.filter(g => g.bh);
-  const kind = bh => { const a = Math.abs(bh), side = bh > 0 ? 'home' : 'away'; return `${a < 10 ? 'Small' : 'Big'} ${side} favourite`; };
+  // picks made before KINDS_FROM keep the kinds of game they were made on, so the record never loses a published pick
+  const kind = bh => { const a = Math.abs(bh), side = bh > 0 ? 'home' : 'away', Side = bh > 0 ? 'Home' : 'Away';
+    return a >= 10 ? `Big ${side} favourite` : !before || before >= KINDS_FROM ? `${Side} favourite under 10` : a < 5 ? 'Close game: tough call' : `Medium ${side} favourite`; };
   const rec = {};
   const add = (k, v) => { const x = rec[k] ||= {w: 0, l: 0}; v > 0 ? x.w++ : v < 0 ? x.l++ : 0; };
   for (const g of games) add(kind(g.bh), (g.hp - g.ap - g.bh) * (g.bh > 0 ? 1 : -1));
@@ -702,7 +710,7 @@ function renderPjCards(P){
       <div class="warn"><b>Not a sure thing.</b> The model uses past results and the injury list, no other news, and has not proven an edge over the bookmaker. This pick rule is new and has no record yet.</div>
       <details><summary>How to read a card</summary><ul><li><b>Winner</b>: the chance to win (the bookmaker's from its odds, margin removed).</li>
         <li><b>Handicap</b>: the expected winning margin, written like a bookmaker's line: Mykonos −8.3 = Mykonos by 8.3.</li>
-        <li><b>Market so far</b>: the kind of game the line makes it, and its record against the lines this season (<a class="back" href="#view=market" data-go="market">Market Analysis</a>). A favourite is small under 10 points, big from 10. Gold = one side has won 54%+ of 20 or more games: a possible market gap, still not proven.</li>
+        <li><b>Market so far</b>: the kind of game the line makes it, and its record against the lines this season (<a class="back" href="#view=market" data-go="market">Market Analysis</a>). Gold = one side has won 54%+ of 20 or more games: a possible market gap, still not proven.</li>
         <li><b>Clubs</b>: clubs on the underrated or overrated lists of Market Analysis, with their average against the handicap.</li>
         <li><b>Pick</b>: a market edge (a gold market gap) and a model edge (${PJ_EDGE}+ points from the line) on the same side, and the club rating does not disagree: the club is not overrated and its opponent is not underrated.</li>
         <li><b>Model leans</b>: the bet the model prefers at the bookmaker's line, and how far apart the two are. Gaps over ${gapMin} points are in gold. "No lean" means the two are close.</li>
@@ -853,7 +861,7 @@ function renderRosters(){
   const nOut = out.length;
   box.innerHTML = `<div class="note" style="margin-bottom:14px">Key players of the ${clubs.length} clubs in this season's FIBA Europe Cup, from ${esc(ROSTERS.source.replace(/^FIBA box scores, /, ''))} of FIBA box scores (updated ${fmtDate(ROSTERS.updated)}).
       <b>Impact</b> is roughly how many points weaker a side is without the player: efficiency per minute above a bench level, times minutes per team game, halved, and trimmed for players with few games.
-      Players listed as out (${nOut ? nOut + ', updated ' + fmtDate(INJURIES.updated) : 'none at the moment'}) are struck through; their impact comes off the club's handicap in the projections.</div>
+      Players listed as out (${nOut ? nOut + ', updated ' + fmtDate(INJURIES.updated) : 'none at the moment'}) are struck through; their impact comes off the club's handicap in the projections. Click a column to sort every club by it.</div>
     <input id="roSearch" placeholder="Search a club, country or player" value="${esc(roQuery)}" aria-label="Search rosters">
     <div class="rogrid" id="roGrid"></div>`;
   const th = (c, label, cls, title) => `<th class="${cls} sort${c === roSort.k ? ' on' : ''}" data-k="${c}"${title ? ` title="${title}"` : ''}>${label}${c === roSort.k ? (roSort.dir > 0 ? ' ▲' : ' ▼') : ''}</th>`;
@@ -1001,8 +1009,8 @@ function mkCompetition(games, clubs){
   const byFav = (lo, hi) => games.filter(g => Math.abs(g.bh) >= lo && Math.abs(g.bh) < hi);
   const favBet = (name, list) => bet(name, list.map(g => hcp(g, fav(g))), 'underdog');
   const sized = (lo, hi, home) => games.filter(g => g.bh && Math.abs(g.bh) >= lo && Math.abs(g.bh) < hi && (home === undefined || (g.bh > 0) === home));
-  const hRows = favBet('All favourites', games.filter(g => g.bh)) + favBet('Small home favourite (under 10)', sized(0, 10, true)) + favBet('Big home favourite (10+)', sized(10, 99, true)) +
-    favBet('Small away favourite (under 10)', sized(0, 10, false)) + favBet('Big away favourite (10+)', sized(10, 99, false));
+  const hRows = favBet('All favourites', games.filter(g => g.bh)) + favBet('Home favourite under 10', sized(0, 10, true)) + favBet('Big home favourite (10+)', sized(10, 99, true)) +
+    favBet('Away favourite under 10', sized(0, 10, false)) + favBet('Big away favourite (10+)', sized(10, 99, false));
   // clubs whose results against their handicaps are further from 0 than their sample's noise
   const rated = sign => clubs.filter(x => x.n >= MK_MIN && x.vsS * sign >= mkLim(MK_SD.hcp, x.n)).sort((x, y) => (y.vsS - x.vsS) * sign);
   const ratedTable = (title, list, cl) => `<div><h3 style="font:600 18px var(--serif);margin:0 0 8px">${title} <span class="tag">${list.length}</span></h3>` + (list.length
@@ -1151,27 +1159,30 @@ function renderRatings(){
   });
   box.querySelectorAll('[data-go]').forEach(a => a.onclick = e => { e.preventDefault(); setView(a.dataset.go); sync(); window.scrollTo({top: 0}); });
 }
-// ---------- Home: one door to each section with its headline, and the last round, which no other tab lists
+// ---------- Home: one tile per section with its number today, and the last round, which no other tab lists
 function renderHome(){
   const box = $('hmView'), P = window.PROJ, now = athens(Date.now());
   const up = ((P && P.list) || []).filter(g => g.when > now), next = up[0];
-  const lined = mkData().games.filter(g => g.bh), picks = pickList(), done = picks.filter(p => p.r), w = done.filter(p => p.res === 'W').length, l = done.filter(p => p.res === 'L').length;
-  const top = P && P.ratings.length ? P.ratings.reduce((x, y) => y.r > x.r ? y : x) : null;
+  const lined = mkData().games.filter(g => g.bh), all = pickList(), done = all.filter(p => p.r), open = all.length - done.length;
+  const w = done.filter(p => p.res === 'W').length, l = done.filter(p => p.res === 'L').length, units = done.reduce((t, p) => t + p.u, 0);
+  const roi = done.length ? units / done.length * 100 : 0, roiTxt = (roi > 0 ? '+' : roi < 0 ? '−' : '') + Math.abs(roi).toFixed(0) + '%';
+  const nOut = ((window.INJURIES && INJURIES.out) || []).length, clubs = window.ROSTERS ? Object.keys(ROSTERS.teams).length : 0;
+  const best = ((P && P.ratings) || []).reduce((x, y) => !x || y.r > x.r ? y : x, null);
   RANK ||= computeRankings();
-  const door = (v, name, big, sub) => `<a class="metric door" href="#view=${v}" data-go="${v}"><div class="lbl">${name}</div><div class="big2">${esc(big)}</div><div class="tag">${esc(sub)}</div></a>`;
+  const tile = (go, name, big, text) => `<a class="metric hm" href="#view=${go}" data-go="${go}"><div class="lbl">${name}</div><div class="big2">${big}</div><div class="tag">${text}</div></a>`;
   const round = g => g.stage.split(' · ')[0], last = lined.reduce((x, g) => !x || g.date >= x.date ? g : x, null);
   const games = last ? lined.filter(g => round(g) === round(last)).sort((x, y) => y.date.localeCompare(x.date) || x.h.localeCompare(y.h)) : [];
   const covered = g => { const c = g.hp - g.ap - g.bh; return c > 0 ? g.h : c < 0 ? g.a : 'Push'; };
   box.innerHTML = `<div class="note" style="margin-bottom:14px">What to expect from each FIBA Europe Cup game: a model and the market's record against the handicap, side by side. For information only, with no proven edge over the bookmaker.</div>
-    <div class="metrics">
-      ${door('projections', 'Projections', `${up.length} games`, next ? `Next: ${fmtDate(next.when.slice(0, 10)).slice(0, 5)} at ${next.when.slice(11)}` : 'No games in the next days')}
-      ${door('picks', 'Picks', done.length ? `${w}–${l}` : `${picks.length} open`, done.length ? `${picks.length - done.length} still to play` : 'No settled picks yet')}
-      ${door('market', 'Market Analysis', `${lined.length} games`, 'Against the handicap this season')}
-      ${door('ratings', 'Club Ratings', top ? top.c : '–', 'Top rated club')}
-      ${door('h2h', 'Head to Head', `${ALL_SEASONS.length} seasons`, 'Any two clubs or countries')}
-      ${door('rosters', 'Rosters', `${Object.keys((window.ROSTERS && ROSTERS.teams) || {}).length} clubs`, 'Key players and who is out')}
-      ${door('rankings', 'Country Power Rankings', RANK[0].c, 'Top rated country')}
-    </div>` + (games.length ? `<h2>Latest results: ${esc(round(last))}</h2><div class="scroll"><table class="fx" style="width:auto;min-width:680px"><tr><th class="n">Date</th><th>Game</th><th class="n">Score</th><th>Handicap</th><th>Covered</th></tr>` +
+    <div class="metrics hmgrid">
+      ${tile('projections', 'Projections', up.length + (up.length === 1 ? ' game' : ' games'), next ? `Next: ${esc(next.h)} – ${esc(next.a)}, ${dayName(next.when.slice(0, 10)).split(' ').slice(1).join(' ')} ${next.when.slice(11)}` : 'No game coming up yet')}
+      ${tile('picks', 'Picks', done.length ? `${w}–${l} · <span class="${roi > 0 ? 'pkw' : roi < 0 ? 'l' : ''}">${roiTxt}</span>` : 'No record yet', `${open} open pick${open === 1 ? '' : 's'}`)}
+      ${tile('market', 'Market Analysis', lined.length + ' games', "Clubs and kinds of game against the bookmaker's lines")}
+      ${tile('ratings', 'Club Ratings', best ? esc(best.c) : '–', "Rated highest by the model, next to the market's rating")}
+      ${tile('h2h', 'Head to Head', 'Any two clubs', 'Or any two countries, home and away, every season')}
+      ${tile('rosters', 'Rosters', nOut + ' out', `Key players of the ${clubs} clubs and who is missing`)}
+      ${tile('rankings', 'Country Power Rankings', esc(RANK[0].c), 'First in the ranking of FIBA Europe Cup countries')}
+    </div>` + (games.length ? `<h2>Latest results: ${esc(round(last))}</h2><div class="scroll"><table class="fx hmres"><tr><th class="n">Date</th><th>Game</th><th class="n">Score</th><th>Handicap</th><th>Covered</th></tr>` +
       games.map(g => `<tr><td class="n">${fmtDate(g.date).slice(0, 5)}</td><td>${esc(g.h)} – ${esc(g.a)}</td><td class="n"><b>${g.hp}–${g.ap}</b></td><td>${esc(g.bh > 0 ? g.h : g.a)} ${fmtLine(-Math.abs(g.bh))}</td><td>${esc(covered(g))}</td></tr>`).join('') + '</table></div>' : '');
   box.querySelectorAll('[data-go]').forEach(a => a.onclick = e => { if (e.metaKey || e.ctrlKey || e.shiftKey || e.button) return; e.preventDefault(); setView(a.dataset.go); sync(); window.scrollTo({top: 0}); });
 }
