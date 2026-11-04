@@ -226,8 +226,11 @@ $('sub').textContent = `${DATA.leagues.length} Leagues · backtest 2022–23 to 
 {
   const set = LIVE.picks.filter(b => b.done && b.ret != null), won = set.filter(b => b.ret > 0).length, lost = set.filter(b => b.ret < 0).length;
   const units = set.reduce((a, b) => a + b.ret, 0), nOpen = LIVE.picks.filter(b => !b.done).length;
+  // average line bet and average closing line, over every settled 2026-27 bet that has a close
+  const cl = [...((DATA.cur || {}).bets || []), ...set].filter(b => b.close != null), avg = f => (cl.reduce((a, b) => a + f(b), 0) / cl.length).toFixed(1);
   $('top').innerHTML = [['Open picks', nOpen, nOpen ? 'to play' : 'none right now'], ['Record', `${won}–${lost}`, 'win – loss'],
-    ['Return', `<span class="${cls(units)}">${sgn(units, 2)}</span>${won + lost ? ` <span class="pill ${cls(units)}">ROI ${roi(units / (won + lost))}</span>` : ''}`, 'units']]
+    ['Return', `<span class="${cls(units)}">${sgn(units, 2)}</span>${won + lost ? ` <span class="pill ${cls(units)}">ROI ${roi(units / (won + lost))}</span>` : ''}`, 'units'],
+    ...(cl.length ? [['Avg line', `<span class="pill">Open ${avg(b => b.line)}</span> <span class="pill">Close ${avg(b => b.close)}</span>`, `${cl.length} settled bets`]] : [])]
     .map(([k, v, n]) => `<a class="tile" href="#view=picks"><span class="klabel">${k}</span><span class="stat">${v}</span><span class="small">${n}</span></a>`).join('');
 }
 
