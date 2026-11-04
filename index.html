@@ -196,6 +196,8 @@ h2 { font-family: var(--display); font-weight: 400; font-size: clamp(2.2rem, 4.6
 .card p { color: var(--muted); margin: .8rem 0 0; }
 .card .meta { font-size: .8rem; margin-top: 1.25rem; display: flex; flex-wrap: wrap; gap: .4rem; }
 .card .meta span { background: var(--paper-2); border-radius: 999px; padding: .25rem .7rem; color: var(--muted); }
+.card .meta span.roi { color: var(--accent); background: color-mix(in srgb, var(--accent) 14%, var(--paper)); border: 1px solid color-mix(in srgb, var(--accent) 45%, var(--paper)); font-weight: 600; }
+.card .meta span.roi.neg { color: #e0697a; background: color-mix(in srgb, #e0697a 14%, var(--paper)); border-color: color-mix(in srgb, #e0697a 45%, var(--paper)); }
 section.alt .card .meta span { background: var(--paper-2); }
 .card .go { margin-top: auto; padding-top: 1.5rem; font-size: .78rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--ink); display: inline-flex; gap: .5rem; }
 .card .go i { font-style: normal; transition: transform .25s; }
@@ -394,7 +396,7 @@ body { overflow-x: clip; }  /* safety net */
           <span class="tag"><svg class="an-mark-sm" aria-hidden="true"><use href="/assets/marks.svg#football"/></svg>Model · Football</span>
           <h3>Greek Super League</h3>
           <p>Projections for every Super League game: goals, xG, shots, corners, cards, fouls, possession and saves, compared with the bookie's lines to find value bets.</p>
-          <!-- live:superleague:start --><div class="meta"><span>Record 15–7</span><span>ROI +35.5%</span><span>No open picks</span><span>Next: Volos – Kifisia, Sat 7 Nov</span></div><!-- live:superleague:end -->
+          <!-- live:superleague:start --><div class="meta"><span>Record 15–7</span><span class="roi">ROI +35.5%</span><span>No open picks</span><span>Next: Volos – Kifisia, Sat 7 Nov</span></div><!-- live:superleague:end -->
           <span class="go">Open <i aria-hidden="true">→</i></span>
         </a>
         <a class="card" href="/football/greek-cup/">
@@ -426,7 +428,7 @@ body { overflow-x: clip; }  /* safety net */
           <span class="tag"><svg class="an-mark-sm" aria-hidden="true"><use href="/assets/marks.svg#handball"/></svg>Model · Handball</span>
           <h3>Handball</h3>
           <p>Goal projections for seven women's leagues and the men's 2. Bundesliga, tested against the bookmakers' lines, plus Magdeburg's first-half pattern as a heavy home favourite.</p>
-          <!-- live:handball:start --><div class="meta"><span>Record 12–4</span><span>ROI +38.2%</span><span>No open picks</span></div><!-- live:handball:end -->
+          <!-- live:handball:start --><div class="meta"><span>Record 12–4</span><span class="roi">ROI +38.2%</span><span>No open picks</span></div><!-- live:handball:end -->
           <span class="go">Open <i aria-hidden="true">→</i></span>
         </a>
         <a class="card" href="/volleyball/">
@@ -434,7 +436,7 @@ body { overflow-x: clip; }  /* safety net */
           <span class="tag"><svg class="an-mark-sm" aria-hidden="true"><use href="/assets/marks.svg#volleyball"/></svg>Model · Volleyball</span>
           <h3>Volleyball</h3>
           <p>Japan, Germany and France (women), Italy and Argentina (men): the five leagues where the over picks beat the price in testing. The chance of 3, 4 or 5 sets, total points against the bookmaker line, and the picks' record.</p>
-          <!-- live:volleyball:start --><div class="meta"><span>Record 1–0</span><span>ROI +84.5%</span><span>No open picks</span></div><!-- live:volleyball:end -->
+          <!-- live:volleyball:start --><div class="meta"><span>Record 1–0</span><span class="roi">ROI +84.5%</span><span>No open picks</span></div><!-- live:volleyball:end -->
           <span class="go">Open <i aria-hidden="true">→</i></span>
         </a>
         <a class="card" href="/basketball/">
@@ -450,7 +452,7 @@ body { overflow-x: clip; }  /* safety net */
           <span class="tag"><svg class="an-mark-sm" aria-hidden="true"><use href="/assets/marks.svg#basketball"/></svg>Model · Basketball</span>
           <h3>Basketball totals</h3>
           <p>Overs at the opening line in seven European leagues: EuroLeague, EuroCup, ACB, BBL, Lega A, the Greek Basket League and NKL. Four seasons of backtest, this week's picks and the live record.</p>
-          <!-- live:basketball-overs:start --><div class="meta"><span>Record 6–3</span><span>ROI +24.2%</span><span>2 open picks</span></div><!-- live:basketball-overs:end -->
+          <!-- live:basketball-overs:start --><div class="meta"><span>Record 6–3</span><span class="roi">ROI +24.2%</span><span>2 open picks</span></div><!-- live:basketball-overs:end -->
           <span class="go">Open <i aria-hidden="true">→</i></span>
         </a>
         <a class="card" href="/paok-hub/">

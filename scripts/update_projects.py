@@ -203,7 +203,10 @@ CARDS = {                    # slug -> (card href on the homepage, reader)
 
 
 def render(slug, pills):
-    spans = "".join(f"<span>{html.escape(p)}</span>" for p in pills[:4])
+    def span(p):                                        # the ROI pill stands out, in the accent (red when negative)
+        cls = ' class="roi neg"' if p.startswith("ROI -") else ' class="roi"' if p.startswith("ROI ") else ""
+        return f"<span{cls}>{html.escape(p)}</span>"
+    spans = "".join(span(p) for p in pills[:4])
     return (f"<!-- live:{slug}:start --><div class=\"meta\">{spans}</div><!-- live:{slug}:end -->\n")
 
 
