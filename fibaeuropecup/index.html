@@ -1120,17 +1120,6 @@ function mkCompetition(games, clubs){
   const hRows = favBet('All favourites', games.filter(g => g.bh)) + favBet('Close game (favourite under 5)', sized(0, 5)) +
     favBet('Medium home favourite (5–10)', sized(5, 10, true)) + favBet('Big home favourite (10+)', sized(10, 99, true)) +
     favBet('Medium away favourite (5–10)', sized(5, 10, false)) + favBet('Big away favourite (10+)', sized(10, 99, false));
-  const split = (key, label) => {
-    const by = {};
-    for (const g of games) (by[key(g)] ||= []).push(g);
-    const pc = (w, n) => n ? `${w} of ${n} <span class="tag">${Math.round(w / n * 100)}%</span>` : '–';
-    const rows = Object.keys(by).sort((a, b) => (+a || 0) - (+b || 0) || a.localeCompare(b)).map(k => {
-      const l = by[k], c = l.filter(g => hcp(g, 1));
-      return `<tr><td><b>${esc(k)}</b></td><td class="n">${l.length}</td><td class="n">${pc(c.filter(g => hcp(g, 1) > 0).length, c.length)}</td><td class="n">${pc(c.filter(g => hcp(g, fav(g)) > 0).length, c.length)}</td>
-        <td class="n">${avg(l.map(g => Math.abs(hcp(g, 1)))).toFixed(1)}</td></tr>`;
-    }).join('');
-    return `<div class="scroll"><table class="fx" style="width:auto;min-width:680px"><tr><th>${label}</th><th class="n">Games</th><th class="n">Home covered</th><th class="n">Favourite covered</th><th class="n" title="Average points the handicap line missed by">Line miss</th></tr>${rows}</table></div>`;
-  };
   // clubs whose results against their handicaps are further from 0 than their sample's noise
   const rated = sign => clubs.filter(x => x.n >= MK_MIN && x.vsS * sign >= mkLim(MK_SD.hcp, x.n)).sort((x, y) => (y.vsS - x.vsS) * sign);
   const ratedTable = (title, list, cl) => `<div><h3 style="font:600 18px var(--serif);margin:0 0 8px">${title} <span class="tag">${list.length}</span></h3>` + (list.length
@@ -1146,7 +1135,6 @@ function mkCompetition(games, clubs){
       ${card('Home covered', hc.length ? Math.round(hc.filter(g => hcp(g, 1) > 0).length / hc.length * 100) + '%' : '–', 'of games, pushes left out')}
     </div>
     <h2>Handicap</h2>${table(hRows)}
-    <h2>By round</h2>${split(g => (g.stage.match(/Round (\d+)/) || [])[1] || g.stage, 'Round')}
 
     <h2>Underrated and overrated clubs</h2><div class="tag" style="margin-bottom:10px;max-width:760px;line-height:1.5">Clubs furthest from their handicaps for their number of games. With so few games, about one club in three would land here by chance, so this is what has happened so far, not a bet: on FIBA lines the bookmaker seems to adjust quickly, and backing the better record won about 49% of the time. For the model's view of each club, see <a class="back" href="#view=ratings" data-go="ratings">Club Ratings</a>.</div>
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:22px">${ratedTable('Underrated so far', rated(1), 'w')}${ratedTable('Overrated so far', rated(-1), 'l')}</div>`;
