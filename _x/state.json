@@ -681,7 +681,8 @@
       "the-man-who-copied",
       "the-last-resort",
       "a-family",
-      "marina"
+      "marina",
+      "a-quiet-life"
     ],
     "log": [
       {
@@ -919,11 +920,17 @@
         "slot": "2026-11-03 20",
         "slug": "marina",
         "id": "2117678418078679384"
+      },
+      {
+        "day": "2026-11-04",
+        "slot": "2026-11-04 20",
+        "slug": "a-quiet-life",
+        "id": "2118040636532142113"
       }
     ],
-    "last_day": "2026-11-03"
+    "last_day": "2026-11-04"
   },
-  "last_slot": "2026-11-04 14",
+  "last_slot": "2026-11-04 20",
   "quote": {
     "seen": [
       "1",
