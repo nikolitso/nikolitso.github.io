@@ -176,7 +176,8 @@ th.tsort{cursor:pointer;user-select:none} th.tsort:hover{color:var(--gold)}
 <header class="an-head"><div>
   <a class="an-brand" href="/volleyball/"><svg class="an-mark" aria-hidden="true"><use href="/assets/marks.svg#volleyball"/></svg><span><small class="an-kicker">Volleyball · Projections</small><h1>Volleyball</h1></span></a>
   <nav class="tabs an-tabs" id="tabs" aria-label="Sections">
-    <a href="#view=projections" data-view="projections" class="on">Projections</a>
+    <a href="#view=home" data-view="home" class="on">Home</a>
+    <a href="#view=projections" data-view="projections">Projections</a>
     <a href="#view=picks" data-view="picks">Picks</a>
     <a href="#view=results" data-view="results">Results</a>
     <a href="#view=season" data-view="season">Season</a>
@@ -189,7 +190,7 @@ th.tsort{cursor:pointer;user-select:none} th.tsort:hover{color:var(--gold)}
   <div class="chips" id="chips"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=d69b8da2"></script>
+<script src="data.js?v=719b6590"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -198,7 +199,7 @@ const short = s => { const d = new Date(s.slice(0,10)+'T12:00'); return `${d.get
 const pct = x => Math.round(x*100) + '%';
 const sgn = (x, d=1) => (x > 0 ? '+' : x < 0 ? '−' : '') + Math.abs(x).toFixed(d);
 const cls = x => x > 0 ? 'pos' : x < 0 ? 'neg' : '';
-let view = 'projections', lg = 'all';
+let view = 'home', lg = 'all';
 const LG = Object.fromEntries([...(DATA.former || []), ...DATA.leagues].map(l => [l.key, l]));   // former: settled picks only
 const sexOf = l => l.women ? 'women' : 'men';
 const sexAb = l => l.women ? '(W)' : '(M)';   // short label: chips, league cells
@@ -213,7 +214,6 @@ $('sub').textContent = `${DATA.leagues.length} leagues, women's and men's · ${D
 
 function renderProjections(){
   let h = `<p class="note">Every match in the next 7 days: the chance it goes 3, 4 or 5 sets, the model's line on total points (where over and under are even). Once a bookmaker posts a line, the row shows the book line, the average over price and the model's over chance against it. Only <b>picks</b> are highlighted (gold); they are backed and recorded: overs on lines ${DATA.min_line}.5 to ${DATA.low - 0.5}, the matches the market expects to end 3-0, where the edge is above ${DATA.edge*100}%.</p>`;
-  h = pickTiles() + h;
   const fx = DATA.fixtures.filter(inLg);
   if (!fx.length) return h + '<p class="empty">No matches in the next 7 days.</p>';
   const byDay = {};
@@ -232,14 +232,42 @@ function renderProjections(){
   return h;
 }
 
-// the pick record at a glance, the same tiles and wording as the handball projections and the homepage card
+// the pick record at a glance, the same tiles and wording as the other model pages; every league, on Home only
 function pickTiles(){
-  const P = DATA.picks.filter(inLg), done = P.filter(p => 'won' in p), nOpen = P.length - done.length;
+  const done = DATA.picks.filter(p => 'won' in p), nOpen = DATA.picks.length - done.length, n = done.length;
   const w = done.filter(p => p.won).length, units = done.reduce((s, p) => s + p.profit, 0);
-  const t = [['Open picks', nOpen, nOpen ? 'to play' : 'none right now'], ['Record', `${w}–${done.length - w}`, 'win – loss'],
+  const avg = `avg of ${n} settled pick${n === 1 ? '' : 's'}`;
+  const t = [['Open picks', nOpen, nOpen ? 'to play' : 'none right now'], ['Record', `${w}–${n - w}`, 'win – loss'],
              ['Return', `<span class="${cls(units)}">${sgn(units, 2)}</span>`, 'units'],
-             ['ROI', done.length ? `<span class="${cls(units)}">${sgn(units / done.length * 100, 1)}%</span>` : '–', 'per unit staked']];
+             ['ROI', n ? `<span class="${cls(units)}">${sgn(units / n * 100, 1)}%</span>` : '–', `${n} settled pick${n === 1 ? '' : 's'}`],
+             ['Book line', avgLine(done, 'line'), avg], ['Model line', avgLine(done, 'fair'), avg], ['Actual total', avgLine(done, 'total'), avg]];
   return `<div class="metrics">${t.map(([l, v, n]) => `<div class="metric"><div class="lbl">${l}</div><div class="big">${v}</div><div class="sm">${n}</div></div>`).join('')}</div>`;
+}
+
+// the front page: the live record, the bet, how the leagues were chosen and what the backtest found. The tables stay in their tabs
+function renderHome(){
+  const B = DATA.backtest, A = B.all, live = new Set(DATA.leagues.map(l => l.key));
+  const by = {};
+  for (const x of B.seasons.filter(x => live.has(x.lg) && !x.tuned)){ const t = by[x.season] ||= 0; by[x.season] = t + x.roi * x.n; }
+  const seasons = Object.keys(by).sort(), up = seasons.filter(k => by[k] > 0).length, lost = seasons.filter(k => by[k] <= 0).map(k => k.replace('-', '–'));
+  const bets = B.bets.filter(b => live.has(b.lg)).sort((a, b) => a.dt.localeCompare(b.dt));
+  let run = 0, top = 0, fall = 0, streak = 0, worst = 0;
+  for (const b of bets){ run += b.ret; top = Math.max(top, run); fall = Math.max(fall, top - run); streak = b.won ? 0 : streak + 1; worst = Math.max(worst, streak); }
+  const span = `${seasons[0].replace('-', '–')} to ${seasons.at(-1).replace('-', '–')}`;
+  const best = DATA.leagues.map(l => ({l, s: B.leagues[l.key]})).sort((a, b) => b.s.roi - a.s.roi)
+    .map(({l, s}) => `${l.country} ${sexAb(l)} ${sgn(s.roi * 100, 1)}%`).join(', ');
+  return pickTiles() + `<div class="doc">
+  <h2>Do the model's overs make a profit?</h2>
+  <p>In the backtest, yes: ${A.n} bets across ${seasons.length} past seasons (${span}) returned <b>${sgn(A.roi * 100, 1)}%</b>, while backing every low-line over in the same leagues without the model returned ${sgn(A.blind_roi * 100, 1)}%. The leagues were chosen on these same seasons, so expect less live. The ${DATA.season.replace('-', '–')} record above is the real test.</p>
+  <h3><span class="num">1</span>The bet</h3>
+  <p>One bet only: the <b>over on a low total-points line</b>, from ${DATA.min_line}.5 to ${DATA.low - 1}.5, when the model's chance × the average price is more than ${DATA.edge * 100}% above 1. A low line means the bookmaker expects a 3-0, so the bet is that the match goes to a fourth set. Every bet is 1 unit, logged before the first serve.</p>
+  <h3><span class="num">2</span>The leagues</h3>
+  <p>${B.tested.length} leagues were tested, women's and men's. A league is here only if, on the seasons the model never saw, it passed three tests: <b>backing every low-line over without the model lost 3% or less</b>, a fair market to start from; <b>the model's bets made more than +10%</b>; and <b>there were at least 50 of them</b>. Five passed: ${liveNames()}.</p>
+  <h3><span class="num">3</span>What the backtest found</h3>
+  <p>${up} of ${seasons.length} seasons made a profit${lost.length ? `; ${andList(lost)} did not` : ''}. By league: ${best}.</p>
+  <h3><span class="num">4</span>What a bad run looks like</h3>
+  <p>At 1 unit a bet the deepest fall from a high was ${fall.toFixed(1)} units, and the longest run of losing bets ${worst}. Size stakes so a run like that is comfortable.</p>
+  </div>`;
 }
 
 function tiles(list){
@@ -265,7 +293,7 @@ function renderResults(){
   const done = DATA.picks.filter(inLg).filter(p => 'won' in p).sort((a, b) => a.dt.localeCompare(b.dt));
   const w = done.filter(p => p.won).length, units = done.reduce((s, p) => s + p.profit, 0);
   let h = `<p class="note">How the picks did: every settled pick since the page went live, at the price logged before the first serve, stake 1 unit. The page judges itself at <b>100 settled picks</b>; before that, the record is mostly noise.</p>`;
-  h += tiles([['Settled picks', done.length], ['Record', `${w}–${done.length - w}`], ['Hit rate', done.length ? pct(w / done.length) : '–'],
+  if (lg !== 'all') h += tiles([['Settled picks', done.length], ['Record', `${w}–${done.length - w}`], ['Hit rate', done.length ? pct(w / done.length) : '–'],
               ['Units', sgn(units, 2), cls(units)], ['ROI', done.length ? sgn(units / done.length * 100, 1) + '%' : '–', cls(units)],
               ['Avg book line', avgLine(done, 'line')], ['Avg model line', avgLine(done, 'fair')], ['Avg actual total', avgLine(done, 'total')]]);
   if (!done.length) return h + '<p class="empty">No settled picks yet. Each pick is added here once its match is played.</p>';
@@ -427,9 +455,6 @@ document.addEventListener('click', e => {
 
 function renderMethod(){
   return `<div class="doc">
-  <h3>What we do</h3>
-  <p>We bet one thing: the <b>over on low total-points lines</b> in volleyball, when the model gives a fourth set a clearly better chance than the bookmaker's price does. Every bet is 1 unit, logged before the first serve and settled on the result, and the <b>Results</b> tab keeps the record.</p>
-  <p>The model was tested on every season of ${DATA.backtest.tested.length} leagues, women's and men's. A league is on this page only if, on the seasons the model never saw, it passed three tests: <b>backing every low-line over without the model lost 3% or less</b> (a fair market to start from, where a small edge is enough), <b>the model's bets made more than +10%</b>, and <b>there were at least 50 of them</b>. Five passed: ${liveNames()}. The rest, including Turkey and Poland (women), which had live picks until 1 Nov 2026, are left out. The <b>Backtest</b> tab shows the five side by side.</p>
   <h3><span class="num">1</span>One number per team</h3>
   <p>Every team gets one rating: its chance of winning a rally against an average side of its own league. It is fitted on the points of every past match, with recent matches weighted more, plus a small home edge. Each league is rated on its own, with its own home edge; the settings that control the fit are the same everywhere, tuned once on Turkey's women's Sultanlar Ligi.</p>
   <h3><span class="num">2</span>From rallies to the whole match</h3>
@@ -476,16 +501,16 @@ function worked(){
   <p>${e.won ? 'A' : 'Even a'} ${p1(e.p_over)} bet ${e.won ? 'still loses' : 'loses'} ${p1(1 - e.p_over)} of the time. The edge only shows over many bets, which is why the page judges itself at 100 picks. This example always shows the latest bet, win or loss.</p>`;
 }
 
-const RENDER = {projections: renderProjections, picks: renderPicks, results: renderResults, season: renderSeason, backtest: renderBacktest, method: renderMethod};
+const RENDER = {home: renderHome, projections: renderProjections, picks: renderPicks, results: renderResults, season: renderSeason, backtest: renderBacktest, method: renderMethod};
 function render(){
   document.querySelectorAll('#tabs a').forEach(a => { a.classList.toggle('on', a.dataset.view === view); a.href = `#view=${a.dataset.view}${lg === 'all' ? '' : '&lg=' + lg}`; });
-  const chips = view === 'method' ? [] : [['all', 'All leagues'], ...DATA.leagues.map(l => [l.key, `${l.country} ${sexAb(l)}`])];
+  const chips = view === 'method' || view === 'home' ? [] : [['all', 'All leagues'], ...DATA.leagues.map(l => [l.key, `${l.country} ${sexAb(l)}`])];
   $('chips').innerHTML = chips.map(([k, t]) => `<a href="#view=${view}${k === 'all' ? '' : '&lg=' + k}" class="${k === lg ? 'on' : ''}">${t}</a>`).join('');
   $('out').innerHTML = RENDER[view]();
 }
 function fromHash(){
   const m = location.hash.match(/view=(\w+)/), l = location.hash.match(/lg=([\w-]+)/);
-  view = m && RENDER[m[1]] ? m[1] : 'projections';
+  view = m && RENDER[m[1]] ? m[1] : 'home';
   const nlg = l && LG[l[1]] ? l[1] : 'all';
   if (nlg !== lg) btSeason = null;
   lg = nlg;
