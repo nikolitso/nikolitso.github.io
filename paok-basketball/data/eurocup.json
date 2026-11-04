@@ -1,7 +1,7 @@
 {
  "competition": "BKT EuroCup",
  "season": "2026-27",
- "updated": "2026-11-04T15:08:34Z",
+ "updated": "2026-11-04T19:16:16Z",
  "source": "https://www.euroleaguebasketball.net/eurocup/",
  "group": "Group D",
  "staff": [
@@ -2501,6 +2501,17 @@
   },
   {
    "pos": 2,
+   "team": "Manresa",
+   "crest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCgOCpC/06792bed-0383-4de2-80b9-95ecca3fd973.png",
+   "paok": false,
+   "gp": 6,
+   "w": 4,
+   "l": 2,
+   "pf": 531,
+   "pa": 501
+  },
+  {
+   "pos": 3,
    "team": "PAOK",
    "crest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjChWbHH/0506e7c4-ec4b-460a-bc59-b033ad9e336c.png",
    "paok": true,
@@ -2511,29 +2522,7 @@
    "pa": 518
   },
   {
-   "pos": 3,
-   "team": "Manresa",
-   "crest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCgOCpC/06792bed-0383-4de2-80b9-95ecca3fd973.png",
-   "paok": false,
-   "gp": 5,
-   "w": 3,
-   "l": 2,
-   "pf": 451,
-   "pa": 435
-  },
-  {
    "pos": 4,
-   "team": "Lietkabelis",
-   "crest": "https://media-cdn.cortextech.io/ffcb6e37-31f4-48f6-91c2-a8c9a6f791a9.png",
-   "paok": false,
-   "gp": 5,
-   "w": 3,
-   "l": 2,
-   "pf": 389,
-   "pa": 393
-  },
-  {
-   "pos": 5,
    "team": "Ulm",
    "crest": "https://media-cdn.cortextech.io/5750bc8b-dd63-48e4-8586-10d4e5e2b4e2.png",
    "paok": false,
@@ -2542,6 +2531,17 @@
    "l": 3,
    "pf": 535,
    "pa": 529
+  },
+  {
+   "pos": 5,
+   "team": "Lietkabelis",
+   "crest": "https://media-cdn.cortextech.io/ffcb6e37-31f4-48f6-91c2-a8c9a6f791a9.png",
+   "paok": false,
+   "gp": 6,
+   "w": 3,
+   "l": 3,
+   "pf": 455,
+   "pa": 473
   },
   {
    "pos": 6,
