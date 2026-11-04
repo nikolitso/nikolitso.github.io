@@ -173,7 +173,7 @@ a.tile:hover{border-color:var(--gold)}
 .tile .stat{font:500 26px var(--mono);line-height:1.15;font-variant-numeric:tabular-nums}
 .tile .small{font-size:14.5px;color:var(--muted)}
 .tiles .pos{color:var(--up)} .tiles .neg{color:var(--dn)}
-.pill{font:500 13.5px var(--mono);padding:2px 9px;border-radius:99px;border:1px solid var(--line);vertical-align:middle}
+.pill{white-space:nowrap;font:500 13.5px var(--mono);padding:2px 9px;border-radius:99px;border:1px solid var(--line);vertical-align:middle}
 .pill.pos{border-color:color-mix(in srgb,var(--up) 40%,transparent);background:color-mix(in srgb,var(--up) 10%,transparent)}
 .pill.neg{border-color:color-mix(in srgb,var(--dn) 40%,transparent);background:color-mix(in srgb,var(--dn) 9%,transparent)}
 .cols2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:28px;align-items:start}
@@ -230,7 +230,7 @@ $('sub').textContent = `${DATA.leagues.length} Leagues · backtest 2022–23 to 
   const cl = [...((DATA.cur || {}).bets || []), ...set].filter(b => b.close != null), avg = f => (cl.reduce((a, b) => a + f(b), 0) / cl.length).toFixed(1);
   $('top').innerHTML = [['Open picks', nOpen, nOpen ? 'to play' : 'none right now'], ['Record', `${won}–${lost}`, 'win – loss'],
     ['Return', `<span class="${cls(units)}">${sgn(units, 2)}</span>${won + lost ? ` <span class="pill ${cls(units)}">ROI ${roi(units / (won + lost))}</span>` : ''}`, 'units'],
-    ...(cl.length ? [['Avg line', `<span class="pill">Open ${avg(b => b.line)}</span> <span class="pill">Close ${avg(b => b.close)}</span>`, `${cl.length} settled bets`]] : [])]
+    ...(cl.length ? [['Avg line', `<span class="pill">Opening line ${avg(b => b.line)}</span> <span class="pill">Closing line ${avg(b => b.close)}</span>`, `${cl.length} settled bets`]] : [])]
     .map(([k, v, n]) => `<a class="tile" href="#view=picks"><span class="klabel">${k}</span><span class="stat">${v}</span><span class="small">${n}</span></a>`).join('');
 }
 
@@ -301,7 +301,7 @@ function bets(){
   let run = 0;
   const rows = list.map(b => { run += b.ret;
     return `<tr><td data-s="${b.dt}">${short(b.dt)} ${b.dt.slice(0,4)}</td>${lg === 'all' ? `<td>${LG[b.lg].country}</td>` : ''}<td class="wr">${b.home} – ${b.away}</td><td class="n">${b.side === 'o' ? 'Over' : 'Under'} ${b.line}</td><td class="n">${b.px.toFixed(2)}</td><td class="n">${b.mu.toFixed(1)}</td><td class="n">${pct(b.p)}</td><td class="n">${sgn(b.edge*100, 0)}%</td><td class="n">${b.close ?? '–'}</td><td class="n ${b.ret > 0 ? 'w' : b.ret < 0 ? 'l' : ''}">${b.total}</td><td class="n ${cls(b.ret)}">${sgn(b.ret, 2)}</td><td class="n ${cls(run)}">${sgn(run, 1)}</td></tr>`; });
-  return `<h2>Every bet, latest first</h2><p class="note">${list.length} bets in unseen seasons${list.length > 400 ? ', the latest 400 shown' : ''}.</p><div class="scroll"><table><thead><tr><th>Date</th>${lg === 'all' ? '<th>League</th>' : ''}<th>Match</th><th class="n">Bet</th><th class="n">Price</th><th class="n">Model</th><th class="n">Chance</th><th class="n">Edge</th><th class="n">Close</th><th class="n">Total</th><th class="n">Units</th><th class="n">Running</th></tr></thead><tbody>${rows.reverse().slice(0, 400).join('')}</tbody></table></div>`;
+  return `<h2>Every bet, latest first</h2><p class="note">${list.length} bets in unseen seasons${list.length > 400 ? ', the latest 400 shown' : ''}.</p><div class="scroll"><table><thead><tr><th>Date</th>${lg === 'all' ? '<th>League</th>' : ''}<th>Match</th><th class="n">Bet</th><th class="n">Price</th><th class="n">Model</th><th class="n">Chance</th><th class="n">Edge</th><th class="n">Closing line</th><th class="n">Total</th><th class="n">Units</th><th class="n">Running</th></tr></thead><tbody>${rows.reverse().slice(0, 400).join('')}</tbody></table></div>`;
 }
 
 function renderProjections(){
@@ -344,8 +344,8 @@ function renderPicks(){
   h += `<h2>The ${sn(DATA.season)} record</h2>`;
   h += tiles([['Bets', String(all.length)], ['Settled', String(set.length)], ['Hit rate', set.length ? pct(won / set.length, 1) : '–'],
               ['ROI', roi(R_), cls(R_)], ['Units', set.length ? sgn(units, 2) : '–', cls(units)],
-              ['Close moved toward the bet', cl.length ? pct(up / cl.length) : '–'], ['Close moved against it', cl.length ? pct(dn / cl.length) : '–']]);
-  h += `<p class="note">Close is the closing line; it moved toward the bet when it ended above the line bet. A few hundred bets are needed before the record says much. Click a column heading to sort.</p>`;
+              ['Closing line moved toward the bet', cl.length ? pct(up / cl.length) : '–'], ['Closing line moved against it', cl.length ? pct(dn / cl.length) : '–']]);
+  h += `<p class="note">The closing line moved toward the bet when it ended above the line bet. A few hundred bets are needed before the record says much. Click a column heading to sort.</p>`;
   if (!set.length) return h + '<p class="empty">No settled bets yet.</p>';
   let run = 0;
   const rows = all.filter(b => b.done).map(b => {   // open picks are in the table above
@@ -355,7 +355,7 @@ function renderPicks(){
     return `<tr><td data-s="${b.dt}">${short(b.dt)}${b.dt.length > 10 ? ' ' + b.dt.slice(11) : ''}</td><td>${LG[b.lg].country}</td><td class="wr">${b.home} – ${b.away}</td><td class="n"><b>Over ${b.line}</b></td>
       <td class="n">${b.px.toFixed(2)}</td><td class="n pos">${sgn(b.edge*100, 0)}%</td><td class="n">${b.close ?? '–'}</td>${res}</tr>`;
   });
-  return h + `<h2>Settled bets, latest first</h2><div class="scroll"><table><thead><tr><th>Tip-off</th><th>League</th><th>Match</th><th class="n">Bet</th><th class="n">Price</th><th class="n">Edge</th><th class="n">Close</th><th class="n">Total</th><th class="n">Units</th><th class="n">Running</th></tr></thead><tbody>${rows.reverse().join('')}</tbody></table></div>`;
+  return h + `<h2>Settled bets, latest first</h2><div class="scroll"><table><thead><tr><th>Tip-off</th><th>League</th><th>Match</th><th class="n">Bet</th><th class="n">Price</th><th class="n">Edge</th><th class="n">Closing line</th><th class="n">Total</th><th class="n">Units</th><th class="n">Running</th></tr></thead><tbody>${rows.reverse().join('')}</tbody></table></div>`;
 }
 
 // click a column heading to sort its table (again to reverse); league groups keep their season rows
