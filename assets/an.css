@@ -25,7 +25,7 @@ html[data-site="wine"]{--an-accent:#d08a9c}
 html[data-site="books"]{--an-accent:#6d8dff}
 
 /* ---- sitebar: the thin strip that links every site to the main one ---- */
-.an-sitebar{font:12.5px/1.4 var(--an-body);color:var(--an-muted);background:var(--an-paper);border-bottom:1px solid var(--an-rule)}
+.an-sitebar{font:14px/1.4 var(--an-body);color:var(--an-muted);background:var(--an-paper);border-bottom:1px solid var(--an-rule)}
 .an-sitebar>div{max-width:var(--an-wrap,1200px);margin:0 auto;padding:7px 20px;display:flex;gap:18px;justify-content:flex-end;align-items:center}
 .an-sitebar a{color:inherit;text-decoration:none}
 .an-sitebar a:hover{color:var(--an-ink)}
@@ -36,9 +36,9 @@ html[data-site="books"]{--an-accent:#6d8dff}
 .an-head>div{max-width:var(--an-wrap,1200px);margin:0 auto;padding:22px 20px 0}   /* --an-wrap: the page's own content width */
 .an-brand{display:flex;align-items:center;gap:14px;color:inherit;text-decoration:none}
 .an-mark{width:40px;height:40px;flex:none;color:var(--an-accent);fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
-.an-kicker{display:block;font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--an-accent);font-weight:600;margin-bottom:2px}
+.an-kicker{display:block;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--an-accent);font-weight:600;margin-bottom:2px}
 .an-brand h1{font:400 30px/1.1 var(--an-display);margin:0;letter-spacing:0;color:var(--an-ink)}
-.an-tabs{display:flex;gap:22px;margin-top:16px;border-bottom:2px solid var(--an-rule);font-size:14px;overflow-x:auto;scrollbar-width:none}
+.an-tabs{display:flex;gap:22px;margin-top:16px;border-bottom:2px solid var(--an-rule);font-size:15.5px;overflow-x:auto;scrollbar-width:none}
 .an-tabs a{color:var(--an-muted);text-decoration:none;padding:0 0 10px;margin-bottom:-2px;border-bottom:2px solid transparent;white-space:nowrap;background:none;border-radius:0}
 .an-tabs a:hover{color:var(--an-ink)}
 .an-tabs a.on,.an-tabs a.active,.an-tabs a[aria-current]{color:var(--an-ink);border-color:var(--an-accent)}
@@ -47,7 +47,7 @@ html[data-site="books"]{--an-accent:#6d8dff}
 
 /* ---- pills: updated · next · one number ---- */
 .an-pills{display:flex;gap:8px;flex-wrap:wrap;font-family:var(--an-body)}
-.an-pill{font-size:12.5px;line-height:1.4;border:1px solid var(--an-rule);border-radius:999px;padding:3px 10px;color:var(--an-muted);background:var(--an-paper)}
+.an-pill{font-size:14px;line-height:1.4;border:1px solid var(--an-rule);border-radius:999px;padding:3px 10px;color:var(--an-muted);background:var(--an-paper)}
 .an-pill.on{border-color:var(--an-accent-line);background:var(--an-accent-soft);color:var(--an-accent)}
 
 /* ---- the one number and the one row that carry the colour ---- */
