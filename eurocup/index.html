@@ -502,7 +502,7 @@ function renderRankings(){
   });
 }
 // ---------- Rosters: each club's key players this season and who is out
-let roQuery = '';
+let roQuery = '', roSort = {k: 1, dir: -1};                     // one sort for every club: column of the roster row, 1 up, -1 down
 function renderRosters(){
   const box = $('roView');
   if (!window.ROSTERS){ box.innerHTML = '<div class="empty">No rosters yet.</div>'; return; }
@@ -511,7 +511,7 @@ function renderRosters(){
   const nOut = out.length;
   box.innerHTML = `<div class="note" style="margin-bottom:14px">Key players of the ${clubs.length} clubs in this season's EuroCup, from ${esc(ROSTERS.source.replace(/^EuroCup box scores, /, ''))} of official EuroCup box scores (updated ${fmtDate(ROSTERS.updated)}).
       <b>Impact</b> is roughly how many points weaker a side is without the player: efficiency per minute above a bench level, times minutes per team game, halved, and trimmed for players with few games.
-      Players listed as out (${nOut ? nOut + ', updated ' + fmtDate(INJURIES.updated) : 'none at the moment'}) are struck through.</div>
+      Players listed as out (${nOut ? nOut + ', updated ' + fmtDate(INJURIES.updated) : 'none at the moment'}) are struck through. Click a column to sort every club by it.</div>
     <input id="roSearch" placeholder="Search a club, country or player" value="${esc(roQuery)}" aria-label="Search rosters">
     <div class="rogrid" id="roGrid"></div>`;
   const draw = () => {
@@ -519,16 +519,28 @@ function renderRosters(){
     const cards = clubs.filter(c => !q || c.toLowerCase().includes(q) || (teams[c] || '').toLowerCase().includes(q) ||
       ROSTERS.teams[c].some(p => p[0].toLowerCase().includes(q))).map(c => {
       const gone = new Map(out.filter(x => x.team === c).map(x => [x.player, x]));
-      const extra = [...gone.values()].filter(x => !ROSTERS.teams[c].some(p => p[0] === x.player));
+      const extra = [...gone.values()].filter(x => !ROSTERS.teams[c].some(p => p[0] === x.player)).map(o => [o.player, o.impact || 0, null, null, null]);
+      const {k, dir} = roSort;                                     // empty values always last
+      const list = [...ROSTERS.teams[c], ...extra].sort((x, y) => {
+        const a = x[k], v = y[k];
+        if (a === null || v === null) return (a === null) - (v === null);
+        return (k ? a - v : a.localeCompare(v)) * dir || y[1] - x[1];
+      });
+      const th = (key, label, title) => `<th class="${key ? 'n ' : ''}sort${key === k ? ' on' : ''}" data-k="${key}"${title ? ` title="${title}"` : ''}>${label}${key === k ? (dir > 0 ? ' ▲' : ' ▼') : ''}</th>`;
+      const num = (v, d) => v === null ? '–' : v.toFixed(d);
       return `<div class="card"><h3 data-club="${esc(c)}">${esc(c)}</h3><div class="tag">${esc(teams[c] || '')}${rankOf(teams[c])}</div>
-        <table><tr><th>Player</th><th class="n" title="Points the side loses without the player">Impact</th><th class="n" title="Minutes per team game">Min</th><th class="n" title="Efficiency per game played">Eff</th><th class="n" title="Games played">G</th></tr>` +
-        ROSTERS.teams[c].map(p => { const o = gone.get(p[0]);
+        <table><tr>${th(0, 'Player')}${th(1, 'Impact', 'Points the side loses without the player')}${th(2, 'Min', 'Minutes per team game')}${th(3, 'Eff', 'Efficiency per game played')}${th(4, 'G', 'Games played')}</tr>` +
+        list.map(p => { const o = gone.get(p[0]);
           return `<tr${o ? ` class="out" title="Out${o.note ? ': ' + esc(o.note) : ''}"` : ''}><td><span class="pl">${esc(p[0])}</span>${o ? ' <span class="tag">out' + (o.note ? ' · ' + esc(o.note) : '') + '</span>' : ''}</td>
-            <td class="n"><b>${p[1].toFixed(1)}</b></td><td class="n">${p[2].toFixed(1)}</td><td class="n">${p[3].toFixed(1)}</td><td class="n">${p[4]}</td></tr>`; }).join('') +
-        extra.map(o => `<tr class="out"><td><span class="pl">${esc(o.player)}</span> <span class="tag">out${o.note ? ' · ' + esc(o.note) : ''}</span></td><td class="n"><b>${(o.impact || 0).toFixed(1)}</b></td><td class="n">–</td><td class="n">–</td><td class="n">–</td></tr>`).join('') +
+            <td class="n"><b>${p[1].toFixed(1)}</b></td><td class="n">${num(p[2], 1)}</td><td class="n">${num(p[3], 1)}</td><td class="n">${num(p[4], 0)}</td></tr>`; }).join('') +
         `</table></div>`;
     });
     $('roGrid').innerHTML = cards.join('') || '<div class="empty">No club or player matches.</div>';
+    $('roGrid').querySelectorAll('th[data-k]').forEach(t => t.onclick = () => {
+      const k = +t.dataset.k;
+      roSort = {k, dir: k === roSort.k ? -roSort.dir : k ? -1 : 1};
+      draw();
+    });
     $('roGrid').querySelectorAll('h3[data-club]').forEach(h => h.onclick = () => {
       setMode('team'); $('a').value = h.dataset.club; $('b').value = ''; setVenue('all');
       setView('h2h'); sync(); render(); window.scrollTo({top: 0, behavior: 'smooth'});
