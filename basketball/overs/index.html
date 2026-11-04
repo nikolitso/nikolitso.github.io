@@ -222,12 +222,12 @@ if (LIVE.leagues) LIVE.leagues = LIVE.leagues.filter(k => LG[k]);
 
 $('sub').textContent = `${DATA.leagues.length} Leagues · backtest 2022–23 to 2025–26 · ${DATA.season.slice(0, 4)}–${DATA.season.slice(7)} record since 1 Oct 2026 · updated ${LIVE.updated} (Athens)`;
 
-// top tiles: the live picks only, counted as on the homepage card (ROI = units over wins + losses)
+// top tiles: the whole 2026-27 record, as on the Picks tab (ROI = units over wins + losses)
 {
-  const set = LIVE.picks.filter(b => b.done && b.ret != null), won = set.filter(b => b.ret > 0).length, lost = set.filter(b => b.ret < 0).length;
+  const set = [...((DATA.cur || {}).bets || []), ...LIVE.picks.filter(b => b.done && b.ret != null)], won = set.filter(b => b.ret > 0).length, lost = set.filter(b => b.ret < 0).length;
   const units = set.reduce((a, b) => a + b.ret, 0), nOpen = LIVE.picks.filter(b => !b.done).length;
   // average line bet and average closing line, over every settled 2026-27 bet that has a close
-  const cl = [...((DATA.cur || {}).bets || []), ...set].filter(b => b.close != null), avg = f => (cl.reduce((a, b) => a + f(b), 0) / cl.length).toFixed(1);
+  const cl = set.filter(b => b.close != null), avg = f => (cl.reduce((a, b) => a + f(b), 0) / cl.length).toFixed(1);
   $('top').innerHTML = [['Open picks', nOpen, nOpen ? 'to play' : 'none right now'], ['Record', `${won}–${lost}`, 'win – loss'],
     ['Return', `<span class="${cls(units)}">${sgn(units, 2)}</span>${won + lost ? ` <span class="pill ${cls(units)}">ROI ${roi(units / (won + lost))}</span>` : ''}`, 'units'],
     ...(cl.length ? [['Opening line', avg(b => b.line), `avg of ${cl.length} settled bets`], ['Closing line', avg(b => b.close), `avg of ${cl.length} settled bets`]] : [])]
