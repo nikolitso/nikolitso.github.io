@@ -69,10 +69,10 @@ def upcoming(items, key):
 
 
 def record(won, lost, profit, n_open):
-    """The two pills every card with picks shares, in this order: past record (with ROI) and open picks."""
+    """The three pills every card with picks shares, in this order: past record, its ROI (flat stakes), open picks."""
     n = won + lost
-    rec = f"Record {won}–{lost} · ROI {profit / n * 100:+.1f}%" if n else "No settled picks yet"
-    return [rec, f"{n_open} open pick{'s' if n_open != 1 else ''}" if n_open else "No open picks"]
+    pills = [f"Record {won}–{lost}", f"ROI {profit / n * 100:+.1f}%"] if n else ["No settled picks yet"]
+    return pills + [f"{n_open} open pick{'s' if n_open != 1 else ''}" if n_open else "No open picks"]
 
 
 def short(team):
@@ -80,7 +80,7 @@ def short(team):
 
 
 # ---- one function per card: returns a list of pill texts ------------------------------------------
-# Cards with picks read the same way: past record with ROI, then open picks (record()). The other cards:
+# Cards with picks read the same way: past record, ROI in its own pill, then open picks (record()). The other cards:
 # what comes next and one number. No "Updated" pill (user, 3 Nov 2026).
 
 def paok_hub():
@@ -137,10 +137,11 @@ def paok_basketball():
 def superleague():
     d = js_object("/superleague/data.js", r"window\.SL\s*=")
     fx = upcoming(d.get("fixtures", []), lambda f: f["kickoff"])
-    pills = []
+    v = d.get("value") or {}
+    rec = (v.get("record") or {}).get("all") or {}
+    pills = record(rec.get("won", 0), rec.get("bets", 0) - rec.get("won", 0), rec.get("profit", 0), len(v.get("bets") or []))
     if fx:
         pills.append(nxt(fx[0]["home"], fx[0]["away"], parse(fx[0]["kickoff"])))
-        pills.append(f"{len(fx)} games projected")
     return pills
 
 
@@ -202,7 +203,7 @@ CARDS = {                    # slug -> (card href on the homepage, reader)
 
 
 def render(slug, pills):
-    spans = "".join(f"<span>{html.escape(p)}</span>" for p in pills[:3])
+    spans = "".join(f"<span>{html.escape(p)}</span>" for p in pills[:4])
     return (f"<!-- live:{slug}:start --><div class=\"meta\">{spans}</div><!-- live:{slug}:end -->\n")
 
 
@@ -219,7 +220,7 @@ def main():
         if not pills:
             print(f"{slug}: nothing to show, left as is")
             continue
-        print(f"{slug}: " + " | ".join(pills[:3]))
+        print(f"{slug}: " + " | ".join(pills[:4]))
         block = render(slug, pills)
         marked = re.compile(rf"<!-- live:{re.escape(slug)}:start -->.*?<!-- live:{re.escape(slug)}:end -->\n", re.S)
         if marked.search(out):
