@@ -68,7 +68,7 @@ tr.click{cursor:pointer} tr.click:hover td{background:var(--an-accent-soft)}
 .scroll{overflow-x:auto}
 .note{font:400 15.5px/1.5 var(--body);color:var(--muted);border-left:2px solid var(--gold);padding:2px 0 2px 14px;margin:0 0 6px}
 .note b{color:var(--text);font-weight:600}
-table.pjt{table-layout:fixed;width:1182px}table.pjt td{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}table.pjt th{white-space:nowrap;overflow:visible}table.pjt td:last-child,table.pjt td:nth-child(2){white-space:normal}
+table.pjt{table-layout:fixed;width:100%;min-width:1140px}table.pjt td{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}table.pjt th{white-space:nowrap;overflow:visible}table.pjt td:last-child,table.pjt td:nth-child(2){white-space:normal}
 td.big{color:var(--bg);background:var(--gold);font-weight:700}
 /* numbers first: bigger and brighter than the text around them, digits lined up */
 table{font-variant-numeric:tabular-nums}
@@ -100,7 +100,9 @@ table.mkt tr.click td{transition:background .12s}
 table.mkt tr.click:hover td{background:color-mix(in srgb,var(--gold) 6%,transparent)}
 table.mkt td.tl b{font-weight:600}
 table.mkt .caret{display:inline-block;width:14px;color:var(--muted);font-size:12.5px}
-table.mkt td.rd{white-space:normal;padding-top:8px;padding-bottom:8px}
+table.mkt td.rd{white-space:normal;padding-top:8px;padding-bottom:8px;padding-right:2px}
+body.wide table.mkt .pill{padding:2px 7px;margin-right:4px}
+@media (min-width:1100px){body.wide .wrap{padding-left:16px;padding-right:16px}}   /* Market Analysis: room for every column at 1200px */
 table.mkt th.rd{padding-left:16px}
 .pill{display:inline-block;margin:2px 6px 2px 0;padding:2px 9px;border-radius:999px;font:500 13.5px var(--body);line-height:1.5;border:1px solid transparent;white-space:nowrap}
 .pill b{font:600 13px var(--mono);margin-left:2px}
@@ -129,7 +131,7 @@ th.sort{cursor:pointer;user-select:none}th.sort:hover,th.sort.on{color:var(--gol
 .chip{background:none;border:1px solid var(--line);border-radius:999px;color:var(--muted);font:500 13.5px var(--mono);padding:5px 12px;cursor:pointer}
 .chip:hover{color:var(--text)}
 .chip.on{background:var(--gold);border-color:var(--gold);color:var(--an-on-accent)}
-table.crt{width:auto;min-width:1180px}table.crt .gl{border-left:1px solid var(--line)}table.crt td.crc{min-width:440px;white-space:normal;line-height:1.45;padding-top:7px;padding-bottom:7px}table.crt th.sort{cursor:pointer}
+table.crt{width:auto;min-width:1140px}table.crt .gl{border-left:1px solid var(--line)}table.crt td.crc{min-width:280px;white-space:normal;line-height:1.45;padding-top:7px;padding-bottom:7px}table.crt th.sort{cursor:pointer}
 .metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px;margin:0 0 8px}
 .metric{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
 .metric .lbl{font:400 12.5px var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}
@@ -148,7 +150,10 @@ select.peer:focus{outline:2px solid var(--gold)}
 .pjintro details{margin-top:8px}.pjintro summary{cursor:pointer;color:var(--gold);font:500 13px var(--mono)}
 .pjgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:14px}
 .pjc{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px 12px;scroll-margin-top:16px}
-.pjc.hot{border-color:color-mix(in srgb,var(--gold) 60%,transparent)}
+.pjc.hot{border-color:#4fd08a;box-shadow:0 0 0 1px #4fd08a}
+.pjc .pkband{margin-top:10px;padding:8px 12px;border-radius:8px;background:#4fd08a;color:#0c1424;display:flex;flex-wrap:wrap;justify-content:space-between;gap:2px 10px;font-size:15px}
+.pjc .pkband span{font:500 12px var(--mono);align-self:center}
+.pkw{color:#4fd08a}.pjpk{width:auto;min-width:640px}.pjpk .hcp{color:#4fd08a}.pjpk td{white-space:normal}
 .pjc .when{font:400 13.5px var(--mono);color:var(--muted);display:flex;justify-content:space-between;gap:8px}
 .pjc .teams{font:600 18px/1.3 var(--serif);margin:4px 0 10px;min-height:2.6em;display:flex;flex-wrap:wrap;align-content:flex-end}
 .pjc table{table-layout:fixed}
@@ -190,7 +195,6 @@ select.peer:focus{outline:2px solid var(--gold)}
   <nav class="tabs an-tabs" id="tabs" aria-label="Sections">
     <a href="#view=projections" data-view="projections" class="on">Projections</a>
     <a href="#view=market" data-view="market">Market Analysis</a>
-    <a href="#view=archive" data-view="archive">Archive</a>
     <a href="#view=picks" data-view="picks">Picks</a>
     <a href="#view=ratings" data-view="ratings">Club Ratings</a>
     <a href="#view=h2h" data-view="h2h">Head to Head</a>
@@ -203,7 +207,6 @@ select.peer:focus{outline:2px solid var(--gold)}
 
   <div id="rkView" hidden></div>
   <div id="pjView" hidden></div>
-  <div id="arView" hidden></div>
   <div id="pkView" hidden></div>
   <div id="crView" hidden></div>
   <div id="mkView"></div>
@@ -542,11 +545,11 @@ const gapSelect = () => `<label>Highlight gaps from <select class="peer gapsel" 
 const bindGap = (box, rerender) => box.querySelectorAll('select.gapsel').forEach(sel => sel.onchange = () => { gapMin = +sel.value; sync(); rerender(); });
 const BOOK = {};                                               // upcoming lines (odds.js) by "home|away"
 for (const o of (window.ODDS && window.ODDS.list) || []) BOOK[o.h + '|' + o.a] = o;
-const outText = list => list.map(([p, imp, note]) => `${p} <span class="tag">${imp.toFixed(1)}${note ? ' · ' + esc(note) : ''}</span>`).join(', ');
+const outText = list => list.map(([p, imp, note]) => `${esc(p)} <span class="tag">${imp.toFixed(1)}${note ? ' · ' + esc(note) : ''}</span>`).join(', ');
 const gapCell = (v, cls = '') => v === null ? `<td class="n tag${cls}">–</td>` :
   Math.abs(v) >= gapMin ? `<td class="n big${cls}">${sgn(v)}</td>` : `<td class="n dim${cls}">${sgn(v)}</td>`;
 // one set of column widths for every day's table, so the columns line up down the page
-const PJ_COLS = '<colgroup><col style="width:64px"><col style="width:290px">' + '<col style="width:84px">'.repeat(7) + '<col style="width:240px"></colgroup>';
+const PJ_COLS = '<colgroup><col style="width:64px"><col style="width:290px">' + '<col style="width:92px">'.repeat(4) + '<col style="width:136px">'.repeat(2) + '<col></colgroup>';
 let pjMode = 'cards';                                              // 'cards' or 'table'
 // the side and line the model prefers against the bookmaker; small gaps count as no lean
 const PJ_LEAN = 1.5;
@@ -554,11 +557,53 @@ const pct = x => Math.round(x * 100) + '%';
 // normal curve (Abramowitz-Stegun): the bookmaker's win chance from its handicap, with the model's spread of misses
 const phi = x => { const t = 1 / (1 + 0.3275911 * Math.abs(x) / Math.SQRT2), e = 1 - t * (0.254829592 + t * (-0.284496736 + t * (1.421413741 + t * (-1.453152027 + t * 1.061405429)))) * Math.exp(-x * x / 2); return x >= 0 ? (1 + e) / 2 : (1 - e) / 2; };
 const lineName = (g, v) => v === 0 ? '<b class="nm">Level</b>pick\'em' : `<b class="nm" title="${esc(v > 0 ? g.h : g.a)}">${esc(v > 0 ? g.h : g.a)}</b>−${Math.abs(v).toFixed(1)}`;
-function pjCard(g, P){
+// the market first: what kind of game each line makes it, and how that kind of game has gone against the lines so far
+function mkSpots(before){
+  const all = mkData().games.filter(g => !before || g.date < before), games = all.filter(g => g.bh);
+  const kind = bh => { const a = Math.abs(bh), side = bh > 0 ? 'home' : 'away'; return a < 5 ? 'Close game: tough call' : a < 10 ? `Medium ${side} favourite` : `Big ${side} favourite`; };
+  const rec = {};
+  const add = (k, v) => { const x = rec[k] ||= {w: 0, l: 0}; v > 0 ? x.w++ : v < 0 ? x.l++ : 0; };
+  for (const g of games) add(kind(g.bh), (g.hp - g.ap - g.bh) * (g.bh > 0 ? 1 : -1));
+  // a market gap: one side has won 54%+ of 20 or more games, as "Worth watching" on Market Analysis
+  const line = (name, k, who) => {
+    const x = rec[k] || {w: 0, l: 0}, n = x.w + x.l, gap = n >= 20 && Math.max(x.w, x.l) / n >= 0.54;
+    return `<div class="lean"><span class="k">${name}</span><span class="pick">${esc(k)}</span><span class="gp${gap ? ' big' : ''}" title="How this kind of game has gone against the lines this season">${who} ${x.w}–${x.l}${gap ? ' · market gap' : ''}</span></div>`;
+  };
+  // the side of a market gap: 1 home, -1 away, 0 none
+  const edge = bh => {
+    const x = rec[kind(bh)] || {w: 0, l: 0}, n = x.w + x.l;
+    return !bh || n < 20 || Math.max(x.w, x.l) / n < 0.54 ? 0 : (x.w > x.l ? 1 : -1) * (bh > 0 ? 1 : -1);
+  };
+  // clubs on the Underrated and Overrated lists of Market Analysis
+  const vs = {};
+  for (const g of all) for (const [t, k] of [[g.h, 1], [g.a, -1]]) (vs[t] ||= []).push((g.hp - g.ap - g.bh) * k);
+  const rated = new Map(Object.entries(vs).filter(([, l]) => l.length >= MK_MIN && Math.abs(l.reduce((a, b) => a + b, 0) / l.length) >= mkLim(MK_SD.hcp, l.length))
+    .map(([t, l]) => [t, l.reduce((a, b) => a + b, 0) / l.length]));
+  return {hcp: bh => bh ? line('Handicap', kind(bh), 'favourite covers') : '', label: bh => { const x = rec[kind(bh)]; return `${kind(bh)}, favourite covers ${x.w}–${x.l}`; }, edge, rated};
+}
+let pjSpots = null;
+const PJ_EDGE = 6;                                             // points from the line for a model edge
+// a pick: market edge and model edge on the same side, and the club rating must not disagree (club overrated or opponent underrated)
+function pickOf(h, a, mh, bh, spots){
+  const gs = mh - bh, model = Math.abs(gs) >= PJ_EDGE ? Math.sign(gs) : 0, market = spots.edge(bh);
+  if (!model || model !== market) return null;
+  const rh = spots.rated.get(h) || 0, ra = spots.rated.get(a) || 0;   // above 0 underrated, below 0 overrated
+  const team = model > 0 ? h : a, opp = model > 0 ? a : h, rt = model > 0 ? rh : ra, ro = model > 0 ? ra : rh;
+  if (rt < 0 || ro > 0) return null;
+  return {home: model > 0, bet: `${team} ${sgn(model > 0 ? -bh : bh)}`, gap: Math.abs(gs), market: spots.label(bh),
+    club: rt > 0 ? `${team} underrated ${sgn(rt)}` : ro < 0 ? `${opp} overrated ${sgn(ro)}` : 'no disagreement'};
+}
+function pjPick(g){
   const o = BOOK[g.h + '|' + g.a];
-  const bh = o ? o.bh : null, bt = o && o.bt != null ? o.bt : null, pb = o ? phi(o.bh / P.spread) : null;
+  const k = o ? pickOf(g.h, g.a, g.mh, o.bh, pjSpots) : null;
+  return k && {...k, g};
+}
+function pjCard(g){
+  const o = BOOK[g.h + '|' + g.a];
+  const bh = o ? o.bh : null, pb = o ? phi(o.bh / PROJ.spread) : null;
   const fav = (v, h, a) => v > 0 ? h : a;
   const winner = ph => `<b class="nm" title="${esc(fav(ph - 0.5, g.h, g.a))}">${esc(fav(ph - 0.5, g.h, g.a))}</b>${pct(Math.max(ph, 1 - ph))}`;
+  const bookHcp = o ? lineName(g, bh) : '–';
   const gapPill = gap => `<span class="gp${Math.abs(gap) >= gapMin ? ' big' : ''}" title="How far the model is from the bookmaker's line">${Math.abs(gap).toFixed(1)} pts apart</span>`;
   const leans = [];
   if (o){
@@ -566,24 +611,19 @@ function pjCard(g, P){
     leans.push(Math.abs(gs) < PJ_LEAN
       ? `<div class="lean none"><span class="k">Handicap</span><span class="pick">No lean: model close to the line</span></div>`
       : `<div class="lean"><span class="k">Handicap</span><span class="pick">${esc(gs > 0 ? g.h : g.a)} ${sgn(gs > 0 ? -bh : bh)}</span>${gapPill(gs)}</div>`);
-    if (bt !== null){
-      const gt = g.mt - bt;
-      leans.push(Math.abs(gt) < PJ_LEAN
-        ? `<div class="lean none"><span class="k">Total</span><span class="pick">No lean: model close to the line</span></div>`
-        : `<div class="lean"><span class="k">Total</span><span class="pick">${gt > 0 ? 'Over' : 'Under'} ${bt.toFixed(1)}</span>${gapPill(gt)}</div>`);
-    }
   }
-  const hot = o && (Math.abs(g.mh - bh) >= gapMin || (bt !== null && Math.abs(g.mt - bt) >= gapMin));
+  const pick = pjPick(g), hot = !!pick;
+  const pill = t => { const v = pjSpots.rated.get(t); return v === undefined ? '' : `<span class="gp" title="Against the handicap this season, per game"><b class="${v > 0 ? 'w' : 'l'}">${esc(t)} ${v > 0 ? 'underrated' : 'overrated'}</b> ${sgn(v)}</span>`; };
+  const clubs = pill(g.h) + pill(g.a);
   const out = [...g.outH.map(x => [x, g.h]), ...g.outA.map(x => [x, g.a])];
   return `<div class="pjc${hot ? ' hot' : ''}" id="pj-${esc((g.h + '-' + g.a).replace(/[^A-Za-z0-9]+/g, '-'))}">
     <div class="when"><span>${g.when.slice(11)} · ${esc(g.round)}</span><span>${esc(code(teams[g.h]))} – ${esc(code(teams[g.a]))}</span></div>
     <div class="teams">${esc(g.h)}<span>vs</span>${esc(g.a)}</div>
     <table><tr><th></th><th>Model</th><th>Bookmaker</th></tr>
       <tr><td title="Chance to win the game">Winner</td><td>${winner(g.ph)}</td><td>${pb === null ? '<span class="tag">–</span>' : `<span title="From the bookmaker's handicap">${winner(pb)}</span>`}</td></tr>
-      <tr><td title="Both as a handicap: Mykonos −8.3 = Mykonos expected to win by 8.3">Handicap</td><td><b class="nm" title="${esc(fav(g.mh, g.h, g.a))}">${esc(fav(g.mh, g.h, g.a))}</b>−${Math.abs(g.mh).toFixed(1)}${g.adj ? '<span class="tag" title="Includes the absences below"> *</span>' : ''}</td><td>${o ? lineName(g, bh) : '–'}</td></tr>
-      <tr><td title="Points scored by both teams together">Total</td><td>${g.mt.toFixed(1)}</td><td>${bt === null ? '<span class="tag">–</span>' : bt.toFixed(1)}</td></tr>
+      <tr><td title="Both as a handicap: Mykonos −8.3 = Mykonos expected to win by 8.3">Handicap</td><td><b class="nm" title="${esc(fav(g.mh, g.h, g.a))}">${esc(fav(g.mh, g.h, g.a))}</b>−${Math.abs(g.mh).toFixed(1)}${g.adj ? '<span class="tag" title="Includes the absences below"> *</span>' : ''}</td><td>${bookHcp}</td></tr>
     </table>
-    ${o ? `<div class="leans"><div class="lh">Model leans</div>${leans.join('')}</div>` : '<div class="noline">No bookmaker line yet: it usually appears a day or two before the game.</div>'}
+    ${o ? `<div class="leans"><div class="lh">Market so far</div>${pjSpots.hcp(bh)}${clubs ? `<div class="lean"><span class="k">Clubs</span>${clubs}</div>` : ''}</div><div class="leans"><div class="lh">Model leans</div>${leans.join('')}</div>${pick ? `<div class="pkband"><b>Pick: ${esc(pick.bet)}</b><span>market edge + model edge</span></div>` : ''}` : '<div class="noline">No bookmaker line yet: it usually appears a day or two before the game.</div>'}
     ${out.length ? `<div class="out">Out: ${out.map(([[pl, imp, note], t]) => `${esc(pl)} (${esc(t)}, worth ${imp.toFixed(1)} pts${note ? '; ' + esc(note) : ''})`).join(' · ')}</div>` : ''}
   </div>`;
 }
@@ -594,20 +634,36 @@ function renderProjections(){
   if (pjMode === 'cards') return renderPjCards(P);
   const days = {};
   for (const g of P.list) (days[g.when.slice(0, 10)] ||= []).push(g);
-  const head = `<tr><th rowspan="2" class="n">Time</th><th rowspan="2">Match</th><th colspan="3" class="grp gap">Model</th><th colspan="2" class="grp gap">Bookmaker</th><th colspan="2" class="grp gap" title="Model minus bookmaker">Model − book</th><th rowspan="2">Out</th></tr>
-    <tr><th class="n" title="Handicap, home minus away">Hcp</th><th class="n">Total</th><th class="n gap" title="Home win chance">Home %</th><th class="n" title="Handicap, home minus away">Hcp</th><th class="n gap">Total</th><th class="n" title="Model handicap minus bookmaker handicap: above 0 = the model likes the home side more">Hcp</th><th class="n gap" title="Model total minus bookmaker total">Total</th></tr>`;
+  const head = `<tr><th rowspan="2" class="n">Time</th><th rowspan="2">Match</th><th colspan="2" class="grp gap">Model</th><th colspan="2" class="grp gap">Bookmaker</th><th class="grp gap" title="Model minus bookmaker">Model − book</th><th class="grp gap" title="How the two clubs have done against the bookmaker's lines this season (Market Analysis tab), and whether that points the same way as the model">Vs market</th><th rowspan="2">Out</th></tr>
+    <tr><th class="n" title="Handicap, home minus away">Hcp</th><th class="n gap" title="Home win chance">Home %</th>
+      <th class="n" title="Handicap, home minus away">Hcp</th><th class="n gap" title="Home win chance worked out from the bookmaker's handicap">Home %</th>
+      <th class="n gap" title="Model handicap minus bookmaker handicap: above 0 = the model likes the home side more">Hcp</th>
+      <th class="n gap" title="Home vs line minus away vs line: above 0 = the home club has beaten the market by more. Green = same way as Model − book, red = the other way">Hcp</th></tr>`;
+  const MK = new Map(mkData().rows.map(x => [x.team, x]));
+  // agreement: the clubs' record against the market points the same way as the model's gap to the book (both need MK_MIN games)
+  // the clubs' market number (home − away on the handicap, average on the total), green when it points the way of the model's gap
+  const agree = (gap, trend, ok, what, detail = '') => trend === null ? '<td class="n tag">–</td>'
+    : !ok || gap === null || !gap || !trend ? `<td class="n tag" title="${detail}${ok ? 'No bookmaker line yet' : 'Shown in colour once both clubs have ' + MK_MIN + ' games'}">${sgn(trend)}</td>`
+    : (gap > 0) === (trend > 0) ? `<td class="n w" title="${detail}Agrees with the model: ${what} points the same way as Model − book (${sgn(gap)})"><b>${sgn(trend)}</b></td>`
+                                : `<td class="n l" title="${detail}Disagrees with the model: ${what} points the other way from Model − book (${sgn(gap)})">${sgn(trend)}</td>`;
   const row = g => {
     const o = BOOK[g.h + '|' + g.a];
-    const out = [...g.outH, ...g.outA];
+    const xh = MK.get(g.h), xa = MK.get(g.a), okS = xh && xa && xh.n >= MK_MIN && xa.n >= MK_MIN;
+    const bh = o ? o.bh : null, pb = o ? phi(o.bh / P.spread) : null;
+    const out = g.outH.length || g.outA.length
+      ? [g.outH.length ? `${esc(g.h)}: ${outText(g.outH)}` : '', g.outA.length ? `${esc(g.a)}: ${outText(g.outA)}` : ''].filter(Boolean).join('; ') : '–';
     return `<tr><td class="n">${g.when.slice(11)}</td>
       <td><b>${esc(g.h)}</b> <span class="tag">${esc(code(teams[g.h]))}</span> – <b>${esc(g.a)}</b> <span class="tag">${esc(code(teams[g.a]))}</span></td>
-      <td class="n hcp"><b>${sgn(g.mh)}</b></td><td class="n">${g.mt.toFixed(1)}</td><td class="n gap">${Math.round(g.ph * 100)}%</td>
-      ${o ? `<td class="n">${sgn(o.bh)}</td><td class="n gap">${o.bt === null ? '–' : o.bt.toFixed(1)}</td>` : '<td class="n tag" colspan="2" title="Lines appear a few days before the game">no line yet</td>'}
-      ${o ? gapCell(g.mh - o.bh) + gapCell(o.bt === null ? null : g.mt - o.bt, ' gap') : '<td class="n tag">–</td><td class="n tag gap">–</td>'}
-      <td class="tag">${out.length ? (g.outH.length ? `${esc(g.h)}: ${outText(g.outH)}` : '') + (g.outH.length && g.outA.length ? '; ' : '') + (g.outA.length ? `${esc(g.a)}: ${outText(g.outA)}` : '') : '–'}</td></tr>`;
+      <td class="n hcp"${g.adj ? ` title="Absences ${sgn(g.adj)}"` : ''}><b>${sgn(g.mh)}</b>${g.adj ? '*' : ''}</td><td class="n gap">${pct(g.ph)}</td>
+      ${o ? `<td class="n">${sgn(bh)}</td><td class="n gap">${pb === null ? '–' : pct(pb)}</td>`
+          : '<td class="n tag gap" colspan="2" title="Lines appear a few days before the game">no line yet</td>'}
+      ${o ? gapCell(g.mh - bh, ' gap') : '<td class="n tag gap">–</td>'}
+      ${agree(o ? g.mh - bh : null, xh && xa ? xh.vsS - xa.vsS : null, okS, 'home − away vs line', xh && xa ? `${g.h} ${sgn(xh.vsS)} (${xh.n} games), ${g.a} ${sgn(xa.vsS)} (${xa.n} games). ` : '').replace('class="n ', 'class="n gap ')}
+      <td class="tag">${out}</td></tr>`;
   };
-  box.innerHTML = pjModeBar() + `<div class="note" style="margin-bottom:14px"><b>The model rates every club from this season's results</b>, with older games counting less, starting from last season's rating scaled by how much of the roster stayed (new clubs start a little below average). Past results are corrected for the players each side was missing, and tonight's absences come off the club (the <b>Out</b> column, from the injury list, impact as on the Rosters tab). Home advantage ${sgn(P.hca)}.
-      It never looks at the bookmaker: <b>Model − book</b> is where the two disagree. Backtested on 2023-24 to 2025-26 (451 games with a line): the book was more accurate on average (miss 10.4 points against 10.8), and games 5+ points apart went 54–44 for the model's side, too few to prove an edge. The <a class="back" href="#view=archive" data-go="archive">Archive</a> keeps every projection made before tip-off.</div>` +
+  box.innerHTML = pjModeBar() + `<div class="note" style="margin-bottom:14px"><b>The model rates every club from this season's results</b>, with older games counting less, starting from last season's rating scaled by how much of the roster stayed (new clubs start a little below average). Past results are corrected for the players each side was missing, and tonight's absences come off the club (the <b>Out</b> column, from the injury list, impact as on the Rosters tab; a handicap marked * includes them). Home advantage ${sgn(P.hca)}.
+      It never looks at the bookmaker: <b>Model − book</b> is where the two disagree. <b>Vs market</b> shows how each club has done against the bookmaker's lines this season (as on the Market Analysis tab): it is home vs line − away vs line; green when it points the same way as Model − book (the market record backs the model), red when it points the other way; in colour once both clubs have ${MK_MIN} games. Backtested on 2023-24 to 2025-26 (451 games with a line): the book was more accurate on average (miss 10.4 points against 10.8), and games 5+ points apart went 54–44 for the model's side, too few to prove an edge.</div>
+` +
     Object.entries(days).map(([d, list]) => `<h2>${dayName(d)} <span class="tag">${esc(list[0].round)}</span></h2>
       <div class="scroll"><table class="fx pjt">${PJ_COLS}${head}${list.map(row).join('')}</table></div>`).join('') +
     `<div class="tag" style="margin-top:14px">Every club's rating, next to the market's: <a class="back" href="#view=ratings" data-go="ratings">Club Ratings</a>. Projections updated ${esc(P.updated)}; win chance = the handicap on a normal curve with the backtest's spread of misses (${P.spread} points).</div>`;
@@ -620,151 +676,71 @@ function bindPj(box){
   box.querySelectorAll('[data-go]').forEach(a => a.onclick = e => { e.preventDefault(); setView(a.dataset.go); sync(); window.scrollTo({top: 0}); });
 }
 // the game cards: what the model expects, next to the bookmaker, in plain words
-function renderPjCards(P){
-  const box = $('pjView');
-  const days = {};
-  for (const g of P.list) (days[g.when.slice(0, 10)] ||= []).push(g);
-  box.innerHTML = pjModeBar() + `<div class="pjintro"><h3>What to expect this week</h3>
-      The model's numbers next to the bookmaker's for every game. <b>Model leans</b> is the side of the bookmaker's line the model prefers.
-      <div class="warn"><b>Not a tip.</b> The model uses past results and the injury list, no other news, and has not proven an edge over the bookmaker. See its <a class="back" href="#view=archive" data-go="archive">track record</a>.</div>
-      <details><summary>How to read a card</summary><ul><li><b>Winner</b>: the chance to win (the bookmaker's worked out from its handicap).</li>
-        <li><b>Handicap</b>: the expected winning margin, written like a bookmaker's line: Mykonos −8.3 = Mykonos by 8.3.</li>
-        <li><b>Total</b>: points scored by both teams together.</li>
-        <li><b>Model leans</b>: the bet the model prefers at the bookmaker's line, and how far apart the two are. Gaps of ${gapMin}+ points are in gold. "No lean" means the two are close.</li>
-        <li><b>*</b>: the handicap includes the absences listed on the card.</li></ul></details></div>` +
-    Object.entries(days).map(([d, list]) => `<h2>${dayName(d)} <span class="tag">${esc(list[0].round)} · ${list.length} game${list.length === 1 ? '' : 's'}</span></h2>
-      <div class="pjgrid">${list.map(g => pjCard(g, P)).join('')}</div>`).join('') +
-    `<div class="tag" style="margin-top:18px">Updated ${esc(P.updated)} (Athens time). More detail: <a class="back" href="#view=ratings" data-go="ratings">Club Ratings</a>.</div>`;
-  bindPj(box);
-}
-const PICK_PRICE = 1.87;                                       // counted where no price was logged (before 3 Nov 2026)
-const PICK_NOTE = 'Prices are logged from 3 Nov 2026; earlier picks (marked *) are counted at 1.87, the usual price on a main line.';
-const pickSource = () => ((window.ARCHIVE && ARCHIVE.list) || []).map(g => ({date: g.when.slice(0, 10), time: g.when.slice(11), round: g.round,
-  h: g.h, a: g.a, mh: g.mh, bh: g.bh, oh: g.oh, oa: g.oa}));
-// ---------- Picks: the rule (the model's side of the bookmaker's handicap when the two are 6+ points apart), 1 unit
-// at the logged price, settled from the results. Read from the Archive, so a pick follows the latest line until
-// tip-off and is frozen with the game after; the rule is fixed here, not by the gap selector.
-const PICK_GAP = 6;
-const PICK_SPLIT_FROM = '2026-11-04';                          // earlier picks helped suggest the split, so the fair count starts here
-// does the two clubs' record against the line before this game (Market Analysis) point the way of the bet? null = too early to say
-function pickRecord(p, games){
-  const vs = t => {
-    const x = games.filter(g => g.date < p.date && (g.h === t || g.a === t)).map(g => (g.hp - g.ap - g.bh) * (g.h === t ? 1 : -1));
-    return x.length >= MK_MIN ? x.reduce((s, v) => s + v, 0) / x.length : null;
-  };
-  const h = vs(p.h), a = vs(p.a);
-  return h === null || a === null || h === a ? null : (h > a) === p.home;
-}
-function pickRows(){
-  const played = mkData().games;
-  return pickSource().filter(g => g.mh != null && g.bh != null && Math.abs(g.mh - g.bh) >= PICK_GAP).map(g => {
-    const home = g.mh > g.bh, logged = home ? g.oh : g.oa, pr = logged || PICK_PRICE;
-    const r = arResult(g.date, g.h, g.a);
-    let m = null, res = null, u = null;
-    if (r){
-      m = r[6] - r[7];
-      const c = home ? m - g.bh : g.bh - m;                 // points the bet side beat the line by
-      res = c > 0 ? 'W' : c < 0 ? 'L' : 'P';
-      u = res === 'W' ? pr - 1 : res === 'L' ? -1 : 0;
-    }
-    return {...g, home, pr, logged: !!logged, r, m, res, u, rec: pickRecord({...g, home}, played), bet: home ? `${g.h} ${sgn(-g.bh)}` : `${g.a} ${sgn(g.bh)}`};
-  }).sort((x, y) => (x.date + x.time).localeCompare(y.date + y.time) || x.h.localeCompare(y.h));
+// ---------- Picks: every game of the Archive data from PICKS_FROM that met the rule, on what was known before its day.
+// A pick follows the latest line until tip-off, is frozen with the game there, and is settled when the result comes in.
+const PICKS_FROM = '2026-11-04', PICK_PRICE = 1.87;              // PICK_PRICE: counted if no price was logged
+function pickList(){
+  const spots = {}, out = [];
+  for (const g of (window.ARCHIVE && ARCHIVE.list) || []){
+    const date = g.when.slice(0, 10);
+    if (date < PICKS_FROM || g.mh == null || g.bh == null) continue;
+    const k = pickOf(g.h, g.a, g.mh, g.bh, spots[date] ||= mkSpots(date));
+    if (!k) continue;
+    const r = arResult(date, g.h, g.a), logged = k.home ? g.oh : g.oa, pr = logged || PICK_PRICE;
+    const c = r ? (r[6] - r[7] - g.bh) * (k.home ? 1 : -1) : null, res = !r ? null : c > 0 ? 'W' : c < 0 ? 'L' : 'P';
+    out.push({...k, date, time: g.when.slice(11), h: g.h, a: g.a, pr, logged: !!logged, r, res, u: !r ? null : res === 'W' ? pr - 1 : res === 'L' ? -1 : 0});
+  }
+  return out.sort((x, y) => (x.date + x.time).localeCompare(y.date + y.time) || x.h.localeCompare(y.h));
 }
 function renderPicks(){
-  const box = $('pkView');
-  const all = pickRows(), open = all.filter(p => !p.r), done = all.filter(p => p.r);
-  const w = done.filter(p => p.res === 'W').length, l = done.filter(p => p.res === 'L').length, pu = done.length - w - l;
-  const units = done.reduce((s, p) => s + p.u, 0);
-  const cls = v => v > 0 ? 'w' : v < 0 ? 'l' : '';
-  const u2 = v => (v > 0 ? '+' : v < 0 ? '−' : '') + Math.abs(v).toFixed(2);
+  const box = $('pkView'), all = pickList(), open = all.filter(p => !p.r), done = all.filter(p => p.r);
+  const w = done.filter(p => p.res === 'W').length, l = done.filter(p => p.res === 'L').length, pu = done.length - w - l, units = done.reduce((t, p) => t + p.u, 0);
+  const cls = v => v > 0 ? 'pkw' : v < 0 ? 'l' : '', u2 = v => (v > 0 ? '+' : v < 0 ? '−' : '') + Math.abs(v).toFixed(2);
   const card = (t, v, sub) => `<div class="metric"><div class="lbl">${t}</div><div class="big2">${v}</div><div class="tag">${sub}</div></div>`;
-  const price = p => `${p.pr.toFixed(2)}${p.logged ? '' : '<span class="tag" title="No price was logged for this pick: counted at ' + PICK_PRICE.toFixed(2) + '">*</span>'}`;
-  let h = `<div class="note" style="margin-bottom:14px"><b>A pick is the model's side of the bookmaker's handicap when the two are ${PICK_GAP} or more points apart</b> (the rule), 1 unit at the price logged with the line. Until tip-off a pick follows the latest line, so it can appear or drop out as the line moves; then it is frozen with the game in the <a class="back" href="#view=archive" data-go="archive">Archive</a> and settled from the result. ${PICK_NOTE} The record judges itself at <b>100 settled picks</b>; before that it is mostly noise.</div>
+  const price = p => p.pr.toFixed(2) + (p.logged ? '' : '<span class="tag" title="No price logged: counted at ' + PICK_PRICE.toFixed(2) + '">*</span>');
+  const when = p => `${fmtDate(p.date).slice(0, 5)} <span class="tag">${esc(p.time)}</span>`;
+  box.innerHTML = `<div class="note" style="margin-bottom:14px"><b>A pick needs everything in place:</b> a market edge and a model edge (${PJ_EDGE}+ points from the line) on the same side, and the club rating must not disagree. 1 unit at the logged price. A pick follows the latest line until tip-off, so it can appear or drop out as the line moves; then it is frozen and settled from the result. The record starts on ${fmtDate(PICKS_FROM)}, the day the rule was set, and it is too early to read anything into it.</div>
     <div class="metrics">
       ${card('Settled picks', done.length, `${open.length} still to play`)}
       ${card('Record', done.length ? `${w}–${l}${pu ? `<span class="tag">–${pu}</span>` : ''}` : '–', 'won – lost' + (pu ? ' – push' : ''))}
-      ${card('Hit rate', w + l ? `<span class="${w / (w + l) * 100 > 100 / PICK_PRICE ? 'w' : 'l'}">${Math.round(w / (w + l) * 100)}%</span>` : '–', `break-even about ${(100 / PICK_PRICE).toFixed(1)}% at ${PICK_PRICE.toFixed(2)}`)}
-      ${card('Units', done.length ? `<span class="${cls(units)}">${u2(units)}</span>` : '–', 'stake 1 unit a pick')}
-      ${card('ROI', done.length ? `<span class="${cls(units)}">${(units > 0 ? '+' : units < 0 ? '−' : '') + Math.abs(units / done.length * 100).toFixed(1)}%</span>` : '–', 'units won per unit staked')}
-    </div>`;
-  const recCell = p => p.rec === null ? '<td class="n tag" title="Too early: both clubs need ' + MK_MIN + ' games with a line">–</td>'
-    : p.rec ? '<td class="n w" title="The clubs\' record against the line points the same way as the bet">✓</td>' : '<td class="n l" title="The clubs\' record against the line points the other way">✗</td>';
-  const wl = list => { const a = list.filter(p => p.res === 'W').length, b = list.filter(p => p.res === 'L').length, c = list.length - a - b; return list.length ? `${a}–${b}${c ? `–${c}` : ''}` : '–'; };
-  const group = (name, rec) => {
-    const x = done.filter(p => p.rec === rec), a = x.filter(p => p.res === 'W').length, b = x.filter(p => p.res === 'L').length, un = x.reduce((t, p) => t + p.u, 0);
-    return `<tr><td><b>${name}</b></td><td class="n">${x.length}</td><td class="n">${wl(x)}</td><td class="n">${a + b ? Math.round(a / (a + b) * 100) + '%' : '–'}</td>
-      <td class="n ${cls(un)}">${x.length ? u2(un) : '–'}</td><td class="n ${cls(un)}">${x.length ? (un > 0 ? '+' : un < 0 ? '−' : '') + Math.abs(un / x.length * 100).toFixed(1) + '%' : '–'}</td>
-      <td class="n"><b>${wl(x.filter(p => p.date >= PICK_SPLIT_FROM))}</b></td></tr>`;
-  };
-  h += `<h2>By season record</h2><div class="tag" style="margin-bottom:8px;max-width:760px;line-height:1.5">Does the two clubs' record against the line before the game (Market Analysis tab) point the same way as the pick? Every pick still counts in the record above: this only watches whether the agreeing picks do better. Past games suggested they might, on very few picks, so the fair count starts on ${fmtDate(PICK_SPLIT_FROM)}.</div>
-    <div class="scroll"><table class="fx" style="width:auto;min-width:640px"><tr><th>Group</th><th class="n">Picks</th><th class="n">Record</th><th class="n">Hit rate</th><th class="n">Units</th><th class="n">ROI</th><th class="n" title="Won – lost since the split was set up">From ${fmtDate(PICK_SPLIT_FROM).slice(0, 5)}</th></tr>
-    ${group('✓ Record agrees', true)}${group('✗ Record disagrees', false)}${group('Too early to say', null)}</table></div>`;
-  h += `<h2>Open picks</h2>` + (open.length ? `<div class="scroll"><table class="fx"><tr><th class="n">Tip-off</th><th>Match</th><th>Bet</th><th class="n">Price</th><th class="n" title="Model handicap, home minus away">Model</th><th class="n" title="Bookmaker handicap, home minus away">Book</th><th class="n" title="Model minus book">Gap</th><th class="n" title="The clubs' record against the line">Record</th></tr>` +
-    open.map(p => `<tr><td class="n">${fmtDate(p.date).slice(0, 5)} <span class="tag">${esc(p.time)}</span></td><td><b>${esc(p.h)}</b> – <b>${esc(p.a)}</b></td>
-      <td><b class="hcp">${esc(p.bet)}</b></td><td class="n">${price(p)}</td><td class="n">${sgn(p.mh)}</td><td class="n">${sgn(p.bh)}</td><td class="n big">${sgn(p.mh - p.bh)}</td>${recCell(p)}</tr>`).join('') + '</table></div>'
-    : '<div class="empty">No open picks right now. They appear here once a bookmaker line is 6+ points from the model.</div>');
-  let run = 0;
-  const rows = done.map(p => { run += p.u; return `<tr><td class="n">${fmtDate(p.date)}</td><td><b>${esc(p.h)}</b> – <b>${esc(p.a)}</b></td>
-      <td><b>${esc(p.bet)}</b></td><td class="n">${price(p)}</td><td class="n">${sgn(p.mh)}</td><td class="n">${sgn(p.bh)}</td>
-      <td class="n"><b>${p.r[6]}–${p.r[7]}</b></td><td class="n">${sgn(p.m)}</td>
-      <td class="n ${p.res === 'W' ? 'w' : p.res === 'L' ? 'l' : 'tag'}"><b>${p.res === 'W' ? 'Won' : p.res === 'L' ? 'Lost' : 'Push'}</b></td>
-      <td class="n ${cls(p.u)}">${u2(p.u)}</td><td class="n ${cls(run)}">${u2(run)}</td>${recCell(p)}</tr>`; }).reverse().join('');
-  h += `<h2>Every settled pick</h2>` + (done.length ? `<div class="scroll"><table class="fx"><tr><th class="n">Date</th><th>Match</th><th>Bet</th><th class="n">Price</th><th class="n">Model</th><th class="n">Book</th><th class="n">Score</th><th class="n" title="Home minus away">Margin</th><th class="n">Result</th><th class="n">Units</th><th class="n">Running</th><th class="n" title="The clubs' record against the line">Record</th></tr>${rows}</table></div>`
-    : '<div class="empty">No settled picks yet. Each pick is added here once its game is played.</div>');
-  box.innerHTML = h;
-  box.querySelectorAll('[data-go]').forEach(a => a.onclick = e => { e.preventDefault(); setView(a.dataset.go); sync(); window.scrollTo({top: 0}); });
+      ${card('Hit rate', w + l ? Math.round(w / (w + l) * 100) + '%' : '–', 'makes a profit from about 54%')}
+      ${card('Units', done.length ? `<span class="${cls(units)}">${u2(units)}</span>` : '–', '1 unit a pick')}
+    </div>
+    <h2>Open picks</h2>` + (open.length ? `<div class="scroll"><table class="fx pjpk"><tr><th class="n">Tip-off</th><th>Pick</th><th>Game</th><th class="n">Price</th><th>Market edge</th><th class="n">Model edge</th><th>Club rating</th></tr>` +
+      open.map(p => `<tr><td class="n">${when(p)}</td><td><b class="hcp">${esc(p.bet)}</b></td><td>${esc(p.h)} – ${esc(p.a)}</td><td class="n">${price(p)}</td><td>${esc(p.market)}</td><td class="n">${p.gap.toFixed(1)} pts</td><td>${esc(p.club)}</td></tr>`).join('') + '</table></div>'
+      : '<div class="empty">No open picks right now. A pick appears here as soon as a game has everything in place.</div>') +
+    `<h2>Results</h2>` + (done.length ? `<div class="scroll"><table class="fx pjpk"><tr><th class="n">Date</th><th>Pick</th><th>Game</th><th class="n">Price</th><th class="n">Score</th><th class="n">Result</th><th class="n">Units</th></tr>` +
+      [...done].reverse().map(p => `<tr><td class="n">${fmtDate(p.date).slice(0, 5)}</td><td><b>${esc(p.bet)}</b></td><td>${esc(p.h)} – ${esc(p.a)}</td><td class="n">${price(p)}</td><td class="n"><b>${p.r[6]}–${p.r[7]}</b></td>
+        <td class="n ${p.res === 'W' ? 'pkw' : p.res === 'L' ? 'l' : 'tag'}"><b>${p.res === 'W' ? 'Won' : p.res === 'L' ? 'Lost' : 'Push'}</b></td><td class="n ${cls(p.u)}">${u2(p.u)}</td></tr>`).join('') + '</table></div>'
+      : '<div class="empty">No settled picks yet. Each pick moves here with its result after the game.</div>');
+}
+function renderPjCards(P){
+  const box = $('pjView');
+  pjSpots = mkSpots();
+  const days = {};
+  for (const g of P.list) (days[g.when.slice(0, 10)] ||= []).push(g);
+  const picks = P.list.map(pjPick).filter(Boolean);
+  box.innerHTML = pjModeBar() + `<div class="pjintro"><h3>What to expect this week</h3>
+      The model's numbers next to the bookmaker's for every game. A <b>pick</b> appears only when the market so far and the model point to the same side, and the club rating does not disagree.
+      <div class="warn"><b>Not a sure thing.</b> The model uses past results and the injury list, no other news, and has not proven an edge over the bookmaker. This pick rule is new and has no record yet.</div>
+      <details><summary>How to read a card</summary><ul><li><b>Winner</b>: the chance to win (the bookmaker's worked out from its handicap).</li>
+        <li><b>Handicap</b>: the expected winning margin, written like a bookmaker's line: Mykonos −8.3 = Mykonos by 8.3.</li>
+        <li><b>Market so far</b>: the kind of game the line makes it, and its record against the lines this season (<a class="back" href="#view=market" data-go="market">Market Analysis</a>). A favourite of under 5 is a close game, a tough call. Gold = one side has won 54%+ of 20 or more games: a possible market gap, still not proven.</li>
+        <li><b>Clubs</b>: clubs on the underrated or overrated lists of Market Analysis, with their average against the handicap.</li>
+        <li><b>Pick</b>: a market edge (a gold market gap) and a model edge (${PJ_EDGE}+ points from the line) on the same side, and the club rating does not disagree: the club is not overrated and its opponent is not underrated.</li>
+        <li><b>Model leans</b>: the bet the model prefers at the bookmaker's line, and how far apart the two are. Gaps of ${gapMin}+ points are in gold. "No lean" means the two are close.</li>
+        <li><b>*</b>: the handicap includes the absences listed on the card.</li></ul></details></div>
+    <h2 style="margin-top:6px">Picks</h2>` + (picks.length
+      ? `<div class="scroll"><table class="fx pjpk"><tr><th class="n">Time</th><th>Pick</th><th>Game</th><th>Market edge</th><th class="n">Model edge</th><th>Club rating</th></tr>` +
+        picks.map(k => `<tr><td class="n">${dayName(k.g.when.slice(0, 10)).split(' ').slice(1).join(' ')} <span class="tag">${k.g.when.slice(11)}</span></td><td><b class="hcp">${esc(k.bet)}</b></td><td>${esc(k.g.h)} – ${esc(k.g.a)}</td><td>${esc(k.market)}</td><td class="n">${k.gap.toFixed(1)} pts</td><td>${esc(k.club)}</td></tr>`).join('') + '</table></div>'
+      : '<div class="tag">No game has everything in place right now.</div>') +
+    Object.entries(days).map(([d, list]) => `<h2>${dayName(d)} <span class="tag">${esc(list[0].round)} · ${list.length} game${list.length === 1 ? '' : 's'}</span></h2>
+      <div class="pjgrid">${list.map(pjCard).join('')}</div>`).join('') +
+    `<div class="tag" style="margin-top:18px">Updated ${esc(P.updated)} (Athens time). More detail: <a class="back" href="#view=ratings" data-go="ratings">Club Ratings</a>.</div>`;
+  bindPj(box);
 }
 
-// ---------- Archive: every projection as it stood before tip-off, with the result once it is in
-function renderArchive(){
-  const box = $('arView');
-  const list = (window.ARCHIVE && ARCHIVE.list) || [];
-  if (!list.length){ box.innerHTML = '<div class="empty">Nothing archived yet.</div>'; return; }
-  const S = {n: list.length, res: 0, em: 0, eb: 0, tm: 0, tb: 0, tn: 0, w: 0, l: 0, big: 0, cm: 0, cb: 0};
-  const rows = list.map(g => {
-    const r = arResult(g.when.slice(0, 10), g.h, g.a);
-    const gap = g.mh - g.bh, big = Math.abs(gap) >= gapMin;
-    let res = '<td class="n tag gap" colspan="2">pending</td><td class="n tag">–</td><td class="n tag gap">–</td><td class="n tag">–</td>';
-    if (r){
-      S.res++;
-      const m = r[6] - r[7], t = r[6] + r[7], em = Math.abs(m - g.mh), eb = Math.abs(m - g.bh);
-      S.em += em; S.eb += eb;
-      if (g.bt !== null){ S.tn++; S.tm += Math.abs(t - g.mt); S.tb += Math.abs(t - g.bt); }
-      let side = '<td class="n tag">–</td>';
-      if (big){                                                  // the model's side of the line: home covers when gap > 0
-        S.big++;
-        const cov = Math.sign(gap) * (m - g.bh);
-        if (cov > 0) S.w++; else if (cov < 0) S.l++;
-        side = `<td class="n ${cov > 0 ? 'w' : cov < 0 ? 'l' : 'tag'}"><b>${cov > 0 ? 'Covered' : cov < 0 ? 'Missed' : 'Push'}</b></td>`;
-      }
-      const near = em < eb ? 'Model' : em > eb ? 'Book' : 'Tie';
-      if (near === 'Model') S.cm++; else if (near === 'Book') S.cb++;
-      res = `<td class="n gap"><b>${r[6]}–${r[7]}</b>${r[8] === 'AET' ? ' <span class="tag">OT</span>' : ''}</td><td class="n">${sgn(m)}</td>${side}
-        <td class="n gap ${near === 'Model' ? 'w' : near === 'Book' ? 'l' : 'tag'}" title="Model off by ${em.toFixed(1)}, book off by ${eb.toFixed(1)}">${near}</td><td class="n">${t}</td>`;
-    }
-    return {round: g.round, html: `<tr><td class="n">${fmtDate(g.when.slice(0, 10))} <span class="tag">${g.when.slice(11)}</span></td>
-      <td><b>${esc(g.h)}</b> – <b>${esc(g.a)}</b>${g.outH.length || g.outA.length ? ` <span class="tag" title="${esc([...g.outH, ...g.outA].map(x => x[0] + ' (' + x[1] + ')').join(', '))}">· out ${g.outH.length + g.outA.length}</span>` : ''}</td>
-      <td class="n hcp">${sgn(g.mh)}</td><td class="n">${sgn(g.bh)}</td>${gapCell(gap, ' gap')}
-      <td class="n">${g.mt.toFixed(1)}</td><td class="n gap">${g.bt === null ? '–' : g.bt.toFixed(1)}</td>${res}</tr>`};
-  });
-  const rounds = [...new Set(list.map(g => g.round))].sort((x, y) => parseInt(y.replace(/\D/g, '')) - parseInt(x.replace(/\D/g, '')));
-  const card = (t, v, sub) => `<div class="metric"><div class="lbl">${t}</div><div class="big2">${v}</div><div class="tag">${sub}</div></div>`;
-  const vs = (m, b) => `<span class="${m < b ? 'w' : m > b ? 'l' : ''}">${m.toFixed(1)}</span> <span class="tag">vs</span> <span class="${b < m ? 'w' : b > m ? 'l' : ''}">${b.toFixed(1)}</span>`;
-  const summary = `<div class="metrics">
-    ${card('Results in', `${S.res} of ${S.n}`, 'games frozen before tip-off')}
-    ${card('Handicap miss (avg)', S.res ? vs(S.em / S.res, S.eb / S.res) : '–', 'model vs book, points from the real margin; lower is better')}
-    ${card(`Model's side, gaps ${gapMin}+`, S.w + S.l ? `<span class="${S.w * 1.87 > S.w + S.l ? 'w' : 'l'}">${S.w}–${S.l}</span>` : '–', S.w + S.l ? `${Math.round(S.w / (S.w + S.l) * 100)}% (break-even at odds 1.87: 53.5%)` : `no finished game ${gapMin}+ points apart yet`)}
-    ${card('Nearer the margin', S.res ? `${S.cm}–${S.cb}` : '–', 'model – book, every finished game')}
-    ${card('Total miss (avg)', S.tn ? vs(S.tm / S.tn, S.tb / S.tn) : '–', 'model vs book')}
-  </div>`;
-  const head = `<tr><th rowspan="2" class="n">Date</th><th rowspan="2">Match</th><th colspan="3" class="grp gap">Handicap</th><th colspan="2" class="grp gap">Total</th><th colspan="5" class="grp">Result</th></tr>
-    <tr><th class="n">Model</th><th class="n">Book</th><th class="n gap" title="Model minus book">Gap</th><th class="n">Model</th><th class="n gap">Book</th>
-    <th class="n gap">Score</th><th class="n" title="Home minus away">Margin</th><th class="n" title="Only for gaps of ${gapMin}+ points: did the model's side of the line cover?">Model's side</th><th class="n gap" title="Whose handicap was nearer the real margin">Nearer</th><th class="n">Total</th></tr>`;
-  box.innerHTML = `<div class="pjbar">${gapSelect()}<span class="tag">Games further apart than this are highlighted and judged in the cards.</span></div>` + summary +
-    rounds.map(rd => `<h2>${esc(rd)}</h2><div class="scroll"><table class="fx">${head}${rows.filter(x => x.round === rd).map(x => x.html).join('')}</table></div>`).join('') +
-    `<div class="tag" style="margin-top:14px">Every projection is written before tip-off with the bookmaker's line of that moment and the injury list of that moment, then never changed. Hcp is home minus away. The result fills in by itself once the game is in the data.</div>`;
-  bindGap(box, renderArchive);
-}
+
 // ---------- Market Analysis: every Regular Season game's bookmaker line against what happened, by group and club
 let mkSort = {k: 'vs', dir: -1};
 const mkOpen = new Set();                                      // clubs whose games are shown
@@ -776,44 +752,33 @@ const MK_SD = {hcp: 12.5, tot: 17.5, pts: 10.75};
 const MK_MIN = 3;                                              // no comment before a club has this many games with a line
 const mkLim = (sd, n) => n >= MK_MIN ? sd / Math.sqrt(n) : Infinity;
 function mkRead(x){
-  // each of the four numbers is judged on its own noise bar; every one that clears it becomes a tag
+  // the handicap record, judged on its noise bar
   const one = v => (v > 0 ? '+' : '−') + Math.abs(v).toFixed(1);
-  const nS = mkLim(MK_SD.hcp, x.n), nT = mkLim(MK_SD.tot, x.tn), nP = mkLim(MK_SD.pts, x.tn);
+  const nS = mkLim(MK_SD.hcp, x.n);
   const tags = [];
   const tag = (cls, label, v, title) => tags.push(`<span class="pill ${cls}" title="${title}">${label} <b>${one(v)}</b></span>`);
   if (Math.abs(x.vsS) >= nS) tag(x.vsS > 0 ? 'w' : 'l', x.vsS > 0 ? 'Underrated' : 'Overrated', x.vsS, `Handicap: ${x.vsS > 0 ? 'beats' : 'falls short of'} the line by ${Math.abs(x.vsS).toFixed(1)} a game`);
-  if (x.vsT !== null && Math.abs(x.vsT) >= nT) tag('o', x.vsT > 0 ? 'Over' : 'Under', x.vsT, `Total: games go ${x.vsT > 0 ? 'over' : 'under'} the line by ${Math.abs(x.vsT).toFixed(1)}`);
-  if (x.own !== null && Math.abs(x.own) >= nP) tag(x.own > 0 ? 'w' : 'l', x.own > 0 ? 'Attack underrated' : 'Attack overrated', x.own, `Scores ${Math.abs(x.own).toFixed(1)} ${x.own > 0 ? 'more' : 'fewer'} than priced`);
-  if (x.opp !== null && Math.abs(x.opp) >= nP) tag(x.opp < 0 ? 'w' : 'l', x.opp < 0 ? 'Defence underrated' : 'Defence overrated', x.opp, `Concedes ${Math.abs(x.opp).toFixed(1)} ${x.opp < 0 ? 'fewer' : 'more'} than priced`);
   return tags.join('');
 }
-// one club's games, from its own side: its handicap and margin, the total, and how each went against the line
+// one club's games, from its own side: its handicap and margin, and how it went against the line
 function mkGames(x){
   const one = v => (v > 0 ? '+' : v < 0 ? '−' : '') + Math.abs(v).toFixed(1);
   const rows = x.games.slice().sort((a, b) => a.date.localeCompare(b.date)).map(g => {
     const home = g.h === x.team, opp = home ? g.a : g.h;
     const own = home ? g.hp : g.ap, them = home ? g.ap : g.hp;
-    const exp = home ? g.bh : -g.bh, m = own - them, tot = g.hp + g.ap;
+    const exp = home ? g.bh : -g.bh, m = own - them;
     const cov = m > exp ? '<span class="w">Covered</span>' : m < exp ? '<span class="l">Not covered</span>' : '<span class="tag">Push</span>';
-    const ou = g.bt === null ? '–' : tot > g.bt ? 'Over' : tot < g.bt ? 'Under' : 'Push';
-    // points the two lines implied: own = (total + handicap) / 2, opponent = (total - handicap) / 2
-    const eo = g.bt === null ? null : (g.bt + exp) / 2, ep = g.bt === null ? null : (g.bt - exp) / 2;
-    const pv = (v, good) => v === null ? '<td class="n">–</td>' : `<td class="n"><span class="${v === 0 ? 'tag' : (good ? v > 0 : v < 0) ? 'w' : 'l'}">${one(v)}</span></td>`;
     return `<tr><td class="n">${fmtDate(g.date)}</td><td class="tag">${esc(g.stage.split(' · ')[0])}</td>
       <td>${home ? 'vs' : 'at'} <b>${esc(opp)}</b> <span class="tag">(${esc(code(teams[opp]))})</span></td>
       <td class="n"><b class="${m > 0 ? 'w' : 'l'}">${own}–${them}</b>${g.ot ? ' <span class="tag">OT</span>' : ''}</td>
-      <td class="n gap">${one(exp)}</td><td class="n">${one(m)}</td><td class="n gap">${cov} <span class="tag">${one(m - exp)}</span></td>
-      <td class="n">${g.bt === null ? '–' : g.bt.toFixed(1)}</td><td class="n">${tot}</td><td class="n gap">${ou} ${g.bt === null ? '' : `<span class="tag">${one(tot - g.bt)}</span>`}</td>
-      <td class="n tag" title="Points the lines implied for the club and its opponent">${eo === null ? '–' : `${eo.toFixed(1)}–${ep.toFixed(1)}`}</td>${pv(eo === null ? null : own - eo, true)}${pv(ep === null ? null : them - ep, false)}</tr>`;
+      <td class="n gap">${one(exp)}</td><td class="n">${one(m)}</td><td class="n">${cov} <span class="tag">${one(m - exp)}</span></td></tr>`;
   }).join('');
-  return `<tr class="mkgames"><td colspan="14" style="padding:4px 0 14px 10px;background:var(--panel)">
+  return `<tr class="mkgames"><td colspan="8" style="padding:4px 0 14px 22px;background:var(--panel)">
     <table class="fx" style="margin:0"><tr><th class="n">Date</th><th>Round</th><th>Opponent</th><th class="n">Score</th>
-      <th class="n gap" title="The club's handicap: + = favourite by that many">Book hcp</th><th class="n" title="The club's margin">Result</th><th class="n gap" title="Against the handicap, with the difference">Handicap</th>
-      <th class="n">Book total</th><th class="n">Total</th><th class="n gap" title="Against the total line, with the difference">Over / under</th>
-      <th class="n" title="Points the two lines implied: own = (total + handicap) / 2, opponent = (total − handicap) / 2">Lines said</th><th class="n" title="Own points minus what the lines implied">Own</th><th class="n" title="Opponent points minus what the lines implied">Opp</th></tr>${rows}</table></td></tr>`;
+      <th class="n gap" title="The club's handicap: + = favourite by that many">Book hcp</th><th class="n" title="The club's margin">Result</th><th class="n" title="Against the handicap, with the difference">Handicap</th></tr>${rows}</table></td></tr>`;
 }
 // one set of column widths for every group table, so the columns line up down the page
-const MK_COLS = '<colgroup><col style="width:200px"><col style="width:40px"><col style="width:68px">' + ['62', '60', '68', '80', '62', '60', '58', '80', '66', '62'].map(w => `<col style="width:${w}px">`).join('') + '<col></colgroup>';
+const MK_COLS = '<colgroup><col style="width:240px"><col style="width:52px"><col style="width:92px">' + ['88', '88', '88', '108'].map(w => `<col style="width:${w}px">`).join('') + '<col style="width:240px"></colgroup>';
 // market rating: line = r[home] - r[away] + home advantage over every game with a line, ridge-shrunk toward 0
 // (lambda 1, home advantage not shrunk), centred on the average club; solved by Gaussian elimination
 function mkRatings(games){
@@ -832,9 +797,9 @@ function mkRatings(games){
   const x = b.map((v, i) => v / A[i][i]), mean = clubs.reduce((t, c, i) => t + x[i], 0) / clubs.length;
   return {r: new Map(clubs.map((c, i) => [c, x[i] - mean])), hca: x[k - 1]};
 }
-// every Regular Season game with a line and a result, and each club's record against those lines (Market Analysis and Club Ratings)
+// every Regular Season game with a line and a result, and each club's record against those lines (shared by Market Analysis and Projections)
 function mkData(){
-  // lines from market.js: every played game's line, read before tip-off
+  // lines from market.js: every played game's line, read before tip-off; the archive fills any game it missed
   const games = [], seen = new Set();
   const add = (date, g) => {
     const r = arResult(date, g.h, g.a);
@@ -845,6 +810,7 @@ function mkData(){
       h: g.h, a: g.a, hp: r[6], ap: r[7], ot: r[8] === 'AET', bh: g.bh, bt: g.bt ?? null});
   };
   for (const g of (window.MARKET && MARKET.list) || []) add(g.date, g);
+  for (const g of (window.ARCHIVE && ARCHIVE.list) || []) add(g.when.slice(0, 10), g);
   const club = {};
   for (const g of games){
     const m = g.hp - g.ap, tot = g.hp + g.ap;
@@ -871,51 +837,24 @@ function mkCompetition(games, clubs){
   const range = (w, n) => { const p = w / n, z = 1.96, d = 1 + z * z / n, c = p + z * z / 2 / n, h = z * Math.sqrt(p * (1 - p) / n + z * z / 4 / n / n); return [(c - h) / d * 100, (c + h) / d * 100]; };
   const hcp = (g, s) => (g.hp - g.ap - g.bh) * s;                // points the side beat its handicap by: s = 1 home, -1 away
   const fav = g => g.bh >= 0 ? 1 : -1;
-  const ot = games.filter(g => g.bt !== null), tot = g => g.hp + g.ap - g.bt;
   // one kind of bet: list of points it beat the line by
-  const bet = (name, pts) => {
+  const bet = (name, pts, other) => {
     const w = pts.filter(v => v > 0).length, l = pts.filter(v => v < 0).length, n = w + l;
     if (!pts.length) return '';
     const p = n ? w / n * 100 : 0, [lo, hi] = n ? range(w, n) : [0, 0];
-    const read = lo > BE ? '<b class="w">Stands out</b>' : p >= BE && n >= 20 ? '<span class="hcp">Worth watching</span>' : '<span class="tag">No edge</span>';
+    const flip = p < 50, best = flip ? 100 - p : p, low = flip ? 100 - hi : lo, who = flip ? `: ${other}` : '';
+    const read = low > BE ? `<b class="w">Stands out${who}</b>` : best >= BE && n >= 20 ? `<span class="hcp">Worth watching${who}</span>` : '<span class="tag">No edge</span>';
     return `<tr><td>${name}</td><td class="n">${pts.length}</td><td class="n">${w}–${l}${pts.length > n ? `<span class="tag">–${pts.length - n}</span>` : ''}</td><td class="n ${p >= BE ? 'w' : ''}"><b>${n ? Math.round(p) + '%' : '–'}</b></td>
-      <td class="n tag">${n ? Math.round(lo) + '–' + Math.round(hi) + '%' : '–'}</td><td class="n">${one(avg(pts))}</td><td>${read}</td></tr>`;
+      <td class="n">${one(avg(pts))}</td><td>${read}</td></tr>`;
   };
-  const head = `<tr><th>Bet</th><th class="n">Games</th><th class="n" title="Won – lost – push">Record</th><th class="n">Win %</th><th class="n" title="Where the real win rate probably lies, given so few games">Likely range</th><th class="n" title="Average points the bet beat the line by">Vs line</th><th>Read</th></tr>`;
+  const head = `<tr><th>Bet</th><th class="n">Games</th><th class="n" title="Won – lost – push">Record</th><th class="n">Win %</th><th class="n" title="Average points the bet beat the line by">Vs line</th><th>Read</th></tr>`;
   const table = rows => `<div class="scroll"><table class="fx" style="width:auto;min-width:680px">${head}${rows}</table></div>`;
   const byFav = (lo, hi) => games.filter(g => Math.abs(g.bh) >= lo && Math.abs(g.bh) < hi);
-  const hRows = bet('Home side', games.map(g => hcp(g, 1))) + bet('Away side', games.map(g => hcp(g, -1))) +
-    bet('Favourite', games.filter(g => g.bh).map(g => hcp(g, fav(g)))) + bet('Underdog', games.filter(g => g.bh).map(g => hcp(g, -fav(g)))) +
-    bet('Home favourite', games.filter(g => g.bh > 0).map(g => hcp(g, 1))) +
-    bet('Small home favourite (under 5)', games.filter(g => g.bh > 0 && g.bh < 5).map(g => hcp(g, 1))) +
-    bet('Medium home favourite (5–10)', games.filter(g => g.bh >= 5 && g.bh < 10).map(g => hcp(g, 1))) +
-    bet('Big home favourite (10+)', games.filter(g => g.bh >= 10).map(g => hcp(g, 1))) +
-    bet('Away favourite', games.filter(g => g.bh < 0).map(g => hcp(g, -1))) +
-    bet('Small away favourite (under 5)', games.filter(g => g.bh < 0 && g.bh > -5).map(g => hcp(g, -1))) +
-    bet('Medium away favourite (5–10)', games.filter(g => g.bh <= -5 && g.bh > -10).map(g => hcp(g, -1))) +
-    bet('Big away favourite (10+)', games.filter(g => g.bh <= -10).map(g => hcp(g, -1))) +
-    bet('Home underdog', games.filter(g => g.bh < 0).map(g => hcp(g, 1))) + bet('Away underdog', games.filter(g => g.bh > 0).map(g => hcp(g, -1))) +
-    [[0, 5], [5, 10], [10, 15], [15, 99]].map(([lo, hi]) => bet(`Favourite by ${hi === 99 ? lo + '+' : lo + '–' + hi}`, byFav(lo, hi).filter(g => g.bh).map(g => hcp(g, fav(g))))).join('');
-  const band = (lo, hi) => ot.filter(g => g.bt >= lo && g.bt < hi);
-  // low and high: the lowest and highest third of this competition's total lines
-  const lines = ot.map(g => g.bt).sort((x, y) => x - y), cutLo = lines[Math.floor(lines.length / 3)], cutHi = lines[Math.floor(lines.length * 2 / 3)];
-  const low = ot.filter(g => g.bt < cutLo), high = ot.filter(g => g.bt > cutHi);
-  const tRows = bet('Over', ot.map(tot)) + bet('Under', ot.map(g => -tot(g))) +
-    (lines.length ? bet(`Low total, over (line under ${cutLo})`, low.map(tot)) + bet(`Low total, under (line under ${cutLo})`, low.map(g => -tot(g))) +
-      bet(`High total, over (line above ${cutHi})`, high.map(tot)) + bet(`High total, under (line above ${cutHi})`, high.map(g => -tot(g))) : '') +
-    [[0, 160], [160, 165], [165, 170], [170, 175], [175, 999]].map(([lo, hi]) => { const l = band(lo, hi), name = lo ? (hi === 999 ? lo + '+' : lo + '–' + hi) : 'under ' + hi; return bet(`Over, line ${name}`, l.map(tot)) + bet(`Under, line ${name}`, l.map(g => -tot(g))); }).join('');
-  const split = (key, label) => {
-    const by = {};
-    for (const g of games) (by[key(g)] ||= []).push(g);
-    const pc = (w, n) => n ? `${w} of ${n} <span class="tag">${Math.round(w / n * 100)}%</span>` : '–';
-    const rows = Object.keys(by).sort((a, b) => (+a || 0) - (+b || 0) || a.localeCompare(b)).map(k => {
-      const l = by[k], t = l.filter(g => g.bt !== null);
-      const c = l.filter(g => hcp(g, 1)), o = t.filter(g => tot(g));
-      return `<tr><td><b>${esc(k)}</b></td><td class="n">${l.length}</td><td class="n">${pc(c.filter(g => hcp(g, 1) > 0).length, c.length)}</td><td class="n">${pc(c.filter(g => hcp(g, fav(g)) > 0).length, c.length)}</td><td class="n">${pc(o.filter(g => tot(g) > 0).length, o.length)}</td>
-        <td class="n">${avg(l.map(g => Math.abs(hcp(g, 1)))).toFixed(1)}</td><td class="n">${t.length ? avg(t.map(g => Math.abs(tot(g)))).toFixed(1) : '–'}</td></tr>`;
-    }).join('');
-    return `<div class="scroll"><table class="fx" style="width:auto;min-width:680px"><tr><th>${label}</th><th class="n">Games</th><th class="n">Home covered</th><th class="n">Favourite covered</th><th class="n">Went over</th><th class="n" title="Average points the handicap line missed by">Hcp miss</th><th class="n" title="Average points the total line missed by">Total miss</th></tr>${rows}</table></div>`;
-  };
+  const favBet = (name, list) => bet(name, list.map(g => hcp(g, fav(g))), 'underdog');
+  const sized = (lo, hi, home) => games.filter(g => g.bh && Math.abs(g.bh) >= lo && Math.abs(g.bh) < hi && (home === undefined || (g.bh > 0) === home));
+  const hRows = favBet('All favourites', games.filter(g => g.bh)) + favBet('Close game (favourite under 5)', sized(0, 5)) +
+    favBet('Medium home favourite (5–10)', sized(5, 10, true)) + favBet('Big home favourite (10+)', sized(10, 99, true)) +
+    favBet('Medium away favourite (5–10)', sized(5, 10, false)) + favBet('Big away favourite (10+)', sized(10, 99, false));
   // clubs whose results against their handicaps are further from 0 than their sample's noise
   const rated = sign => clubs.filter(x => x.n >= MK_MIN && x.vsS * sign >= mkLim(MK_SD.hcp, x.n)).sort((x, y) => (y.vsS - x.vsS) * sign);
   const ratedTable = (title, list, cl) => `<div><h3 style="font:600 18px var(--serif);margin:0 0 8px">${title} <span class="tag">${list.length}</span></h3>` + (list.length
@@ -923,19 +862,15 @@ function mkCompetition(games, clubs){
       list.map(x => `<tr><td><b>${esc(x.team)}</b></td><td class="n">${x.n}</td><td class="n">${x.w}–${x.l}${x.p ? `–${x.p}` : ''}</td><td class="n ${cl}"><b>${one(x.vsS)}</b></td></tr>`).join('') + '</table></div>'
     : '<div class="empty">None so far.</div>') + '</div>';
   const card = (t, v, sub) => `<div class="metric"><div class="lbl">${t}</div><div class="big2">${v}</div><div class="tag">${sub}</div></div>`;
-  const hc = games.filter(g => hcp(g, 1)), ov = ot.filter(g => tot(g));
-  return `<div class="note" style="margin-bottom:14px"><b>Is there a kind of bet the bookmaker keeps getting wrong?</b> Every Regular Season game so far, each kind of bet at 1 unit. A bet makes money at about <b>${BE}%</b>. <b>Likely range</b> is where the real win rate probably lies, given so few games. <b>Stands out</b> = the whole range is above ${BE}%; <b>Worth watching</b> = ${BE}%+ on 20 or more games, but the range still reaches below. With this many rows, a few will look good by luck alone, so treat anything here as a lead to follow, not a tip.</div>
+  const hc = games.filter(g => hcp(g, 1));
+  return `<div class="note" style="margin-bottom:14px"><b>Is there a kind of bet the bookmaker keeps getting wrong?</b> Every Regular Season game so far, each kind of bet at 1 unit. Each row is one bet on the favourite's handicap. The other side is the same row read the other way, so a low win % means the underdog has done well. A bet makes a profit at about <b>${BE}%</b>. <b>Stands out</b> = well above ${BE}%, even allowing for so few games; <b>Worth watching</b> = ${BE}%+ on 20 or more games, but it could still be luck. With this many rows, a few will look good by luck alone, so treat anything here as a lead to follow, not a tip.</div>
     <div class="metrics">
       ${card('Games', games.length, `from ${fmtDate(MK_FROM)}`)}
       ${card('Handicap miss', avg(games.map(g => Math.abs(hcp(g, 1)))).toFixed(1), 'average points the line was off')}
-      ${card('Total miss', ot.length ? avg(ot.map(g => Math.abs(tot(g)))).toFixed(1) : '–', 'average points the line was off')}
       ${card('Home covered', hc.length ? Math.round(hc.filter(g => hcp(g, 1) > 0).length / hc.length * 100) + '%' : '–', 'of games, pushes left out')}
-      ${card('Went over', ov.length ? Math.round(ov.filter(g => tot(g) > 0).length / ov.length * 100) + '%' : '–', 'of games, pushes left out')}
     </div>
     <h2>Handicap</h2>${table(hRows)}
-    <h2>Totals</h2>${table(tRows)}
-    <h2>By round</h2>${split(g => (g.stage.match(/Round (\d+)/) || [])[1] || g.stage, 'Round')}
-    <h2>By group</h2>${split(g => g.grp, 'Group')}
+
     <h2>Underrated and overrated clubs</h2><div class="tag" style="margin-bottom:10px;max-width:760px;line-height:1.5">Clubs furthest from their handicaps for their number of games. With so few games, about one club in three would land here by chance, so this is what has happened so far, not a bet: on FIBA lines the bookmaker seems to adjust quickly, and backing the better record won about 49% of the time. For the model's view of each club, see <a class="back" href="#view=ratings" data-go="ratings">Club Ratings</a>.</div>
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:22px">${ratedTable('Underrated so far', rated(1), 'w')}${ratedTable('Overrated so far', rated(-1), 'l')}</div>`;
 }
@@ -947,12 +882,11 @@ function renderMarket(){
   const col = (v, lim) => v === null ? '' : v >= lim ? 'w' : v <= -lim ? 'l' : 'tag';
   const {k, dir} = mkSort;
   const val = (x, c) => c === 'team' ? x.team : c === 'cov' ? (x.n ? x.w / x.n : 0) : c === 'ou' ? (x.tn ? x.o / x.tn : 0) : c === 'vs' ? x.vsS : (x[c] ?? -999);
-  const th = (c, label, cls, title, extra = '') => `<th class="${cls} sort${c === k ? ' on' : ''}" data-k="${c}"${extra}${title ? ` title="${title}"` : ''}>${label}${c === k ? `<i class="ar">${dir > 0 ? '▲' : '▼'}</i>` : ''}</th>`;
-  const head = `<tr class="mkgrp"><th></th><th></th><th></th><th colspan="4" class="grp sec"><span>Handicap</span></th><th colspan="4" class="grp sec"><span>Total</span></th><th colspan="2" class="grp sec" title="How far the club's own points and its opponents' points were from what the two lines implied"><span>Points vs line</span></th><th></th></tr>
+  const th = (c, label, cls, title, extra = '') => `<th class="${cls} sort${c === k ? ' on' : ''}" data-k="${c}"${extra}${title ? ` title="${title}"` : ''}>${label}${c === k ? (dir > 0 ? ' ▲' : ' ▼') : ''}</th>`;
+  const head = `<tr class="mkgrp"><th></th><th></th><th></th><th colspan="4" class="grp sec"><span>Handicap</span></th><th></th></tr>
     <tr>${th('team', 'Team', 'tl')}${th('n', 'GP', 'n', 'Games with a line')}${th('mr', 'Market', 'n sec0', 'Market rating: points better (+) or worse (−) than an average club on a neutral court, as the bookmaker lines rate it')}
       ${th('bh', 'Book', 'n sec0', 'Average bookmaker handicap for the club, per game (+ = favourite)')}${th('rm', 'Result', 'n', 'Average real margin for the club, per game')}${th('cov', 'Covered', 'n', 'Beat the handicap – did not (pushes after)')}${th('vs', 'Vs line', 'n', 'Real margin minus the margin the handicap expected, per game: above 0 = underrated')}
-      ${th('bt', 'Book', 'n sec0', 'Average total line in the club games')}${th('rt', 'Result', 'n', 'Average points scored in the club games')}${th('ou', 'O–U', 'n', 'Overs – unders')}${th('vsT', 'Vs line', 'n', 'Points in the game minus the total line, per game: above 0 = over')}
-      ${th('own', 'Own', 'n sec0', 'Own points minus what the lines implied, per game: (total vs line + handicap vs line) / 2')}${th('opp', 'Opp', 'n', 'Opponents points minus what the lines implied, per game: (total vs line − handicap vs line) / 2')}<th class="tl rd sec0">Read</th></tr>`;
+      <th class="tl rd sec0">Read</th></tr>`;
   const groups = [...new Set(rows.map(x => x.grp))].sort();
   const sections = groups.map(gr => {
     const list = rows.filter(x => x.grp === gr).sort((p, q) => {
@@ -961,38 +895,29 @@ function renderMarket(){
     });
     return `<h2 class="mkh">Group ${esc(gr)}</h2><div class="scroll"><table class="mkt">${MK_COLS}${head}` + list.map(x => {
       const hs = `Line said ${one(x.exp / x.n)}, real margin ${one(x.real / x.n)}`;
-      const ts = x.tn ? `Total line ${(x.texp / x.tn).toFixed(1)}, real total ${(x.treal / x.tn).toFixed(1)}` : '';
       const open = mkOpen.has(x.team);
       return `<tr class="click" data-club="${esc(x.team)}" title="Click for the club's games">
         <td class="tl"><span class="caret">${open ? '▾' : '▸'}</span><b>${esc(x.team)}</b> <span class="tag">${esc(code(teams[x.team]))}</span></td><td class="n">${x.n}</td><td class="n sec0"><b class="hcp">${x.mr === null ? '–' : one(x.mr)}</b></td>
         <td class="n sec0">${one(x.bh)}</td><td class="n">${one(x.rm)}</td>
         <td class="n" title="${hs}">${x.w}–${x.l}${x.p ? `<span class="tag">–${x.p}</span>` : ''}</td>
         <td class="n" title="${hs}; counts from ±${mkLim(MK_SD.hcp, x.n).toFixed(1)} after ${x.n} games"><b class="${col(x.vsS, mkLim(MK_SD.hcp, x.n))}">${one(x.vsS)}</b></td>
-        <td class="n sec0">${x.bt === null ? '–' : x.bt.toFixed(1)}</td><td class="n">${x.rt === null ? '–' : x.rt.toFixed(1)}</td>
-        <td class="n" title="${ts}">${x.tn ? `${x.o}–${x.u}${x.tp ? `<span class="tag">–${x.tp}</span>` : ''}` : '–'}</td>
-        <td class="n" title="${ts}${x.tn ? `; counts from ±${mkLim(MK_SD.tot, x.tn).toFixed(1)} after ${x.tn} games` : ''}"><b class="${Math.abs(x.vsT ?? 0) >= mkLim(MK_SD.tot, x.tn) ? 'hcp' : 'tag'}">${one(x.vsT)}</b></td>
-        <td class="n sec0"><span class="${col(x.own, mkLim(MK_SD.pts, x.tn))}">${one(x.own)}</span></td><td class="n"><span class="${col(x.opp === null ? null : -x.opp, mkLim(MK_SD.pts, x.tn))}">${one(x.opp)}</span></td>
         <td class="rd sec0">${mkRead(x)}</td></tr>` + (open ? mkGames(x) : '');
     }).join('') + `</table></div>`;
   }).join('');
   const all = games.slice().sort((x, y) => y.date.localeCompare(x.date) || x.h.localeCompare(y.h)).map(g => {
-    const m = g.hp - g.ap, tot = g.hp + g.ap;
+    const m = g.hp - g.ap;
     const cov = m > g.bh ? g.h : m < g.bh ? g.a : 'push';
-    const ou = g.bt === null ? '' : tot > g.bt ? 'Over' : tot < g.bt ? 'Under' : 'push';
     return `<tr><td class="n">${fmtDate(g.date)}</td><td class="tag">${esc(g.stage)}</td><td><b>${esc(g.h)}</b> – <b>${esc(g.a)}</b></td>
       <td class="n"><b>${g.hp}–${g.ap}</b>${g.ot ? ' <span class="tag">OT</span>' : ''}</td>
-      <td class="n gap">${one(g.bh)}</td><td class="n">${one(m)}</td><td class="n gap">${esc(cov)}</td>
-      <td class="n">${g.bt === null ? '–' : g.bt.toFixed(1)}</td><td class="n">${tot}</td><td class="n">${ou}</td></tr>`;
+      <td class="n gap">${one(g.bh)}</td><td class="n">${one(m)}</td><td class="n">${esc(cov)}</td></tr>`;
   }).join('');
   box.innerHTML = mkCompetition(games, rows) + `<h2 style="margin-top:44px">By club</h2><div class="note" style="margin-bottom:14px">The bookmaker's pre-game line for every Regular Season game from Round 1 (${fmtDate(MK_FROM)}) against what happened: ${games.length} games so far, by group. Each club appears in every game it played, home or away.
-      <b>Handicap vs line</b> above 0 = the club did better than priced (underrated); <b>Total vs line</b> above 0 = its games went over.
+      <b>Vs line</b> above 0 = the club did better than priced (underrated), below 0 = worse (overrated).
       <b>Market</b> = the club's rating in the bookmaker's eyes: points better (+) or worse (−) than an average club on a neutral court, fitted from every line so far (home advantage in the lines: ${one(MR.hca)}).
-      <b>Points vs line</b> splits the two: <b>Own</b> = its own points against what the lines implied, <b>Opp</b> = its opponents' points.
-      Each of the four is judged on its own, and only after ${MK_MIN} completed games: the Read names every one that is off by more than its sample's noise (own points and defence included, even when the total alone is not off).
-      A club's average only counts once it is larger than the noise of its sample: the book's typical miss divided by √games, about ${MK_SD.hcp} ÷ √games on the handicap and ${MK_SD.tot} ÷ √games on the total (±${mkLim(MK_SD.hcp, 3).toFixed(1)} and ±${mkLim(MK_SD.tot, 3).toFixed(1)} after 3 games, ±${mkLim(MK_SD.hcp, 10).toFixed(1)} and ±${mkLim(MK_SD.tot, 10).toFixed(1)} after 10). Smaller differences are greyed out and left out of the Read; green = better for the club than priced, red = worse. Click a club for its games one by one.</div>
+      A club's average only counts once it is larger than the noise of its sample, about ${MK_SD.hcp} ÷ √games (±${mkLim(MK_SD.hcp, 3).toFixed(1)} after 3 games, ±${mkLim(MK_SD.hcp, 10).toFixed(1)} after 10). Smaller differences are greyed out; green = better than priced, red = worse. Click a club for its games one by one.</div>
     ${sections}
     <details class="ros" style="margin-top:18px"><summary><b>Every game</b> <span class="tag">${games.length}</span></summary>
-      <div class="scroll"><table class="fx"><tr><th class="n">Date</th><th>Round</th><th>Match</th><th class="n">Score</th><th class="n gap" title="Bookmaker handicap, home minus away">Hcp line</th><th class="n" title="Home minus away">Margin</th><th class="n gap">Covered</th><th class="n">Total line</th><th class="n">Total</th><th class="n">O/U</th></tr>${all}</table></div></details>`;
+      <div class="scroll"><table class="fx"><tr><th class="n">Date</th><th>Round</th><th>Match</th><th class="n">Score</th><th class="n gap" title="Bookmaker handicap, home minus away">Hcp line</th><th class="n" title="Home minus away">Margin</th><th class="n">Covered</th></tr>${all}</table></div></details>`;
   box.querySelectorAll('[data-go]').forEach(a => a.onclick = e => { e.preventDefault(); setView(a.dataset.go); sync(); window.scrollTo({top: 0}); });
   box.querySelectorAll('tr.click[data-club]').forEach(tr => tr.onclick = () => {
     const c = tr.dataset.club; mkOpen.has(c) ? mkOpen.delete(c) : mkOpen.add(c); renderMarket();
@@ -1079,18 +1004,16 @@ function renderRatings(){
   box.querySelectorAll('[data-go]').forEach(a => a.onclick = e => { e.preventDefault(); setView(a.dataset.go); sync(); window.scrollTo({top: 0}); });
 }
 function setView(v){
-  view = ['market', 'projections', 'archive', 'picks', 'ratings', 'h2h', 'rosters', 'rankings'].includes(v) ? v : 'projections';
+  view = ['market', 'projections', 'picks', 'ratings', 'h2h', 'rosters', 'rankings'].includes(v) ? v : 'projections';
   document.querySelectorAll('#tabs a').forEach(b => b.classList.toggle('on', b.dataset.view === view));
-  document.body.classList.toggle('wide', view === 'market' || view === 'projections' || view === 'archive' || view === 'ratings' || view === 'picks');
+  document.body.classList.toggle('wide', view === 'market' || view === 'projections' || view === 'ratings' || view === 'picks');
   $('rkView').hidden = view !== 'rankings';
   $('pjView').hidden = view !== 'projections';
-  $('arView').hidden = view !== 'archive';
   $('pkView').hidden = view !== 'picks';
   if (view === 'picks') renderPicks();
   $('crView').hidden = view !== 'ratings';
   if (view === 'ratings') renderRatings();
   if (view === 'projections') renderProjections();
-  if (view === 'archive') renderArchive();
   $('mkView').hidden = view !== 'market';
   $('h2hView').hidden = view !== 'h2h';
   $('roView').hidden = view !== 'rosters';
@@ -1119,7 +1042,7 @@ function sync(){
     if (hSeasons !== PJ_DEFAULT_SEASONS) q.set('seasons', hSeasons || 'all');
     if (!(hStages.size === 1 && hStages.has('Main'))) q.set('stages', PJ_STAGES.filter(x => hStages.has(x)).join(','));
   }
-  if ((view === 'projections' || view === 'archive') && gapMin !== GAP_DEFAULT) q.set('gap', gapMin);
+  if (view === 'projections' && gapMin !== GAP_DEFAULT) q.set('gap', gapMin);
   if (view === 'projections' && pjMode === 'table') q.set('layout', 'table');
   if (view === 'rankings' && rkSeasons !== PJ_DEFAULT_SEASONS) q.set('seasons', rkSeasons || 'all');
   if (view === 'rankings' && !(rkStages.size === 1 && rkStages.has('Main'))) q.set('stages', PJ_STAGES.filter(x => rkStages.has(x)).join(','));

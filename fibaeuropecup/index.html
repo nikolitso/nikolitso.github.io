@@ -69,7 +69,7 @@ tr.click{cursor:pointer} tr.click:hover td{background:var(--an-accent-soft)}
 .note{font:400 15.5px/1.5 var(--body);color:var(--muted);border-left:2px solid var(--gold);padding:2px 0 2px 14px;margin:0 0 6px}
 .note b{color:var(--text);font-weight:600}
 td.big{color:var(--bg);background:var(--gold);font-weight:700}
-table.pjt{table-layout:fixed;width:100%;min-width:1180px}table.pjt td{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}table.pjt th{white-space:nowrap;overflow:visible}table.pjt td:last-child,table.pjt td:nth-child(2){white-space:normal}
+table.pjt{table-layout:fixed;width:100%;min-width:1140px}table.pjt td{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}table.pjt th{white-space:nowrap;overflow:visible}table.pjt td:last-child,table.pjt td:nth-child(2){white-space:normal}
 /* Market Analysis group tables */
 h2.mkh{font:600 21px var(--serif);margin:38px 0 10px;padding-bottom:8px;border-bottom:1px solid var(--line)}
 table.mkt{table-layout:fixed;width:100%;border-collapse:separate;border-spacing:0;font-variant-numeric:tabular-nums}
@@ -122,7 +122,7 @@ th.sort{cursor:pointer;user-select:none}th.sort:hover,th.sort.on{color:var(--gol
 .chip:hover{color:var(--text)}
 .chip.on{background:var(--gold);border-color:var(--gold);color:var(--an-on-accent)}
 .sct{width:auto;min-width:640px}.sct td,.sct th{padding-left:14px;padding-right:14px}.sct tr.sum td{border-top:1px solid var(--gold)}
-table.crt{width:auto;min-width:1180px}table.crt .gl{border-left:1px solid var(--line)}table.crt td.crc{min-width:440px;white-space:normal;line-height:1.45;padding-top:7px;padding-bottom:7px}table.crt th.sort{cursor:pointer}
+table.crt{width:auto;min-width:1140px}table.crt .gl{border-left:1px solid var(--line)}table.crt td.crc{min-width:280px;white-space:normal;line-height:1.45;padding-top:7px;padding-bottom:7px}table.crt th.sort{cursor:pointer}
 .metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px;margin:0 0 8px}
 .metric{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
 .metric .lbl{font:400 12.5px var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}
@@ -675,7 +675,7 @@ function renderPicks(){
     <div class="metrics">
       ${card('Settled picks', done.length, `${open.length} still to play`)}
       ${card('Record', done.length ? `${w}–${l}${pu ? `<span class="tag">–${pu}</span>` : ''}` : '–', 'won – lost' + (pu ? ' – push' : ''))}
-      ${card('Hit rate', w + l ? Math.round(w / (w + l) * 100) + '%' : '–', 'makes money from about 54%')}
+      ${card('Hit rate', w + l ? Math.round(w / (w + l) * 100) + '%' : '–', 'makes a profit from about 54%')}
       ${card('Units', done.length ? `<span class="${cls(units)}">${u2(units)}</span>` : '–', '1 unit a pick')}
     </div>
     <h2>Open picks</h2>` + (open.length ? `<div class="scroll"><table class="fx pjpk"><tr><th class="n">Tip-off</th><th>Pick</th><th>Game</th><th class="n">Price</th><th>Market edge</th><th class="n">Model edge</th><th>Club rating</th></tr>` +
@@ -995,7 +995,7 @@ function mkCompetition(games, clubs){
     : '<div class="empty">None so far.</div>') + '</div>';
   const card = (t, v, sub) => `<div class="metric"><div class="lbl">${t}</div><div class="big2">${v}</div><div class="tag">${sub}</div></div>`;
   const hc = games.filter(g => hcp(g, 1));
-  return `<div class="note" style="margin-bottom:14px"><b>Is there a kind of bet the bookmaker keeps getting wrong?</b> Every Regular Season game so far, each kind of bet at 1 unit. Each row is one bet on the favourite's handicap. The other side is the same row read the other way, so a low win % means the underdog has done well. A bet makes money at about <b>${BE}%</b>. <b>Stands out</b> = well above ${BE}%, even allowing for so few games; <b>Worth watching</b> = ${BE}%+ on 20 or more games, but it could still be luck. With this many rows, a few will look good by luck alone, so treat anything here as a lead to follow, not a tip.</div>
+  return `<div class="note" style="margin-bottom:14px"><b>Is there a kind of bet the bookmaker keeps getting wrong?</b> Every Regular Season game so far, each kind of bet at 1 unit. Each row is one bet on the favourite's handicap. The other side is the same row read the other way, so a low win % means the underdog has done well. A bet makes a profit at about <b>${BE}%</b>. <b>Stands out</b> = well above ${BE}%, even allowing for so few games; <b>Worth watching</b> = ${BE}%+ on 20 or more games, but it could still be luck. With this many rows, a few will look good by luck alone, so treat anything here as a lead to follow, not a tip.</div>
     <div class="metrics">
       ${card('Games', games.length, `from ${fmtDate(MK_FROM)}`)}
       ${card('Handicap miss', avg(games.map(g => Math.abs(hcp(g, 1)))).toFixed(1), 'average points the line was off')}
