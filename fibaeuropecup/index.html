@@ -525,6 +525,24 @@ const PJ_COLS = '<colgroup><col style="width:64px"><col style="width:290px">' + 
 let pjMode = 'cards';                                              // 'cards' or 'table'
 // the side and line the model prefers against the bookmaker; small gaps count as no lean
 const PJ_LEAN = 1.5;
+// the market first: what kind of game each line makes it, and how that kind of game has gone against the lines so far
+function mkSpots(){
+  const games = mkData().games.filter(g => g.bh), ot = mkData().games.filter(g => g.bt !== null);
+  const kind = bh => { const a = Math.abs(bh), side = bh > 0 ? 'home' : 'away'; return a < 5 ? 'Close game: tough call' : a < 10 ? `Medium ${side} favourite` : `Big ${side} favourite`; };
+  const rec = {};
+  const add = (k, v) => { const x = rec[k] ||= {w: 0, l: 0}; v > 0 ? x.w++ : v < 0 ? x.l++ : 0; };
+  for (const g of games) add(kind(g.bh), (g.hp - g.ap - g.bh) * (g.bh > 0 ? 1 : -1));
+  const lines = ot.map(g => g.bt).sort((x, y) => x - y), lo = lines[Math.floor(lines.length / 3)], hi = lines[Math.floor(lines.length * 2 / 3)];
+  const tk = bt => bt < lo ? 'Low total' : bt > hi ? 'High total' : null;
+  for (const g of ot) if (tk(g.bt)) add(tk(g.bt), g.hp + g.ap - g.bt);
+  // a market gap: one side has won 54%+ of 20 or more games, as "Worth watching" on Market Analysis
+  const line = (name, k, who) => {
+    const x = rec[k] || {w: 0, l: 0}, n = x.w + x.l, gap = n >= 20 && Math.max(x.w, x.l) / n >= 0.54;
+    return `<div class="lean"><span class="k">${name}</span><span class="pick">${esc(k)}</span><span class="gp${gap ? ' big' : ''}" title="How this kind of game has gone against the lines this season">${who} ${x.w}–${x.l}${gap ? ' · market gap' : ''}</span></div>`;
+  };
+  return {hcp: bh => bh ? line('Handicap', kind(bh), 'favourite covers') : '', tot: bt => bt !== null && tk(bt) ? line('Total', tk(bt), 'over') : ''};
+}
+let pjSpots = null;
 function pjCard(g){
   const o = ODDS[g.h + '|' + g.a];
   const bh = o ? -o.sp : null, bt = o && o.tot != null ? o.tot : null, pb = bookWin(o);
@@ -555,7 +573,7 @@ function pjCard(g){
       <tr><td title="Both as a handicap: Mykonos −8.3 = Mykonos expected to win by 8.3">Handicap</td><td><b class="nm" title="${esc(fav(g.mh, g.h, g.a))}">${esc(fav(g.mh, g.h, g.a))}</b>−${Math.abs(g.mh).toFixed(1)}${g.adj ? '<span class="tag" title="Includes the absences below"> *</span>' : ''}</td><td>${bookHcp}</td></tr>
       <tr><td title="Points scored by both teams together">Total</td><td>${g.mt.toFixed(1)}</td><td>${bt === null ? '<span class="tag">–</span>' : bt.toFixed(1)}</td></tr>
     </table>
-    ${o ? `<div class="leans"><div class="lh">Model leans</div>${leans.join('')}</div>` : '<div class="noline">No bookmaker line yet: it usually appears a day or two before the game.</div>'}
+    ${o ? `<div class="leans"><div class="lh">Market so far</div>${pjSpots.hcp(bh)}${pjSpots.tot(bt)}</div><div class="leans"><div class="lh">Model leans</div>${leans.join('')}</div>` : '<div class="noline">No bookmaker line yet: it usually appears a day or two before the game.</div>'}
     ${out.length ? `<div class="out">Out: ${out.map(([[pl, imp, note], t]) => `${esc(pl)} (${esc(t)}, worth ${imp.toFixed(1)} pts${note ? '; ' + esc(note) : ''})`).join(' · ')}</div>` : ''}
   </div>`;
 }
@@ -610,14 +628,16 @@ function bindPj(box){
 // the game cards: what the model expects, next to the bookmaker, in plain words
 function renderPjCards(P){
   const box = $('pjView');
+  pjSpots = mkSpots();
   const days = {};
   for (const g of P.list) (days[g.when.slice(0, 10)] ||= []).push(g);
   box.innerHTML = pjModeBar() + `<div class="pjintro"><h3>What to expect this week</h3>
-      The model's numbers next to the bookmaker's for every game. <b>Model leans</b> is the side of the bookmaker's line the model prefers.
+      The model's numbers next to the bookmaker's for every game. <b>Market so far</b> shows how this kind of game has gone against the lines this season; <b>Model leans</b> is the side of the line the model prefers.
       <div class="warn"><b>Not a tip.</b> The model uses past results and the injury list, no other news, and has not proven an edge over the bookmaker. See its <a class="back" href="#view=archive" data-go="archive">track record</a>.</div>
       <details><summary>How to read a card</summary><ul><li><b>Winner</b>: the chance to win (the bookmaker's from its odds, margin removed).</li>
         <li><b>Handicap</b>: the expected winning margin, written like a bookmaker's line: Mykonos −8.3 = Mykonos by 8.3.</li>
         <li><b>Total</b>: points scored by both teams together.</li>
+        <li><b>Market so far</b>: the kind of game the line makes it, and its record against the lines this season (<a class="back" href="#view=market" data-go="market">Market Analysis</a>). A favourite of under 5 is a close game, a tough call. Gold = one side has won 54%+ of 20 or more games: a possible market gap, still not proven.</li>
         <li><b>Model leans</b>: the bet the model prefers at the bookmaker's line, and how far apart the two are. Gaps over ${gapMin} points are in gold. "No lean" means the two are close.</li>
         <li><b>*</b>: the handicap includes the absences listed on the card.</li></ul></details></div>` +
     Object.entries(days).map(([d, list]) => `<h2>${dayName(d)} <span class="tag">${esc(list[0].round)} · ${list.length} game${list.length === 1 ? '' : 's'}</span></h2>
