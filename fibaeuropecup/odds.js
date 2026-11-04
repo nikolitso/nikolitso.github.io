@@ -1,7 +1,7 @@
 // Bookmaker lines for upcoming fixtures, keyed by the fixture's home and away club.
 // sp = handicap on the home side (+ means the home side is the underdog), spH / spA = its odds home / away,
 // tot = points total, ov / un = odds over / under, mlH / mlA = money line odds (null when not offered).
-window.ODDS = {"updated": "2026-11-02", "source": "pre-game lines, earlier ones kept", "list": [
+window.ODDS = {"updated": "2026-11-04", "source": "pre-game lines, earlier ones kept", "list": [
   {"h": "AEK Larnaca", "a": "Tartu Ulikool", "sp": -5.5, "spH": 1.83, "spA": 1.83, "tot": 165.5, "ov": 1.83, "un": 1.83, "mlH": 1.19, "mlA": 4.0},
   {"h": "CSM Oradea", "a": "VEF Riga", "sp": -3.5, "spH": 1.83, "spA": 1.83, "tot": 172.5, "ov": 1.83, "un": 1.83, "mlH": 1.62, "mlA": 2.1},
   {"h": "Esenler Erokspor", "a": "SCM Craiova", "sp": -19.5, "spH": 1.83, "spA": 1.83, "tot": 163.5, "ov": 1.83, "un": 1.83, "mlH": 1.01, "mlA": 11.5},
@@ -48,5 +48,13 @@ window.ODDS = {"updated": "2026-11-02", "source": "pre-game lines, earlier ones 
   {"h": "Mykonos", "a": "CSM Oradea", "sp": -4.5, "spH": 1.83, "spA": 1.85, "tot": 166.5, "ov": 1.83, "un": 1.83, "mlH": 1.48, "mlA": 2.4},
   {"h": "Rilski Sportist", "a": "Kolossos Rhodes", "sp": 12.5, "spH": 1.83, "spA": 1.83, "tot": 159.5, "ov": 1.83, "un": 1.85, "mlH": 5.0, "mlA": 1.12},
   {"h": "Basquet Girona", "a": "Levice", "sp": -18.5, "spH": 1.8, "spA": 1.87, "tot": 169.5, "ov": 1.83, "un": 1.85, "mlH": 1.03, "mlA": 8.5},
-  {"h": "Nancy", "a": "Keravnos", "sp": -17.5, "spH": 1.8, "spA": 1.87, "tot": 163.5, "ov": 1.87, "un": 1.8, "mlH": 1.04, "mlA": 8.0}
+  {"h": "Nancy", "a": "Keravnos", "sp": -17.5, "spH": 1.8, "spA": 1.87, "tot": 163.5, "ov": 1.87, "un": 1.8, "mlH": 1.04, "mlA": 8.0},
+  {"h": "Batumi", "a": "Split", "sp": 11.5, "spH": 1.9, "spA": 1.84, "tot": null, "ov": null, "un": null, "mlH": 5.85, "mlA": 1.11},
+  {"h": "Esenler Erokspor", "a": "Sporting CP", "sp": -14.5, "spH": 1.85, "spA": 1.78, "tot": 161.5, "ov": 1.8, "un": 1.83, "mlH": 1.1, "mlA": 5.5},
+  {"h": "Lok. Plovdiv", "a": "Neftchi IK", "sp": -5.5, "spH": 1.85, "spA": 1.88, "tot": null, "ov": null, "un": null, "mlH": 1.4, "mlA": 2.82},
+  {"h": "Parnu", "a": "Szczecin", "sp": 9.5, "spH": 1.84, "spA": 1.9, "tot": null, "ov": null, "un": null, "mlH": 4.0, "mlA": 1.22},
+  {"h": "Promitheas", "a": "Opava", "sp": -18.5, "spH": 1.85, "spA": 1.85, "tot": null, "ov": null, "un": null, "mlH": 1.02, "mlA": 10.0},
+  {"h": "Valmiera Glass Via", "a": "Manchester Basketball", "sp": -2.5, "spH": 1.85, "spA": 1.88, "tot": null, "ov": null, "un": null, "mlH": 1.64, "mlA": 2.17},
+  {"h": "Iraklis", "a": "AEK Larnaca", "sp": -12.5, "spH": 1.88, "spA": 1.85, "tot": null, "ov": null, "un": null, "mlH": 1.13, "mlA": 5.5},
+  {"h": "Dziki Warszawa", "a": "MZT Skopje", "sp": -14.5, "spH": 1.88, "spA": 1.85, "tot": null, "ov": null, "un": null, "mlH": 1.06, "mlA": 7.75}
 ]};
