@@ -617,7 +617,7 @@ function pjCard(g){
   const clubs = pill(g.h) + pill(g.a);
   const out = [...g.outH.map(x => [x, g.h]), ...g.outA.map(x => [x, g.a])];
   return `<div class="pjc${hot ? ' hot' : ''}" id="pj-${esc((g.h + '-' + g.a).replace(/[^A-Za-z0-9]+/g, '-'))}">
-    <div class="when"><span>${g.when.slice(11)} · ${esc(g.round)}</span><span>${esc(code(teams[g.h]))} – ${esc(code(teams[g.a]))}</span></div>
+    <div class="when"><span>${g.when.slice(11)} · ${esc(g.round)}${g.when <= athens(Date.now()) ? ' · <b>started</b>' : ''}</span><span>${esc(code(teams[g.h]))} – ${esc(code(teams[g.a]))}</span></div>
     <div class="teams">${esc(g.h)}<span>vs</span>${esc(g.a)}</div>
     <table><tr><th></th><th>Model</th><th>Bookmaker</th></tr>
       <tr><td title="Chance to win the game">Winner</td><td>${winner(g.ph)}</td><td>${pb === null ? '<span class="tag">–</span>' : `<span title="From the bookmaker's handicap">${winner(pb)}</span>`}</td></tr>
@@ -627,9 +627,22 @@ function pjCard(g){
     ${out.length ? `<div class="out">Out: ${out.map(([[pl, imp, note], t]) => `${esc(pl)} (${esc(t)}, worth ${imp.toFixed(1)} pts${note ? '; ' + esc(note) : ''})`).join(' · ')}</div>` : ''}
   </div>`;
 }
+// Athens time as "YYYY-MM-DD HH:MM", as the game times are written; a game leaves the page PJ_KEEP hours after tip-off
+const PJ_KEEP = 2;
+const athens = ms => new Date(ms).toLocaleString('sv-SE', {timeZone: 'Europe/Athens'}).slice(0, 16);
+// the update drops a game once it has started: it comes back from the Archive, with its numbers and line at tip-off
+function pjList(P){
+  const now = athens(Date.now()), from = athens(Date.now() - PJ_KEEP * 3600e3), list = [...P.list], seen = new Set(list.map(g => g.h + '|' + g.a));
+  for (const g of (window.ARCHIVE && ARCHIVE.list) || []){
+    if (g.mh == null || g.when <= from || g.when > now) continue;
+    if (g.bh != null) BOOK[g.h + '|' + g.a] ||= {bh: g.bh, bt: g.bt};
+    if (!seen.has(g.h + '|' + g.a)) list.push(g);
+  }
+  return list.filter(g => g.when > from).sort((x, y) => x.when.localeCompare(y.when));
+}
 function renderProjections(){
   const box = $('pjView');
-  const P = window.PROJ;
+  const P = window.PROJ && {...PROJ, list: pjList(PROJ)};
   if (!P || !P.list.length){ box.innerHTML = '<div class="empty">No games in the next days.</div>'; return; }
   if (pjMode === 'cards') return renderPjCards(P);
   const days = {};
