@@ -49,12 +49,14 @@ window.ODDS = {"updated": "2026-11-04", "source": "pre-game lines, earlier ones 
   {"h": "Rilski Sportist", "a": "Kolossos Rhodes", "sp": 12.5, "spH": 1.83, "spA": 1.83, "tot": 159.5, "ov": 1.83, "un": 1.85, "mlH": 5.0, "mlA": 1.12},
   {"h": "Basquet Girona", "a": "Levice", "sp": -18.5, "spH": 1.8, "spA": 1.87, "tot": 169.5, "ov": 1.83, "un": 1.85, "mlH": 1.03, "mlA": 8.5},
   {"h": "Nancy", "a": "Keravnos", "sp": -17.5, "spH": 1.8, "spA": 1.87, "tot": 163.5, "ov": 1.87, "un": 1.8, "mlH": 1.04, "mlA": 8.0},
-  {"h": "Batumi", "a": "Split", "sp": 11.5, "spH": 1.9, "spA": 1.84, "tot": null, "ov": null, "un": null, "mlH": 5.85, "mlA": 1.11},
-  {"h": "Esenler Erokspor", "a": "Sporting CP", "sp": -14.5, "spH": 1.85, "spA": 1.78, "tot": 161.5, "ov": 1.8, "un": 1.83, "mlH": 1.1, "mlA": 5.5},
   {"h": "Lok. Plovdiv", "a": "Neftchi IK", "sp": -5.5, "spH": 1.85, "spA": 1.88, "tot": null, "ov": null, "un": null, "mlH": 1.4, "mlA": 2.82},
-  {"h": "Parnu", "a": "Szczecin", "sp": 9.5, "spH": 1.84, "spA": 1.9, "tot": null, "ov": null, "un": null, "mlH": 4.0, "mlA": 1.22},
-  {"h": "Promitheas", "a": "Opava", "sp": -18.5, "spH": 1.85, "spA": 1.85, "tot": null, "ov": null, "un": null, "mlH": 1.02, "mlA": 10.0},
-  {"h": "Valmiera Glass Via", "a": "Manchester Basketball", "sp": -2.5, "spH": 1.85, "spA": 1.88, "tot": null, "ov": null, "un": null, "mlH": 1.64, "mlA": 2.17},
-  {"h": "Iraklis", "a": "AEK Larnaca", "sp": -12.5, "spH": 1.88, "spA": 1.85, "tot": null, "ov": null, "un": null, "mlH": 1.13, "mlA": 5.5},
-  {"h": "Dziki Warszawa", "a": "MZT Skopje", "sp": -14.5, "spH": 1.88, "spA": 1.85, "tot": null, "ov": null, "un": null, "mlH": 1.06, "mlA": 7.75}
+  {"h": "Esenler Erokspor", "a": "Sporting CP", "sp": -14.5, "spH": 1.85, "spA": 1.78, "tot": 161.5, "ov": 1.8, "un": 1.83, "mlH": 1.1, "mlA": 5.5},
+  {"h": "Batumi", "a": "Split", "sp": 12.5, "spH": 1.78, "spA": 1.85, "tot": 159.5, "ov": 1.8, "un": 1.83, "mlH": 4.85, "mlA": 1.13},
+  {"h": "Promitheas", "a": "Opava", "sp": -18.5, "spH": 1.87, "spA": 1.78, "tot": 166.5, "ov": 1.82, "un": 1.82, "mlH": 1.04, "mlA": 7.9},
+  {"h": "SCM Craiova", "a": "Gence", "sp": -6.5, "spH": 1.8, "spA": 1.83, "tot": 162.5, "ov": 1.82, "un": 1.82, "mlH": 1.34, "mlA": 2.92},
+  {"h": "Parnu", "a": "Szczecin", "sp": 9.5, "spH": 1.78, "spA": 1.85, "tot": 161.5, "ov": 1.82, "un": 1.83, "mlH": 3.65, "mlA": 1.22},
+  {"h": "Valmiera Glass Via", "a": "Manchester Basketball", "sp": -2.5, "spH": 1.82, "spA": 1.82, "tot": 165.5, "ov": 1.8, "un": 1.83, "mlH": 1.62, "mlA": 2.12},
+  {"h": "Iraklis", "a": "AEK Larnaca", "sp": -11.5, "spH": 1.78, "spA": 1.87, "tot": 163.5, "ov": 1.78, "un": 1.85, "mlH": 1.13, "mlA": 4.8},
+  {"h": "Dziki Warszawa", "a": "MZT Skopje", "sp": -14.5, "spH": 1.8, "spA": 1.83, "tot": 166.5, "ov": 1.82, "un": 1.83, "mlH": 1.09, "mlA": 5.7},
+  {"h": "Zielona Gora", "a": "Dinamo Bucharest", "sp": -4.5, "spH": 1.82, "spA": 1.83, "tot": 167.5, "ov": 1.85, "un": 1.78, "mlH": 1.47, "mlA": 2.42}
 ]};
