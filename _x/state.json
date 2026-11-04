@@ -156,7 +156,8 @@
       "remote-office-not-required",
       "measure-what-matters",
       "the-definitive-guide-a-z-of-betting",
-      "interception-the-secrets-of-modern"
+      "interception-the-secrets-of-modern",
+      "football-the-philosophy-behind-the"
     ],
     "log": [
       {
@@ -422,9 +423,15 @@
         "slot": "2026-11-03 14",
         "slug": "interception-the-secrets-of-modern",
         "id": "2117587648374047061"
+      },
+      {
+        "day": "2026-11-04",
+        "slot": "2026-11-04 14",
+        "slug": "football-the-philosophy-behind-the",
+        "id": "2117950059266666720"
       }
     ],
-    "last_day": "2026-11-03"
+    "last_day": "2026-11-04"
   },
   "film": {
     "seen": [
@@ -916,7 +923,7 @@
     ],
     "last_day": "2026-11-03"
   },
-  "last_slot": "2026-11-04 11",
+  "last_slot": "2026-11-04 14",
   "quote": {
     "seen": [
       "1",
