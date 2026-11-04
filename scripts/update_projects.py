@@ -183,7 +183,8 @@ def basketball():
 def basketball_overs():
     d = js_object("/basketball/overs/live.js", r"window\.LIVE\s*=")
     picks = d.get("picks", [])
-    done = [p for p in picks if p.get("done") and p.get("ret") is not None]
+    season = js_object("/basketball/overs/data.js", r"const DATA\s*=").get("cur", {}).get("bets", [])    # the page's 2026-27 record
+    done = season + [p for p in picks if p.get("done") and p.get("ret") is not None]
     return record(sum(p["ret"] > 0 for p in done), sum(p["ret"] < 0 for p in done),
                   sum(p["ret"] for p in done), sum(not p.get("done") for p in picks))
 
