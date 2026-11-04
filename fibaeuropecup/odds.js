@@ -62,9 +62,9 @@ window.ODDS = {"updated": "2026-11-04", "source": "pre-game lines, earlier ones 
   {"h": "Fribourg Olympic", "a": "VEF Riga", "sp": 6.5, "spH": 1.84, "spA": 1.82, "tot": null, "ov": null, "un": null, "mlH": 3.0, "mlA": 1.34},
   {"h": "Trier", "a": "Trepca", "sp": -15.5, "spH": 1.81, "spA": 1.85, "tot": null, "ov": null, "un": null, "mlH": 1.04, "mlA": 8.3},
   {"h": "Benfica", "a": "Absheron Lions", "sp": -12.5, "spH": 1.84, "spA": 1.82, "tot": null, "ov": null, "un": null, "mlH": 1.1, "mlA": 5.7},
-  {"h": "Geneva Lions", "a": "BC Prievidza", "sp": -3.5, "spH": 1.8, "spA": 1.86, "tot": null, "ov": null, "un": null, "mlH": 1.52, "mlA": 2.35},
-  {"h": "Oostende", "a": "Szolnoki Olaj", "sp": -4.5, "spH": 1.84, "spA": 1.82, "tot": null, "ov": null, "un": null, "mlH": 1.47, "mlA": 2.5},
   {"h": "Batumi", "a": "Split", "sp": 13.5, "spH": 1.83, "spA": 1.9, "tot": 158.5, "ov": 1.9, "un": 1.83, "mlH": 6.75, "mlA": 1.1},
   {"h": "Esenler Erokspor", "a": "Sporting CP", "sp": -16.5, "spH": 1.83, "spA": 1.9, "tot": 161.5, "ov": 1.83, "un": 1.85, "mlH": 1.06, "mlA": 7.0},
-  {"h": "Korfez Basket", "a": "Bashkimi", "sp": -19.5, "spH": 1.86, "spA": 1.86, "tot": 167.5, "ov": 1.86, "un": 1.86, "mlH": 1.06, "mlA": 9.0}
+  {"h": "Korfez Basket", "a": "Bashkimi", "sp": -19.5, "spH": 1.86, "spA": 1.86, "tot": 167.5, "ov": 1.86, "un": 1.86, "mlH": 1.06, "mlA": 9.0},
+  {"h": "Geneva Lions", "a": "BC Prievidza", "sp": -3.5, "spH": 1.83, "spA": 1.85, "tot": 168.5, "ov": 1.83, "un": 1.83, "mlH": 1.55, "mlA": 2.25},
+  {"h": "Oostende", "a": "Szolnoki Olaj", "sp": -4.5, "spH": 1.85, "spA": 1.83, "tot": 162.5, "ov": 1.8, "un": 1.87, "mlH": 1.48, "mlA": 2.4}
 ]};
