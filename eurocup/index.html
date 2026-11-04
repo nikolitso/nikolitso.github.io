@@ -668,7 +668,18 @@ const pickSource = () => ((window.ARCHIVE && ARCHIVE.list) || []).map(g => ({dat
 // at the logged price, settled from the results. Read from the Archive, so a pick follows the latest line until
 // tip-off and is frozen with the game after; the rule is fixed here, not by the gap selector.
 const PICK_GAP = 6;
+const PICK_SPLIT_FROM = '2026-11-04';                          // earlier picks helped suggest the split, so the fair count starts here
+// does the two clubs' record against the line before this game (Vs Market) point the way of the bet? null = too early to say
+function pickRecord(p, games){
+  const vs = t => {
+    const x = games.filter(g => g.date < p.date && (g.h === t || g.a === t)).map(g => (g.hp - g.ap - g.bh) * (g.h === t ? 1 : -1));
+    return x.length >= MK_MIN ? x.reduce((s, v) => s + v, 0) / x.length : null;
+  };
+  const h = vs(p.h), a = vs(p.a);
+  return h === null || a === null || h === a ? null : (h > a) === p.home;
+}
 function pickRows(){
+  const played = mkData().games;
   return pickSource().filter(g => g.mh != null && g.bh != null && Math.abs(g.mh - g.bh) >= PICK_GAP).map(g => {
     const home = g.mh > g.bh, logged = home ? g.oh : g.oa, pr = logged || PICK_PRICE;
     const r = arResult(g.date, g.h, g.a);
@@ -679,7 +690,7 @@ function pickRows(){
       res = c > 0 ? 'W' : c < 0 ? 'L' : 'P';
       u = res === 'W' ? pr - 1 : res === 'L' ? -1 : 0;
     }
-    return {...g, home, pr, logged: !!logged, r, m, res, u, bet: home ? `${g.h} ${sgn(-g.bh)}` : `${g.a} ${sgn(g.bh)}`};
+    return {...g, home, pr, logged: !!logged, r, m, res, u, rec: pickRecord({...g, home}, played), bet: home ? `${g.h} ${sgn(-g.bh)}` : `${g.a} ${sgn(g.bh)}`};
   }).sort((x, y) => (x.date + x.time).localeCompare(y.date + y.time) || x.h.localeCompare(y.h));
 }
 function renderPicks(){
@@ -699,17 +710,29 @@ function renderPicks(){
       ${card('Units', done.length ? `<span class="${cls(units)}">${u2(units)}</span>` : '–', 'stake 1 unit a pick')}
       ${card('ROI', done.length ? `<span class="${cls(units)}">${(units > 0 ? '+' : units < 0 ? '−' : '') + Math.abs(units / done.length * 100).toFixed(1)}%</span>` : '–', 'units won per unit staked')}
     </div>`;
-  h += `<h2>Open picks</h2>` + (open.length ? `<div class="scroll"><table class="fx"><tr><th class="n">Tip-off</th><th>Match</th><th>Bet</th><th class="n">Price</th><th class="n" title="Model handicap, home minus away">Model</th><th class="n" title="Bookmaker handicap, home minus away">Book</th><th class="n" title="Model minus book">Gap</th></tr>` +
+  const recCell = p => p.rec === null ? '<td class="n tag" title="Too early: both clubs need ' + MK_MIN + ' games with a line">–</td>'
+    : p.rec ? '<td class="n w" title="The clubs\' record against the line points the same way as the bet">✓</td>' : '<td class="n l" title="The clubs\' record against the line points the other way">✗</td>';
+  const wl = list => { const a = list.filter(p => p.res === 'W').length, b = list.filter(p => p.res === 'L').length, c = list.length - a - b; return list.length ? `${a}–${b}${c ? `–${c}` : ''}` : '–'; };
+  const group = (name, rec) => {
+    const x = done.filter(p => p.rec === rec), a = x.filter(p => p.res === 'W').length, b = x.filter(p => p.res === 'L').length, un = x.reduce((t, p) => t + p.u, 0);
+    return `<tr><td><b>${name}</b></td><td class="n">${x.length}</td><td class="n">${wl(x)}</td><td class="n">${a + b ? Math.round(a / (a + b) * 100) + '%' : '–'}</td>
+      <td class="n ${cls(un)}">${x.length ? u2(un) : '–'}</td><td class="n ${cls(un)}">${x.length ? (un > 0 ? '+' : un < 0 ? '−' : '') + Math.abs(un / x.length * 100).toFixed(1) + '%' : '–'}</td>
+      <td class="n"><b>${wl(x.filter(p => p.date >= PICK_SPLIT_FROM))}</b></td></tr>`;
+  };
+  h += `<h2>By season record</h2><div class="tag" style="margin-bottom:8px;max-width:760px;line-height:1.5">Does the two clubs' record against the line before the game (Vs Market tab) point the same way as the pick? Every pick still counts in the record above: this only watches whether the agreeing picks do better. Past games suggested they might, on very few picks, so the fair count starts on ${fmtDate(PICK_SPLIT_FROM)}.</div>
+    <div class="scroll"><table class="fx" style="width:auto;min-width:640px"><tr><th>Group</th><th class="n">Picks</th><th class="n">Record</th><th class="n">Hit rate</th><th class="n">Units</th><th class="n">ROI</th><th class="n" title="Won – lost since the split was set up">From ${fmtDate(PICK_SPLIT_FROM).slice(0, 5)}</th></tr>
+    ${group('✓ Record agrees', true)}${group('✗ Record disagrees', false)}${group('Too early to say', null)}</table></div>`;
+  h += `<h2>Open picks</h2>` + (open.length ? `<div class="scroll"><table class="fx"><tr><th class="n">Tip-off</th><th>Match</th><th>Bet</th><th class="n">Price</th><th class="n" title="Model handicap, home minus away">Model</th><th class="n" title="Bookmaker handicap, home minus away">Book</th><th class="n" title="Model minus book">Gap</th><th class="n" title="The clubs' record against the line">Record</th></tr>` +
     open.map(p => `<tr><td class="n">${fmtDate(p.date).slice(0, 5)} <span class="tag">${esc(p.time)}</span></td><td><b>${esc(p.h)}</b> – <b>${esc(p.a)}</b></td>
-      <td><b class="hcp">${esc(p.bet)}</b></td><td class="n">${price(p)}</td><td class="n">${sgn(p.mh)}</td><td class="n">${sgn(p.bh)}</td><td class="n big">${sgn(p.mh - p.bh)}</td></tr>`).join('') + '</table></div>'
+      <td><b class="hcp">${esc(p.bet)}</b></td><td class="n">${price(p)}</td><td class="n">${sgn(p.mh)}</td><td class="n">${sgn(p.bh)}</td><td class="n big">${sgn(p.mh - p.bh)}</td>${recCell(p)}</tr>`).join('') + '</table></div>'
     : '<div class="empty">No open picks right now. They appear here once a bookmaker line is 6+ points from the model.</div>');
   let run = 0;
   const rows = done.map(p => { run += p.u; return `<tr><td class="n">${fmtDate(p.date)}</td><td><b>${esc(p.h)}</b> – <b>${esc(p.a)}</b></td>
       <td><b>${esc(p.bet)}</b></td><td class="n">${price(p)}</td><td class="n">${sgn(p.mh)}</td><td class="n">${sgn(p.bh)}</td>
       <td class="n"><b>${p.r[6]}–${p.r[7]}</b></td><td class="n">${sgn(p.m)}</td>
       <td class="n ${p.res === 'W' ? 'w' : p.res === 'L' ? 'l' : 'tag'}"><b>${p.res === 'W' ? 'Won' : p.res === 'L' ? 'Lost' : 'Push'}</b></td>
-      <td class="n ${cls(p.u)}">${u2(p.u)}</td><td class="n ${cls(run)}">${u2(run)}</td></tr>`; }).reverse().join('');
-  h += `<h2>Every settled pick</h2>` + (done.length ? `<div class="scroll"><table class="fx"><tr><th class="n">Date</th><th>Match</th><th>Bet</th><th class="n">Price</th><th class="n">Model</th><th class="n">Book</th><th class="n">Score</th><th class="n" title="Home minus away">Margin</th><th class="n">Result</th><th class="n">Units</th><th class="n">Running</th></tr>${rows}</table></div>`
+      <td class="n ${cls(p.u)}">${u2(p.u)}</td><td class="n ${cls(run)}">${u2(run)}</td>${recCell(p)}</tr>`; }).reverse().join('');
+  h += `<h2>Every settled pick</h2>` + (done.length ? `<div class="scroll"><table class="fx"><tr><th class="n">Date</th><th>Match</th><th>Bet</th><th class="n">Price</th><th class="n">Model</th><th class="n">Book</th><th class="n">Score</th><th class="n" title="Home minus away">Margin</th><th class="n">Result</th><th class="n">Units</th><th class="n">Running</th><th class="n" title="The clubs' record against the line">Record</th></tr>${rows}</table></div>`
     : '<div class="empty">No settled picks yet. Each pick is added here once its game is played.</div>');
   box.innerHTML = h;
   box.querySelectorAll('[data-go]').forEach(a => a.onclick = e => { e.preventDefault(); setView(a.dataset.go); sync(); window.scrollTo({top: 0}); });
