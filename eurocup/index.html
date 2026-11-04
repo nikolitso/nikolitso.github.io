@@ -79,7 +79,7 @@ table{font-variant-numeric:tabular-nums}
 .fx td.n:first-child{font-size:15.5px;color:var(--muted)}
 .fx td.n.big{font-weight:600;box-shadow:inset 0 0 0 3px var(--bg)}
 .fx tr:nth-child(even){background:transparent}
-/* Vs Market group tables */
+/* Market Analysis group tables */
 h2.mkh{font:600 21px var(--serif);margin:38px 0 10px;padding-bottom:8px;border-bottom:1px solid var(--line)}
 table.mkt{table-layout:fixed;width:100%;border-collapse:separate;border-spacing:0;font-variant-numeric:tabular-nums}
 table.mkt th{font:500 12px var(--mono);letter-spacing:.04em;color:var(--muted);text-transform:uppercase;vertical-align:bottom;padding:6px 8px 9px;border-bottom:1px solid var(--line);white-space:nowrap;overflow:visible}
@@ -189,7 +189,7 @@ select.peer:focus{outline:2px solid var(--gold)}
   <a class="an-brand" href="/eurocup/"><svg class="an-mark" aria-hidden="true"><use href="/assets/marks.svg#basketball"/></svg><span><small class="an-kicker">Basketball · Projections</small><h1>EuroCup</h1></span></a>
   <nav class="tabs an-tabs" id="tabs" aria-label="Sections">
     <a href="#view=projections" data-view="projections" class="on">Projections</a>
-    <a href="#view=market" data-view="market">Vs Market</a>
+    <a href="#view=market" data-view="market">Market Analysis</a>
     <a href="#view=archive" data-view="archive">Archive</a>
     <a href="#view=picks" data-view="picks">Picks</a>
     <a href="#view=ratings" data-view="ratings">Club Ratings</a>
@@ -646,7 +646,7 @@ const pickSource = () => ((window.ARCHIVE && ARCHIVE.list) || []).map(g => ({dat
 // tip-off and is frozen with the game after; the rule is fixed here, not by the gap selector.
 const PICK_GAP = 6;
 const PICK_SPLIT_FROM = '2026-11-04';                          // earlier picks helped suggest the split, so the fair count starts here
-// does the two clubs' record against the line before this game (Vs Market) point the way of the bet? null = too early to say
+// does the two clubs' record against the line before this game (Market Analysis) point the way of the bet? null = too early to say
 function pickRecord(p, games){
   const vs = t => {
     const x = games.filter(g => g.date < p.date && (g.h === t || g.a === t)).map(g => (g.hp - g.ap - g.bh) * (g.h === t ? 1 : -1));
@@ -696,7 +696,7 @@ function renderPicks(){
       <td class="n ${cls(un)}">${x.length ? u2(un) : '–'}</td><td class="n ${cls(un)}">${x.length ? (un > 0 ? '+' : un < 0 ? '−' : '') + Math.abs(un / x.length * 100).toFixed(1) + '%' : '–'}</td>
       <td class="n"><b>${wl(x.filter(p => p.date >= PICK_SPLIT_FROM))}</b></td></tr>`;
   };
-  h += `<h2>By season record</h2><div class="tag" style="margin-bottom:8px;max-width:760px;line-height:1.5">Does the two clubs' record against the line before the game (Vs Market tab) point the same way as the pick? Every pick still counts in the record above: this only watches whether the agreeing picks do better. Past games suggested they might, on very few picks, so the fair count starts on ${fmtDate(PICK_SPLIT_FROM)}.</div>
+  h += `<h2>By season record</h2><div class="tag" style="margin-bottom:8px;max-width:760px;line-height:1.5">Does the two clubs' record against the line before the game (Market Analysis tab) point the same way as the pick? Every pick still counts in the record above: this only watches whether the agreeing picks do better. Past games suggested they might, on very few picks, so the fair count starts on ${fmtDate(PICK_SPLIT_FROM)}.</div>
     <div class="scroll"><table class="fx" style="width:auto;min-width:640px"><tr><th>Group</th><th class="n">Picks</th><th class="n">Record</th><th class="n">Hit rate</th><th class="n">Units</th><th class="n">ROI</th><th class="n" title="Won – lost since the split was set up">From ${fmtDate(PICK_SPLIT_FROM).slice(0, 5)}</th></tr>
     ${group('✓ Record agrees', true)}${group('✗ Record disagrees', false)}${group('Too early to say', null)}</table></div>`;
   h += `<h2>Open picks</h2>` + (open.length ? `<div class="scroll"><table class="fx"><tr><th class="n">Tip-off</th><th>Match</th><th>Bet</th><th class="n">Price</th><th class="n" title="Model handicap, home minus away">Model</th><th class="n" title="Bookmaker handicap, home minus away">Book</th><th class="n" title="Model minus book">Gap</th><th class="n" title="The clubs' record against the line">Record</th></tr>` +
@@ -765,10 +765,10 @@ function renderArchive(){
     `<div class="tag" style="margin-top:14px">Every projection is written before tip-off with the bookmaker's line of that moment and the injury list of that moment, then never changed. Hcp is home minus away. The result fills in by itself once the game is in the data.</div>`;
   bindGap(box, renderArchive);
 }
-// ---------- Vs Market: every Regular Season game's bookmaker line against what happened, by group and club
+// ---------- Market Analysis: every Regular Season game's bookmaker line against what happened, by group and club
 let mkSort = {k: 'vs', dir: -1};
 const mkOpen = new Set();                                      // clubs whose games are shown
-const MK_FROM = '2026-09-29';                                  // Vs Market counts the Regular Season from Round 1 on
+const MK_FROM = '2026-09-29';                                  // Market Analysis counts the Regular Season from Round 1 on
 // A club's average against the line is noise until it beats the book's typical miss / sqrt(games):
 // the book misses the handicap by about 12.5 points and the total by about 17.5 (2025-27 lines), and the own / opponent
 // split (half the sum of the two) by about 10.75.
@@ -832,7 +832,7 @@ function mkRatings(games){
   const x = b.map((v, i) => v / A[i][i]), mean = clubs.reduce((t, c, i) => t + x[i], 0) / clubs.length;
   return {r: new Map(clubs.map((c, i) => [c, x[i] - mean])), hca: x[k - 1]};
 }
-// every Regular Season game with a line and a result, and each club's record against those lines (Vs Market and Club Ratings)
+// every Regular Season game with a line and a result, and each club's record against those lines (Market Analysis and Club Ratings)
 function mkData(){
   // lines from market.js: every played game's line, read before tip-off
   const games = [], seen = new Set();
@@ -862,6 +862,62 @@ function mkData(){
       own: vsT === null ? null : (vsT + vsS) / 2, opp: vsT === null ? null : (vsT - vsS) / 2};
   });
   return {games, rows, MR};
+}
+// the competition as a whole against the lines: is there a kind of bet the bookmaker keeps getting wrong?
+function mkCompetition(games){
+  const BE = 54;                                                 // break-even at the usual odds
+  const avg = l => l.length ? l.reduce((s, v) => s + v, 0) / l.length : 0;
+  const one = v => (v > 0 ? '+' : v < 0 ? '−' : '') + Math.abs(v).toFixed(1);
+  const range = (w, n) => { const p = w / n, z = 1.96, d = 1 + z * z / n, c = p + z * z / 2 / n, h = z * Math.sqrt(p * (1 - p) / n + z * z / 4 / n / n); return [(c - h) / d * 100, (c + h) / d * 100]; };
+  const hcp = (g, s) => (g.hp - g.ap - g.bh) * s;                // points the side beat its handicap by: s = 1 home, -1 away
+  const fav = g => g.bh >= 0 ? 1 : -1;
+  const ot = games.filter(g => g.bt !== null), tot = g => g.hp + g.ap - g.bt;
+  // one kind of bet: list of points it beat the line by
+  const bet = (name, pts) => {
+    const w = pts.filter(v => v > 0).length, l = pts.filter(v => v < 0).length, n = w + l;
+    if (!pts.length) return '';
+    const p = n ? w / n * 100 : 0, [lo, hi] = n ? range(w, n) : [0, 0];
+    const read = lo > BE ? '<b class="w">Stands out</b>' : p >= BE && n >= 20 ? '<span class="hcp">Worth watching</span>' : '<span class="tag">No edge</span>';
+    return `<tr><td>${name}</td><td class="n">${pts.length}</td><td class="n">${w}–${l}${pts.length > n ? `<span class="tag">–${pts.length - n}</span>` : ''}</td><td class="n ${p >= BE ? 'w' : ''}"><b>${n ? Math.round(p) + '%' : '–'}</b></td>
+      <td class="n tag">${n ? Math.round(lo) + '–' + Math.round(hi) + '%' : '–'}</td><td class="n">${one(avg(pts))}</td><td>${read}</td></tr>`;
+  };
+  const head = `<tr><th>Bet</th><th class="n">Games</th><th class="n" title="Won – lost – push">Record</th><th class="n">Win %</th><th class="n" title="Where the real win rate probably lies, given so few games">Likely range</th><th class="n" title="Average points the bet beat the line by">Vs line</th><th>Read</th></tr>`;
+  const table = rows => `<div class="scroll"><table class="fx" style="width:auto;min-width:680px">${head}${rows}</table></div>`;
+  const byFav = (lo, hi) => games.filter(g => Math.abs(g.bh) >= lo && Math.abs(g.bh) < hi);
+  const hRows = bet('Home side', games.map(g => hcp(g, 1))) + bet('Away side', games.map(g => hcp(g, -1))) +
+    bet('Favourite', games.filter(g => g.bh).map(g => hcp(g, fav(g)))) + bet('Underdog', games.filter(g => g.bh).map(g => hcp(g, -fav(g)))) +
+    bet('Home favourite', games.filter(g => g.bh > 0).map(g => hcp(g, 1))) + bet('Away favourite', games.filter(g => g.bh < 0).map(g => hcp(g, -1))) +
+    bet('Home underdog', games.filter(g => g.bh < 0).map(g => hcp(g, 1))) + bet('Away underdog', games.filter(g => g.bh > 0).map(g => hcp(g, -1))) +
+    [[0, 5], [5, 10], [10, 15], [15, 99]].map(([lo, hi]) => bet(`Favourite by ${hi === 99 ? lo + '+' : lo + '–' + hi}`, byFav(lo, hi).filter(g => g.bh).map(g => hcp(g, fav(g))))).join('');
+  const band = (lo, hi) => ot.filter(g => g.bt >= lo && g.bt < hi);
+  const tRows = bet('Over', ot.map(tot)) + bet('Under', ot.map(g => -tot(g))) +
+    [[0, 160], [160, 165], [165, 170], [170, 175], [175, 999]].map(([lo, hi]) => { const l = band(lo, hi), name = lo ? (hi === 999 ? lo + '+' : lo + '–' + hi) : 'under ' + hi; return bet(`Over, line ${name}`, l.map(tot)) + bet(`Under, line ${name}`, l.map(g => -tot(g))); }).join('');
+  const split = (key, label) => {
+    const by = {};
+    for (const g of games) (by[key(g)] ||= []).push(g);
+    const pc = (w, n) => n ? `${w} of ${n} <span class="tag">${Math.round(w / n * 100)}%</span>` : '–';
+    const rows = Object.keys(by).sort((a, b) => (+a || 0) - (+b || 0) || a.localeCompare(b)).map(k => {
+      const l = by[k], t = l.filter(g => g.bt !== null);
+      const c = l.filter(g => hcp(g, 1)), o = t.filter(g => tot(g));
+      return `<tr><td><b>${esc(k)}</b></td><td class="n">${l.length}</td><td class="n">${pc(c.filter(g => hcp(g, 1) > 0).length, c.length)}</td><td class="n">${pc(c.filter(g => hcp(g, fav(g)) > 0).length, c.length)}</td><td class="n">${pc(o.filter(g => tot(g) > 0).length, o.length)}</td>
+        <td class="n">${avg(l.map(g => Math.abs(hcp(g, 1)))).toFixed(1)}</td><td class="n">${t.length ? avg(t.map(g => Math.abs(tot(g)))).toFixed(1) : '–'}</td></tr>`;
+    }).join('');
+    return `<div class="scroll"><table class="fx" style="width:auto;min-width:680px"><tr><th>${label}</th><th class="n">Games</th><th class="n">Home covered</th><th class="n">Favourite covered</th><th class="n">Went over</th><th class="n" title="Average points the handicap line missed by">Hcp miss</th><th class="n" title="Average points the total line missed by">Total miss</th></tr>${rows}</table></div>`;
+  };
+  const card = (t, v, sub) => `<div class="metric"><div class="lbl">${t}</div><div class="big2">${v}</div><div class="tag">${sub}</div></div>`;
+  const hc = games.filter(g => hcp(g, 1)), ov = ot.filter(g => tot(g));
+  return `<div class="note" style="margin-bottom:14px"><b>Is there a kind of bet the bookmaker keeps getting wrong?</b> Every Regular Season game so far, each kind of bet at 1 unit. A bet makes money at about <b>${BE}%</b>. <b>Likely range</b> is where the real win rate probably lies, given so few games. <b>Stands out</b> = the whole range is above ${BE}%; <b>Worth watching</b> = ${BE}%+ on 20 or more games, but the range still reaches below. With this many rows, a few will look good by luck alone, so treat anything here as a lead to follow, not a tip.</div>
+    <div class="metrics">
+      ${card('Games', games.length, `from ${fmtDate(MK_FROM)}`)}
+      ${card('Handicap miss', avg(games.map(g => Math.abs(hcp(g, 1)))).toFixed(1), 'average points the line was off')}
+      ${card('Total miss', ot.length ? avg(ot.map(g => Math.abs(tot(g)))).toFixed(1) : '–', 'average points the line was off')}
+      ${card('Home covered', hc.length ? Math.round(hc.filter(g => hcp(g, 1) > 0).length / hc.length * 100) + '%' : '–', 'of games, pushes left out')}
+      ${card('Went over', ov.length ? Math.round(ov.filter(g => tot(g) > 0).length / ov.length * 100) + '%' : '–', 'of games, pushes left out')}
+    </div>
+    <h2>Handicap</h2>${table(hRows)}
+    <h2>Totals</h2>${table(tRows)}
+    <h2>By round</h2>${split(g => (g.stage.match(/Round (\d+)/) || [])[1] || g.stage, 'Round')}
+    <h2>By group</h2>${split(g => g.grp, 'Group')}`;
 }
 function renderMarket(){
   const box = $('mkView');
@@ -908,7 +964,7 @@ function renderMarket(){
       <td class="n gap">${one(g.bh)}</td><td class="n">${one(m)}</td><td class="n gap">${esc(cov)}</td>
       <td class="n">${g.bt === null ? '–' : g.bt.toFixed(1)}</td><td class="n">${tot}</td><td class="n">${ou}</td></tr>`;
   }).join('');
-  box.innerHTML = `<div class="note" style="margin-bottom:14px">The bookmaker's pre-game line for every Regular Season game from Round 1 (${fmtDate(MK_FROM)}) against what happened: ${games.length} games so far, by group. Each club appears in every game it played, home or away.
+  box.innerHTML = mkCompetition(games) + `<h2 style="margin-top:44px">By club</h2><div class="note" style="margin-bottom:14px">The bookmaker's pre-game line for every Regular Season game from Round 1 (${fmtDate(MK_FROM)}) against what happened: ${games.length} games so far, by group. Each club appears in every game it played, home or away.
       <b>Handicap vs line</b> above 0 = the club did better than priced (underrated); <b>Total vs line</b> above 0 = its games went over.
       <b>Market</b> = the club's rating in the bookmaker's eyes: points better (+) or worse (−) than an average club on a neutral court, fitted from every line so far (home advantage in the lines: ${one(MR.hca)}).
       <b>Points vs line</b> splits the two: <b>Own</b> = its own points against what the lines implied, <b>Opp</b> = its opponents' points.
@@ -926,7 +982,7 @@ function renderMarket(){
     renderMarket();
   });
 }
-// ---------- Club ratings: the model's rating next to the market's (fitted from the bookmaker lines, as on Vs Market)
+// ---------- Club ratings: the model's rating next to the market's (fitted from the bookmaker lines, as on Market Analysis)
 // Regular Season lines only compare clubs of the same group, so the market cannot say how strong a group is: both
 // ratings are compared on each group's own average (model in group vs market in group).
 let crSort = {k: 'd', dir: -1};
@@ -986,7 +1042,7 @@ function renderRatings(){
     <td class="n hcp"><b>${sgn(x.r)}</b></td><td class="n gl">${x.rg === null ? '–' : sgn(x.rg)}</td><td class="n">${x.mr === null ? '–' : sgn(x.mr)}</td>${dcell(x.d)}${vcell(x)}
     <td class="n">${x.n}</td><td class="crc">${crComment(x)}</td></tr>`).join('');
   box.innerHTML = `<div class="note" style="margin-bottom:14px"><b>Model</b> = the club's rating in the projection model, from this season's results (older games count less), starting from last season's rating scaled by how much of the roster stayed.
-      <b>Market</b> = the club's rating in the bookmaker's eyes, fitted from every handicap line so far (as on the <a class="back" href="#view=market" data-go="market">Vs Market</a> tab).
+      <b>Market</b> = the club's rating in the bookmaker's eyes, fitted from every handicap line so far (as on the <a class="back" href="#view=market" data-go="market">Market Analysis</a> tab).
       In the Regular Season a club only meets the clubs of its own group, so the lines compare clubs within a group but cannot say how strong one group is against another. The comparison is therefore made <b>within the group</b>: both ratings in points better (+) or worse (−) than the group's average club, on a neutral court. <b>Overall</b> is the model's rating against the whole competition.
       <b>Model vs market</b> (a view of strength, looking ahead) = model rating minus market rating: above 0 = the model rates the club higher in its group than the market does (underrated by the market); below 0 = lower (overrated). Green from +${CR_STRONG}, red from −${CR_STRONG}.
       <b>Results vs line</b> (what happened, no model involved) = the club's real margin minus the bookmaker handicap, per game: above 0 = it has beaten its lines, below 0 = fallen short (coloured once larger than its sample's noise).
@@ -1022,7 +1078,7 @@ function setView(v){
   if (view === 'rosters') renderRosters();
 }
 document.querySelectorAll('#tabs a').forEach(b => b.onclick = e => { if (e.metaKey || e.ctrlKey || e.shiftKey || e.button) return; e.preventDefault(); setView(b.dataset.view); sync(); });
-// Home: back to the start (countries, all venues, nothing selected, Vs Market tab)
+// Home: back to the start (countries, all venues, nothing selected, Market Analysis tab)
 document.querySelectorAll('[data-home]').forEach(a => a.onclick = e => {
   e.preventDefault();
   setMode('country'); setVenue('all'); $('a').value = $('b').value = '';
