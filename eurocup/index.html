@@ -864,7 +864,7 @@ function mkData(){
   return {games, rows, MR};
 }
 // the competition as a whole against the lines: is there a kind of bet the bookmaker keeps getting wrong?
-function mkCompetition(games){
+function mkCompetition(games, clubs){
   const BE = 54;                                                 // break-even at the usual odds
   const avg = l => l.length ? l.reduce((s, v) => s + v, 0) / l.length : 0;
   const one = v => (v > 0 ? '+' : v < 0 ? '−' : '') + Math.abs(v).toFixed(1);
@@ -916,6 +916,12 @@ function mkCompetition(games){
     }).join('');
     return `<div class="scroll"><table class="fx" style="width:auto;min-width:680px"><tr><th>${label}</th><th class="n">Games</th><th class="n">Home covered</th><th class="n">Favourite covered</th><th class="n">Went over</th><th class="n" title="Average points the handicap line missed by">Hcp miss</th><th class="n" title="Average points the total line missed by">Total miss</th></tr>${rows}</table></div>`;
   };
+  // clubs whose results against their handicaps are further from 0 than their sample's noise
+  const rated = sign => clubs.filter(x => x.n >= MK_MIN && x.vsS * sign >= mkLim(MK_SD.hcp, x.n)).sort((x, y) => (y.vsS - x.vsS) * sign);
+  const ratedTable = (title, list, cl) => `<div><h3 style="font:600 18px var(--serif);margin:0 0 8px">${title} <span class="tag">${list.length}</span></h3>` + (list.length
+    ? `<div class="scroll"><table class="fx"><tr><th>Club</th><th class="n">Games</th><th class="n" title="Covered – did not cover – push">Covered</th><th class="n" title="Real margin minus the handicap, per game">Vs line</th></tr>` +
+      list.map(x => `<tr><td><b>${esc(x.team)}</b></td><td class="n">${x.n}</td><td class="n">${x.w}–${x.l}${x.p ? `–${x.p}` : ''}</td><td class="n ${cl}"><b>${one(x.vsS)}</b></td></tr>`).join('') + '</table></div>'
+    : '<div class="empty">None so far.</div>') + '</div>';
   const card = (t, v, sub) => `<div class="metric"><div class="lbl">${t}</div><div class="big2">${v}</div><div class="tag">${sub}</div></div>`;
   const hc = games.filter(g => hcp(g, 1)), ov = ot.filter(g => tot(g));
   return `<div class="note" style="margin-bottom:14px"><b>Is there a kind of bet the bookmaker keeps getting wrong?</b> Every Regular Season game so far, each kind of bet at 1 unit. A bet makes money at about <b>${BE}%</b>. <b>Likely range</b> is where the real win rate probably lies, given so few games. <b>Stands out</b> = the whole range is above ${BE}%; <b>Worth watching</b> = ${BE}%+ on 20 or more games, but the range still reaches below. With this many rows, a few will look good by luck alone, so treat anything here as a lead to follow, not a tip.</div>
@@ -929,7 +935,9 @@ function mkCompetition(games){
     <h2>Handicap</h2>${table(hRows)}
     <h2>Totals</h2>${table(tRows)}
     <h2>By round</h2>${split(g => (g.stage.match(/Round (\d+)/) || [])[1] || g.stage, 'Round')}
-    <h2>By group</h2>${split(g => g.grp, 'Group')}`;
+    <h2>By group</h2>${split(g => g.grp, 'Group')}
+    <h2>Underrated and overrated clubs</h2><div class="tag" style="margin-bottom:10px;max-width:760px;line-height:1.5">Clubs furthest from their handicaps for their number of games. With so few games, about one club in three would land here by chance, so this is what has happened so far, not a bet: on FIBA lines the bookmaker seems to adjust quickly, and backing the better record won about 49% of the time. For the model's view of each club, see <a class="back" href="#view=ratings" data-go="ratings">Club Ratings</a>.</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:22px">${ratedTable('Underrated so far', rated(1), 'w')}${ratedTable('Overrated so far', rated(-1), 'l')}</div>`;
 }
 function renderMarket(){
   const box = $('mkView');
@@ -976,7 +984,7 @@ function renderMarket(){
       <td class="n gap">${one(g.bh)}</td><td class="n">${one(m)}</td><td class="n gap">${esc(cov)}</td>
       <td class="n">${g.bt === null ? '–' : g.bt.toFixed(1)}</td><td class="n">${tot}</td><td class="n">${ou}</td></tr>`;
   }).join('');
-  box.innerHTML = mkCompetition(games) + `<h2 style="margin-top:44px">By club</h2><div class="note" style="margin-bottom:14px">The bookmaker's pre-game line for every Regular Season game from Round 1 (${fmtDate(MK_FROM)}) against what happened: ${games.length} games so far, by group. Each club appears in every game it played, home or away.
+  box.innerHTML = mkCompetition(games, rows) + `<h2 style="margin-top:44px">By club</h2><div class="note" style="margin-bottom:14px">The bookmaker's pre-game line for every Regular Season game from Round 1 (${fmtDate(MK_FROM)}) against what happened: ${games.length} games so far, by group. Each club appears in every game it played, home or away.
       <b>Handicap vs line</b> above 0 = the club did better than priced (underrated); <b>Total vs line</b> above 0 = its games went over.
       <b>Market</b> = the club's rating in the bookmaker's eyes: points better (+) or worse (−) than an average club on a neutral court, fitted from every line so far (home advantage in the lines: ${one(MR.hca)}).
       <b>Points vs line</b> splits the two: <b>Own</b> = its own points against what the lines implied, <b>Opp</b> = its opponents' points.
@@ -985,6 +993,7 @@ function renderMarket(){
     ${sections}
     <details class="ros" style="margin-top:18px"><summary><b>Every game</b> <span class="tag">${games.length}</span></summary>
       <div class="scroll"><table class="fx"><tr><th class="n">Date</th><th>Round</th><th>Match</th><th class="n">Score</th><th class="n gap" title="Bookmaker handicap, home minus away">Hcp line</th><th class="n" title="Home minus away">Margin</th><th class="n gap">Covered</th><th class="n">Total line</th><th class="n">Total</th><th class="n">O/U</th></tr>${all}</table></div></details>`;
+  box.querySelectorAll('[data-go]').forEach(a => a.onclick = e => { e.preventDefault(); setView(a.dataset.go); sync(); window.scrollTo({top: 0}); });
   box.querySelectorAll('tr.click[data-club]').forEach(tr => tr.onclick = () => {
     const c = tr.dataset.club; mkOpen.has(c) ? mkOpen.delete(c) : mkOpen.add(c); renderMarket();
   });
