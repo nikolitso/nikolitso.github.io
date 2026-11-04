@@ -189,7 +189,7 @@ th.tsort{cursor:pointer;user-select:none} th.tsort:hover{color:var(--gold)}
   <div class="chips" id="chips"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=68e07231"></script>
+<script src="data.js?v=d69b8da2"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -237,7 +237,8 @@ function pickTiles(){
   const P = DATA.picks.filter(inLg), done = P.filter(p => 'won' in p), nOpen = P.length - done.length;
   const w = done.filter(p => p.won).length, units = done.reduce((s, p) => s + p.profit, 0);
   const t = [['Open picks', nOpen, nOpen ? 'to play' : 'none right now'], ['Record', `${w}–${done.length - w}`, 'win – loss'],
-             ['Return', `<span class="${cls(units)}">${sgn(units, 2)}</span>${done.length ? ` <span class="pill ${cls(units)}">ROI ${sgn(units / done.length * 100, 1)}%</span>` : ''}`, 'units']];
+             ['Return', `<span class="${cls(units)}">${sgn(units, 2)}</span>`, 'units'],
+             ['ROI', done.length ? `<span class="${cls(units)}">${sgn(units / done.length * 100, 1)}%</span>` : '–', 'per unit staked']];
   return `<div class="metrics">${t.map(([l, v, n]) => `<div class="metric"><div class="lbl">${l}</div><div class="big">${v}</div><div class="sm">${n}</div></div>`).join('')}</div>`;
 }
 
