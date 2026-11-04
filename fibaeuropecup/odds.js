@@ -49,9 +49,6 @@ window.ODDS = {"updated": "2026-11-04", "source": "pre-game lines, earlier ones 
   {"h": "Rilski Sportist", "a": "Kolossos Rhodes", "sp": 12.5, "spH": 1.83, "spA": 1.83, "tot": 159.5, "ov": 1.83, "un": 1.85, "mlH": 5.0, "mlA": 1.12},
   {"h": "Basquet Girona", "a": "Levice", "sp": -18.5, "spH": 1.8, "spA": 1.87, "tot": 169.5, "ov": 1.83, "un": 1.85, "mlH": 1.03, "mlA": 8.5},
   {"h": "Nancy", "a": "Keravnos", "sp": -17.5, "spH": 1.8, "spA": 1.87, "tot": 163.5, "ov": 1.87, "un": 1.8, "mlH": 1.04, "mlA": 8.0},
-  {"h": "Batumi", "a": "Split", "sp": 12.5, "spH": 1.83, "spA": 1.83, "tot": 159.5, "ov": 1.8, "un": 1.83, "mlH": 5.9, "mlA": 1.09},
-  {"h": "Esenler Erokspor", "a": "Sporting CP", "sp": -13.5, "spH": 1.78, "spA": 1.88, "tot": 161.5, "ov": 1.8, "un": 1.83, "mlH": 1.07, "mlA": 6.6},
-  {"h": "Korfez Basket", "a": "Bashkimi", "sp": -17.5, "spH": 1.84, "spA": 1.82, "tot": null, "ov": null, "un": null, "mlH": 1.02, "mlA": 9.2},
   {"h": "Parnu", "a": "Szczecin", "sp": 8.5, "spH": 1.83, "spA": 1.83, "tot": 161.5, "ov": 1.82, "un": 1.83, "mlH": 3.65, "mlA": 1.23},
   {"h": "Lok. Plovdiv", "a": "Neftchi IK", "sp": -8.5, "spH": 1.88, "spA": 1.78, "tot": null, "ov": null, "un": null, "mlH": 1.26, "mlA": 3.5},
   {"h": "Nitra Blue Wings", "a": "Vienna Basket", "sp": 2.5, "spH": 1.84, "spA": 1.82, "tot": null, "ov": null, "un": null, "mlH": 2.1, "mlA": 1.65},
@@ -66,5 +63,8 @@ window.ODDS = {"updated": "2026-11-04", "source": "pre-game lines, earlier ones 
   {"h": "Trier", "a": "Trepca", "sp": -15.5, "spH": 1.81, "spA": 1.85, "tot": null, "ov": null, "un": null, "mlH": 1.04, "mlA": 8.3},
   {"h": "Benfica", "a": "Absheron Lions", "sp": -12.5, "spH": 1.84, "spA": 1.82, "tot": null, "ov": null, "un": null, "mlH": 1.1, "mlA": 5.7},
   {"h": "Geneva Lions", "a": "BC Prievidza", "sp": -3.5, "spH": 1.8, "spA": 1.86, "tot": null, "ov": null, "un": null, "mlH": 1.52, "mlA": 2.35},
-  {"h": "Oostende", "a": "Szolnoki Olaj", "sp": -4.5, "spH": 1.84, "spA": 1.82, "tot": null, "ov": null, "un": null, "mlH": 1.47, "mlA": 2.5}
+  {"h": "Oostende", "a": "Szolnoki Olaj", "sp": -4.5, "spH": 1.84, "spA": 1.82, "tot": null, "ov": null, "un": null, "mlH": 1.47, "mlA": 2.5},
+  {"h": "Batumi", "a": "Split", "sp": 13.5, "spH": 1.83, "spA": 1.9, "tot": 158.5, "ov": 1.9, "un": 1.83, "mlH": 6.75, "mlA": 1.1},
+  {"h": "Esenler Erokspor", "a": "Sporting CP", "sp": -16.5, "spH": 1.83, "spA": 1.9, "tot": 161.5, "ov": 1.83, "un": 1.85, "mlH": 1.06, "mlA": 7.0},
+  {"h": "Korfez Basket", "a": "Bashkimi", "sp": -19.5, "spH": 1.86, "spA": 1.86, "tot": 167.5, "ov": 1.86, "un": 1.86, "mlH": 1.06, "mlA": 9.0}
 ]};
