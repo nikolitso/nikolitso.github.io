@@ -245,7 +245,7 @@ const GHEAD = first => `<thead><tr><th>${first}</th><th class="n">Bets</th><th c
 
 function renderFindings(){
   const F = DATA.findings;
-  let h = `<div class="verdict"><h2>The short answer</h2><p>${F.verdict}</p></div>`;
+  let h = `<div class="verdict"><h2>Do the model's overs make a profit?</h2><p>${F.verdict}</p></div>`;
   if (F.note) h += `<p class="note">${F.note}</p>`;
   h += tiles(F.tiles.map(t => [t[0], t[1], t[2]]));
   F.items.forEach((f, i) => { h += `<div class="find"><h3><span class="num">${String(i + 1).padStart(2, '0')}</span>${f.h}</h3><p>${f.p}</p></div>`; });
