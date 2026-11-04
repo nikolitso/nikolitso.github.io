@@ -20,7 +20,7 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 PIPELINE = Path(os.environ.get("FIBA_PIPELINE", HERE.parent / "_bs" / "fibaeuropecup"))
-PREFER = ["Stake.com", "bwin", "Betsson", "1xBet", "Sports Interaction", "Unibet", "Betway", "Pinnacle"]
+PREFER = ["bwin", "Betsson", "Stake.com", "1xBet", "Sports Interaction", "Unibet", "Betway", "Pinnacle"]
 SKIP = {"bet365"}
 
 
