@@ -144,7 +144,7 @@ select.peer:focus{outline:2px solid var(--gold)}
 .pjc.hot{border-color:#4fd08a;box-shadow:0 0 0 1px #4fd08a}
 .pjc .pkband{margin-top:10px;padding:8px 12px;border-radius:8px;background:#4fd08a;color:#0c1424;display:flex;flex-wrap:wrap;justify-content:space-between;gap:2px 10px;font-size:15px}
 .pjc .pkband span{font:500 12px var(--mono);align-self:center}
-.pjpk{width:auto;min-width:640px}.pjpk .hcp{color:#4fd08a}.pjpk td{white-space:normal}
+.pkw{color:#4fd08a}.pjpk{width:auto;min-width:640px}.pjpk .hcp{color:#4fd08a}.pjpk td{white-space:normal}
 .pjc .when{font:400 13.5px var(--mono);color:var(--muted);display:flex;justify-content:space-between;gap:8px}
 .pjc .teams{font:600 18px/1.3 var(--serif);margin:4px 0 10px;min-height:2.6em;display:flex;flex-wrap:wrap;align-content:flex-end}
 .pjc table{table-layout:fixed}
@@ -186,6 +186,7 @@ select.peer:focus{outline:2px solid var(--gold)}
   <nav class="tabs an-tabs" id="tabs" aria-label="Sections">
     <a href="#view=projections" data-view="projections" class="on">Projections</a>
     <a href="#view=market" data-view="market">Market Analysis</a>
+    <a href="#view=picks" data-view="picks">Picks</a>
     <a href="#view=ratings" data-view="ratings">Club Ratings</a>
     <a href="#view=h2h" data-view="h2h">Head to Head</a>
     <a href="#view=rosters" data-view="rosters">Rosters</a>
@@ -197,6 +198,7 @@ select.peer:focus{outline:2px solid var(--gold)}
 
   <div id="rkView" hidden></div>
   <div id="pjView" hidden></div>
+  <div id="pkView" hidden></div>
   <div id="crView" hidden></div>
   <div id="mkView"></div>
   <div id="roView" hidden></div>
@@ -525,8 +527,8 @@ let pjMode = 'cards';                                              // 'cards' or
 // the side and line the model prefers against the bookmaker; small gaps count as no lean
 const PJ_LEAN = 1.5;
 // the market first: what kind of game each line makes it, and how that kind of game has gone against the lines so far
-function mkSpots(){
-  const games = mkData().games.filter(g => g.bh);
+function mkSpots(before){
+  const all = mkData().games.filter(g => !before || g.date < before), games = all.filter(g => g.bh);
   const kind = bh => { const a = Math.abs(bh), side = bh > 0 ? 'home' : 'away'; return a < 5 ? 'Close game: tough call' : a < 10 ? `Medium ${side} favourite` : `Big ${side} favourite`; };
   const rec = {};
   const add = (k, v) => { const x = rec[k] ||= {w: 0, l: 0}; v > 0 ? x.w++ : v < 0 ? x.l++ : 0; };
@@ -542,21 +544,28 @@ function mkSpots(){
     return !bh || n < 20 || Math.max(x.w, x.l) / n < 0.54 ? 0 : (x.w > x.l ? 1 : -1) * (bh > 0 ? 1 : -1);
   };
   // clubs on the Underrated and Overrated lists of Market Analysis
-  const rated = new Map(mkData().rows.filter(x => x.n >= MK_MIN && Math.abs(x.vsS) >= mkLim(MK_SD.hcp, x.n)).map(x => [x.team, x.vsS]));
+  const vs = {};
+  for (const g of all) for (const [t, k] of [[g.h, 1], [g.a, -1]]) (vs[t] ||= []).push((g.hp - g.ap - g.bh) * k);
+  const rated = new Map(Object.entries(vs).filter(([, l]) => l.length >= MK_MIN && Math.abs(l.reduce((a, b) => a + b, 0) / l.length) >= mkLim(MK_SD.hcp, l.length))
+    .map(([t, l]) => [t, l.reduce((a, b) => a + b, 0) / l.length]));
   return {hcp: bh => bh ? line('Handicap', kind(bh), 'favourite covers') : '', label: bh => { const x = rec[kind(bh)]; return `${kind(bh)}, favourite covers ${x.w}–${x.l}`; }, edge, rated};
 }
 let pjSpots = null;
 const PJ_EDGE = 6;                                             // points from the line for a model edge
 // a pick: market edge and model edge on the same side, and the club rating must not disagree (club overrated or opponent underrated)
+function pickOf(h, a, mh, bh, spots){
+  const gs = mh - bh, model = Math.abs(gs) >= PJ_EDGE ? Math.sign(gs) : 0, market = spots.edge(bh);
+  if (!model || model !== market) return null;
+  const rh = spots.rated.get(h) || 0, ra = spots.rated.get(a) || 0;   // above 0 underrated, below 0 overrated
+  const team = model > 0 ? h : a, opp = model > 0 ? a : h, rt = model > 0 ? rh : ra, ro = model > 0 ? ra : rh;
+  if (rt < 0 || ro > 0) return null;
+  return {home: model > 0, bet: `${team} ${fmtLine(model > 0 ? -bh : bh)}`, gap: Math.abs(gs), market: spots.label(bh),
+    club: rt > 0 ? `${team} underrated ${sgn(rt)}` : ro < 0 ? `${opp} overrated ${sgn(ro)}` : 'no disagreement'};
+}
 function pjPick(g){
   const o = ODDS[g.h + '|' + g.a];
-  if (!o) return null;
-  const bh = -o.sp, gs = g.mh - bh, model = Math.abs(gs) >= PJ_EDGE ? Math.sign(gs) : 0, market = pjSpots.edge(bh);
-  if (!model || model !== market) return null;
-  const rh = pjSpots.rated.get(g.h) || 0, ra = pjSpots.rated.get(g.a) || 0;   // above 0 underrated, below 0 overrated
-  const team = model > 0 ? g.h : g.a, opp = model > 0 ? g.a : g.h, rt = model > 0 ? rh : ra, ro = model > 0 ? ra : rh;
-  if (rt < 0 || ro > 0) return null;
-  return {g, bet: `${team} ${fmtLine(model > 0 ? o.sp : -o.sp)}`, gap: Math.abs(gs), market: pjSpots.label(bh), club: rt > 0 ? `${team} underrated ${sgn(rt)}` : ro < 0 ? `${opp} overrated ${sgn(ro)}` : 'no disagreement'};
+  const k = o ? pickOf(g.h, g.a, g.mh, -o.sp, pjSpots) : null;
+  return k && {...k, g};
 }
 function pjCard(g){
   const o = ODDS[g.h + '|' + g.a];
@@ -636,6 +645,47 @@ function bindPj(box){
   box.querySelectorAll('[data-go]').forEach(a => a.onclick = e => { e.preventDefault(); setView(a.dataset.go); sync(); window.scrollTo({top: 0}); });
 }
 // the game cards: what the model expects, next to the bookmaker, in plain words
+// ---------- Picks: every game of the Archive data from PICKS_FROM that met the rule, on what was known before its day.
+// A pick follows the latest line until tip-off, is frozen with the game there, and is settled when the result comes in.
+const PICKS_FROM = '2026-11-04', PICK_PRICE = 1.83;              // PICK_PRICE: counted if no price was logged
+function pickList(){
+  const spots = {}, out = [];
+  for (const sn of (window.ARCHIVE && ARCHIVE.list) || []){
+    if (sn.date < PICKS_FROM) continue;
+    const sp = spots[sn.date] ||= mkSpots(sn.date);
+    for (const g of sn.games){
+      if (g.mh == null || g.bh == null) continue;
+      const k = pickOf(g.h, g.a, g.mh, g.bh, sp);
+      if (!k) continue;
+      const r = arResult(sn.date, g.h, g.a), logged = k.home ? g.oH : g.oA, pr = logged || PICK_PRICE;
+      const c = r ? (r[6] - r[7] - g.bh) * (k.home ? 1 : -1) : null, res = !r ? null : c > 0 ? 'W' : c < 0 ? 'L' : 'P';
+      out.push({...k, date: sn.date, time: g.when, h: g.h, a: g.a, pr, logged: !!logged, r, res, u: !r ? null : res === 'W' ? pr - 1 : res === 'L' ? -1 : 0});
+    }
+  }
+  return out.sort((x, y) => (x.date + x.time).localeCompare(y.date + y.time) || x.h.localeCompare(y.h));
+}
+function renderPicks(){
+  const box = $('pkView'), all = pickList(), open = all.filter(p => !p.r), done = all.filter(p => p.r);
+  const w = done.filter(p => p.res === 'W').length, l = done.filter(p => p.res === 'L').length, pu = done.length - w - l, units = done.reduce((t, p) => t + p.u, 0);
+  const cls = v => v > 0 ? 'pkw' : v < 0 ? 'l' : '', u2 = v => (v > 0 ? '+' : v < 0 ? '−' : '') + Math.abs(v).toFixed(2);
+  const card = (t, v, sub) => `<div class="metric"><div class="lbl">${t}</div><div class="big2">${v}</div><div class="tag">${sub}</div></div>`;
+  const price = p => p.pr.toFixed(2) + (p.logged ? '' : '<span class="tag" title="No price logged: counted at ' + PICK_PRICE.toFixed(2) + '">*</span>');
+  const when = p => `${fmtDate(p.date).slice(0, 5)} <span class="tag">${esc(p.time)}</span>`;
+  box.innerHTML = `<div class="note" style="margin-bottom:14px"><b>A pick needs everything in place:</b> a market edge and a model edge (${PJ_EDGE}+ points from the line) on the same side, and the club rating must not disagree. 1 unit at the logged price. A pick follows the latest line until tip-off, so it can appear or drop out as the line moves; then it is frozen and settled from the result. The record starts on ${fmtDate(PICKS_FROM)}, the day the rule was set, and it is too early to read anything into it.</div>
+    <div class="metrics">
+      ${card('Settled picks', done.length, `${open.length} still to play`)}
+      ${card('Record', done.length ? `${w}–${l}${pu ? `<span class="tag">–${pu}</span>` : ''}` : '–', 'won – lost' + (pu ? ' – push' : ''))}
+      ${card('Hit rate', w + l ? Math.round(w / (w + l) * 100) + '%' : '–', 'makes money from about 54%')}
+      ${card('Units', done.length ? `<span class="${cls(units)}">${u2(units)}</span>` : '–', '1 unit a pick')}
+    </div>
+    <h2>Open picks</h2>` + (open.length ? `<div class="scroll"><table class="fx pjpk"><tr><th class="n">Tip-off</th><th>Pick</th><th>Game</th><th class="n">Price</th><th>Market edge</th><th class="n">Model edge</th><th>Club rating</th></tr>` +
+      open.map(p => `<tr><td class="n">${when(p)}</td><td><b class="hcp">${esc(p.bet)}</b></td><td>${esc(p.h)} – ${esc(p.a)}</td><td class="n">${price(p)}</td><td>${esc(p.market)}</td><td class="n">${p.gap.toFixed(1)} pts</td><td>${esc(p.club)}</td></tr>`).join('') + '</table></div>'
+      : '<div class="empty">No open picks right now. A pick appears here as soon as a game has everything in place.</div>') +
+    `<h2>Results</h2>` + (done.length ? `<div class="scroll"><table class="fx pjpk"><tr><th class="n">Date</th><th>Pick</th><th>Game</th><th class="n">Price</th><th class="n">Score</th><th class="n">Result</th><th class="n">Units</th></tr>` +
+      [...done].reverse().map(p => `<tr><td class="n">${fmtDate(p.date).slice(0, 5)}</td><td><b>${esc(p.bet)}</b></td><td>${esc(p.h)} – ${esc(p.a)}</td><td class="n">${price(p)}</td><td class="n"><b>${p.r[6]}–${p.r[7]}</b></td>
+        <td class="n ${p.res === 'W' ? 'pkw' : p.res === 'L' ? 'l' : 'tag'}"><b>${p.res === 'W' ? 'Won' : p.res === 'L' ? 'Lost' : 'Push'}</b></td><td class="n ${cls(p.u)}">${u2(p.u)}</td></tr>`).join('') + '</table></div>'
+      : '<div class="empty">No settled picks yet. Each pick moves here with its result after the game.</div>');
+}
 function renderPjCards(P){
   const box = $('pjView');
   pjSpots = mkSpots();
@@ -1086,13 +1136,15 @@ function renderRatings(){
   box.querySelectorAll('[data-go]').forEach(a => a.onclick = e => { e.preventDefault(); setView(a.dataset.go); sync(); window.scrollTo({top: 0}); });
 }
 function setView(v){
-  view = ['projections', 'ratings', 'market', 'h2h', 'rosters', 'rankings'].includes(v) ? v : 'projections';
+  view = ['projections', 'picks', 'ratings', 'market', 'h2h', 'rosters', 'rankings'].includes(v) ? v : 'projections';
   document.querySelectorAll('#tabs a').forEach(b => b.classList.toggle('on', b.dataset.view === view));
-  document.body.classList.toggle('wide', view === 'projections' || view === 'market' || view === 'ratings');
+  document.body.classList.toggle('wide', view === 'projections' || view === 'market' || view === 'ratings' || view === 'picks');
   $('rkView').hidden = view !== 'rankings';
   $('crView').hidden = view !== 'ratings';
   $('mkView').hidden = view !== 'market';
   $('pjView').hidden = view !== 'projections';
+  $('pkView').hidden = view !== 'picks';
+  if (view === 'picks') renderPicks();
   $('h2hView').hidden = view !== 'h2h';
   $('roView').hidden = view !== 'rosters';
   if (view === 'rankings') renderRankings();
