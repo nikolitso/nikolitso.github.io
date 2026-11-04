@@ -563,9 +563,12 @@ const pct = x => Math.round(x * 100) + '%';
 const phi = x => { const t = 1 / (1 + 0.3275911 * Math.abs(x) / Math.SQRT2), e = 1 - t * (0.254829592 + t * (-0.284496736 + t * (1.421413741 + t * (-1.453152027 + t * 1.061405429)))) * Math.exp(-x * x / 2); return x >= 0 ? (1 + e) / 2 : (1 - e) / 2; };
 const lineName = (g, v) => v === 0 ? '<b class="nm">Level</b>pick\'em' : `<b class="nm" title="${esc(v > 0 ? g.h : g.a)}">${esc(v > 0 ? g.h : g.a)}</b>−${Math.abs(v).toFixed(1)}`;
 // the market first: what kind of game each line makes it, and how that kind of game has gone against the lines so far
+const KINDS_FROM = '2026-11-05';
 function mkSpots(before){
   const all = mkData().games.filter(g => !before || g.date < before), games = all.filter(g => g.bh);
-  const kind = bh => { const a = Math.abs(bh), side = bh > 0 ? 'home' : 'away'; return a < 5 ? 'Close game: tough call' : a < 10 ? `Medium ${side} favourite` : `Big ${side} favourite`; };
+  // picks made before KINDS_FROM keep the kinds of game they were made on, so the record never loses a published pick
+  const kind = bh => { const a = Math.abs(bh), side = bh > 0 ? 'home' : 'away', Side = bh > 0 ? 'Home' : 'Away';
+    return a >= 10 ? `Big ${side} favourite` : !before || before >= KINDS_FROM ? `${Side} favourite under 10` : a < 5 ? 'Close game: tough call' : `Medium ${side} favourite`; };
   const rec = {};
   const add = (k, v) => { const x = rec[k] ||= {w: 0, l: 0}; v > 0 ? x.w++ : v < 0 ? x.l++ : 0; };
   for (const g of games) add(kind(g.bh), (g.hp - g.ap - g.bh) * (g.bh > 0 ? 1 : -1));
@@ -743,7 +746,7 @@ function renderPjCards(P){
       <div class="warn"><b>Not a sure thing.</b> The model uses past results and the injury list, no other news, and has not proven an edge over the bookmaker. This pick rule is new and has no record yet.</div>
       <details><summary>How to read a card</summary><ul><li><b>Winner</b>: the chance to win (the bookmaker's worked out from its handicap).</li>
         <li><b>Handicap</b>: the expected winning margin, written like a bookmaker's line: Mykonos −8.3 = Mykonos by 8.3.</li>
-        <li><b>Market so far</b>: the kind of game the line makes it, and its record against the lines this season (<a class="back" href="#view=market" data-go="market">Market Analysis</a>). A favourite of under 5 is a close game, a tough call. Gold = one side has won 54%+ of 20 or more games: a possible market gap, still not proven.</li>
+        <li><b>Market so far</b>: the kind of game the line makes it, and its record against the lines this season (<a class="back" href="#view=market" data-go="market">Market Analysis</a>). Gold = one side has won 54%+ of 20 or more games: a possible market gap, still not proven.</li>
         <li><b>Clubs</b>: clubs on the underrated or overrated lists of Market Analysis, with their average against the handicap.</li>
         <li><b>Pick</b>: a market edge (a gold market gap) and a model edge (${PJ_EDGE}+ points from the line) on the same side, and the club rating does not disagree: the club is not overrated and its opponent is not underrated.</li>
         <li><b>Model leans</b>: the bet the model prefers at the bookmaker's line, and how far apart the two are. Gaps of ${gapMin}+ points are in gold. "No lean" means the two are close.</li>
@@ -870,9 +873,9 @@ function mkCompetition(games, clubs){
   const byFav = (lo, hi) => games.filter(g => Math.abs(g.bh) >= lo && Math.abs(g.bh) < hi);
   const favBet = (name, list) => bet(name, list.map(g => hcp(g, fav(g))), 'underdog');
   const sized = (lo, hi, home) => games.filter(g => g.bh && Math.abs(g.bh) >= lo && Math.abs(g.bh) < hi && (home === undefined || (g.bh > 0) === home));
-  const hRows = favBet('All favourites', games.filter(g => g.bh)) + favBet('Close game (favourite under 5)', sized(0, 5)) +
-    favBet('Medium home favourite (5–10)', sized(5, 10, true)) + favBet('Big home favourite (10+)', sized(10, 99, true)) +
-    favBet('Medium away favourite (5–10)', sized(5, 10, false)) + favBet('Big away favourite (10+)', sized(10, 99, false));
+  const hRows = favBet('All favourites', games.filter(g => g.bh)) + favBet('Home favourite under 10', sized(0, 10, true)) +
+    favBet('Big home favourite (10+)', sized(10, 99, true)) +
+    favBet('Away favourite under 10', sized(0, 10, false)) + favBet('Big away favourite (10+)', sized(10, 99, false));
   // clubs whose results against their handicaps are further from 0 than their sample's noise
   const rated = sign => clubs.filter(x => x.n >= MK_MIN && x.vsS * sign >= mkLim(MK_SD.hcp, x.n)).sort((x, y) => (y.vsS - x.vsS) * sign);
   const ratedTable = (title, list, cl) => `<div><h3 style="font:600 18px var(--serif);margin:0 0 8px">${title} <span class="tag">${list.length}</span></h3>` + (list.length
