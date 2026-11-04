@@ -182,7 +182,7 @@ a.tile:hover{border-color:var(--gold)}
 <header class="an-head"><div>
   <a class="an-brand" href="/basketball/overs/"><svg class="an-mark" aria-hidden="true"><use href="/assets/marks.svg#basketball"/></svg><span><small class="an-kicker">Basketball · Totals</small><h1>Basketball totals</h1></span></a>
   <nav class="tabs an-tabs" id="tabs" aria-label="Sections">
-    <a href="#view=findings" data-view="findings" class="on">Findings</a>
+    <a href="#view=home" data-view="home" class="on">Home</a>
     <a href="#view=picks" data-view="picks">Picks</a>
     <a href="#view=leagues" data-view="leagues">Leagues</a>
     <a href="#view=backtest" data-view="backtest">Backtest</a>
@@ -208,7 +208,7 @@ const sgn = (x, d=1) => x == null ? '–' : (x > 0 ? '+' : x < 0 ? '−' : '') +
 const roi = x => x == null ? '–' : sgn(x*100, 1) + '%';
 const cls = x => x > 0 ? 'pos' : x < 0 ? 'neg' : '';
 const sn = s => s.replace('-', '–');
-let view = 'findings', lg = 'all', open = null;
+let view = 'home', lg = 'all', open = null;
 const LG = Object.fromEntries(DATA.leagues.map(l => [l.key, l]));
 const lgName = k => `${LG[k].country} · ${LG[k].name}`;
 const inLg = x => lg === 'all' || x.lg === lg;
@@ -389,7 +389,7 @@ document.addEventListener('click', e => {
   render();
 });
 
-const RENDER = {findings: renderFindings, picks: renderPicks, leagues: renderLeagues, backtest: renderBacktest, projections: renderProjections, method: renderMethod};
+const RENDER = {home: renderFindings, picks: renderPicks, leagues: renderLeagues, backtest: renderBacktest, projections: renderProjections, method: renderMethod};
 const CHIPS = {backtest: 1, projections: 1};
 function render(){
   document.querySelectorAll('#tabs a').forEach(a => { a.classList.toggle('on', a.dataset.view === view); a.href = `#view=${a.dataset.view}${lg === 'all' || !CHIPS[a.dataset.view] ? '' : '&lg=' + lg}`; });
@@ -402,7 +402,8 @@ function render(){
 }
 function fromHash(){
   const m = location.hash.match(/view=(\w+)/), l = location.hash.match(/lg=([\w-]+)/);
-  view = m && m[1] === 'live' ? 'picks' : m && RENDER[m[1]] ? m[1] : 'findings';   // the old Live test tab is now part of Picks
+  const old = {live: 'picks', findings: 'home'}, v = m && (old[m[1]] || m[1]);   // old links: Live test is part of Picks, Findings is Home
+  view = RENDER[v] ? v : 'home';
   lg = l && LG[l[1]] ? l[1] : 'all';
   render();
 }
