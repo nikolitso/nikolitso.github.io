@@ -1133,9 +1133,9 @@ function mkCompetition(games, clubs){
     const flip = p < 50, best = flip ? 100 - p : p, low = flip ? 100 - hi : lo, who = flip ? `: ${other}` : '';
     const read = low > BE ? `<b class="w">Stands out${who}</b>` : best >= BE && n >= 20 ? `<span class="hcp">Worth watching${who}</span>` : '<span class="tag">No edge</span>';
     return `<tr><td>${name}</td><td class="n">${pts.length}</td><td class="n">${w}–${l}${pts.length > n ? `<span class="tag">–${pts.length - n}</span>` : ''}</td><td class="n ${p >= BE ? 'w' : ''}"><b>${n ? Math.round(p) + '%' : '–'}</b></td>
-      <td class="n tag">${n ? Math.round(lo) + '–' + Math.round(hi) + '%' : '–'}</td><td class="n">${one(avg(pts))}</td><td>${read}</td></tr>`;
+      <td class="n">${one(avg(pts))}</td><td>${read}</td></tr>`;
   };
-  const head = `<tr><th>Bet</th><th class="n">Games</th><th class="n" title="Won – lost – push">Record</th><th class="n">Win %</th><th class="n" title="Where the real win rate probably lies, given so few games">Likely range</th><th class="n" title="Average points the bet beat the line by">Vs line</th><th>Read</th></tr>`;
+  const head = `<tr><th>Bet</th><th class="n">Games</th><th class="n" title="Won – lost – push">Record</th><th class="n">Win %</th><th class="n" title="Average points the bet beat the line by">Vs line</th><th>Read</th></tr>`;
   const table = rows => `<div class="scroll"><table class="fx" style="width:auto;min-width:680px">${head}${rows}</table></div>`;
   const byFav = (lo, hi) => games.filter(g => Math.abs(g.bh) >= lo && Math.abs(g.bh) < hi);
   const favBet = (name, list) => bet(name, list.map(g => hcp(g, fav(g))), 'underdog');
@@ -1168,7 +1168,7 @@ function mkCompetition(games, clubs){
     : '<div class="empty">None so far.</div>') + '</div>';
   const card = (t, v, sub) => `<div class="metric"><div class="lbl">${t}</div><div class="big2">${v}</div><div class="tag">${sub}</div></div>`;
   const hc = games.filter(g => hcp(g, 1)), ov = ot.filter(g => tot(g));
-  return `<div class="note" style="margin-bottom:14px"><b>Is there a kind of bet the bookmaker keeps getting wrong?</b> Every Regular Season game so far, each kind of bet at 1 unit. Each row is one bet: the favourite on the handicap, the over on totals. The other side is the same row read the other way, so a low win % means the underdog or the under has done well. A bet makes money at about <b>${BE}%</b>. <b>Likely range</b> is where the real win rate probably lies, given so few games. <b>Stands out</b> = the whole range is above ${BE}%; <b>Worth watching</b> = ${BE}%+ on 20 or more games, but the range still reaches below. With this many rows, a few will look good by luck alone, so treat anything here as a lead to follow, not a tip.</div>
+  return `<div class="note" style="margin-bottom:14px"><b>Is there a kind of bet the bookmaker keeps getting wrong?</b> Every Regular Season game so far, each kind of bet at 1 unit. Each row is one bet: the favourite on the handicap, the over on totals. The other side is the same row read the other way, so a low win % means the underdog or the under has done well. A bet makes money at about <b>${BE}%</b>. <b>Stands out</b> = well above ${BE}%, even allowing for so few games; <b>Worth watching</b> = ${BE}%+ on 20 or more games, but it could still be luck. With this many rows, a few will look good by luck alone, so treat anything here as a lead to follow, not a tip.</div>
     <div class="metrics">
       ${card('Games', games.length, `from ${fmtDate(MK_FROM)}`)}
       ${card('Handicap miss', avg(games.map(g => Math.abs(hcp(g, 1)))).toFixed(1), 'average points the line was off')}
