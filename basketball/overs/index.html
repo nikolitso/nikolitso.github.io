@@ -166,7 +166,7 @@ table.proj tr.pk td{background:var(--an-accent-soft)}table.proj tr.pk td:first-c
 .scroll{overflow-x:auto}
 #out th{cursor:pointer;user-select:none}#out th:hover{color:var(--gold)}#out th.sa::after{content:" ▲";font-size:.8em}#out th.sd::after{content:" ▼";font-size:.8em}
 /* top row, same tiles as the handball projections page: open picks · record · return */
-.tiles{--up:#4cc47a;--dn:#ef7a70;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(170px,40vw),1fr));gap:10px;margin:16px 0 4px}
+.tiles{--up:#4cc47a;--dn:#ef7a70;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(140px,40vw),1fr));gap:10px;margin:16px 0 4px}
 .tile{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px;display:flex;flex-direction:column;gap:3px;min-width:0;color:inherit;text-decoration:none}
 a.tile:hover{border-color:var(--gold)}
 .tile .klabel{font:400 12.5px var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
@@ -231,7 +231,7 @@ $('sub').textContent = `${DATA.leagues.length} Leagues · backtest 2022–23 to 
   $('top').innerHTML = [['Open picks', nOpen, nOpen ? 'to play' : 'none right now'], ['Record', `${won}–${lost}`, 'win – loss'],
     ['Return', `<span class="${cls(units)}">${sgn(units, 2)}</span>`, 'units'],
     ['ROI', won + lost ? `<span class="${cls(units)}">${roi(units / (won + lost))}</span>` : '–', `${won + lost} settled bets`],
-    ...(cl.length ? [['Opening line', avg(b => b.line), `avg of ${cl.length} settled bets`], ['Closing line', avg(b => b.close), `avg of ${cl.length} settled bets`]] : [])]
+    ...(cl.length ? [['Opening line', avg(b => b.line), `avg of ${cl.length} settled bets`], ['Closing line', avg(b => b.close), `avg of ${cl.length} settled bets`], ['Actual total', avg(b => b.total), `avg of ${cl.length} settled bets`]] : [])]
     .map(([k, v, n]) => `<a class="tile" href="#view=picks"><span class="klabel">${k}</span><span class="stat">${v}</span><span class="small">${n}</span></a>`).join('');
 }
 
