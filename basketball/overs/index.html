@@ -170,7 +170,7 @@ table.proj tr.pk td{background:var(--an-accent-soft)}table.proj tr.pk td:first-c
 .tile{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px;display:flex;flex-direction:column;gap:3px;min-width:0;color:inherit;text-decoration:none}
 a.tile:hover{border-color:var(--gold)}
 .tile .klabel{font:400 12.5px var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
-.tile .stat{font:500 26px var(--mono);line-height:1.15;font-variant-numeric:tabular-nums}
+.tile .stat{font:500 26px var(--mono);line-height:1.15;font-variant-numeric:tabular-nums;display:flex;flex-wrap:wrap;align-items:center;gap:2px 6px}
 .tile .small{font-size:14.5px;color:var(--muted)}
 .tiles .pos{color:var(--up)} .tiles .neg{color:var(--dn)}
 .pill{white-space:nowrap;font:500 13.5px var(--mono);padding:2px 9px;border-radius:99px;border:1px solid var(--line);vertical-align:middle}
@@ -230,7 +230,7 @@ $('sub').textContent = `${DATA.leagues.length} Leagues · backtest 2022–23 to 
   const cl = [...((DATA.cur || {}).bets || []), ...set].filter(b => b.close != null), avg = f => (cl.reduce((a, b) => a + f(b), 0) / cl.length).toFixed(1);
   $('top').innerHTML = [['Open picks', nOpen, nOpen ? 'to play' : 'none right now'], ['Record', `${won}–${lost}`, 'win – loss'],
     ['Return', `<span class="${cls(units)}">${sgn(units, 2)}</span>${won + lost ? ` <span class="pill ${cls(units)}">ROI ${roi(units / (won + lost))}</span>` : ''}`, 'units'],
-    ...(cl.length ? [['Avg line', `<span class="pill">Opening line ${avg(b => b.line)}</span> <span class="pill">Closing line ${avg(b => b.close)}</span>`, `${cl.length} settled bets`]] : [])]
+    ...(cl.length ? [['Opening line', avg(b => b.line), `avg of ${cl.length} settled bets`], ['Closing line', avg(b => b.close), `avg of ${cl.length} settled bets`]] : [])]
     .map(([k, v, n]) => `<a class="tile" href="#view=picks"><span class="klabel">${k}</span><span class="stat">${v}</span><span class="small">${n}</span></a>`).join('');
 }
 
