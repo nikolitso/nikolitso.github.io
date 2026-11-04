@@ -1,3 +1,3 @@
 // Bookmaker lines for the next EuroCup games (fs_upcoming.py).
 // bh = handicap home minus away, bt = points total, oh / oa = odds home / away on it, ov / un = odds over / under.
-window.ODDS = {"updated": "2026-11-04", "list": [{"date": "2026-11-04", "h": "Maxima Roma", "a": "London Lions", "bh": 7.5, "bt": 163.5, "oh": 1.87, "oa": 1.87, "ov": 1.87, "un": 1.87}, {"date": "2026-11-04", "h": "San Pablo Burgos", "a": "Rostock", "bh": 9.5, "bt": 171.5, "oh": 2.0, "oa": 1.75, "ov": 1.95, "un": 1.8}, {"date": "2026-11-05", "h": "Tenerife", "a": "Cluj-Napoca", "bh": 12.5, "bt": 174.5, "oh": 1.85, "oa": 1.85, "ov": 1.87, "un": 1.87}]};
+window.ODDS = {"updated": "2026-11-05", "list": [{"date": "2026-11-05", "h": "Tenerife", "a": "Cluj-Napoca", "bh": 12.5, "bt": 174.5, "oh": 1.87, "oa": 1.87, "ov": 1.87, "un": 1.87}]};

@@ -85,6 +85,14 @@ window.MARKET = {"updated": "2026-11-04", "list": [
 {"date": "2026-11-03", "h": "Buducnost", "a": "Chemnitz", "bh": 8.5, "bt": 173.5},
 {"date": "2026-11-03", "h": "PAOK", "a": "BC Roma", "bh": 10.5, "bt": 173.5},
 {"date": "2026-11-03", "h": "Ulm", "a": "Bahcesehir Kol.", "bh": -6.5, "bt": 174.5},
+{"date": "2026-11-04", "h": "Cedevita Olimpija", "a": "Tortona", "bh": 3.5, "bt": 165.5},
+{"date": "2026-11-04", "h": "Hapoel Jerusalem", "a": "Aris", "bh": 3.5, "bt": 166.5},
+{"date": "2026-11-04", "h": "KK Bosna", "a": "Balkan", "bh": 10.5, "bt": 159.5},
+{"date": "2026-11-04", "h": "Lietkabelis", "a": "Manresa", "bh": -3.5, "bt": 169.5},
+{"date": "2026-11-04", "h": "Maxima Roma", "a": "London Lions", "bh": 5.5, "bt": 163.5},
 {"date": "2026-11-04", "h": "Rigas Zelli", "a": "Le Mans", "bh": -3.5, "bt": 166.5},
-{"date": "2026-11-04", "h": "Turk Telekom", "a": "Frankfurt", "bh": 10.5, "bt": 165.5}
+{"date": "2026-11-04", "h": "San Pablo Burgos", "a": "Rostock", "bh": 9.5, "bt": 171.5},
+{"date": "2026-11-04", "h": "Slask Wroclaw", "a": "JL Bourg", "bh": -6.5, "bt": 173.5},
+{"date": "2026-11-04", "h": "Turk Telekom", "a": "Frankfurt", "bh": 10.5, "bt": 165.5},
+{"date": "2026-11-04", "h": "Venezia", "a": "Siauliai", "bh": 11.5, "bt": 171.5}
 ]};
