@@ -1126,37 +1126,28 @@ function mkCompetition(games, clubs){
   const fav = g => g.bh >= 0 ? 1 : -1;
   const ot = games.filter(g => g.bt !== null), tot = g => g.hp + g.ap - g.bt;
   // one kind of bet: list of points it beat the line by
-  const bet = (name, pts) => {
+  const bet = (name, pts, other) => {
     const w = pts.filter(v => v > 0).length, l = pts.filter(v => v < 0).length, n = w + l;
     if (!pts.length) return '';
     const p = n ? w / n * 100 : 0, [lo, hi] = n ? range(w, n) : [0, 0];
-    const read = lo > BE ? '<b class="w">Stands out</b>' : p >= BE && n >= 20 ? '<span class="hcp">Worth watching</span>' : '<span class="tag">No edge</span>';
+    const flip = p < 50, best = flip ? 100 - p : p, low = flip ? 100 - hi : lo, who = flip ? `: ${other}` : '';
+    const read = low > BE ? `<b class="w">Stands out${who}</b>` : best >= BE && n >= 20 ? `<span class="hcp">Worth watching${who}</span>` : '<span class="tag">No edge</span>';
     return `<tr><td>${name}</td><td class="n">${pts.length}</td><td class="n">${w}–${l}${pts.length > n ? `<span class="tag">–${pts.length - n}</span>` : ''}</td><td class="n ${p >= BE ? 'w' : ''}"><b>${n ? Math.round(p) + '%' : '–'}</b></td>
       <td class="n tag">${n ? Math.round(lo) + '–' + Math.round(hi) + '%' : '–'}</td><td class="n">${one(avg(pts))}</td><td>${read}</td></tr>`;
   };
   const head = `<tr><th>Bet</th><th class="n">Games</th><th class="n" title="Won – lost – push">Record</th><th class="n">Win %</th><th class="n" title="Where the real win rate probably lies, given so few games">Likely range</th><th class="n" title="Average points the bet beat the line by">Vs line</th><th>Read</th></tr>`;
   const table = rows => `<div class="scroll"><table class="fx" style="width:auto;min-width:680px">${head}${rows}</table></div>`;
   const byFav = (lo, hi) => games.filter(g => Math.abs(g.bh) >= lo && Math.abs(g.bh) < hi);
-  const hRows = bet('Home side', games.map(g => hcp(g, 1))) + bet('Away side', games.map(g => hcp(g, -1))) +
-    bet('Favourite', games.filter(g => g.bh).map(g => hcp(g, fav(g)))) + bet('Underdog', games.filter(g => g.bh).map(g => hcp(g, -fav(g)))) +
-    bet('Home favourite', games.filter(g => g.bh > 0).map(g => hcp(g, 1))) +
-    bet('Small home favourite (under 5)', games.filter(g => g.bh > 0 && g.bh < 5).map(g => hcp(g, 1))) +
-    bet('Medium home favourite (5–10)', games.filter(g => g.bh >= 5 && g.bh < 10).map(g => hcp(g, 1))) +
-    bet('Big home favourite (10+)', games.filter(g => g.bh >= 10).map(g => hcp(g, 1))) +
-    bet('Away favourite', games.filter(g => g.bh < 0).map(g => hcp(g, -1))) +
-    bet('Small away favourite (under 5)', games.filter(g => g.bh < 0 && g.bh > -5).map(g => hcp(g, -1))) +
-    bet('Medium away favourite (5–10)', games.filter(g => g.bh <= -5 && g.bh > -10).map(g => hcp(g, -1))) +
-    bet('Big away favourite (10+)', games.filter(g => g.bh <= -10).map(g => hcp(g, -1))) +
-    bet('Home underdog', games.filter(g => g.bh < 0).map(g => hcp(g, 1))) + bet('Away underdog', games.filter(g => g.bh > 0).map(g => hcp(g, -1))) +
-    [[0, 5], [5, 10], [10, 15], [15, 99]].map(([lo, hi]) => bet(`Favourite by ${hi === 99 ? lo + '+' : lo + '–' + hi}`, byFav(lo, hi).filter(g => g.bh).map(g => hcp(g, fav(g))))).join('');
-  const band = (lo, hi) => ot.filter(g => g.bt >= lo && g.bt < hi);
+  const favBet = (name, list) => bet(name, list.map(g => hcp(g, fav(g))), 'underdog');
+  const sized = (lo, hi, home) => games.filter(g => g.bh && Math.abs(g.bh) >= lo && Math.abs(g.bh) < hi && (home === undefined || (g.bh > 0) === home));
+  const hRows = favBet('All favourites', games.filter(g => g.bh)) + favBet('Close game (favourite under 5)', sized(0, 5)) +
+    favBet('Medium home favourite (5–10)', sized(5, 10, true)) + favBet('Big home favourite (10+)', sized(10, 99, true)) +
+    favBet('Medium away favourite (5–10)', sized(5, 10, false)) + favBet('Big away favourite (10+)', sized(10, 99, false));
   // low and high: the lowest and highest third of this competition's total lines
   const lines = ot.map(g => g.bt).sort((x, y) => x - y), cutLo = lines[Math.floor(lines.length / 3)], cutHi = lines[Math.floor(lines.length * 2 / 3)];
   const low = ot.filter(g => g.bt < cutLo), high = ot.filter(g => g.bt > cutHi);
-  const tRows = bet('Over', ot.map(tot)) + bet('Under', ot.map(g => -tot(g))) +
-    (lines.length ? bet(`Low total, over (line under ${cutLo})`, low.map(tot)) + bet(`Low total, under (line under ${cutLo})`, low.map(g => -tot(g))) +
-      bet(`High total, over (line above ${cutHi})`, high.map(tot)) + bet(`High total, under (line above ${cutHi})`, high.map(g => -tot(g))) : '') +
-    [[0, 160], [160, 165], [165, 170], [170, 175], [175, 999]].map(([lo, hi]) => { const l = band(lo, hi), name = lo ? (hi === 999 ? lo + '+' : lo + '–' + hi) : 'under ' + hi; return bet(`Over, line ${name}`, l.map(tot)) + bet(`Under, line ${name}`, l.map(g => -tot(g))); }).join('');
+  const tRows = bet('All games, over', ot.map(tot), 'under') +
+    (lines.length ? bet(`Low total, over (line under ${cutLo})`, low.map(tot), 'under') + bet(`High total, over (line above ${cutHi})`, high.map(tot), 'under') : '');
   const split = (key, label) => {
     const by = {};
     for (const g of games) (by[key(g)] ||= []).push(g);
@@ -1177,7 +1168,7 @@ function mkCompetition(games, clubs){
     : '<div class="empty">None so far.</div>') + '</div>';
   const card = (t, v, sub) => `<div class="metric"><div class="lbl">${t}</div><div class="big2">${v}</div><div class="tag">${sub}</div></div>`;
   const hc = games.filter(g => hcp(g, 1)), ov = ot.filter(g => tot(g));
-  return `<div class="note" style="margin-bottom:14px"><b>Is there a kind of bet the bookmaker keeps getting wrong?</b> Every Regular Season game so far, each kind of bet at 1 unit. A bet makes money at about <b>${BE}%</b>. <b>Likely range</b> is where the real win rate probably lies, given so few games. <b>Stands out</b> = the whole range is above ${BE}%; <b>Worth watching</b> = ${BE}%+ on 20 or more games, but the range still reaches below. With this many rows, a few will look good by luck alone, so treat anything here as a lead to follow, not a tip.</div>
+  return `<div class="note" style="margin-bottom:14px"><b>Is there a kind of bet the bookmaker keeps getting wrong?</b> Every Regular Season game so far, each kind of bet at 1 unit. Each row is one bet: the favourite on the handicap, the over on totals. The other side is the same row read the other way, so a low win % means the underdog or the under has done well. A bet makes money at about <b>${BE}%</b>. <b>Likely range</b> is where the real win rate probably lies, given so few games. <b>Stands out</b> = the whole range is above ${BE}%; <b>Worth watching</b> = ${BE}%+ on 20 or more games, but the range still reaches below. With this many rows, a few will look good by luck alone, so treat anything here as a lead to follow, not a tip.</div>
     <div class="metrics">
       ${card('Games', games.length, `from ${fmtDate(MK_FROM)}`)}
       ${card('Handicap miss', avg(games.map(g => Math.abs(hcp(g, 1)))).toFixed(1), 'average points the line was off')}
@@ -1188,7 +1179,7 @@ function mkCompetition(games, clubs){
     <h2>Handicap</h2>${table(hRows)}
     <h2>Totals</h2>${table(tRows)}
     <h2>By round</h2>${split(g => (g.stage.match(/Round (\d+)/) || [])[1] || g.stage, 'Round')}
-    <h2>By group</h2>${split(g => g.grp, 'Group')}
+
     <h2>Underrated and overrated clubs</h2><div class="tag" style="margin-bottom:10px;max-width:760px;line-height:1.5">Clubs furthest from their handicaps for their number of games. With so few games, about one club in three would land here by chance, so this is what has happened so far, not a bet: on FIBA lines the bookmaker seems to adjust quickly, and backing the better record won about 49% of the time. For the model's view of each club, see <a class="back" href="#view=ratings" data-go="ratings">Club Ratings</a>.</div>
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:22px">${ratedTable('Underrated so far', rated(1), 'w')}${ratedTable('Overrated so far', rated(-1), 'l')}</div>`;
 }
