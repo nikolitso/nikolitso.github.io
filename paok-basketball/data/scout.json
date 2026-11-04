@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-04T19:19:48Z",
+ "updated": "2026-11-04T22:10:33Z",
  "reports": [
   {
    "comp": "EuroCup",
@@ -56,49 +56,49 @@
     "drebPct": 71.6
    },
    "oppTeam": {
-    "gp": 5,
-    "w": 0,
+    "gp": 6,
+    "w": 1,
     "l": 5,
-    "pts": 67.8,
-    "allowed": 83.0,
-    "fgp": 40.4,
-    "fg3p": 26.7,
-    "fg3a": 23.2,
-    "ftp": 68.3,
-    "reb": 35.0,
-    "oreb": 11.4,
-    "ast": 12.8,
-    "tov": 16.4,
-    "stl": 6.6,
-    "pir": 60.0,
-    "opp_fgp": 47.8,
-    "opp_fg3p": 34.7,
-    "poss": 74.9,
+    "pts": 69.5,
+    "allowed": 80.7,
+    "fgp": 41.8,
+    "fg3p": 24.6,
+    "fg3a": 23.7,
+    "ftp": 71.6,
+    "reb": 36.0,
+    "oreb": 10.7,
+    "ast": 12.3,
+    "tov": 15.5,
+    "stl": 6.8,
+    "pir": 65.3,
+    "opp_fgp": 46.7,
+    "opp_fg3p": 34.6,
+    "poss": 74.7,
     "pace": 73.1,
-    "ortg": 90.5,
-    "drtg": 110.8,
+    "ortg": 93.1,
+    "drtg": 108.0,
     "r100": {
-     "fg2m": 25.367156208277702,
-     "fg3m": 8.277703604806408,
-     "ftm": 14.953271028037383,
-     "ast": 17.089452603471294,
-     "fga": 83.31108144192257,
-     "oreb": 15.220293724966622,
-     "dreb": 31.5086782376502,
-     "tov": 21.895861148197596
+     "fg2m": 27.229711632889924,
+     "fg3m": 7.811802517632355,
+     "ftm": 15.177216319971432,
+     "ast": 16.516382465851265,
+     "fga": 83.92107847513616,
+     "oreb": 14.284438889384878,
+     "dreb": 33.925542362289086,
+     "tov": 20.757075261137402
     },
     "opp100": {
-     "fg2m": 27.236315086782376,
-     "fg3m": 11.214953271028037,
-     "ftm": 22.696929238985312,
-     "ast": 25.901201602136183,
-     "fga": 80.37383177570094,
-     "oreb": 13.35113484646195,
-     "dreb": 36.84913217623498,
-     "tov": 19.492656875834445
+     "fg2m": 27.229711632889924,
+     "fg3m": 10.49013480939202,
+     "ftm": 22.09624140701723,
+     "ast": 25.89054548701009,
+     "fga": 80.79635746808322,
+     "oreb": 12.498884028211767,
+     "dreb": 35.93429158110883,
+     "tov": 18.525131684671013
     },
-    "orebPct": 29.2,
-    "drebPct": 70.2
+    "orebPct": 28.4,
+    "drebPct": 73.1
    },
    "league": {
     "pts": 84.3,
@@ -149,23 +149,23 @@
     {
      "name": "Javante Mccoy",
      "no": "13",
-     "gp": 3,
-     "min": 23.6,
-     "pts": 17.7,
-     "reb": 1.7,
-     "ast": 1.7,
-     "stl": 0.7,
-     "blk": 0.3,
-     "tov": 2.0,
-     "pir": 15.0,
-     "fg3m": 1.0,
-     "fg3a": 10,
-     "fg3p": 30.0,
-     "fgp": 53.5,
-     "fta": 2.0,
-     "dreb": 0.3,
-     "pf": 1.0,
-     "pm": -9.7,
+     "gp": 4,
+     "min": 25.6,
+     "pts": 20.0,
+     "reb": 2.2,
+     "ast": 2.0,
+     "stl": 0.8,
+     "blk": 0.2,
+     "tov": 2.2,
+     "pir": 17.5,
+     "fg3m": 0.8,
+     "fg3a": 15,
+     "fg3p": 20.0,
+     "fgp": 54.7,
+     "fta": 2.2,
+     "dreb": 1.2,
+     "pf": 1.8,
+     "pm": -5.8,
      "tags": [
       "Top scorer"
      ]
@@ -197,71 +197,71 @@
     {
      "name": "Konstantin Toshkov",
      "no": "22",
-     "gp": 5,
-     "min": 25.6,
-     "pts": 9.2,
-     "reb": 2.4,
-     "ast": 2.6,
-     "stl": 1.4,
+     "gp": 6,
+     "min": 27.7,
+     "pts": 9.0,
+     "reb": 2.7,
+     "ast": 2.8,
+     "stl": 1.2,
      "blk": 0.0,
      "tov": 1.0,
-     "pir": 11.4,
+     "pir": 11.5,
      "fg3m": 1.2,
-     "fg3a": 16,
-     "fg3p": 37.5,
-     "fgp": 46.9,
-     "fta": 2.4,
-     "dreb": 1.6,
-     "pf": 3.2,
-     "pm": -6.6,
+     "fg3a": 20,
+     "fg3p": 35.0,
+     "fgp": 44.7,
+     "fta": 2.7,
+     "dreb": 2.0,
+     "pf": 3.3,
+     "pm": -2.3,
      "tags": []
     },
     {
      "name": "Gael Bonilla",
      "no": "2",
-     "gp": 2,
-     "min": 27.4,
-     "pts": 8.5,
-     "reb": 6.0,
-     "ast": 2.0,
-     "stl": 0.5,
+     "gp": 3,
+     "min": 29.2,
+     "pts": 9.0,
+     "reb": 7.3,
+     "ast": 1.3,
+     "stl": 0.7,
      "blk": 0.0,
-     "tov": 3.5,
-     "pir": 8.5,
+     "tov": 3.0,
+     "pir": 10.7,
      "fg3m": 0.0,
-     "fg3a": 2,
+     "fg3a": 4,
      "fg3p": 0.0,
-     "fgp": 42.9,
-     "fta": 4.0,
-     "dreb": 5.5,
+     "fgp": 50.0,
+     "fta": 2.7,
+     "dreb": 6.3,
      "pf": 3.0,
-     "pm": 0.5,
+     "pm": 6.3,
      "tags": [
-      "Gets to the line"
+      "Rebounder"
      ]
     },
     {
      "name": "Ulrich Chomche",
      "no": "14",
-     "gp": 5,
-     "min": 15.4,
-     "pts": 5.0,
-     "reb": 6.4,
-     "ast": 0.4,
-     "stl": 1.0,
-     "blk": 0.8,
-     "tov": 1.8,
+     "gp": 6,
+     "min": 14.8,
+     "pts": 4.8,
+     "reb": 5.8,
+     "ast": 0.3,
+     "stl": 0.8,
+     "blk": 1.2,
+     "tov": 1.5,
      "pir": 7.8,
      "fg3m": 0.0,
      "fg3a": 0,
      "fg3p": null,
-     "fgp": 58.8,
-     "fta": 2.0,
-     "dreb": 3.8,
-     "pf": 3.0,
-     "pm": -7.2,
+     "fgp": 60.0,
+     "fta": 1.7,
+     "dreb": 3.5,
+     "pf": 2.8,
+     "pm": -5.8,
      "tags": [
-      "Rebounder"
+      "Disruptor"
      ]
     }
    ],
@@ -391,23 +391,23 @@
     {
      "name": "Javante Mccoy",
      "no": "13",
-     "gp": 3,
-     "min": 23.6,
-     "pts": 17.7,
-     "reb": 1.7,
-     "ast": 1.7,
-     "stl": 0.7,
-     "blk": 0.3,
-     "tov": 2.0,
-     "pir": 15.0,
-     "fg3m": 1.0,
-     "fg3a": 10,
-     "fg3p": 30.0,
-     "fgp": 53.5,
-     "fta": 2.0,
-     "dreb": 0.3,
-     "pf": 1.0,
-     "pm": -9.7
+     "gp": 4,
+     "min": 25.6,
+     "pts": 20.0,
+     "reb": 2.2,
+     "ast": 2.0,
+     "stl": 0.8,
+     "blk": 0.2,
+     "tov": 2.2,
+     "pir": 17.5,
+     "fg3m": 0.8,
+     "fg3a": 15,
+     "fg3p": 20.0,
+     "fgp": 54.7,
+     "fta": 2.2,
+     "dreb": 1.2,
+     "pf": 1.8,
+     "pm": -5.8
     },
     {
      "name": "Darnell Edge",
@@ -433,86 +433,65 @@
     {
      "name": "Konstantin Toshkov",
      "no": "22",
-     "gp": 5,
-     "min": 25.6,
-     "pts": 9.2,
-     "reb": 2.4,
-     "ast": 2.6,
-     "stl": 1.4,
+     "gp": 6,
+     "min": 27.7,
+     "pts": 9.0,
+     "reb": 2.7,
+     "ast": 2.8,
+     "stl": 1.2,
      "blk": 0.0,
      "tov": 1.0,
-     "pir": 11.4,
+     "pir": 11.5,
      "fg3m": 1.2,
-     "fg3a": 16,
-     "fg3p": 37.5,
-     "fgp": 46.9,
-     "fta": 2.4,
-     "dreb": 1.6,
-     "pf": 3.2,
-     "pm": -6.6
+     "fg3a": 20,
+     "fg3p": 35.0,
+     "fgp": 44.7,
+     "fta": 2.7,
+     "dreb": 2.0,
+     "pf": 3.3,
+     "pm": -2.3
     },
     {
      "name": "Gael Bonilla",
      "no": "2",
-     "gp": 2,
-     "min": 27.4,
-     "pts": 8.5,
-     "reb": 6.0,
-     "ast": 2.0,
-     "stl": 0.5,
+     "gp": 3,
+     "min": 29.2,
+     "pts": 9.0,
+     "reb": 7.3,
+     "ast": 1.3,
+     "stl": 0.7,
      "blk": 0.0,
-     "tov": 3.5,
-     "pir": 8.5,
+     "tov": 3.0,
+     "pir": 10.7,
      "fg3m": 0.0,
-     "fg3a": 2,
+     "fg3a": 4,
      "fg3p": 0.0,
-     "fgp": 42.9,
-     "fta": 4.0,
-     "dreb": 5.5,
+     "fgp": 50.0,
+     "fta": 2.7,
+     "dreb": 6.3,
      "pf": 3.0,
-     "pm": 0.5
+     "pm": 6.3
     },
     {
      "name": "Ulrich Chomche",
      "no": "14",
-     "gp": 5,
-     "min": 15.4,
-     "pts": 5.0,
-     "reb": 6.4,
-     "ast": 0.4,
-     "stl": 1.0,
-     "blk": 0.8,
-     "tov": 1.8,
+     "gp": 6,
+     "min": 14.8,
+     "pts": 4.8,
+     "reb": 5.8,
+     "ast": 0.3,
+     "stl": 0.8,
+     "blk": 1.2,
+     "tov": 1.5,
      "pir": 7.8,
      "fg3m": 0.0,
      "fg3a": 0,
      "fg3p": null,
-     "fgp": 58.8,
-     "fta": 2.0,
-     "dreb": 3.8,
-     "pf": 3.0,
-     "pm": -7.2
-    },
-    {
-     "name": "Sukhmail Mathon",
-     "no": "41",
-     "gp": 4,
-     "min": 17.1,
-     "pts": 4.0,
-     "reb": 6.0,
-     "ast": 1.2,
-     "stl": 0.0,
-     "blk": 0.2,
-     "tov": 1.5,
-     "pir": 7.2,
-     "fg3m": 0.2,
-     "fg3a": 2,
-     "fg3p": 50.0,
-     "fgp": 23.5,
-     "fta": 2.0,
-     "dreb": 3.8,
-     "pf": 1.5,
-     "pm": -7.5
+     "fgp": 60.0,
+     "fta": 1.7,
+     "dreb": 3.5,
+     "pf": 2.8,
+     "pm": -5.8
     },
     {
      "name": "Ivan Alipiev",
@@ -536,46 +515,88 @@
      "pm": -9.0
     },
     {
+     "name": "Sukhmail Mathon",
+     "no": "41",
+     "gp": 5,
+     "min": 14.6,
+     "pts": 3.8,
+     "reb": 4.8,
+     "ast": 1.2,
+     "stl": 0.0,
+     "blk": 0.2,
+     "tov": 1.2,
+     "pir": 6.0,
+     "fg3m": 0.4,
+     "fg3a": 5,
+     "fg3p": 40.0,
+     "fgp": 23.8,
+     "fta": 1.6,
+     "dreb": 3.0,
+     "pf": 1.4,
+     "pm": -7.8
+    },
+    {
      "name": "Pavlin Ivanov",
      "no": "10",
-     "gp": 4,
-     "min": 21.4,
-     "pts": 7.0,
-     "reb": 1.0,
-     "ast": 1.8,
-     "stl": 0.5,
+     "gp": 5,
+     "min": 18.0,
+     "pts": 5.6,
+     "reb": 0.8,
+     "ast": 1.4,
+     "stl": 0.4,
      "blk": 0.0,
-     "tov": 1.0,
-     "pir": 5.2,
-     "fg3m": 1.0,
+     "tov": 0.8,
+     "pir": 4.2,
+     "fg3m": 0.8,
      "fg3a": 14,
      "fg3p": 28.6,
      "fgp": 40.0,
-     "fta": 2.2,
-     "dreb": 0.5,
-     "pf": 2.8,
-     "pm": -12.0
+     "fta": 1.8,
+     "dreb": 0.4,
+     "pf": 2.2,
+     "pm": -11.0
+    },
+    {
+     "name": "Aleksandar Stoimenov",
+     "no": "3",
+     "gp": 6,
+     "min": 22.3,
+     "pts": 11.8,
+     "reb": 2.0,
+     "ast": 1.2,
+     "stl": 1.0,
+     "blk": 0.3,
+     "tov": 2.7,
+     "pir": 3.7,
+     "fg3m": 1.2,
+     "fg3a": 28,
+     "fg3p": 25.0,
+     "fgp": 40.0,
+     "fta": 2.0,
+     "dreb": 1.7,
+     "pf": 3.3,
+     "pm": -3.7
     },
     {
      "name": "David Okwera",
      "no": "0",
-     "gp": 5,
-     "min": 22.5,
-     "pts": 4.4,
-     "reb": 3.4,
-     "ast": 0.6,
-     "stl": 0.8,
-     "blk": 0.6,
-     "tov": 2.0,
-     "pir": 2.4,
-     "fg3m": 0.6,
-     "fg3a": 14,
-     "fg3p": 21.4,
-     "fgp": 32.1,
+     "gp": 6,
+     "min": 22.7,
+     "pts": 4.0,
+     "reb": 4.5,
+     "ast": 0.7,
+     "stl": 1.0,
+     "blk": 0.5,
+     "tov": 1.8,
+     "pir": 3.3,
+     "fg3m": 0.5,
+     "fg3a": 16,
+     "fg3p": 18.8,
+     "fgp": 31.2,
      "fta": 0.2,
-     "dreb": 2.8,
-     "pf": 2.0,
-     "pm": -10.8
+     "dreb": 4.0,
+     "pf": 2.2,
+     "pm": -8.5
     },
     {
      "name": "Martin Sotirov",
@@ -620,27 +641,6 @@
      "pm": -2.0
     },
     {
-     "name": "Aleksandar Stoimenov",
-     "no": "3",
-     "gp": 5,
-     "min": 22.1,
-     "pts": 9.8,
-     "reb": 1.8,
-     "ast": 1.4,
-     "stl": 1.0,
-     "blk": 0.4,
-     "tov": 2.6,
-     "pir": 1.6,
-     "fg3m": 1.0,
-     "fg3a": 21,
-     "fg3p": 23.8,
-     "fgp": 36.4,
-     "fta": 1.6,
-     "dreb": 1.6,
-     "pf": 3.0,
-     "pm": -5.0
-    },
-    {
      "name": "Alex Ducas",
      "no": "8",
      "gp": 5,
@@ -664,23 +664,44 @@
     {
      "name": "Nikolay Grozev",
      "no": "33",
-     "gp": 3,
-     "min": 10.5,
-     "pts": 3.3,
-     "reb": 1.0,
-     "ast": 0.3,
-     "stl": 0.7,
+     "gp": 4,
+     "min": 9.9,
+     "pts": 2.5,
+     "reb": 0.8,
+     "ast": 0.2,
+     "stl": 0.5,
      "blk": 0.0,
-     "tov": 1.0,
-     "pir": 0.7,
+     "tov": 0.8,
+     "pir": 0.2,
      "fg3m": 0.0,
-     "fg3a": 2,
+     "fg3a": 3,
      "fg3p": 0.0,
-     "fgp": 55.6,
+     "fgp": 50.0,
      "fta": 0.0,
      "dreb": 0.0,
-     "pf": 3.3,
-     "pm": 0.3
+     "pf": 2.5,
+     "pm": -1.2
+    },
+    {
+     "name": "Dimitar Dimitrov",
+     "no": "34",
+     "gp": 2,
+     "min": 15.3,
+     "pts": 1.0,
+     "reb": 0.5,
+     "ast": 0.5,
+     "stl": 1.5,
+     "blk": 0.5,
+     "tov": 1.5,
+     "pir": 0.0,
+     "fg3m": 0.0,
+     "fg3a": 3,
+     "fg3p": 0.0,
+     "fgp": 0.0,
+     "fta": 1.0,
+     "dreb": 0.5,
+     "pf": 1.5,
+     "pm": 4.5
     },
     {
      "name": "Ivan Spirov",
@@ -702,27 +723,6 @@
      "dreb": 0.0,
      "pf": 0.3,
      "pm": -4.3
-    },
-    {
-     "name": "Dimitar Dimitrov",
-     "no": "34",
-     "gp": 1,
-     "min": 9.0,
-     "pts": 0.0,
-     "reb": 0.0,
-     "ast": 0.0,
-     "stl": 0.0,
-     "blk": 0.0,
-     "tov": 2.0,
-     "pir": -4.0,
-     "fg3m": 0.0,
-     "fg3a": 1,
-     "fg3p": 0.0,
-     "fgp": 0.0,
-     "fta": 0.0,
-     "dreb": 0.0,
-     "pf": 1.0,
-     "pm": -8.0
     }
    ],
    "oppRoster": [
@@ -849,284 +849,286 @@
    ],
    "projection": {
     "paok": {
-     "score": 81.2,
+     "score": 76.3,
      "players": [
-      {
-       "name": "Cedi Osman",
-       "no": "6",
-       "min": 29,
-       "pts": 17.3,
-       "reb": 4.1,
-       "ast": 1.7,
-       "pir": 21.2
-      },
       {
        "name": "Marcus Foster",
        "no": "17",
-       "min": 25,
-       "pts": 13.4,
-       "reb": 4.0,
-       "ast": 2.3,
-       "pir": 13.8
+       "min": 26,
+       "pts": 14.5,
+       "reb": 4.2,
+       "ast": 2.4,
+       "pir": 14.3
       },
       {
        "name": "Kyle Alexander",
        "no": "8",
-       "min": 19,
-       "pts": 7.1,
-       "reb": 5.3,
-       "ast": 0.8,
-       "pir": 12.2
+       "min": 21,
+       "pts": 8.0,
+       "reb": 5.7,
+       "ast": 0.9,
+       "pir": 13.2
       },
       {
        "name": "Breein Tyree",
        "no": "5",
-       "min": 16,
-       "pts": 11.2,
-       "reb": 1.9,
-       "ast": 1.3,
-       "pir": 10.9
+       "min": 19,
+       "pts": 13.2,
+       "reb": 2.2,
+       "ast": 1.4,
+       "pir": 12.4
       },
       {
        "name": "Nick Calathes",
        "no": "33",
-       "min": 19,
-       "pts": 6.3,
-       "reb": 3.7,
-       "ast": 4.7,
-       "pir": 9.3
-      },
-      {
-       "name": "Trevor Hudgins",
-       "no": "12",
-       "min": 15,
-       "pts": 5.6,
-       "reb": 1.5,
-       "ast": 1.8,
-       "pir": 6.0
+       "min": 23,
+       "pts": 7.9,
+       "reb": 4.5,
+       "ast": 5.6,
+       "pir": 11.1
       },
       {
        "name": "Raiquan Gray",
        "no": "0",
-       "min": 20,
-       "pts": 4.0,
-       "reb": 2.3,
-       "ast": 1.8,
-       "pir": 5.8
+       "min": 23,
+       "pts": 4.8,
+       "reb": 2.6,
+       "ast": 2.0,
+       "pir": 6.6
+      },
+      {
+       "name": "Trevor Hudgins",
+       "no": "12",
+       "min": 16,
+       "pts": 6.3,
+       "reb": 1.7,
+       "ast": 2.0,
+       "pir": 6.5
       },
       {
        "name": "Ben Moore",
        "no": "26",
-       "min": 16,
-       "pts": 4.3,
-       "reb": 3.0,
+       "min": 18,
+       "pts": 4.9,
+       "reb": 3.3,
        "ast": 0.5,
-       "pir": 5.5
+       "pir": 5.9
       },
       {
        "name": "Naz Mitrou Long",
        "no": "1",
-       "min": 14,
-       "pts": 4.9,
-       "reb": 1.3,
-       "ast": 0.9,
-       "pir": 4.5
-      },
-      {
-       "name": "Nikos Chougkaz",
-       "no": "9",
-       "min": 11,
-       "pts": 2.6,
-       "reb": 1.4,
-       "ast": 0.4,
-       "pir": 2.6
+       "min": 16,
+       "pts": 5.8,
+       "reb": 1.5,
+       "ast": 1.1,
+       "pir": 5.1
       },
       {
        "name": "Athanasios Bazinas",
        "no": "77",
-       "min": 8,
-       "pts": 2.5,
-       "reb": 0.9,
-       "ast": 0.7,
-       "pir": 2.5
+       "min": 10,
+       "pts": 3.4,
+       "reb": 1.2,
+       "ast": 0.8,
+       "pir": 3.2
+      },
+      {
+       "name": "Nikos Chougkaz",
+       "no": "9",
+       "min": 14,
+       "pts": 3.5,
+       "reb": 1.7,
+       "ast": 0.5,
+       "pir": 3.2
       },
       {
        "name": "Nikolaos Persidis",
        "no": "18",
-       "min": 7,
-       "pts": 1.9,
-       "reb": 1.1,
-       "ast": 0.4,
-       "pir": 2.0
+       "min": 9,
+       "pts": 2.7,
+       "reb": 1.5,
+       "ast": 0.6,
+       "pir": 2.7
+      },
+      {
+       "name": "Dimitris Kaklamanakis",
+       "no": "14",
+       "min": 6,
+       "pts": 1.4,
+       "reb": 1.5,
+       "ast": 0.3,
+       "pir": 2.5
       }
      ],
-     "missing": [],
-     "pace": 74.2
+     "missing": [
+      "Cedi Osman"
+     ],
+     "pace": 74.1
     },
     "opp": {
-     "score": 77.0,
+     "score": 76.9,
      "players": [
-      {
-       "name": "Konstantin Toshkov",
-       "no": "22",
-       "min": 27,
-       "pts": 10.7,
-       "reb": 2.9,
-       "ast": 2.4,
-       "pir": 10.7
-      },
       {
        "name": "Javante Mccoy",
        "no": "13",
-       "min": 15,
-       "pts": 10.1,
-       "reb": 1.5,
-       "ast": 1.0,
-       "pir": 7.4
+       "min": 19,
+       "pts": 14.1,
+       "reb": 2.1,
+       "ast": 1.4,
+       "pir": 11.2
       },
       {
-       "name": "Ulrich Chomche",
-       "no": "14",
-       "min": 16,
-       "pts": 6.0,
-       "reb": 5.2,
-       "ast": 0.6,
-       "pir": 6.8
+       "name": "Konstantin Toshkov",
+       "no": "22",
+       "min": 25,
+       "pts": 9.1,
+       "reb": 2.7,
+       "ast": 2.4,
+       "pir": 9.9
       },
       {
        "name": "Darnell Edge",
        "no": "1",
-       "min": 19,
-       "pts": 8.4,
-       "reb": 2.2,
-       "ast": 1.8,
-       "pir": 6.7
-      },
-      {
-       "name": "Sukhmail Mathon",
-       "no": "41",
-       "min": 14,
-       "pts": 4.4,
-       "reb": 3.9,
-       "ast": 1.0,
-       "pir": 5.2
-      },
-      {
-       "name": "Pavlin Ivanov",
-       "no": "10",
-       "min": 18,
-       "pts": 6.7,
-       "reb": 1.4,
-       "ast": 1.3,
-       "pir": 4.5
-      },
-      {
-       "name": "David Okwera",
-       "no": "0",
-       "min": 23,
-       "pts": 6.2,
-       "reb": 3.5,
-       "ast": 0.8,
-       "pir": 3.5
+       "min": 21,
+       "pts": 8.9,
+       "reb": 2.4,
+       "ast": 2.0,
+       "pir": 7.5
       },
       {
        "name": "Gael Bonilla",
        "no": "2",
-       "min": 11,
-       "pts": 4.2,
-       "reb": 2.2,
-       "ast": 0.8,
-       "pir": 3.4
+       "min": 20,
+       "pts": 7.0,
+       "reb": 4.4,
+       "ast": 1.0,
+       "pir": 6.9
+      },
+      {
+       "name": "Ulrich Chomche",
+       "no": "14",
+       "min": 13,
+       "pts": 4.9,
+       "reb": 4.3,
+       "ast": 0.5,
+       "pir": 6.2
+      },
+      {
+       "name": "Sukhmail Mathon",
+       "no": "41",
+       "min": 12,
+       "pts": 3.9,
+       "reb": 3.3,
+       "ast": 0.9,
+       "pir": 4.5
       },
       {
        "name": "Aleksandar Stoimenov",
        "no": "3",
-       "min": 23,
+       "min": 20,
        "pts": 10.9,
-       "reb": 2.3,
-       "ast": 1.4,
-       "pir": 2.9
+       "reb": 2.1,
+       "ast": 1.1,
+       "pir": 4.0
+      },
+      {
+       "name": "Pavlin Ivanov",
+       "no": "10",
+       "min": 15,
+       "pts": 5.3,
+       "reb": 1.2,
+       "ast": 1.1,
+       "pir": 3.8
+      },
+      {
+       "name": "David Okwera",
+       "no": "0",
+       "min": 21,
+       "pts": 4.9,
+       "reb": 3.9,
+       "ast": 0.8,
+       "pir": 3.8
       },
       {
        "name": "Alex Ducas",
        "no": "8",
-       "min": 19,
-       "pts": 4.0,
-       "reb": 2.9,
-       "ast": 0.8,
-       "pir": 2.6
+       "min": 16,
+       "pts": 3.2,
+       "reb": 2.4,
+       "ast": 0.6,
+       "pir": 2.2
       },
       {
-       "name": "Martin Sotirov",
-       "no": "44",
+       "name": "Yura Melikyan",
+       "no": "77",
        "min": 8,
-       "pts": 3.1,
-       "reb": 1.1,
-       "ast": 0.5,
-       "pir": 2.0
+       "pts": 2.5,
+       "reb": 1.8,
+       "ast": 0.4,
+       "pir": 1.9
       },
       {
-       "name": "Nikolay Grozev",
-       "no": "33",
-       "min": 7,
-       "pts": 2.4,
-       "reb": 0.8,
-       "ast": 0.3,
-       "pir": 1.2
+       "name": "Dimitar Dimitrov",
+       "no": "34",
+       "min": 9,
+       "pts": 2.3,
+       "reb": 1.0,
+       "ast": 0.4,
+       "pir": 1.6
       }
      ],
      "missing": [],
-     "pace": 74.2
+     "pace": 74.1
     },
-    "winProb": 65,
-    "pace": 74.2,
-    "lineupSource": "assumed",
-    "note": "",
+    "winProb": 48,
+    "pace": 74.1,
+    "lineupSource": "manual",
+    "note": "PAOK without Osman, who is out for one to two months.",
     "teamStats": {
      "pts": {
-      "paok": 81.2,
-      "opp": 77.0,
-      "total": 158.2
+      "paok": 76.3,
+      "opp": 76.9,
+      "total": 153.2
      },
      "fg2m": {
-      "paok": 20.1,
-      "opp": 20.2,
-      "total": 40.2
+      "paok": 19.0,
+      "opp": 20.6,
+      "total": 39.6
      },
      "fg3m": {
-      "paok": 8.3,
-      "opp": 7.5,
-      "total": 15.8
+      "paok": 7.7,
+      "opp": 7.2,
+      "total": 14.9
      },
      "ftm": {
-      "paok": 16.2,
-      "opp": 14.3,
-      "total": 30.5
+      "paok": 15.3,
+      "opp": 14.1,
+      "total": 29.4
      },
      "ast": {
-      "paok": 17.0,
-      "opp": 15.3,
-      "total": 32.3
+      "paok": 16.2,
+      "opp": 14.9,
+      "total": 31.1
      },
      "oreb": {
-      "paok": 10.6,
-      "opp": 10.4,
-      "total": 21.0
+      "paok": 10.8,
+      "opp": 10.3,
+      "total": 21.1
      },
      "dreb": {
       "paok": 23.8,
-      "opp": 23.0,
-      "total": 46.7
+      "opp": 24.5,
+      "total": 48.3
      },
      "tov": {
-      "paok": 14.0,
-      "opp": 15.0,
-      "total": 29.0
+      "paok": 13.8,
+      "opp": 14.7,
+      "total": 28.5
      },
      "reb": {
-      "paok": 34.4,
-      "opp": 33.4,
-      "total": 67.7
+      "paok": 34.6,
+      "opp": 34.8,
+      "total": 69.4
      }
     }
    }
@@ -1953,118 +1955,120 @@
    ],
    "projection": {
     "paok": {
-     "score": 82.7,
+     "score": 78.8,
      "players": [
-      {
-       "name": "Cedi Osman",
-       "no": "6",
-       "min": 29,
-       "pts": 17.1,
-       "reb": 3.3,
-       "ast": 2.1,
-       "pir": 16.7
-      },
       {
        "name": "Kyle Alexander",
        "no": "8",
-       "min": 19,
-       "pts": 6.5,
-       "reb": 5.5,
-       "ast": 0.7,
-       "pir": 9.4
+       "min": 21,
+       "pts": 7.4,
+       "reb": 5.9,
+       "ast": 0.8,
+       "pir": 10.2
       },
       {
        "name": "Ben Moore",
        "no": "26",
-       "min": 16,
-       "pts": 5.7,
-       "reb": 4.7,
-       "ast": 1.0,
-       "pir": 8.9
+       "min": 18,
+       "pts": 6.5,
+       "reb": 5.1,
+       "ast": 1.1,
+       "pir": 9.7
       },
       {
        "name": "Breein Tyree",
        "no": "5",
-       "min": 16,
-       "pts": 10.5,
-       "reb": 1.8,
-       "ast": 0.9,
-       "pir": 8.4
+       "min": 19,
+       "pts": 12.5,
+       "reb": 2.0,
+       "ast": 1.0,
+       "pir": 9.5
       },
       {
        "name": "Trevor Hudgins",
        "no": "12",
-       "min": 15,
-       "pts": 6.6,
-       "reb": 1.7,
-       "ast": 2.1,
-       "pir": 7.7
+       "min": 16,
+       "pts": 7.5,
+       "reb": 1.9,
+       "ast": 2.2,
+       "pir": 8.4
       },
       {
        "name": "Marcus Foster",
        "no": "17",
-       "min": 25,
-       "pts": 11.0,
-       "reb": 2.4,
-       "ast": 2.6,
-       "pir": 7.7
+       "min": 26,
+       "pts": 12.0,
+       "reb": 2.5,
+       "ast": 2.7,
+       "pir": 8.0
       },
       {
        "name": "Naz Mitrou-Long",
        "no": "1",
-       "min": 14,
-       "pts": 6.4,
-       "reb": 2.3,
-       "ast": 1.6,
-       "pir": 6.9
+       "min": 16,
+       "pts": 7.6,
+       "reb": 2.6,
+       "ast": 1.8,
+       "pir": 7.8
       },
       {
        "name": "Nick Calathes",
        "no": "33",
-       "min": 19,
-       "pts": 5.2,
-       "reb": 2.9,
-       "ast": 2.6,
-       "pir": 5.9
+       "min": 23,
+       "pts": 6.5,
+       "reb": 3.5,
+       "ast": 3.2,
+       "pir": 7.0
       },
       {
        "name": "Raiquan Gray",
        "no": "0",
-       "min": 20,
-       "pts": 6.3,
-       "reb": 3.2,
-       "ast": 0.8,
-       "pir": 5.6
+       "min": 23,
+       "pts": 7.5,
+       "reb": 3.7,
+       "ast": 0.9,
+       "pir": 6.3
       },
       {
        "name": "Thanasis Bazinas",
        "no": "77",
-       "min": 8,
-       "pts": 2.5,
-       "reb": 1.1,
-       "ast": 0.6,
-       "pir": 3.0
+       "min": 10,
+       "pts": 3.3,
+       "reb": 1.3,
+       "ast": 0.8,
+       "pir": 3.8
       },
       {
        "name": "Nikos Chougkaz",
        "no": "9",
-       "min": 11,
-       "pts": 2.7,
-       "reb": 1.7,
-       "ast": 0.3,
-       "pir": 2.6
+       "min": 14,
+       "pts": 3.6,
+       "reb": 2.2,
+       "ast": 0.4,
+       "pir": 3.3
       },
       {
        "name": "Nikos Persidis",
        "no": "18",
-       "min": 7,
-       "pts": 2.1,
-       "reb": 1.1,
-       "ast": 0.5,
-       "pir": 1.9
+       "min": 9,
+       "pts": 2.9,
+       "reb": 1.4,
+       "ast": 0.6,
+       "pir": 2.7
+      },
+      {
+       "name": "Dimitris Kaklamanakis",
+       "no": "14",
+       "min": 6,
+       "pts": 1.5,
+       "reb": 1.5,
+       "ast": 0.2,
+       "pir": 2.4
       }
      ],
-     "missing": [],
+     "missing": [
+      "Cedi Osman"
+     ],
      "pace": 71.4
     },
     "opp": {
@@ -2073,154 +2077,154 @@
       {
        "name": "Giannis Karakostas",
        "no": "3",
-       "min": 23,
-       "pts": 8.1,
-       "reb": 3.1,
-       "ast": 4.3,
-       "pir": 11.8
+       "min": 22,
+       "pts": 7.7,
+       "reb": 3.0,
+       "ast": 4.1,
+       "pir": 11.2
       },
       {
        "name": "Kostas Gontikas",
        "no": "27",
-       "min": 19,
-       "pts": 6.9,
-       "reb": 4.6,
-       "ast": 1.2,
-       "pir": 10.0
+       "min": 18,
+       "pts": 6.6,
+       "reb": 4.4,
+       "ast": 1.1,
+       "pir": 9.5
       },
       {
        "name": "Giannis Agravanis",
        "no": "8",
-       "min": 23,
-       "pts": 9.4,
-       "reb": 3.6,
-       "ast": 1.1,
-       "pir": 9.2
+       "min": 22,
+       "pts": 8.9,
+       "reb": 3.4,
+       "ast": 1.0,
+       "pir": 8.8
       },
       {
        "name": "Keshawn Justice",
        "no": "14",
-       "min": 24,
-       "pts": 7.8,
-       "reb": 3.3,
-       "ast": 1.4,
-       "pir": 9.2
+       "min": 23,
+       "pts": 7.4,
+       "reb": 3.1,
+       "ast": 1.3,
+       "pir": 8.7
       },
       {
        "name": "Will Mcnair",
        "no": "13",
-       "min": 19,
-       "pts": 6.3,
-       "reb": 4.5,
-       "ast": 0.8,
-       "pir": 9.0
-      },
-      {
-       "name": "Jordan Floyd",
-       "no": "11",
-       "min": 24,
-       "pts": 10.3,
-       "reb": 2.4,
-       "ast": 4.0,
-       "pir": 7.8
+       "min": 18,
+       "pts": 6.0,
+       "reb": 4.3,
+       "ast": 0.7,
+       "pir": 8.6
       },
       {
        "name": "Andreas Patrikis",
        "no": "41",
-       "min": 14,
-       "pts": 5.0,
-       "reb": 3.7,
+       "min": 15,
+       "pts": 5.4,
+       "reb": 4.0,
        "ast": 0.6,
-       "pir": 7.3
+       "pir": 7.8
       },
       {
-       "name": "Allerik Freeman",
-       "no": "85",
+       "name": "Jordan Floyd",
+       "no": "11",
        "min": 22,
-       "pts": 6.4,
-       "reb": 2.6,
-       "ast": 1.7,
-       "pir": 6.0
+       "pts": 9.8,
+       "reb": 2.3,
+       "ast": 3.8,
+       "pir": 7.4
       },
       {
        "name": "Shannon Bogues",
        "no": "1",
-       "min": 8,
-       "pts": 3.3,
-       "reb": 1.2,
-       "ast": 0.6,
-       "pir": 4.0
+       "min": 14,
+       "pts": 5.5,
+       "reb": 2.0,
+       "ast": 1.1,
+       "pir": 6.7
+      },
+      {
+       "name": "Allerik Freeman",
+       "no": "85",
+       "min": 21,
+       "pts": 6.1,
+       "reb": 2.5,
+       "ast": 1.6,
+       "pir": 5.7
       },
       {
        "name": "Ansley Almonor",
        "no": "5",
        "min": 12,
-       "pts": 3.6,
-       "reb": 1.8,
+       "pts": 3.4,
+       "reb": 1.7,
        "ast": 0.5,
-       "pir": 4.0
+       "pir": 3.9
+      },
+      {
+       "name": "Nic Pozoglou",
+       "no": "88",
+       "min": 7,
+       "pts": 1.7,
+       "reb": 1.3,
+       "ast": 0.4,
+       "pir": 2.4
       },
       {
        "name": "Aris Sotiriou",
        "no": "10",
        "min": 7,
-       "pts": 2.4,
+       "pts": 2.3,
        "reb": 1.0,
        "ast": 0.3,
-       "pir": 2.1
-      },
-      {
-       "name": "Nic Pozoglou",
-       "no": "88",
-       "min": 5,
-       "pts": 1.3,
-       "reb": 1.0,
-       "ast": 0.3,
-       "pir": 1.9
+       "pir": 2.0
       }
      ],
      "missing": [],
      "pace": 71.4
     },
-    "winProb": 86,
+    "winProb": 76,
     "pace": 71.4,
-    "lineupSource": "assumed",
-    "note": "",
+    "lineupSource": "manual",
+    "note": "PAOK without Osman, who is out for one to two months.",
     "teamStats": {
      "pts": {
-      "paok": 82.7,
+      "paok": 78.8,
       "opp": 70.9,
-      "total": 153.6
+      "total": 149.7
      },
      "fg2m": {
-      "paok": 17.9,
+      "paok": 17.1,
       "opp": 17.0,
-      "total": 34.9
+      "total": 34.0
      },
      "fg3m": {
-      "paok": 9.5,
+      "paok": 9.1,
       "opp": 7.9,
-      "total": 17.4
+      "total": 16.9
      },
      "ftm": {
-      "paok": 18.3,
+      "paok": 17.5,
       "opp": 13.3,
-      "total": 31.6
+      "total": 30.8
      },
      "ast": {
-      "paok": 16.6,
+      "paok": 15.8,
       "opp": 14.9,
-      "total": 31.5
+      "total": 30.7
      },
      "oreb": {
-      "paok": 10.4,
+      "paok": 10.8,
       "opp": 10.4,
-      "total": 20.8
+      "total": 21.2
      },
      "dreb": {
       "paok": 25.8,
-      "opp": 23.9,
-      "total": 49.6
+      "opp": 24.8,
+      "total": 50.6
      },
      "tov": {
       "paok": 11.9,
@@ -2228,9 +2232,9 @@
       "total": 25.1
      },
      "reb": {
-      "paok": 36.2,
-      "opp": 34.3,
-      "total": 70.4
+      "paok": 36.6,
+      "opp": 35.2,
+      "total": 71.8
      }
     }
    }
