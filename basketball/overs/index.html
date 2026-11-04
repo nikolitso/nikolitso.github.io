@@ -229,7 +229,8 @@ $('sub').textContent = `${DATA.leagues.length} Leagues · backtest 2022–23 to 
   // average line bet and average closing line, over every settled 2026-27 bet that has a close
   const cl = set.filter(b => b.close != null), avg = f => (cl.reduce((a, b) => a + f(b), 0) / cl.length).toFixed(1);
   $('top').innerHTML = [['Open picks', nOpen, nOpen ? 'to play' : 'none right now'], ['Record', `${won}–${lost}`, 'win – loss'],
-    ['Return', `<span class="${cls(units)}">${sgn(units, 2)}</span>${won + lost ? ` <span class="pill ${cls(units)}">ROI ${roi(units / (won + lost))}</span>` : ''}`, 'units'],
+    ['Return', `<span class="${cls(units)}">${sgn(units, 2)}</span>`, 'units'],
+    ['ROI', won + lost ? `<span class="${cls(units)}">${roi(units / (won + lost))}</span>` : '–', `${won + lost} settled bets`],
     ...(cl.length ? [['Opening line', avg(b => b.line), `avg of ${cl.length} settled bets`], ['Closing line', avg(b => b.close), `avg of ${cl.length} settled bets`]] : [])]
     .map(([k, v, n]) => `<a class="tile" href="#view=picks"><span class="klabel">${k}</span><span class="stat">${v}</span><span class="small">${n}</span></a>`).join('');
 }
