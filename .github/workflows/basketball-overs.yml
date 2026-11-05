@@ -3,7 +3,7 @@ name: Feed · Basketball totals live test
 # Live test of the basketball totals rule (the leagues in data/live_leagues.json): this season's results and odds, projections for
 # the next 7 days, picks logged at the line on offer and settled after the game. Scripts and data in
 # nikolitso/BettingSignal (basketball-overs/); the record is basketball-overs/data/live/report.md there.
-# Publishes basketball/overs/live.js (projections + live record; the backtest part of the page is fixed).
+# Publishes basketball/overs/live.js (projections + live record; the backtest part of the page is fixed) and a page per game.
 # Hourly: GitHub drops most scheduled runs, so a cron-job.org job starts this through the API (workflow_dispatch).
 # Its token expires 30 Oct 2027. The schedule below is only a backup.
 on:
@@ -44,7 +44,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add basketball/overs/live.js
+          git add basketball/overs/live.js basketball/overs/games basketball/overs/sitemap.xml
           if git diff --cached --quiet; then echo "page unchanged"; exit 0; fi
           git commit -q -m "Basketball totals: refresh $(TZ=Europe/Athens date '+%Y-%m-%d %H:%M')"
           for i in 1 2 3 4 5; do git pull -q --rebase && git push -q && exit 0; sleep $((RANDOM % 10 + 5)); done

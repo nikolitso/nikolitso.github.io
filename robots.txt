@@ -5,6 +5,7 @@ Sitemap: https://antonisnikolitsopoulos.com/sitemap.xml
 Sitemap: https://antonisnikolitsopoulos.com/superleague/sitemap.xml
 Sitemap: https://antonisnikolitsopoulos.com/eurocup/sitemap.xml
 Sitemap: https://antonisnikolitsopoulos.com/basketball/sitemap.xml
+Sitemap: https://antonisnikolitsopoulos.com/basketball/overs/sitemap.xml
 Sitemap: https://antonisnikolitsopoulos.com/fibaeuropecup/sitemap.xml
 Sitemap: https://antonisnikolitsopoulos.com/handball/sitemap.xml
 Sitemap: https://antonisnikolitsopoulos.com/volleyball/sitemap.xml
