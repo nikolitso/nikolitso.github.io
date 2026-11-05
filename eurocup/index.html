@@ -123,7 +123,7 @@ th.sort{cursor:pointer;user-select:none}th.sort:hover,th.sort.on{color:var(--gol
 .rogrid th{font:400 12.5px var(--mono);color:var(--muted);text-align:left;border-top:0}.rogrid .n{text-align:right}
 .rogrid tr.out td{color:var(--loss)}.rogrid tr.out .pl{text-decoration:line-through}
 .rogrid .miss{color:var(--gold)}
-.clinks{display:flex;flex-wrap:wrap;gap:6px 12px;margin-top:10px;font:500 14.5px var(--mono)}.clinks a{color:var(--gold);text-decoration:none}.clinks a:hover{text-decoration:underline}
+.clinks{display:flex;justify-content:space-between;gap:8px;margin-top:10px;font:500 14px var(--mono);white-space:nowrap}.clinks a{color:var(--gold);text-decoration:none}.clinks a:hover{text-decoration:underline}
 .clgrid h3{cursor:default}.clgrid h3:hover{color:inherit}
 @media (max-width:420px){.rogrid{grid-template-columns:1fr}}
 .back{font:500 14.5px var(--mono);color:var(--gold);text-decoration:none;letter-spacing:.04em}
@@ -511,15 +511,18 @@ let clQuery = '';
 function renderClubs(){
   const box = $('clView');
   if (!window.CLUBS){ box.innerHTML = '<div class="empty">No clubs yet.</div>'; return; }
-  const NAMES = [['site', 'Official site'], ['instagram', 'Instagram'], ['facebook', 'Facebook'], ['x', 'X'], ['youtube', 'YouTube'], ['tiktok', 'TikTok']];
-  box.innerHTML = `<div class="note" style="margin-bottom:14px">The official site and social accounts of the ${CLUBS.list.length} clubs. Team news for the Rosters tab and the model is read from here.</div>
+  // highest model rating first, as on Club Ratings
+  const rate = new Map(((window.PROJ && PROJ.ratings) || []).map(x => [x.c, x.r]));
+  const list = [...CLUBS.list].sort((x, y) => (rate.get(y.club) ?? -99) - (rate.get(x.club) ?? -99));
+  const NAMES = [['site', 'Site'], ['instagram', 'Instagram'], ['facebook', 'Facebook'], ['x', 'X'], ['youtube', 'YouTube']];
+  box.innerHTML = `<div class="note" style="margin-bottom:14px">The official site, Instagram, Facebook, X and YouTube of the ${CLUBS.list.length} clubs, highest model rating first. Team news for the Rosters tab and the model is read from here.</div>
     <input id="clSearch" placeholder="Search a club, city or country" value="${esc(clQuery)}" aria-label="Search clubs">
     <div class="rogrid clgrid" id="clGrid"></div>`;
   const draw = () => {
     const q = clQuery.trim().toLowerCase();
-    $('clGrid').innerHTML = CLUBS.list.filter(c => !q || [c.club, c.full, c.city, c.country].join(' ').toLowerCase().includes(q)).map(c =>
-      `<div class="card"><h3>${esc(c.full)}</h3><div class="tag">${esc(c.city)}, ${esc(c.country)}</div>
-        <div class="clinks">${NAMES.filter(([k]) => c[k]).map(([k, n]) => `<a href="${esc(c[k])}" target="_blank" rel="noopener">${n}</a>`).join('')}</div></div>`).join('')
+    $('clGrid').innerHTML = list.filter(c => !q || [c.club, c.full, c.city, c.country].join(' ').toLowerCase().includes(q)).map(c =>
+      `<div class="card"><h3>${esc(c.club)}</h3><div class="tag">${esc(c.city)}, ${esc(c.country)}${rate.has(c.club) ? ` · rating <b class="hcp">${sgn(rate.get(c.club))}</b>` : ''}</div>
+        <div class="clinks">${NAMES.map(([k, n]) => c[k] ? `<a href="${esc(c[k])}" target="_blank" rel="noopener">${n}</a>` : `<span class="tag" title="No official account found">${n} –</span>`).join('')}</div></div>`).join('')
       || '<div class="empty">No club matches.</div>';
   };
   $('clSearch').oninput = e => { clQuery = e.target.value; draw(); };
