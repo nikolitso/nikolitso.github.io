@@ -240,8 +240,13 @@ function tiles(list){
 }
 
 // one table row from a {n, w, roi} group
-const grp = (label, g, extra='') => g && g.n ? `<tr${extra}><td>${label}</td><td class="n">${g.n}</td><td class="n">${pct(g.w / g.n, 1)}</td><td class="n">${g.px ? g.px.toFixed(2) : '–'}</td><td class="n ${cls(g.roi)}">${roi(g.roi)}</td></tr>` : '';
-const GHEAD = first => `<thead><tr><th>${first}</th><th class="n">Bets</th><th class="n">Hit</th><th class="n">Avg price</th><th class="n">ROI</th></tr></thead>`;
+const grp = (label, g, extra='', more='') => g && g.n ? `<tr${extra}><td>${label}</td><td class="n">${g.n}</td><td class="n">${pct(g.w / g.n, 1)}</td><td class="n">${g.px ? g.px.toFixed(2) : '–'}</td><td class="n ${cls(g.roi)}">${roi(g.roi)}</td>${more}</tr>` : '';
+const LHEAD = '<th class="n">Opening line</th><th class="n">Closing line</th>';
+const GHEAD = (first, more='') => `<thead><tr><th>${first}</th><th class="n">Bets</th><th class="n">Hit</th><th class="n">Avg price</th><th class="n">ROI</th>${more}</tr></thead>`;
+// average opening and closing line of a list of bets, as two table cells
+const seasonOf = b => { const y = +b.dt.slice(0, 4); return +b.dt.slice(5, 7) >= 7 ? `${y}-${y + 1}` : `${y - 1}-${y}`; };
+const lineAvg = (list, k) => (list.reduce((a, b) => a + b[k], 0) / list.length).toFixed(1);
+const lineCells = list => { const c = list.filter(b => b.close != null); return c.length ? `<td class="n">${lineAvg(c, 'line')}</td><td class="n">${lineAvg(c, 'close')}</td>` : '<td class="n muted">–</td><td class="n muted">–</td>'; };
 
 function renderFindings(){
   const F = DATA.findings;
@@ -253,19 +258,19 @@ function renderFindings(){
 }
 
 function renderLeagues(){
-  let h = `<p class="note">Regular-season games from ${sn(DATA.first)} on (2020–21 only warms the ratings up; play-offs are left out, as in the rule). The model column starts in 2022–23 and is all out of sample. <b>Over %</b>: how often the final score (overtime included) went over the closing line. Blind over: backing the over in every game at the average price. Model overs: overs the rule bet at the opening line (edge above ${Math.round(R.edge*100)}%), count and ROI. Click a league for its seasons.</p>`;
-  h += `<div class="scroll"><table><thead><tr><th>League</th><th class="n">Games</th><th class="n">Total / line</th><th class="n">Over %</th><th class="n">Blind over</th><th class="n">Model overs</th></tr></thead><tbody>`;
+  let h = `<p class="note">Regular-season games from ${sn(DATA.first)} on (2020–21 only warms the ratings up; play-offs are left out, as in the rule). The model column starts in 2022–23 and is all out of sample. <b>Over %</b>: how often the final score (overtime included) went over the closing line. Blind over: backing the over in every game at the average price. Opening and closing line: the average of those bets. Model overs: overs the rule bet at the opening line (edge above ${Math.round(R.edge*100)}%), count and ROI. Click a league for its seasons.</p>`;
+  h += `<div class="scroll"><table><thead><tr><th>League</th><th class="n">Games</th><th class="n">Total / line</th><th class="n">Over %</th><th class="n">Blind over</th><th class="n">Model overs</th>${LHEAD}</tr></thead><tbody>`;
   const mod = g => g.n ? `${g.n} <span class="${cls(g.roi)}">${roi(g.roi)}</span>` : '<span class="muted">–</span>';
-  const row = (label, s, attrs='') => `<tr${attrs}><td>${label}</td><td class="n">${s.games}</td><td class="n">${s.avg_total.toFixed(1)} / ${s.avg_line.toFixed(1)}</td><td class="n">${pct(s.over, 1)}</td>
+  const row = (label, s, attrs='', list=[]) => `<tr${attrs}><td>${label}</td><td class="n">${s.games}</td><td class="n">${s.avg_total.toFixed(1)} / ${s.avg_line.toFixed(1)}</td><td class="n">${pct(s.over, 1)}</td>
     <td class="n ${cls(s.blind_over)}">${roi(s.blind_over)}</td>
-    <td class="n">${mod(s.mo)}</td></tr>`;
+    <td class="n">${mod(s.mo)}</td>${lineCells(list)}</tr>`;
   const tierName = {europe: 'European competitions', top: 'Top divisions', second: 'Second divisions'};
   for (const tier of ['europe', 'top', 'second']){
-    h += `<tr><td colspan="6" class="tier" style="padding-top:18px">${tierName[tier]}</td></tr>`;
+    h += `<tr><td colspan="8" class="tier" style="padding-top:18px">${tierName[tier]}</td></tr>`;
     for (const l of DATA.leagues.filter(l => l.tier === tier)){
       const on = open === l.key;
-      h += row(`<span class="caret">${on ? '▾' : '▸'}</span> ${l.country} <span class="muted">${l.name}</span>`, l.all, ` class="srow${on ? ' on' : ''}" data-open="${l.key}"`);
-      if (on) for (const s of l.seasons) h += row(sn(s.season) + (s.season === DATA.tuned ? ' (tuned on)' : '') + (s.season === DATA.season ? ' (so far)' : ''), s, ' class="sub"');
+      h += row(`<span class="caret">${on ? '▾' : '▸'}</span> ${l.country} <span class="muted">${l.name}</span>`, l.all, ` class="srow${on ? ' on' : ''}" data-open="${l.key}"`, DATA.bets.filter(b => b.lg === l.key));
+      if (on) for (const s of l.seasons) h += row(sn(s.season) + (s.season === DATA.tuned ? ' (tuned on)' : '') + (s.season === DATA.season ? ' (so far)' : ''), s, ' class="sub"', [...DATA.bets, ...((DATA.cur || {}).bets || [])].filter(b => b.lg === l.key && seasonOf(b) === s.season));
     }
   }
   return h + '</tbody></table></div>';
@@ -275,14 +280,16 @@ function renderBacktest(){
   const B = DATA.backtest, S = lg === 'all' ? B.all : B.leagues[lg];
   let h = `<p class="note">${B.note} Click a column heading to sort.</p>`;
   if (!S || !S.rule.n) return h + '<p class="empty">The rule placed no bets in this league.</p>';
-  h += tiles([['Bets', S.rule.n], ['Hit rate', pct(S.rule.w / S.rule.n, 1)], ['ROI', roi(S.rule.roi), cls(S.rule.roi)], ['Units', sgn(S.rule.roi * S.rule.n, 1), cls(S.rule.roi)]]);
-  h += `<h2>By season</h2><div class="scroll"><table style="max-width:820px">${GHEAD('Season')}<tbody>`;
-  for (const s of S.seasons) h += grp(sn(s.season) + (s.season === DATA.tuned ? ' <span class="muted">(tuned on)</span>' : '') + (s.season === DATA.season ? ' <span class="muted">(so far)</span>' : ''), s);
+  const BT = DATA.bets.filter(inLg);
+  h += tiles([['Bets', S.rule.n], ['Hit rate', pct(S.rule.w / S.rule.n, 1)], ['ROI', roi(S.rule.roi), cls(S.rule.roi)], ['Units', sgn(S.rule.roi * S.rule.n, 1), cls(S.rule.roi)],
+              ['Opening line', lineAvg(BT, 'line')], ['Closing line', lineAvg(BT, 'close')]]);
+  h += `<h2>By season</h2><div class="scroll"><table style="max-width:980px">${GHEAD('Season', LHEAD)}<tbody>`;
+  for (const s of S.seasons) h += grp(sn(s.season) + (s.season === DATA.tuned ? ' <span class="muted">(tuned on)</span>' : '') + (s.season === DATA.season ? ' <span class="muted">(so far)</span>' : ''), s, '', lineCells(BT.filter(b => seasonOf(b) === s.season)));
   h += '</tbody></table></div>';
   if (lg === 'all'){
-    h += `<h2>By league</h2><p class="note">Unseen seasons. Click a league to see it alone.</p><div class="scroll"><table style="max-width:820px">${GHEAD('League')}<tbody>`;
+    h += `<h2>By league</h2><p class="note">Unseen seasons. Click a league to see it alone.</p><div class="scroll"><table style="max-width:980px">${GHEAD('League', LHEAD)}<tbody>`;
     for (const l of DATA.leagues.filter(l => B.leagues[l.key] && B.leagues[l.key].rule.n).sort((a, b) => B.leagues[b.key].rule.roi - B.leagues[a.key].rule.roi))
-      h += grp(`<a href="#view=backtest&lg=${l.key}" style="color:inherit;text-decoration:none">${l.country} <span class="muted">${l.name}</span></a>`, B.leagues[l.key].rule);
+      h += grp(`<a href="#view=backtest&lg=${l.key}" style="color:inherit;text-decoration:none">${l.country} <span class="muted">${l.name}</span></a>`, B.leagues[l.key].rule, '', lineCells(DATA.bets.filter(b => b.lg === l.key)));
     h += '</tbody></table></div>';
   }
   h += `<div class="cols2"><div><h2>By edge</h2><div class="scroll"><table>${GHEAD('Edge above')}<tbody>`;
