@@ -537,7 +537,7 @@ def sitemap(books):
     (ROOT / "sitemap.xml").write_text(
         f'<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">{urls}</urlset>\n',
         encoding="utf-8")
-    (ROOT / "robots.txt").write_text(f"User-agent: *\nAllow: /\n\nSitemap: {SITE}/sitemap.xml\nSitemap: {SITE}/superleague/sitemap.xml\nSitemap: {SITE}/eurocup/sitemap.xml\nSitemap: {SITE}/basketball/sitemap.xml\nSitemap: {SITE}/fibaeuropecup/sitemap.xml\n", encoding="utf-8")
+    (ROOT / "robots.txt").write_text(f"User-agent: *\nAllow: /\n\nSitemap: {SITE}/sitemap.xml\nSitemap: {SITE}/superleague/sitemap.xml\nSitemap: {SITE}/eurocup/sitemap.xml\nSitemap: {SITE}/basketball/sitemap.xml\nSitemap: {SITE}/fibaeuropecup/sitemap.xml\nSitemap: {SITE}/handball/sitemap.xml\n", encoding="utf-8")
 
 
 def forward_old(books):

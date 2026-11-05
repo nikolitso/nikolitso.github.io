@@ -69,3 +69,10 @@ Its archive is kept by day and holds two models; some "mix" games have no projec
 so the margin is `-sp`. The pipeline's own scripts publish a fixed list of files, so the workflow has a separate Game pages step. 87 of the 124
 games played so far have a saved projection; the rest have no page.
 
+## Handball (5 Nov 2026)
+
+`BettingSignal/handball/projector/games.py` writes `/handball/games/` from the page data and `extra.json`. The model keeps projections only for the next
+games and for flagged signals, so `games_log.json` saves each upcoming game until tip-off, and every game from 5 Nov 2026 keeps its page once played. Before
+that only the 16 signals were saved. Pages show the published total (`ours`), not `ph` and `pa`, which are workings and do not add up to it. Women's
+clubs end in " W" in `extra.json` and not in the published data, so results are normalised when loaded.
+
