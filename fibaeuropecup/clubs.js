@@ -27,7 +27,7 @@ window.CLUBS = {"updated": "2026-11-05", "list": {
   "Lok. Plovdiv": {"site": "https://lokomotivbasketball.com/", "facebook": "https://www.facebook.com/BCLokomotivPlovdiv", "instagram": "https://www.instagram.com/lokomotivbasketball"},
   "MZT Skopje": {"site": "https://www.mztskopjeaerodrom.mk", "facebook": "https://www.facebook.com/kkmztskopje", "instagram": "https://www.instagram.com/kkmzt_skopje"},
   "Manchester Basketball": {"site": "https://www.manchester.basketball/", "facebook": "https://www.facebook.com/manchesterbball", "instagram": "https://www.instagram.com/mcrbball", "x": "https://x.com/mcrbball", "youtube": "https://www.youtube.com/@mcrbball"},
-  "Mykonos": {"site": "https://mykonosbc.gr", "facebook": "https://www.facebook.com/MykonosBetssonBC", "instagram": "https://www.instagram.com/mykonos_bc", "x": "https://x.com/mykonos_bc"},
+  "Mykonos": {"site": "https://mykonosbc.gr", "instagram": "https://www.instagram.com/mykonos_bc", "x": "https://x.com/mykonos_bc"},
   "Nancy": {"site": "https://www.sluc-basket.fr/", "facebook": "https://www.facebook.com/sluc.nancy.officiel", "instagram": "https://www.instagram.com/slucnancybasket", "x": "https://x.com/SLUCbasketNancy", "youtube": "https://www.youtube.com/channel/UCjTjF1h3ZIUJxaEKiV-3hGA"},
   "Neftchi IK": {"site": "https://www.neftchi.org/", "facebook": "https://www.facebook.com/pages/Neft%C3%A7i-%C4%B0dman-Klubu-%C4%B0ctimai-Birliyi/1578747822352254", "instagram": "https://www.instagram.com/neftchibasketball", "youtube": "https://www.youtube.com/@neftciidmanklubu"},
   "Nitra Blue Wings": {"site": "https://www.nitrabw.com", "facebook": "https://www.facebook.com/Nitra-Blue-Wings", "instagram": "https://www.instagram.com/nitra_bluewings"},

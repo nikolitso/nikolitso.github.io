@@ -88,7 +88,6 @@ table.mkt th.grp{color:var(--gold);text-align:center;font-size:11.5px;letter-spa
 table.mkt th.grp span{display:block;border-bottom:1px solid color-mix(in srgb,var(--gold) 45%,transparent);padding-bottom:4px}
 table.mkt td{padding:11px 8px;border-bottom:1px solid color-mix(in srgb,var(--line) 55%,transparent);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 table.mkt td.n,table.mkt th.n{text-align:right;font-family:var(--mono);font-size:15px}
-table.mkt td.n{font-weight:500}
 table.mkt td.n b{font-weight:600}
 /* sort arrow: after the label on Team, just under the label on number columns (adds no width) */
 table.mkt th .ar{font-style:normal;font-size:10.5px;margin-left:5px}
@@ -117,14 +116,16 @@ table.mkt tr.mkgames table th{padding:6px 6px 8px}
 table.mkt tr.mkgames table td:nth-child(3){white-space:normal;min-width:150px}   /* only the opponent may wrap */
 td.better{color:var(--win)!important;font-weight:700}td.worse{color:var(--loss)!important}
 th.sort{cursor:pointer;user-select:none}th.sort:hover,th.sort.on{color:var(--gold)}
-.rogrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px;margin-top:16px}
+.cltab{width:100%;margin-top:14px}.cll{display:grid;grid-template-columns:repeat(5,minmax(max-content,1fr));gap:2px 14px}.cll .tag{font:inherit}.cll a{color:var(--gold);text-decoration:none}.cll a:hover{text-decoration:underline}
+@media (max-width:720px){table.cltab td,table.cltab th{white-space:normal}.cll{grid-template-columns:repeat(2,max-content)}}
+.rogrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,430px),1fr));gap:16px;margin-top:16px}
 .rogrid .card{padding:16px;margin:0}.rogrid h3{font:600 18px var(--serif);margin:0 0 2px;cursor:pointer}.rogrid h3:hover{color:var(--gold)}
 .rogrid table{width:100%;border-collapse:collapse;margin-top:8px}.rogrid td,.rogrid th{padding:4px 4px;border-top:1px solid var(--line);font-size:15.5px}
 .rogrid th{font:400 12.5px var(--mono);color:var(--muted);text-align:left;border-top:0}.rogrid .n{text-align:right}
-.rogrid tr.out td{color:var(--loss)}.rogrid tr.out .pl{text-decoration:line-through}
+.rogrid th.sort:hover,.rogrid th.sort.on{color:var(--gold)}.rogrid tr.out td{color:var(--loss)}.rogrid tr.out .pl{text-decoration:line-through}
 .rogrid .miss{color:var(--gold)}
-.clinks{display:flex;justify-content:space-between;gap:8px;margin-top:10px;font:500 14px var(--mono);white-space:nowrap}.clinks a{color:var(--gold);text-decoration:none}.clinks a:hover{text-decoration:underline}
-.clgrid h3{cursor:default}.clgrid h3:hover{color:inherit}
+.rogrid .card{min-width:0;overflow-x:auto}
+@media (max-width:560px){.rogrid .card{padding:12px 10px}.rogrid td,.rogrid th{padding:3px 2px;font-size:13.5px}.rogrid th{font-size:11.5px;letter-spacing:0}}
 @media (max-width:420px){.rogrid{grid-template-columns:1fr}}
 .back{font:500 14.5px var(--mono);color:var(--gold);text-decoration:none;letter-spacing:.04em}
 .back:hover{text-decoration:underline}
@@ -134,16 +135,16 @@ th.sort{cursor:pointer;user-select:none}th.sort:hover,th.sort.on{color:var(--gol
 .chip{background:none;border:1px solid var(--line);border-radius:999px;color:var(--muted);font:500 13.5px var(--mono);padding:5px 12px;cursor:pointer}
 .chip:hover{color:var(--text)}
 .chip.on{background:var(--gold);border-color:var(--gold);color:var(--an-on-accent)}
-table.crt{width:auto;min-width:1140px}table.crt .gl{border-left:1px solid var(--line)}table.crt td.crc{min-width:280px;white-space:normal;line-height:1.45;padding-top:7px;padding-bottom:7px}table.crt th.sort{cursor:pointer}
+table.crt{width:auto;min-width:1120px}table.crt .gl{border-left:1px solid var(--line)}table.crt td.crc{min-width:260px;white-space:normal;line-height:1.45;padding-top:7px;padding-bottom:7px}table.crt th.sort{cursor:pointer}
 .metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px;margin:0 0 8px}
 .metric{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
 .metric .lbl{font:400 12.5px var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}
-.metric .big2{font:500 26px var(--mono);color:var(--gold)}
+.metric .big2{font:500 24px var(--mono);color:var(--gold)}
 a.metric.hm{display:block;color:inherit;text-decoration:none}
 a.metric.hm:hover{border-color:var(--gold)}
 .hmgrid{grid-template-columns:repeat(4,minmax(0,1fr));margin-top:16px}
-@media (max-width:1050px){.hmgrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media (max-width:560px){.hmgrid{grid-template-columns:1fr}}
+@media (max-width:700px){.hmgrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:1050px){.hmgrid .big2{font-size:19px;overflow-wrap:anywhere}}
 table.hmres{width:auto;min-width:680px}
 @media (max-width:720px){table.hmres{width:100%;min-width:0}table.hmres td,table.hmres th{white-space:normal;padding-left:3px;padding-right:3px;font-size:13.5px;overflow-wrap:anywhere}}
 .pjbar{display:flex;flex-wrap:wrap;align-items:center;gap:10px 22px;margin:0 0 8px}
@@ -510,26 +511,34 @@ function renderRankings(){
     setView('h2h'); sync(); render(); window.scrollTo({top: 0, behavior: 'smooth'});
   });
 }
-// ---------- Clubs: every club's official site and social accounts, the sources scanned for team news
-let clQuery = '';
+// ---------- Clubs: each club's official website and social accounts
+let clQuery = '', clSort = {k: 'r', dir: -1};
 function renderClubs(){
   const box = $('clView');
   if (!window.CLUBS){ box.innerHTML = '<div class="empty">No clubs yet.</div>'; return; }
-  // highest model rating first, as on Club Ratings
-  const rate = new Map(((window.PROJ && PROJ.ratings) || []).map(x => [x.c, x.r]));
-  const list = [...CLUBS.list].sort((x, y) => (rate.get(y.club) ?? -99) - (rate.get(x.club) ?? -99));
-  const NAMES = [['site', 'Site'], ['instagram', 'Instagram'], ['facebook', 'Facebook'], ['x', 'X'], ['youtube', 'YouTube']];
-  box.innerHTML = `<div class="note" style="margin-bottom:14px">The official site, Instagram, Facebook, X and YouTube of the ${CLUBS.list.length} clubs, highest model rating first. Team news for the Rosters tab and the model is read from here.</div>
-    <input id="clSearch" placeholder="Search a club, city or country" value="${esc(clQuery)}" aria-label="Search clubs">
-    <div class="rogrid clgrid" id="clGrid"></div>`;
+  const names = {site: 'Website', instagram: 'Instagram', facebook: 'Facebook', x: 'X', youtube: 'YouTube'};
+  const rating = new Map(((window.PROJ && PROJ.ratings) || []).map(x => [x.c, x.r]));
+  const all = Object.entries(CLUBS.list).map(([club, l]) => ({club, country: teams[club] || '', r: rating.get(club) ?? null, l}));
+  box.innerHTML = `<div class="note" style="margin-bottom:14px">Official websites and social accounts of the ${all.length} clubs, from the EuroCup's club data and the clubs' own websites (updated ${fmtDate(CLUBS.updated)}).</div>
+    <input id="clSearch" placeholder="Search a club or country" value="${esc(clQuery)}" aria-label="Search clubs"><div id="clList"></div>`;
   const draw = () => {
-    const q = clQuery.trim().toLowerCase();
-    $('clGrid').innerHTML = list.filter(c => !q || [c.club, c.full, c.city, c.country].join(' ').toLowerCase().includes(q)).map(c =>
-      `<div class="card"><h3>${esc(c.club)}</h3><div class="tag">${esc(c.city)}, ${esc(c.country)}${rate.has(c.club) ? ` · rating <b class="hcp">${sgn(rate.get(c.club))}</b>` : ''}</div>
-        <div class="clinks">${NAMES.map(([k, n]) => c[k] ? `<a href="${esc(c[k])}" target="_blank" rel="noopener">${n}</a>` : `<span class="tag" title="No official account found">${n} –</span>`).join('')}</div></div>`).join('')
-      || '<div class="empty">No club matches.</div>';
+    const q = clQuery.trim().toLowerCase(), {k, dir} = clSort;
+    const rows = all.filter(x => !q || x.club.toLowerCase().includes(q) || x.country.toLowerCase().includes(q))
+      .sort((a, b) => {                                            // clubs without a rating always last
+        if (a[k] === null || b[k] === null) return (a[k] === null) - (b[k] === null) || a.club.localeCompare(b.club);
+        return (k === 'r' ? a.r - b.r : a[k].localeCompare(b[k])) * dir || a.club.localeCompare(b.club);
+      });
+    const th = (c, label, cls = '', title = '') => `<th class="${cls} sort${c === k ? ' on' : ''}" data-k="${c}"${title ? ` title="${title}"` : ''}>${label}${c === k ? (dir > 0 ? ' ▲' : ' ▼') : ''}</th>`;
+    $('clList').innerHTML = rows.length ? `<div class="scroll"><table class="fx cltab"><tr>${th('club', 'Club')}${th('country', 'Country')}${th('r', 'Rating', 'n', 'The model rating, as on Club Ratings')}<th>Links</th></tr>` +
+      rows.map(x => `<tr><td><b>${esc(x.club)}</b></td><td>${esc(x.country)}</td><td class="n">${x.r === null ? '–' : `<b class="hcp">${sgn(x.r)}</b>`}</td><td><div class="cll">${Object.entries(names).map(([n, t]) => x.l[n] ? `<a href="${esc(x.l[n])}" target="_blank" rel="noopener">${t}</a>` : `<span class="tag" title="No official account found">${t} –</span>`).join('')}</div></td></tr>`).join('') + '</table></div>'
+      : '<div class="empty">No club matches.</div>';
   };
   $('clSearch').oninput = e => { clQuery = e.target.value; draw(); };
+  $('clList').onclick = e => {
+    const h = e.target.closest('th.sort'); if (!h) return;
+    clSort = h.dataset.k === clSort.k ? {k: clSort.k, dir: -clSort.dir} : {k: h.dataset.k, dir: h.dataset.k === 'r' ? -1 : 1};
+    draw();
+  };
   draw();
 }
 // ---------- Rosters: each club's key players this season and who is out
@@ -542,7 +551,7 @@ function renderRosters(){
   const nOut = out.length;
   box.innerHTML = `<div class="note" style="margin-bottom:14px">Key players of the ${clubs.length} clubs in this season's EuroCup, from ${esc(ROSTERS.source.replace(/^EuroCup box scores, /, ''))} of official EuroCup box scores (updated ${fmtDate(ROSTERS.updated)}).
       <b>Impact</b> is roughly how many points weaker a side is without the player: efficiency per minute above a bench level, times minutes per team game, halved, and trimmed for players with few games.
-      Players listed as out (${nOut ? nOut + ', updated ' + fmtDate(INJURIES.updated) : 'none at the moment'}) are struck through and count in the model; they come from the clubs' own news (<a class="back" href="#view=clubs" data-go="clubs">Clubs</a>). <b>Missed last game</b> comes from the official box score and is only a hint: it does not change the model until the absence is confirmed. Click a column to sort every club by it.</div>
+      Players listed as out (${nOut ? nOut + ', updated ' + fmtDate(INJURIES.updated) : 'none at the moment'}) are struck through; their impact comes off the club's handicap in the projections. <b>Missed last game</b> comes from the official box score and is only a hint: it does not change the model until the absence is confirmed. Click a column to sort every club by it.</div>
     <input id="roSearch" placeholder="Search a club, country or player" value="${esc(roQuery)}" aria-label="Search rosters">
     <div class="rogrid" id="roGrid"></div>`;
   const draw = () => {
@@ -550,7 +559,7 @@ function renderRosters(){
     const cards = clubs.filter(c => !q || c.toLowerCase().includes(q) || (teams[c] || '').toLowerCase().includes(q) ||
       ROSTERS.teams[c].some(p => p[0].toLowerCase().includes(q))).map(c => {
       const gone = new Map(out.filter(x => x.team === c).map(x => [x.player, x])), miss = new Set(ROSTERS.missed?.[c]?.players || []);
-      const extra = [...gone.values()].filter(x => !ROSTERS.teams[c].some(p => p[0] === x.player)).map(o => [o.player, o.impact || 0, null, null, null]);
+      const extra = [...gone.values()].filter(x => !ROSTERS.teams[c].some(p => p[0] === x.player)).map(o => [o.player, o.impact || 0, null, null, null, null, null, null]);
       const {k, dir} = roSort;                                     // empty values always last
       const list = [...ROSTERS.teams[c], ...extra].sort((x, y) => {
         const a = x[k], v = y[k];
@@ -560,10 +569,10 @@ function renderRosters(){
       const th = (key, label, title) => `<th class="${key ? 'n ' : ''}sort${key === k ? ' on' : ''}" data-k="${key}"${title ? ` title="${title}"` : ''}>${label}${key === k ? (dir > 0 ? ' ▲' : ' ▼') : ''}</th>`;
       const num = (v, d) => v === null ? '–' : v.toFixed(d);
       return `<div class="card"><h3 data-club="${esc(c)}">${esc(c)}</h3><div class="tag">${esc(teams[c] || '')}${rankOf(teams[c])}</div>
-        <table><tr>${th(0, 'Player')}${th(1, 'Impact', 'Points the side loses without the player')}${th(2, 'Min', 'Minutes per team game')}${th(3, 'Eff', 'Efficiency per game played')}${th(4, 'G', 'Games played')}</tr>` +
+        <table><tr>${th(0, 'Player')}${th(1, 'Impact', 'Points the side loses without the player')}${th(2, 'Min', 'Minutes per team game')}${th(3, 'Eff', 'Efficiency per game played')}${th(4, 'G', 'Games played')}${th(5, 'Pts', 'Points per game')}${th(6, 'Reb', 'Rebounds per game')}${th(7, 'Ast', 'Assists per game')}</tr>` +
         list.map(p => { const o = gone.get(p[0]);
           return `<tr${o ? ` class="out" title="Out${o.note ? ': ' + esc(o.note) : ''}"` : ''}><td><span class="pl">${esc(p[0])}</span>${o ? ' <span class="tag">out' + (o.note ? ' · ' + esc(o.note) : '') + '</span>' : miss.has(p[0]) ? ` <span class="tag miss" title="Did not play the club's latest EuroCup game (${fmtDate(ROSTERS.missed[c].date).slice(0, 5)})">missed last game</span>` : ''}</td>
-            <td class="n"><b>${p[1].toFixed(1)}</b></td><td class="n">${num(p[2], 1)}</td><td class="n">${num(p[3], 1)}</td><td class="n">${num(p[4], 0)}</td></tr>`; }).join('') +
+            <td class="n"><b>${p[1].toFixed(1)}</b></td><td class="n">${num(p[2], 1)}</td><td class="n">${num(p[3], 1)}</td><td class="n">${num(p[4], 0)}</td><td class="n">${num(p[5] ?? null, 1)}</td><td class="n">${num(p[6] ?? null, 1)}</td><td class="n">${num(p[7] ?? null, 1)}</td></tr>`; }).join('') +
         `</table></div>`;
     });
     $('roGrid').innerHTML = cards.join('') || '<div class="empty">No club or player matches.</div>';
@@ -577,7 +586,6 @@ function renderRosters(){
       setView('h2h'); sync(); render(); window.scrollTo({top: 0, behavior: 'smooth'});
     });
   };
-  box.querySelectorAll('[data-go]').forEach(a => a.onclick = e => { e.preventDefault(); setView(a.dataset.go); sync(); window.scrollTo({top: 0}); });
   $('roSearch').oninput = e => { roQuery = e.target.value; draw(); };
   draw();
 }
@@ -587,10 +595,10 @@ function renderRosters(){
 // injury list. Backtested on 2023-24 to 2025-26 (backtest.py). Independent of the bookmaker lines.
 const sgn = v => (v > 0 ? '+' : v < 0 ? '−' : '') + Math.abs(v).toFixed(1);
 const dayName = d => new Date(d + 'T12:00').toLocaleDateString('en-GB', {weekday:'long', day:'numeric', month:'long'});
-let gapMin = 5;                                                // model-vs-book gaps from this many points are highlighted and judged
-const GAP_DEFAULT = 5;
+let gapMin = 6;                                                // model-vs-book gaps from this many points are highlighted and judged
+const GAP_DEFAULT = 6;
 const gapSelect = () => `<label>Highlight gaps from <select class="peer gapsel" aria-label="Gap threshold">` +
-  [3, 4, 5, 6, 7, 8, 9].map(k => `<option value="${k}"${k === gapMin ? ' selected' : ''}>${k} pts</option>`).join('') + `</select></label>`;
+  [4, 5, 6, 7, 8, 9, 10].map(k => `<option value="${k}"${k === gapMin ? ' selected' : ''}>${k} pts</option>`).join('') + `</select></label>`;
 const bindGap = (box, rerender) => box.querySelectorAll('select.gapsel').forEach(sel => sel.onchange = () => { gapMin = +sel.value; sync(); rerender(); });
 const BOOK = {};                                               // upcoming lines (odds.js) by "home|away"
 for (const o of (window.ODDS && window.ODDS.list) || []) BOOK[o.h + '|' + o.a] = o;
@@ -1176,7 +1184,7 @@ if (p.get('view') === 'rankings'){
   if (hashStages().length) rkStages = new Set(hashStages());
   if (hashSeasons() !== null) rkSeasons = hashSeasons();
 }
-{ const g = +p.get('gap'); if (g >= 3 && g <= 9) gapMin = Math.round(g); }
+{ const g = +p.get('gap'); if (g >= 4 && g <= 10) gapMin = Math.round(g); }
 render();
 if (p.get('layout') === 'table') pjMode = 'table';
 setView(p.get('view'));

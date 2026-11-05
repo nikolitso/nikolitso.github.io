@@ -116,12 +116,15 @@ table.mkt tr.mkgames table th{padding:6px 6px 8px}
 table.mkt tr.mkgames table td:nth-child(3){white-space:normal;min-width:150px}   /* only the opponent may wrap */
 td.better{color:var(--win)!important;font-weight:700}td.worse{color:var(--loss)!important}
 th.sort{cursor:pointer;user-select:none}th.sort:hover,th.sort.on{color:var(--gold)}
-.cltab{width:100%;margin-top:14px}.cll a{display:inline-block;margin:2px 12px 2px 0;color:var(--gold);text-decoration:none}.cll a:hover{text-decoration:underline}
+.cltab{width:100%;margin-top:14px}.cll{display:grid;grid-template-columns:repeat(5,minmax(max-content,1fr));gap:2px 14px}.cll .tag{font:inherit}.cll a{color:var(--gold);text-decoration:none}.cll a:hover{text-decoration:underline}
+@media (max-width:720px){table.cltab td,table.cltab th{white-space:normal}.cll{grid-template-columns:repeat(2,max-content)}}
 .rogrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,430px),1fr));gap:16px;margin-top:16px}
 .rogrid .card{padding:16px;margin:0}.rogrid h3{font:600 18px var(--serif);margin:0 0 2px;cursor:pointer}.rogrid h3:hover{color:var(--gold)}
 .rogrid table{width:100%;border-collapse:collapse;margin-top:8px}.rogrid td,.rogrid th{padding:4px 4px;border-top:1px solid var(--line);font-size:15.5px}
 .rogrid th{font:400 12.5px var(--mono);color:var(--muted);text-align:left;border-top:0}.rogrid .n{text-align:right}
 .rogrid th.sort:hover,.rogrid th.sort.on{color:var(--gold)}.rogrid tr.out td{color:var(--loss)}.rogrid tr.out .pl{text-decoration:line-through}
+.rogrid .card{min-width:0;overflow-x:auto}
+@media (max-width:560px){.rogrid .card{padding:12px 10px}.rogrid td,.rogrid th{padding:3px 2px;font-size:13.5px}.rogrid th{font-size:11.5px;letter-spacing:0}}
 @media (max-width:420px){.rogrid{grid-template-columns:1fr}}
 .back{font:500 14.5px var(--mono);color:var(--gold);text-decoration:none;letter-spacing:.04em}
 .back:hover{text-decoration:underline}
@@ -394,7 +397,7 @@ const dayName = d => new Date(d + 'T12:00').toLocaleDateString('en-GB', {weekday
 const PEER_DEFAULT = 3;
 let pjAll = {h: PEER_DEFAULT, a: PEER_DEFAULT}, pjRow = {};      // global setting, per-fixture overrides by index
 const PJ_STAGES = ['Main', 'Second stage', 'First stage', 'Preliminary', 'Play Offs', 'Qualification'];
-const PJ_STAGE_LABEL = {'Main': 'Main · Group'};
+const PJ_STAGE_LABEL = {'Main': 'Regular Season'};
 const ALL_SEASONS = [...new Set(matches.map(m => m[0]))].sort();
 // sample filters: how many of the latest seasons to use (0 = all) and which stages count; default = Main only
 const PJ_DEFAULT_SEASONS = 5;
@@ -1179,7 +1182,7 @@ let clQuery = '', clSort = {k: 'r', dir: -1};
 function renderClubs(){
   const box = $('clView');
   if (!window.CLUBS){ box.innerHTML = '<div class="empty">No clubs yet.</div>'; return; }
-  const names = {site: 'Website', facebook: 'Facebook', instagram: 'Instagram', x: 'X', youtube: 'YouTube'};
+  const names = {site: 'Website', instagram: 'Instagram', facebook: 'Facebook', x: 'X', youtube: 'YouTube'};
   const rating = new Map(((window.PROJ && PROJ.ratings) || []).map(x => [x.c, x.r]));
   const all = Object.entries(CLUBS.list).map(([club, l]) => ({club, country: teams[club] || '', r: rating.get(club) ?? null, l}));
   box.innerHTML = `<div class="note" style="margin-bottom:14px">Official websites and social accounts of the ${all.length} clubs, from FIBA's team pages and the clubs' own websites (updated ${fmtDate(CLUBS.updated)}).</div>
@@ -1193,7 +1196,7 @@ function renderClubs(){
       });
     const th = (c, label, cls = '', title = '') => `<th class="${cls} sort${c === k ? ' on' : ''}" data-k="${c}"${title ? ` title="${title}"` : ''}>${label}${c === k ? (dir > 0 ? ' ▲' : ' ▼') : ''}</th>`;
     $('clList').innerHTML = rows.length ? `<div class="scroll"><table class="fx cltab"><tr>${th('club', 'Club')}${th('country', 'Country')}${th('r', 'Rating', 'n', 'The model rating, as on Club Ratings')}<th>Links</th></tr>` +
-      rows.map(x => `<tr><td><b>${esc(x.club)}</b></td><td>${esc(x.country)}</td><td class="n">${x.r === null ? '–' : `<b class="hcp">${sgn(x.r)}</b>`}</td><td class="cll">${Object.entries(names).filter(([n]) => x.l[n]).map(([n, t]) => `<a href="${esc(x.l[n])}" target="_blank" rel="noopener">${t}</a>`).join('')}</td></tr>`).join('') + '</table></div>'
+      rows.map(x => `<tr><td><b>${esc(x.club)}</b></td><td>${esc(x.country)}</td><td class="n">${x.r === null ? '–' : `<b class="hcp">${sgn(x.r)}</b>`}</td><td><div class="cll">${Object.entries(names).map(([n, t]) => x.l[n] ? `<a href="${esc(x.l[n])}" target="_blank" rel="noopener">${t}</a>` : `<span class="tag" title="No official account found">${t} –</span>`).join('')}</div></td></tr>`).join('') + '</table></div>'
       : '<div class="empty">No club matches.</div>';
   };
   $('clSearch').oninput = e => { clQuery = e.target.value; draw(); };
