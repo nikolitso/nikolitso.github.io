@@ -1164,27 +1164,31 @@ function renderRatings(){
 }
 // ---------- Home: one tile per section with its number today, and the last round, which no other tab lists
 // ---------- Clubs: each club's official website and social accounts
-let clQuery = '', clSort = {k: 'club', dir: 1};
+let clQuery = '', clSort = {k: 'r', dir: -1};
 function renderClubs(){
   const box = $('clView');
   if (!window.CLUBS){ box.innerHTML = '<div class="empty">No clubs yet.</div>'; return; }
   const names = {site: 'Website', facebook: 'Facebook', instagram: 'Instagram', x: 'X', youtube: 'YouTube'};
-  const all = Object.entries(CLUBS.list).map(([club, l]) => ({club, country: teams[club] || '', l}));
+  const rating = new Map(((window.PROJ && PROJ.ratings) || []).map(x => [x.c, x.r]));
+  const all = Object.entries(CLUBS.list).map(([club, l]) => ({club, country: teams[club] || '', r: rating.get(club) ?? null, l}));
   box.innerHTML = `<div class="note" style="margin-bottom:14px">Official websites and social accounts of the ${all.length} clubs, from FIBA's team pages and the clubs' own websites (updated ${fmtDate(CLUBS.updated)}).</div>
     <input id="clSearch" placeholder="Search a club or country" value="${esc(clQuery)}" aria-label="Search clubs"><div id="clList"></div>`;
   const draw = () => {
     const q = clQuery.trim().toLowerCase(), {k, dir} = clSort;
     const rows = all.filter(x => !q || x.club.toLowerCase().includes(q) || x.country.toLowerCase().includes(q))
-      .sort((a, b) => a[k].localeCompare(b[k]) * dir || a.club.localeCompare(b.club));
-    const th = (c, label) => `<th class="sort${c === k ? ' on' : ''}" data-k="${c}">${label}${c === k ? (dir > 0 ? ' ▲' : ' ▼') : ''}</th>`;
-    $('clList').innerHTML = rows.length ? `<div class="scroll"><table class="fx cltab"><tr>${th('club', 'Club')}${th('country', 'Country')}<th>Links</th></tr>` +
-      rows.map(x => `<tr><td><b>${esc(x.club)}</b></td><td>${esc(x.country)}</td><td class="cll">${Object.entries(names).filter(([n]) => x.l[n]).map(([n, t]) => `<a href="${esc(x.l[n])}" target="_blank" rel="noopener">${t}</a>`).join('')}</td></tr>`).join('') + '</table></div>'
+      .sort((a, b) => {                                            // clubs without a rating always last
+        if (a[k] === null || b[k] === null) return (a[k] === null) - (b[k] === null) || a.club.localeCompare(b.club);
+        return (k === 'r' ? a.r - b.r : a[k].localeCompare(b[k])) * dir || a.club.localeCompare(b.club);
+      });
+    const th = (c, label, cls = '', title = '') => `<th class="${cls} sort${c === k ? ' on' : ''}" data-k="${c}"${title ? ` title="${title}"` : ''}>${label}${c === k ? (dir > 0 ? ' ▲' : ' ▼') : ''}</th>`;
+    $('clList').innerHTML = rows.length ? `<div class="scroll"><table class="fx cltab"><tr>${th('club', 'Club')}${th('country', 'Country')}${th('r', 'Rating', 'n', 'The model rating, as on Club Ratings')}<th>Links</th></tr>` +
+      rows.map(x => `<tr><td><b>${esc(x.club)}</b></td><td>${esc(x.country)}</td><td class="n">${x.r === null ? '–' : `<b class="hcp">${sgn(x.r)}</b>`}</td><td class="cll">${Object.entries(names).filter(([n]) => x.l[n]).map(([n, t]) => `<a href="${esc(x.l[n])}" target="_blank" rel="noopener">${t}</a>`).join('')}</td></tr>`).join('') + '</table></div>'
       : '<div class="empty">No club matches.</div>';
   };
   $('clSearch').oninput = e => { clQuery = e.target.value; draw(); };
   $('clList').onclick = e => {
     const h = e.target.closest('th.sort'); if (!h) return;
-    clSort = h.dataset.k === clSort.k ? {k: clSort.k, dir: -clSort.dir} : {k: h.dataset.k, dir: 1};
+    clSort = h.dataset.k === clSort.k ? {k: clSort.k, dir: -clSort.dir} : {k: h.dataset.k, dir: h.dataset.k === 'r' ? -1 : 1};
     draw();
   };
   draw();
