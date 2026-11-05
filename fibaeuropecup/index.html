@@ -70,6 +70,15 @@ tr.click{cursor:pointer} tr.click:hover td{background:var(--an-accent-soft)}
 .note b{color:var(--text);font-weight:600}
 td.big{color:var(--bg);background:var(--gold);font-weight:700}
 table.pjt{table-layout:fixed;width:100%;min-width:1140px}table.pjt td{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}table.pjt th{white-space:nowrap;overflow:visible}table.pjt td:last-child,table.pjt td:nth-child(2){white-space:normal}
+/* numbers first: bigger and brighter than the text around them, digits lined up */
+table{font-variant-numeric:tabular-nums}
+.fx td.n{font-size:16.5px;color:var(--text)}
+.fx td.n.hcp{font-size:17.5px;font-weight:600;color:var(--gold)}
+.fx td.n.dim{color:var(--muted);font-weight:400}
+.fx td.n.tag{font-size:13.5px;font-weight:400;color:var(--muted)}
+.fx td.n:first-child{font-size:15.5px;color:var(--muted)}
+.fx td.n.big{font-weight:600;box-shadow:inset 0 0 0 3px var(--bg)}
+.fx tr:nth-child(even){background:transparent}
 /* Market Analysis group tables */
 h2.mkh{font:600 21px var(--serif);margin:38px 0 10px;padding-bottom:8px;border-bottom:1px solid var(--line)}
 table.mkt{table-layout:fixed;width:100%;border-collapse:separate;border-spacing:0;font-variant-numeric:tabular-nums}
@@ -423,7 +432,7 @@ const MIN_GAMES = 8;
 // model-vs-book gaps above gapMin points are highlighted (Projections); chosen from 4 to 10
 let gapMin = 6;
 const GAP_DEFAULT = 6;
-const gapSelect = () => `<label>Highlight gaps over <select class="peer gapsel" aria-label="Gap threshold">` +
+const gapSelect = () => `<label>Highlight gaps from <select class="peer gapsel" aria-label="Gap threshold">` +
   [4, 5, 6, 7, 8, 9, 10].map(k => `<option value="${k}"${k === gapMin ? ' selected' : ''}>${k} pts</option>`).join('') + `</select></label>`;
 const bindGap = (box, rerender) => box.querySelectorAll('select.gapsel').forEach(sel => sel.onchange = () => { gapMin = +sel.value; sync(); rerender(); });
 const fmtLine = v => (v > 0 ? '+' : v < 0 ? '−' : '') + Math.abs(v).toFixed(1);
@@ -532,7 +541,7 @@ const peerSelect = (i, side, v) => `<select class="peer" data-i="${i}" data-side
 // rating and the country's power-ranking rating; tonight's absences from the injury list. Independent of the lines.
 const outText = list => list.map(([p, imp, note]) => `${esc(p)} <span class="tag">${imp.toFixed(1)}${note ? ' · ' + esc(note) : ''}</span>`).join(', ');
 const gapCell = (v, cls = '') => v === null ? `<td class="n tag${cls}">–</td>` :
-  Math.abs(v) > gapMin ? `<td class="n big${cls}">${sgn(v)}</td>` : `<td class="n tag${cls}">${sgn(v)}</td>`;
+  Math.abs(v) >= gapMin ? `<td class="n big${cls}">${sgn(v)}</td>` : `<td class="n dim${cls}">${sgn(v)}</td>`;
 // one set of column widths for every day's table, so the columns line up down the page
 const PJ_COLS = '<colgroup><col style="width:64px"><col style="width:290px">' + '<col style="width:92px">'.repeat(4) + '<col style="width:136px">'.repeat(2) + '<col></colgroup>';
 let pjMode = 'cards';                                              // 'cards' or 'table'
@@ -588,7 +597,7 @@ function pjCard(g){
   const fav = (v, h, a) => v > 0 ? h : a;
   const winner = ph => `<b class="nm" title="${esc(fav(ph - 0.5, g.h, g.a))}">${esc(fav(ph - 0.5, g.h, g.a))}</b>${pct(Math.max(ph, 1 - ph))}`;
   const bookHcp = !o ? '–' : o.sp === 0 ? '<b class="nm">Level</b>pick\'em' : `<b class="nm" title="${esc(o.sp < 0 ? g.h : g.a)}">${esc(o.sp < 0 ? g.h : g.a)}</b>−${Math.abs(o.sp).toFixed(1)}`;
-  const gapPill = gap => `<span class="gp${Math.abs(gap) > gapMin ? ' big' : ''}" title="How far the model is from the bookmaker's line">${Math.abs(gap).toFixed(1)} pts apart</span>`;
+  const gapPill = gap => `<span class="gp${Math.abs(gap) >= gapMin ? ' big' : ''}" title="How far the model is from the bookmaker's line">${Math.abs(gap).toFixed(1)} pts apart</span>`;
   const leans = [];
   if (o){
     const gs = g.mh - bh;
@@ -643,7 +652,7 @@ function renderProjections(){
       <td><b>${esc(g.h)}</b> <span class="tag">${esc(code(teams[g.h]))}</span> – <b>${esc(g.a)}</b> <span class="tag">${esc(code(teams[g.a]))}</span></td>
       <td class="n hcp"${g.adj ? ` title="Absences ${sgn(g.adj)}"` : ''}><b>${sgn(g.mh)}</b>${g.adj ? '*' : ''}</td><td class="n gap">${pct(g.ph)}</td>
       ${o ? `<td class="n">${sgn(bh)}</td><td class="n gap">${pb === null ? '–' : pct(pb)}</td>`
-          : '<td class="n tag gap" colspan="2" title="Lines appear a few days before the game">no line yet</td>'}
+          : '<td class="n tag" title="Lines appear a few days before the game">–</td><td class="n tag gap">–</td>'}
       ${o ? gapCell(g.mh - bh, ' gap') : '<td class="n tag gap">–</td>'}
       ${agree(o ? g.mh - bh : null, xh && xa ? xh.vsS - xa.vsS : null, okS, 'home − away vs line', xh && xa ? `${g.h} ${sgn(xh.vsS)} (${xh.n} games), ${g.a} ${sgn(xa.vsS)} (${xa.n} games). ` : '').replace('class="n ', 'class="n gap ')}
       <td class="tag">${out}</td></tr>`;
@@ -718,7 +727,7 @@ function renderPjCards(P){
         <li><b>Market so far</b>: the kind of game the line makes it, and its record against the lines this season (<a class="back" href="#view=market" data-go="market">Market Analysis</a>). Gold = one side has won 54%+ of 20 or more games: a possible market gap, still not proven.</li>
         <li><b>Clubs</b>: clubs on the underrated or overrated lists of Market Analysis, with their average against the handicap.</li>
         <li><b>Pick</b>: a market edge (a gold market gap) and a model edge (${PJ_EDGE}+ points from the line) on the same side, and the club rating does not disagree: the club is not overrated and its opponent is not underrated.</li>
-        <li><b>Model leans</b>: the bet the model prefers at the bookmaker's line, and how far apart the two are. Gaps over ${gapMin} points are in gold. "No lean" means the two are close.</li>
+        <li><b>Model leans</b>: the bet the model prefers at the bookmaker's line, and how far apart the two are. Gaps of ${gapMin}+ points are in gold. "No lean" means the two are close.</li>
         <li><b>*</b>: the handicap includes the absences listed on the card.</li></ul></details></div>
     <h2 style="margin-top:6px">Picks</h2>` + (picks.length
       ? `<div class="scroll"><table class="fx pjpk"><tr><th class="n">Time</th><th>Pick</th><th>Game</th><th>Market edge</th><th class="n">Model edge</th><th>Club rating</th></tr>` +
