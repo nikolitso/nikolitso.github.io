@@ -26,6 +26,7 @@ jobs:
           run: |
             python -W ignore run_update.py | tee /tmp/update.log
             python make_site.py "$GITHUB_WORKSPACE/basketball"
+            python games.py "$GITHUB_WORKSPACE/basketball"
           pages: basketball
           label: Basketball
           token: ${{ secrets.SITES_TOKEN }}

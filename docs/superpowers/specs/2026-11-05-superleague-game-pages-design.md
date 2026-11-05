@@ -53,3 +53,12 @@ the main Super League page or the model.
 follows the same choices: played games show the score and the numbers, with no summary and no side column, and no game has a
 closing note. Only games with a projection get a page: the frozen entries in `archive.js` (saved before tip-off with the
 bookmaker's line) and the upcoming ones in `projections.js`. Rounds 1-4 of 2026-27 predate the archive and have no page.
+
+## Basketball (5 Nov 2026)
+
+`BettingSignal/basketball/projector/games.py` writes `/basketball/games/` for the Basket League and Cyprus Division A, from the page data
+`make_site.py` wrote. Upcoming games show the bookmaker's lines, both records and European fatigue. The model's projection joins them only
+when `config.SHOW_PROJECTIONS` is on, using the same numbers as the league page's Projections table; that tab is hidden while the setting is
+off. Played games show the score, the lines and the match report and never a projection: `lines_log.json` keeps `ours`, not the `strength`
+figure the site shows, so it cannot say what the model showed.
+

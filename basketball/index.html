@@ -126,7 +126,7 @@ html{scroll-behavior:smooth;font-size:17.5px}   /* one step larger: the page siz
 
 <section id="league" hidden>
   <p class="crumb"><a href="/basketball/">← All leagues</a></p>
-  <div><div class="eyebrow proj">Handicap</div><h2 id="lName"></h2><p class="muted proj" id="lNote"></p></div>
+  <div><div class="eyebrow proj">Handicap</div><h2 id="lName"></h2><p class="games-link" style="margin:6px 0 0"><a href="/basketball/games/">Every game, one page each →</a></p><p class="muted proj" id="lNote"></p></div>
   <div id="lLinks" hidden></div>
   <h3 class="proj">Next matches</h3>
   <div class="tbl proj"><table id="lNext"></table></div>
@@ -383,6 +383,9 @@ function foreignGames(l){
 }
 /* surname only, full name on hover: 'Greg Brown Iii' -> Brown */
 const sur=n=>{const w=String(n).split(' ').filter(x=>!/^(jr|sr|ii|iii|iv)\.?$/i.test(x));return `<span title="${esc(n)}">${esc(w[w.length-1]||n)}</span>`};
+/* each game has its own page: /basketball/games/<date>-<home>-<away>/ (written by games.py) */
+const slugify=s=>s.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+const gameHref=g=>`/basketball/games/${g.date}-${slugify(g.home)}-${slugify(g.away)}/`;
 /* who was missing in a played game and what it cost, from the team-strength block */
 const lineup=(l,g)=>{const E=((l.strength||{}).gameEffects||{})[g.id];if(!E)return '';
   const s=[['home',g.home],['away',g.away]].filter(([k])=>E[k]&&E[k].out.length).map(([k,t])=>`${esc(t)} without ${E[k].out.map(sur).join(', ')} (<span class="${cls(-E[k].cost)}">${sg(-E[k].cost*(l.strength.poss||72)/100)}</span>)`);
@@ -407,7 +410,7 @@ function roundsBlock(l){
     const P=$('#rdPanel');
     if(open===null){P.hidden=true;P.innerHTML='';return}
     P.hidden=false;
-    P.innerHTML=`<ul class="boxlist small" style="margin-top:10px">${R[open].games.map(g=>`<li><span class="muted">${day(g.date)}</span> · <b>${esc(g.home)} ${g.hp}-${g.ap} ${esc(g.away)}</b>${g.box?' · '+ext(g.box,'Box score'):''}${g.live?' · '+ext(g.live,'Live'):''}${g.report?' · '+ext(g.report,'Report'):''}${impLine(g)}${lineup(l,g)}${euroLine(l,g)}${g.headline?`<br><span>${esc(g.headline)}</span>`:''}${g.summary?`<br><span class="muted">${esc(g.summary)}</span>`:''}</li>`).join('')}</ul>`;
+    P.innerHTML=`<ul class="boxlist small" style="margin-top:10px">${R[open].games.map(g=>`<li><span class="muted">${day(g.date)}</span> · <b>${esc(g.home)} ${g.hp}-${g.ap} ${esc(g.away)}</b> · <a href="${gameHref(g)}">Game page</a>${g.box?' · '+ext(g.box,'Box score'):''}${g.live?' · '+ext(g.live,'Live'):''}${g.report?' · '+ext(g.report,'Report'):''}${impLine(g)}${lineup(l,g)}${euroLine(l,g)}${g.headline?`<br><span>${esc(g.headline)}</span>`:''}${g.summary?`<br><span class="muted">${esc(g.summary)}</span>`:''}</li>`).join('')}</ul>`;
   };
   draw();
 }
@@ -428,7 +431,7 @@ function marketBlock(l){
    Team strength opens first */
 const PANE_ORDER=['prj','str','mk','std','rat','rd','lg','fat','off','ros'], OLD_ANCHOR={stdHead:'std',lgHead:'lg',mkHead:'mk',rosHead:'ros',fgHead:'ros',rdHead:'rd',offHead:'off'};
 function panes(){
-  const live=PANE_ORDER.map(k=>$(`#league .pane[data-pane="${k}"]`)).filter(p=>p&&[...p.querySelectorAll('h3')].some(h=>!h.hidden&&!h.classList.contains('proj')));
+  const live=PANE_ORDER.map(k=>$(`#league .pane[data-pane="${k}"]`)).filter(p=>p&&!(p.dataset.pane==='prj'&&D.showProjections===false)&&[...p.querySelectorAll('h3')].some(h=>!h.hidden&&!h.classList.contains('proj')));
   if(!live.length)return;
   if(!$('#lLinks .chips'))$('#lLinks').innerHTML='<div class="chips"></div><div class="hcard" id="lPanel" hidden style="margin-top:10px"></div>';
   const box=$('#lLinks .chips'); $('#lLinks').hidden=false;
