@@ -274,7 +274,8 @@
     }
    ]
   },
-  "line": 168.5
+  "line": 168.5,
+  "hcp": 7.5
  },
  "EuroCup:64": {
   "comp": "EuroCup",
@@ -569,7 +570,8 @@
     }
    ]
   },
-  "line": 173.5
+  "line": 173.5,
+  "hcp": 13.5
  },
  "GBL:BD2162B8": {
   "comp": "GBL",
@@ -851,7 +853,8 @@
     }
    ]
   },
-  "line": 164.5
+  "line": 164.5,
+  "hcp": 10.5
  },
  "EuroCup:78": {
   "comp": "EuroCup",
@@ -1133,7 +1136,8 @@
     }
    ]
   },
-  "line": 169.5
+  "line": 169.5,
+  "hcp": -5.0
  },
  "GBL:29CD5AD8": {
   "comp": "GBL",
@@ -1415,7 +1419,8 @@
     }
    ]
   },
-  "line": 159.5
+  "line": 159.5,
+  "hcp": 6.5
  },
  "EuroCup:95": {
   "comp": "EuroCup",
@@ -1697,7 +1702,8 @@
     }
    ]
   },
-  "line": 173.5
+  "line": 173.5,
+  "hcp": 9.5
  },
  "GBL:9B455F5D": {
   "comp": "GBL",
@@ -1705,45 +1711,45 @@
   "date": "2026-11-07T15:30:00Z",
   "opp": "Vikos Falcons",
   "home": true,
-  "saved": "2026-11-05T06:44:02Z",
-  "paok": 83.9,
-  "oppScore": 75.4,
-  "winProb": 78,
+  "saved": "2026-11-05T08:55:35Z",
+  "paok": 86.7,
+  "oppScore": 72.6,
+  "winProb": 93,
   "lineupSource": "manual",
   "teamStats": {
    "pts": {
-    "paok": 83.9,
-    "opp": 75.4,
+    "paok": 86.7,
+    "opp": 72.6,
     "total": 159.3
    },
    "fg2m": {
-    "paok": 18.2,
-    "opp": 18.1,
+    "paok": 18.8,
+    "opp": 17.4,
     "total": 36.2
    },
    "fg3m": {
-    "paok": 9.7,
-    "opp": 8.4,
+    "paok": 10.0,
+    "opp": 8.1,
     "total": 18.0
    },
    "ftm": {
-    "paok": 18.6,
-    "opp": 14.2,
-    "total": 32.7
+    "paok": 19.2,
+    "opp": 13.6,
+    "total": 32.8
    },
    "ast": {
-    "paok": 16.8,
-    "opp": 15.9,
-    "total": 32.7
+    "paok": 17.4,
+    "opp": 15.3,
+    "total": 32.6
    },
    "oreb": {
-    "paok": 10.3,
-    "opp": 9.9,
+    "paok": 10.0,
+    "opp": 10.2,
     "total": 20.2
    },
    "dreb": {
-    "paok": 24.6,
-    "opp": 23.6,
+    "paok": 25.3,
+    "opp": 22.9,
     "total": 48.2
    },
    "tov": {
@@ -1752,13 +1758,15 @@
     "total": 25.1
    },
    "reb": {
-    "paok": 34.9,
-    "opp": 33.5,
+    "paok": 35.3,
+    "opp": 33.1,
     "total": 68.4
    }
   },
   "modelTotal": 148.9,
   "line": 161.5,
+  "modelMargin": 8.5,
+  "hcp": 15.5,
   "players": {
    "paok": [
     {
@@ -1988,7 +1996,7 @@
   "date": "2026-11-10T17:00:00Z",
   "opp": "Balkan",
   "home": false,
-  "saved": "2026-11-05T06:44:02Z",
+  "saved": "2026-11-05T08:55:35Z",
   "paok": 76.3,
   "oppScore": 79.2,
   "winProb": 41,
@@ -2042,6 +2050,8 @@
   },
   "modelTotal": 154.3,
   "line": null,
+  "modelMargin": -2.9,
+  "hcp": null,
   "players": {
    "paok": [
     {

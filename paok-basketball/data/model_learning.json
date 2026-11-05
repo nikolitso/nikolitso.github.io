@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-05T06:44:02Z",
+ "updated": "2026-11-05T08:55:19Z",
  "comps": {
   "EuroCup": {
    "games": 1092,
@@ -8,7 +8,11 @@
    "totalBias": 1.19,
    "spreadSd": 12.5,
    "lineWeight": 0.79,
-   "lineWeightRaw": 0.79
+   "lineWeightRaw": 0.79,
+   "marginGames": 1032,
+   "marginWeight": 0.8,
+   "marginWeightRaw": 0.81,
+   "marginSd": 11.5
   },
   "GBL": {
    "games": 962,
@@ -17,7 +21,11 @@
    "totalBias": 1.47,
    "spreadSd": 11.0,
    "lineWeight": 0.8,
-   "lineWeightRaw": 0.89
+   "lineWeightRaw": 0.89,
+   "marginGames": 944,
+   "marginWeight": 0.8,
+   "marginWeightRaw": 0.84,
+   "marginSd": 9.5
   }
  },
  "paok": [
@@ -29,7 +37,9 @@
    "line": 168.5,
    "real": 172,
    "margin": -0.6,
-   "realMargin": 4
+   "realMargin": 4,
+   "modelMargin": -0.6,
+   "hcp": 7.5
   },
   {
    "comp": "EuroCup",
@@ -39,7 +49,9 @@
    "line": 173.5,
    "real": 165,
    "margin": 7.5,
-   "realMargin": 9
+   "realMargin": 9,
+   "modelMargin": 7.5,
+   "hcp": 13.5
   },
   {
    "comp": "GBL",
@@ -49,7 +61,9 @@
    "line": 164.5,
    "real": 127,
    "margin": 6.4,
-   "realMargin": 3
+   "realMargin": 3,
+   "modelMargin": 6.4,
+   "hcp": 10.5
   },
   {
    "comp": "EuroCup",
@@ -59,7 +73,9 @@
    "line": 169.5,
    "real": 165,
    "margin": -5.5,
-   "realMargin": -3
+   "realMargin": -3,
+   "modelMargin": -5.5,
+   "hcp": -5.0
   },
   {
    "comp": "GBL",
@@ -69,7 +85,9 @@
    "line": 159.5,
    "real": 116,
    "margin": -0.6,
-   "realMargin": 10
+   "realMargin": 10,
+   "modelMargin": -0.6,
+   "hcp": 6.5
   },
   {
    "comp": "EuroCup",
@@ -79,7 +97,9 @@
    "line": 173.5,
    "real": 224,
    "margin": 8.4,
-   "realMargin": 2
+   "realMargin": 2,
+   "modelMargin": 8.4,
+   "hcp": 9.5
   }
  ]
 }

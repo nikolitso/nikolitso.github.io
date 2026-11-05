@@ -27,7 +27,9 @@ const vsAt = (g) => (g.neutral ? 'vs' : g.home ? 'vs' : '@');
 // bookmaker totals for upcoming games; the page works without them
 const getLines = () => fetch(`../basketball/overs/live.js?v=${Date.now()}`).then((r) => r.text())
   .then((t) => JSON.parse(t.slice(t.indexOf('{'), t.lastIndexOf('}') + 1)).fixtures.filter((g) => g.home === 'PAOK' || g.away === 'PAOK')).catch(() => []);
-const lineFor = (g) => { const d = toDate(g.date).getTime(); const m = (state.lines || []).find((l) => Math.abs(new Date(l.dt.replace(' ', 'T') + 'Z').getTime() - d) < 864e5); return m ? m.line : null; };
+const lineRow = (g) => { const d = toDate(g.date).getTime(); return (state.lines || []).find((l) => Math.abs(new Date(l.dt.replace(' ', 'T') + 'Z').getTime() - d) < 864e5); };
+const lineFor = (g) => lineRow(g)?.line ?? null;
+const hcpFor = (g) => { const m = lineRow(g); return m?.hcp == null ? null : (m.home === 'PAOK' ? m.hcp : -m.hcp); }; // PAOK's expected margin
 
 async function load() {
   const get = (f) => fetch(`data/${f}?v=${Date.now()}`).then((r) => r.json());
@@ -499,6 +501,8 @@ VIEWS.scout = function scout() {
       <div class="table-wrap"><table><thead><tr><th class="l">Stat</th>${sides.map(([, n]) => `<th>${esc(n)}</th>`).join('')}<th>Total</th></tr></thead>
       <tbody>${tsRows.filter(([k]) => ts[k]).map(([k, label]) => `<tr><td class="l">${label}</td>${sides.map(([s]) => `<td><b>${f1(ts[k][s])}</b></td>`).join('')}<td>${f1(ts[k].total)}</td></tr>`).join('')}</tbody></table></div>` : '';
     const line = lineFor(pick) ?? pr.line ?? null;
+    const hcp = hcpFor(pick) ?? pr.hcp ?? null;
+    const byWhom = (m) => (Math.abs(m) < 0.05 ? 'level' : `${esc(m > 0 ? 'PAOK' : pick.opp)} by ${f1(Math.abs(m))}`);
     const fit = pr.learned || {};
     const [hn, hs, an, as] = pick.home ? ['PAOK', us.score, pick.opp, them.score] : [pick.opp, them.score, 'PAOK', us.score];
     proj = `<div class="card dark proj">
@@ -507,6 +511,7 @@ VIEWS.scout = function scout() {
         <div class="winbar"><div style="width:${pr.winProb}%"></div></div>
         <div class="muted">PAOK win chance: <b style="color:inherit">${pr.winProb}%</b> · expected ${pr.pace ? f1(pr.pace) : '–'} possessions · ${esc(src)}${pr.note ? ' · ' + esc(pr.note) : ''}</div>
         <div class="muted">Projected total: <b style="color:inherit">${f1(us.score + them.score)}</b>${pr.modelTotal ? ` (model alone ${f1(pr.modelTotal)})` : ''} · Bookmaker total: <b style="color:inherit">${line != null ? line : 'not out yet'}</b></div>
+        <div class="muted">Projected margin: <b style="color:inherit">${byWhom(us.score - them.score)}</b>${pr.modelMargin != null ? ` (model alone ${byWhom(pr.modelMargin)})` : ''} · Bookmaker handicap: <b style="color:inherit">${hcp != null ? byWhom(hcp) : 'not out yet'}</b></div>
       </div>
       ${tstats}
       ${absent(us, 'PAOK')}${absent(them, pick.opp)}
@@ -515,7 +520,7 @@ VIEWS.scout = function scout() {
         Team stats: each team's rate per 100 possessions × what the opponent allows ÷ the league average, over the expected possessions (pulled harder toward the league average than scoring, since these rates settle more slowly); made shots are scaled to add up to the projected score,
         and rebounds come from the expected misses and both teams' offensive and defensive rebounding rates.
         PAOK's numbers come from games in this competition only (the rosters differ between the Greek League and the EuroCup).
-        ${fit.games ? `Totals get a correction of +${fit.totalBias} points and, once a bookmaker total is out, move ${Math.round(fit.lineWeight * 100)}% of the way to it; the margin between the teams stays the same. The home edge, this correction and the win chance are re-fitted after every game on ${fit.games.toLocaleString('en-GB')} past games.` : ''}
+        ${fit.games ? `Totals get a correction of +${fit.totalBias} points and, once a bookmaker total is out, move ${Math.round(fit.lineWeight * 100)}% of the way to it.${fit.marginWeight != null ? ` Once a bookmaker handicap is out, the margin moves ${Math.round(fit.marginWeight * 100)}% of the way to it.` : ''} The home edge, these two blends and the win chance are re-fitted after every game on ${fit.games.toLocaleString('en-GB')} past games.` : ''}
 </p>`;
   }
   const gf = (state.gameFiles || {})[`${pick.comp}-${pick.code}`];

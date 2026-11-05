@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-05T06:44:02Z",
+ "updated": "2026-11-05T08:55:35Z",
  "reports": [
   {
    "comp": "EuroCup",
@@ -1086,6 +1086,8 @@
     "note": "PAOK without Osman, who is out for one to two months.",
     "modelTotal": 154.3,
     "line": null,
+    "modelMargin": -2.9,
+    "hcp": null,
     "learned": {
      "games": 1092,
      "lineGames": 1032,
@@ -1093,7 +1095,11 @@
      "totalBias": 1.19,
      "spreadSd": 12.5,
      "lineWeight": 0.79,
-     "lineWeightRaw": 0.79
+     "lineWeightRaw": 0.79,
+     "marginGames": 1032,
+     "marginWeight": 0.8,
+     "marginWeightRaw": 0.81,
+     "marginSd": 11.5
     },
     "teamStats": {
      "pts": {
@@ -1966,7 +1972,7 @@
    ],
    "projection": {
     "paok": {
-     "score": 83.9,
+     "score": 86.7,
      "players": [
       {
        "name": "Kyle Alexander",
@@ -2083,7 +2089,7 @@
      "pace": 71.4
     },
     "opp": {
-     "score": 75.4,
+     "score": 72.6,
      "players": [
       {
        "name": "Giannis Karakostas",
@@ -2197,12 +2203,14 @@
      "missing": [],
      "pace": 71.4
     },
-    "winProb": 78,
+    "winProb": 93,
     "pace": 71.4,
     "lineupSource": "manual",
     "note": "PAOK without Osman, who is out for one to two months.",
     "modelTotal": 148.9,
     "line": 161.5,
+    "modelMargin": 8.5,
+    "hcp": 15.5,
     "learned": {
      "games": 962,
      "lineGames": 944,
@@ -2210,42 +2218,46 @@
      "totalBias": 1.47,
      "spreadSd": 11.0,
      "lineWeight": 0.8,
-     "lineWeightRaw": 0.89
+     "lineWeightRaw": 0.89,
+     "marginGames": 944,
+     "marginWeight": 0.8,
+     "marginWeightRaw": 0.84,
+     "marginSd": 9.5
     },
     "teamStats": {
      "pts": {
-      "paok": 83.9,
-      "opp": 75.4,
+      "paok": 86.7,
+      "opp": 72.6,
       "total": 159.3
      },
      "fg2m": {
-      "paok": 18.2,
-      "opp": 18.1,
+      "paok": 18.8,
+      "opp": 17.4,
       "total": 36.2
      },
      "fg3m": {
-      "paok": 9.7,
-      "opp": 8.4,
+      "paok": 10.0,
+      "opp": 8.1,
       "total": 18.0
      },
      "ftm": {
-      "paok": 18.6,
-      "opp": 14.2,
-      "total": 32.7
+      "paok": 19.2,
+      "opp": 13.6,
+      "total": 32.8
      },
      "ast": {
-      "paok": 16.8,
-      "opp": 15.9,
-      "total": 32.7
+      "paok": 17.4,
+      "opp": 15.3,
+      "total": 32.6
      },
      "oreb": {
-      "paok": 10.3,
-      "opp": 9.9,
+      "paok": 10.0,
+      "opp": 10.2,
       "total": 20.2
      },
      "dreb": {
-      "paok": 24.6,
-      "opp": 23.6,
+      "paok": 25.3,
+      "opp": 22.9,
       "total": 48.2
      },
      "tov": {
@@ -2254,8 +2266,8 @@
       "total": 25.1
      },
      "reb": {
-      "paok": 34.9,
-      "opp": 33.5,
+      "paok": 35.3,
+      "opp": 33.1,
       "total": 68.4
      }
     }
