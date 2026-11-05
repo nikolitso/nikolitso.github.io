@@ -69,7 +69,12 @@ tr.click{cursor:pointer} tr.click:hover td{background:var(--an-accent-soft)}
 .note{font:400 15.5px/1.5 var(--body);color:var(--muted);border-left:2px solid var(--gold);padding:2px 0 2px 14px;margin:0 0 6px}
 .note b{color:var(--text);font-weight:600}
 td.big{color:var(--bg);background:var(--gold);font-weight:700}
-table.pjt{table-layout:fixed;width:100%;min-width:1140px}table.pjt td{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}table.pjt th{white-space:nowrap;overflow:visible}table.pjt td:last-child,table.pjt td:nth-child(2){white-space:normal}
+table.pjt{table-layout:fixed;width:100%;min-width:1220px}table.pjt.nolines{min-width:840px;max-width:1000px}
+table.pjt td{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}table.pjt th{white-space:nowrap;overflow:visible}
+table.pjt td.fv{font-size:14.5px;padding-right:4px}
+table.pjt tr.pjday td{font:600 20px var(--serif);padding:26px 10px 8px}table.pjt tr.pjday:first-of-type td{padding-top:14px}
+table.pjt tr.hasout td{border-bottom:0;padding-bottom:2px}
+table.pjt tr.pjo td{white-space:normal;padding:0 10px 9px;font:400 13.5px var(--mono);color:var(--muted)}table.pjt tr.pjo b{color:var(--text);font-weight:500}
 /* numbers first: bigger and brighter than the text around them, digits lined up */
 table{font-variant-numeric:tabular-nums}
 .fx td.n{font-size:16.5px;color:var(--text)}
@@ -542,11 +547,12 @@ const peerSelect = (i, side, v) => `<select class="peer" data-i="${i}" data-side
 // ---------- Projections: the club-rating model (predict.py, as on the EuroCup page) for the next games, against the bookmaker
 // Model: each club's rating from this season's margins (older games fade), pulled toward a prior from last season's
 // rating and the country's power-ranking rating; tonight's absences from the injury list. Independent of the lines.
-const outText = list => list.map(([p, imp, note]) => `${esc(p)} <span class="tag">${imp.toFixed(1)}${note ? ' · ' + esc(note) : ''}</span>`).join(', ');
 const gapCell = (v, cls = '') => v === null ? `<td class="n tag${cls}">–</td>` :
   Math.abs(v) >= gapMin ? `<td class="n big${cls}">${sgn(v)}</td>` : `<td class="n dim${cls}">${sgn(v)}</td>`;
-// one set of column widths for every day's table, so the columns line up down the page
-const PJ_COLS = '<colgroup><col style="width:64px"><col style="width:290px">' + '<col style="width:92px">'.repeat(4) + '<col style="width:136px">'.repeat(2) + '<col></colgroup>';
+// column widths of the Full table: the Book and Gap columns only exist once a game has a line
+const pjCols = lines => '<colgroup><col style="width:62px"><col>' + [150, 78, 62, ...(lines ? [150, 70, 62, 140] : []), 110].map(w => `<col style="width:${w}px">`).join('') + '</colgroup>';
+// a home-minus-away handicap as the bookmaker writes it: the favourite's name and a minus line
+const pjFav = (g, v) => v > 0 ? g.h : v < 0 ? g.a : 'Level';
 let pjMode = 'cards';                                              // 'cards' or 'table'
 // the side and line the model prefers against the bookmaker; small gaps count as no lean
 const PJ_LEAN = 1.5;
@@ -633,42 +639,48 @@ function renderProjections(){
   if (pjMode === 'cards') return renderPjCards(P);
   const days = {};
   for (const g of P.list) (days[g.when.slice(0, 10)] ||= []).push(g);
-  const head = `<tr><th rowspan="2" class="n">Time</th><th rowspan="2">Match</th><th colspan="2" class="grp gap">Model</th><th colspan="2" class="grp gap">Bookmaker</th><th class="grp gap" title="Model minus bookmaker">Model − book</th><th class="grp gap" title="How the two clubs have done against the bookmaker's lines this season (Market Analysis tab), and whether that points the same way as the model">Vs market</th><th rowspan="2">Out</th></tr>
-    <tr><th class="n" title="Handicap, home minus away">Hcp</th><th class="n gap" title="Home win chance">Home %</th>
-      <th class="n" title="Handicap, home minus away">Hcp</th><th class="n gap" title="Home win chance from the money line, margin removed">Home %</th>
-      <th class="n gap" title="Model handicap minus bookmaker handicap: above 0 = the model likes the home side more">Hcp</th>
-      <th class="n gap" title="Home vs line minus away vs line: above 0 = the home club has beaten the market by more. Green = same way as Model − book, red = the other way">Hcp</th></tr>`;
+  const lines = P.list.some(g => ODDS[g.h + '|' + g.a]), width = lines ? 10 : 6;
+  const head = `<thead><tr><th class="n">Time</th><th>Match</th><th colspan="2" title="The favourite and the handicap the model expects">Model</th><th class="n gap" title="The model's favourite's chance to win">Win %</th>
+    ${lines ? `<th colspan="2" title="The favourite and the bookmaker's handicap">Book</th><th class="n gap" title="The bookmaker's favourite's chance to win, from the money line, margin removed">Win %</th>
+    <th class="n gap" title="Model handicap minus bookmaker handicap, home minus away: above 0 = the model likes the home side more">Gap for home</th>` : ''}
+    <th class="n" title="Home vs line minus away vs line: above 0 = the home club has beaten the market by more. Green = same way as the gap, red = the other way">Vs market</th></tr></thead>`;
   const MK = new Map(mkData().rows.map(x => [x.team, x]));
   // agreement: the clubs' record against the market points the same way as the model's gap to the book (both need MK_MIN games)
   // the clubs' market number (home − away on the handicap, average on the total), green when it points the way of the model's gap
   const agree = (gap, trend, ok, what, detail = '') => trend === null ? '<td class="n tag">–</td>'
     : !ok || gap === null || !gap || !trend ? `<td class="n tag" title="${detail}${ok ? 'No bookmaker line yet' : 'Shown in colour once both clubs have ' + MK_MIN + ' games'}">${sgn(trend)}</td>`
-    : (gap > 0) === (trend > 0) ? `<td class="n w" title="${detail}Agrees with the model: ${what} points the same way as Model − book (${sgn(gap)})"><b>${sgn(trend)}</b></td>`
-                                : `<td class="n l" title="${detail}Disagrees with the model: ${what} points the other way from Model − book (${sgn(gap)})">${sgn(trend)}</td>`;
+    : (gap > 0) === (trend > 0) ? `<td class="n w" title="${detail}Agrees with the model: ${what} points the same way as the gap (${sgn(gap)})"><b>${sgn(trend)}</b></td>`
+                                : `<td class="n l" title="${detail}Disagrees with the model: ${what} points the other way from the gap (${sgn(gap)})">${sgn(trend)}</td>`;
+  const outs = (list, club) => list.map(([p, imp, note]) => `<span${note ? ` title="${esc(note)}"` : ''}><b>${esc(p)}</b> (${esc(club)}) ${imp.toFixed(1)}</span>`);
   const row = g => {
     const o = ODDS[g.h + '|' + g.a];
     const xh = MK.get(g.h), xa = MK.get(g.a), okS = xh && xa && xh.n >= MK_MIN && xa.n >= MK_MIN;
     const bh = o ? -o.sp : null, pb = bookWin(o);
-    const out = g.outH.length || g.outA.length
-      ? [g.outH.length ? `${esc(g.h)}: ${outText(g.outH)}` : '', g.outA.length ? `${esc(g.a)}: ${outText(g.outA)}` : ''].filter(Boolean).join('; ') : '–';
-    return `<tr><td class="n">${g.when.slice(11)}</td>
-      <td><b>${esc(g.h)}</b> <span class="tag">${esc(code(teams[g.h]))}</span> – <b>${esc(g.a)}</b> <span class="tag">${esc(code(teams[g.a]))}</span></td>
-      <td class="n hcp"${g.adj ? ` title="Absences ${sgn(g.adj)}"` : ''}><b>${sgn(g.mh)}</b>${g.adj ? '*' : ''}</td><td class="n gap">${pct(g.ph)}</td>
-      ${o ? `<td class="n">${sgn(bh)}</td><td class="n gap">${pb === null ? '–' : pct(pb)}</td>`
-          : '<td class="n tag" title="Lines appear a few days before the game">–</td><td class="n tag gap">–</td>'}
-      ${o ? gapCell(g.mh - bh, ' gap') : '<td class="n tag gap">–</td>'}
-      ${agree(o ? g.mh - bh : null, xh && xa ? xh.vsS - xa.vsS : null, okS, 'home − away vs line', xh && xa ? `${g.h} ${sgn(xh.vsS)} (${xh.n} games), ${g.a} ${sgn(xa.vsS)} (${xa.n} games). ` : '').replace('class="n ', 'class="n gap ')}
-      <td class="tag">${out}</td></tr>`;
+    const out = [...outs(g.outH, g.h), ...outs(g.outA, g.a)];
+    const book = !lines ? '' : o
+      ? `<td class="fv">${esc(pjFav(g, bh))}</td><td class="n">${sgn(-Math.abs(bh))}</td><td class="n gap">${pb === null || !bh ? '–' : pct(bh > 0 ? pb : 1 - pb)}</td>${gapCell(g.mh - bh, ' gap')}`
+      : '<td class="n tag gap" colspan="3" title="Lines appear a few days before the game">–</td><td class="n tag gap">–</td>';
+    return `<tr${out.length ? ' class="hasout"' : ''}><td class="n">${g.when.slice(11)}</td>
+      <td title="${esc(g.h)} (${esc(code(teams[g.h]))}) – ${esc(g.a)} (${esc(code(teams[g.a]))})"><b>${esc(g.h)}</b> – <b>${esc(g.a)}</b></td>
+      <td class="fv">${esc(pjFav(g, g.mh))}</td><td class="n hcp"${g.adj ? ` title="Absences ${sgn(g.adj)}"` : ''}><b>${sgn(-Math.abs(g.mh))}</b>${g.adj ? '*' : ''}</td><td class="n gap">${g.mh ? pct(g.mh > 0 ? g.ph : 1 - g.ph) : '–'}</td>
+      ${book}
+      ${agree(o ? g.mh - bh : null, xh && xa ? xh.vsS - xa.vsS : null, okS, 'home − away vs line', xh && xa ? `${g.h} ${sgn(xh.vsS)} (${xh.n} games), ${g.a} ${sgn(xa.vsS)} (${xa.n} games). ` : '')}</tr>` +
+      (out.length ? `<tr class="pjo"><td></td><td colspan="${width - 1}">Out: ${out.join(', ')}</td></tr>` : '');
   };
-  box.innerHTML = pjModeBar() + `<div class="note" style="margin-bottom:14px"><b>The model rates every club from this season's results</b>, with older games counting less, starting from last season's club rating (85%) and its country's power-ranking rating (15%); clubs new to the competition start from the country rating. Tonight's absences come off the club (the <b>Out</b> column, from the injury list, impact as on the Rosters tab; a handicap marked * includes them). Home advantage ${sgn(P.hca)}.
-      It never looks at the bookmaker: <b>Model − book</b> is where the two disagree. <b>Vs market</b> shows how each club has done against the bookmaker's lines this season (as on the Market Analysis tab): it is home vs line − away vs line; green when it points the same way as Model − book (the market record backs the model), red when it points the other way; in colour once both clubs have ${MK_MIN} games. It is the same model as on the EuroCup page, with settings tuned on 2023-24 and 2024-25; tested on 2025-26 and 2026-27 (184 games) it picked 69.0% of winners with an average miss of 13.1 points, level with the earlier country model (69.6%, 13.2).</div>
-` +
-    Object.entries(days).map(([d, list]) => `<h2>${dayName(d)} <span class="tag">${esc(list[0].round)}</span></h2>
-      <div class="scroll"><table class="fx pjt">${PJ_COLS}${head}${list.map(row).join('')}</table></div>`).join('') +
-    `<div class="tag" style="margin-top:14px">Every club's rating, next to the market's: <a class="back" href="#view=ratings" data-go="ratings">Club Ratings</a>. Projections updated ${esc(P.updated)}; win chance = the handicap on a normal curve with the backtest's spread of misses (${P.spread} points).</div>`;
+  box.innerHTML = pjModeBar(lines) + `<div class="pjintro">The model's favourite, handicap and win chance for every game${lines ? ", next to the bookmaker's. <b>Gap</b> is how far apart the two are" : '. Bookmaker lines appear a few days before the game'}. A handicap marked * includes the players listed as out.
+      <details><summary>How it works</summary><ul>
+        <li><b>Model</b>: rates every club from this season's results, with older games counting less, starting from last season's club rating (85%) and its country's power-ranking rating (15%); clubs new to the competition start from the country rating. Home advantage ${sgn(P.hca)}. It never looks at the bookmaker.</li>
+        <li><b>Handicap</b>: the expected winning margin, written like a bookmaker's line: Trier −8.3 = Trier by 8.3. <b>Win %</b> is the favourite's chance to win: the handicap on a normal curve with the backtest's spread of misses (${P.spread} points).</li>
+        <li><b>Out</b>: absences from the injury list come off the club, with each player's impact as on the Rosters tab.</li>
+        <li><b>Gap for home</b>: model minus bookmaker, home minus away. Above 0 = the model likes the home side more, below 0 the away side. Gaps of ${gapMin}+ points are in gold.</li>
+        <li><b>Vs market</b>: how the clubs have done against the bookmaker's lines this season (as on the Market Analysis tab), home vs line − away vs line. Green when it points the same way as the gap, red when it points the other way; in colour once both clubs have ${MK_MIN} games.</li>
+        <li><b>Test</b>: the same model as on the EuroCup page, with settings tuned on 2023-24 and 2024-25. Tested on 2025-26 and 2026-27 (184 games) it picked 69.0% of winners with an average miss of 13.1 points, level with the earlier country model (69.6%, 13.2).</li></ul></details></div>
+    <div class="scroll"><table class="fx pjt${lines ? '' : ' nolines'}">${pjCols(lines)}${head}<tbody>` +
+    Object.entries(days).map(([d, list]) => `<tr class="pjday"><td colspan="${width}">${dayName(d)} <span class="tag">${esc(list[0].round)}</span></td></tr>${list.map(row).join('')}`).join('') +
+    `</tbody></table></div><div class="tag" style="margin-top:14px">Every club's rating, next to the market's: <a class="back" href="#view=ratings" data-go="ratings">Club Ratings</a>. Projections updated ${esc(P.updated)}.</div>`;
   bindPj(box);
 }
-const pjModeBar = () => `<div class="pjbar"><span class="seg2" role="group" aria-label="Layout"><button data-pjm="cards"${pjMode === 'cards' ? ' class="on"' : ''}>Game cards</button><button data-pjm="table"${pjMode === 'table' ? ' class="on"' : ''}>Full table</button></span>${pjMode === 'table' ? gapSelect() : ''}</div>`;
+const pjModeBar = (gaps = true) => `<div class="pjbar"><span class="seg2" role="group" aria-label="Layout"><button data-pjm="cards"${pjMode === 'cards' ? ' class="on"' : ''}>Game cards</button><button data-pjm="table"${pjMode === 'table' ? ' class="on"' : ''}>Full table</button></span>${pjMode === 'table' && gaps ? gapSelect() : ''}</div>`;
 function bindPj(box){
   bindGap(box, renderProjections);
   box.querySelectorAll('[data-pjm]').forEach(b => b.onclick = () => { pjMode = b.dataset.pjm; sync(); renderProjections(); });
