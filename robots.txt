@@ -2,3 +2,4 @@ User-agent: *
 Allow: /
 
 Sitemap: https://antonisnikolitsopoulos.com/sitemap.xml
+Sitemap: https://antonisnikolitsopoulos.com/superleague/sitemap.xml

@@ -29,7 +29,9 @@ jobs:
         with:
           dir: superleague
           requirements: -r _bs/superleague/requirements.txt
-          run: python -u update.py
-          pages: superleague/data.js superleague/index.html superleague/referee-games.js
+          run: |
+            python -u update.py
+            python -u games.py
+          pages: superleague/data.js superleague/index.html superleague/referee-games.js superleague/games superleague/sitemap.xml
           label: Super League
           token: ${{ secrets.SITES_TOKEN }}
