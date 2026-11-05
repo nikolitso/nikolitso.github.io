@@ -142,6 +142,8 @@ table.crt{width:auto;min-width:1140px}table.crt .gl{border-left:1px solid var(--
 a.metric.hm{display:block;color:inherit;text-decoration:none}
 a.metric.hm:hover{border-color:var(--gold)}
 .hmgrid{grid-template-columns:repeat(auto-fit,minmax(250px,1fr));margin-top:16px}
+table.hmres{width:auto;min-width:680px}
+@media (max-width:720px){table.hmres{width:100%;min-width:0}table.hmres td,table.hmres th{white-space:normal;padding-left:3px;padding-right:3px;font-size:13.5px;overflow-wrap:anywhere}}
 .pjbar{display:flex;flex-wrap:wrap;align-items:center;gap:10px 22px;margin:0 0 8px}
 .pjbar label{font:400 14.5px var(--mono);color:var(--muted);text-transform:none;letter-spacing:0;margin:0;display:flex;align-items:center;gap:8px}
 select.peer{background:var(--panel);border:1px solid var(--line);border-radius:6px;color:var(--text);font:500 15.5px var(--mono);padding:4px 6px;cursor:pointer}
@@ -258,7 +260,7 @@ const fmtDate = d => d.split('-').reverse().join('.');
 const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 
 $('sub').textContent = `${matches.length} games · seasons ${matches[0][0].slice(0,4)}–${matches[matches.length-1][0].slice(-4)} · ${Object.keys(teams).length} teams · ${new Set(Object.values(teams)).size} countries` +
-  (window.PROJ ? ` · last update ${fmtDate(PROJ.updated.slice(0, 10))} ${PROJ.updated.slice(11)}` : '');   // every update run rewrites projections.js
+  (window.PROJ ? ` · last update ${new Date(PROJ.updated.slice(0, 10) + 'T12:00').toLocaleDateString('en-GB', {day: 'numeric', month: 'short', year: 'numeric'})} ${PROJ.updated.slice(11)}` : '');   // every update run rewrites projections.js
 
 function names(){ return mode === 'team' ? Object.keys(teams).sort() : [...new Set(Object.values(teams))].sort(); }
 function fillOptions(){ $('opts').innerHTML = names().map(n => `<option value="${esc(n)}">`).join(''); }
@@ -1066,33 +1068,36 @@ function renderRatings(){
 }
 // ---------- Home: what the page is, and one tile per section with its number today. The tables stay on their own tabs.
 function renderHome(){
-  const games = window.PROJ ? pjList(PROJ) : [], next = games.find(g => g.when > athens(Date.now()));
-  const all = pickList(), done = all.filter(p => p.r), open = all.length - done.length;
+  const box = $('hmView'), P = window.PROJ, now = athens(Date.now());
+  const up = ((P && P.list) || []).filter(g => g.when > now), next = up[0];
+  const lined = mkData().games.filter(g => g.bh), all = pickList(), done = all.filter(p => p.r), open = all.length - done.length;
   const w = done.filter(p => p.res === 'W').length, l = done.filter(p => p.res === 'L').length, units = done.reduce((t, p) => t + p.u, 0);
   const roi = done.length ? units / done.length * 100 : 0, roiTxt = (roi > 0 ? '+' : roi < 0 ? '−' : '') + Math.abs(roi).toFixed(0) + '%';
-  const lined = mkData().games.length, nOut = ((window.INJURIES && INJURIES.out) || []).length, clubs = window.ROSTERS ? Object.keys(ROSTERS.teams).length : 0;
-  const listed = new Set(((window.INJURIES && INJURIES.out) || []).map(x => x.player));
-  const nMiss = Object.values((window.ROSTERS && ROSTERS.missed) || {}).flatMap(x => x.players).filter(p => !listed.has(p)).length;
-  const best = ((window.PROJ && PROJ.ratings) || []).reduce((x, y) => !x || y.r > x.r ? y : x, null);
+  const nOut = ((window.INJURIES && INJURIES.out) || []).length, clubs = window.ROSTERS ? Object.keys(ROSTERS.teams).length : 0;
+  const best = ((P && P.ratings) || []).reduce((x, y) => !x || y.r > x.r ? y : x, null);
   RANK ||= computeRankings();
   const tile = (go, name, big, text) => `<a class="metric hm" href="#view=${go}" data-go="${go}"><div class="lbl">${name}</div><div class="big2">${big}</div><div class="tag">${text}</div></a>`;
-  $('hmView').innerHTML = `<div class="note">A statistical model that rates every EuroCup club, projects each game and measures it against the bookmaker's line.</div>
+  const round = g => g.stage.split(' · ')[0], last = lined.reduce((x, g) => !x || g.date >= x.date ? g : x, null);
+  const games = last ? lined.filter(g => round(g) === round(last)).sort((x, y) => y.date.localeCompare(x.date) || x.h.localeCompare(y.h)) : [];
+  const covered = g => { const c = g.hp - g.ap - g.bh; return c > 0 ? g.h : c < 0 ? g.a : 'Push'; };
+  box.innerHTML = `<div class="note" style="margin-bottom:14px">What to expect from each EuroCup game: a model and the market's record against the handicap, side by side. For information only, with no proven edge over the bookmaker.</div>
     <div class="metrics hmgrid">
-      ${tile('projections', 'Projections', games.length + (games.length === 1 ? ' game' : ' games'), next ? `Next: ${esc(next.h)} – ${esc(next.a)}, ${dayName(next.when.slice(0, 10)).split(' ').slice(1).join(' ')} ${next.when.slice(11)}` : 'No game coming up yet')}
+      ${tile('projections', 'Projections', up.length + (up.length === 1 ? ' game' : ' games'), next ? `Next: ${esc(next.h)} – ${esc(next.a)}, ${dayName(next.when.slice(0, 10)).split(' ').slice(1).join(' ')} ${next.when.slice(11)}` : 'No game coming up yet')}
       ${tile('picks', 'Picks', done.length ? `${w}–${l} · <span class="${roi > 0 ? 'pkw' : roi < 0 ? 'l' : ''}">${roiTxt}</span>` : 'No record yet', `${open} open pick${open === 1 ? '' : 's'}`)}
-      ${tile('market', 'Market Analysis', lined + ' games', "Clubs and kinds of game against the bookmaker's lines")}
+      ${tile('market', 'Market Analysis', lined.length + ' games', "Clubs and kinds of game against the bookmaker's lines")}
       ${tile('ratings', 'Club Ratings', best ? esc(best.c) : '–', "Rated highest by the model, next to the market's rating")}
       ${tile('h2h', 'Head to Head', 'Any two clubs', 'Or any two countries, home and away, every season')}
-      ${tile('rosters', 'Rosters', nOut + ' out', `${nMiss} more missed their club's latest game`)}
-      ${tile('clubs', 'Clubs', clubs + ' clubs', 'Official sites and social accounts')}
+      ${tile('rosters', 'Rosters', nOut + ' out', `Key players of the ${clubs} clubs and who is missing`)}
+      ${tile('clubs', 'Clubs', Object.keys((window.CLUBS && CLUBS.list) || {}).length + ' clubs', 'Official websites and social accounts')}
       ${tile('rankings', 'Country Power Rankings', esc(RANK[0].c), 'First in the ranking of EuroCup countries')}
-    </div>`;
-  $('hmView').querySelectorAll('[data-go]').forEach(a => a.onclick = e => { if (e.metaKey || e.ctrlKey || e.shiftKey || e.button) return; e.preventDefault(); setView(a.dataset.go); sync(); window.scrollTo({top: 0}); });
+    </div>` + (games.length ? `<h2>Latest results: ${esc(round(last))}</h2><div class="scroll"><table class="fx hmres"><tr><th class="n">Date</th><th>Game</th><th class="n">Score</th><th>Handicap</th><th>Covered</th></tr>` +
+      games.map(g => `<tr><td class="n">${fmtDate(g.date).slice(0, 5)}</td><td>${esc(g.h)} – ${esc(g.a)}</td><td class="n"><b>${g.hp}–${g.ap}</b></td><td>${esc(g.bh > 0 ? g.h : g.a)} ${sgn(-Math.abs(g.bh))}</td><td>${esc(covered(g))}</td></tr>`).join('') + '</table></div>' : '');
+  box.querySelectorAll('[data-go]').forEach(a => a.onclick = e => { if (e.metaKey || e.ctrlKey || e.shiftKey || e.button) return; e.preventDefault(); setView(a.dataset.go); sync(); window.scrollTo({top: 0}); });
 }
 function setView(v){
   view = ['home', 'market', 'projections', 'picks', 'ratings', 'h2h', 'rosters', 'clubs', 'rankings'].includes(v) ? v : 'home';
   document.querySelectorAll('#tabs a').forEach(b => b.classList.toggle('on', b.dataset.view === view));
-  document.body.classList.toggle('wide', view === 'market' || view === 'projections' || view === 'ratings' || view === 'picks');
+  document.body.classList.toggle('wide', view === 'home' || view === 'market' || view === 'projections' || view === 'ratings' || view === 'picks');
   $('hmView').hidden = view !== 'home';
   if (view === 'home') renderHome();
   $('rkView').hidden = view !== 'rankings';
