@@ -1168,7 +1168,7 @@ let clQuery = '', clSort = {k: 'club', dir: 1};
 function renderClubs(){
   const box = $('clView');
   if (!window.CLUBS){ box.innerHTML = '<div class="empty">No clubs yet.</div>'; return; }
-  const names = {site: 'Website', facebook: 'Facebook', instagram: 'Instagram', x: 'X', youtube: 'YouTube', tiktok: 'TikTok'};
+  const names = {site: 'Website', facebook: 'Facebook', instagram: 'Instagram', x: 'X', youtube: 'YouTube'};
   const all = Object.entries(CLUBS.list).map(([club, l]) => ({club, country: teams[club] || '', l}));
   box.innerHTML = `<div class="note" style="margin-bottom:14px">Official websites and social accounts of the ${all.length} clubs, from FIBA's team pages and the clubs' own websites (updated ${fmtDate(CLUBS.updated)}).</div>
     <input id="clSearch" placeholder="Search a club or country" value="${esc(clQuery)}" aria-label="Search clubs"><div id="clList"></div>`;
