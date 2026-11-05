@@ -62,3 +62,10 @@ when `config.SHOW_PROJECTIONS` is on, using the same numbers as the league page'
 off. Played games show the score, the lines and the match report and never a projection: `lines_log.json` keeps `ours`, not the `strength`
 figure the site shows, so it cannot say what the model showed.
 
+## FIBA Europe Cup (5 Nov 2026)
+
+`BettingSignal/fibaeuropecup/games.py` writes `/fibaeuropecup/games/` through `BettingSignal/cupgames.py`, the page code it shares with EuroCup.
+Its archive is kept by day and holds two models; some "mix" games have no projected total and show a dash. In `odds.js` a home favourite is negative,
+so the margin is `-sp`. The pipeline's own scripts publish a fixed list of files, so the workflow has a separate Game pages step. 87 of the 124
+games played so far have a saved projection; the rest have no page.
+

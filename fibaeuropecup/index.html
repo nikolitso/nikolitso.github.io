@@ -31,6 +31,8 @@ body{margin:0;background:var(--bg);color:var(--text);font:17px/1.5 var(--body)}
 .wrap{max-width:980px;margin:0 auto;padding:40px 16px 80px}
 body.wide .wrap{max-width:none;padding-left:24px;padding-right:24px}   /* Projections: use the whole window so every column fits */
 h1 span{color:var(--gold)}
+.games-link{margin:-10px 0 22px;font-size:15px}.games-link a,.gp{color:var(--gold);text-decoration:none}.games-link a:hover,.gp:hover{text-decoration:underline}
+.gp{display:inline-block;font:500 14.5px var(--an-body);margin:2px 0 8px}
 .sub{font:400 14.5px var(--mono);color:var(--muted);letter-spacing:.04em;margin-bottom:22px}
 .controls{display:grid;grid-template-columns:auto 1fr auto 1fr;gap:12px;align-items:end;margin-bottom:28px}
 .segs{display:flex;flex-wrap:wrap;gap:12px;grid-column:1/-1}
@@ -222,6 +224,7 @@ select.peer:focus{outline:2px solid var(--gold)}
 </div></header>
 <div class="wrap">
   <div class="sub" id="sub"></div>
+  <p class="games-link"><a href="/fibaeuropecup/games/">Game by game: the projection, the line and the result →</a></p>
 
   <div id="hmView" hidden></div>
   <div id="rkView" hidden></div>
@@ -600,6 +603,9 @@ function pjPick(g){
   const k = o ? pickOf(g.h, g.a, g.mh, -o.sp, pjSpots) : null;
   return k && {...k, g};
 }
+// each game with a projection has its own page: /fibaeuropecup/games/<date>-<home>-<away>/ (written by games.py)
+const slugify = s => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+const gameHref = g => `/fibaeuropecup/games/${g.when.slice(0, 10)}-${slugify(g.h)}-${slugify(g.a)}/`;
 function pjCard(g){
   const o = ODDS[g.h + '|' + g.a];
   const bh = o ? -o.sp : null, pb = bookWin(o);
@@ -621,6 +627,7 @@ function pjCard(g){
   return `<div class="pjc${hot ? ' hot' : ''}" id="pj-${esc((g.h + '-' + g.a).replace(/[^A-Za-z0-9]+/g, '-'))}">
     <div class="when"><span>${g.when.slice(11)} · ${esc(g.round)}${g.when <= athens(Date.now()) ? ' · <b>started</b>' : ''}</span><span>${esc(code(teams[g.h]))} – ${esc(code(teams[g.a]))}</span></div>
     <div class="teams">${esc(g.h)}<span>vs</span>${esc(g.a)}</div>
+    <a class="gp" href="${gameHref(g)}">game page →</a>
     <table><tr><th></th><th>Model</th><th>Bookmaker</th></tr>
       <tr><td title="Chance to win the game">Winner</td><td>${winner(g.ph)}</td><td>${pb === null ? '<span class="tag">–</span>' : winner(pb)}</td></tr>
       <tr><td title="Both as a handicap: Mykonos −8.3 = Mykonos expected to win by 8.3">Handicap</td><td><b class="nm" title="${esc(fav(g.mh, g.h, g.a))}">${esc(fav(g.mh, g.h, g.a))}</b>−${Math.abs(g.mh).toFixed(1)}${g.adj ? '<span class="tag" title="Includes the absences below"> *</span>' : ''}</td><td>${bookHcp}</td></tr>

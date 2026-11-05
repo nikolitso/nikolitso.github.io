@@ -55,3 +55,17 @@ jobs:
           job="${{ inputs.job }}"
           [ "${{ github.event.schedule }}" = "5 7-18 * * *" ] && job=odds
           python -u scripts/fiba_runner.py "${job:-update}"
+      - name: Game pages
+        if: ${{ inputs.job != 'probe' }}
+        env:
+          FIBA_SITE: ${{ github.workspace }}/fibaeuropecup
+          PYTHONIOENCODING: utf-8
+          TZ: Europe/Athens
+        run: |
+          python -u _bs/fibaeuropecup/games.py
+          git add fibaeuropecup/games fibaeuropecup/sitemap.xml
+          if git diff --cached --quiet; then echo "game pages unchanged"; exit 0; fi
+          git commit -q -m "FIBA Europe Cup: game pages $(date '+%Y-%m-%d %H:%M')"
+          # several pipelines push at once: on a rejected push, rebase and try again
+          for i in 1 2 3 4 5; do git pull -q --rebase --autostash && git push -q && exit 0; sleep $((RANDOM % 10 + 5)); done
+          exit 1
