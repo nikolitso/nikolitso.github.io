@@ -117,7 +117,7 @@ table.mkt tr.mkgames table td:nth-child(3){white-space:normal;min-width:150px}  
 td.better{color:var(--win)!important;font-weight:700}td.worse{color:var(--loss)!important}
 th.sort{cursor:pointer;user-select:none}th.sort:hover,th.sort.on{color:var(--gold)}
 .cltab{width:100%;margin-top:14px}.cll a{display:inline-block;margin:2px 12px 2px 0;color:var(--gold);text-decoration:none}.cll a:hover{text-decoration:underline}
-.rogrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px;margin-top:16px}
+.rogrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,430px),1fr));gap:16px;margin-top:16px}
 .rogrid .card{padding:16px;margin:0}.rogrid h3{font:600 18px var(--serif);margin:0 0 2px;cursor:pointer}.rogrid h3:hover{color:var(--gold)}
 .rogrid table{width:100%;border-collapse:collapse;margin-top:8px}.rogrid td,.rogrid th{padding:4px 4px;border-top:1px solid var(--line);font-size:15.5px}
 .rogrid th{font:400 12.5px var(--mono);color:var(--muted);text-align:left;border-top:0}.rogrid .n{text-align:right}
@@ -891,10 +891,10 @@ function renderRosters(){
       const gone = new Map(out.filter(x => x.team === c).map(x => [x.player, x]));
       const extra = [...gone.values()].filter(x => !ROSTERS.teams[c].some(p => p[0] === x.player));
       return `<div class="card"><h3 data-club="${esc(c)}">${esc(c)}</h3><div class="tag">${esc(teams[c] || '')}${rankOf(teams[c])}</div>
-        <table><tr>${th(0, 'Player', '')}${th(1, 'Impact', 'n', 'Points the side loses without the player')}${th(2, 'Min', 'n', 'Minutes per team game')}${th(3, 'Eff', 'n', 'Efficiency per game played')}${th(4, 'G', 'n', 'Games played')}</tr>` +
-        [...ROSTERS.teams[c], ...extra.map(o => [o.player, o.impact || 0, null, null, null])].sort(order).map(p => { const o = gone.get(p[0]), num = (v, d) => v === null ? '–' : v.toFixed(d);
+        <table><tr>${th(0, 'Player', '')}${th(1, 'Impact', 'n', 'Points the side loses without the player')}${th(2, 'Min', 'n', 'Minutes per team game')}${th(3, 'Eff', 'n', 'Efficiency per game played')}${th(4, 'G', 'n', 'Games played')}${th(5, 'Pts', 'n', 'Points per game')}${th(6, 'Reb', 'n', 'Rebounds per game')}${th(7, 'Ast', 'n', 'Assists per game')}</tr>` +
+        [...ROSTERS.teams[c], ...extra.map(o => [o.player, o.impact || 0, null, null, null, null, null, null])].sort(order).map(p => { const o = gone.get(p[0]), num = (v, d) => v === null ? '–' : v.toFixed(d);
           return `<tr${o ? ` class="out" title="Out${o.note ? ': ' + esc(o.note) : ''}"` : ''}><td><span class="pl">${esc(p[0])}</span>${o ? ' <span class="tag">out' + (o.note ? ' · ' + esc(o.note) : '') + '</span>' : ''}</td>
-            <td class="n"><b>${p[1].toFixed(1)}</b></td><td class="n">${num(p[2], 1)}</td><td class="n">${num(p[3], 1)}</td><td class="n">${num(p[4], 0)}</td></tr>`; }).join('') +
+            <td class="n"><b>${p[1].toFixed(1)}</b></td><td class="n">${num(p[2], 1)}</td><td class="n">${num(p[3], 1)}</td><td class="n">${num(p[4], 0)}</td><td class="n">${num(p[5] ?? null, 1)}</td><td class="n">${num(p[6] ?? null, 1)}</td><td class="n">${num(p[7] ?? null, 1)}</td></tr>`; }).join('') +
         `</table></div>`;
     });
     $('roGrid').innerHTML = cards.join('') || '<div class="empty">No club or player matches.</div>';
@@ -1104,7 +1104,7 @@ function renderMarket(){
 let crSort = {k: 'd', dir: -1};
 const CR_STRONG = 4, CR_MILD = 2;                              // model − market, points
 function crComment(x){
-  if (x.mr === null) return 'No line yet.';
+  if (x.mr === null) return '–';
   if (x.n < MK_MIN) return 'Too early.';
   const d = x.d, lim = mkLim(MK_SD.hcp, x.n);
   if (Math.abs(d) < CR_MILD) return '';   // model and market agree: nothing to say

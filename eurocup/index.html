@@ -721,7 +721,7 @@ function renderProjections(){
       <td><b>${esc(g.h)}</b> <span class="tag">${esc(code(teams[g.h]))}</span> – <b>${esc(g.a)}</b> <span class="tag">${esc(code(teams[g.a]))}</span></td>
       <td class="n hcp"${g.adj ? ` title="Absences ${sgn(g.adj)}"` : ''}><b>${sgn(g.mh)}</b>${g.adj ? '*' : ''}</td><td class="n gap">${pct(g.ph)}</td>
       ${o ? `<td class="n">${sgn(bh)}</td><td class="n gap">${pb === null ? '–' : pct(pb)}</td>`
-          : '<td class="n tag gap" colspan="2" title="Lines appear a few days before the game">no line yet</td>'}
+          : '<td class="n tag" title="Lines appear a few days before the game">–</td><td class="n tag gap">–</td>'}
       ${o ? gapCell(g.mh - bh, ' gap') : '<td class="n tag gap">–</td>'}
       ${agree(o ? g.mh - bh : null, xh && xa ? xh.vsS - xa.vsS : null, okS, 'home − away vs line', xh && xa ? `${g.h} ${sgn(xh.vsS)} (${xh.n} games), ${g.a} ${sgn(xa.vsS)} (${xa.n} games). ` : '').replace('class="n ', 'class="n gap ')}
       <td class="tag">${out}</td></tr>`;
@@ -999,7 +999,7 @@ function renderMarket(){
 let crSort = {k: 'd', dir: -1};
 const CR_STRONG = 4, CR_MILD = 2;                              // model − market, points
 function crComment(x){
-  if (x.mr === null) return 'No line yet.';
+  if (x.mr === null) return '–';
   if (x.n < MK_MIN) return 'Too early.';
   const d = x.d, lim = mkLim(MK_SD.hcp, x.n);
   if (Math.abs(d) < CR_MILD) return '';   // model and market agree: nothing to say
