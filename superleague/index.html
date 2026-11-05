@@ -373,6 +373,7 @@ function renderMethod(){
     <p>Here ${E.balance.home < E.balance.away ? H : W} are the favourites (the odds make them ${Math.abs(g.proj.home - g.proj.away).toFixed(1)} goals better, see step 7), so their cards go down and ${E.balance.home < E.balance.away ? W : H}'s ${(E.balance.home < E.balance.away ? E.balance.away : E.balance.home) >= 1 ? 'go up slightly' : 'barely change'}:</p>
     <div class="calc">${H} ${x(k.mu_home,k.home_for,k.away_against)} × ${E.balance.home.toFixed(2)} = <b>${bal(k.mu_home*k.home_for*k.away_against, E.balance.home)}</b> · ${W} ${x(k.mu_away,k.away_for,k.home_against)} × ${E.balance.away.toFixed(2)} = <b>${bal(k.mu_away*k.away_for*k.home_against, E.balance.away)}</b></div>
 
+    <p><b>Big-4 derbies</b> get one more step: both sides' cards × 1.13. In the 73 games between the Big 4 since 2023–24 the ratings projected 5.19 cards and there were 5.86, short in every season, while other games came within 0.1.</p>
     <h3><span class="num">6</span>Add the referee (cards and fouls)</h3>`;
     const cH = +bal(k.mu_home*k.home_for*k.away_against, E.balance.home), cW = +bal(k.mu_away*k.away_for*k.home_against, E.balance.away);
     if (E.ref && E.ref.games){
