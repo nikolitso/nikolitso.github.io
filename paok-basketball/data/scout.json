@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-05T08:55:35Z",
+ "updated": "2026-11-05T10:15:13Z",
  "reports": [
   {
    "comp": "EuroCup",
@@ -1093,13 +1093,13 @@
      "lineGames": 1032,
      "homeEdge": 1.44,
      "totalBias": 1.19,
-     "spreadSd": 12.5,
+     "spreadSd": 12.4,
      "lineWeight": 0.79,
      "lineWeightRaw": 0.79,
      "marginGames": 1032,
-     "marginWeight": 0.8,
+     "marginWeight": 0.81,
      "marginWeightRaw": 0.81,
-     "marginSd": 11.5
+     "marginSd": 11.4
     },
     "teamStats": {
      "pts": {
@@ -1972,7 +1972,7 @@
    ],
    "projection": {
     "paok": {
-     "score": 86.7,
+     "score": 87.3,
      "players": [
       {
        "name": "Kyle Alexander",
@@ -2089,7 +2089,7 @@
      "pace": 71.4
     },
     "opp": {
-     "score": 72.6,
+     "score": 72.9,
      "players": [
       {
        "name": "Giannis Karakostas",
@@ -2216,49 +2216,49 @@
      "lineGames": 944,
      "homeEdge": 2.17,
      "totalBias": 1.47,
-     "spreadSd": 11.0,
-     "lineWeight": 0.8,
+     "spreadSd": 9.1,
+     "lineWeight": 0.89,
      "lineWeightRaw": 0.89,
      "marginGames": 944,
-     "marginWeight": 0.8,
+     "marginWeight": 0.84,
      "marginWeightRaw": 0.84,
-     "marginSd": 9.5
+     "marginSd": 9.7
     },
     "teamStats": {
      "pts": {
-      "paok": 86.7,
-      "opp": 72.6,
-      "total": 159.3
+      "paok": 87.3,
+      "opp": 72.9,
+      "total": 160.2
      },
      "fg2m": {
-      "paok": 18.8,
-      "opp": 17.4,
-      "total": 36.2
+      "paok": 18.9,
+      "opp": 17.5,
+      "total": 36.4
      },
      "fg3m": {
-      "paok": 10.0,
+      "paok": 10.1,
       "opp": 8.1,
-      "total": 18.0
+      "total": 18.1
      },
      "ftm": {
-      "paok": 19.2,
-      "opp": 13.6,
-      "total": 32.8
+      "paok": 19.3,
+      "opp": 13.7,
+      "total": 33.0
      },
      "ast": {
-      "paok": 17.4,
-      "opp": 15.3,
-      "total": 32.6
+      "paok": 17.5,
+      "opp": 15.4,
+      "total": 32.8
      },
      "oreb": {
-      "paok": 10.0,
+      "paok": 9.9,
       "opp": 10.2,
-      "total": 20.2
+      "total": 20.1
      },
      "dreb": {
-      "paok": 25.3,
-      "opp": 22.9,
-      "total": 48.2
+      "paok": 25.2,
+      "opp": 22.7,
+      "total": 48.0
      },
      "tov": {
       "paok": 11.9,
@@ -2266,9 +2266,9 @@
       "total": 25.1
      },
      "reb": {
-      "paok": 35.3,
-      "opp": 33.1,
-      "total": 68.4
+      "paok": 35.1,
+      "opp": 32.9,
+      "total": 68.1
      }
     }
    }
