@@ -252,7 +252,7 @@ def site_footer():
 
 def layout(title, body, path, desc, image=None, active="books"):
     full = f"{title} — Antonis Nikolitsopoulos" if title != "Books" else "Books — Book takeaways by Antonis Nikolitsopoulos"
-    img = image if (image or "").startswith("http") else SITE + (image or "/og.png")
+    img = image if (image or "").startswith("http") else SITE + (image or ("/books.jpg" if active else "/og.png"))
     sub = lambda key, href, label: f'<a href="{href}"{" class=on" if active == key else ""}>{label}</a>'
     subnav = (f'<nav class="subnav" aria-label="Books"><div class="wrap">{sub("books", BASE, "All books")}'
               f'{sub("authors", BASE + "authors/", "Authors")}<a href="{BASE}feed.xml">RSS</a></div></nav>') if active else ""
