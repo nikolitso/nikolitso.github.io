@@ -290,7 +290,7 @@ function logTable(el,S){
 }
 function recTable(el,rec){
   const R=Object.values(rec), sum=k=>R.reduce((a,x)=>a+x[k],0), n=sum('won')+sum('lost')+sum('push'), u=sum('units');
-  el.innerHTML=`<table><thead><tr><th>Flagged</th><th>Wins</th><th>Losses</th><th>Pushes</th><th>To play</th><th>Return %</th></tr></thead><tbody><tr><td><b>${n+sum('open')}</b></td><td>${sum('won')}</td><td>${sum('lost')}</td><td>${sum('push')}</td><td>${sum('open')}</td><td class="${cls(u)}">${n?sg(u/n*100,0)+'%':'–'}</td></tr></tbody></table>`;
+  el.innerHTML=`<table><thead><tr><th>Flagged</th><th>Wins</th><th>Losses</th><th>Pushes</th><th>To play</th><th>Return %</th></tr></thead><tbody><tr><td><b>${n+sum('open')}</b></td><td>${sum('won')}</td><td>${sum('lost')}</td><td>${sum('push')}</td><td>${sum('open')}</td><td class="${cls(u)}">${sum('won')+sum('lost')?sg(u/(sum('won')+sum('lost'))*100,0)+'%':'–'}</td></tr></tbody></table><p class="small muted">Return % is ROI: profit ÷ total staked on won and lost picks; pushes are left out.</p>`;
 }
 function tiles(el,items){el.innerHTML=items.map(([k,v,n])=>`<div class="tile"><span class="klabel">${k}</span><span class="stat">${v}</span><span class="small muted">${n}</span></div>`).join('')}
 

@@ -303,7 +303,7 @@ const avgLine = (g, k) => { const v = g.map(p => p[k]).filter(x => x != null); r
 function renderResults(){
   const done = DATA.picks.filter(inLg).filter(p => 'won' in p).sort((a, b) => a.dt.localeCompare(b.dt));
   const w = done.filter(p => p.won).length, units = done.reduce((s, p) => s + p.profit, 0);
-  let h = `<p class="note">How the picks did: every settled pick since the page went live, at the price logged before the first serve, at equal stakes. The page judges itself at <b>100 settled picks</b>; before that, the record is mostly noise.</p>`;
+  let h = `<p class="note">How the picks did: every settled pick since the page went live, at the price logged before the first serve, at equal stakes. ROI = profit ÷ total staked (lines end in .5, so there are no pushes). The page judges itself at <b>100 settled picks</b>; before that, the record is mostly noise.</p>`;
   if (lg !== 'all') h += tiles([['Settled picks', done.length], ['Record', `${w}–${done.length - w}`], ['Hit rate', done.length ? pct(w / done.length) : '–'],
               ['ROI', done.length ? sgn(units / done.length * 100, 1) + '%' : '–', cls(units)],
               ['Avg market line', avgLine(done, 'line')], ['Avg model line', avgLine(done, 'fair')], ['Avg actual total', avgLine(done, 'total')]]);

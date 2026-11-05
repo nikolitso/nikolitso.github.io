@@ -341,7 +341,7 @@ function renderPicks(){
   // open picks first, then this season's record: October bets (same rules, worked out from results) + bets logged live
   const open = LIVE.picks.filter(b => !b.done).sort((a, b) => a.dt < b.dt ? -1 : 1);
   const fx = Object.fromEntries(LIVE.fixtures.map(g => [g.home + '|' + g.away, g]));
-  let h = `<p class="note">Picks to take: overs where the model's edge is above ${Math.round(LE()*100)}% at the line on offer, regular season, both teams ${LIVE.min_gp ?? 3}+ games${LIVE.max_line && LIVE.max_line < 999 ? `, line under ${LIVE.max_line}` : ''}, equal stakes. Every hour the model checks every game in the next 7 days; a pick is logged the first time its edge clears the bar, at that line and the average price, and never changed. Take it as early as possible, as the line tends to move toward it. Updated ${LIVE.updated} (Athens).</p>`;
+  let h = `<p class="note">Picks to take: overs where the model's edge is above ${Math.round(LE()*100)}% at the line on offer, regular season, both teams ${LIVE.min_gp ?? 3}+ games${LIVE.max_line && LIVE.max_line < 999 ? `, line under ${LIVE.max_line}` : ''}, equal stakes. ROI = profit ÷ total staked on won and lost picks; pushes are left out. Every hour the model checks every game in the next 7 days; a pick is logged the first time its edge clears the bar, at that line and the average price, and never changed. Take it as early as possible, as the line tends to move toward it. Updated ${LIVE.updated} (Athens).</p>`;
   if (!open.length) h += '<p class="empty">No open picks right now. New ones appear here as lines open.</p>';
   else {
     h += `<h2>Open picks</h2><div class="scroll"><table class="proj"><thead><tr><th>Tip-off</th><th>League</th><th>Match</th><th class="n">Pick</th><th class="n">Price</th><th class="n">Model total</th><th class="n">Edge</th><th class="n">Line now</th></tr></thead><tbody>` +
@@ -352,11 +352,11 @@ function renderPicks(){
   const pre = ((DATA.cur || {}).bets || []).map(b => ({...b, side: 'o', pre: true, done: true, close: b.close ?? null}));
   const all = [...pre, ...LIVE.picks].sort((a, b) => a.dt < b.dt ? -1 : 1);
   const set = all.filter(b => b.done && b.ret != null), won = set.filter(b => b.ret > 0).length;
-  const units = set.reduce((a, b) => a + b.ret, 0), R_ = set.length ? units / set.length : null;
+  const units = set.reduce((a, b) => a + b.ret, 0), nDec = set.filter(b => b.ret !== 0).length, R_ = nDec ? units / nDec : null;
   const cl = all.filter(b => b.close != null), up = cl.filter(b => b.close > b.line).length, dn = cl.filter(b => b.close < b.line).length;
   h += `<h2>The ${sn(DATA.season)} record</h2>`;
   h += tiles([['Picks', String(all.length)], ['Settled', String(set.length)], ['Hit rate', set.length ? pct(won / set.length, 1) : '–'],
-              ['ROI', roi(R_), cls(R_)],,
+              ['ROI', roi(R_), cls(R_)],
               ['Closing line moved toward the pick', cl.length ? pct(up / cl.length) : '–'], ['Closing line moved against it', cl.length ? pct(dn / cl.length) : '–']]);
   h += `<p class="note">The closing line moved toward the pick when it ended above the line picked. A few hundred picks are needed before the record says much. Click a column heading to sort.</p>`;
   if (!set.length) return h + '<p class="empty">No settled picks yet.</p>';
@@ -404,11 +404,11 @@ document.addEventListener('click', e => {
 
 function renderTesting(){
   const T = LIVE.test || {names: {}, picks: []}, nm = k => T.names[k] || k, n = Object.keys(T.names).length;
-  let h = `<p class="note">Every league outside the main ${DATA.leagues.length}, run live under the same rules${T.start ? ` since ${T.start}` : ''}: overs only, edge above ${Math.round(LE()*100)}% at the line on offer, regular season, both teams ${LIVE.min_gp ?? 3}+ games${LIVE.max_line && LIVE.max_line < 999 ? `, line under ${LIVE.max_line}` : ''}, equal stakes. These picks are kept apart and do not count in the record on the other tabs. A league can join the main list once a long run of picks shows a steady profit. Click a column heading to sort.</p>`;
+  let h = `<p class="note">Every league outside the main ${DATA.leagues.length}, run live under the same rules${T.start ? ` since ${T.start}` : ''}: overs only, edge above ${Math.round(LE()*100)}% at the line on offer, regular season, both teams ${LIVE.min_gp ?? 3}+ games${LIVE.max_line && LIVE.max_line < 999 ? `, line under ${LIVE.max_line}` : ''}, equal stakes. ROI = profit ÷ total staked on won and lost picks; pushes are left out. These picks are kept apart and do not count in the record on the other tabs. A league can join the main list once a long run of picks shows a steady profit. Click a column heading to sort.</p>`;
   const open = T.picks.filter(b => !b.done).sort((a, b) => a.dt < b.dt ? -1 : 1), done = T.picks.filter(b => b.done);
-  const set = done.filter(b => b.ret != null), won = set.filter(b => b.ret > 0).length, units = set.reduce((a, b) => a + b.ret, 0), R_ = set.length ? units / set.length : null;
+  const set = done.filter(b => b.ret != null), won = set.filter(b => b.ret > 0).length, units = set.reduce((a, b) => a + b.ret, 0), nDec = set.filter(b => b.ret !== 0).length, R_ = nDec ? units / nDec : null;
   h += tiles([['Leagues', String(n || '–')], ['Picks', String(T.picks.length)], ['Open picks', String(open.length)], ['Settled', String(set.length)],
-              ['Hit rate', set.length ? pct(won / set.length, 1) : '–'], ['ROI', roi(R_), cls(R_)],]);
+              ['Hit rate', set.length ? pct(won / set.length, 1) : '–'], ['ROI', roi(R_), cls(R_)]]);
   h += '<h2>Open picks</h2>';
   h += !open.length ? '<p class="empty">No open picks in the testing leagues right now.</p>' :
     `<div class="scroll"><table class="proj"><thead><tr><th>Tip-off</th><th>League</th><th>Match</th><th class="n">Pick</th><th class="n">Price</th><th class="n">Model total</th><th class="n">Edge</th><th class="n">Line now</th></tr></thead><tbody>` +
@@ -420,7 +420,7 @@ function renderTesting(){
   set.forEach(b => (by[b.lg] ||= []).push(b));
   h += `<h2>By league</h2><div class="scroll"><table style="max-width:760px"><thead><tr><th>League</th><th class="n">Picks</th><th class="n">Hit rate</th><th class="n">ROI</th></tr></thead><tbody>` +
     Object.entries(by).map(([k, l]) => [k, l, l.reduce((a, b) => a + b.ret, 0)]).sort((a, b) => b[2] - a[2]).map(([k, l, u]) =>
-      `<tr><td>${nm(k)}</td><td class="n">${l.length}</td><td class="n">${pct(l.filter(b => b.ret > 0).length / l.length, 1)}</td><td class="n ${cls(u)}">${roi(u / l.length)}</td></tr>`).join('') + '</tbody></table></div>';
+      `<tr><td>${nm(k)}</td><td class="n">${l.length}</td><td class="n">${pct(l.filter(b => b.ret > 0).length / l.length, 1)}</td><td class="n ${cls(u)}">${roi(u / (l.filter(b => b.ret !== 0).length || 1))}</td></tr>`).join('') + '</tbody></table></div>';
   let run = 0;
   const rows = done.map(b => {
     if (b.ret != null) run += b.ret;

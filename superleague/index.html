@@ -599,7 +599,7 @@ function renderSettled(settled, all){
   const mkts = Object.keys(counts).sort((a, b) => counts[b] - counts[a] || mktName(a).localeCompare(mktName(b)));
   if (stMkt !== 'all' && !counts[stMkt]) stMkt = 'all';
   if (stMkt !== 'all'){ settled = settled.filter(b => b.stat === stMkt); all = summary(settled); }
-  let h = `<h2>Settled</h2><p class="note">Every value pick that has been settled, with what happened, and the running record (equal stakes). The minimum EV and the market you pick filter both.</p>
+  let h = `<h2>Settled</h2><p class="note">Every value pick that has been settled, with what happened, and the running record (equal stakes). ROI = profit ÷ total staked. The minimum EV and the market you pick filter both.</p>
   <div class="chips" id="stmk" style="margin:0 0 18px">${[['all', `All ${Object.values(counts).reduce((a, b) => a + b, 0)}`], ...mkts.map(m => [m, `${mktName(m)} ${counts[m]}`])]
     .map(([m, t]) => `<button class="chip${m === stMkt ? ' on' : ''}" data-s="${m}">${t}</button>`).join('')}</div>`;
   h += `<div class="metrics">
