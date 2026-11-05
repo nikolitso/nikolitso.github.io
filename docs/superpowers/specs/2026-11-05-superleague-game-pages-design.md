@@ -59,8 +59,10 @@ bookmaker's line) and the upcoming ones in `projections.js`. Rounds 1-4 of 2026-
 `BettingSignal/basketball/projector/games.py` writes `/basketball/games/` for the Basket League and Cyprus Division A, from the page data
 `make_site.py` wrote. Upcoming games show the bookmaker's lines, both records and European fatigue. The model's projection joins them only
 when `config.SHOW_PROJECTIONS` is on, using the same numbers as the league page's Projections table; that tab is hidden while the setting is
-off. Played games show the score, the lines and the match report and never a projection: `lines_log.json` keeps `ours`, not the `strength`
-figure the site shows, so it cannot say what the model showed.
+off. Played games show the score, the lines and the match report. `lines_log.json` keeps `ours`, not the `strength` figure the site shows,
+so games before 5 Nov 2026 never show a projection. From that date `games_log.json` saves the shown figure until tip-off, even while the
+setting is off, and played games show it once the setting is on. Super League has its own `games_log.json` from the same date: played games
+in it show the saved numbers, older ones stay recalculated.
 
 ## FIBA Europe Cup (5 Nov 2026)
 
