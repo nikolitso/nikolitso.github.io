@@ -4,10 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Basketball totals: overs at the opening line</title>
-<meta name="description" content="Basketball totals across 7 European leagues: five seasons of backtests against the opening and closing lines, findings and projections.">
+<meta name="description" content="Basketball totals across 6 European leagues: five seasons of backtests against the opening and closing lines, findings and projections.">
 <link rel="canonical" href="https://antonisnikolitsopoulos.com/basketball/overs/">
 <meta property="og:title" content="Basketball totals: overs at the opening line">
-<meta property="og:description" content="Basketball totals across 7 European leagues: five seasons of backtests against the opening and closing lines, findings and projections.">
+<meta property="og:description" content="Basketball totals across 6 European leagues: five seasons of backtests against the opening and closing lines, findings and projections.">
 <meta property="og:url" content="https://antonisnikolitsopoulos.com/basketball/overs/">
 <meta property="og:image" content="https://antonisnikolitsopoulos.com/basketball-overs.jpg">
 <meta name="twitter:card" content="summary_large_image">
@@ -151,7 +151,7 @@ tr.sub td:first-child{padding-left:28px;color:var(--muted)}
 .chips{display:flex;flex-wrap:wrap;gap:6px;margin:14px 0 4px}
 .chips a{font:400 14.5px var(--mono);color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:4px 11px;text-decoration:none}
 .chips a.on{color:var(--an-on-accent);background:var(--gold);border-color:var(--gold)}
-td.wr{white-space:normal}a.gm{color:inherit;text-decoration:underline;text-decoration-color:var(--an-rule);text-underline-offset:3px}a.gm:hover{color:var(--gold);text-decoration-color:currentColor}
+td.wr{white-space:normal}.lglist{list-style:none;margin:8px 0 0;padding:0;columns:3 220px;column-gap:28px}.lglist li{padding:4px 0;font-size:14.5px;break-inside:avoid}a.gm{color:inherit;text-decoration:underline;text-decoration-color:var(--an-rule);text-underline-offset:3px}a.gm:hover{color:var(--gold);text-decoration-color:currentColor}
 table.proj tr.pk td{background:var(--an-accent-soft)}table.proj tr.pk td:first-child{box-shadow:inset 3px 0 var(--gold)}
 /* seven tiles in one row at desktop width */
 .metrics{grid-template-columns:repeat(auto-fit,minmax(min(140px,40vw),1fr))}
@@ -197,7 +197,7 @@ a.tile:hover{border-color:var(--gold)}
   <div class="chips" id="chips"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=d512f21c"></script>
+<script src="data.js?v=83d198a2"></script>
 <script src="live.js"></script>
 <script>
 const $ = id => document.getElementById(id);
@@ -269,6 +269,7 @@ function renderLeagues(){
     <td class="n">${mod(s.mo)}</td>${lineCells(list)}</tr>`;
   const tierName = {europe: 'European competitions', top: 'Top divisions', second: 'Second divisions'};
   for (const tier of ['europe', 'top', 'second']){
+    if (!DATA.leagues.some(l => l.tier === tier)) continue;
     h += `<tr><td colspan="8" class="tier" style="padding-top:18px">${tierName[tier]}</td></tr>`;
     for (const l of DATA.leagues.filter(l => l.tier === tier)){
       const on = open === l.key;
@@ -413,7 +414,9 @@ function renderTesting(){
   h += !open.length ? '<p class="empty">No open picks in the testing leagues right now.</p>' :
     `<div class="scroll"><table class="proj"><thead><tr><th>Tip-off</th><th>League</th><th>Match</th><th class="n">Pick</th><th class="n">Price</th><th class="n">Model total</th><th class="n">Edge</th><th class="n">Line now</th></tr></thead><tbody>` +
     open.map(b => `<tr><td data-s="${b.dt}">${dayName(b.dt)} ${b.dt.slice(11)}</td><td>${nm(b.lg)}</td><td class="wr">${b.home} – ${b.away}</td><td class="n"><b>Over ${b.line}</b></td><td class="n">${b.px.toFixed(2)}</td><td class="n">${b.mu.toFixed(1)}</td><td class="n pos">${sgn(b.edge*100, 0)}%</td><td class="n">${b.now ?? '–'}</td></tr>`).join('') + '</tbody></table></div>';
-  if (!set.length) return h;
+  const tail = () => { const list = Object.values(T.names).sort((a, b) => a.localeCompare(b));
+  h += `<h2>The ${list.length} testing leagues</h2><ul class="lglist">${list.map(x => `<li>${x}</li>`).join('')}</ul>`; return h; };
+  if (!set.length) return tail();
   const by = {};
   set.forEach(b => (by[b.lg] ||= []).push(b));
   h += `<h2>By league</h2><div class="scroll"><table style="max-width:760px"><thead><tr><th>League</th><th class="n">Picks</th><th class="n">Hit rate</th><th class="n">ROI</th><th class="n">Units</th></tr></thead><tbody>` +
@@ -424,7 +427,8 @@ function renderTesting(){
     if (b.ret != null) run += b.ret;
     const res = b.ret == null ? '<td class="n muted" colspan="3">void</td>' : `<td class="n">${b.total}</td><td class="n ${cls(b.ret)}">${sgn(b.ret, 2)}</td><td class="n ${cls(run)}">${sgn(run, 2)}</td>`;
     return `<tr><td data-s="${b.dt}">${short(b.dt)} ${b.dt.slice(11)}</td><td>${nm(b.lg)}</td><td class="wr">${b.home} – ${b.away}</td><td class="n"><b>Over ${b.line}</b></td><td class="n">${b.px.toFixed(2)}</td><td class="n pos">${sgn(b.edge*100, 0)}%</td><td class="n">${b.close ?? '–'}</td>${res}</tr>`; });
-  return h + `<h2>Settled picks, latest first</h2><div class="scroll"><table><thead><tr><th>Tip-off</th><th>League</th><th>Match</th><th class="n">Pick</th><th class="n">Price</th><th class="n">Edge</th><th class="n">Closing line</th><th class="n">Total</th><th class="n">Units</th><th class="n">Running</th></tr></thead><tbody>${rows.reverse().join('')}</tbody></table></div>`;
+  h += `<h2>Settled picks, latest first</h2><div class="scroll"><table><thead><tr><th>Tip-off</th><th>League</th><th>Match</th><th class="n">Pick</th><th class="n">Price</th><th class="n">Edge</th><th class="n">Closing line</th><th class="n">Total</th><th class="n">Units</th><th class="n">Running</th></tr></thead><tbody>${rows.reverse().join('')}</tbody></table></div>`;
+  return tail();
 }
 
 const RENDER = {home: renderFindings, picks: renderPicks, leagues: renderLeagues, backtest: renderBacktest, projections: renderProjections, testing: renderTesting, method: renderMethod};
