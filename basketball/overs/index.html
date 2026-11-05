@@ -317,7 +317,7 @@ function bets(){
 }
 
 function renderProjections(){
-  let h = `<p class="note">Games in the next 7 days with the model's projected total (fitted on earlier games only) next to the bookmakers' consensus line. Only overs that meet the rule (regular season, both teams ${LIVE.min_gp ?? 3}+ games) get an edge here; highlighted games are logged in the Picks tab at the line and price shown when they were first seen, and their edge is the one at that moment, while the line and prices keep updating. Click a column heading to sort.</p>`;
+  let h = `<p class="note">Games in the next 7 days with the model's projected total (fitted on earlier games only) next to the market's consensus line. Only overs that meet the rule (regular season, both teams ${LIVE.min_gp ?? 3}+ games) get an edge here; highlighted games are logged in the Picks tab at the line and price shown when they were first seen, and their edge is the one at that moment, while the line and prices keep updating. Click a column heading to sort.</p>`;
   const fx = LIVE.fixtures.filter(inLg);
   if (!fx.length) return h + '<p class="empty">No games in the next 7 days.</p>';
   const taken = Object.fromEntries(LIVE.picks.map(b => [b.home + '|' + b.away, b]));   // a pick keeps the edge it was taken at

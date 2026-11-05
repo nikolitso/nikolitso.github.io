@@ -118,7 +118,7 @@
     var fav = thirds(all.filter(function (g) { return g.odds && g.odds.x12; }), favPrice);
     var ovr = thirds(all.filter(function (g) { return g.odds && g.odds.ou25; }), function (g) { return g.odds.ou25[0]; });
     if (!/^[fo][0-2]$/.test(st.ob)) st.ob = "f0";
-    var h = '<p class="note">Games split into three groups as equal as possible, by the favourite\u2019s 1X2 price or by the over 2.5 goals price. Odds are the middle price across the bookmakers listed before kick-off. <b>Odds %</b> is the chance the odds give once the margin is removed; results and over/under always use the full match.</p>';
+    var h = '<p class="note">Games split into three groups as equal as possible, by the favourite\u2019s 1X2 price or by the over 2.5 goals price. Odds are the middle market price before kick-off. <b>Odds %</b> is the chance the odds give once the margin is removed; results and over/under always use the full match.</p>';
     h += '<div class="bar">' + periodSeg() + '</div>';
     function pills(lbl, set, pre) {
       var r = '<div class="bar"><span class="muted" style="font:500 12px var(--mono);text-transform:uppercase;letter-spacing:.06em;min-width:150px">' + lbl + '</span><div class="chips">';
@@ -340,7 +340,7 @@
       '<li><b>xG</b> (expected goals) and <b>xG on target</b> are shown with two decimals. <b>Big chances</b> are clear scoring chances as logged for each game.</li>' +
       '<li><b>Cards</b> are counted as: yellow 1, straight red 2, a player sent off with two yellows 3. Counted from the match incidents.</li>' +
       '<li><b>Tiers</b>: SL1 = Super League clubs, SL2 = Super League 2 (' + sl2.join(", ") + '). "SL1 v SL2" counts the tie whoever is at home.</li>' +
-      '<li><b>Odds</b>: 1X2 and over/under 2.5 goals before kick-off, the middle price across the bookmakers listed for each game. "Odds %" removes the margin.</li>' +
+      '<li><b>Odds</b>: 1X2 and over/under 2.5 goals before kick-off, the middle market price for each game. "Odds %" removes the margin.</li>' +
       '<li>The cup mixes Super League clubs with lower-division sides, so team averages say as much about the draw as about the team.</li></ul>' +
       '<p class="muted">Updated ' + day(D.updated) + '.</p></div>';
     out.innerHTML = h;

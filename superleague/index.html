@@ -191,7 +191,7 @@ function linesHtml(lines){
 }
 
 const mult = x => `×${x.toFixed(2)}`;
-// model chances shown as odds with a 5% bookmaker-style margin
+// model chances shown as odds with a 5% market-style margin
 const MARGIN = 1.05;
 // each game has its own page: /superleague/games/<date>-<home>-<away>/ (written by games.py)
 const gameHref = g => `/superleague/games/${(g.kickoff || g.date).slice(0, 10)}-${slugify(g.home)}-${slugify(g.away)}/`;
@@ -299,7 +299,7 @@ function renderProjections(){
   let h = `<div class="bar"><div class="seg" id="pjmode"><button data-m="match" class="${pjMode==='match'?'on':''}">By match</button><button data-m="stat" class="${pjMode==='stat'?'on':''}">By stat</button></div>`;
   if (pjMode === 'stat') h += chipsHtml('pjstat', pjStat, ORDER);
   h += '</div>';
-  if (fixtures.some(g => g.ref && g.ref.est)) h += `<p class="note">This round's referees were appointed after the last model update, so their effect on cards and fouls is estimated here: each referee's cards per game since 2024–25 (fouls: this season's games against the model's projection) next to the league's, pulled hard toward ×1.00, because in testing a referee's past said little about his next game's cards. The model's own referee factors replace these at its next update. Bookie comparisons and value picks use the adjusted numbers.</p>`;
+  if (fixtures.some(g => g.ref && g.ref.est)) h += `<p class="note">This round's referees were appointed after the last model update, so their effect on cards and fouls is estimated here: each referee's cards per game since 2024–25 (fouls: this season's games against the model's projection) next to the league's, pulled hard toward ×1.00, because in testing a referee's past said little about his next game's cards. The model's own referee factors replace these at its next update. Market comparisons and value picks use the adjusted numbers.</p>`;
   const byDay = {};
   fixtures.forEach(g => (byDay[g.kickoff.slice(0,10)] ||= []).push(g));
   if (pjMode === 'match'){
@@ -364,7 +364,7 @@ function renderMethod(){
   const A = D.accuracy, E = D.example, MD = D.market_drive;
   let h = '<div class="doc">';
   h += `<h2 style="margin-top:0">The idea</h2>
-  <p>Every number on the Projections tab is built the same way. Start from what an average Super League game produces, then adjust it for how good or bad each team is at that stat. Goals and the result are our own, independent of the bookmakers, so they can be compared with the odds. The match odds are only used as an input for other stats: who is the favourite for cards, and a small adjustment to shots, SoT and saves. Cards also take into account who is the favourite (again from the odds), and cards and fouls take into account the referee.</p>`;
+  <p>Every number on the Projections tab is built the same way. Start from what an average Super League game produces, then adjust it for how good or bad each team is at that stat. Goals and the result are our own, independent of the market, so they can be compared with the odds. The match odds are only used as an input for other stats: who is the favourite for cards, and a small adjustment to shots, SoT and saves. Cards also take into account who is the favourite (again from the odds), and cards and fouls take into account the referee.</p>`;
   if (E){
     const H = E.home, W = E.away, c = E.stats.corners, k = E.stats.cards, g = E.stats.goals;
     const tH = D.teams.find(t => t.team === H), tW = D.teams.find(t => t.team === W);
@@ -480,7 +480,7 @@ function renderMethod(){
   return h;
 }
 
-// Vs Market: the bookmaker's main line for each stat (the one closest to 50/50), its fair
+// Vs Market: the market's main line for each stat (the one closest to 50/50), its fair
 // over chance with the margin removed, and ours on the same line
 const BOOK_STATS = ['goals','corners','cards','sot','shots','fouls','saves'];
 const pts = d => `${d > 0 ? '+' : ''}${Math.round(d * 100)}`;
@@ -502,13 +502,13 @@ function renderMarket(){
   const games = D.fixtures.filter(g => g.market);
   if (!games.length) return '<p class="empty">No market odds for this round yet.</p>';
   const T = D.market_test;
-  let h = `<p class="note">The market's odds for this round next to the model, for every stat${D.odds_pulled ? ` (pulled ${dayName(D.odds_pulled.slice(0,10))} ${D.odds_pulled.slice(11)} Athens)` : ''}. For each stat the line is the bookie's main one (closest to 50/50). <b>Bookie %</b> is the bookie's chance of over with its margin taken out; <b>Model %</b> is the model's chance on the same line, and <b>Model odds</b> are those chances turned into odds with a ${Math.round((MARGIN - 1) * 100)}% margin, comparable with the bookie's. Differences of 10 points or more are highlighted. This is the full comparison, including markets we don't trust; the short list of picks worth considering, with their record, is on <a href="#view=picks" style="color:var(--gold)" onclick="setView('picks')">Picks</a>.</p>
-  <p class="note"><b>On result and goals the market has been sharper than the model:</b> over ${T.games} games since ${T.since}, its closing odds predicted results better (log loss ${T.ll_market.toFixed(3)} vs ${T.ll_ours.toFixed(3)}), and backing the model's disagreements lost ${Math.round(-T.roi_1x2 * 100)}% per pick on 1X2 and ${Math.round(-T.roi_ou * 100 * 10) / 10}% on over/under 2.5. For the other stats, read the differences with care: the bookie's shots lines run about 2 shots above the model in every game, which looks like a different way of counting shots rather than value. Every pull of the market's odds is saved so this can be checked after a few rounds.</p>`;
+  let h = `<p class="note">The market's odds for this round next to the model, for every stat${D.odds_pulled ? ` (pulled ${dayName(D.odds_pulled.slice(0,10))} ${D.odds_pulled.slice(11)} Athens)` : ''}. For each stat the line is the market's main one (closest to 50/50). <b>Market %</b> is the market's chance of over with its margin taken out; <b>Model %</b> is the model's chance on the same line, and <b>Model odds</b> are those chances turned into odds with a ${Math.round((MARGIN - 1) * 100)}% margin, comparable with the market's. Differences of 10 points or more are highlighted. This is the full comparison, including markets we don't trust; the short list of picks worth considering, with their record, is on <a href="#view=picks" style="color:var(--gold)" onclick="setView('picks')">Picks</a>.</p>
+  <p class="note"><b>On result and goals the market has been sharper than the model:</b> over ${T.games} games since ${T.since}, its closing odds predicted results better (log loss ${T.ll_market.toFixed(3)} vs ${T.ll_ours.toFixed(3)}), and backing the model's disagreements lost ${Math.round(-T.roi_1x2 * 100)}% per pick on 1X2 and ${Math.round(-T.roi_ou * 100 * 10) / 10}% on over/under 2.5. For the other stats, read the differences with care: the market's shots lines run about 2 shots above the model in every game, which looks like a different way of counting shots rather than value. Every pull of the market's odds is saved so this can be checked after a few rounds.</p>`;
   const all = [];
   games.forEach(g => marketRows(g).forEach(r => all.push({...r, g})));
   const big = all.filter(r => Math.abs(r.diff) >= .1 && r.s !== 'shots').sort((a, b) => Math.abs(b.diff) - Math.abs(a.diff)).slice(0, 8);
   if (big.length){
-    h += `<h2>Biggest differences</h2><div class="scroll"><table class="mk"><thead><tr><th>Match</th><th>Stat</th><th class="n">Model total</th><th class="n">Line</th><th class="n">Bookie %</th><th class="n">Model %</th><th class="n">Diff</th><th class="n">Model side · market odds</th></tr></thead><tbody>`;
+    h += `<h2>Biggest differences</h2><div class="scroll"><table class="mk"><thead><tr><th>Match</th><th>Stat</th><th class="n">Model total</th><th class="n">Line</th><th class="n">Market %</th><th class="n">Model %</th><th class="n">Diff</th><th class="n">Model side · market odds</th></tr></thead><tbody>`;
     for (const r of big) h += `<tr><td>${r.g.home} – ${r.g.away}</td><td>${L[r.s]}</td><td class="n">${f(r.total, r.s)}</td><td class="n">${r.ln}</td><td class="n">${pct(r.fair)}</td><td class="n tot">${pct(r.ours)}</td><td class="n ${r.diff > 0 ? 'w' : 'l'}">${pts(r.diff)}</td><td class="n">${r.diff > 0 ? 'Over ' + r.ov.toFixed(2) : 'Under ' + r.un.toFixed(2)}</td></tr>`;
     h += '</tbody></table></div>';
   }
@@ -522,9 +522,9 @@ function renderMarket(){
       if (res) h += `<table class="mk"><thead><tr><th>Result</th><th class="n">1</th><th class="n">X</th><th class="n">2</th></tr></thead><tbody>
         <tr><td class="muted">Market odds</td>${res.odds.map(o => `<td class="n">${o.toFixed(2)}</td>`).join('')}</tr>
         <tr><td class="muted">Model odds</td>${mr.map(p => `<td class="n tot">${modelOdds(p)}</td>`).join('')}</tr>
-        <tr><td class="muted">Bookie %</td>${res.fair.map(p => `<td class="n">${pct(p)}</td>`).join('')}</tr>
+        <tr><td class="muted">Market %</td>${res.fair.map(p => `<td class="n">${pct(p)}</td>`).join('')}</tr>
         <tr><td class="muted">Model %</td>${mr.map((p, i) => `<td class="n tot">${pct(p)} ${big10(p - res.fair[i]) ? `<span class="${p > res.fair[i] ? 'w' : 'l'}" style="font-size:12.5px">${pts(p - res.fair[i])}</span>` : ''}</td>`).join('')}</tr></tbody></table>`;
-      h += `<table class="mk"><thead><tr><th>Stat</th><th class="n">Model total</th><th class="n">Line</th><th class="n">Market odds<br>over · under</th><th class="n">Model odds<br>over · under</th><th class="n">Bookie %</th><th class="n">Model %</th><th class="n">Diff</th></tr></thead><tbody>`;
+      h += `<table class="mk"><thead><tr><th>Stat</th><th class="n">Model total</th><th class="n">Line</th><th class="n">Market odds<br>over · under</th><th class="n">Model odds<br>over · under</th><th class="n">Market %</th><th class="n">Model %</th><th class="n">Diff</th></tr></thead><tbody>`;
       for (const r of marketRows(g)){
         const hot = big10(r.diff);
         h += `<tr><td>${L[r.s]}</td><td class="n">${f(r.total, r.s)}</td><td class="n">${r.ln}</td><td class="n muted">${r.ov.toFixed(2)} · ${r.un.toFixed(2)}</td><td class="n tot">${modelOdds(r.ours)} · ${modelOdds(1 - r.ours)}</td><td class="n">${pct(r.fair)}</td><td class="n tot">${pct(r.ours)}</td><td class="n ${r.diff > 0 ? 'w' : 'l'}">${hot ? pts(r.diff) : ''}</td></tr>`;
@@ -536,7 +536,7 @@ function renderMarket(){
   return h;
 }
 
-// Value picks: bookie prices where the model's chance x the odds is at least 1 + min_ev
+// Value picks: market prices where the model's chance x the odds is at least 1 + min_ev
 const lc = s => ({sot: 'SoT', saves: 'GK saves', xg: 'xG', result: 'match result'})[s] || L[s].toLowerCase();
 const betName = b => b.stat === 'result' ? ({1: 'Home win', X: 'Draw', 2: 'Away win'})[b.side] : `${b.side === 'over' ? 'Over' : 'Under'} ${b.line} ${lc(b.stat)}`;
 const evPct = x => `${x >= 0 ? '+' : ''}${Math.round(x * 100)}%`;
@@ -570,7 +570,7 @@ function renderValue(){
   const label = x => x >= .3 ? '30%+' : Math.round(x * 100) + '%';
   const evBar = `<div class="bar"><span class="muted" style="font:400 14.5px var(--mono)">Minimum EV</span><div class="seg" id="valmin">${EV_STEPS.map(x => `<button data-v="${x}" class="${x === valMin ? 'on' : ''}">${label(x)}</button>`).join('')}</div></div>`;
   const started = (R.started || []).filter(b => b.ev >= valMin - 1e-9);
-  let h = `<p class="note">A pick is <b>value</b> when the model's chance of it winning, times the market's odds, comes to more than 1: on average it would return more than the stake. <b>EV</b> = model chance × market odds − 1, the expected return per 1 staked (EV +20% = 1.20 back per 1, on average). The bookie's own chance is shown for comparison only. Level lines only: for each game and stat, the bookie's main line (the one it prices closest to 50-50, odds around 2.00 each side), and only when its own chance is between ${Math.round(V.fair_range[0] * 100)}% and ${Math.round(V.fair_range[1] * 100)}%.</p>
+  let h = `<p class="note">A pick is <b>value</b> when the model's chance of it winning, times the market's odds, comes to more than 1: on average it would return more than the stake. <b>EV</b> = model chance × market odds − 1, the expected return per 1 staked (EV +20% = 1.20 back per 1, on average). The market's own chance is shown for comparison only. Level lines only: for each game and stat, the market's main line (the one it prices closest to 50-50, odds around 2.00 each side), and only when its own chance is between ${Math.round(V.fair_range[0] * 100)}% and ${Math.round(V.fair_range[1] * 100)}%.</p>
   <p class="note"><b>Not listed:</b> ${Object.entries(V.skip).map(([s, why]) => `<b>${lc(s)}</b>: ${why}`).join('; ')}. A very large EV usually means the model is missing something (a new coach, injuries, a change of style) rather than a gift, so check those first. Every pick is fixed at its line and odds once it reaches EV 10% and settled when the results come in; results and the record are further down this tab.</p>
   ${evBar}`;
   h += `<div class="metrics">
@@ -578,7 +578,7 @@ function renderValue(){
     <div class="metric"><div class="lbl">Started, waiting for result</div><div class="big">${started.length}</div></div></div>`;
   if (!bets.length) h += `<p class="empty">No picks at EV ${label(valMin)} or more for the coming games.</p>`;
   else {
-    h += `<h2>Coming games</h2><div class="scroll"><table class="mk"><thead><tr><th>Kick-off</th><th>Match</th><th>Pick</th><th class="n">Market odds</th><th class="n">Model odds</th><th class="n">Bookie %</th><th class="n">Model %</th><th class="n">EV</th></tr></thead><tbody>`;
+    h += `<h2>Coming games</h2><div class="scroll"><table class="mk"><thead><tr><th>Kick-off</th><th>Match</th><th>Pick</th><th class="n">Market odds</th><th class="n">Model odds</th><th class="n">Market %</th><th class="n">Model %</th><th class="n">EV</th></tr></thead><tbody>`;
     for (const b of bets) h += `<tr><td class="muted">${dayName(b.kickoff)} ${b.kickoff.slice(11)}</td><td>${b.home} – ${b.away}</td><td><b>${betName(b)}</b></td><td class="n">${b.odds.toFixed(2)}</td><td class="n tot">${modelOdds(b.ours)}</td><td class="n">${pct(b.fair)}</td><td class="n tot">${pct(b.ours)}</td><td class="n ${b.ev >= .15 ? 'w' : ''}">${evPct(b.ev)}</td></tr>`;
     h += '</tbody></table></div>';
   }
@@ -788,7 +788,7 @@ function openRef(name, scope = 'all'){
     return metric('Favourite wins', p(s.win), s.n ? `${Math.round(s.win * s.n)} of ${s.n} · all refs ${p(b.win)}` : `no odds yet`)
       + metric('Outsider more cards', p(s.out), s.n ? `${Math.round(s.out * s.n)} of ${s.n} · all refs ${p(b.out)}` : `no odds yet`);
   };
-  const favNote = `<p class="muted" style="font-size:14.5px;margin:-6px 0 12px">The boxes cover league games since 2024–25; the list below is this season's. Favourite and outsider by the bookmakers' 1X2 odds (the shorter win price). A draw counts as the favourite not winning; level cards count as the outsider not getting more. <b>All refs</b> is the same over every referee's games in the same span${all ? '' : ', from the games read so far (the full game list is still being read)'}.</p>`;
+  const favNote = `<p class="muted" style="font-size:14.5px;margin:-6px 0 12px">The boxes cover league games since 2024–25; the list below is this season's. Favourite and outsider by the market's 1X2 odds (the shorter win price). A draw counts as the favourite not winning; level cards count as the outsider not getting more. <b>All refs</b> is the same over every referee's games in the same span${all ? '' : ', from the games read so far (the full game list is still being read)'}.</p>`;
   $('refdlg-h').textContent = name;
   let h = '';
   if (all){
@@ -811,12 +811,12 @@ function openRef(name, scope = 'all'){
     h += `<div class="metrics">${metric(sc.title, sel.length, sub)}${metric('Cards per game', sel.length ? avgOf(sel.map(g => g.hc + g.ac)).toFixed(2) : '–')}
       ${split}${metric('Rating 2026–27', srt == null ? '–' : round1(srt), sc.what ? 'in these games' : '')}
       ${favMetrics(sel, all.filter(g => g.season >= '2024-25' && sc.test(g)))}</div>
-      <p class="muted" style="font-size:14.5px;margin:-6px 0 12px">The boxes cover this referee's games ${sc.what ? sc.what + ' ' : ''}since 2024–25${sc.table ? `, the same games as ${sc.table}` : ''} (listed at the bottom); the first list below is all of this season's games. ${scope === 'big4' ? '<b>Big-4 · Opp</b> is cards per game for the Big-4 side and its opponent. ' : ''}Favourite and outsider by the bookmakers' 1X2 odds (the shorter win price); a draw counts as the favourite not winning, level cards as the outsider not getting more. <b>All refs</b> is the same over every referee's games ${sc.what ? sc.what + ' ' : ''}since 2024–25.</p>`;
+      <p class="muted" style="font-size:14.5px;margin:-6px 0 12px">The boxes cover this referee's games ${sc.what ? sc.what + ' ' : ''}since 2024–25${sc.table ? `, the same games as ${sc.table}` : ''} (listed at the bottom); the first list below is all of this season's games. ${scope === 'big4' ? '<b>Big-4 · Opp</b> is cards per game for the Big-4 side and its opponent. ' : ''}Favourite and outsider by the market's 1X2 odds (the shorter win price); a draw counts as the favourite not winning, level cards as the outsider not getting more. <b>All refs</b> is the same over every referee's games ${sc.what ? sc.what + ' ' : ''}since 2024–25.</p>`;
     const cur = gs.filter(g => g.season === '2026-27');
     h += `<h3 class="refsub">This season's games</h3>`;
     if (!cur.length) h += '<p class="empty">No 2026–27 games with this referee yet.</p>';
     else {
-      h += `<div class="scroll"><table class="mk rp"><thead><tr><th>Date</th><th>Match</th><th class="n">Score</th><th class="n">Cards</th><th class="n">Total</th><th class="n" title="Bookmakers' median home-win odds">Home odds</th><th class="n">Rating</th><th>Comment</th></tr></thead><tbody>`;
+      h += `<div class="scroll"><table class="mk rp"><thead><tr><th>Date</th><th>Match</th><th class="n">Score</th><th class="n">Cards</th><th class="n">Total</th><th class="n" title="Market median home-win odds">Home odds</th><th class="n">Rating</th><th>Comment</th></tr></thead><tbody>`;
       for (const g of cur){ const r = rep(g);
         h += `<tr><td class="muted">${ddmm(g.date)}</td><td>${g.home} – ${g.away}</td><td class="n">${g.hg}–${g.ag}</td><td class="n">${g.hc}–${g.ac}</td><td class="n tot">${g.hc + g.ac}</td><td class="n">${g.odds ? g.odds.toFixed(2) : '–'}</td><td class="n">${r ? rate(r[4]) : '<span class="muted">–</span>'}</td><td class="cm">${r ? r[6] : ''}</td></tr>`; }
       h += '</tbody></table></div>';
@@ -874,7 +874,7 @@ function renderRefs(){
   if (!R) return '<p class="empty">Referee data is not available.</p>';
   const all = refGameList(), T = all ? refTables(all) : R;
   const sec = [['rf-cards', 'Card averages'], ['rf-odds', 'By the odds'], ['rf-big4', 'Big-4 games'], ['rf-small', 'Other games'], ['rf-report', 'Referee reports'], ['rf-rating', 'Ratings']];
-  let h = `<p class="note">How many cards each referee shows, how cards follow the odds, and how each referee did this season. Card numbers cover league games since 2024–25 (Big-4 against Big-4 since 2021–22); ratings and comments are from diaititis.gr's referee reports. ${T.live ? `Worked out from all ${T.games} league games since 2024–25 in our own match data (the same games the model uses), refreshed with every update, so each round is in once its results are (last update ${window.SLREFGAMES.updated}, Athens). Cards are every yellow and red shown; home odds are the bookmakers' average closing 1X2 price.` : `A snapshot from ${dayName(R.updated)}; it switches to tables worked out from every game once those have all been read.`} Click a referee's name to see their games.</p>
+  let h = `<p class="note">How many cards each referee shows, how cards follow the odds, and how each referee did this season. Card numbers cover league games since 2024–25 (Big-4 against Big-4 since 2021–22); ratings and comments are from diaititis.gr's referee reports. ${T.live ? `Worked out from all ${T.games} league games since 2024–25 in our own match data (the same games the model uses), refreshed with every update, so each round is in once its results are (last update ${window.SLREFGAMES.updated}, Athens). Cards are every yellow and red shown; home odds are the market's average closing 1X2 price.` : `A snapshot from ${dayName(R.updated)}; it switches to tables worked out from every game once those have all been read.`} Click a referee's name to see their games.</p>
     <div class="jump">${sec.map(([id, t]) => `<button class="chip" data-jump="${id}">${t}</button>`).join('')}</div>`;
 
   h += `<h2 id="rf-cards">Cards per game by referee</h2><div class="scroll"><table class="mk sortable" style="max-width:620px"><thead><tr><th>Referee</th><th class="n">Games</th><th class="n">Cards</th><th class="n">Home</th><th class="n">Away</th></tr></thead><tbody>`;

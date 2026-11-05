@@ -4,10 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Volleyball projections: sets and total points</title>
-<meta name="description" content="Volleyball projections and over picks for the five leagues where the model beat the price in testing: Japan, Germany and France (women), Italy and Argentina (men). Set count, total points and the bookmaker line.">
+<meta name="description" content="Volleyball projections and over picks for the five leagues where the model beat the price in testing: Japan, Germany and France (women), Italy and Argentina (men). Set count, total points and the market line.">
 <link rel="canonical" href="https://antonisnikolitsopoulos.com/volleyball/">
 <meta property="og:title" content="Volleyball projections: sets and total points">
-<meta property="og:description" content="Volleyball projections and over picks for the five leagues where the model beat the price in testing: Japan, Germany and France (women), Italy and Argentina (men). Set count, total points and the bookmaker line.">
+<meta property="og:description" content="Volleyball projections and over picks for the five leagues where the model beat the price in testing: Japan, Germany and France (women), Italy and Argentina (men). Set count, total points and the market line.">
 <meta property="og:url" content="https://antonisnikolitsopoulos.com/volleyball/">
 <meta property="og:image" content="https://antonisnikolitsopoulos.com/volleyball.jpg">
 <meta name="twitter:card" content="summary_large_image">
@@ -223,13 +223,13 @@ const one = () => lg === 'all' ? DATA.leagues[0].key : lg;      // tabs that sho
 $('sub').textContent = `${DATA.leagues.length} leagues, women's and men's · ${DATA.season.replace('-','–')} · updated ${DATA.updated} (Athens)`;
 
 function renderProjections(){
-  let h = `<p class="note">Every match in the next 7 days: the chance it goes 3, 4 or 5 sets, the model's line on total points (where over and under are even). Once a bookmaker posts a line, the row shows the book line, the average over price and the model's over chance against it. Only <b>picks</b> are highlighted (gold); they are backed and recorded: overs on lines ${DATA.min_line}.5 to ${DATA.low - 0.5}, the matches the market expects to end 3-0, where the edge is above ${DATA.edge*100}%.</p>`;
+  let h = `<p class="note">Every match in the next 7 days: the chance it goes 3, 4 or 5 sets, the model's line on total points (where over and under are even). Once the market posts a line, the row shows the market line, the average over price and the model's over chance against it. Only <b>picks</b> are highlighted (gold); they are backed and recorded: overs on lines ${DATA.min_line}.5 to ${DATA.low - 0.5}, the matches the market expects to end 3-0, where the edge is above ${DATA.edge*100}%.</p>`;
   h += '<p class="note"><a href="/volleyball/games/">Every game, one page each →</a></p>';
   const fx = DATA.fixtures.filter(inLg);
   if (!fx.length) return h + '<p class="empty">No matches in the next 7 days.</p>';
   const byDay = {};
   fx.forEach(g => (byDay[g.dt.slice(0,10)] ||= []).push(g));
-  const head = `<thead><tr><th>Time</th>${lg === 'all' ? '<th>League</th>' : ''}<th>Match</th><th class="n">3 sets</th><th class="n">4 sets</th><th class="n">5 sets</th><th class="n">Model</th><th class="n">Book line</th><th class="n">Over</th><th class="n">Over chance</th><th class="n">Edge</th></tr></thead>`;
+  const head = `<thead><tr><th>Time</th>${lg === 'all' ? '<th>League</th>' : ''}<th>Match</th><th class="n">3 sets</th><th class="n">4 sets</th><th class="n">5 sets</th><th class="n">Model</th><th class="n">Market line</th><th class="n">Over</th><th class="n">Over chance</th><th class="n">Edge</th></tr></thead>`;
   for (const [d, gs] of Object.entries(byDay)){
     h += `<h2 class="day">${dayName(d)}</h2><div class="scroll"><table class="proj">${head}<tbody>`;
     for (const g of gs){
@@ -251,7 +251,7 @@ function pickTiles(){
   const t = [['Open picks', nOpen, nOpen ? 'to play' : 'none right now'], ['Record', `${w}–${n - w}`, 'win – loss'],
              ['Return', `<span class="${cls(units)}">${sgn(units, 2)}</span>`, 'units'],
              ['ROI', n ? `<span class="${cls(units)}">${sgn(units / n * 100, 1)}%</span>` : '–', `${n} settled pick${n === 1 ? '' : 's'}`],
-             ['Book line', avgLine(done, 'line'), avg], ['Model line', avgLine(done, 'fair'), avg], ['Actual total', avgLine(done, 'total'), avg]];
+             ['Market line', avgLine(done, 'line'), avg], ['Model line', avgLine(done, 'fair'), avg], ['Actual total', avgLine(done, 'total'), avg]];
   return `<div class="metrics">${t.map(([l, v, n]) => `<div class="metric"><div class="lbl">${l}</div><div class="big">${v}</div><div class="sm">${n}</div></div>`).join('')}</div>`;
 }
 
@@ -271,7 +271,7 @@ function renderHome(){
   <h2>Do the model's overs make a profit?</h2>
   <p>In the backtest, yes: ${A.n} bets across ${seasons.length} past seasons (${span}) returned <b>${sgn(A.roi * 100, 1)}%</b>, while backing every low-line over in the same leagues without the model returned ${sgn(A.blind_roi * 100, 1)}%. The leagues were chosen on these same seasons, so expect less live. The ${DATA.season.replace('-', '–')} record above is the real test.</p>
   <h3><span class="num">1</span>The bet</h3>
-  <p>One bet only: the <b>over on a low total-points line</b>, from ${DATA.min_line}.5 to ${DATA.low - 1}.5, when the model's chance × the average price is more than ${DATA.edge * 100}% above 1. A low line means the bookmaker expects a 3-0, so the bet is that the match goes to a fourth set. Every bet is 1 unit, logged before the first serve.</p>
+  <p>One bet only: the <b>over on a low total-points line</b>, from ${DATA.min_line}.5 to ${DATA.low - 1}.5, when the model's chance × the average price is more than ${DATA.edge * 100}% above 1. A low line means the market expects a 3-0, so the bet is that the match goes to a fourth set. Every bet is 1 unit, logged before the first serve.</p>
   <h3><span class="num">2</span>The leagues</h3>
   <p>${B.tested.length} leagues were tested, women's and men's. A league is here only if, on the seasons the model never saw, it passed three tests: <b>backing every low-line over without the model lost 3% or less</b>, a fair market to start from; <b>the model's bets made more than +10%</b>; and <b>there were at least 50 of them</b>. Five passed: ${liveNames()}.</p>
   <h3><span class="num">3</span>What the backtest found</h3>
@@ -290,8 +290,8 @@ const fairCell = p => p.fair == null ? '<td class="n muted">–</td>' : `<td cla
 function renderPicks(){
   const open = DATA.picks.filter(inLg).filter(p => !('won' in p)).sort((a, b) => a.dt.localeCompare(b.dt));
   let h = `<p class="note">The picks still to play, logged before the first serve: an over on a line from ${DATA.min_line}.5 to ${DATA.low - 0.5}, when the model's chance × the average price is more than ${DATA.edge*100}% above 1. Leagues: ${liveNames()}. Stake 1 unit each. Until the start a pick follows the latest line. Once played it moves to <b>Results</b>.</p>`;
-  if (!open.length) return h + '<p class="empty">No open picks. New ones appear once bookmakers post lines for a match that qualifies.</p>';
-  h += `<div class="scroll"><table><thead><tr><th>Date</th>${lg === 'all' ? '<th>League</th>' : ''}<th>Match</th><th class="n">Book line</th><th class="n">Price</th><th class="n">Model line</th><th class="n">Over chance</th><th class="n">Edge</th></tr></thead><tbody>`;
+  if (!open.length) return h + '<p class="empty">No open picks. New ones appear once the market posts lines for a match that qualifies.</p>';
+  h += `<div class="scroll"><table><thead><tr><th>Date</th>${lg === 'all' ? '<th>League</th>' : ''}<th>Match</th><th class="n">Market line</th><th class="n">Price</th><th class="n">Model line</th><th class="n">Over chance</th><th class="n">Edge</th></tr></thead><tbody>`;
   for (const p of open)
     h += `<tr><td>${short(p.dt)} ${p.dt.slice(11)}</td>${lg === 'all' ? `<td>${LG[p.lg].country}</td>` : ''}<td class="wr">${p.home} – ${p.away}</td><td class="n">Over ${p.line}</td><td class="n">${p.px.toFixed(2)}</td>
       ${fairCell(p)}<td class="n">${pct(p.p)}</td><td class="n ${cls(p.edge)}">${sgn(p.edge*100, 0)}%</td></tr>`;
@@ -306,10 +306,10 @@ function renderResults(){
   let h = `<p class="note">How the picks did: every settled pick since the page went live, at the price logged before the first serve, stake 1 unit. The page judges itself at <b>100 settled picks</b>; before that, the record is mostly noise.</p>`;
   if (lg !== 'all') h += tiles([['Settled picks', done.length], ['Record', `${w}–${done.length - w}`], ['Hit rate', done.length ? pct(w / done.length) : '–'],
               ['Units', sgn(units, 2), cls(units)], ['ROI', done.length ? sgn(units / done.length * 100, 1) + '%' : '–', cls(units)],
-              ['Avg book line', avgLine(done, 'line')], ['Avg model line', avgLine(done, 'fair')], ['Avg actual total', avgLine(done, 'total')]]);
+              ['Avg market line', avgLine(done, 'line')], ['Avg model line', avgLine(done, 'fair')], ['Avg actual total', avgLine(done, 'total')]]);
   if (!done.length) return h + '<p class="empty">No settled picks yet. Each pick is added here once its match is played.</p>';
   if (lg === 'all'){
-    h += `<h2>By league</h2><div class="scroll"><table style="max-width:940px"><thead><tr><th>League</th><th class="n">Picks</th><th class="n">Won</th><th class="n">Hit</th><th class="n">Avg book line</th><th class="n">Avg model line</th><th class="n">Avg actual total</th><th class="n">Units</th><th class="n">ROI</th></tr></thead><tbody>`;
+    h += `<h2>By league</h2><div class="scroll"><table style="max-width:940px"><thead><tr><th>League</th><th class="n">Picks</th><th class="n">Won</th><th class="n">Hit</th><th class="n">Avg market line</th><th class="n">Avg model line</th><th class="n">Avg actual total</th><th class="n">Units</th><th class="n">ROI</th></tr></thead><tbody>`;
     for (const l of [...DATA.leagues, ...(DATA.former || [])]){
       const g = done.filter(p => p.lg === l.key); if (!g.length) continue;
       const gw = g.filter(p => p.won).length, gu = g.reduce((s, p) => s + p.profit, 0);
@@ -317,7 +317,7 @@ function renderResults(){
     }
     h += '</tbody></table></div>';
   }
-  h += `<h2>Every pick</h2><div class="scroll"><table><thead><tr><th>Date</th>${lg === 'all' ? '<th>League</th>' : ''}<th>Match</th><th class="n">Book line</th><th class="n">Price</th><th class="n">Model line</th><th class="n">Over chance</th><th class="n">Edge</th><th class="n">Sets</th><th class="n">Total</th><th class="n">Units</th><th class="n">Running</th></tr></thead><tbody>`;
+  h += `<h2>Every pick</h2><div class="scroll"><table><thead><tr><th>Date</th>${lg === 'all' ? '<th>League</th>' : ''}<th>Match</th><th class="n">Market line</th><th class="n">Price</th><th class="n">Model line</th><th class="n">Over chance</th><th class="n">Edge</th><th class="n">Sets</th><th class="n">Total</th><th class="n">Units</th><th class="n">Running</th></tr></thead><tbody>`;
   let run = 0;
   const rows = done.map(p => { run += p.profit;
     return `<tr><td>${short(p.dt)}</td>${lg === 'all' ? `<td>${LG[p.lg].country}</td>` : ''}<td class="wr">${p.home} – ${p.away}</td><td class="n">Over ${p.line}</td><td class="n">${p.px.toFixed(2)}</td>
@@ -403,14 +403,14 @@ document.addEventListener('click', e => {
   render();
 });
 
-// P/L by the bookmaker's total line: the live rule's bets in unseen seasons, in 10-point bands (bands of the line's whole part)
+// P/L by the market's total line: the live rule's bets in unseen seasons, in 10-point bands (bands of the line's whole part)
 function byLine(){
   const tuned = new Set(DATA.backtest.seasons.filter(s => s.tuned).map(s => s.lg + '|' + s.season));
   const bets = DATA.backtest.bets.filter(b => inLg(b) && !tuned.has(b.lg + '|' + b.season));
   const band = b => { const f = Math.floor(b.line); return Math.ceil(f / 10) * 10; };
   const by = {};
   bets.forEach(b => (by[band(b)] ||= []).push(b));
-  let h = `<h2>By line</h2><p class="note">The same bets grouped by the bookmaker's total-points line. Profit and loss in units, stake 1 per bet.</p>`;
+  let h = `<h2>By line</h2><p class="note">The same bets grouped by the market's total-points line. Profit and loss in units, stake 1 per bet.</p>`;
   h += `<div class="scroll"><table style="max-width:620px"><thead><tr><th>Line</th><th class="n">Bets</th><th class="n">Won</th><th class="n">Hit</th><th class="n">P/L</th><th class="n">ROI</th></tr></thead><tbody>`;
   let n = 0, w = 0, pl = 0;
   for (const k of Object.keys(by).map(Number).sort((a, b) => a - b)){
@@ -471,7 +471,7 @@ function renderMethod(){
   <h3><span class="num">2</span>From rallies to the whole match</h3>
   <p>A set runs to 25 points (the fifth to 15) and must be won by two, and the match is best of five. From the two ratings the model works out the exact chance of every set score and every points total, allowing for some day-to-day variation in form.</p>
   <h3><span class="num">3</span>Why totals have two humps</h3>
-  <p>A 3-0 ends around 131 points, a four-setter around 180 and a five-setter around 207. Few matches finish in between. Bookmakers set their line either low (they expect a 3-0) or high (a long match), so the over/under is mostly a bet on whether the match ends in straight sets.</p>
+  <p>A 3-0 ends around 131 points, a four-setter around 180 and a five-setter around 207. Few matches finish in between. The market sets its line either low (they expect a 3-0) or high (a long match), so the over/under is mostly a bet on whether the match ends in straight sets.</p>
   <h3><span class="num">4</span>The bet</h3>
   <p>Only overs on low lines, below ${DATA.low}: across the backtest, unders and high-line overs did not beat the price. The model's job is to pick out the low-line matches most likely to go to a fourth set.</p>
   <h3><span class="num">5</span>What it cannot see</h3>

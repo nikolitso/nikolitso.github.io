@@ -24,7 +24,7 @@ const result = (g) => (g.us > g.them ? 'W' : 'L');
 const where = (g) => (g.neutral ? 'Neutral' : g.home ? 'Home' : 'Away');
 const vsAt = (g) => (g.neutral ? 'vs' : g.home ? 'vs' : '@');
 
-// bookmaker totals for upcoming games; the page works without them
+// market totals for upcoming games; the page works without them
 const getLines = () => fetch(`../basketball/overs/live.js?v=${Date.now()}`).then((r) => r.text())
   .then((t) => JSON.parse(t.slice(t.indexOf('{'), t.lastIndexOf('}') + 1)).fixtures.filter((g) => g.home === 'PAOK' || g.away === 'PAOK')).catch(() => []);
 const lineRow = (g) => { const d = toDate(g.date).getTime(); return (state.lines || []).find((l) => Math.abs(new Date(l.dt.replace(' ', 'T') + 'Z').getTime() - d) < 864e5); };
@@ -510,8 +510,8 @@ VIEWS.scout = function scout() {
         <div class="big">${esc(hn)} ${Math.round(hs)} – ${Math.round(as)} ${esc(an)}</div>
         <div class="winbar"><div style="width:${pr.winProb}%"></div></div>
         <div class="muted">PAOK win chance: <b style="color:inherit">${pr.winProb}%</b> · expected ${pr.pace ? f1(pr.pace) : '–'} possessions · ${esc(src)}${pr.note ? ' · ' + esc(pr.note) : ''}</div>
-        <div class="muted">Projected total: <b style="color:inherit">${f1(us.score + them.score)}</b> · Bookmaker total: <b style="color:inherit">${line != null ? line : 'not out yet'}</b></div>
-        <div class="muted">Projected margin: <b style="color:inherit">${byWhom(us.score - them.score)}</b> · Bookmaker handicap: <b style="color:inherit">${hcp != null ? byWhom(hcp) : 'not out yet'}</b></div>
+        <div class="muted">Projected total: <b style="color:inherit">${f1(us.score + them.score)}</b> · Market total: <b style="color:inherit">${line != null ? line : 'not out yet'}</b></div>
+        <div class="muted">Projected margin: <b style="color:inherit">${byWhom(us.score - them.score)}</b> · Market handicap: <b style="color:inherit">${hcp != null ? byWhom(hcp) : 'not out yet'}</b></div>
       </div>
       ${tstats}
       ${absent(us, 'PAOK')}${absent(them, pick.opp)}
@@ -520,7 +520,7 @@ VIEWS.scout = function scout() {
         Team stats: each team's rate per 100 possessions × what the opponent allows ÷ the league average, over the expected possessions (pulled harder toward the league average than scoring, since these rates settle more slowly); made shots are scaled to add up to the projected score,
         and rebounds come from the expected misses and both teams' offensive and defensive rebounding rates.
         PAOK's numbers come from games in this competition only (the rosters differ between the Greek League and the EuroCup).
-        ${fit.games ? `Totals get a correction of +${fit.totalBias} points and, once a bookmaker total is out, move ${Math.round(fit.lineWeight * 100)}% of the way to it.${fit.marginWeight != null ? ` Once a bookmaker handicap is out, the margin moves ${Math.round(fit.marginWeight * 100)}% of the way to it.` : ''} The home edge, these two blends and the win chance are re-fitted after every game on ${fit.games.toLocaleString('en-GB')} past games.` : ''}
+        ${fit.games ? `Totals get a correction of +${fit.totalBias} points and, once a market total is out, move ${Math.round(fit.lineWeight * 100)}% of the way to it.${fit.marginWeight != null ? ` Once a market handicap is out, the margin moves ${Math.round(fit.marginWeight * 100)}% of the way to it.` : ''} The home edge, these two blends and the win chance are re-fitted after every game on ${fit.games.toLocaleString('en-GB')} past games.` : ''}
 </p>`;
   }
   const gf = (state.gameFiles || {})[`${pick.comp}-${pick.code}`];
