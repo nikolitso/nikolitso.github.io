@@ -30,6 +30,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
+        with:
+          ref: main                 # the latest main, not the commit the run was queued on: a queued run must not publish over an older copy
       - uses: actions/checkout@v5
         with:
           repository: nikolitso/BettingSignal
