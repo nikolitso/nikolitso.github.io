@@ -27,8 +27,6 @@ th{text-align:left;font-weight:600;color:var(--an-muted);font-size:12px;letter-s
 td{padding:9px 10px;border-bottom:1px solid var(--an-rule);font-variant-numeric:tabular-nums}
 th.n,td.n{text-align:right}
 tr.hi td{background:var(--an-accent-soft)}
-td.hit{color:var(--an-accent);font-weight:600}
-td.miss{color:var(--an-muted)}
 .facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin:8px 0 6px}
 .fact{background:var(--an-soft);border:1px solid var(--an-rule);border-radius:10px;padding:12px 14px;font-size:14px;line-height:1.5}
 .fact b{display:block;font-weight:600;margin-bottom:2px}
@@ -51,12 +49,10 @@ td.miss{color:var(--an-muted)}
 </div></header>
 <div class="wrap">
 <div class=score>1–1<small>final score, Sat 29 Aug 2026</small></div>
-<p class=lede>The model projected <b>1.5 goals for Volos</b> and <b>1.1 for Iraklis</b> (Volos the likelier winner); it ended 1–1. It expected <b>2.6 goals</b> in all; there were 2.</p>
 <h2>Projected and actual, stat by stat</h2>
-<table><tr><th>Stat</th><th class=n>Volos proj.</th><th class=n>Iraklis proj.</th><th class=n>Total proj.</th><th class=n>Volos</th><th class=n>Iraklis</th><th class=n>Total</th><th class=n>Side</th></tr>
-<tr><td>Goals</td><td class=n>1.5</td><td class=n>1.1</td><td class=n>2.6</td><td class=n>1.0</td><td class=n>1.0</td><td class=n>2.0</td><td class='n miss'>✗</td></tr><tr><td>Shots</td><td class=n>14.3</td><td class=n>10.2</td><td class=n>24.5</td><td class=n>17.0</td><td class=n>10.0</td><td class=n>27.0</td><td class='n hit'>✓</td></tr><tr><td>SoT</td><td class=n>4.6</td><td class=n>3.3</td><td class=n>8.0</td><td class=n>3.0</td><td class=n>1.0</td><td class=n>4.0</td><td class='n miss'>✗</td></tr><tr><td>Corners</td><td class=n>4.9</td><td class=n>3.4</td><td class=n>8.3</td><td class=n>2.0</td><td class=n>2.0</td><td class=n>4.0</td><td class='n hit'>✓</td></tr><tr><td>Cards</td><td class=n>2.4</td><td class=n>2.8</td><td class=n>5.2</td><td class=n>4.0</td><td class=n>4.0</td><td class=n>8.0</td><td class='n miss'>✗</td></tr><tr><td>Fouls</td><td class=n>15.3</td><td class=n>15.9</td><td class=n>31.3</td><td class=n>18.0</td><td class=n>23.0</td><td class=n>41.0</td><td class='n miss'>✗</td></tr><tr><td>GK saves</td><td class=n>2.3</td><td class=n>3.2</td><td class=n>5.4</td><td class=n>0.0</td><td class=n>2.0</td><td class=n>2.0</td><td class='n hit'>✓</td></tr><tr><td>xG</td><td class=n>1.4</td><td class=n>1.1</td><td class=n>2.5</td><td class=n>1.3</td><td class=n>0.6</td><td class=n>1.9</td><td class='n miss'>✗</td></tr><tr><td>Possession %</td><td class=n>48.7</td><td class=n>51.3</td><td class=n>100.0</td><td class=n>63.2</td><td class=n>36.8</td><td class=n>100.0</td><td class='n '>–</td></tr></table>
-<p class=note>The model called the right side of the line on 3 of 8 stats. "Side" compares the actual total with the
-projected one against the main line of the game. Projections were made before kick-off by the 2026-2027 model on
+<table><tr><th>Stat</th><th class=n>Volos proj.</th><th class=n>Iraklis proj.</th><th class=n>Total proj.</th><th class=n>Volos</th><th class=n>Iraklis</th><th class=n>Total</th></tr>
+<tr><td>Goals</td><td class=n>1.5</td><td class=n>1.1</td><td class=n>2.6</td><td class=n>1</td><td class=n>1</td><td class=n>2</td></tr><tr><td>Shots</td><td class=n>14.3</td><td class=n>10.2</td><td class=n>24.5</td><td class=n>17</td><td class=n>10</td><td class=n>27</td></tr><tr><td>SoT</td><td class=n>4.6</td><td class=n>3.3</td><td class=n>8.0</td><td class=n>3</td><td class=n>1</td><td class=n>4</td></tr><tr><td>Corners</td><td class=n>4.9</td><td class=n>3.4</td><td class=n>8.3</td><td class=n>2</td><td class=n>2</td><td class=n>4</td></tr><tr><td>Cards</td><td class=n>2.4</td><td class=n>2.8</td><td class=n>5.2</td><td class=n>4</td><td class=n>4</td><td class=n>8</td></tr><tr><td>Fouls</td><td class=n>15.3</td><td class=n>15.9</td><td class=n>31.3</td><td class=n>18</td><td class=n>23</td><td class=n>41</td></tr><tr><td>GK saves</td><td class=n>2.3</td><td class=n>3.2</td><td class=n>5.4</td><td class=n>0</td><td class=n>2</td><td class=n>2</td></tr><tr><td>xG</td><td class=n>1.4</td><td class=n>1.1</td><td class=n>2.5</td><td class=n>1.3</td><td class=n>0.6</td><td class=n>1.9</td></tr><tr><td>Possession %</td><td class=n>48.7</td><td class=n>51.3</td><td class=n>100.0</td><td class=n>63.2</td><td class=n>36.8</td><td class=n>100.0</td></tr></table>
+<p class=note>Projections were made before kick-off by the 2026-2027 model on
 antonisnikolitsopoulos.com and are kept as they were.</p>
 <div class=nav><a href="/superleague/games/2026-08-29-panetolikos-kalamata/">← Panetolikos – Kalamata</a><a href="/superleague/games/">All games</a><a href="/superleague/">Super League projections</a><a href="/superleague/games/2026-08-30-aris-ofi/">Aris – OFI →</a></div>
 </div>
