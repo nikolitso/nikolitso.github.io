@@ -720,19 +720,18 @@ function renderPicks(){
   const card = (t, v, sub) => `<div class="metric"><div class="lbl">${t}</div><div class="big2">${v}</div><div class="tag">${sub}</div></div>`;
   const price = p => p.pr.toFixed(2) + (p.logged ? '' : '<span class="tag" title="No price logged: counted at ' + PICK_PRICE.toFixed(2) + '">*</span>');
   const when = p => `${fmtDate(p.date).slice(0, 5)} <span class="tag">${esc(p.time)}</span>`;
-  box.innerHTML = `<div class="note" style="margin-bottom:14px"><b>A pick needs everything in place:</b> a market edge and a model edge (${PJ_EDGE}+ points from the line) on the same side, and the club rating must not disagree. 1 unit at the logged price. A pick follows the latest line until tip-off, so it can appear or drop out as the line moves; then it is frozen and settled from the result. The record starts on ${fmtDate(PICKS_FROM)}, after Round 5, and it is too early to read anything into it.</div>
+  box.innerHTML = `<div class="note" style="margin-bottom:14px"><b>A pick needs everything in place:</b> a market edge and a model edge (${PJ_EDGE}+ points from the line) on the same side, and the club rating must not disagree. Equal stakes at the logged price. A pick follows the latest line until tip-off, so it can appear or drop out as the line moves; then it is frozen and settled from the result. The record starts on ${fmtDate(PICKS_FROM)}, after Round 5, and it is too early to read anything into it.</div>
     <div class="metrics">
       ${card('Settled picks', done.length, `${open.length} still to play`)}
       ${card('Record', done.length ? `${w}–${l}${pu ? `<span class="tag">–${pu}</span>` : ''}` : '–', 'won – lost' + (pu ? ' – push' : ''))}
       ${card('Hit rate', w + l ? Math.round(w / (w + l) * 100) + '%' : '–', 'makes a profit from about 54%')}
-      ${card('Units', done.length ? `<span class="${cls(units)}">${u2(units)}</span>` : '–', '1 unit a pick')}
     </div>
     <h2>Open picks</h2>` + (open.length ? `<div class="scroll"><table class="fx pjpk"><tr><th class="n">Tip-off</th><th>Pick</th><th>Game</th><th class="n">Price</th><th>Market edge</th><th class="n">Model edge</th><th>Club rating</th></tr>` +
       open.map(p => `<tr><td class="n">${when(p)}</td><td><b class="hcp">${esc(p.bet)}</b></td><td>${esc(p.h)} – ${esc(p.a)}</td><td class="n">${price(p)}</td><td>${esc(p.market)}</td><td class="n">${p.gap.toFixed(1)} pts</td><td>${esc(p.club)}</td></tr>`).join('') + '</table></div>'
       : '<div class="empty">No open picks right now. A pick appears here as soon as a game has everything in place.</div>') +
-    `<h2>Results</h2>` + (done.length ? `<div class="scroll"><table class="fx pjpk"><tr><th class="n">Date</th><th>Pick</th><th>Game</th><th class="n">Price</th><th class="n">Score</th><th class="n">Result</th><th class="n">Units</th></tr>` +
+    `<h2>Results</h2>` + (done.length ? `<div class="scroll"><table class="fx pjpk"><tr><th class="n">Date</th><th>Pick</th><th>Game</th><th class="n">Price</th><th class="n">Score</th><th class="n">Result</th></tr>` +
       [...done].reverse().map(p => `<tr><td class="n">${fmtDate(p.date).slice(0, 5)}</td><td><b>${esc(p.bet)}</b></td><td>${esc(p.h)} – ${esc(p.a)}</td><td class="n">${price(p)}</td><td class="n"><b>${p.r[6]}–${p.r[7]}</b></td>
-        <td class="n ${p.res === 'W' ? 'pkw' : p.res === 'L' ? 'l' : 'tag'}"><b>${p.res === 'W' ? 'Won' : p.res === 'L' ? 'Lost' : 'Push'}</b></td><td class="n ${cls(p.u)}">${u2(p.u)}</td></tr>`).join('') + '</table></div>'
+        <td class="n ${p.res === 'W' ? 'pkw' : p.res === 'L' ? 'l' : 'tag'}"><b>${p.res === 'W' ? 'Won' : p.res === 'L' ? 'Lost' : 'Push'}</b></td></tr>`).join('') + '</table></div>'
       : '<div class="empty">No settled picks yet. Each pick moves here with its result after the game.</div>');
 }
 function renderPjCards(P){
@@ -1055,7 +1054,7 @@ function mkCompetition(games, clubs){
     : '<div class="empty">None so far.</div>') + '</div>';
   const card = (t, v, sub) => `<div class="metric"><div class="lbl">${t}</div><div class="big2">${v}</div><div class="tag">${sub}</div></div>`;
   const hc = games.filter(g => hcp(g, 1));
-  return `<div class="note" style="margin-bottom:14px"><b>Is there a kind of bet the market keeps getting wrong?</b> Every Regular Season game so far, each kind of bet at 1 unit. Each row is one bet on the favourite's handicap. The other side is the same row read the other way, so a low win % means the underdog has done well. A bet makes a profit at about <b>${BE}%</b>. <b>Stands out</b> = well above ${BE}%, even allowing for so few games; <b>Worth watching</b> = ${BE}%+ on 20 or more games, but it could still be luck. With this many rows, a few will look good by luck alone, so treat anything here as a lead to follow, not a tip.</div>
+  return `<div class="note" style="margin-bottom:14px"><b>Is there a kind of bet the market keeps getting wrong?</b> Every Regular Season game so far, each kind of bet at equal stakes. Each row is one bet on the favourite's handicap. The other side is the same row read the other way, so a low win % means the underdog has done well. A bet makes a profit at about <b>${BE}%</b>. <b>Stands out</b> = well above ${BE}%, even allowing for so few games; <b>Worth watching</b> = ${BE}%+ on 20 or more games, but it could still be luck. With this many rows, a few will look good by luck alone, so treat anything here as a lead to follow, not a tip.</div>
     <div class="metrics">
       ${card('Games', games.length, `from ${fmtDate(MK_FROM)}`)}
       ${card('Handicap miss', avg(games.map(g => Math.abs(hcp(g, 1)))).toFixed(1), 'average points the line was off')}

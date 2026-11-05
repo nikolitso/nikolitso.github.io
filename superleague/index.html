@@ -554,8 +554,8 @@ function summary(bs){
 function recordTable(title, groups, note, byEv){
   const rows = Object.entries(groups).map(([k, bs]) => [k, summary(bs)]).sort(byEv ? (a, b) => parseInt(a[0]) - parseInt(b[0]) : (a, b) => b[1].n - a[1].n);
   if (!rows.length) return '';
-  let h = `<h2>${title}</h2>${note ? `<p class="muted" style="margin:-4px 0 10px;font-size:15.5px">${note}</p>` : ''}<div class="scroll"><table class="mk" style="max-width:820px"><thead><tr><th></th><th class="n">Picks</th><th class="n">Won</th><th class="n">Hit rate</th><th class="n">Avg odds</th><th class="n">Profit</th><th class="n">ROI</th></tr></thead><tbody>`;
-  for (const [k, r] of rows) h += `<tr><td>${k}</td><td class="n">${r.n}</td><td class="n">${r.won}</td><td class="n">${pct(r.hit)}</td><td class="n muted">${r.odds.toFixed(2)}</td><td class="n ${r.profit >= 0 ? 'w' : 'l'}">${r.profit > 0 ? '+' : ''}${r.profit.toFixed(2)}</td><td class="n ${r.roi >= 0 ? 'w' : 'l'}">${evPct(r.roi)}</td></tr>`;
+  let h = `<h2>${title}</h2>${note ? `<p class="muted" style="margin:-4px 0 10px;font-size:15.5px">${note}</p>` : ''}<div class="scroll"><table class="mk" style="max-width:820px"><thead><tr><th></th><th class="n">Picks</th><th class="n">Won</th><th class="n">Hit rate</th><th class="n">Avg odds</th><th class="n">ROI</th></tr></thead><tbody>`;
+  for (const [k, r] of rows) h += `<tr><td>${k}</td><td class="n">${r.n}</td><td class="n">${r.won}</td><td class="n">${pct(r.hit)}</td><td class="n muted">${r.odds.toFixed(2)}</td><td class="n ${r.roi >= 0 ? 'w' : 'l'}">${evPct(r.roi)}</td></tr>`;
   return h + '</tbody></table></div>';
 }
 
@@ -599,13 +599,13 @@ function renderSettled(settled, all){
   const mkts = Object.keys(counts).sort((a, b) => counts[b] - counts[a] || mktName(a).localeCompare(mktName(b)));
   if (stMkt !== 'all' && !counts[stMkt]) stMkt = 'all';
   if (stMkt !== 'all'){ settled = settled.filter(b => b.stat === stMkt); all = summary(settled); }
-  let h = `<h2>Settled</h2><p class="note">Every value pick that has been settled, with what happened, and the running record (1 unit staked on each). The minimum EV and the market you pick filter both.</p>
+  let h = `<h2>Settled</h2><p class="note">Every value pick that has been settled, with what happened, and the running record (equal stakes). The minimum EV and the market you pick filter both.</p>
   <div class="chips" id="stmk" style="margin:0 0 18px">${[['all', `All ${Object.values(counts).reduce((a, b) => a + b, 0)}`], ...mkts.map(m => [m, `${mktName(m)} ${counts[m]}`])]
     .map(([m, t]) => `<button class="chip${m === stMkt ? ' on' : ''}" data-s="${m}">${t}</button>`).join('')}</div>`;
   h += `<div class="metrics">
     <div class="metric"><div class="lbl">Settled so far</div><div class="big">${all.n}</div></div>
     <div class="metric"><div class="lbl">Hit rate</div><div class="big">${all.n ? pct(all.hit) : '–'}</div></div>
-    <div class="metric"><div class="lbl">Profit (1 unit each)</div><div class="big">${all.n ? (all.profit > 0 ? '+' : '') + all.profit.toFixed(2) : '–'}</div></div>
+    
     <div class="metric"><div class="lbl">ROI</div><div class="big">${all.n ? evPct(all.roi) : '–'}</div></div></div>`;
   if (!settled.length) return h + `<p class="muted" style="margin-top:18px">No settled picks yet at this EV level: the record starts once results for logged picks are in the data.</p>`;
   h += `<h2>${stMkt === 'all' ? 'All settled picks' : `Settled ${mktName(stMkt).toLowerCase()} picks`}</h2><p class="muted" style="margin:-4px 0 10px;font-size:15.5px">Every pick from EV +${Math.round(valMin * 100)}% with its result, newest first; the record by market, side and EV follows below.</p><div class="scroll"><table class="mk"><thead><tr><th>Date</th><th>Match</th><th>Pick</th><th class="n">Odds</th><th class="n">EV</th><th class="n" title="What happened: the final score for 1X2 picks, the match total for the rest">Actual</th><th class="n">Result</th></tr></thead><tbody>`;

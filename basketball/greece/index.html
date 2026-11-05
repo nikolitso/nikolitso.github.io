@@ -286,11 +286,11 @@ function nextTable(el,rows,showLeague){
 }
 function logTable(el,S){
   const st={open:'<span class="sig wait">To play</span>',won:'<span class="sig go">Win</span>',lost:'<span class="sig">Loss</span>',push:'<span class="sig">Push</span>'};
-  el.innerHTML=S.length?`<thead><tr><th class="l">League</th><th class="l">Match</th><th class="l">Date</th><th class="l">Bet</th><th>Odds</th><th>Model margin</th><th>Real margin</th><th class="l">Result</th><th>Return</th></tr></thead><tbody>${S.map(x=>`<tr><td class="l muted">${esc(lname(byLeague[x.league]||{name:x.league}))}</td><td class="l m"><b>${esc(x.home)}</b> – ${esc(x.away)}</td><td class="l">${day(x.date)}</td><td class="l"><b>${call(x)}</b></td><td>${f(x.odds,2)}</td><td>${sg(x.ours)}</td><td>${x.margin==null?'–':sg(x.margin,0)}</td><td class="l">${st[x.status]}</td><td class="${cls(x.profit)}">${x.profit==null?'–':sg(x.profit,2)}</td></tr>`).join('')}</tbody>`:'<tbody><tr><td class="l empty">Nothing flagged yet. Handicaps are logged here the first time they qualify.</td></tr></tbody>';
+  el.innerHTML=S.length?`<thead><tr><th class="l">League</th><th class="l">Match</th><th class="l">Date</th><th class="l">Bet</th><th>Odds</th><th>Model margin</th><th>Real margin</th><th class="l">Result</th></tr></thead><tbody>${S.map(x=>`<tr><td class="l muted">${esc(lname(byLeague[x.league]||{name:x.league}))}</td><td class="l m"><b>${esc(x.home)}</b> – ${esc(x.away)}</td><td class="l">${day(x.date)}</td><td class="l"><b>${call(x)}</b></td><td>${f(x.odds,2)}</td><td>${sg(x.ours)}</td><td>${x.margin==null?'–':sg(x.margin,0)}</td><td class="l">${st[x.status]}</td></tr>`).join('')}</tbody>`:'<tbody><tr><td class="l empty">Nothing flagged yet. Handicaps are logged here the first time they qualify.</td></tr></tbody>';
 }
 function recTable(el,rec){
   const R=Object.values(rec), sum=k=>R.reduce((a,x)=>a+x[k],0), n=sum('won')+sum('lost')+sum('push'), u=sum('units');
-  el.innerHTML=`<table><thead><tr><th>Flagged</th><th>Wins</th><th>Losses</th><th>Pushes</th><th>To play</th><th>Return (units)</th><th>Return %</th></tr></thead><tbody><tr><td><b>${n+sum('open')}</b></td><td>${sum('won')}</td><td>${sum('lost')}</td><td>${sum('push')}</td><td>${sum('open')}</td><td class="${cls(u)}"><b>${sg(u,2)}</b></td><td class="${cls(u)}">${n?sg(u/n*100,0)+'%':'–'}</td></tr></tbody></table>`;
+  el.innerHTML=`<table><thead><tr><th>Flagged</th><th>Wins</th><th>Losses</th><th>Pushes</th><th>To play</th><th>Return %</th></tr></thead><tbody><tr><td><b>${n+sum('open')}</b></td><td>${sum('won')}</td><td>${sum('lost')}</td><td>${sum('push')}</td><td>${sum('open')}</td><td class="${cls(u)}">${n?sg(u/n*100,0)+'%':'–'}</td></tr></tbody></table>`;
 }
 function tiles(el,items){el.innerHTML=items.map(([k,v,n])=>`<div class="tile"><span class="klabel">${k}</span><span class="stat">${v}</span><span class="small muted">${n}</span></div>`).join('')}
 
@@ -528,7 +528,7 @@ function leaguePage(l){
   document.title=l.name+' · Basketball';
   $('#lName').innerHTML=flag(l,'flag big')+esc(l.name);
   $('#lNote').textContent='Flagged when the model is 5 or more points away from the market\'s handicap, on either side, once both teams have played 6 games.';
-  const bt=l.backtest, ru=x=>x&&x.n?`${x.won}–${x.lost}${x.push?' ('+x.push+' push)':''}, ${sg(x.units,1)} u`:'–';
+  const bt=l.backtest, ru=x=>x&&x.n?`${x.won}–${x.lost}${x.push?' ('+x.push+' push)':''}`:'–';
   const items=[['Games played',l.gamesMin===l.gamesMax?l.gamesMin:l.gamesMin+'–'+l.gamesMax,'per team'],['League average',l.avg?`${f(l.avg.muH,1)}–${f(l.avg.muA,1)}`:'–','home – away points'],['Next 8 days',l.upcoming.length,'matches projected'],['Margin error',`±${f(l.sd,0)}`,'typical miss, points']];
   if(bt&&bt.lines)items.push(['Same rule, 2022-26',ru({n:bt.train.n+bt.test.n,won:bt.train.won+bt.test.won,lost:bt.train.lost+bt.test.lost,push:bt.train.push+bt.test.push,units:bt.train.units+bt.test.units}),(bt.train.n+bt.test.n)+' past bets']);
   tiles($('#lTiles'),D.showProjections===false?items.filter(x=>!/Next 8 days|Margin error|Same rule/.test(x[0])):items);
