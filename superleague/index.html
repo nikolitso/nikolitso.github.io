@@ -48,6 +48,7 @@ h2.day{font-size:20px;padding-bottom:8px;border-bottom:1px solid var(--line)}
 .card td:first-child{white-space:normal}
 .card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px 18px 10px}
 .card h3{font:600 24px var(--serif);margin:0}
+.card h3 a{color:inherit;text-decoration:none}.card h3 a:hover{color:var(--gold)}.card h3 .go{font:500 14.5px var(--an-body);color:var(--gold);margin-left:8px;white-space:nowrap}
 .live{font:500 12.5px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--bg);background:var(--gold);border-radius:4px;padding:1px 6px;margin-left:8px;vertical-align:1px}
 .card .ko{font:500 15.5px var(--mono);color:var(--text);letter-spacing:.06em}
 .wdl{display:flex;height:8px;border-radius:4px;overflow:hidden;margin:12px 0 6px;background:var(--line)}
@@ -188,6 +189,9 @@ function linesHtml(lines){
 const mult = x => `×${x.toFixed(2)}`;
 // model chances shown as odds with a 5% bookmaker-style margin
 const MARGIN = 1.05;
+// each game has its own page: /superleague/games/<date>-<home>-<away>/ (written by games.py)
+const gameHref = g => `/superleague/games/${(g.kickoff || g.date).slice(0, 10)}-${slugify(g.home)}-${slugify(g.away)}/`;
+const slugify = s => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 const modelOdds = p => (p > 0 ? Math.max(1.01, 1 / (p * MARGIN)) : 99).toFixed(2);
 const monthYear = s => { const d = new Date(s + 'T12:00'); return `${MON[d.getMonth()]} ${d.getFullYear()}`; };
 // the referee factor uses his last 20 games (refs.py LAST_N)
@@ -240,7 +244,7 @@ function matchCard(g){
     return `<tr><td>${L[s]}</td><td class="n">${f(x.home, s)}</td><td class="n">${f(x.away, s)}</td>`+
       `<td class="n tot">${x.total == null ? '' : f(x.total, s)}</td></tr>`;
   }).join('');
-  return `<div class="card mcard"><div class="top"><div class="ko">${t}</div><h3>${g.home} <span class="muted">–</span> ${g.away}</h3>${refHtml(g.ref)}${coachHtml(g.coaches, g.home, g.away)}${sampleHtml(g)}</div>
+  return `<div class="card mcard"><div class="top"><div class="ko">${t}</div><h3><a href="${gameHref(g)}" title="This game's own page: the projection, the lines, and after the game what happened">${g.home} <span class="muted">–</span> ${g.away} <span class="go">game page →</span></a></h3>${refHtml(g.ref)}${coachHtml(g.coaches, g.home, g.away)}${sampleHtml(g)}</div>
     <div><div class="wdl"><i style="width:${r.home*100}%"></i><i style="width:${r.draw*100}%"></i><i style="width:${r.away*100}%"></i></div>
     <div class="wdlt"><span>Home <b>${pct(r.home)}</b><br><i>${modelOdds(r.home)}</i></span><span>Draw <b>${pct(r.draw)}</b><br><i>${modelOdds(r.draw)}</i></span><span>Away <b>${pct(r.away)}</b><br><i>${modelOdds(r.away)}</i></span></div></div>
     <table><thead><tr><th>Stat</th><th class="n"><span class="full">${g.home}</span><span class="abbr">Home</span></th><th class="n"><span class="full">${g.away}</span><span class="abbr">Away</span></th><th class="n">Total</th></tr></thead><tbody>${rows}</tbody></table></div>`;
@@ -480,7 +484,7 @@ function renderMarket(){
     h += `<h2 class="day">${dayName(d)}</h2><div class="stack">`;
     for (const g of gs){
       const res = g.market.result, mr = [g.result.home, g.result.draw, g.result.away];
-      h += `<div class="card"><div class="ko">${g.kickoff.slice(11)}${g.started ? ' <span class="live">Started</span> <span class="muted" style="font-size:13.5px;letter-spacing:0">closing odds, last pull before kick-off</span>' : ''}</div><h3>${g.home} <span class="muted">–</span> ${g.away}</h3>${sampleHtml(g)}<div class="mkcols">`;
+      h += `<div class="card"><div class="ko">${g.kickoff.slice(11)}${g.started ? ' <span class="live">Started</span> <span class="muted" style="font-size:13.5px;letter-spacing:0">closing odds, last pull before kick-off</span>' : ''}</div><h3><a href="${gameHref(g)}" title="This game's own page: the projection, the lines, and after the game what happened">${g.home} <span class="muted">–</span> ${g.away} <span class="go">game page →</span></a></h3>${sampleHtml(g)}<div class="mkcols">`;
       if (res) h += `<table class="mk"><thead><tr><th>Result</th><th class="n">1</th><th class="n">X</th><th class="n">2</th></tr></thead><tbody>
         <tr><td class="muted">Bookie odds</td>${res.odds.map(o => `<td class="n">${o.toFixed(2)}</td>`).join('')}</tr>
         <tr><td class="muted">Model odds</td>${mr.map(p => `<td class="n tot">${modelOdds(p)}</td>`).join('')}</tr>
