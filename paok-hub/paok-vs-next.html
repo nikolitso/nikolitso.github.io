@@ -102,6 +102,18 @@
     margin-top: 18px;
   }
 
+  .unavail { margin-top: 26px; }
+  .unavail-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-top: 10px; }
+  .unavail-card { border: 1px solid var(--line); border-radius: 8px; background: var(--surface); padding: 14px 16px; }
+  .unavail-card h3 { margin: 0 0 8px; font-size: 15px; }
+  .unavail-row { display: flex; gap: 10px; align-items: baseline; padding: 7px 0; border-top: 1px solid var(--line); font-size: 14.5px; }
+  .unavail-row b { flex: 0 0 96px; font-weight: 600; }
+  .unavail-row span { flex: 1; min-width: 0; color: var(--ink-dim); }
+  .unavail-row i { flex: none; font-style: normal; font-size: 12px; font-weight: 600; padding: 1px 7px; border-radius: 999px; border: 1px solid currentColor; }
+  .unavail-row i.out { color: var(--bad); }
+  .unavail-row i.doubtful { color: #d9a441; }
+  .unavail-foot { margin: 10px 0 0; font-size: 12.5px; color: var(--ink-dim); line-height: 1.5; }
+  @media (max-width: 640px) { .unavail-grid { grid-template-columns: 1fr; } }
   .meta-pill {
     font-family:var(--an-mono);
     font-size: 13.5px;
@@ -228,6 +240,11 @@
       <span class="meta-pill" id="meta-when">&hellip;</span>
       <span class="meta-pill" id="meta-fixture">&hellip;</span>
     </div>
+    <section class="unavail" id="unavail" hidden>
+      <p class="pos-label"><span class="dot"></span>Unavailable</p>
+      <div class="unavail-grid" id="unavail-grid"></div>
+      <p class="unavail-foot" id="unavail-foot"></p>
+    </section>
     <p id="load-status" class="sub" style="display:none; margin-top:14px; color:var(--bad);"></p>
 
   <div class="pos-group">
@@ -450,6 +467,35 @@
   }
 
   var bust = '?_=' + Date.now();
+
+  // Reported absences from unavailable.json, shown only while that file is about the next fixture.
+  function renderUnavailable(meta, oppName) {
+    fetch('unavailable.json' + bust).then(function (r) { return r.ok ? r.json() : null; }).then(function (u) {
+      if (!u || u.match !== meta.home + ' vs ' + meta.away) return;
+      var grid = document.getElementById('unavail-grid');
+      [['PAOK', u.paok], [oppName, u.opponent]].forEach(function (side) {
+        var card = document.createElement('div'); card.className = 'unavail-card';
+        var h = document.createElement('h3'); h.textContent = side[0]; card.appendChild(h);
+        side[1].forEach(function (p) {
+          var row = document.createElement('div'); row.className = 'unavail-row';
+          var b = document.createElement('b'); b.textContent = p.name;
+          var s = document.createElement('span'); s.textContent = p.reason;
+          var i = document.createElement('i'); i.className = p.status.toLowerCase(); i.textContent = p.status;
+          row.appendChild(b); row.appendChild(s); row.appendChild(i); card.appendChild(row);
+        });
+        grid.appendChild(card);
+      });
+      var foot = document.getElementById('unavail-foot');
+      foot.appendChild(document.createTextNode('From press reports, as of ' + u.updated + ', not official squad lists: '));
+      u.sources.forEach(function (src, n) {
+        if (n) foot.appendChild(document.createTextNode(', '));
+        var a = document.createElement('a'); a.href = src.url; a.target = '_blank'; a.rel = 'noopener'; a.textContent = src.name;
+        foot.appendChild(a);
+      });
+      document.getElementById('unavail').hidden = false;
+    }).catch(function () {});
+  }
+
   Promise.all([
     fetch('fixtures.html' + bust).then(function (r) { return r.text(); }),
     fetch('teams-stats.html' + bust).then(function (r) { return r.text(); }),
@@ -478,6 +524,7 @@
     var opp = Object.assign({}, oppRow, oppXg);
 
     render(paok, opp, meta.opponent, meta);
+    renderUnavailable(meta, meta.opponent);
   }).catch(function () {
     showError('Could not load next-match data right now. Try refreshing.');
   });

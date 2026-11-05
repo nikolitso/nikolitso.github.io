@@ -1,0 +1,25 @@
+{
+  "match": "Olympiakos vs PAOK Thessaloniki FC",
+  "updated": "5 Nov 2026",
+  "paok": [
+    {"name": "Kenny", "status": "Out", "reason": "Suspended: sent off against Asteras"},
+    {"name": "Taison", "status": "Out", "reason": "Training with PAOK B, not in the first-team squad"},
+    {"name": "Pavlenka", "status": "Out", "reason": "Surgery after the injury in Agrinio"},
+    {"name": "Ali", "status": "Out", "reason": "Surgery after the injury in Agrinio"},
+    {"name": "Pelkas", "status": "Out", "reason": "Recovering from knee arthroscopy"},
+    {"name": "Meite", "status": "Out", "reason": "Long-term injury"},
+    {"name": "Chalov", "status": "Out", "reason": "Long-term injury"},
+    {"name": "Sarris", "status": "Out", "reason": "Long-term injury"},
+    {"name": "Michailidis", "status": "Doubtful", "reason": "Muscle strain, unlikely to risk him"},
+    {"name": "Louchet", "status": "Doubtful", "reason": "Discomfort, decision late in the week"},
+    {"name": "Despodov", "status": "Doubtful", "reason": "Building fitness, more likely back for the 14 Nov friendly"}
+  ],
+  "opponent": [
+    {"name": "Saliakas", "status": "Doubtful", "reason": "Muscle spasm in the back, came off against Rennes"}
+  ],
+  "sources": [
+    {"name": "Thita News", "url": "https://www.thitanews.gr/paok-pos-paei-sto-karaiskaki-oi-apousies-kai-i-allagi-pou-dokimazei-o-lisi/"},
+    {"name": "Metrosport", "url": "https://www.metrosport.gr/paok-oi-parontes-oi-apontes-kai-poioi-pithanotata-epistrefoyn-en-opsei-olympiakoy-1332299"},
+    {"name": "PAOK24", "url": "https://www.paok24.com/podosfairo/651266/651266/"}
+  ]
+}
