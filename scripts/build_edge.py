@@ -520,7 +520,7 @@ def page_404(by_date):
 
 def sitemap(books):
     """Pages linked from the site. Unlinked or unfinished sections (e.g. /wine/) stay out."""
-    paths = ["/", "/about/", BASE, BASE + "authors/"] + [b["url"] for b in books] + ["/thought-bank/", "/paok-hub/", "/paok-basketball/", "/fibaeuropecup/", "/eurocup/", "/superleague/", "/football/greek-cup/"]
+    paths = ["/", "/about/", BASE, BASE + "authors/"] + [b["url"] for b in books] + ["/thought-bank/", "/paok-hub/", "/paok-basketball/", "/fibaeuropecup/", "/eurocup/", "/superleague/", "/football/greek-cup/", "/volleyball/"]
     for section in ("basketball", "handball"):        # model sections built elsewhere: every real page in them (redirects excluded)
         base = ROOT / section
         if base.exists():
@@ -528,6 +528,9 @@ def sitemap(books):
                 if "http-equiv=\"refresh\"" in f.read_text(encoding="utf-8", errors="ignore")[:1500]:
                     continue
                 paths.append("/" + f.parent.relative_to(ROOT).as_posix() + "/")
+    for f in sorted((ROOT / "paok-hub").glob("*.html")):   # every PAOK Hub page, redirects excluded
+        if f.name != "index.html" and "http-equiv=\"refresh\"" not in f.read_text(encoding="utf-8", errors="ignore")[:1500]:
+            paths.append(f"/paok-hub/{f.name}")
     urls = "".join(f"<url><loc>{SITE}{p}</loc></url>" for p in dict.fromkeys(paths))
     (ROOT / "sitemap.xml").write_text(
         f'<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">{urls}</urlset>\n',
