@@ -510,8 +510,8 @@ VIEWS.scout = function scout() {
         <div class="big">${esc(hn)} ${Math.round(hs)} – ${Math.round(as)} ${esc(an)}</div>
         <div class="winbar"><div style="width:${pr.winProb}%"></div></div>
         <div class="muted">PAOK win chance: <b style="color:inherit">${pr.winProb}%</b> · expected ${pr.pace ? f1(pr.pace) : '–'} possessions · ${esc(src)}${pr.note ? ' · ' + esc(pr.note) : ''}</div>
-        <div class="muted">Projected total: <b style="color:inherit">${f1(us.score + them.score)}</b>${pr.modelTotal ? ` (model alone ${f1(pr.modelTotal)})` : ''} · Bookmaker total: <b style="color:inherit">${line != null ? line : 'not out yet'}</b></div>
-        <div class="muted">Projected margin: <b style="color:inherit">${byWhom(us.score - them.score)}</b>${pr.modelMargin != null ? ` (model alone ${byWhom(pr.modelMargin)})` : ''} · Bookmaker handicap: <b style="color:inherit">${hcp != null ? byWhom(hcp) : 'not out yet'}</b></div>
+        <div class="muted">Projected total: <b style="color:inherit">${f1(us.score + them.score)}</b> · Bookmaker total: <b style="color:inherit">${line != null ? line : 'not out yet'}</b></div>
+        <div class="muted">Projected margin: <b style="color:inherit">${byWhom(us.score - them.score)}</b> · Bookmaker handicap: <b style="color:inherit">${hcp != null ? byWhom(hcp) : 'not out yet'}</b></div>
       </div>
       ${tstats}
       ${absent(us, 'PAOK')}${absent(them, pick.opp)}
