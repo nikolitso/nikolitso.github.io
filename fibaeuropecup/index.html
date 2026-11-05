@@ -107,6 +107,7 @@ table.mkt tr.mkgames table th{padding:6px 6px 8px}
 table.mkt tr.mkgames table td:nth-child(3){white-space:normal;min-width:150px}   /* only the opponent may wrap */
 td.better{color:var(--win)!important;font-weight:700}td.worse{color:var(--loss)!important}
 th.sort{cursor:pointer;user-select:none}th.sort:hover,th.sort.on{color:var(--gold)}
+.cltab{width:100%;margin-top:14px}.cll a{display:inline-block;margin:2px 12px 2px 0;color:var(--gold);text-decoration:none}.cll a:hover{text-decoration:underline}
 .rogrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px;margin-top:16px}
 .rogrid .card{padding:16px;margin:0}.rogrid h3{font:600 18px var(--serif);margin:0 0 2px;cursor:pointer}.rogrid h3:hover{color:var(--gold)}
 .rogrid table{width:100%;border-collapse:collapse;margin-top:8px}.rogrid td,.rogrid th{padding:4px 4px;border-top:1px solid var(--line);font-size:15.5px}
@@ -196,6 +197,7 @@ select.peer:focus{outline:2px solid var(--gold)}
     <a href="#view=ratings" data-view="ratings">Club Ratings</a>
     <a href="#view=h2h" data-view="h2h">Head to Head</a>
     <a href="#view=rosters" data-view="rosters">Rosters</a>
+    <a href="#view=clubs" data-view="clubs">Clubs</a>
     <a href="#view=rankings" data-view="rankings">Country Power Rankings</a>
   </nav>
 </div></header>
@@ -209,6 +211,7 @@ select.peer:focus{outline:2px solid var(--gold)}
   <div id="crView" hidden></div>
   <div id="mkView"></div>
   <div id="roView" hidden></div>
+  <div id="clView" hidden></div>
 
   <div id="h2hView" hidden>
   <div class="controls">
@@ -234,7 +237,7 @@ select.peer:focus{outline:2px solid var(--gold)}
 <script>
 // data files change after every update; a per-minute stamp keeps browsers from showing a cached copy for up to 10 minutes
 (() => { const v = Math.floor(Date.now() / 60000);
-  for (const f of ['data', 'fixtures', 'odds', 'archive', 'market', 'rosters', 'injuries', 'projections']) document.write(`<script src="${f}.js?v=${v}"><\/script>`); })();
+  for (const f of ['data', 'fixtures', 'odds', 'archive', 'market', 'rosters', 'injuries', 'projections', 'clubs']) document.write(`<script src="${f}.js?v=${v}"><\/script>`); })();
 </script>
 <script>
 const {matches, teams} = window.DATA;
@@ -1160,6 +1163,32 @@ function renderRatings(){
   box.querySelectorAll('[data-go]').forEach(a => a.onclick = e => { e.preventDefault(); setView(a.dataset.go); sync(); window.scrollTo({top: 0}); });
 }
 // ---------- Home: one tile per section with its number today, and the last round, which no other tab lists
+// ---------- Clubs: each club's official website and social accounts
+let clQuery = '', clSort = {k: 'club', dir: 1};
+function renderClubs(){
+  const box = $('clView');
+  if (!window.CLUBS){ box.innerHTML = '<div class="empty">No clubs yet.</div>'; return; }
+  const names = {site: 'Website', facebook: 'Facebook', instagram: 'Instagram', x: 'X', youtube: 'YouTube', tiktok: 'TikTok'};
+  const all = Object.entries(CLUBS.list).map(([club, l]) => ({club, country: teams[club] || '', l}));
+  box.innerHTML = `<div class="note" style="margin-bottom:14px">Official websites and social accounts of the ${all.length} clubs, from FIBA's team pages and the clubs' own websites (updated ${fmtDate(CLUBS.updated)}).</div>
+    <input id="clSearch" placeholder="Search a club or country" value="${esc(clQuery)}" aria-label="Search clubs"><div id="clList"></div>`;
+  const draw = () => {
+    const q = clQuery.trim().toLowerCase(), {k, dir} = clSort;
+    const rows = all.filter(x => !q || x.club.toLowerCase().includes(q) || x.country.toLowerCase().includes(q))
+      .sort((a, b) => a[k].localeCompare(b[k]) * dir || a.club.localeCompare(b.club));
+    const th = (c, label) => `<th class="sort${c === k ? ' on' : ''}" data-k="${c}">${label}${c === k ? (dir > 0 ? ' ▲' : ' ▼') : ''}</th>`;
+    $('clList').innerHTML = rows.length ? `<div class="scroll"><table class="fx cltab"><tr>${th('club', 'Club')}${th('country', 'Country')}<th>Links</th></tr>` +
+      rows.map(x => `<tr><td><b>${esc(x.club)}</b></td><td>${esc(x.country)}</td><td class="cll">${Object.entries(names).filter(([n]) => x.l[n]).map(([n, t]) => `<a href="${esc(x.l[n])}" target="_blank" rel="noopener">${t}</a>`).join('')}</td></tr>`).join('') + '</table></div>'
+      : '<div class="empty">No club matches.</div>';
+  };
+  $('clSearch').oninput = e => { clQuery = e.target.value; draw(); };
+  $('clList').onclick = e => {
+    const h = e.target.closest('th.sort'); if (!h) return;
+    clSort = h.dataset.k === clSort.k ? {k: clSort.k, dir: -clSort.dir} : {k: h.dataset.k, dir: 1};
+    draw();
+  };
+  draw();
+}
 function renderHome(){
   const box = $('hmView'), P = window.PROJ, now = athens(Date.now());
   const up = ((P && P.list) || []).filter(g => g.when > now), next = up[0];
@@ -1181,16 +1210,19 @@ function renderHome(){
       ${tile('ratings', 'Club Ratings', best ? esc(best.c) : '–', "Rated highest by the model, next to the market's rating")}
       ${tile('h2h', 'Head to Head', 'Any two clubs', 'Or any two countries, home and away, every season')}
       ${tile('rosters', 'Rosters', nOut + ' out', `Key players of the ${clubs} clubs and who is missing`)}
+      ${tile('clubs', 'Clubs', Object.keys((window.CLUBS && CLUBS.list) || {}).length + ' clubs', 'Official websites and social accounts')}
       ${tile('rankings', 'Country Power Rankings', esc(RANK[0].c), 'First in the ranking of FIBA Europe Cup countries')}
     </div>` + (games.length ? `<h2>Latest results: ${esc(round(last))}</h2><div class="scroll"><table class="fx hmres"><tr><th class="n">Date</th><th>Game</th><th class="n">Score</th><th>Handicap</th><th>Covered</th></tr>` +
       games.map(g => `<tr><td class="n">${fmtDate(g.date).slice(0, 5)}</td><td>${esc(g.h)} – ${esc(g.a)}</td><td class="n"><b>${g.hp}–${g.ap}</b></td><td>${esc(g.bh > 0 ? g.h : g.a)} ${fmtLine(-Math.abs(g.bh))}</td><td>${esc(covered(g))}</td></tr>`).join('') + '</table></div>' : '');
   box.querySelectorAll('[data-go]').forEach(a => a.onclick = e => { if (e.metaKey || e.ctrlKey || e.shiftKey || e.button) return; e.preventDefault(); setView(a.dataset.go); sync(); window.scrollTo({top: 0}); });
 }
 function setView(v){
-  view = ['home', 'projections', 'picks', 'ratings', 'market', 'h2h', 'rosters', 'rankings'].includes(v) ? v : 'home';
+  view = ['home', 'projections', 'picks', 'ratings', 'market', 'h2h', 'rosters', 'clubs', 'rankings'].includes(v) ? v : 'home';
   document.querySelectorAll('#tabs a').forEach(b => b.classList.toggle('on', b.dataset.view === view));
   document.body.classList.toggle('wide', view === 'home' || view === 'projections' || view === 'market' || view === 'ratings' || view === 'picks');
   $('hmView').hidden = view !== 'home';
+  $('clView').hidden = view !== 'clubs';
+  if (view === 'clubs') renderClubs();
   if (view === 'home') renderHome();
   $('rkView').hidden = view !== 'rankings';
   $('crView').hidden = view !== 'ratings';
