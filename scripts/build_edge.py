@@ -519,8 +519,8 @@ def page_404(by_date):
 
 
 def sitemap(books):
-    """Pages linked from the site. Unlinked or unfinished sections (e.g. /wine/) stay out."""
-    paths = ["/", "/about/", BASE, BASE + "authors/"] + [b["url"] for b in books] + ["/thought-bank/", "/paok-hub/", "/paok-basketball/", "/fibaeuropecup/", "/eurocup/", "/superleague/", "/football/greek-cup/", "/volleyball/"]
+    """Pages linked from the site. Unlinked or unfinished sections stay out."""
+    paths = ["/", "/about/", BASE, BASE + "authors/"] + [b["url"] for b in books] + ["/thought-bank/", "/paok-hub/", "/paok-basketball/", "/fibaeuropecup/", "/eurocup/", "/superleague/", "/football/greek-cup/", "/volleyball/", "/wine/"]
     for section in ("basketball", "handball"):        # model sections built elsewhere: every real page in them (redirects excluded)
         base = ROOT / section
         if base.exists():
