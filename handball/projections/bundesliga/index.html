@@ -144,7 +144,7 @@ html{scroll-behavior:smooth;font-size:17.5px}   /* one step larger: the page siz
 <body>
 <noscript><p style="max-width:60ch;margin:2rem auto;padding:0 1rem;font-family:sans-serif">This page builds its tables in the browser. Please turn on JavaScript to see the handball projections.</p></noscript>
 <header class="an-head"><div>
-  <a class="an-brand" href="/handball/"><svg class="an-mark" aria-hidden="true"><use href="/assets/marks.svg#handball"/></svg><span><small class="an-kicker">Handball · Projections · Test season 2026-27</small><h1>Handball</h1></span></a>
+  <a class="an-brand" href="/handball/"><svg class="an-mark" aria-hidden="true"><use href="/assets/marks.svg#handball"/></svg><span><small class="an-kicker">Handball · Projections</small><h1>Handball</h1></span></a>
   <nav class="tabs an-tabs" aria-label="Pages"><a data-id="home" href="#home">Home</a><a data-id="projections" href="#projections">Projections</a><a data-id="backtesting" href="#backtesting">Backtesting</a><a data-id="done-by-the-break" href="#done-by-the-break">Done by the Break</a></nav>
 </div></header>
 <div class="wrap" data-page="bundesliga" data-base="/handball/">
@@ -429,7 +429,7 @@ function makeSortable(){
     if(lg&&window.__lg) window.__lg(lg);
     if(window.__ar&&tab==='backtesting') window.__ar(bt?LG[c.slice(3)]:'all');
     document.querySelectorAll('.tabs a').forEach(a=>{const on=a.dataset.id===tab;a.classList.toggle('on',on);if(on)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current')});
-    document.querySelector('.an-kicker').textContent='Handball · '+names[tab]+' · Test season 2026-27';
+    document.querySelector('.an-kicker').textContent='Handball · '+names[tab];
     document.title='Handball · '+(names[c]||(bt?'Backtesting · '+cap(c.slice(3)):cap(c)+' (projections)'));makeSortable();}
   addEventListener('hashchange',()=>{show();scrollTo(0,0)});show();
 })();
