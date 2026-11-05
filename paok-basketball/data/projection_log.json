@@ -1711,36 +1711,36 @@
   "date": "2026-11-07T15:30:00Z",
   "opp": "Vikos Falcons",
   "home": true,
-  "saved": "2026-11-05T10:15:13Z",
-  "paok": 87.3,
+  "saved": "2026-11-05T10:29:16Z",
+  "paok": 87.6,
   "oppScore": 72.9,
-  "winProb": 93,
+  "winProb": 94,
   "lineupSource": "manual",
   "teamStats": {
    "pts": {
-    "paok": 87.3,
+    "paok": 87.6,
     "opp": 72.9,
-    "total": 160.2
+    "total": 160.5
    },
    "fg2m": {
-    "paok": 18.9,
+    "paok": 19.0,
     "opp": 17.5,
     "total": 36.4
    },
    "fg3m": {
     "paok": 10.1,
     "opp": 8.1,
-    "total": 18.1
+    "total": 18.2
    },
    "ftm": {
-    "paok": 19.3,
+    "paok": 19.4,
     "opp": 13.7,
-    "total": 33.0
+    "total": 33.1
    },
    "ast": {
     "paok": 17.5,
     "opp": 15.4,
-    "total": 32.8
+    "total": 32.9
    },
    "oreb": {
     "paok": 9.9,
@@ -1750,7 +1750,7 @@
    "dreb": {
     "paok": 25.2,
     "opp": 22.7,
-    "total": 48.0
+    "total": 47.9
    },
    "tov": {
     "paok": 11.9,
@@ -1760,12 +1760,12 @@
    "reb": {
     "paok": 35.1,
     "opp": 32.9,
-    "total": 68.1
+    "total": 68.0
    }
   },
-  "modelTotal": 148.9,
+  "modelTotal": 150.9,
   "line": 161.5,
-  "modelMargin": 8.5,
+  "modelMargin": 10.5,
   "hcp": 15.5,
   "players": {
    "paok": [
@@ -1773,7 +1773,7 @@
      "name": "Kyle Alexander",
      "no": "8",
      "min": 21,
-     "pts": 7.4,
+     "pts": 7.6,
      "reb": 5.9,
      "ast": 0.8,
      "pir": 10.2
@@ -1782,7 +1782,7 @@
      "name": "Ben Moore",
      "no": "26",
      "min": 18,
-     "pts": 6.5,
+     "pts": 6.6,
      "reb": 5.1,
      "ast": 1.1,
      "pir": 9.7
@@ -1791,7 +1791,7 @@
      "name": "Breein Tyree",
      "no": "5",
      "min": 19,
-     "pts": 12.5,
+     "pts": 12.8,
      "reb": 2.0,
      "ast": 1.0,
      "pir": 9.5
@@ -1800,7 +1800,7 @@
      "name": "Trevor Hudgins",
      "no": "12",
      "min": 16,
-     "pts": 7.5,
+     "pts": 7.7,
      "reb": 1.9,
      "ast": 2.2,
      "pir": 8.4
@@ -1809,7 +1809,7 @@
      "name": "Marcus Foster",
      "no": "17",
      "min": 26,
-     "pts": 12.0,
+     "pts": 12.3,
      "reb": 2.5,
      "ast": 2.7,
      "pir": 8.0
@@ -1818,7 +1818,7 @@
      "name": "Naz Mitrou-Long",
      "no": "1",
      "min": 16,
-     "pts": 7.6,
+     "pts": 7.8,
      "reb": 2.6,
      "ast": 1.8,
      "pir": 7.8
@@ -1827,7 +1827,7 @@
      "name": "Nick Calathes",
      "no": "33",
      "min": 23,
-     "pts": 6.5,
+     "pts": 6.7,
      "reb": 3.5,
      "ast": 3.2,
      "pir": 7.0
@@ -1836,7 +1836,7 @@
      "name": "Raiquan Gray",
      "no": "0",
      "min": 23,
-     "pts": 7.4,
+     "pts": 7.6,
      "reb": 3.7,
      "ast": 0.9,
      "pir": 6.3
@@ -1845,7 +1845,7 @@
      "name": "Thanasis Bazinas",
      "no": "77",
      "min": 10,
-     "pts": 3.3,
+     "pts": 3.4,
      "reb": 1.3,
      "ast": 0.8,
      "pir": 3.8
@@ -1854,7 +1854,7 @@
      "name": "Nikos Chougkaz",
      "no": "9",
      "min": 14,
-     "pts": 3.6,
+     "pts": 3.7,
      "reb": 2.2,
      "ast": 0.4,
      "pir": 3.3
@@ -1863,7 +1863,7 @@
      "name": "Nikos Persidis",
      "no": "18",
      "min": 9,
-     "pts": 2.9,
+     "pts": 3.0,
      "reb": 1.4,
      "ast": 0.6,
      "pir": 2.7
@@ -1996,46 +1996,46 @@
   "date": "2026-11-10T17:00:00Z",
   "opp": "Balkan",
   "home": false,
-  "saved": "2026-11-05T10:15:13Z",
-  "paok": 76.3,
+  "saved": "2026-11-05T10:29:16Z",
+  "paok": 78.8,
   "oppScore": 79.2,
-  "winProb": 41,
+  "winProb": 49,
   "lineupSource": "manual",
   "teamStats": {
    "pts": {
-    "paok": 76.3,
+    "paok": 78.8,
     "opp": 79.2,
-    "total": 155.5
+    "total": 158.0
    },
    "fg2m": {
-    "paok": 19.1,
+    "paok": 19.7,
     "opp": 21.2,
-    "total": 40.3
+    "total": 40.9
    },
    "fg3m": {
-    "paok": 7.6,
+    "paok": 7.9,
     "opp": 7.4,
-    "total": 15.0
+    "total": 15.3
    },
    "ftm": {
-    "paok": 15.3,
+    "paok": 15.8,
     "opp": 14.5,
-    "total": 29.8
+    "total": 30.3
    },
    "ast": {
-    "paok": 16.2,
+    "paok": 16.7,
     "opp": 15.4,
-    "total": 31.6
+    "total": 32.1
    },
    "oreb": {
-    "paok": 10.7,
+    "paok": 10.5,
     "opp": 10.0,
-    "total": 20.7
+    "total": 20.4
    },
    "dreb": {
     "paok": 23.4,
-    "opp": 24.6,
-    "total": 48.0
+    "opp": 24.0,
+    "total": 47.3
    },
    "tov": {
     "paok": 13.7,
@@ -2043,14 +2043,14 @@
     "total": 28.4
    },
    "reb": {
-    "paok": 34.1,
-    "opp": 34.6,
-    "total": 68.7
+    "paok": 33.9,
+    "opp": 34.0,
+    "total": 67.7
    }
   },
-  "modelTotal": 154.3,
+  "modelTotal": 156.8,
   "line": null,
-  "modelMargin": -2.9,
+  "modelMargin": -0.4,
   "hcp": null,
   "players": {
    "paok": [
@@ -2058,7 +2058,7 @@
      "name": "Marcus Foster",
      "no": "17",
      "min": 26,
-     "pts": 14.4,
+     "pts": 14.8,
      "reb": 4.2,
      "ast": 2.4,
      "pir": 14.3
@@ -2067,7 +2067,7 @@
      "name": "Kyle Alexander",
      "no": "8",
      "min": 21,
-     "pts": 7.9,
+     "pts": 8.2,
      "reb": 5.7,
      "ast": 0.9,
      "pir": 13.2
@@ -2076,7 +2076,7 @@
      "name": "Breein Tyree",
      "no": "5",
      "min": 19,
-     "pts": 13.1,
+     "pts": 13.5,
      "reb": 2.2,
      "ast": 1.4,
      "pir": 12.4
@@ -2085,7 +2085,7 @@
      "name": "Nick Calathes",
      "no": "33",
      "min": 23,
-     "pts": 7.8,
+     "pts": 8.1,
      "reb": 4.5,
      "ast": 5.6,
      "pir": 11.1
@@ -2094,7 +2094,7 @@
      "name": "Raiquan Gray",
      "no": "0",
      "min": 23,
-     "pts": 4.7,
+     "pts": 4.9,
      "reb": 2.6,
      "ast": 2.0,
      "pir": 6.6
@@ -2103,7 +2103,7 @@
      "name": "Trevor Hudgins",
      "no": "12",
      "min": 16,
-     "pts": 6.3,
+     "pts": 6.5,
      "reb": 1.7,
      "ast": 2.0,
      "pir": 6.5
@@ -2112,7 +2112,7 @@
      "name": "Ben Moore",
      "no": "26",
      "min": 18,
-     "pts": 4.8,
+     "pts": 5.0,
      "reb": 3.3,
      "ast": 0.5,
      "pir": 5.9
@@ -2121,7 +2121,7 @@
      "name": "Naz Mitrou Long",
      "no": "1",
      "min": 16,
-     "pts": 5.8,
+     "pts": 6.0,
      "reb": 1.5,
      "ast": 1.1,
      "pir": 5.1
@@ -2130,7 +2130,7 @@
      "name": "Athanasios Bazinas",
      "no": "77",
      "min": 10,
-     "pts": 3.3,
+     "pts": 3.5,
      "reb": 1.2,
      "ast": 0.8,
      "pir": 3.2
@@ -2139,7 +2139,7 @@
      "name": "Nikos Chougkaz",
      "no": "9",
      "min": 14,
-     "pts": 3.4,
+     "pts": 3.6,
      "reb": 1.7,
      "ast": 0.5,
      "pir": 3.2
@@ -2148,7 +2148,7 @@
      "name": "Nikolaos Persidis",
      "no": "18",
      "min": 9,
-     "pts": 2.7,
+     "pts": 2.8,
      "reb": 1.5,
      "ast": 0.6,
      "pir": 2.7
@@ -2157,7 +2157,7 @@
      "name": "Dimitris Kaklamanakis",
      "no": "14",
      "min": 6,
-     "pts": 1.4,
+     "pts": 1.5,
      "reb": 1.5,
      "ast": 0.3,
      "pir": 2.5
