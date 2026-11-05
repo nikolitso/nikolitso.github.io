@@ -196,7 +196,7 @@ a.tile:hover{border-color:var(--gold)}
   <div class="chips" id="chips"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=f99d6140"></script>
+<script src="data.js?v=14636eb6"></script>
 <script src="live.js"></script>
 <script>
 const $ = id => document.getElementById(id);
@@ -211,6 +211,8 @@ const sn = s => s.replace('-', '–');
 let view = 'home', lg = 'all', open = null;
 const LG = Object.fromEntries(DATA.leagues.map(l => [l.key, l]));
 const lgName = k => `${LG[k].country} · ${LG[k].name}`;
+const lgFull = l => l.country === 'Europe' ? l.name : `${l.country} <span class="muted">${l.name}</span>`;
+const lgShort = k => LG[k].country === 'Europe' ? LG[k].name : LG[k].country;   // EuroLeague and EuroCup share a country
 const inLg = x => lg === 'all' || x.lg === lg;
 const R = DATA.rule;
 const LE = () => LIVE.edge ?? R.edge;
@@ -269,7 +271,7 @@ function renderLeagues(){
     h += `<tr><td colspan="8" class="tier" style="padding-top:18px">${tierName[tier]}</td></tr>`;
     for (const l of DATA.leagues.filter(l => l.tier === tier)){
       const on = open === l.key;
-      h += row(`<span class="caret">${on ? '▾' : '▸'}</span> ${l.country} <span class="muted">${l.name}</span>`, l.all, ` class="srow${on ? ' on' : ''}" data-open="${l.key}"`, DATA.bets.filter(b => b.lg === l.key));
+      h += row(`<span class="caret">${on ? '▾' : '▸'}</span> ${lgFull(l)}`, l.all, ` class="srow${on ? ' on' : ''}" data-open="${l.key}"`, DATA.bets.filter(b => b.lg === l.key));
       if (on) for (const s of l.seasons) h += row(sn(s.season) + (s.season === DATA.tuned ? ' (tuned on)' : '') + (s.season === DATA.season ? ' (so far)' : ''), s, ' class="sub"', [...DATA.bets, ...((DATA.cur || {}).bets || [])].filter(b => b.lg === l.key && seasonOf(b) === s.season));
     }
   }
@@ -289,7 +291,7 @@ function renderBacktest(){
   if (lg === 'all'){
     h += `<h2>By league</h2><p class="note">Unseen seasons. Click a league to see it alone.</p><div class="scroll"><table style="max-width:980px">${GHEAD('League', LHEAD)}<tbody>`;
     for (const l of DATA.leagues.filter(l => B.leagues[l.key] && B.leagues[l.key].rule.n).sort((a, b) => B.leagues[b.key].rule.roi - B.leagues[a.key].rule.roi))
-      h += grp(`<a href="#view=backtest&lg=${l.key}" style="color:inherit;text-decoration:none">${l.country} <span class="muted">${l.name}</span></a>`, B.leagues[l.key].rule, '', lineCells(DATA.bets.filter(b => b.lg === l.key)));
+      h += grp(`<a href="#view=backtest&lg=${l.key}" style="color:inherit;text-decoration:none">${lgFull(l)}</a>`, B.leagues[l.key].rule, '', lineCells(DATA.bets.filter(b => b.lg === l.key)));
     h += '</tbody></table></div>';
   }
   h += `<h2>By edge</h2><div class="scroll"><table style="max-width:980px">${GHEAD('Edge above', LHEAD)}<tbody>`;
@@ -309,7 +311,7 @@ function bets(){
   if (!list.length) return '';
   let run = 0;
   const rows = list.map(b => { run += b.ret;
-    return `<tr><td data-s="${b.dt}">${short(b.dt)} ${b.dt.slice(0,4)}</td>${lg === 'all' ? `<td>${LG[b.lg].country}</td>` : ''}<td class="wr">${b.home} – ${b.away}</td><td class="n">${b.side === 'o' ? 'Over' : 'Under'} ${b.line}</td><td class="n">${b.px.toFixed(2)}</td><td class="n">${b.mu.toFixed(1)}</td><td class="n">${pct(b.p)}</td><td class="n">${sgn(b.edge*100, 0)}%</td><td class="n">${b.close ?? '–'}</td><td class="n ${b.ret > 0 ? 'w' : b.ret < 0 ? 'l' : ''}">${b.total}</td><td class="n ${cls(b.ret)}">${sgn(b.ret, 2)}</td><td class="n ${cls(run)}">${sgn(run, 1)}</td></tr>`; });
+    return `<tr><td data-s="${b.dt}">${short(b.dt)} ${b.dt.slice(0,4)}</td>${lg === 'all' ? `<td>${lgShort(b.lg)}</td>` : ''}<td class="wr">${b.home} – ${b.away}</td><td class="n">${b.side === 'o' ? 'Over' : 'Under'} ${b.line}</td><td class="n">${b.px.toFixed(2)}</td><td class="n">${b.mu.toFixed(1)}</td><td class="n">${pct(b.p)}</td><td class="n">${sgn(b.edge*100, 0)}%</td><td class="n">${b.close ?? '–'}</td><td class="n ${b.ret > 0 ? 'w' : b.ret < 0 ? 'l' : ''}">${b.total}</td><td class="n ${cls(b.ret)}">${sgn(b.ret, 2)}</td><td class="n ${cls(run)}">${sgn(run, 1)}</td></tr>`; });
   return `<h2>Every bet, latest first</h2><p class="note">${list.length} bets in unseen seasons${list.length > 400 ? ', the latest 400 shown' : ''}.</p><div class="scroll"><table><thead><tr><th>Date</th>${lg === 'all' ? '<th>League</th>' : ''}<th>Match</th><th class="n">Bet</th><th class="n">Price</th><th class="n">Model</th><th class="n">Chance</th><th class="n">Edge</th><th class="n">Closing line</th><th class="n">Total</th><th class="n">Units</th><th class="n">Running</th></tr></thead><tbody>${rows.reverse().slice(0, 400).join('')}</tbody></table></div>`;
 }
 
@@ -324,7 +326,7 @@ function renderProjections(){
     h += `<h2 class="day">${dayName(d)}</h2><div class="scroll"><table class="proj">${head}<tbody>`;
     for (const g of gs){
       const e = g.line == null || !(g.ok ?? RL(g.lg)) ? null : g.eo;
-      h += `<tr${g.pick ? ' class="pk"' : ''}><td>${g.dt.slice(11)}</td>${lg === 'all' ? `<td>${LG[g.lg].country}</td>` : ''}
+      h += `<tr${g.pick ? ' class="pk"' : ''}><td>${g.dt.slice(11)}</td>${lg === 'all' ? `<td>${lgShort(g.lg)}</td>` : ''}
         <td class="wr">${g.home} – ${g.away}${g.pick ? `<span class="badge">${g.pick}</span>` : ''}</td><td class="n"><b>${g.mu.toFixed(1)}</b></td>
         ${g.line == null ? '<td class="n muted" colspan="5">no line yet</td>' : `<td class="n">${g.line}</td><td class="n">${g.op.toFixed(2)}</td><td class="n">${g.up.toFixed(2)}</td><td class="n">${pct(g.p)}</td><td class="n ${e > LE() ? 'pos' : 'muted'}">${e == null ? '–' : sgn(e*100, 0) + '%'}</td>`}</tr>`;
     }
@@ -342,7 +344,7 @@ function renderPicks(){
   else {
     h += `<h2>Open picks</h2><div class="scroll"><table class="proj"><thead><tr><th>Tip-off</th><th>League</th><th>Match</th><th class="n">Bet</th><th class="n">Price</th><th class="n">Model total</th><th class="n">Edge</th><th class="n">Line now</th></tr></thead><tbody>` +
       open.map(b => { const g = fx[b.home + '|' + b.away] || {};
-        return `<tr class="pk"><td data-s="${b.dt}">${dayName(b.dt)} ${b.dt.slice(11)}</td><td>${LG[b.lg].country}</td><td class="wr">${b.home} – ${b.away}</td><td class="n"><b>Over ${b.line}</b></td><td class="n">${b.px.toFixed(2)}</td><td class="n">${g.mu != null ? g.mu.toFixed(1) : '–'}</td><td class="n pos">${sgn(b.edge*100, 0)}%</td><td class="n">${g.line ?? '–'}</td></tr>`; }).join('') +
+        return `<tr class="pk"><td data-s="${b.dt}">${dayName(b.dt)} ${b.dt.slice(11)}</td><td>${lgShort(b.lg)}</td><td class="wr">${b.home} – ${b.away}</td><td class="n"><b>Over ${b.line}</b></td><td class="n">${b.px.toFixed(2)}</td><td class="n">${g.mu != null ? g.mu.toFixed(1) : '–'}</td><td class="n pos">${sgn(b.edge*100, 0)}%</td><td class="n">${g.line ?? '–'}</td></tr>`; }).join('') +
       '</tbody></table></div>';
   }
   const pre = ((DATA.cur || {}).bets || []).map(b => ({...b, side: 'o', pre: true, done: true, close: b.close ?? null}));
@@ -361,7 +363,7 @@ function renderPicks(){
     if (b.ret != null) run += b.ret;
     const res = !b.done ? '<td class="n muted" colspan="3">to play</td>' : b.ret == null ? '<td class="n muted" colspan="3">void</td>' :
       `<td class="n">${b.total}</td><td class="n ${cls(b.ret)}">${sgn(b.ret, 2)}</td><td class="n ${cls(run)}">${sgn(run, 2)}</td>`;
-    return `<tr><td data-s="${b.dt}">${short(b.dt)}${b.dt.length > 10 ? ' ' + b.dt.slice(11) : ''}</td><td>${LG[b.lg].country}</td><td class="wr">${b.home} – ${b.away}</td><td class="n"><b>Over ${b.line}</b></td>
+    return `<tr><td data-s="${b.dt}">${short(b.dt)}${b.dt.length > 10 ? ' ' + b.dt.slice(11) : ''}</td><td>${lgShort(b.lg)}</td><td class="wr">${b.home} – ${b.away}</td><td class="n"><b>Over ${b.line}</b></td>
       <td class="n">${b.px.toFixed(2)}</td><td class="n pos">${sgn(b.edge*100, 0)}%</td><td class="n">${b.close ?? '–'}</td>${res}</tr>`;
   });
   return h + `<h2>Settled bets, latest first</h2><div class="scroll"><table><thead><tr><th>Tip-off</th><th>League</th><th>Match</th><th class="n">Bet</th><th class="n">Price</th><th class="n">Edge</th><th class="n">Closing line</th><th class="n">Total</th><th class="n">Units</th><th class="n">Running</th></tr></thead><tbody>${rows.reverse().join('')}</tbody></table></div>`;
@@ -405,7 +407,7 @@ function render(){
   let keys = DATA.leagues.map(l => l.key);
   if (view === 'backtest') keys = keys.filter(k => DATA.backtest.leagues[k] && DATA.backtest.leagues[k].rule.n);
   if (view === 'projections') keys = keys.filter(k => LIVE.fixtures.some(g => g.lg === k));
-  const chips = CHIPS[view] ? [['all', 'All leagues'], ...keys.map(k => [k, LG[k].country + (DATA.leagues.filter(l => l.country === LG[k].country).length > 1 ? ' ' + LG[k].name : '')])] : [];
+  const chips = CHIPS[view] ? [['all', 'All leagues'], ...keys.map(k => [k, lgShort(k)])] : [];
   $('chips').innerHTML = chips.map(([k, t]) => `<a href="#view=${view}${k === 'all' ? '' : '&lg=' + k}" class="${k === lg ? 'on' : ''}">${t}</a>`).join('');
   $('out').innerHTML = RENDER[view]();
 }
