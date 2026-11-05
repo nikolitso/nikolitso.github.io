@@ -24,12 +24,17 @@ const result = (g) => (g.us > g.them ? 'W' : 'L');
 const where = (g) => (g.neutral ? 'Neutral' : g.home ? 'Home' : 'Away');
 const vsAt = (g) => (g.neutral ? 'vs' : g.home ? 'vs' : '@');
 
+// bookmaker totals for upcoming games; the page works without them
+const getLines = () => fetch(`../basketball/overs/live.js?v=${Date.now()}`).then((r) => r.text())
+  .then((t) => JSON.parse(t.slice(t.indexOf('{'), t.lastIndexOf('}') + 1)).fixtures.filter((g) => g.home === 'PAOK' || g.away === 'PAOK')).catch(() => []);
+const lineFor = (g) => { const d = toDate(g.date).getTime(); const m = (state.lines || []).find((l) => Math.abs(new Date(l.dt.replace(' ', 'T') + 'Z').getTime() - d) < 864e5); return m ? m.line : null; };
+
 async function load() {
   const get = (f) => fetch(`data/${f}?v=${Date.now()}`).then((r) => r.json());
   let hidden;
   let additions;
-  [state.ec, state.gbl, state.scout, hidden, state.club, state.clubStaff, state.info, additions, state.league, state.power, state.highlights, state.projLog, state.oppSources, state.coach] = await Promise.all([get('eurocup.json'), get('gbl.json'),
-    get('scout.json').catch(() => ({ reports: [] })), get('excluded_players.json').catch(() => ({})), get('paokbc.json').catch(() => ({})), get('paokbc_staff.json').catch(() => []), get('player_info.json').catch(() => ({})), get('roster_additions.json').catch(() => ({})), get('league.json').catch(() => ({ comps: {} })), get('power.json').catch(() => ({ comps: {} })), get('highlights.json').catch(() => ({})), get('projection_log.json').catch(() => ({})), get('opponent_sources.json').catch(() => ({})), get('trinchieri.json').catch(() => ({ games: [] }))]);
+  [state.ec, state.gbl, state.scout, hidden, state.club, state.clubStaff, state.info, additions, state.league, state.power, state.highlights, state.projLog, state.oppSources, state.coach, state.lines] = await Promise.all([get('eurocup.json'), get('gbl.json'),
+    get('scout.json').catch(() => ({ reports: [] })), get('excluded_players.json').catch(() => ({})), get('paokbc.json').catch(() => ({})), get('paokbc_staff.json').catch(() => []), get('player_info.json').catch(() => ({})), get('roster_additions.json').catch(() => ({})), get('league.json').catch(() => ({ comps: {} })), get('power.json').catch(() => ({ comps: {} })), get('highlights.json').catch(() => ({})), get('projection_log.json').catch(() => ({})), get('opponent_sources.json').catch(() => ({})), get('trinchieri.json').catch(() => ({ games: [] })), getLines()]);
   // players hidden until their first game (e.g. youth players registered for depth)
   const surnameOf = (n) => n.toLowerCase().replace(/-/g, ' ').split(' ').pop();
   const played = new Set([...state.ec.games, ...state.gbl.games].flatMap((g) => (g.box ? g.box.players.filter((p) => p.sec > 0).map((p) => surnameOf(p.name)) : [])));
@@ -493,12 +498,14 @@ VIEWS.scout = function scout() {
     const tstats = ts ? `<h3 style="margin-top:20px">Projected team stats</h3>
       <div class="table-wrap"><table><thead><tr><th class="l">Stat</th>${sides.map(([, n]) => `<th>${esc(n)}</th>`).join('')}<th>Total</th></tr></thead>
       <tbody>${tsRows.filter(([k]) => ts[k]).map(([k, label]) => `<tr><td class="l">${label}</td>${sides.map(([s]) => `<td><b>${f1(ts[k][s])}</b></td>`).join('')}<td>${f1(ts[k].total)}</td></tr>`).join('')}</tbody></table></div>` : '';
+    const line = lineFor(pick);
     const [hn, hs, an, as] = pick.home ? ['PAOK', us.score, pick.opp, them.score] : [pick.opp, them.score, 'PAOK', us.score];
     proj = `<div class="card dark proj">
         <div class="label">Projected score</div>
         <div class="big">${esc(hn)} ${Math.round(hs)} – ${Math.round(as)} ${esc(an)}</div>
         <div class="winbar"><div style="width:${pr.winProb}%"></div></div>
         <div class="muted">PAOK win chance: <b style="color:inherit">${pr.winProb}%</b> · expected ${pr.pace ? f1(pr.pace) : '–'} possessions · ${esc(src)}${pr.note ? ' · ' + esc(pr.note) : ''}</div>
+        <div class="muted">Projected total: <b style="color:inherit">${f1(us.score + them.score)}</b> · Bookmaker total: <b style="color:inherit">${line != null ? line : 'not out yet'}</b></div>
       </div>
       ${tstats}
       ${absent(us, 'PAOK')}${absent(them, pick.opp)}
@@ -507,6 +514,7 @@ VIEWS.scout = function scout() {
         Team stats: each team's rate per 100 possessions × what the opponent allows ÷ the league average, over the expected possessions (pulled harder toward the league average than scoring, since these rates settle more slowly); made shots are scaled to add up to the projected score,
         and rebounds come from the expected misses and both teams' offensive and defensive rebounding rates.
         PAOK's numbers come from games in this competition only (the rosters differ between the Greek League and the EuroCup).
+        The bookmaker total is there for comparison only and isn't used in the projection.
 </p>`;
   }
   const gf = (state.gameFiles || {})[`${pick.comp}-${pick.code}`];
