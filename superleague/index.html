@@ -4,10 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Greek Super League</title>
-<meta name="description" content="Greek Super League projections for every game: goals, xG, shots, shots on target, corners, cards, fouls, possession and goalkeeper saves.">
+<meta name="description" content="Greek Super League projections for every game: goals, shots, shots on target, corners, cards, fouls and goalkeeper saves.">
 <link rel="canonical" href="https://antonisnikolitsopoulos.com/superleague/">
 <meta property="og:title" content="Greek Super League">
-<meta property="og:description" content="Greek Super League projections for every game: goals, xG, shots, corners, cards, fouls, possession and saves.">
+<meta property="og:description" content="Greek Super League projections for every game: goals, shots, corners, cards, fouls and saves.">
 <meta property="og:url" content="https://antonisnikolitsopoulos.com/superleague/">
 <meta property="og:image" content="https://antonisnikolitsopoulos.com/superleague.jpg">
 <meta name="twitter:card" content="summary_large_image">
@@ -169,14 +169,15 @@ th.rs{cursor:pointer;user-select:none} th.rs:hover,th.rs.on{color:var(--gold)}
 <script src="referee-games.js?v=caa7e2f0" onerror="window.SLREFGAMES=null"></script>
 <script>
 const D = window.SL, $ = id => document.getElementById(id);
-const L = D.labels, ORDER = D.order;
+// xG and possession have no odds: Teams only, as actual averages
+const L = D.labels, ORDER = D.order, TEAM_ORDER = D.team_order || D.order;
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 const dayName = s => { const d = new Date(s.slice(0,10)+'T12:00'); return `${DAYS[d.getDay()]} ${d.getDate()} ${MON[d.getMonth()]}`; };
 const pct = x => Math.round(x*100) + '%';
 const dec = s => ['xg','goals'].includes(s) ? 2 : 1;
 const f = (x, s) => x == null ? '–' : (+x).toFixed(s === 'possession' ? 0 : dec(s));
-// actual counts are whole numbers; only xG has decimals
-const fa = (x, s) => s === 'xg' ? f(x, s) : x == null ? '–' : String(Math.round(x));
+// actual counts are whole numbers
+const fa = x => x == null ? '–' : String(Math.round(x));
 let view = 'projections', pjMode = 'match', pjStat = 'goals', rsStat = 'goals', tmStat = 'goals', tmSort = ['for', -1];
 
 $('sub').textContent = `${D.season.replace('-','–')} · updated ${D.updated} (Athens) · ratings from the ${D.history.games} games since ${D.history.from}–${String(+D.history.from + 1).slice(2)}`;
@@ -271,30 +272,29 @@ function renderProjections(){
     return h;
   }
   const s = pjStat;
-  h += `<div class="scroll"><table><thead><tr><th>Kick-off</th><th>Match</th><th class="n">Home</th><th class="n">Away</th>${s==='possession'?'':'<th class="n">Total</th>'}<th class="n">${s==='possession'||s==='xg'?'':'Over'}</th></tr></thead><tbody>`;
+  h += `<div class="scroll"><table><thead><tr><th>Kick-off</th><th>Match</th><th class="n">Home</th><th class="n">Away</th><th class="n">Total</th><th class="n">Over</th></tr></thead><tbody>`;
   for (const g of fixtures){
     const x = g.stats[s];
     const rf = (s === 'cards' || s === 'fouls') && g.ref && !g.ref.pending ? ` <span class="muted" style="font-size:13.5px">· ${g.ref.name}${g.ref.games ? ' ' + mult(g.ref[s]) : ''}</span>` : '';
-    h += `<tr><td class="muted">${dayName(g.kickoff)} ${g.kickoff.slice(11)}${g.started ? ' <span class="live">Started</span>' : ''}</td><td>${g.home} – ${g.away}${rf}${tenureLine(g)}</td><td class="n">${f(x.home,s)}</td><td class="n">${f(x.away,s)}</td>${s==='possession'?'':`<td class="n tot">${f(x.total,s)}</td>`}<td class="ln">${linesHtml(x.lines)}</td></tr>`;
+    h += `<tr><td class="muted">${dayName(g.kickoff)} ${g.kickoff.slice(11)}${g.started ? ' <span class="live">Started</span>' : ''}</td><td>${g.home} – ${g.away}${rf}${tenureLine(g)}</td><td class="n">${f(x.home,s)}</td><td class="n">${f(x.away,s)}</td><td class="n tot">${f(x.total,s)}</td><td class="ln">${linesHtml(x.lines)}</td></tr>`;
   }
   return h + '</tbody></table></div>';
 }
 
 function renderResults(){
-  const s = rsStat, poss = s === 'possession';
+  const s = rsStat;
   let h = `<p class="note">Every game this season, with the projection the model would have made the day before it (only earlier games used) next to what happened.</p>
     <div class="bar">${chipsHtml('rsstat', s, ORDER)}</div>`;
   const rows = D.results.filter(g => g.stats[s][2] != null);
   let err = 0;
-  rows.forEach(g => { const [ph, pa, ah, aa] = g.stats[s]; err += poss ? Math.abs(ph - ah) : Math.abs(ph + pa - ah - aa); });
+  rows.forEach(g => { const [ph, pa, ah, aa] = g.stats[s]; err += Math.abs(ph + pa - ah - aa); });
   h += `<div class="metrics"><div class="metric"><div class="lbl">Games</div><div class="big">${rows.length}</div></div>
-    <div class="metric"><div class="lbl">Avg miss, ${poss ? 'home share' : 'match total'}</div><div class="big">${rows.length ? (err/rows.length).toFixed(2) : '–'}</div></div></div>`;
-  h += `<div class="scroll"><table><thead><tr><th>Date</th><th>Match</th><th class="n">Projected</th><th class="n">Actual</th>${poss ? '' : '<th class="n">Proj. total</th><th class="n">Actual total</th>'}<th class="n">Miss</th></tr></thead><tbody>`;
+    <div class="metric"><div class="lbl">Avg miss, match total</div><div class="big">${rows.length ? (err/rows.length).toFixed(2) : '–'}</div></div></div>`;
+  h += `<div class="scroll"><table><thead><tr><th>Date</th><th>Match</th><th class="n">Projected</th><th class="n">Actual</th><th class="n">Proj. total</th><th class="n">Actual total</th><th class="n">Miss</th></tr></thead><tbody>`;
   for (const g of rows){
     const [ph, pa, ah, aa] = g.stats[s];
-    const miss = poss ? ah - ph : ah + aa - ph - pa;
-    h += `<tr><td class="muted">${dayName(g.date)}</td><td>${g.home} – ${g.away}</td><td class="n">${f(ph,s)} – ${f(pa,s)}</td><td class="n">${fa(ah,s)} – ${fa(aa,s)}</td>`+
-      (poss ? '' : `<td class="n">${f(ph+pa,s)}</td><td class="n tot">${fa(ah+aa,s)}</td>`)+
+    const miss = ah + aa - ph - pa;
+    h += `<tr><td class="muted">${dayName(g.date)}</td><td>${g.home} – ${g.away}</td><td class="n">${f(ph,s)} – ${f(pa,s)}</td><td class="n">${fa(ah)} – ${fa(aa)}</td><td class="n">${f(ph+pa,s)}</td><td class="n tot">${fa(ah+aa)}</td>`+
       `<td class="n muted">${miss > 0 ? '+' : ''}${f(miss,s)}</td></tr>`;
   }
   return h + '</tbody></table></div>';
@@ -303,7 +303,7 @@ function renderResults(){
 function renderTeams(){
   const s = tmStat;
   let h = `<p class="note">Per-game averages. <b>This season</b> covers every game this season. <b>Current coach</b> covers only the games since the coach took over, which can include last season. <b>For</b> is what the team produced, <b>against</b> is what its opponents produced. A coach with only a few games is mostly luck: the projections themselves use the whole of the last three seasons.</p>
-    <div class="bar">${chipsHtml('tmstat', s, ORDER)}</div>`;
+    <div class="bar">${chipsHtml('tmstat', s, TEAM_ORDER)}</div>`;
   const [key, dir] = tmSort;
   const val = (t, k) => (k.startsWith('c_') ? t.coach?.[k.slice(2)]?.[s] : t[k][s]) ?? -1;
   const rows = D.teams.slice().sort((a, b) => key === 'team' ? dir * a.team.localeCompare(b.team) : dir * (val(a, key) - val(b, key)));
@@ -331,7 +331,7 @@ function renderMethod(){
   h += `<h2 style="margin-top:0">The idea</h2>
   <p>Every number on the Projections tab is built the same way. Start from what an average Super League game produces, then adjust it for how good or bad each team is at that stat. Goals and the result are our own, independent of the bookmakers, so they can be compared with the odds. The match odds are only used as an input for other stats: who is the favourite for cards, and a small adjustment to shots, SoT and saves. Cards also take into account who is the favourite (again from the odds), and cards and fouls take into account the referee.</p>`;
   if (E){
-    const H = E.home, W = E.away, c = E.stats.corners, k = E.stats.cards, g = E.stats.goals, P = E.possession;
+    const H = E.home, W = E.away, c = E.stats.corners, k = E.stats.cards, g = E.stats.goals;
     const tH = D.teams.find(t => t.team === H), tW = D.teams.find(t => t.team === W);
     const x = (a, b, d) => (a * b * d).toFixed(2);
     const bal = (v, m) => (+v.toFixed(2) * +m.toFixed(2)).toFixed(2);
@@ -397,10 +397,8 @@ function renderMethod(){
     ${E.market_goals ? `<p>For comparison, the bookie's odds imply ${H} <b>${E.market_goals[0].toFixed(2)}</b> and ${W} <b>${E.market_goals[1].toFixed(2)}</b> goals. We keep our own numbers so they can be compared with the market (see Open bets), but on goals the market has been the more accurate of the two in testing, so treat goal and result differences with caution.</p>` : ''}
     <p>Goals are rare, random events. A team expected to score ${g.proj.home.toFixed(2)} scores 0 in ${pct(ph[0])} of games, 1 in ${pct(ph[1])} and 2 in ${pct(ph[2])}. Doing this for both teams gives a chance for every score, and the most likely is <b>${best[0]}–${best[1]}</b> (${pct(best[2])}). Adding up all the scores: <b>${H} win ${pct(E.result.home)}</b>, <b>draw ${pct(E.result.draw)}</b>, <b>${W} win ${pct(E.result.away)}</b>.</p>
 
-    <h3><span class="num">8</span>Possession</h3>
-    <p>Possession is a split that always adds to 100%, so it can't be multiplied like the counts. Each team has one possession strength (points above or below an even split), and the home side gets a small edge:</p>
-    <div class="calc">${H} possession = 50 ${sgn(P.edge)} <i>home edge</i> ${sgn(P.home)} <i>${H}</i> ${sgn(-P.away)} <i>${W}</i> = <b>${P.proj.toFixed(1)}%</b> · ${W} ${(100 - P.proj).toFixed(1)}%</div>
-    <p>Shots, SoT, xG, fouls and saves all work like corners, each with its own averages and ratings. Shots, SoT and goalkeeper saves then get a small adjustment from the match odds: favourites take more shots and force more saves than their ratings alone suggest. In testing on 284 games since 2025–26 this made them about 1% more accurate (shots 1.4%, SoT 1.0%, saves 0.9%). I tested the same for xG, corners, fouls and possession, but the odds didn't help there, so those come from the ratings alone.</p>`;
+    <h3><span class="num">8</span>The other stats</h3>
+    <p>Shots, SoT, fouls and saves all work like corners, each with its own averages and ratings. Shots, SoT and goalkeeper saves then get a small adjustment from the match odds: favourites take more shots and force more saves than their ratings alone suggest. In testing on 284 games since 2025–26 this made them about 1% more accurate (shots 1.4%, SoT 1.0%, saves 0.9%). I tested the same for corners and fouls, but the odds didn't help there, so those come from the ratings alone.</p>`;
   }
   h += `<h2>Where the ratings come from</h2>
   <ul>
@@ -422,7 +420,7 @@ function renderMethod(){
     <li><b>Small samples are pulled toward the club's usual level.</b> After four games a team isn't really a corner machine because it won 9 in one of them. In Greece the Big 4 stay big and the small clubs stay small, so a team is pulled toward its own long-run level (every season since 2019), not toward the league average: Olympiakos toward Olympiakos, a promoted side toward a typical promoted side. Before this, the model under-rated the Big 4: they scored 9% more goals than it projected. Fouls follow the coach more than the club, so they are still pulled toward the league average.</li>
     <li><b>The Big 4 against the small clubs.</b> Even with that, a small club facing Olympiakos, PAOK, AEK or Panathinaikos has scored 15–20% fewer goals than projected in every season since 2019. So in those games the small club's goals are multiplied by ×${D.matchup['small v big'].toFixed(2)} and the big club's by ×${D.matchup['big v small'].toFixed(2)} (half of the gap seen so far, which tested best season by season). This feeds the goals line and the 1X2 chances.</li>
     <li><b>Promoted teams</b> start from how promoted sides have usually done. For corners that's ${E ? Math.round((1 - E.newcomer[0])*100) : 15}% fewer won and ${E ? Math.round((E.newcomer[1] - 1)*100) : 12}% more conceded than average. Their own results take over as games come in.</li>
-    ${(D.coach_window || []).length ? `<li><b>Same coach only.</b> For ${D.coach_window.map(s => lc(s)).join(', ')}, a team's own numbers start this season, or at its current coach's first game if he was already there before. Games under an earlier coach don't count. Until a new coach has enough games, the team is pulled toward the club's usual level, not the league average: replaying 2023–24 and 2024–25, this was as accurate as using every game, while dropping the club level as well made projections miss 2–6% more. Shots, fouls and possession lost a little with this rule, so they still use every game, faded.</li>` : ''}
+    ${(D.coach_window || []).length ? `<li><b>Same coach only.</b> For ${D.coach_window.map(s => lc(s)).join(', ')}, a team's own numbers start this season, or at its current coach's first game if he was already there before. Games under an earlier coach don't count. Until a new coach has enough games, the team is pulled toward the club's usual level, not the league average: replaying 2023–24 and 2024–25, this was as accurate as using every game, while dropping the club level as well made projections miss 2–6% more. Shots and fouls lost a little with this rule, so they still use every game, faded.</li>` : ''}
     ${Object.keys(D.rebuilt || {}).length ? `<li><b>Rebuilt clubs.</b> Sometimes a club's past says little about it now: a new coach and a new squad. For these teams the earlier games are dropped altogether, and the rating isn't pulled toward the club's usual level, only toward the league average until enough new games are in. ${Object.entries(D.rebuilt).map(([t, x]) => `<b>${t}</b>: only games since ${longDate(x.since)} (${x.why}).`).join(' ')} This is a judgement call, set by hand, not something the model finds by itself.</li>` : ''}
     <li><b>How these were picked.</b> For every stat I replayed each game since 2023–24 with 20 combinations of fade speed and earlier-season cut, and took the one that gives this season the most weight while missing no more than 0.05% more than the old setting (in practice, no difference). Pushing further did cost accuracy: for goals, giving this season more than about 55% made the projections miss more, because 7–10 games of one season are still mostly luck.</li>
     <li><b>None of these settings are guesses.</b> For each stat I tried several combinations on every game since 2023–24, each time using only games played before that date, and kept the one that missed least.</li>
@@ -434,7 +432,7 @@ function renderMethod(){
   <div class="scroll"><table class="mini" style="max-width:600px"><thead><tr><th>Stat</th><th class="n">Average miss</th><th class="n">Better than guessing the average</th></tr></thead><tbody>`;
   for (const s of ORDER){
     const a = A[s], gain = 1 - a.team_mae / a.baseline;
-    h += `<tr><td>${L[s]}</td><td class="n">${a.team_mae.toFixed(2)}${s === 'possession' ? ' pts' : ''}</td><td class="n ${gain >= .1 ? 'w' : gain < .06 ? 'muted' : ''}">${pct(gain)}</td></tr>`;
+    h += `<tr><td>${L[s]}</td><td class="n">${a.team_mae.toFixed(2)}</td><td class="n ${gain >= .1 ? 'w' : gain < .06 ? 'muted' : ''}">${pct(gain)}</td></tr>`;
   }
   h += `</tbody></table></div>
   <p>A single game is mostly luck, so no model gets near zero. Even knowing a team's true average exactly, its corners would still miss by about 1.7 a game.</p>
