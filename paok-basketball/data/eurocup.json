@@ -1,7 +1,7 @@
 {
  "competition": "BKT EuroCup",
  "season": "2026-27",
- "updated": "2026-11-04T19:16:16Z",
+ "updated": "2026-11-05T02:00:02Z",
  "source": "https://www.euroleaguebasketball.net/eurocup/",
  "group": "Group D",
  "staff": [
@@ -2548,11 +2548,11 @@
    "team": "Bosna",
    "crest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCjnOJl/0024f0d4-55d9-4ed0-be41-68c0e90c41d5.png",
    "paok": false,
-   "gp": 5,
+   "gp": 6,
    "w": 2,
-   "l": 3,
-   "pf": 408,
-   "pa": 409
+   "l": 4,
+   "pf": 477,
+   "pa": 487
   },
   {
    "pos": 7,
@@ -2570,11 +2570,11 @@
    "team": "Balkan",
    "crest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCgOCpC/ba6e2d99-3ea9-4730-a0ce-830cccca4657.png",
    "paok": false,
-   "gp": 5,
-   "w": 0,
+   "gp": 6,
+   "w": 1,
    "l": 5,
-   "pf": 336,
-   "pa": 407
+   "pf": 414,
+   "pa": 476
   }
  ]
 }
