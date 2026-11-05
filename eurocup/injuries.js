@@ -1,2 +1,3 @@
 // Players who will miss the next games (injured, suspended, left the club), names as in rosters.js.
-window.INJURIES = {"updated": "2026-10-22", "out": []};
+// Scanned from the clubs' official sites and accounts (clubs.js); only absences the club or coach confirmed go here.
+window.INJURIES = {"updated": "2026-11-05", "out": [{"team": "Aris", "player": "Vassilis Toliopoulos", "note": "hamstring", "source": "https://arisbasketball.com/en/first-team/post-game-interview-hapoel-loss-spanoulis-bkteurocup-en.html"}, {"team": "Tenerife", "player": "Ethan Happ", "note": "finger, about 3 months", "source": "https://cbcanarias.net/2026/11/04/parte-medico-de-ethan-happ/"}]};

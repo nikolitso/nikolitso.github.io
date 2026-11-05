@@ -122,6 +122,9 @@ th.sort{cursor:pointer;user-select:none}th.sort:hover,th.sort.on{color:var(--gol
 .rogrid table{width:100%;border-collapse:collapse;margin-top:8px}.rogrid td,.rogrid th{padding:4px 4px;border-top:1px solid var(--line);font-size:15.5px}
 .rogrid th{font:400 12.5px var(--mono);color:var(--muted);text-align:left;border-top:0}.rogrid .n{text-align:right}
 .rogrid tr.out td{color:var(--loss)}.rogrid tr.out .pl{text-decoration:line-through}
+.rogrid .miss{color:var(--gold)}
+.clinks{display:flex;flex-wrap:wrap;gap:6px 12px;margin-top:10px;font:500 14.5px var(--mono)}.clinks a{color:var(--gold);text-decoration:none}.clinks a:hover{text-decoration:underline}
+.clgrid h3{cursor:default}.clgrid h3:hover{color:inherit}
 @media (max-width:420px){.rogrid{grid-template-columns:1fr}}
 .back{font:500 14.5px var(--mono);color:var(--gold);text-decoration:none;letter-spacing:.04em}
 .back:hover{text-decoration:underline}
@@ -203,6 +206,7 @@ select.peer:focus{outline:2px solid var(--gold)}
     <a href="#view=ratings" data-view="ratings">Club Ratings</a>
     <a href="#view=h2h" data-view="h2h">Head to Head</a>
     <a href="#view=rosters" data-view="rosters">Rosters</a>
+    <a href="#view=clubs" data-view="clubs">Clubs</a>
     <a href="#view=rankings" data-view="rankings">Country Power Rankings</a>
   </nav>
 </div></header>
@@ -216,6 +220,7 @@ select.peer:focus{outline:2px solid var(--gold)}
   <div id="crView" hidden></div>
   <div id="mkView"></div>
   <div id="roView" hidden></div>
+  <div id="clView" hidden></div>
 
   <div id="h2hView" hidden>
   <div class="controls">
@@ -241,7 +246,7 @@ select.peer:focus{outline:2px solid var(--gold)}
 <script>
 // data files change after every update; a per-minute stamp keeps browsers from showing a cached copy for up to 10 minutes
 (() => { const v = Math.floor(Date.now() / 60000);
-  for (const f of ['data', 'market', 'rosters', 'injuries', 'projections', 'odds', 'archive']) document.write(`<script src="${f}.js?v=${v}"><\/script>`); })();
+  for (const f of ['data', 'market', 'rosters', 'injuries', 'clubs', 'projections', 'odds', 'archive']) document.write(`<script src="${f}.js?v=${v}"><\/script>`); })();
 </script>
 <script>
 const {matches, teams} = window.DATA;
@@ -501,6 +506,25 @@ function renderRankings(){
     setView('h2h'); sync(); render(); window.scrollTo({top: 0, behavior: 'smooth'});
   });
 }
+// ---------- Clubs: every club's official site and social accounts, the sources scanned for team news
+let clQuery = '';
+function renderClubs(){
+  const box = $('clView');
+  if (!window.CLUBS){ box.innerHTML = '<div class="empty">No clubs yet.</div>'; return; }
+  const NAMES = [['site', 'Official site'], ['instagram', 'Instagram'], ['facebook', 'Facebook'], ['x', 'X'], ['youtube', 'YouTube'], ['tiktok', 'TikTok']];
+  box.innerHTML = `<div class="note" style="margin-bottom:14px">The official site and social accounts of the ${CLUBS.list.length} clubs. Team news for the Rosters tab and the model is read from here.</div>
+    <input id="clSearch" placeholder="Search a club, city or country" value="${esc(clQuery)}" aria-label="Search clubs">
+    <div class="rogrid clgrid" id="clGrid"></div>`;
+  const draw = () => {
+    const q = clQuery.trim().toLowerCase();
+    $('clGrid').innerHTML = CLUBS.list.filter(c => !q || [c.club, c.full, c.city, c.country].join(' ').toLowerCase().includes(q)).map(c =>
+      `<div class="card"><h3>${esc(c.full)}</h3><div class="tag">${esc(c.city)}, ${esc(c.country)}</div>
+        <div class="clinks">${NAMES.filter(([k]) => c[k]).map(([k, n]) => `<a href="${esc(c[k])}" target="_blank" rel="noopener">${n}</a>`).join('')}</div></div>`).join('')
+      || '<div class="empty">No club matches.</div>';
+  };
+  $('clSearch').oninput = e => { clQuery = e.target.value; draw(); };
+  draw();
+}
 // ---------- Rosters: each club's key players this season and who is out
 let roQuery = '', roSort = {k: 1, dir: -1};                     // one sort for every club: column of the roster row, 1 up, -1 down
 function renderRosters(){
@@ -511,14 +535,14 @@ function renderRosters(){
   const nOut = out.length;
   box.innerHTML = `<div class="note" style="margin-bottom:14px">Key players of the ${clubs.length} clubs in this season's EuroCup, from ${esc(ROSTERS.source.replace(/^EuroCup box scores, /, ''))} of official EuroCup box scores (updated ${fmtDate(ROSTERS.updated)}).
       <b>Impact</b> is roughly how many points weaker a side is without the player: efficiency per minute above a bench level, times minutes per team game, halved, and trimmed for players with few games.
-      Players listed as out (${nOut ? nOut + ', updated ' + fmtDate(INJURIES.updated) : 'none at the moment'}) are struck through. Click a column to sort every club by it.</div>
+      Players listed as out (${nOut ? nOut + ', updated ' + fmtDate(INJURIES.updated) : 'none at the moment'}) are struck through and count in the model; they come from the clubs' own news (<a class="back" href="#view=clubs" data-go="clubs">Clubs</a>). <b>Missed last game</b> comes from the official box score and is only a hint: it does not change the model until the absence is confirmed. Click a column to sort every club by it.</div>
     <input id="roSearch" placeholder="Search a club, country or player" value="${esc(roQuery)}" aria-label="Search rosters">
     <div class="rogrid" id="roGrid"></div>`;
   const draw = () => {
     const q = roQuery.trim().toLowerCase();
     const cards = clubs.filter(c => !q || c.toLowerCase().includes(q) || (teams[c] || '').toLowerCase().includes(q) ||
       ROSTERS.teams[c].some(p => p[0].toLowerCase().includes(q))).map(c => {
-      const gone = new Map(out.filter(x => x.team === c).map(x => [x.player, x]));
+      const gone = new Map(out.filter(x => x.team === c).map(x => [x.player, x])), miss = new Set(ROSTERS.missed?.[c]?.players || []);
       const extra = [...gone.values()].filter(x => !ROSTERS.teams[c].some(p => p[0] === x.player)).map(o => [o.player, o.impact || 0, null, null, null]);
       const {k, dir} = roSort;                                     // empty values always last
       const list = [...ROSTERS.teams[c], ...extra].sort((x, y) => {
@@ -531,7 +555,7 @@ function renderRosters(){
       return `<div class="card"><h3 data-club="${esc(c)}">${esc(c)}</h3><div class="tag">${esc(teams[c] || '')}${rankOf(teams[c])}</div>
         <table><tr>${th(0, 'Player')}${th(1, 'Impact', 'Points the side loses without the player')}${th(2, 'Min', 'Minutes per team game')}${th(3, 'Eff', 'Efficiency per game played')}${th(4, 'G', 'Games played')}</tr>` +
         list.map(p => { const o = gone.get(p[0]);
-          return `<tr${o ? ` class="out" title="Out${o.note ? ': ' + esc(o.note) : ''}"` : ''}><td><span class="pl">${esc(p[0])}</span>${o ? ' <span class="tag">out' + (o.note ? ' · ' + esc(o.note) : '') + '</span>' : ''}</td>
+          return `<tr${o ? ` class="out" title="Out${o.note ? ': ' + esc(o.note) : ''}"` : ''}><td><span class="pl">${esc(p[0])}</span>${o ? ' <span class="tag">out' + (o.note ? ' · ' + esc(o.note) : '') + '</span>' : miss.has(p[0]) ? ` <span class="tag miss" title="Did not play the club's latest EuroCup game (${fmtDate(ROSTERS.missed[c].date).slice(0, 5)})">missed last game</span>` : ''}</td>
             <td class="n"><b>${p[1].toFixed(1)}</b></td><td class="n">${num(p[2], 1)}</td><td class="n">${num(p[3], 1)}</td><td class="n">${num(p[4], 0)}</td></tr>`; }).join('') +
         `</table></div>`;
     });
@@ -546,6 +570,7 @@ function renderRosters(){
       setView('h2h'); sync(); render(); window.scrollTo({top: 0, behavior: 'smooth'});
     });
   };
+  box.querySelectorAll('[data-go]').forEach(a => a.onclick = e => { e.preventDefault(); setView(a.dataset.go); sync(); window.scrollTo({top: 0}); });
   $('roSearch').oninput = e => { roQuery = e.target.value; draw(); };
   draw();
 }
@@ -1043,6 +1068,8 @@ function renderHome(){
   const w = done.filter(p => p.res === 'W').length, l = done.filter(p => p.res === 'L').length, units = done.reduce((t, p) => t + p.u, 0);
   const roi = done.length ? units / done.length * 100 : 0, roiTxt = (roi > 0 ? '+' : roi < 0 ? '−' : '') + Math.abs(roi).toFixed(0) + '%';
   const lined = mkData().games.length, nOut = ((window.INJURIES && INJURIES.out) || []).length, clubs = window.ROSTERS ? Object.keys(ROSTERS.teams).length : 0;
+  const listed = new Set(((window.INJURIES && INJURIES.out) || []).map(x => x.player));
+  const nMiss = Object.values((window.ROSTERS && ROSTERS.missed) || {}).flatMap(x => x.players).filter(p => !listed.has(p)).length;
   const best = ((window.PROJ && PROJ.ratings) || []).reduce((x, y) => !x || y.r > x.r ? y : x, null);
   RANK ||= computeRankings();
   const tile = (go, name, big, text) => `<a class="metric hm" href="#view=${go}" data-go="${go}"><div class="lbl">${name}</div><div class="big2">${big}</div><div class="tag">${text}</div></a>`;
@@ -1053,13 +1080,14 @@ function renderHome(){
       ${tile('market', 'Market Analysis', lined + ' games', "Clubs and kinds of game against the bookmaker's lines")}
       ${tile('ratings', 'Club Ratings', best ? esc(best.c) : '–', "Rated highest by the model, next to the market's rating")}
       ${tile('h2h', 'Head to Head', 'Any two clubs', 'Or any two countries, home and away, every season')}
-      ${tile('rosters', 'Rosters', nOut + ' out', `Key players of the ${clubs} clubs and who is missing`)}
+      ${tile('rosters', 'Rosters', nOut + ' out', `${nMiss} more missed their club's latest game`)}
+      ${tile('clubs', 'Clubs', clubs + ' clubs', 'Official sites and social accounts')}
       ${tile('rankings', 'Country Power Rankings', esc(RANK[0].c), 'First in the ranking of EuroCup countries')}
     </div>`;
   $('hmView').querySelectorAll('[data-go]').forEach(a => a.onclick = e => { if (e.metaKey || e.ctrlKey || e.shiftKey || e.button) return; e.preventDefault(); setView(a.dataset.go); sync(); window.scrollTo({top: 0}); });
 }
 function setView(v){
-  view = ['home', 'market', 'projections', 'picks', 'ratings', 'h2h', 'rosters', 'rankings'].includes(v) ? v : 'home';
+  view = ['home', 'market', 'projections', 'picks', 'ratings', 'h2h', 'rosters', 'clubs', 'rankings'].includes(v) ? v : 'home';
   document.querySelectorAll('#tabs a').forEach(b => b.classList.toggle('on', b.dataset.view === view));
   document.body.classList.toggle('wide', view === 'market' || view === 'projections' || view === 'ratings' || view === 'picks');
   $('hmView').hidden = view !== 'home';
@@ -1074,6 +1102,8 @@ function setView(v){
   $('mkView').hidden = view !== 'market';
   $('h2hView').hidden = view !== 'h2h';
   $('roView').hidden = view !== 'rosters';
+  $('clView').hidden = view !== 'clubs';
+  if (view === 'clubs') renderClubs();
   if (view === 'rankings') renderRankings();
   if (view === 'market') renderMarket();
   if (view === 'rosters') renderRosters();
