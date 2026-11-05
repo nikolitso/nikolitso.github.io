@@ -153,7 +153,7 @@ th.rs{cursor:pointer;user-select:none} th.rs:hover,th.rs.on{color:var(--gold)}
   <nav class="tabs an-tabs" id="tabs" aria-label="Sections">
     <a href="#view=projections" data-view="projections" class="on">Projections</a>
     <a href="#view=picks" data-view="picks">Picks</a>
-    <a href="#view=market" data-view="market">Vs Bookie</a>
+    <a href="#view=market" data-view="market">Vs Market</a>
     <a href="#view=results" data-view="results">Results</a>
     <a href="#view=teams" data-view="teams">Teams</a>
     <a href="#view=refs" data-view="refs">Referees</a>
@@ -488,11 +488,11 @@ function renderMethod(){
   return h;
 }
 
-// Vs Bookie: the bookmaker's main line for each stat (the one closest to 50/50), its fair
+// Vs Market: the bookmaker's main line for each stat (the one closest to 50/50), its fair
 // over chance with the margin removed, and ours on the same line
 const BOOK_STATS = ['goals','corners','cards','sot','shots','fouls','saves'];
 const pts = d => `${d > 0 ? '+' : ''}${Math.round(d * 100)}`;
-// Vs Bookie shows a difference only from 10 points (as displayed, after rounding)
+// Vs Market shows a difference only from 10 points (as displayed, after rounding)
 const big10 = d => Math.abs(Math.round(d * 100)) >= 10;
 
 function marketRows(g){

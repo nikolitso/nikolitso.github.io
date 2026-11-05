@@ -25,6 +25,6 @@ jobs:
           requirements: -r _bs/volleyball/requirements.txt
           browser: "true"
           run: python -u update.py --no-push
-          pages: volleyball/data.js volleyball/index.html index.html
+          pages: volleyball/data.js volleyball/index.html volleyball/games volleyball/sitemap.xml index.html
           label: Volleyball
           token: ${{ secrets.SITES_TOKEN }}

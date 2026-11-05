@@ -43,11 +43,12 @@ h2{font:600 22px var(--serif);margin:30px 0 12px}
 h2.day{font-size:20px;padding-bottom:8px;border-bottom:1px solid var(--line)}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(520px,100%),1fr));gap:18px}
 .grid>.card{min-width:0}
-.grid>.mcard{display:grid;grid-row:span 3;grid-template-rows:subgrid;row-gap:0;align-content:start}
+.grid>.mcard{display:grid;grid-row:span 4;grid-template-rows:subgrid;row-gap:0;align-content:start}
 .mcard .top{padding-bottom:4px}
 .card td:first-child{white-space:normal}
 .card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px 18px 10px}
 .card h3{font:600 24px var(--serif);margin:0}
+.card h3 a{color:inherit;text-decoration:none}.card h3 a:hover{color:var(--gold)}
 .live{font:500 12.5px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--bg);background:var(--gold);border-radius:4px;padding:1px 6px;margin-left:8px;vertical-align:1px}
 .card .ko{font:500 15.5px var(--mono);color:var(--text);letter-spacing:.06em}
 .wdl{display:flex;height:8px;border-radius:4px;overflow:hidden;margin:12px 0 6px;background:var(--line)}
@@ -72,6 +73,10 @@ table.mk{margin-bottom:6px}table.mk td,table.mk th{padding:6px 7px}
 .coach{font:400 15px/1.55 var(--mono);color:var(--muted);margin-top:2px}
 .coach b{color:var(--text);font-weight:500}
 .coach .wc{display:inline-block;width:7ch;text-align:right}
+.ctx{margin-top:12px;padding-bottom:8px}
+.ctx h4{font:400 12.5px var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin:0 0 4px;padding-bottom:6px;border-bottom:1px solid var(--line)}
+.ctx .coach{display:grid;grid-template-columns:118px minmax(0,1fr);column-gap:8px;font-size:14.5px;margin-top:4px}
+.ctx .coach .who{min-width:0}
 table.tm{max-width:1000px}table.tm .gl{border-left:1px solid var(--line);padding-left:12px}
 table.tm tr.grp th{color:var(--gold);border-bottom:0;padding-bottom:0}
 .head{display:flex;justify-content:space-between;align-items:flex-start;gap:6px 14px;flex-wrap:wrap}
@@ -173,6 +178,7 @@ th.tsort{cursor:pointer;user-select:none} th.tsort:hover{color:var(--gold)}
 .pill.pos{border-color:color-mix(in srgb,var(--win) 40%,transparent);background:color-mix(in srgb,var(--win) 10%,transparent)}
 .pill.neg{border-color:color-mix(in srgb,var(--loss) 40%,transparent);background:color-mix(in srgb,var(--loss) 9%,transparent)}
 .lgt{font:500 12.5px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--gold)}
+.gm{color:var(--an-accent);text-decoration:none;font-weight:500;white-space:nowrap;margin-left:6px}.gm:hover{text-decoration:underline}
 </style>
 <header class="an-head"><div>
   <a class="an-brand" href="/volleyball/"><svg class="an-mark" aria-hidden="true"><use href="/assets/marks.svg#volleyball"/></svg><span><small class="an-kicker">Volleyball · Projections · Test season 2026-27</small><h1>Volleyball</h1></span></a>
@@ -197,6 +203,9 @@ const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 const dayName = s => { const d = new Date(s.slice(0,10)+'T12:00'); return `${DAYS[d.getDay()]} ${d.getDate()} ${MON[d.getMonth()]}`; };
 const short = s => { const d = new Date(s.slice(0,10)+'T12:00'); return `${d.getDate()} ${MON[d.getMonth()]}`; };
+/* each game has its own page: /volleyball/games/<date>-<home>-<away>/ (written by games.py) */
+const slugify = s => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+const gameLink = g => `<a class="gm" href="/volleyball/games/${g.dt.slice(0,10)}-${slugify(g.home)}-${slugify(g.away)}/">game page →</a>`;
 const pct = x => Math.round(x*100) + '%';
 const sgn = (x, d=1) => (x > 0 ? '+' : x < 0 ? '−' : '') + Math.abs(x).toFixed(d);
 const cls = x => x > 0 ? 'pos' : x < 0 ? 'neg' : '';
@@ -215,6 +224,7 @@ $('sub').textContent = `${DATA.leagues.length} leagues, women's and men's · ${D
 
 function renderProjections(){
   let h = `<p class="note">Every match in the next 7 days: the chance it goes 3, 4 or 5 sets, the model's line on total points (where over and under are even). Once a bookmaker posts a line, the row shows the book line, the average over price and the model's over chance against it. Only <b>picks</b> are highlighted (gold); they are backed and recorded: overs on lines ${DATA.min_line}.5 to ${DATA.low - 0.5}, the matches the market expects to end 3-0, where the edge is above ${DATA.edge*100}%.</p>`;
+  h += '<p class="note"><a href="/volleyball/games/">Every game, one page each →</a></p>';
   const fx = DATA.fixtures.filter(inLg);
   if (!fx.length) return h + '<p class="empty">No matches in the next 7 days.</p>';
   const byDay = {};
@@ -224,7 +234,7 @@ function renderProjections(){
     h += `<h2 class="day">${dayName(d)}</h2><div class="scroll"><table class="proj">${head}<tbody>`;
     for (const g of gs){
       h += `<tr${g.pick ? ' class="pk"' : ''}><td>${g.dt.slice(11)}</td>${lg === 'all' ? `<td>${LG[g.lg].country}</td>` : ''}
-      <td class="wr">${g.home} – ${g.away}${g.pick ? `<span class="badge">Over ${g.mk.line}</span>` : ''}${g.note ? `<div class="flag">${g.note}</div>` : ''}</td>
+      <td class="wr">${g.home} – ${g.away} ${gameLink(g)}${g.pick ? `<span class="badge">Over ${g.mk.line}</span>` : ''}${g.note ? `<div class="flag">${g.note}</div>` : ''}</td>
       <td class="n">${pct(g.p3)}</td><td class="n">${pct(g.p4)}</td><td class="n">${pct(g.p5)}</td><td class="n"><b>${g.fair}</b></td>
       ${g.mk ? `<td class="n">${g.mk.line}</td><td class="n">${g.mk.over.toFixed(2)}</td><td class="n">${pct(g.p_over)}</td>${g.edge > 0 ? `<td class="n ${cls(g.edge)}">${sgn(g.edge*100, 0)}%</td>` : '<td class="n muted">–</td>'}` : '<td class="n muted" colspan="4">no line yet</td>'}</tr>`;
     }
@@ -324,7 +334,7 @@ function renderSeason(){
     h += `<div class="scroll"><table><thead><tr><th>Date</th><th>Match</th><th class="n">Sets</th><th class="n">Total</th><th class="n">Proj.</th><th class="n">Line</th><th class="n">Over %</th></tr></thead><tbody>`;
     for (const r of res){
       const o = r.line == null ? '' : r.total > r.line ? 'w' : 'l';
-      h += `<tr><td>${short(r.dt)}</td><td class="wr">${r.home} – ${r.away}</td><td class="n">${r.sets}</td><td class="n ${o}">${r.total}</td>
+      h += `<tr><td>${short(r.dt)}</td><td class="wr">${r.home} – ${r.away} ${gameLink(r)}</td><td class="n">${r.sets}</td><td class="n ${o}">${r.total}</td>
         <td class="n">${r.med}</td><td class="n">${r.line ?? '–'}</td><td class="n">${r.p_over == null ? '–' : pct(r.p_over)}</td></tr>`;
     }
     h += '</tbody></table></div>';

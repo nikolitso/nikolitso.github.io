@@ -78,3 +78,9 @@ games and for flagged signals, so `games_log.json` saves each upcoming game unti
 that only the 16 signals were saved. Pages show the published total (`ours`), not `ph` and `pa`, which are workings and do not add up to it. Women's
 clubs end in " W" in `extra.json` and not in the published data, so results are normalised when loaded.
 
+## Volleyball (5 Nov 2026)
+
+Every game of the season on the page gets one, as in Super League: played games are walk-forward recalculations, so they give the median total
+(`med`). Upcoming games give `fair`, the Projections tab's model line. `volleyball/data/games_log.json` saves each game's numbers until the start;
+played games in it show the saved `fair` and line. Picks stay on the Picks tab, not on game pages. `update.py` calls `games.py`. Links: Projections
+and Season tabs.
