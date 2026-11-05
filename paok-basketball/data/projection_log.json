@@ -1711,46 +1711,46 @@
   "date": "2026-11-07T15:30:00Z",
   "opp": "Vikos Falcons",
   "home": true,
-  "saved": "2026-11-05T10:29:16Z",
-  "paok": 87.6,
-  "oppScore": 72.9,
+  "saved": "2026-11-05T15:15:27Z",
+  "paok": 88.0,
+  "oppScore": 73.3,
   "winProb": 94,
   "lineupSource": "manual",
   "teamStats": {
    "pts": {
-    "paok": 87.6,
-    "opp": 72.9,
-    "total": 160.5
+    "paok": 88.0,
+    "opp": 73.3,
+    "total": 161.3
    },
    "fg2m": {
     "paok": 19.0,
-    "opp": 17.5,
-    "total": 36.4
+    "opp": 17.6,
+    "total": 36.6
    },
    "fg3m": {
     "paok": 10.1,
     "opp": 8.1,
-    "total": 18.2
+    "total": 18.3
    },
    "ftm": {
-    "paok": 19.4,
-    "opp": 13.7,
-    "total": 33.1
+    "paok": 19.5,
+    "opp": 13.8,
+    "total": 33.3
    },
    "ast": {
-    "paok": 17.5,
+    "paok": 17.6,
     "opp": 15.4,
-    "total": 32.9
+    "total": 33.0
    },
    "oreb": {
-    "paok": 9.9,
+    "paok": 9.8,
     "opp": 10.2,
-    "total": 20.1
+    "total": 20.0
    },
    "dreb": {
-    "paok": 25.2,
-    "opp": 22.7,
-    "total": 47.9
+    "paok": 25.1,
+    "opp": 22.6,
+    "total": 47.7
    },
    "tov": {
     "paok": 11.9,
@@ -1758,13 +1758,13 @@
     "total": 25.1
    },
    "reb": {
-    "paok": 35.1,
-    "opp": 32.9,
-    "total": 68.0
+    "paok": 34.9,
+    "opp": 32.8,
+    "total": 67.7
    }
   },
   "modelTotal": 150.9,
-  "line": 161.5,
+  "line": 162.5,
   "modelMargin": 10.5,
   "hcp": 15.5,
   "players": {
@@ -1996,7 +1996,7 @@
   "date": "2026-11-10T17:00:00Z",
   "opp": "Balkan",
   "home": false,
-  "saved": "2026-11-05T10:29:16Z",
+  "saved": "2026-11-05T15:15:27Z",
   "paok": 78.8,
   "oppScore": 79.2,
   "winProb": 49,
