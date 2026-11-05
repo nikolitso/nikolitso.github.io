@@ -689,7 +689,8 @@
       "the-last-resort",
       "a-family",
       "marina",
-      "a-quiet-life"
+      "a-quiet-life",
+      "silent-heart"
     ],
     "log": [
       {
@@ -933,11 +934,17 @@
         "slot": "2026-11-04 20",
         "slug": "a-quiet-life",
         "id": "2118040636532142113"
+      },
+      {
+        "day": "2026-11-05",
+        "slot": "2026-11-05 20",
+        "slug": "silent-heart",
+        "id": "2118403023365935180"
       }
     ],
-    "last_day": "2026-11-04"
+    "last_day": "2026-11-05"
   },
-  "last_slot": "2026-11-05 14",
+  "last_slot": "2026-11-05 20",
   "quote": {
     "seen": [
       "1",
