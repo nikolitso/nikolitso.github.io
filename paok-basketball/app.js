@@ -498,23 +498,24 @@ VIEWS.scout = function scout() {
     const tstats = ts ? `<h3 style="margin-top:20px">Projected team stats</h3>
       <div class="table-wrap"><table><thead><tr><th class="l">Stat</th>${sides.map(([, n]) => `<th>${esc(n)}</th>`).join('')}<th>Total</th></tr></thead>
       <tbody>${tsRows.filter(([k]) => ts[k]).map(([k, label]) => `<tr><td class="l">${label}</td>${sides.map(([s]) => `<td><b>${f1(ts[k][s])}</b></td>`).join('')}<td>${f1(ts[k].total)}</td></tr>`).join('')}</tbody></table></div>` : '';
-    const line = lineFor(pick);
+    const line = lineFor(pick) ?? pr.line ?? null;
+    const fit = pr.learned || {};
     const [hn, hs, an, as] = pick.home ? ['PAOK', us.score, pick.opp, them.score] : [pick.opp, them.score, 'PAOK', us.score];
     proj = `<div class="card dark proj">
         <div class="label">Projected score</div>
         <div class="big">${esc(hn)} ${Math.round(hs)} – ${Math.round(as)} ${esc(an)}</div>
         <div class="winbar"><div style="width:${pr.winProb}%"></div></div>
         <div class="muted">PAOK win chance: <b style="color:inherit">${pr.winProb}%</b> · expected ${pr.pace ? f1(pr.pace) : '–'} possessions · ${esc(src)}${pr.note ? ' · ' + esc(pr.note) : ''}</div>
-        <div class="muted">Projected total: <b style="color:inherit">${f1(us.score + them.score)}</b> · Bookmaker total: <b style="color:inherit">${line != null ? line : 'not out yet'}</b></div>
+        <div class="muted">Projected total: <b style="color:inherit">${f1(us.score + them.score)}</b>${pr.modelTotal ? ` (model alone ${f1(pr.modelTotal)})` : ''} · Bookmaker total: <b style="color:inherit">${line != null ? line : 'not out yet'}</b></div>
       </div>
       ${tstats}
       ${absent(us, 'PAOK')}${absent(them, pick.opp)}
       <p class="note">How it works: expected possessions = both teams' possessions per game relative to the league average. Points per 100 possessions = a team's schedule-adjusted offensive rating × the opponent's schedule-adjusted defensive rating ÷ the league average (adjusted = corrected for the strength of the opponents faced so far),
-        reduced if key scorers are missing. Early-season numbers are pulled toward each team's pre-season expectation, plus a home-court edge of 2 points each way.
+        reduced if key scorers are missing. Early-season numbers are pulled toward each team's pre-season expectation, plus a home-court edge of ${fit.homeEdge ?? 2} points each way.
         Team stats: each team's rate per 100 possessions × what the opponent allows ÷ the league average, over the expected possessions (pulled harder toward the league average than scoring, since these rates settle more slowly); made shots are scaled to add up to the projected score,
         and rebounds come from the expected misses and both teams' offensive and defensive rebounding rates.
         PAOK's numbers come from games in this competition only (the rosters differ between the Greek League and the EuroCup).
-        The bookmaker total is there for comparison only and isn't used in the projection.
+        ${fit.games ? `Totals get a correction of +${fit.totalBias} points and, once a bookmaker total is out, move ${Math.round(fit.lineWeight * 100)}% of the way to it; the margin between the teams stays the same. The home edge, this correction and the win chance are re-fitted after every game on ${fit.games.toLocaleString('en-GB')} past games.` : ''}
 </p>`;
   }
   const gf = (state.gameFiles || {})[`${pick.comp}-${pick.code}`];

@@ -60,6 +60,10 @@ jobs:
         if: steps.plan.outputs.comps != ''
         continue-on-error: true
         run: python $S/power.py ${{ steps.plan.outputs.comps }}
+      - name: Re-fit the projection settings
+        if: steps.plan.outputs.comps != ''
+        continue-on-error: true
+        run: python $S/learn.py
       - name: Next-game scouting and projections
         id: scout
         if: steps.plan.outputs.comps != ''

@@ -1,0 +1,85 @@
+{
+ "updated": "2026-11-05T06:44:02Z",
+ "comps": {
+  "EuroCup": {
+   "games": 1092,
+   "lineGames": 1032,
+   "homeEdge": 1.44,
+   "totalBias": 1.19,
+   "spreadSd": 12.5,
+   "lineWeight": 0.79,
+   "lineWeightRaw": 0.79
+  },
+  "GBL": {
+   "games": 962,
+   "lineGames": 944,
+   "homeEdge": 2.17,
+   "totalBias": 1.47,
+   "spreadSd": 11.0,
+   "lineWeight": 0.8,
+   "lineWeightRaw": 0.89
+  }
+ },
+ "paok": [
+  {
+   "comp": "GBL",
+   "opp": "Kolossos",
+   "model": 164.8,
+   "shown": 164.8,
+   "line": 168.5,
+   "real": 172,
+   "margin": -0.6,
+   "realMargin": 4
+  },
+  {
+   "comp": "EuroCup",
+   "opp": "Ulm",
+   "model": 177.1,
+   "shown": 177.1,
+   "line": 173.5,
+   "real": 165,
+   "margin": 7.5,
+   "realMargin": 9
+  },
+  {
+   "comp": "GBL",
+   "opp": "AEK",
+   "model": 155.6,
+   "shown": 155.6,
+   "line": 164.5,
+   "real": 127,
+   "margin": 6.4,
+   "realMargin": 3
+  },
+  {
+   "comp": "EuroCup",
+   "opp": "Bahcesehir",
+   "model": 169.1,
+   "shown": 169.1,
+   "line": 169.5,
+   "real": 165,
+   "margin": -5.5,
+   "realMargin": -3
+  },
+  {
+   "comp": "GBL",
+   "opp": "Iraklis",
+   "model": 146.8,
+   "shown": 146.8,
+   "line": 159.5,
+   "real": 116,
+   "margin": -0.6,
+   "realMargin": 10
+  },
+  {
+   "comp": "EuroCup",
+   "opp": "Roma",
+   "model": 166.6,
+   "shown": 166.6,
+   "line": 173.5,
+   "real": 224,
+   "margin": 8.4,
+   "realMargin": 2
+  }
+ ]
+}
