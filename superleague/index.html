@@ -241,14 +241,13 @@ function refHtml(r){
 
 // one line per stat: goals 2.5 always, others the half-point next to the projection
 
-// what the past adds to a projection: derby level, head to head, the referee's habits, recent form
+// what the past adds to a projection: derby level and the referee's habits
 // (referee-games.js: every league game since 2024-25, Big-4 against Big-4 since 2021-22; newest first)
 let ctxList;
 const ctxGames = () => ctxList === undefined ? (ctxList = refGameList()) : ctxList;
 const refKey = n => n.replace(/\s*\(.*$/, '').normalize('NFD').replace(/[̀-ͯ]/g, '').trim().split(/\s+/).pop().toLowerCase();
 const gameCards = x => x.hc + x.ac;
 const cardsAvg = xs => avgOf(xs.map(gameCards)).toFixed(1);
-const goalsAvg = xs => avgOf(xs.map(x => x.hg + x.ag)).toFixed(1);
 const cardsOver = (xs, ln) => pct(xs.filter(x => gameCards(x) > ln).length / xs.length);
 const ctxRow = (who, txt) => `<div class="coach"><span class="who">${who}</span><span>${txt}</span></div>`;
 // a team's result in a game: W, D or L, and its goals and cards
@@ -262,10 +261,6 @@ function contextHtml(g){
     const bb = all.filter(x => BIG4.includes(x.home) && BIG4.includes(x.away));
     rows.push(ctxRow('Big-4 derby', `<b>${cardsAvg(bb)}</b> cards in ${bb.length} derbies since 2021–22, over ${ln} in <b>${cardsOver(bb, ln)}</b> · cards here include the derby ×1.13`));
   }
-  const here = all.filter(x => x.home === home && x.away === away), both = all.filter(x => (x.home === home && x.away === away) || (x.home === away && x.away === home));
-  if (here.length) rows.push(ctxRow('H2H here', `${home} <b>${wdl(here, home)}</b> in ${here.length} · ${goalsAvg(here)} goals · <b>${cardsAvg(here)}</b> cards, over ${ln} in ${cardsOver(here, ln)} · last ${here.slice(0, 3).map(x => `${x.hg}–${x.ag}`).join(', ')}`));
-  if (both.length > here.length) rows.push(ctxRow(here.length ? 'H2H both ways' : 'H2H away leg', `${both.length} game${both.length === 1 ? '' : 's'} · ${goalsAvg(both)} goals · <b>${cardsAvg(both)}</b> cards`));
-  if (!both.length) rows.push(ctxRow('H2H', 'no league meeting since 2024–25'));
   if (g.ref && g.ref.name){
     const k = refKey(g.ref.name), rg = all.filter(x => x.ref && refKey(x.ref) === k && x.season >= '2024-25');
     if (rg.length){
@@ -275,10 +270,7 @@ function contextHtml(g){
       if (withTeam.length) rows.push(ctxRow('Referee with', withTeam.map(([t, xs]) => `${t} <b>${wdl(xs, t)}</b> in ${xs.length}, ${avgOf(xs.map(x => teamGame(x, t).cards)).toFixed(1)} cards a game`).join(' · ')));
     }
   }
-  [home, away].forEach((t, i) => {
-    const xs = all.filter(x => x.home === t || x.away === t).slice(0, 5), ts = xs.map(x => teamGame(x, t));
-    if (xs.length) rows.push(ctxRow(i ? '' : `Last ${xs.length}`, `${t} <b>${ts.map(x => x.res).join(' ')}</b> · goals ${ts.reduce((a, x) => a + x.gf, 0)}–${ts.reduce((a, x) => a + x.ga, 0)} · ${avgOf(ts.map(x => x.cards)).toFixed(1)} cards a game`));
-  });
+  if (!rows.length) return '';
   return `<div class="ctx"><h4>Context</h4>${rows.join('')}</div>`;
 }
 function matchCard(g){
