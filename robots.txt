@@ -3,3 +3,4 @@ Allow: /
 
 Sitemap: https://antonisnikolitsopoulos.com/sitemap.xml
 Sitemap: https://antonisnikolitsopoulos.com/superleague/sitemap.xml
+Sitemap: https://antonisnikolitsopoulos.com/eurocup/sitemap.xml

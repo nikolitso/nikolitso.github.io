@@ -24,7 +24,9 @@ jobs:
           dir: eurocup
           requirements: -r _bs/eurocup/requirements.txt
           browser: "true"
-          run: python -u update.py --no-push
+          run: |
+            python -u update.py --no-push
+            python -u games.py
           pages: eurocup
           label: EuroCup
           token: ${{ secrets.SITES_TOKEN }}

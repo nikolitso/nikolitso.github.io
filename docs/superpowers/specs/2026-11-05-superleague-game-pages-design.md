@@ -46,3 +46,10 @@ relative to the main line, ✗ otherwise, – where there was no line. The sente
 
 Other sports (the same script pattern applies later), Greek text, bet recommendations on the pages, any change to
 the main Super League page or the model.
+
+## EuroCup (5 Nov 2026)
+
+`BettingSignal/eurocup/games.py`, on the shared frame in `BettingSignal/gamepages.py`, writes `/eurocup/games/` the same way and
+follows the same choices: played games show the score and the numbers, with no summary and no side column, and no game has a
+closing note. Only games with a projection get a page: the frozen entries in `archive.js` (saved before tip-off with the
+bookmaker's line) and the upcoming ones in `projections.js`. Rounds 1-4 of 2026-27 predate the archive and have no page.
