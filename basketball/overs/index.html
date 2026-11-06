@@ -197,7 +197,7 @@ a.tile:hover{border-color:var(--gold)}
   <div class="chips" id="chips"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=df9a0c5d"></script>
+<script src="data.js?v=a6524e85"></script>
 <script src="live.js"></script>
 <script>
 const $ = id => document.getElementById(id);
@@ -359,6 +359,13 @@ function renderPicks(){
               ['ROI', roi(R_), cls(R_)],
               ['Closing line moved toward the pick', cl.length ? pct(up / cl.length) : '–'], ['Closing line moved against it', cl.length ? pct(dn / cl.length) : '–']]);
   h += `<p class="note">The closing line moved toward the pick when it ended above the line picked. A few hundred picks are needed before the record says much. Picks before 7 Nov 2026 were made with the earlier team numbers, which also used last season. Click a column heading to sort.</p>`;
+  if (cl.length) {
+    const bt = k => DATA.bets.filter(b => b.lg === k && b.close != null);
+    h += `<h2>The closing line by league</h2><p class="note">How each league's picks did against the closing line this season. This shows sooner than the record whether the model is reading a league well. Points: the average move from the line picked to the closing line. Backtest: how often the line moved toward the pick in 2022–23 to 2025–26.</p><div class="scroll"><table style="max-width:860px"><thead><tr><th>League</th><th class="n">Picks</th><th class="n">Moved toward</th><th class="n">Moved against</th><th class="n">Points</th><th class="n">Backtest</th></tr></thead><tbody>` +
+      DATA.leagues.map(l => { const g = cl.filter(b => b.lg === l.key), n = g.length, t = bt(l.key);
+        return `<tr><td>${lgFull(l)}</td><td class="n">${n}</td><td class="n">${n ? pct(g.filter(b => b.close > b.line).length / n) : '–'}</td><td class="n">${n ? pct(g.filter(b => b.close < b.line).length / n) : '–'}</td><td class="n">${n ? sgn(g.reduce((a, b) => a + b.close - b.line, 0) / n) : '–'}</td><td class="n">${t.length ? pct(t.filter(b => b.close > b.line).length / t.length) : '–'}</td></tr>`; }).join('') +
+      '</tbody></table></div>';
+  }
   if (!set.length) return h + '<p class="empty">No settled picks yet.</p>';
   let run = 0;
   const rows = all.filter(b => b.done).map(b => {   // open picks are in the table above
