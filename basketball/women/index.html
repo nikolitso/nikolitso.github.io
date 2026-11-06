@@ -197,7 +197,7 @@ a.tile:hover{border-color:var(--gold)}
   <div class="chips" id="chips"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=w12"></script>
+<script src="data.js?v=w13"></script>
 <script src="live.js"></script>
 <script>
 const $ = id => document.getElementById(id);
@@ -210,7 +210,8 @@ const roi = x => x == null ? '–' : sgn(x*100, 1) + '%';
 const cls = x => x > 0 ? 'pos' : x < 0 ? 'neg' : '';
 const sn = s => s.replace('-', '–');
 let view = 'home', lg = 'all', open = null;
-const LG = Object.fromEntries(DATA.leagues.map(l => [l.key, l]));
+const ALLG = [...DATA.leagues, ...(DATA.past || [])];   // past: on the list in an earlier season, not now
+const LG = Object.fromEntries(ALLG.map(l => [l.key, l]));
 const lgName = k => `${LG[k].country} · ${LG[k].name}`;
 const lgFull = l => l.country === 'Europe' ? l.name : `${l.country} <span class="muted">${l.name}</span>`;
 const lgShort = k => LG[k].short;
@@ -293,7 +294,7 @@ function renderBacktest(){
               ['Opening line', lineAvg(BT.filter(b => b.open != null), 'open')], ['Closing line', lineAvg(BT, 'close')]]);
   h += `<h2>By season</h2>` + sideTable('Season', S.seasons.map(s => [sn(s.season), BT.filter(x => seasonOf(x) === s.season)]));
   if (lg === 'all'){
-    const ls = DATA.leagues.map(l => [l, DATA.bets.filter(b => b.lg === l.key)]).filter(([l, r]) => r.length).sort((a, b) => stat(b[1]).roi - stat(a[1]).roi);
+    const ls = ALLG.map(l => [l, DATA.bets.filter(b => b.lg === l.key)]).filter(([l, r]) => r.length).sort((a, b) => stat(b[1]).roi - stat(a[1]).roi);
     h += `<h2>By league</h2><p class="note">Unseen seasons. Click a league to see it alone.</p>` + sideTable('League', ls.map(([l, r]) => [`<a href="#view=${view}&lg=${l.key}" style="color:inherit;text-decoration:none">${lgFull(l)}</a>`, r]));
   }
   const byEdge = [...BT].sort((x, y) => y.edge - x.edge);   // bets store a rounded edge, so take each row's count from the top
@@ -399,7 +400,7 @@ document.addEventListener('click', e => {
 
 function renderTesting(){
   const T = LIVE.test || {names: {}, picks: []}, nm = k => T.names[k] || k, n = Object.keys(T.names).length;
-  let h = `<p class="note">Every domestic league outside the main ${DATA.leagues.length}, run live under the same rules${T.start ? ` since ${T.start}` : ''}: overs only, edge above ${Math.round(LE()*100)}% at the line on offer, both teams ${LIVE.min_gp ?? 6}+ games, model within 12 points of the line, regular season only, none in February or May, equal stakes. ROI = profit ÷ total staked on won and lost picks; pushes are left out. These picks are kept apart and do not count in the record on the other tabs. A league can join the main list once a long run of picks shows a steady profit. Click a column heading to sort.</p>`;
+  let h = `<p class="note">Every domestic league outside the main ${DATA.leagues.length}, run live under the same rules${T.start ? ` since ${T.start}` : ''}: overs only, edge above ${Math.round(LE()*100)}% at the line on offer, both teams ${LIVE.min_gp ?? 6}+ games, model within 12 points of the line, regular season only, none in February or May, equal stakes. ROI = profit ÷ total staked on won and lost picks; pushes are left out. These picks are kept apart and do not count in the record on the other tabs. A league can join the main list before a season if it clears the bar in How it works. Click a column heading to sort.</p>`;
   const open = T.picks.filter(b => !b.done).sort((a, b) => a.dt < b.dt ? -1 : 1), done = T.picks.filter(b => b.done);
   const set = done.filter(b => b.ret != null), won = set.filter(b => b.ret > 0).length, units = set.reduce((a, b) => a + b.ret, 0), nDec = set.filter(b => b.ret !== 0).length, R_ = nDec ? units / nDec : null;
   h += tiles([['Leagues', String(n || '–')], ['Picks', String(T.picks.length)], ['Open picks', String(open.length)], ['Settled', String(set.length)],
@@ -429,7 +430,7 @@ const RENDER = {home: renderFindings, picks: renderPicks, leagues: renderLeagues
 const CHIPS = {backtest: 1, projections: 1};
 function render(){
   document.querySelectorAll('#tabs a').forEach(a => { a.classList.toggle('on', a.dataset.view === view); a.href = `#view=${a.dataset.view}${lg === 'all' || !CHIPS[a.dataset.view] ? '' : '&lg=' + lg}`; });
-  let keys = DATA.leagues.map(l => l.key);
+  let keys = ALLG.map(l => l.key);
   if (view === 'backtest') keys = keys.filter(k => DATA.bets.some(b => b.lg === k));
   if (view === 'projections') keys = keys.filter(k => LIVE.fixtures.some(g => g.lg === k));
   const chips = CHIPS[view] ? [['all', 'All leagues'], ...keys.map(k => [k, lgShort(k)])] : [];
