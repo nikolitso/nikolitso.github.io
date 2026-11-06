@@ -697,7 +697,8 @@
       "a-family",
       "marina",
       "a-quiet-life",
-      "silent-heart"
+      "silent-heart",
+      "the-double-hour"
     ],
     "log": [
       {
@@ -947,11 +948,17 @@
         "slot": "2026-11-05 20",
         "slug": "silent-heart",
         "id": "2118403023365935180"
+      },
+      {
+        "day": "2026-11-06",
+        "slot": "2026-11-06 20",
+        "slug": "the-double-hour",
+        "id": "2118765413366370447"
       }
     ],
-    "last_day": "2026-11-05"
+    "last_day": "2026-11-06"
   },
-  "last_slot": "2026-11-06 14",
+  "last_slot": "2026-11-06 20",
   "quote": {
     "seen": [
       "1",
