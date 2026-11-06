@@ -721,52 +721,67 @@ const infoFor = (name) => {
 const posLabel = (r) => (((state.filters.profTeam === 'PAOK') && infoFor(r.name).positions) || r.posCode || ({ Guard: 'G', Forward: 'F', Center: 'C' }[r.pos] || r.pos || '')).replace(/\//g, ' / ');
 const surnameOnly = (name) => name.split(' ').slice(1).join(' ') || name;
 const cardName = (name) => ((state.sharedSurnames || new Set()).has(surnameOnly(name)) ? `${name[0]}. ${surnameOnly(name)}` : surnameOnly(name));
-/* Offence and Defence ratings, league percentiles and form, from data/ratings.json */
+/* Each player in words: Offence and Defence, one sentence, and the numbers tucked into Full profile. Data from data/ratings.json */
 const ratingOf = (comp, team, name) => (state.ratings.comps[comp]?.teams[team] || []).find((x) => sname(x.name) === sname(name));
 const ratingsFor = (name) => state.profScope.comps.map((c) => [c, ratingOf(c, state.profScope.team, name)]).filter(([, x]) => x);
-const rateScore = (label, v, lo, hi) => `<div class="rate" title="${label}: ${v} (likely between ${lo} and ${hi})"><b>${v}</b><span>${label}</span><em>${lo}–${hi}</em>
-  <div class="meter" aria-hidden="true"><s style="left:${lo}%;width:${hi - lo}%"></s><u style="left:${v}%"></u></div></div>`;
+const BANDS = [[90, 'Elite', 5], [70, 'Good', 4], [30, 'Average', 3], [10, 'Below average', 2], [0, 'Weak', 1]];
+const bandOf = (v) => BANDS.find(([from]) => v >= from);
+const PHRASES = {
+  'Scoring efficiency': ['efficient scorer', 'inefficient scorer'], '3-pt shooting': ['reliable from three', 'struggles from three'],
+  Playmaking: ['creates for others', 'creates little for others'], Rebounding: ['strong rebounder', 'few rebounds'],
+  'Steals & blocks': ['disruptive with steals and blocks', 'few steals or blocks'], 'Ball security': ['looks after the ball', 'turnover-prone'], 'Foul discipline': ['rarely fouls', 'fouls a lot'],
+};
+const sentenceCase = (t) => t[0].toUpperCase() + t.slice(1);
+// across competitions, by minutes played in each
+function overall(rows, key) {
+  const rated = rows.filter(([, x]) => x.rated);
+  return rated.length ? rated.reduce((s, [, x]) => s + x[key] * x.min, 0) / rated.reduce((s, [, x]) => s + x.min, 0) : null;
+}
 function ratingBlock(name) {
-  const rows = ratingsFor(name), both = state.profScope.comps.length > 1;
-  return `<div class="rate-block">${rows.map(([c, x]) => `<div class="rate-line">${both ? `<span class="label">${esc(compName(c))}</span>` : ''}${x.rated
-    ? rateScore('Offence', x.off, x.offLo, x.offHi) + rateScore('Defence', x.def, x.defLo, x.defHi)
-    : `<span class="muted rate-none">Not enough minutes to rate yet (${x.min} of ${state.ratings.comps[c].minMinutes})</span>`}</div>`).join('')}</div>`;
+  const rows = ratingsFor(name), off = overall(rows, 'off');
+  if (off === null) return `<div class="rate-block"><p class="muted rate-none">${rows.length ? 'Not enough minutes to judge yet' : ''}</p></div>`;
+  const line = (label, v) => { const [, word, n] = bandOf(v); return `<div class="rate"><span>${label}</span><b>${word}</b><div class="steps steps-${n}" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div></div>`; };
+  return `<div class="rate-block">${line('Offence', off)}${line('Defence', overall(rows, 'def'))}</div>`;
+}
+function summaryLine(name) {
+  const rated = ratingsFor(name).filter(([, x]) => x.rated).sort((a, b) => b[1].min - a[1].min);
+  if (!rated.length) return '<p class="prof-sum"></p>';
+  const { strengths, weak } = rated[0][1];
+  const good = strengths.slice(0, 2).map((t) => PHRASES[t][0]), bad = weak.slice(0, 2).map((t) => PHRASES[t][1]);
+  return `<p class="prof-sum">${[good, bad].filter((x) => x.length).map((x) => `${sentenceCase(x.join(', '))}.`).join(' ')}</p>`;
 }
 const barValue = (b) => (['ts', 'fg3'].includes(b.key) ? `${f1(b.v)}%` : f1(b.v));
-function moreBlock(name) {
-  const rows = ratingsFor(name), both = state.profScope.comps.length > 1;
-  if (!rows.length) return '<div></div>';
-  const part = ([c, x]) => {
-    const list = (title, items, cls) => (items && items.length ? `<div class="more-tags"><span class="label">${title}</span>${items.map((t) => `<span class="pill ${cls}">${esc(t)}</span>`).join('')}</div>` : '');
-    return `${both ? `<h4>${esc(compName(c))}</h4>` : ''}
-      <p class="more-line">${x.gp} game${x.gp > 1 ? 's' : ''} · ${f1(x.mpg)} min · ${f1(x.pts)} pts · ${f1(x.pir)} PIR</p>
-      ${x.form ? `<p class="more-line">Last ${x.form.gp}: <b>${f1(x.form.pts)}</b> pts · <b>${f1(x.form.pir)}</b> PIR</p>` : ''}
-      ${x.rated ? `<p class="more-line">Offence ${ordinal(x.offRank)} and Defence ${ordinal(x.defRank)} of ${state.ratings.comps[c].rated} rated players</p>` : ''}
-      ${list('Strengths', x.strengths, 'pos')}${list('Weak spots', x.weak, 'neg')}
-      ${(x.bars || []).map((b) => `<div class="pbar" title="Better than ${b.p}% of rated players"><span>${esc(b.label)}</span><div class="track"><i style="width:${b.p}%"></i></div><b>${barValue(b)}</b></div>`).join('')}`;
-  };
-  return `<details class="prof-more"><summary>Full profile</summary>${rows.map(part).join('')}</details>`;
+function compNumbers([c, x], both) {
+  return `${both ? `<h4>${esc(compName(c))}</h4>` : ''}
+    <p class="more-line">${x.gp} game${x.gp > 1 ? 's' : ''} · ${f1(x.mpg)} min · ${f1(x.pts)} pts · ${f1(x.pir)} PIR${x.form ? ` · last ${x.form.gp}: ${f1(x.form.pts)} pts` : ''}</p>
+    ${x.rated ? `<p class="more-line">Offence ${x.off} (likely ${x.offLo}–${x.offHi}) · Defence ${x.def} (likely ${x.defLo}–${x.defHi}) · out of 100, league percentile</p>
+    ${(x.bars || []).map((b) => `<div class="pbar" title="Better than ${b.p}% of rated players"><span>${esc(b.label)}</span><div class="track"><i style="width:${b.p}%"></i></div><b>${barValue(b)}</b></div>`).join('')}` : ''}`;
 }
 function profileCard(r, p, regulars, emptyText) {
-  const head = (extra) => `<div class="impact-head"><div><div class="pname-row"><b class="pname" title="${esc(r.name)}">${esc(cardName(r.name))}</b>${posLabel(r) ? `<span class="ppos">${esc(posLabel(r))}</span>` : ''}</div>${extra}</div>${p ? `<div class="pir-badge">${f1(p.pir)}<span>PIR</span></div>` : ''}</div>`;
+  const head = (extra) => `<div class="impact-head"><div><div class="pname-row"><b class="pname" title="${esc(r.name)}">${esc(cardName(r.name))}</b>${posLabel(r) ? `<span class="ppos">${esc(posLabel(r))}</span>` : ''}</div>${extra}</div></div>`;
   if (!p) return `<div class="card impact muted-card">${head('')}<p class="muted" style="margin:14px 0 0">${esc(emptyText)}</p></div>`;
   const { off, def } = profileTags(p, regulars);
   const pill = (t, cls = '') => `<span class="pill ${cls}" title="${esc(RULE_TEXT[t])}">${esc(t)}</span>`;
   const pm = p.pm === null || p.pm === undefined ? '–' : (p.pm > 0 ? '+' : '') + f1(p.pm);
+  const rows = ratingsFor(r.name), both = state.profScope.comps.length > 1;
   return `<div class="card impact">
-    ${head(`<div class="muted" style="font-size:12px">${p.gp} game${p.gp > 1 ? 's' : ''} · ${f1(p.min)} min</div>`)}
+    ${head('')}
     ${ratingBlock(r.name)}
-    <div class="impact-line"><div><b>${f1(p.pts)}</b><span>PTS</span></div><div><b>${f1(p.reb)}</b><span>REB</span></div>${p.ast > 1 ? `<div><b>${f1(p.ast)}</b><span>AST</span></div>` : '<div aria-hidden="true"></div>'}<div><b>${p.fg3p === null || p.fg3p === undefined ? '–' : f1(p.fg3p) + '%'}</b><span>3P</span></div></div>
-    <div class="tags">${off.map((t) => pill(t)).join('')}</div>
-    <div class="def-line"><span class="label">Defence</span>
-      ${p.stl > 0.5 ? `<div><b>${f1(p.stl)}</b><span>STL</span></div>` : '<div aria-hidden="true"></div>'}${p.blk > 0.5 ? `<div><b>${f1(p.blk)}</b><span>BLK</span></div>` : '<div aria-hidden="true"></div>'}<div><b>${f1(p.dreb)}</b><span>DREB</span></div><div><b>${f1(p.pf)}</b><span>PF</span></div></div>
-    <div class="tags">${def.filter((t) => !t.endsWith('+/-')).map((t) => pill(t, t === 'Foul trouble' ? '' : 'def')).join('')}</div>
-    <div class="pm-row">${(() => {
-      // plus/minus covers the whole game (offence and defence), so it sits on its own row
-      const t = def.find((x) => x.endsWith('+/-'));
-      return t ? `${pill(t, t.startsWith('Positive') ? 'pos' : 'neg')}<b class="${pmClass(p.pm)}">${pm}</b><span class="muted">per game</span>` : '';
-    })()}</div>
-    ${moreBlock(r.name)}
+    ${summaryLine(r.name)}
+    <details class="prof-more"><summary>Full profile</summary>
+      <p class="more-line">${p.gp} game${p.gp > 1 ? 's' : ''} · ${f1(p.min)} min · ${f1(p.pir)} PIR</p>
+      <div class="impact-line"><div><b>${f1(p.pts)}</b><span>PTS</span></div><div><b>${f1(p.reb)}</b><span>REB</span></div>${p.ast > 1 ? `<div><b>${f1(p.ast)}</b><span>AST</span></div>` : '<div aria-hidden="true"></div>'}<div><b>${p.fg3p === null || p.fg3p === undefined ? '–' : f1(p.fg3p) + '%'}</b><span>3P</span></div></div>
+      <div class="tags">${off.map((t) => pill(t)).join('')}</div>
+      <div class="def-line"><span class="label">Defence</span>
+        ${p.stl > 0.5 ? `<div><b>${f1(p.stl)}</b><span>STL</span></div>` : '<div aria-hidden="true"></div>'}${p.blk > 0.5 ? `<div><b>${f1(p.blk)}</b><span>BLK</span></div>` : '<div aria-hidden="true"></div>'}<div><b>${f1(p.dreb)}</b><span>DREB</span></div><div><b>${f1(p.pf)}</b><span>PF</span></div></div>
+      <div class="tags">${def.filter((t) => !t.endsWith('+/-')).map((t) => pill(t, t === 'Foul trouble' ? '' : 'def')).join('')}</div>
+      <div class="pm-row">${(() => {
+        // plus/minus covers the whole game (offence and defence), so it sits on its own row
+        const t = def.find((x) => x.endsWith('+/-'));
+        return t ? `${pill(t, t.startsWith('Positive') ? 'pos' : 'neg')}<b class="${pmClass(p.pm)}">${pm}</b><span class="muted">per game</span>` : '';
+      })()}</div>
+      ${rows.map((row) => compNumbers(row, both)).join('')}
+    </details>
   </div>`;
 }
 
@@ -775,12 +790,12 @@ function ratingsExplainer() {
   if (!m) return '';
   const comps = Object.entries(state.ratings.comps);
   const counts = comps.map(([c, v]) => `${v.rated} in the ${compName(c)}`).join(' and ');
-  return `<h2>How the ratings work</h2>
-    <div class="card"><p>Offence and Defence are percentiles: <b>70</b> means better than 70% of the players rated in that competition (${counts}, from ${comps[0][1].minMinutes} minutes played). The small numbers are the likely range, shown as the band on the meter.</p>
+  return `<h3>How the ratings work</h3>
+    <div class="card"><p>Each player is compared with everyone rated in the same competition (${counts}, from ${comps[0][1].minMinutes} minutes played). <b>Elite</b> is the top 10%, <b>Good</b> the next 20%, <b>Average</b> the middle 40%, <b>Below average</b> the next 20% and <b>Weak</b> the bottom 10%. On All games, the competitions count by minutes played. Full profile has the number and its likely range.</p>
     <p><b>Offence</b> counts points, missed shots, assists, offensive rebounds, turnovers and fouls drawn per 40 minutes. <b>Defence</b> counts defensive rebounds, steals, blocks and fouls. The weights are half the official PIR weights and half measured from four EuroCup seasons, the mix that best predicted teams' later results. The Greek League uses the same weights.</p>
     <p>Few minutes pull a rating towards the league average. Offence takes about ${m.off} minutes to be half signal and half noise, Defence about ${m.def}, so early-season ratings move a lot.</p>
     <p>Box scores miss most of defence, such as staying in front of your man, and they favour big men, who collect the rebounds and blocks. Read Defence as what a player adds in the box score, not as his whole defensive game.</p>
-    <p class="muted">The Full profile bars show where a player stands among rated players. Playmaking, rebounding, steals &amp; blocks, turnovers and fouls are per 40 minutes. Strengths and weak spots are stats in the top or bottom quarter of the league.</p></div>`;
+    <p class="muted">The sentence on each card names stats in the top or bottom quarter of the league. The Full profile bars show where a player stands among rated players; playmaking, rebounding, steals &amp; blocks, turnovers and fouls are per 40 minutes.</p></div>`;
 }
 
 VIEWS.profiles = function profiles() {
@@ -822,12 +837,14 @@ VIEWS.profiles = function profiles() {
   state.sharedSurnames = new Set(Object.keys(count).filter((k) => count[k] > 1));
   const legend = (title, rules, cls) => `<div class="card"><h3>${title}</h3><ul class="legend">${rules.map(([n, d]) => `<li><span class="pill ${{ 'Positive +/-': 'pos', 'Negative +/-': 'neg' }[n] || cls}">${esc(n)}</span><span class="muted">${esc(d)}</span></li>`).join('')}</ul></div>`;
   return `<h2>Player Profiles</h2>${seg('profTeam', teams)}${intro}
+    <p class="muted">Early in the season these reads rest on a few games, so they will change.</p>
     <div class="grid three profile-grid">${items.map(({ r, p }) => profileCard(r, p, regulars, emptyText)).join('')}</div>
-    <h2>What the badges mean</h2>
-    <div class="grid two">${legend('Offence &amp; all-round', TAG_RULES, '')}${legend('Defence', DEF_RULES, 'def')}</div>
+    <details class="page-more"><summary>How to read this page</summary>
     ${ratingsExplainer()}
+    <h3>What the badges mean</h3>
+    <div class="grid two">${legend('Offence &amp; all-round', TAG_RULES, '')}${legend('Defence', DEF_RULES, 'def')}</div>
     ${PIR_EXPLAINER}
-    <p class="note">"Leads the team" counts players who've played at least half of the games. Box scores only capture part of defence: steals, blocks, defensive rebounds, fouls and plus/minus.</p>`;
+    <p class="note">"Leads the team" counts players who've played at least half of the games. Box scores only capture part of defence: steals, blocks, defensive rebounds, fouls and plus/minus.</p></details>`;
 };
 
 /* ---------- possessions, pace and efficiency ---------- */

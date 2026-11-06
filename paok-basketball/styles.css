@@ -261,34 +261,35 @@ h3.official-h { margin-top: 30px; }
 .report.hl-link { color: #c62828; }
 
 /* player profiles: cards in the same row share row heights, so badges and the defence line line up */
-.profile-grid > .impact { display: grid; grid-template-rows: subgrid; grid-row: span 8; row-gap: 0; align-content: start; }
+.profile-grid > .impact { display: grid; grid-template-rows: subgrid; grid-row: span 4; row-gap: 0; align-content: start; }
 .profile-grid > .impact > * { margin-top: 0; margin-bottom: 0; }
 .profile-grid > .impact > .impact-line { margin: 12px 0 10px; }
 .profile-grid > .impact > .def-line { margin: 10px 0 8px; align-self: start; }
 .profile-grid > .impact > .tags { align-content: flex-start; align-self: start; }
 
-/* Offence and Defence ratings on the profile cards */
-.profile-grid > .impact > .rate-block { margin-top: 12px; padding-bottom: 10px; }
-.rate-block { display: grid; gap: 8px; border-bottom: 1px dashed var(--line); align-self: start; }
-.profile-grid > .impact > .rate-block:empty { margin: 0; padding: 0; border: 0; }
-.rate-line { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 16px; }
-.rate-line > .label { grid-column: 1 / -1; }
-.rate { display: grid; grid-template-columns: auto 1fr auto; align-items: baseline; column-gap: 6px; }
-.rate b { font: 700 28px/1.1 var(--an-display), sans-serif; }
-.rate span { font-size: 12px; color: var(--muted); letter-spacing: .04em; text-transform: uppercase; }
-.rate em { font-style: normal; font-size: 12px; color: var(--muted); }
-.meter { grid-column: 1 / -1; position: relative; height: 6px; margin-top: 4px; background: var(--soft); border-radius: 3px; }
-.meter s { position: absolute; top: 0; bottom: 0; background: var(--line); border-radius: 3px; }
-.meter u { position: absolute; top: -2px; width: 3px; height: 10px; margin-left: -1px; background: var(--ink); }
-.rate-none { grid-column: 1 / -1; font-size: 13px; }
-.profile-grid > .impact > .prof-more { margin-top: 10px; padding-top: 8px; }
+/* Offence and Defence in words on the profile cards */
+.profile-grid > .impact > .rate-block { margin-top: 14px; }
+.rate-block { display: grid; gap: 12px; align-self: start; }
+.rate { display: grid; grid-template-columns: 1fr auto; align-items: baseline; gap: 5px 10px; }
+.rate span { font-size: 13px; color: var(--muted); letter-spacing: .08em; text-transform: uppercase; }
+.rate b { font: 700 19px/1.1 var(--an-display), sans-serif; letter-spacing: .01em; }
+.steps { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(5, 1fr); gap: 3px; }
+.steps i { height: 6px; border-radius: 2px; background: var(--line); }
+.steps-1 i:nth-child(-n+1), .steps-2 i:nth-child(-n+2), .steps-3 i:nth-child(-n+3), .steps-4 i:nth-child(-n+4), .steps-5 i { background: var(--ink); }
+.rate-none { margin: 0; font-size: 14px; }
+.profile-grid > .impact > .prof-sum { margin-top: 12px; }
+.prof-sum { font-size: 15px; line-height: 1.4; align-self: start; }
+.prof-sum:empty { display: none; }
+.prof-more .impact-line { margin: 10px 0 8px; }
+.page-more { margin-top: 26px; }
+.page-more > summary { cursor: pointer; font-weight: 700; }
+.page-more h3 { margin-top: 18px; }
+.profile-grid > .impact > .prof-more { margin-top: 12px; padding-top: 8px; }
 .prof-more { border-top: 1px dashed var(--line); align-self: start; }
 .prof-more summary { cursor: pointer; font-weight: 700; font-size: 13.5px; letter-spacing: .04em; }
 .prof-more h4 { margin: 14px 0 2px; font-size: 14px; letter-spacing: .04em; text-transform: uppercase; }
 .more-line { margin: 4px 0; font-size: 13.5px; color: var(--muted); }
 .more-line b { color: var(--ink); }
-.more-tags { display: flex; flex-wrap: wrap; align-items: center; gap: 5px; margin: 8px 0; }
-.more-tags .label { width: 100%; }
 .pbar { display: grid; grid-template-columns: 8.5em 1fr 3.4em; align-items: center; gap: 8px; margin: 6px 0; font-size: 13px; }
 .pbar .track { height: 7px; background: var(--soft); border-radius: 4px; overflow: hidden; }
 .pbar .track i { display: block; height: 100%; background: var(--ink); }
