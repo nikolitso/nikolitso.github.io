@@ -198,7 +198,7 @@ a.metric{display:block;color:inherit;text-decoration:none} a.metric:hover{border
   <div class="chips" id="chips"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=3e4a87b6"></script>
+<script src="data.js?v=124c614c"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -269,6 +269,9 @@ function renderHome(){
   const span = `${seasons[0].replace('-', '–')} to ${seasons.at(-1).replace('-', '–')}`;
   const best = DATA.leagues.map(l => ({l, s: B.leagues[l.key]})).sort((a, b) => b.s.roi - a.s.roi)
     .map(({l, s}) => `${l.country} ${sexAb(l)} ${sgn(s.roi * 100, 1)}%`).join(', ');
+  // the calibration table's top band, in a sentence: only while the model is clearly too confident there
+  const top = bets.filter(b => b.edge >= 0.4), said = top.reduce((s, b) => s + b.p, 0) / top.length, hit = top.filter(b => b.won).length / top.length;
+  const over = top.length && hit < said - 0.05 ? ` Above a 40% edge the model is too confident: it said ${pct(said)} and those ${top.length} bets won ${pct(hit)}, so a bigger edge is not a bigger real chance (see Calibration in <b>Backtest</b>).` : '';
   return pickTiles() + `<div class="doc">
   <h2>Do the model's overs make a profit?</h2>
   <p>In the backtest, yes: ${A.n} bets across ${seasons.length} past seasons (${span}) returned <b>${sgn(A.roi * 100, 1)}%</b>, while backing every low-line over in the same leagues without the model returned ${sgn(A.blind_roi * 100, 1)}%. The leagues were chosen on these same seasons, so expect less live. The ${DATA.season.replace('-', '–')} record above is the real test.</p>
@@ -277,7 +280,7 @@ function renderHome(){
   <h3><span class="num">2</span>The leagues</h3>
   <p>${B.tested.length} leagues were tested, women's and men's. A league is here only if, on the seasons the model never saw, it passed three tests: <b>backing every low-line over without the model lost 3% or less</b>, a fair market to start from; <b>the model's bets made more than +10%</b>; and <b>there were at least 50 of them</b>. Five passed: ${liveNames()}.</p>
   <h3><span class="num">3</span>What the backtest found</h3>
-  <p>${up} of ${seasons.length} seasons made a profit${lost.length ? `; ${andList(lost)} did not` : ''}. By league: ${best}.</p>
+  <p>${up} of ${seasons.length} seasons made a profit${lost.length ? `; ${andList(lost)} did not` : ''}. By league: ${best}.${over}</p>
   <h3><span class="num">4</span>What a bad run looks like</h3>
   <p>The longest run of losing bets was ${worst}. Size stakes so a run like that is comfortable.</p>
   </div>`;
