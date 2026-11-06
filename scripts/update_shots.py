@@ -1,7 +1,8 @@
-"""Refresh the screenshots on the homepage's project cards.
+"""Refresh each project's screenshot, the image shown when its page is shared (og:image). The Projects cards on the
+homepage show no image (user, 6 Nov 2026); the side-project cards still do.
 
 Run:  python scripts/update_shots.py
-The "Update project pills" GitHub Action runs it every morning, so the cards always show
+The "Update project pills" GitHub Action runs it every morning, so the images always show
 the current version of each page.
 
 Pages that live in this repo are served from the checkout (so a change shows up at once);
@@ -89,7 +90,7 @@ def main():
         html, n = re.subn(
             r'(<a class="card" href="' + re.escape(href) + r'">\s*<div class="card-shot"><img src=")[^"]*(")',
             lambda m: f"{m.group(1)}{name}.jpg?v={v}{m.group(2)}", html, count=1)
-        print(f"{href}: {'updated' if n else 'image saved, card not matched'} ({'repo' if in_repo else 'live'})")
+        print(f"{href}: {'updated' if n else 'image saved'} ({'repo' if in_repo else 'live'})")
     index.write_text(html, encoding="utf-8")
     shutil.rmtree(tmp, ignore_errors=True)
 
