@@ -174,6 +174,7 @@ th.tsort{cursor:pointer;user-select:none} th.tsort:hover{color:var(--gold)}
 .chips a{font:400 14.5px var(--mono);color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:4px 11px;text-decoration:none}
 .chips a.on{color:var(--an-on-accent);background:var(--gold);border-color:var(--gold)}
 .metric .sm{font:400 14px var(--mono);color:var(--muted);margin-top:4px}
+a.metric{display:block;color:inherit;text-decoration:none} a.metric:hover{border-color:var(--gold)}
 .pill{display:inline-block;font:500 13.5px var(--mono);padding:2px 9px;border-radius:99px;border:1px solid var(--line);vertical-align:4px;margin-left:6px}
 .pill.pos{border-color:color-mix(in srgb,var(--win) 40%,transparent);background:color-mix(in srgb,var(--win) 10%,transparent)}
 .pill.neg{border-color:color-mix(in srgb,var(--loss) 40%,transparent);background:color-mix(in srgb,var(--loss) 9%,transparent)}
@@ -197,7 +198,7 @@ th.tsort{cursor:pointer;user-select:none} th.tsort:hover{color:var(--gold)}
   <div class="chips" id="chips"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=a541986c"></script>
+<script src="data.js?v=a69387f8"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -248,11 +249,12 @@ function pickTiles(){
   const done = DATA.picks.filter(p => 'won' in p), nOpen = DATA.picks.length - done.length, n = done.length;
   const w = done.filter(p => p.won).length, units = done.reduce((s, p) => s + p.profit, 0);
   const avg = `avg of ${n} settled pick${n === 1 ? '' : 's'}`;
-  const t = [['Open picks', nOpen, nOpen ? 'to play' : 'none right now'], ['Record', `${w}–${n - w}`, 'win – loss'],
+  const t = [['Open picks', nOpen, nOpen ? 'to play →' : 'none right now', '#view=picks'], ['Record', `${w}–${n - w}`, 'win – loss'],
              
              ['ROI', n ? `<span class="${cls(units)}">${sgn(units / n * 100, 1)}%</span>` : '–', `${n} settled pick${n === 1 ? '' : 's'}`],
              ['Market line', avgLine(done, 'line'), avg], ['Model line', avgLine(done, 'fair'), avg], ['Actual total', avgLine(done, 'total'), avg]];
-  return `<div class="metrics">${t.map(([l, v, n]) => `<div class="metric"><div class="lbl">${l}</div><div class="big">${v}</div><div class="sm">${n}</div></div>`).join('')}</div>`;
+  return `<div class="metrics">${t.map(([l, v, n, href]) => { const inner = `<div class="lbl">${l}</div><div class="big">${v}</div><div class="sm">${n}</div>`;
+    return href ? `<a class="metric" href="${href}">${inner}</a>` : `<div class="metric">${inner}</div>`; }).join('')}</div>`;
 }
 
 // the front page: the live record, the bet, how the leagues were chosen and what the backtest found. The tables stay in their tabs
