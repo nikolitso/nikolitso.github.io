@@ -294,14 +294,13 @@ function renderBacktest(){
               ['Opening line', lineAvg(BT.filter(b => b.open != null), 'open')], ['Closing line', lineAvg(BT, 'close')]]);
   h += `<h2>By season</h2>` + sideTable('Season', S.seasons.map(s => [sn(s.season), BT.filter(x => seasonOf(x) === s.season)]));
   if (lg === 'all'){
-    h += `<h2>By division</h2>` + sideTable('Division', [['Top divisions', 'top'], ['Second divisions', 'second']].map(([label, t]) => [label, BT.filter(x => LG[x.lg].tier === t)]).filter(r => r[1].length));
     const ls = ALLG.map(l => [l, DATA.bets.filter(b => b.lg === l.key)]).filter(([l, r]) => r.length).sort((a, b) => stat(b[1]).roi - stat(a[1]).roi);
     h += `<h2>By league</h2><p class="note">Unseen seasons. Click a league to see it alone.</p>` + sideTable('League', ls.map(([l, r]) => [`<a href="#view=${view}&lg=${l.key}" style="color:inherit;text-decoration:none">${lgFull(l)}</a>`, r]));
   }
   const byEdge = [...BT].sort((x, y) => y.edge - x.edge);   // bets store a rounded edge, so take each row's count from the top
   h += `<h2>By edge</h2>` + sideTable('Edge', S.edges.map(e => [`${Math.round(e.edge * 100)}%+`, byEdge.slice(0, e.n)]));   // each row counts everything above it
   h += `<h2>By month</h2>` + sideTable('Month', S.months.map(m => [MON[m.m - 1], BT.filter(x => +x.dt.slice(5, 7) === m.m)]));
-  h += `<h2>By line</h2><p class="note">The line of the pick in four bands.</p>` + sideTable('Line band', [['Under 130', 0, 130], ['130–139.5', 130, 140], ['140–149.5', 140, 150], ['150 and over', 150, 999]].map(([label, lo, hi]) => [label, BT.filter(x => x.line >= lo && x.line < hi)]));
+  h += `<h2>By line</h2><p class="note">The line of the pick in three bands.</p>` + sideTable('Line band', [['Under 130', 0, 130], ['130–139.5', 130, 140], ['140 and over', 140, 999]].map(([label, lo, hi]) => [label, BT.filter(x => x.line >= lo && x.line < hi)]));
   return h + bets(BT);
 }
 
