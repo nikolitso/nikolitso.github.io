@@ -753,7 +753,8 @@ function summaryLine(name) {
 const barValue = (b) => (['ts', 'fg3'].includes(b.key) ? `${f1(b.v)}%` : f1(b.v));
 function compNumbers([c, x], both) {
   return `${both ? `<h4>${esc(compName(c))}</h4>` : ''}
-    <p class="more-line">${x.gp} game${x.gp > 1 ? 's' : ''} · ${f1(x.mpg)} min · ${f1(x.pts)} pts · ${f1(x.pir)} PIR${x.form ? ` · last ${x.form.gp}: ${f1(x.form.pts)} pts` : ''}</p>
+    ${both ? `<p class="more-line">${x.gp} game${x.gp > 1 ? 's' : ''} · ${f1(x.mpg)} min · ${f1(x.pts)} pts · ${f1(x.pir)} PIR</p>` : ''}
+    ${x.form ? `<p class="more-line">Last ${x.form.gp} games: ${f1(x.form.pts)} pts · ${f1(x.form.pir)} PIR</p>` : ''}
     ${x.rated ? `<p class="more-line">Offence ${x.off} (likely ${x.offLo}–${x.offHi}) · Defence ${x.def} (likely ${x.defLo}–${x.defHi}) · out of 100, league percentile</p>
     ${(x.bars || []).map((b) => `<div class="pbar" title="Better than ${b.p}% of rated players"><span>${esc(b.label)}</span><div class="track"><i style="width:${b.p}%"></i></div><b>${barValue(b)}</b></div>`).join('')}` : ''}`;
 }
