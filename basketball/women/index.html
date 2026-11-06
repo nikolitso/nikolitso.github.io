@@ -228,16 +228,17 @@ if (LIVE.leagues) LIVE.leagues = LIVE.leagues.filter(k => LG[k]);
 
 $('sub').textContent = `${DATA.leagues.length} Leagues · backtest 2023–24 to 2025–26 · 2026–27 record · updated ${LIVE.updated} (Athens)`;
 
-// top tiles: the whole 2026-27 record, as on the Picks tab (ROI = return over wins + losses)
-{
-  const set = [...((DATA.cur || {}).bets || []), ...LIVE.picks.filter(b => b.done && b.ret != null)], won = set.filter(b => b.ret > 0).length, lost = set.filter(b => b.ret < 0).length;
-  const units = set.reduce((a, b) => a + b.ret, 0), nOpen = LIVE.picks.filter(b => !b.done).length;
+// top tiles: the 2026-27 record (ROI = return over wins + losses); on an overs or unders tab, that side alone
+function topTiles(side){
+  const mine = b => !side || b.side === side;
+  const set = [...((DATA.cur || {}).bets || []), ...LIVE.picks.filter(b => b.done && b.ret != null)].filter(mine), won = set.filter(b => b.ret > 0).length, lost = set.filter(b => b.ret < 0).length;
+  const units = set.reduce((a, b) => a + b.ret, 0), nOpen = LIVE.picks.filter(b => !b.done && mine(b)).length;
   // average line bet and average closing line, over every settled 2026-27 bet that has a close
   const cl = set.filter(b => b.close != null && b.open != null), avg = f => (cl.reduce((a, b) => a + f(b), 0) / cl.length).toFixed(1);
   $('top').innerHTML = [['Open picks', nOpen, nOpen ? 'to play' : 'none right now'], ['Record', `${won}–${lost}`, 'win – loss'],
     ['ROI', won + lost ? `<span class="${cls(units)}">${roi(units / (won + lost))}</span>` : '–', `${won + lost} settled picks`],
     ...(cl.length ? [['Opening line', avg(b => b.open), `avg of ${cl.length} settled picks`], ['Closing line', avg(b => b.close), `avg of ${cl.length} settled picks`], ['Actual total', avg(b => b.total), `avg of ${cl.length} settled picks`]] : [])]
-    .map(([k, v, n]) => `<a class="tile" href="#view=picksover"><span class="klabel">${k}</span><span class="stat">${v}</span><span class="small">${n}</span></a>`).join('');
+    .map(([k, v, n]) => `<a class="tile" href="#view=${side === 'u' ? 'picksunder' : 'picksover'}"><span class="klabel">${k}</span><span class="stat">${v}</span><span class="small">${n}</span></a>`).join('');
 }
 
 function tiles(list){
@@ -436,6 +437,7 @@ function render(){
   if (view === 'projections') keys = keys.filter(k => LIVE.fixtures.some(g => g.lg === k));
   const chips = CHIPS[view] ? [['all', 'All leagues'], ...keys.map(k => [k, lgShort(k)])] : [];
   $('chips').innerHTML = chips.map(([k, t]) => `<a href="#view=${view}${k === 'all' ? '' : '&lg=' + k}" class="${k === lg ? 'on' : ''}">${t}</a>`).join('');
+  topTiles({picksover: 'o', overs: 'o', picksunder: 'u', unders: 'u'}[view]);
   $('top').style.display = $('sub').style.display = view === 'testing' ? 'none' : '';     // the main record stays off the testing tab
   $('out').innerHTML = RENDER[view]();
 }
