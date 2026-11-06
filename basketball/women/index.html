@@ -266,7 +266,7 @@ function renderFindings(){
 }
 
 function renderLeagues(){
-  let h = `<p class="note">Regular-season games from ${sn(DATA.first)} on (play-offs are left out). The model column starts in 2021–22 and is all out of sample. <b>Over %</b>: how often the game went over the closing line. Blind over: backing the over in every game at the average price. Opening and closing line: the average of those picks. Model picks: overs the rule picked (edge above ${Math.round(R.edge*100)}%), count and ROI. Click a league for its seasons.</p>`;
+  let h = `<p class="note">Regular-season games from ${sn(DATA.first)} on (play-offs are left out). The model column starts in 2021–22 and is all out of sample. <b>Over %</b>: how often the game went over the closing line. Blind over: backing the over in every game at the average price. Model picks: overs the rule picked (edge above ${Math.round(R.edge*100)}%), count and ROI. Opening and closing line: the average line of the model picks only, not of all games. Click a league for its seasons.</p>`;
   h += `<div class="scroll"><table><thead><tr><th>League</th><th class="n">Games</th><th class="n">Total / line</th><th class="n">Over %</th><th class="n">Blind over</th><th class="n">Model picks</th>${LHEAD}</tr></thead><tbody>`;
   const mod = g => g.n ? `${g.n} <span class="${cls(g.roi)}">${roi(g.roi)}</span>` : '<span class="muted">–</span>';
   const row = (label, s, attrs='', list=[]) => `<tr${attrs}><td>${label}</td><td class="n">${s.games}</td><td class="n">${s.avg_total.toFixed(1)} / ${s.avg_line.toFixed(1)}</td><td class="n">${pct(s.over, 1)}</td>
@@ -308,7 +308,7 @@ function btBody(BT, S, pool, leagues){
   h += `<h2>By edge</h2>` + sideTable('Edge', S.edges.map(e => [`${Math.round(e.edge * 100)}%+`, byEdge.slice(0, e.n)]));   // each row counts everything above it
   h += `<h2>By month</h2>` + sideTable('Month', S.months.map(m => [MON[m.m - 1], BT.filter(x => +x.dt.slice(5, 7) === m.m)]));
   h += `<h2>By line</h2><p class="note">The line of the pick in three bands.</p>` + sideTable('Line band', [['Under 130', 0, 130], ['130–139.5', 130, 140], ['140 and over', 140, 999]].map(([label, lo, hi]) => [label, BT.filter(x => x.line >= lo && x.line < hi)]));
-  h += `<h2>By line difference</h2><p class="note">How many points the model total was above the line of the pick.</p>` + sideTable('Difference', [['4–5.9', 3, 6], ['6–7.9', 6, 8], ['8–9.9', 8, 10], ['10–12', 10, 99]].map(([label, lo, hi]) => [label, BT.filter(x => gap(x) >= lo && gap(x) < hi)]).filter(r => r[1].length));
+  h += `<h2>By line difference</h2><p class="note">How many points the model total was above the line of the pick.</p>` + sideTable('Difference', [['4–5.9', 3, 6], ['6–7.9', 6, 8], ['8–12', 8, 99]].map(([label, lo, hi]) => [label, BT.filter(x => gap(x) >= lo && gap(x) < hi)]).filter(r => r[1].length));
   return h + bets(BT);
 }
 
