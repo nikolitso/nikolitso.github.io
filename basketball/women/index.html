@@ -187,7 +187,6 @@ a.tile:hover{border-color:var(--gold)}
     <a href="#view=leagues" data-view="leagues">Leagues</a>
     <a href="#view=backtest" data-view="backtest">Backtest</a>
     <a href="#view=projections" data-view="projections">Projections</a>
-    <a href="#view=testing" data-view="testing">Testing leagues</a>
     <a href="#view=method" data-view="method">How it works</a>
   </nav>
 </div></header>
@@ -197,7 +196,7 @@ a.tile:hover{border-color:var(--gold)}
   <div class="chips" id="chips"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=w26"></script>
+<script src="data.js?v=w27"></script>
 <script src="live.js"></script>
 <script>
 const $ = id => document.getElementById(id);
@@ -211,8 +210,7 @@ const cls = x => x > 0 ? 'pos' : x < 0 ? 'neg' : '';
 const sn = s => s.replace('-', '–');
 let view = 'home', lg = 'all', open = null;
 const ALLG = [...DATA.leagues, ...(DATA.past || [])];   // past: on the list in an earlier season, not now
-const TL = DATA.testl || [];                             // the testing leagues
-const LG = Object.fromEntries([...ALLG, ...TL].map(l => [l.key, l]));
+const LG = Object.fromEntries(ALLG.map(l => [l.key, l]));
 const lgName = k => `${LG[k].country} · ${LG[k].name}`;
 const lgFull = l => l.country === 'Europe' ? l.name : `${l.country} <span class="muted">${l.name}</span>`;
 const lgShort = k => LG[k].short;
@@ -295,8 +293,8 @@ function renderBacktest(){
   return h + btBody(BT, S, DATA.bets, ALLG);
 }
 
-// the backtest layout, shared by the Backtest and Testing leagues tabs
-function btBody(BT, S, pool, leagues, testing = false){
+// the backtest layout
+function btBody(BT, S, pool, leagues){
   let h = '';
   const T = stat(BT);
   h += tiles([['Picks', T.n], ['Hit rate', pct(T.w / T.n, 1)], ['ROI', roi(T.roi), cls(T.roi)],
@@ -309,7 +307,7 @@ function btBody(BT, S, pool, leagues, testing = false){
   const byEdge = [...BT].sort((x, y) => y.edge - x.edge);   // bets store a rounded edge, so take each row's count from the top
   h += `<h2>By edge</h2>` + sideTable('Edge', S.edges.map(e => [`${Math.round(e.edge * 100)}%+`, byEdge.slice(0, e.n)]));   // each row counts everything above it
   h += `<h2>By month</h2>` + sideTable('Month', S.months.map(m => [MON[m.m - 1], BT.filter(x => +x.dt.slice(5, 7) === m.m)]));
-  if (!testing) h += `<h2>By line</h2><p class="note">The line of the pick in three bands.</p>` + sideTable('Line band', [['Under 130', 0, 130], ['130–139.5', 130, 140], ['140 and over', 140, 999]].map(([label, lo, hi]) => [label, BT.filter(x => x.line >= lo && x.line < hi)]));
+  h += `<h2>By line</h2><p class="note">The line of the pick in three bands.</p>` + sideTable('Line band', [['Under 130', 0, 130], ['130–139.5', 130, 140], ['140 and over', 140, 999]].map(([label, lo, hi]) => [label, BT.filter(x => x.line >= lo && x.line < hi)]));
   h += `<h2>By line difference</h2><p class="note">How many points the model total was above the line of the pick.</p>` + sideTable('Difference', [['4–5.9', 3, 6], ['6–7.9', 6, 8], ['8–9.9', 8, 10], ['10–12', 10, 99]].map(([label, lo, hi]) => [label, BT.filter(x => gap(x) >= lo && gap(x) < hi)]).filter(r => r[1].length));
   return h + bets(BT);
 }
@@ -408,53 +406,20 @@ document.addEventListener('click', e => {
   render();
 });
 
-function renderTesting(){
-  const T = LIVE.test || {names: {}, picks: []}, nm = k => T.names[k] || k, n = Object.keys(T.names).length, TP = T.picks.filter(inLg);
-  let h = `<p class="note">Every domestic league outside the main ${DATA.leagues.length}, run live under stricter rules${T.start ? ` since ${T.start}` : ''}: overs only, edge above ${Math.round(LE()*100)}% at the line on offer, both teams ${LIVE.min_gp ?? 4}+ games, model 8 to 12 points above the line, line under 130.5, regular season only, equal stakes. ROI = profit ÷ total staked on won and lost picks; pushes are left out. These picks are kept apart and do not count in the record on the other tabs. The main list is chosen by hand: see How it works. Click a column heading to sort.</p>`;
-  const open = TP.filter(b => !b.done).sort((a, b) => a.dt < b.dt ? -1 : 1), done = TP.filter(b => b.done);
-  const set = done.filter(b => b.ret != null), won = set.filter(b => b.ret > 0).length, units = set.reduce((a, b) => a + b.ret, 0), nDec = set.filter(b => b.ret !== 0).length, R_ = nDec ? units / nDec : null;
-  h += tiles([['Leagues', String(n || '–')], ['Picks', String(TP.length)], ['Open picks', String(open.length)], ['Settled', String(set.length)],
-              ['Hit rate', set.length ? pct(won / set.length, 1) : '–'], ['ROI', roi(R_), cls(R_)]]);
-  h += '<h2>Open picks</h2>';
-  h += !open.length ? '<p class="empty">No open picks in the testing leagues right now.</p>' :
-    `<div class="scroll"><table class="proj"><thead><tr><th>Tip-off</th><th>League</th><th>Match</th><th class="n">Pick</th><th class="n">Price</th><th class="n">Model total</th><th class="n">Edge</th><th class="n">Line now</th></tr></thead><tbody>` +
-    open.map(b => `<tr><td data-s="${b.dt}">${dayName(b.dt)} ${b.dt.slice(11)}</td><td>${nm(b.lg)}</td><td class="wr">${b.home} – ${b.away}</td><td class="n"><b>${sd(b)} ${b.line}</b></td><td class="n">${b.px.toFixed(2)}</td><td class="n">${b.mu.toFixed(1)}</td><td class="n pos">${sgn(b.edge*100, 0)}%</td><td class="n">${b.now ?? '–'}</td></tr>`).join('') + '</tbody></table></div>';
-  const X = DATA.testbt, XB = (DATA.testbets || []).filter(inLg), XS = X && (lg === 'all' ? X.all : X.leagues[lg]);
-  const tail = () => { const list = Object.values(T.names).sort((a, b) => a.localeCompare(b));
-  if (XS && XB.length) h += `<h2>Backtest</h2><p class="note">The same rules on seasons the model had not seen, 2021–22 to 2025–26, overs only, with the model at least 8 points above a line under 130.5. Both bars were set after seeing these seasons. These leagues were left off the main list after seeing these same seasons, so these figures run low: they show how each league did, not what to expect.</p>` + btBody(XB, XS, DATA.testbets, TL, true);
-  else h += '<p class="empty">The rule made no backtest picks in this league.</p>';
-  if (lg === 'all') h += `<h2>The ${list.length} testing leagues</h2><ul class="lglist">${list.map(x => `<li>${x}</li>`).join('')}</ul>`; return h; };
-  if (!set.length) return tail();
-  const by = {};
-  set.forEach(b => (by[b.lg] ||= []).push(b));
-  h += `<h2>By league</h2><div class="scroll"><table style="max-width:760px"><thead><tr><th>League</th><th class="n">Picks</th><th class="n">Hit rate</th><th class="n">ROI</th></tr></thead><tbody>` +
-    Object.entries(by).map(([k, l]) => [k, l, l.reduce((a, b) => a + b.ret, 0)]).sort((a, b) => b[2] - a[2]).map(([k, l, u]) =>
-      `<tr><td>${nm(k)}</td><td class="n">${l.length}</td><td class="n">${pct(l.filter(b => b.ret > 0).length / l.length, 1)}</td><td class="n ${cls(u)}">${roi(u / (l.filter(b => b.ret !== 0).length || 1))}</td></tr>`).join('') + '</tbody></table></div>';
-  let run = 0;
-  const rows = done.map(b => {
-    if (b.ret != null) run += b.ret;
-    const res = b.ret == null ? '<td class="n muted">void</td>' : `<td class="n ${wl(b)}">${b.total}</td>`;
-    return `<tr><td data-s="${b.dt}">${short(b.dt)} ${b.dt.slice(11)}</td><td>${nm(b.lg)}</td><td class="wr">${b.home} – ${b.away}</td><td class="n ${wl(b)}"><b>${sd(b)} ${b.line}</b></td><td class="n">${b.px.toFixed(2)}</td><td class="n pos">${sgn(b.edge*100, 0)}%</td><td class="n">${b.close ?? '–'}</td>${res}</tr>`; });
-  h += `<h2>Settled picks, latest first</h2><div class="scroll"><table><thead><tr><th>Tip-off</th><th>League</th><th>Match</th><th class="n">Pick</th><th class="n">Price</th><th class="n">Edge</th><th class="n">Closing line</th><th class="n">Total</th></tr></thead><tbody>${rows.reverse().join('')}</tbody></table></div>`;
-  return tail();
-}
-
-const RENDER = {home: renderFindings, picks: renderPicks, leagues: renderLeagues, backtest: renderBacktest, projections: renderProjections, testing: renderTesting, method: renderMethod};
-const CHIPS = {backtest: 1, projections: 1, testing: 1};
+const RENDER = {home: renderFindings, picks: renderPicks, leagues: renderLeagues, backtest: renderBacktest, projections: renderProjections, method: renderMethod};
+const CHIPS = {backtest: 1, projections: 1};
 function render(){
-  document.querySelectorAll('#tabs a').forEach(a => { a.classList.toggle('on', a.dataset.view === view); a.href = `#view=${a.dataset.view}${lg === 'all' || !CHIPS[a.dataset.view] || (a.dataset.view === 'testing') !== (view === 'testing') ? '' : '&lg=' + lg}`; });
-  let keys = (view === 'testing' ? TL : ALLG).map(l => l.key);
-  if (view === 'testing') keys = keys.filter(k => (DATA.testbets || []).some(b => b.lg === k));
+  document.querySelectorAll('#tabs a').forEach(a => { a.classList.toggle('on', a.dataset.view === view); a.href = `#view=${a.dataset.view}${lg === 'all' || !CHIPS[a.dataset.view] ? '' : '&lg=' + lg}`; });
+  let keys = ALLG.map(l => l.key);
   if (view === 'backtest') keys = keys.filter(k => DATA.bets.some(b => b.lg === k));
   if (view === 'projections') keys = keys.filter(k => LIVE.fixtures.some(g => g.lg === k));
   const chips = CHIPS[view] ? [['all', 'All leagues'], ...keys.map(k => [k, lgShort(k)])] : [];
   $('chips').innerHTML = chips.map(([k, t]) => `<a href="#view=${view}${k === 'all' ? '' : '&lg=' + k}" class="${k === lg ? 'on' : ''}">${t}</a>`).join('');
-  $('top').style.display = $('sub').style.display = view === 'testing' ? 'none' : '';     // the main record stays off the testing tab
   $('out').innerHTML = RENDER[view]();
 }
 function fromHash(){
   const m = location.hash.match(/view=(\w+)/), l = location.hash.match(/lg=([\w-]+)/);
-  const old = {live: 'picks', findings: 'home', picksover: 'picks', picksunder: 'picks', overs: 'backtest', unders: 'backtest'}, v = m && (old[m[1]] || m[1]);   // old links: Live test is part of Picks, Findings is Home
+  const old = {live: 'picks', findings: 'home', picksover: 'picks', picksunder: 'picks', overs: 'backtest', unders: 'backtest', testing: 'backtest'}, v = m && (old[m[1]] || m[1]);   // old links: Live test is part of Picks, Findings is Home
   view = RENDER[v] ? v : 'home';
   lg = l && LG[l[1]] ? l[1] : 'all';
   render();
