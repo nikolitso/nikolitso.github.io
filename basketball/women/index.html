@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="en" data-site="basketball">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Women's basketball totals: is there a gap in the pricing?</title>
+<meta name="description" content="European women's basketball totals: market analysis, backtests against the closing line and a live record of two signals.">
+<link rel="canonical" href="https://antonisnikolitsopoulos.com/basketball/women/">
+<meta property="og:title" content="Women's basketball totals: is there a gap in the pricing?">
+<meta property="og:description" content="European women's basketball totals: market analysis, backtests against the closing line and a live record of two signals.">
+<meta property="og:url" content="https://antonisnikolitsopoulos.com/basketball/women/">
+<meta property="og:image" content="https://antonisnikolitsopoulos.com/basketball-overs.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.png" type="image/png" sizes="64x64">
+<!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "b67bbb76d0e24af196b24ded3ab71ad0"}'></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Hanken+Grotesk:ital,wght@0,300..700;1,400&display=swap">
+<style>
+:root{
+  --bg:#0c1424; --panel:#131d33; --line:#26334f; --text:#f1ead9; --muted:#9aa4ba;
+  --gold:#d4af37; --win:#6fcf97; --loss:#eb7a6c;
+  --serif:'Playfair Display',Georgia,serif; --body:'Source Serif 4',Georgia,serif; --mono:'IBM Plex Mono',ui-monospace,monospace;
+  /* shared base (assets/an.css): the page's own names mapped onto the tokens */
+  --bg:var(--an-paper); --panel:var(--an-soft); --line:var(--an-rule); --text:var(--an-ink); --muted:var(--an-muted);
+  --gold:var(--an-accent); --win:var(--an-accent); --loss:var(--an-muted);
+  --serif:var(--an-display); --body:var(--an-body); --mono:var(--an-mono); --an-wrap:1180px;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:17px/1.5 var(--body)}
+.wrap{max-width:1180px;margin:0 auto;padding:18px 16px 80px}
+.sub{font:400 14.5px var(--mono);color:var(--muted);letter-spacing:.04em;margin-bottom:22px}
+.bar{display:flex;flex-wrap:wrap;align-items:center;gap:10px 18px;margin:0 0 18px}
+.seg{display:flex;border:1px solid var(--line);border-radius:6px;overflow:hidden;width:max-content}
+.seg button{background:none;border:0;color:var(--muted);font:500 14.5px var(--mono);padding:8px 16px;cursor:pointer;letter-spacing:.06em;text-transform:uppercase}
+.seg button.on{background:var(--gold);color:var(--an-on-accent)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{background:none;border:1px solid var(--line);border-radius:999px;color:var(--muted);font:500 13.5px var(--mono);padding:5px 12px;cursor:pointer}
+.chip:hover{color:var(--text)}
+.chip.on{background:var(--gold);border-color:var(--gold);color:var(--an-on-accent)}
+h2{font:600 22px var(--serif);margin:30px 0 12px}
+h2.day{font-size:20px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(520px,100%),1fr));gap:18px}
+.grid>.card{min-width:0}
+.grid>.mcard{display:grid;grid-row:span 3;grid-template-rows:subgrid;row-gap:0;align-content:start}
+.mcard .top{padding-bottom:4px}
+.card td:first-child{white-space:normal}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px 18px 10px}
+.card h3{font:600 24px var(--serif);margin:0}
+.live{font:500 12.5px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--bg);background:var(--gold);border-radius:4px;padding:1px 6px;margin-left:8px;vertical-align:1px}
+.card .ko{font:500 15.5px var(--mono);color:var(--text);letter-spacing:.06em}
+.wdl{display:flex;height:8px;border-radius:4px;overflow:hidden;margin:12px 0 6px;background:var(--line)}
+.wdl i{display:block} .wdl i:nth-child(1){background:var(--gold)} .wdl i:nth-child(2){background:var(--an-muted)} .wdl i:nth-child(3){background:var(--an-bar)}
+.wdlt{display:flex;justify-content:space-between;font:400 15.5px var(--mono);color:var(--muted)}
+.wdlt b{color:var(--text);font-weight:500}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+th{font:400 12.5px var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.08em;text-align:left;padding:8px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:7px 8px;border-bottom:1px solid color-mix(in srgb,var(--line) 60%,transparent);font-size:16.5px;white-space:nowrap}
+td.n,th.n{text-align:right;font-family:var(--mono);font-size:15px}
+td.tot{color:var(--gold);font-weight:500}
+.card table{margin-top:6px}
+table.mk{margin-bottom:6px}table.mk td,table.mk th{padding:6px 7px}
+.stack{display:grid;gap:18px}
+.mkcols{display:grid;grid-template-columns:minmax(0,300px) minmax(0,1fr);gap:24px;align-items:start;margin-top:8px}
+@media(max-width:900px){.mkcols{grid-template-columns:1fr}.mkcols table{display:block;overflow-x:auto}}
+.stack>.card{min-width:0}
+.wdlt i{font-style:normal;color:var(--gold)}
+.wdlt span:nth-child(2){text-align:center}.wdlt span:last-child{text-align:right}
+.coach .who{display:inline-block;min-width:118px;color:var(--muted)}
+.tenure{font:400 13.5px/1.4 var(--mono);color:var(--muted);margin-top:2px}
+.coach{font:400 15px/1.55 var(--mono);color:var(--muted);margin-top:2px}
+.coach b{color:var(--text);font-weight:500}
+.coach .wc{display:inline-block;width:7ch;text-align:right}
+table.tm{max-width:1000px}table.tm .gl{border-left:1px solid var(--line);padding-left:12px}
+table.tm tr.grp th{color:var(--gold);border-bottom:0;padding-bottom:0}
+.head{display:flex;justify-content:space-between;align-items:flex-start;gap:6px 14px;flex-wrap:wrap}
+.ref{font:400 15px/1.55 var(--mono);color:var(--muted);margin-top:6px}
+.ref b{color:var(--text);font-weight:500}
+.card tr:last-child td{border-bottom:0}
+.ln{font:400 13.5px var(--mono);color:var(--muted);text-align:right}
+.ln span{display:inline-block;min-width:92px}
+.ln b{color:var(--text);font-weight:500}
+.ln .hi{color:var(--win)} .ln .lo{color:var(--loss)}
+th.sort{cursor:pointer;user-select:none} th.sort:hover,th.sort.on{color:var(--gold)}
+.w{color:var(--win)} .l{color:var(--loss)}
+.muted{color:var(--muted)}
+.empty{color:var(--muted);padding:30px 0;text-align:center}
+.note{font:400 16.5px/1.55 var(--body);color:var(--muted);border-left:2px solid var(--gold);padding:2px 0 2px 14px;margin:0 0 14px;max-width:820px}
+.note b{color:var(--text);font-weight:600}
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin:0 0 18px}
+.refsub{font:600 18px var(--serif);margin:8px 0 8px}
+.metric{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.metric .lbl{font:400 12.5px var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}
+.metric .big{font:500 24px var(--mono);color:var(--gold)}
+.scroll{overflow-x:auto}
+.doc{max-width:860px}
+.doc p,.doc li{font-size:16.5px;line-height:1.65;margin:0 0 14px}
+.doc ul{padding-left:20px;margin:0 0 14px}
+.doc h3{font:600 18px var(--serif);margin:28px 0 8px;display:flex;align-items:center;gap:10px}
+.doc .num{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--gold);color:var(--an-on-accent);font:600 14.5px var(--mono);flex:none}
+.calc{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:8px;padding:12px 16px;margin:0 0 14px;font:400 15.5px/2 var(--mono);overflow-x:auto}
+.calc i{font-style:normal;color:var(--muted);font-size:13.5px}
+.calc b{color:var(--gold);font-weight:500}
+table.mini{margin:0 0 16px}
+.abbr{display:none}
+.charts{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(440px,100%),1fr));gap:18px;margin:6px 0 10px}
+.chart{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px 12px;min-width:0}
+.chart h3{font:600 17px var(--serif);margin:0 0 4px;display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+.chart svg{display:block;width:100%;height:auto}
+.chart .cap{font:400 15.5px/1.5 var(--body);color:var(--muted);margin:6px 0 0}
+.key{font:400 13.5px var(--mono);color:var(--muted);display:flex;gap:14px}
+.key i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+.chart .hit{fill:transparent;cursor:default}
+.chart .bar.hl{opacity:.75}
+.tip{position:fixed;pointer-events:none;background:var(--an-paper);border:1px solid var(--line);box-shadow:0 10px 30px rgba(0,0,0,.45);border-radius:6px;padding:6px 10px;font:400 14px/1.5 var(--mono);color:var(--text);z-index:10;display:none;white-space:nowrap}
+.tip b{color:var(--gold);font-weight:500}
+tr.avg td,tr.few td{color:var(--muted)} tr.avg td:first-child{font-style:italic}
+tr.sum td{border-top:1px solid var(--line);font-weight:600}
+table.rp td.cm{white-space:normal;min-width:320px;font-size:16px;line-height:1.45;color:var(--muted)}
+table.rp td{vertical-align:top}
+.rate{display:inline-block;min-width:40px;text-align:center;border-radius:999px;padding:1px 8px;font:500 14px var(--mono)}
+.r-good{background:var(--an-accent-soft);color:var(--win)} .r-mid{background:var(--an-soft);color:var(--text)}
+.r-warn{background:var(--an-accent-soft);color:var(--gold)} .r-bad{background:var(--an-bad-soft);color:var(--loss)}
+button.reflink{background:none;border:0;padding:0;margin:0;color:inherit;font:inherit;text-align:left;cursor:pointer;text-decoration:underline dotted color-mix(in srgb,var(--muted) 70%,transparent);text-underline-offset:3px}
+button.reflink:hover{color:var(--gold);text-decoration-color:var(--gold)}
+dialog#refdlg{background:var(--bg);color:var(--text);border:1px solid var(--line);border-radius:12px;padding:0;width:min(1100px,96vw);max-height:90vh}
+dialog#refdlg::backdrop{background:var(--an-backdrop)}
+#refdlg .dh{position:sticky;top:0;background:var(--bg);display:flex;justify-content:space-between;align-items:center;gap:12px;padding:16px 20px 12px;border-bottom:1px solid var(--line);z-index:1}
+#refdlg .dh h2{margin:0}
+#refdlg .db{padding:16px 20px 20px}
+#refdlg .x{background:none;border:1px solid var(--line);border-radius:6px;color:var(--muted);font:500 14.5px var(--mono);padding:6px 12px;cursor:pointer}
+#refdlg .x:hover{color:var(--text)}
+#refdlg .metrics{grid-template-columns:repeat(auto-fit,minmax(min(140px,40vw),1fr))}
+th.rs{cursor:pointer;user-select:none} th.rs:hover,th.rs.on{color:var(--gold)}
+.jump{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 8px}
+@media(max-width:600px){.grid{grid-template-columns:1fr}.ln span{min-width:0;margin-left:8px}.card{padding:14px 10px 8px}td,th{padding:6px 4px}
+  .card td{font-size:15.5px}.card td.n{font-size:14px}.full{display:none}.abbr{display:inline}.wdlt{flex-wrap:wrap;gap:2px 12px}}
+</style>
+<link rel="stylesheet" href="/assets/an.css?v=1">
+</head>
+<body>
+<!-- sitebar:start (link back to antonisnikolitsopoulos.com; keep on every page) -->
+<nav class="an-sitebar" aria-label="Main site"><div><a href="/books/">Books</a><a href="/#projects">Projects</a><a href="/about/">About</a><a href="/" title="Main site: antonisnikolitsopoulos.com" aria-label="Main site"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 2 11.5h3V21h5.5v-6h3v6H19v-9.5h3z"/></svg></a></div></nav>
+<!-- sitebar:end -->
+<style>
+.pos{color:var(--win)} .neg{color:var(--loss)}
+tr.srow{cursor:pointer} tr.srow:hover td,tr.srow.on td{background:color-mix(in srgb,var(--gold) 10%,transparent)}
+tr.sub td{background:color-mix(in srgb,var(--panel) 70%,transparent);font-size:15px}
+tr.sub td:first-child{padding-left:28px;color:var(--muted)}
+.caret{color:var(--gold);display:inline-block;width:1em}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:14px 0 4px}
+.chips a{font:400 14.5px var(--mono);color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:4px 11px;text-decoration:none}
+.chips a.on{color:var(--an-on-accent);background:var(--gold);border-color:var(--gold)}
+td.wr{white-space:normal}.lglist{list-style:none;margin:8px 0 0;padding:0;columns:3 220px;column-gap:28px}.lglist li{padding:4px 0;font-size:14.5px;break-inside:avoid}a.gm{color:inherit;text-decoration:underline;text-decoration-color:var(--an-rule);text-underline-offset:3px}a.gm:hover{color:var(--gold);text-decoration-color:currentColor}
+table.proj tr.pk td{background:var(--an-accent-soft)}table.proj tr.pk td:first-child{box-shadow:inset 3px 0 var(--gold)}
+/* seven tiles in one row at desktop width */
+.metrics{grid-template-columns:repeat(auto-fit,minmax(min(140px,40vw),1fr))}
+.badge{display:inline-block;font:500 12.5px var(--mono);letter-spacing:.06em;text-transform:uppercase;background:var(--gold);color:var(--an-on-accent);border-radius:4px;padding:2px 7px;margin-left:8px;vertical-align:2px}
+.find{border-left:3px solid var(--gold);padding:2px 0 2px 16px;margin:0 0 22px;max-width:860px}
+.find h3{font:600 20px var(--serif);margin:0 0 4px}
+.find p{margin:0;color:var(--text)}
+.find .num{font:500 13.5px var(--mono);color:var(--gold);letter-spacing:.06em;margin-right:8px}
+.verdict{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px 20px;margin:0 0 30px;max-width:860px}
+.verdict h2{margin:0 0 8px}
+.tier{font:400 12.5px var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.scroll{overflow-x:auto}
+#out th{cursor:pointer;user-select:none}#out th:hover{color:var(--gold)}#out th.sa::after{content:" ▲";font-size:.8em}#out th.sd::after{content:" ▼";font-size:.8em}
+/* top row, same tiles as the handball projections page: open picks · record · return */
+.tiles{--up:#4cc47a;--dn:#ef7a70;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(140px,40vw),1fr));gap:10px;margin:16px 0 4px}
+.tile{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px;display:flex;flex-direction:column;gap:3px;min-width:0;color:inherit;text-decoration:none}
+a.tile:hover{border-color:var(--gold)}
+.tile .klabel{font:400 12.5px var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+.tile .stat{font:500 26px var(--mono);line-height:1.15;font-variant-numeric:tabular-nums;display:flex;flex-wrap:wrap;align-items:center;gap:2px 6px}
+.tile .small{font-size:14.5px;color:var(--muted)}
+.tiles .pos{color:var(--up)} .tiles .neg{color:var(--dn)}
+.pill{white-space:nowrap;font:500 13.5px var(--mono);padding:2px 9px;border-radius:99px;border:1px solid var(--line);vertical-align:middle}
+.pill.pos{border-color:color-mix(in srgb,var(--up) 40%,transparent);background:color-mix(in srgb,var(--up) 10%,transparent)}
+.pill.neg{border-color:color-mix(in srgb,var(--dn) 40%,transparent);background:color-mix(in srgb,var(--dn) 9%,transparent)}
+.cols2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:28px;align-items:start}
+@media(max-width:900px){.cols2{grid-template-columns:minmax(0,1fr)}}
+</style>
+<header class="an-head"><div>
+  <a class="an-brand" href="/basketball/women/"><svg class="an-mark" aria-hidden="true"><use href="/assets/marks.svg#basketball"/></svg><span><small class="an-kicker">Basketball · Women</small><h1>Women's basketball totals</h1></span></a>
+  <nav class="tabs an-tabs" id="tabs" aria-label="Sections">
+    <a href="#view=home" data-view="home" class="on">Home</a>
+    <a href="#view=picks" data-view="picks">Picks</a>
+    <a href="#view=backtest" data-view="backtest">Backtest</a>
+    <a href="#view=market" data-view="market">Market</a>
+    <a href="#view=method" data-view="method">How it works</a>
+  </nav>
+</div></header>
+<div class="wrap">
+  <div class="tiles" id="top"></div>
+  <div class="sub" id="sub"></div>
+  <div id="out"></div>
+</div>
+<script src="data.js?v=1"></script>
+<script src="live.js"></script>
+<script>
+const D = window.DATA, L = window.LIVE || {picks: [], updated: ""};
+const out = document.getElementById("out"), $top = document.getElementById("top"), $sub = document.getElementById("sub");
+const sgn = (v, d = 1) => (v > 0 ? "+" : v < 0 ? "−" : "") + Math.abs(v).toFixed(d);
+const pc = v => `<span class="${v > 0 ? "pos" : v < 0 ? "neg" : ""}">${sgn(v)}%</span>`;
+const un = v => `<span class="${v > 0 ? "pos" : v < 0 ? "neg" : ""}">${sgn(v, 2)}u</span>`;
+const when = ts => new Date(ts * 1000).toLocaleString("en-GB", {timeZone: "Europe/Athens", day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit"});
+const done = L.picks.filter(p => p.r !== undefined), open = L.picks.filter(p => p.r === undefined);
+function rec(ps) {
+  const w = ps.filter(p => p.r > 0).length, l = ps.filter(p => p.r < 0).length, u = ps.reduce((a, p) => a + p.r, 0);
+  return {w, l, u, roi: ps.length ? u / ps.length * 100 : 0, n: ps.length};
+}
+const all = rec(done);
+$top.innerHTML = [["Open picks", open.length], ["Record", `${all.w}–${all.l}`], ["Return", all.n ? un(all.u) : "–"], ["ROI", all.n ? pc(all.roi) : "–"]]
+  .map(([k, v]) => `<div class="tile"><span class="klabel">${k}</span><span class="stat">${v}</span></div>`).join("");
+$sub.textContent = `${D.comps} competitions · backtest 2023–24 to Oct 2026 · live test since 6 Nov 2026`;
+
+function tbl(cols, rows) {
+  const id = "t" + Math.random().toString(36).slice(2);
+  return `<div class="scroll"><table class="sortable" id="${id}"><thead><tr>${cols.map(c => `<th class="sort${c.n ? " n" : ""}">${c.h}</th>`).join("")}</tr></thead><tbody>` +
+    rows.map(r => `<tr>${cols.map(c => `<td class="${c.n ? "n" : ""}" data-v="${c.v ? c.v(r) : ""}">${c.f(r)}</td>`).join("")}</tr>`).join("") + `</tbody></table></div>`;
+}
+const STAT = [{h: "", f: r => r.s, v: r => r.s}, {h: "Picks", n: 1, f: r => r.n, v: r => r.n}, {h: "Hit", n: 1, f: r => r.hit.toFixed(1) + "%", v: r => r.hit},
+  {h: "Units", n: 1, f: r => sgn(r.u), v: r => r.u}, {h: "ROI", n: 1, f: r => pc(r.roi), v: r => r.roi}];
+const stat = (head, rows) => tbl([{...STAT[0], h: head}, ...STAT.slice(1)], rows);
+
+const V = {
+home() {
+  const a = D.s1.all, b = D.s2.all, m = D.market;
+  return `<div class="verdict"><h2>Is there a gap in the pricing?</h2><p>In the backtest, yes. Two signals made a profit, and the first one held up all the way to the closing line, which the same model does not do in men's basketball. That is a backtest result, not proof: the live record only began on 6 Nov 2026, and the 2026–27 games before that were a loss for the model. Break-even at these prices is about 54.6%.</p></div>
+  <div class="find"><h3><span class="num">1</span>Women's lines barely move</h3><p>${m[0].moved}% of lines moved between open and close in 2025–26, against ${m[1].moved}% in the men's leagues, and by ${m[0].mv} points on average against ${m[1].mv}. The moves add almost nothing: the average miss goes from ${m[0].mae_o} points at the open to ${m[0].mae_c} at the close.</p></div>
+  <div class="find"><h3><span class="num">2</span>A simple team model finds value at the close</h3><p>Overs and unders with an edge above 4%: ${a.n.toLocaleString("en-GB")} picks, ${a.hit}% hit, ${sgn(a.roi)}% ROI. The same code on men's games made no reliable profit at the close.</p></div>
+  <div class="find"><h3><span class="num">3</span>A line far from the others is often wrong</h3><p>When one book opened 5 to 12 points from the rest, the favourable side made ${sgn(b.roi)}% over ${b.n} picks, positive in 2024–25, 2025–26 and so far in 2026–27. It is unknown how many of those opening lines could really have been taken, which is what the live test measures.</p></div>
+  <div class="find"><h3><span class="num">4</span>Betting blind loses</h3><p>Overs and unders lose in every season once the margin of about 9% is paid. Choosing leagues by their past over rate did not make a reliable profit.</p></div>`;
+},
+picks() {
+  const P = {model: "Model", gap: "Line gap"};
+  const cols = [{h: "Tip-off", f: p => when(p.ts), v: p => p.ts}, {h: "League", f: p => p.league, v: p => p.league}, {h: "Game", f: p => `${p.home} – ${p.away}`, v: p => p.home},
+    {h: "Signal", f: p => P[p.sig], v: p => p.sig}, {h: "Pick", f: p => `${p.side} ${p.line}`, v: p => p.line}, {h: "Price", n: 1, f: p => p.price.toFixed(2), v: p => p.price}];
+  const res = [...cols, {h: "Close", n: 1, f: p => p.close ?? "–", v: p => p.close ?? 0}, {h: "Total", n: 1, f: p => p.total, v: p => p.total}, {h: "Return", n: 1, f: p => un(p.r), v: p => p.r}];
+  const by = k => rec(done.filter(p => p.sig === k));
+  const row = (n, r) => `<tr><td>${n}</td><td class="n">${r.n}</td><td class="n">${r.w}–${r.l}</td><td class="n">${r.n ? un(r.u) : "–"}</td><td class="n">${r.n ? pc(r.roi) : "–"}</td></tr>`;
+  let h = `<p class="note">Picks are logged at the line and price on offer the first time a signal fires, and never changed. Prices are the average of the books at that line. A few hundred picks are needed before the record says much.</p>`;
+  h += `<h2>Record</h2><div class="scroll"><table><thead><tr><th>Signal</th><th class="n">Picks</th><th class="n">Record</th><th class="n">Return</th><th class="n">ROI</th></tr></thead><tbody>${row("Model", by("model"))}${row("Line gap", by("gap"))}</tbody></table></div>`;
+  h += `<h2>Open picks</h2>` + (open.length ? tbl(cols, [...open].sort((a, b) => a.ts - b.ts)) : `<p class="empty">No open picks.</p>`);
+  h += `<h2>Results</h2>` + (done.length ? tbl(res, [...done].sort((a, b) => b.ts - a.ts)) : `<p class="empty">No results yet.</p>`);
+  return h + (L.updated ? `<p class="muted">Updated ${L.updated} Athens time.</p>` : "");
+},
+backtest() {
+  const s = D.s1, g = D.s2;
+  let h = `<p class="note">Each season's model is fitted only on earlier seasons. The 2026–27 rows are the games before the live test began. Click a column heading to sort.</p>`;
+  h += `<h2>Model at the closing line</h2><div class="metrics">${[["Picks", s.all.n.toLocaleString("en-GB")], ["Hit", s.all.hit + "%"], ["ROI", sgn(s.all.roi) + "%"], ["Units", sgn(s.all.u)], ["Worst run", "−" + s.dd + "u"], ["Average price", s.px.toFixed(2)]].map(([k, v]) => `<div class="metric"><div class="lbl">${k}</div><div class="big">${v}</div></div>`).join("")}</div>`;
+  h += `<div class="cols2"><div>${stat("Season", s.seasons)}</div><div>${stat("Side", s.sides)}<div style="height:14px"></div>${stat("Books pricing the game", s.books)}</div></div>`;
+  h += `<p class="note" style="margin-top:16px">More books means a thinner edge: games priced by three books made the smallest return, and more games are priced that way each season.</p>`;
+  h += `<h2>By league</h2><p class="note">Most leagues have too few picks to judge on their own, so no league has been dropped.</p>` + stat("League", s.leagues);
+  h += `<h2>Line gap at the open</h2><div class="metrics">${[["Picks", g.all.n], ["Hit", g.all.hit + "%"], ["ROI", sgn(g.all.roi) + "%"], ["Units", sgn(g.all.u)]].map(([k, v]) => `<div class="metric"><div class="lbl">${k}</div><div class="big">${v}</div></div>`).join("")}</div>`;
+  h += `<div class="cols2"><div>${stat("Season", g.seasons)}</div><div>${stat("Gap to the other books", g.gaps)}<div style="height:14px"></div>${stat("Side", g.sides)}</div></div>`;
+  return h;
+},
+market() {
+  const m = D.market;
+  let h = `<p class="note">The 2025–26 season, women's competitions next to the men's leagues from the totals study.</p>`;
+  h += tbl([{h: "", f: r => r.s}, {h: "Games", n: 1, f: r => r.games.toLocaleString("en-GB")}, {h: "Avg line", n: 1, f: r => r.line}, {h: "Lines moved", n: 1, f: r => r.moved + "%"}, {h: "Avg move", n: 1, f: r => r.mv}, {h: "Miss at open", n: 1, f: r => r.mae_o}, {h: "Miss at close", n: 1, f: r => r.mae_c}, {h: "Margin", n: 1, f: r => r.mar + "%"}], m);
+  const B = [{h: "Picks", n: 1, f: r => r.n.toLocaleString("en-GB"), v: r => r.n}];
+  const O = [{h: "Over %", n: 1, f: r => r.over.toFixed(1) + "%", v: r => r.over}, {h: "Blind over", n: 1, f: r => pc(r.ro), v: r => r.ro}, {h: "Blind under", n: 1, f: r => pc(r.ru), v: r => r.ru}];
+  h += `<h2>By season</h2>` + tbl([{h: "Season", f: r => r.s, v: r => r.s}, ...B, {h: "Books a game", n: 1, f: r => r.books, v: r => r.books}, ...O], D.seasons);
+  h += `<h2>By league, 2023–24 on</h2><p class="note">Leagues with 100 or more priced games, at the closing line. Choosing leagues from these columns did not make a reliable profit in testing.</p>`;
+  h += tbl([{h: "League", f: r => r.s, v: r => r.s}, ...B, {h: "Avg line", n: 1, f: r => r.line, v: r => r.line}, {h: "Avg total", n: 1, f: r => r.act, v: r => r.act}, ...O], D.leagues);
+  return h;
+},
+method() {
+  return `<div class="doc"><h3><span class="num">1</span>Data</h3><p>${D.games.toLocaleString("en-GB")} priced games in ${D.comps} European competitions from 2020–21, with opening and closing total lines. A book's overtime market settles on the final score and its regulation market on the score after four quarters. Placeholder lines and lines far from any plausible total were removed.</p>
+  <h3><span class="num">2</span>Model</h3><p>Each team gets a points tendency from its earlier games, with recent games counting more and earlier seasons counting less. The settings come from the men's totals model and were not tuned on women's games.</p>
+  <h3><span class="num">3</span>Model signal</h3><ul><li>Overs and unders</li><li>Edge above 4% at the line on offer</li><li>Both teams at least 3 games into the season</li><li>Model within 12 points of the line</li></ul>
+  <h3><span class="num">4</span>Line gap signal</h3><ul><li>At least three books pricing the game</li><li>One book 5 to 12 points from the median of the others</li><li>Take the favourable side at that book: the over at a low line, the under at a high one</li></ul>
+  <h3><span class="num">5</span>Live test</h3><p>The rules were frozen on 6 Nov 2026 and picks are logged about every hour. In the live test the line gap signal uses the lines on offer at that moment, not the reported openings, so every pick is a price that was there to take. Stake limits are not measured, and they can be low in these markets.</p></div>`;
+}};
+function sortable() {
+  out.querySelectorAll("table.sortable").forEach(t => t.querySelectorAll("th").forEach((th, i) => th.onclick = () => {
+    const b = t.tBodies[0], d = th.dataset.d === "1" ? -1 : 1; th.dataset.d = d === 1 ? "1" : "0";
+    const val = r => { const s = r.cells[i].dataset.v, n = parseFloat(s); return s !== "" && !isNaN(n) ? n : s; };
+    [...b.rows].sort((x, y) => { const p = val(x), q = val(y); return (p > q ? 1 : p < q ? -1 : 0) * d; }).forEach(r => b.appendChild(r));
+  }));
+}
+function show() {
+  const v = (location.hash.match(/view=(\w+)/) || [])[1], k = V[v] ? v : "home";
+  document.querySelectorAll("#tabs a").forEach(a => a.classList.toggle("on", a.dataset.view === k));
+  out.innerHTML = V[k](); sortable();
+}
+addEventListener("hashchange", show); show();
+</script>
+</body>
+</html>

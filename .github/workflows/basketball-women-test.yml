@@ -1,6 +1,6 @@
 name: Feed · Women's basketball totals live test
 
-# Logging-only live test of the two women's totals signals. Publishes nothing on the site.
+# Live test of the two women's totals signals. Publishes basketball/women/live.js; the rest of the page is fixed.
 # Scripts, frozen rules and the record are in nikolitso/BettingSignal (women-totals/); read data/report.md there.
 # Runs after each men's totals run, so it inherits that job's hourly outside timer. The schedule is only a backup.
 on:
@@ -12,7 +12,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 concurrency:
   group: basketball-women-test
@@ -22,6 +22,7 @@ jobs:
   run:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v5
       - uses: actions/checkout@v5
         with:
           repository: nikolitso/BettingSignal
@@ -36,7 +37,17 @@ jobs:
         working-directory: _bs/women-totals
         env:
           PYTHONIOENCODING: utf-8
+          SITE_REPO: ${{ github.workspace }}
         run: python -u wlive.py
+      - name: Publish the page data
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add basketball/women/live.js
+          if git diff --cached --quiet; then echo "page unchanged"; exit 0; fi
+          git commit -q -m "Women's basketball totals: refresh $(TZ=Europe/Athens date '+%Y-%m-%d %H:%M')"
+          for i in 1 2 3 4 5; do git pull -q --rebase && git push -q && exit 0; sleep $((RANDOM % 10 + 5)); done
+          exit 1
       - name: Save the data
         working-directory: _bs
         run: |
