@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-06T14:53:29Z",
+ "updated": "2026-11-06T18:52:28Z",
  "reports": [
   {
    "comp": "EuroCup",
@@ -1972,7 +1972,7 @@
    ],
    "projection": {
     "paok": {
-     "score": 86.8,
+     "score": 87.2,
      "players": [
       {
        "name": "Kyle Alexander",
@@ -2089,7 +2089,7 @@
      "pace": 71.4
     },
     "opp": {
-     "score": 73.7,
+     "score": 73.3,
      "players": [
       {
        "name": "Giannis Karakostas",
@@ -2203,14 +2203,14 @@
      "missing": [],
      "pace": 71.4
     },
-    "winProb": 91,
+    "winProb": 92,
     "pace": 71.4,
     "lineupSource": "manual",
     "note": "PAOK without Osman, who is out for one to two months.",
     "modelTotal": 150.9,
     "line": 161.5,
     "modelMargin": 10.5,
-    "hcp": 13.5,
+    "hcp": 14.5,
     "learned": {
      "games": 962,
      "lineGames": 944,
@@ -2226,38 +2226,38 @@
     },
     "teamStats": {
      "pts": {
-      "paok": 86.8,
-      "opp": 73.7,
+      "paok": 87.2,
+      "opp": 73.3,
       "total": 160.5
      },
      "fg2m": {
-      "paok": 18.8,
-      "opp": 17.7,
-      "total": 36.5
+      "paok": 18.9,
+      "opp": 17.6,
+      "total": 36.4
      },
      "fg3m": {
       "paok": 10.0,
-      "opp": 8.2,
+      "opp": 8.1,
       "total": 18.2
      },
      "ftm": {
-      "paok": 19.2,
+      "paok": 19.3,
       "opp": 13.8,
       "total": 33.1
      },
      "ast": {
-      "paok": 17.4,
-      "opp": 15.5,
+      "paok": 17.5,
+      "opp": 15.4,
       "total": 32.9
      },
      "oreb": {
-      "paok": 10.0,
-      "opp": 10.1,
+      "paok": 9.9,
+      "opp": 10.2,
       "total": 20.1
      },
      "dreb": {
-      "paok": 25.0,
-      "opp": 22.9,
+      "paok": 25.1,
+      "opp": 22.8,
       "total": 47.9
      },
      "tov": {
