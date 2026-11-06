@@ -35,8 +35,8 @@ jobs:
       - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
-      - name: Install Excel reader (play-by-play sheets for plus/minus)
-        run: pip install --quiet openpyxl
+      - name: Install Excel reader (play-by-play sheets for plus/minus) and numbers library (player ratings)
+        run: pip install --quiet openpyxl numpy
       - name: Plan tonight's update from the schedules
         id: plan
         run: python $S/plan.py
@@ -69,6 +69,11 @@ jobs:
         if: steps.plan.outputs.comps != ''
         continue-on-error: true
         run: python $S/scout.py ${{ steps.plan.outputs.comps }}
+      - name: Player Offence and Defence ratings
+        id: ratings
+        if: steps.plan.outputs.comps != ''
+        continue-on-error: true
+        run: python $S/ratings.py
       - name: Highlight videos
         if: steps.plan.outputs.comps != ''
         run: python $S/highlights.py ${{ steps.plan.outputs.comps }} || echo "highlights unavailable, keeping previous links"
@@ -87,8 +92,8 @@ jobs:
           for i in 1 2 3 4 5; do git pull -q --rebase && git push -q && exit 0; sleep $((RANDOM % 10 + 5)); done
           exit 1
       - name: Report any step that failed (its data was kept from the last good run)
-        if: steps.eurocup.outcome == 'failure' || steps.gbl.outcome == 'failure' || steps.league.outcome == 'failure' || steps.power.outcome == 'failure' || steps.scout.outcome == 'failure'
+        if: steps.eurocup.outcome == 'failure' || steps.gbl.outcome == 'failure' || steps.league.outcome == 'failure' || steps.power.outcome == 'failure' || steps.scout.outcome == 'failure' || steps.ratings.outcome == 'failure'
         run: |
-          echo "EuroCup: ${{ steps.eurocup.outcome }} | Greek League: ${{ steps.gbl.outcome }} | League: ${{ steps.league.outcome }} | Power: ${{ steps.power.outcome }} | Scouting: ${{ steps.scout.outcome }}"
+          echo "EuroCup: ${{ steps.eurocup.outcome }} | Greek League: ${{ steps.gbl.outcome }} | League: ${{ steps.league.outcome }} | Power: ${{ steps.power.outcome }} | Scouting: ${{ steps.scout.outcome }} | Ratings: ${{ steps.ratings.outcome }}"
           echo "Everything that succeeded has been saved. Re-run to retry the failed part."
           exit 1
