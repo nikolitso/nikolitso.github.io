@@ -198,7 +198,7 @@ a.metric{display:block;color:inherit;text-decoration:none} a.metric:hover{border
   <div class="chips" id="chips"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=8d4cddec"></script>
+<script src="data.js?v=d720eb1e"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -274,7 +274,7 @@ function renderHome(){
   const over = big.length && hit < said - 0.05 ? ` Above a 40% edge the model is too confident: it said ${pct(said)} and those ${big.length} bets won ${pct(hit)}, so a bigger edge is not a bigger real chance (see Calibration in <b>Backtest</b>).` : '';
   return pickTiles() + `<div class="doc">
   <h2>Do the model's overs make a profit?</h2>
-  <p>Modestly, on the fair test. With each season's leagues chosen in advance from earlier seasons only, the bets returned <b>${sgn(B.fair.roi * 100, 1)}%</b> over ${B.fair.n} bets (${B.fair.first}–${String(B.fair.last + 1).slice(2)} seasons on), against ${sgn(B.fair.left_roi * 100, 1)}% in the leagues left out. Across the leagues as they stand now, ${A.n} bets over ${seasons.length} past seasons returned ${sgn(A.roi * 100, 1)}%, but that figure knows which leagues were kept, so it runs high. Backing every low-line over in these leagues without the model returned ${sgn(A.blind_roi * 100, 1)}%. The ${DATA.season.replace('-', '–')} record above is the real test.</p>
+  <p>Modestly, on the fair test. With each season's leagues chosen in advance from earlier seasons only, the bets returned <b>${sgn(B.fair.roi * 100, 1)}%</b> over ${B.fair.n} bets (${B.fair.first}–${(B.fair.first + 1) % 100} to ${B.fair.last}–${(B.fair.last + 1) % 100}), against ${sgn(B.fair.left_roi * 100, 1)}% in the leagues left out. Across the leagues as they stand now, ${A.n} bets over ${seasons.length} past seasons returned ${sgn(A.roi * 100, 1)}%, but that figure knows which leagues were kept, so it runs high. Backing every low-line over in these leagues without the model returned ${sgn(A.blind_roi * 100, 1)}%. The ${DATA.season.replace('-', '–')} record above is the real test.</p>
   <h3><span class="num">1</span>The bet</h3>
   <p>One bet only: the <b>over on a low total-points line</b>, from ${DATA.min_line}.5 to ${DATA.low - 1}.5, when the model's chance × the average price is more than ${DATA.edge * 100}% above 1. A low line means the market expects a 3-0, so the bet is that the match goes to a fourth set. Every bet is the same stake, logged before the first serve. Team ratings use the current season only, as rosters change from year to year, so there are no picks until both teams have played ${DATA.min_games} matches this season.</p>
   <h3><span class="num">2</span>The leagues</h3>
