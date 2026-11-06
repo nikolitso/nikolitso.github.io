@@ -4,10 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Women's basketball totals: is there a gap in the pricing?</title>
-<meta name="description" content="Women's basketball totals in European domestic leagues: backtests against the closing line, picks, projections and findings.">
+<meta name="description" content="Women's basketball totals in European domestic leagues: backtests at opening and closing lines, picks, projections and findings.">
 <link rel="canonical" href="https://antonisnikolitsopoulos.com/basketball/women/">
 <meta property="og:title" content="Women's basketball totals: is there a gap in the pricing?">
-<meta property="og:description" content="Women's basketball totals in European domestic leagues: backtests against the closing line, picks, projections and findings.">
+<meta property="og:description" content="Women's basketball totals in European domestic leagues: backtests at opening and closing lines, picks, projections and findings.">
 <meta property="og:url" content="https://antonisnikolitsopoulos.com/basketball/women/">
 <meta property="og:image" content="https://antonisnikolitsopoulos.com/basketball-overs.jpg">
 <meta name="twitter:card" content="summary_large_image">
@@ -196,7 +196,7 @@ a.tile:hover{border-color:var(--gold)}
   <div class="chips" id="chips"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=w27"></script>
+<script src="data.js?v=w28"></script>
 <script src="live.js"></script>
 <script>
 const $ = id => document.getElementById(id);
@@ -266,7 +266,7 @@ function renderFindings(){
 }
 
 function renderLeagues(){
-  let h = `<p class="note">Regular-season games from ${sn(DATA.first)} on (play-offs are left out). The model column starts in 2021–22 and is all out of sample. <b>Over %</b>: how often the game went over the closing line. Blind over: backing the over in every game at the average price. Model picks: overs the rule picked (edge above ${Math.round(R.edge*100)}%), count and ROI. Model line, opening line, closing line and result: averages of the model picks only, not of all games. Result is the final total. Click a league for its seasons.</p>`;
+  let h = `<p class="note">Regular-season games from ${sn(DATA.first)} on (play-offs are left out). The model column starts in 2021–22 and uses earlier games only, but the leagues were chosen with these seasons known. <b>Over %</b>: how often the game went over the closing line. Blind over: backing the over in every game at the average price. Model picks: overs the rule picked (edge above ${Math.round(R.edge*100)}%), count and ROI. Model line, opening line, closing line and result: averages of the model picks only, not of all games. Result is the final total. Click a league for its seasons.</p>`;
   h += `<div class="scroll"><table><thead><tr><th>League</th><th class="n">Games</th><th class="n">Total / line</th><th class="n">Over %</th><th class="n">Blind over</th><th class="n">Model picks</th>${LHEAD}</tr></thead><tbody>`;
   const mod = g => g.n ? `${g.n} <span class="${cls(g.roi)}">${roi(g.roi)}</span>` : '<span class="muted">–</span>';
   const row = (label, s, attrs='', list=[]) => `<tr${attrs}><td>${label}</td><td class="n">${s.games}</td><td class="n">${s.avg_total.toFixed(1)} / ${s.avg_line.toFixed(1)}</td><td class="n">${pct(s.over, 1)}</td>
@@ -302,7 +302,7 @@ function btBody(BT, S, pool, leagues){
   h += `<h2>By season</h2>` + sideTable('Season', S.seasons.map(s => [sn(s.season), BT.filter(x => seasonOf(x) === s.season)]));
   if (lg === 'all'){
     const ls = leagues.map(l => [l, pool.filter(b => b.lg === l.key)]).filter(([l, r]) => r.length).sort((a, b) => stat(b[1]).roi - stat(a[1]).roi);
-    h += `<h2>By league</h2><p class="note">Unseen seasons. Click a league to see it alone.</p>` + sideTable('League', ls.map(([l, r]) => [`<a href="#view=${view}&lg=${l.key}" style="color:inherit;text-decoration:none">${lgFull(l)}</a>`, r]));
+    h += `<h2>By league</h2><p class="note">Leagues chosen with these seasons known. Click a league to see it alone.</p>` + sideTable('League', ls.map(([l, r]) => [`<a href="#view=${view}&lg=${l.key}" style="color:inherit;text-decoration:none">${lgFull(l)}</a>`, r]));
   }
   const byEdge = [...BT].sort((x, y) => y.edge - x.edge);   // bets store a rounded edge, so take each row's count from the top
   h += `<h2>By edge</h2>` + sideTable('Edge', S.edges.map(e => [`${Math.round(e.edge * 100)}%+`, byEdge.slice(0, e.n)]));   // each row counts everything above it
@@ -317,7 +317,7 @@ function bets(list){
   let run = 0;
   const rows = list.map(b => { run += b.ret;
     return `<tr><td data-s="${b.dt}">${short(b.dt)} ${b.dt.slice(0,4)}</td>${lg === 'all' ? `<td>${lgShort(b.lg)}</td>` : ''}<td class="wr">${b.home} – ${b.away}</td><td class="n ${wl(b)}">${b.side === 'o' ? 'Over' : 'Under'} ${b.line}</td><td class="n">${b.px.toFixed(2)}</td><td class="n">${b.mu.toFixed(1)}</td><td class="n">${b.open ?? '–'}</td><td class="n">${b.close ?? '–'}</td><td class="n">${sgn(gap(b), 1)}</td><td class="n">${pct(b.p)}</td><td class="n">${sgn(b.edge*100, 0)}%</td><td class="n ${b.ret > 0 ? 'w' : b.ret < 0 ? 'l' : ''}">${b.total}</td></tr>`; });
-  return `<h2>Every pick, latest first</h2><p class="note">${list.length} picks in unseen seasons${list.length > 400 ? ', the latest 400 shown' : ''}.</p><div class="scroll"><table><thead><tr><th>Date</th>${lg === 'all' ? '<th>League</th>' : ''}<th>Match</th><th class="n">Pick</th><th class="n">Price</th><th class="n">Model line</th><th class="n">Opening</th><th class="n">Closing</th><th class="n">Line diff</th><th class="n">Chance</th><th class="n">Edge</th><th class="n">Result</th></tr></thead><tbody>${rows.reverse().slice(0, 400).join('')}</tbody></table></div>`;
+  return `<h2>Every pick, latest first</h2><p class="note">${list.length} backtest picks${list.length > 400 ? ', the latest 400 shown' : ''}.</p><div class="scroll"><table><thead><tr><th>Date</th>${lg === 'all' ? '<th>League</th>' : ''}<th>Match</th><th class="n">Pick</th><th class="n">Price</th><th class="n">Model line</th><th class="n">Opening</th><th class="n">Closing</th><th class="n">Line diff</th><th class="n">Chance</th><th class="n">Edge</th><th class="n">Result</th></tr></thead><tbody>${rows.reverse().slice(0, 400).join('')}</tbody></table></div>`;
 }
 
 function renderProjections(){
@@ -363,6 +363,13 @@ function renderPicks(){
               ['ROI', roi(R_), cls(R_)],
               ['Closing line moved toward the pick', cl.length ? pct(up / cl.length) : '–'], ['Closing line moved against it', cl.length ? pct(dn / cl.length) : '–']]);
   h += `<p class="note">The closing line moved toward the pick when it ended above the line picked; those two tiles cover picks logged live. Picks before ${LIVE.start} come from the same rules applied to those games. A few hundred picks are needed before the record says much. Click a column heading to sort.</p>`;
+  if (cl.length) {
+    const bt = k => DATA.bets.filter(b => b.lg === k && b.close != null);
+    h += `<h2>The closing line by league</h2><p class="note">How each league's picks did against the closing line this season. This shows sooner than the record whether the model is reading a league well. Points: the average move from the line picked to the closing line. Backtest: how often the line moved toward the pick in 2021–22 to 2025–26.</p><div class="scroll"><table style="max-width:860px"><thead><tr><th>League</th><th class="n">Picks</th><th class="n">Moved toward</th><th class="n">Moved against</th><th class="n">Points</th><th class="n">Backtest</th></tr></thead><tbody>` +
+      DATA.leagues.map(l => { const g = cl.filter(b => b.lg === l.key), n = g.length, t = bt(l.key);
+        return `<tr><td>${lgFull(l)}</td><td class="n">${n}</td><td class="n">${n ? pct(g.filter(b => mv(b) > 0).length / n) : '–'}</td><td class="n">${n ? pct(g.filter(b => mv(b) < 0).length / n) : '–'}</td><td class="n">${n ? sgn(g.reduce((a, b) => a + mv(b), 0) / n) : '–'}</td><td class="n">${t.length ? pct(t.filter(b => b.close > b.line).length / t.length) : '–'}</td></tr>`; }).join('') +
+      '</tbody></table></div>';
+  }
   if (!set.length) return h + '<p class="empty">No settled picks yet.</p>';
   let run = 0;
   const rows = all.filter(b => b.done).map(b => {   // open picks are in the table above
