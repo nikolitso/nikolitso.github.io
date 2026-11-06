@@ -198,7 +198,7 @@ a.gm{color:inherit;text-decoration:none} a.gm:hover{color:var(--gold);text-decor
   <div class="chips" id="chips"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=13a0e4e1"></script>
+<script src="data.js?v=c4d75c3f"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -226,6 +226,7 @@ $('sub').textContent = `${DATA.leagues.length} leagues, women's and men's · ${D
 function renderProjections(){
   let h = `<p class="note">Every match in the next 7 days: the chance it goes 3, 4 or 5 sets, the model's line on total points (where over and under are even). Once the market posts a line, the row shows the market line, the average over price and the model's over chance against it. Only <b>picks</b> are highlighted (gold); they are backed and recorded: overs on lines ${DATA.min_line}.5 to ${DATA.low - 0.5}, the matches the market expects to end 3-0, where the edge is above ${DATA.edge*100}%.</p>`;
   h += '<p class="note"><a href="/volleyball/games/">Every game, one page each →</a></p>';
+  h = pickTiles() + h;
   const fx = DATA.fixtures.filter(inLg);
   if (!fx.length) return h + '<p class="empty">No matches in the next 7 days.</p>';
   const byDay = {};
@@ -244,9 +245,9 @@ function renderProjections(){
   return h;
 }
 
-// the pick record at a glance, the same tiles and wording as the other model pages; every league, on Home only
+// the pick record at a glance, the same tiles and wording as the other model pages; on Projections they follow the chosen league
 function pickTiles(){
-  const done = DATA.picks.filter(p => 'won' in p), nOpen = DATA.picks.length - done.length, n = done.length;
+  const P = DATA.picks.filter(p => view === 'home' || inLg(p)), done = P.filter(p => 'won' in p), nOpen = P.length - done.length, n = done.length;
   const w = done.filter(p => p.won).length, units = done.reduce((s, p) => s + p.profit, 0);
   const avg = `avg of ${n} settled pick${n === 1 ? '' : 's'}`;
   const t = [['Open picks', nOpen, nOpen ? 'to play →' : 'none right now', '#view=picks'], ['Record', `${w}–${n - w}`, 'win – loss →', '#view=results'],
