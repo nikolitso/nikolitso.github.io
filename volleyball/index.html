@@ -198,7 +198,7 @@ a.metric{display:block;color:inherit;text-decoration:none} a.metric:hover{border
   <div class="chips" id="chips"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=124c614c"></script>
+<script src="data.js?v=8d719b78"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -270,8 +270,8 @@ function renderHome(){
   const best = DATA.leagues.map(l => ({l, s: B.leagues[l.key]})).sort((a, b) => b.s.roi - a.s.roi)
     .map(({l, s}) => `${l.country} ${sexAb(l)} ${sgn(s.roi * 100, 1)}%`).join(', ');
   // the calibration table's top band, in a sentence: only while the model is clearly too confident there
-  const top = bets.filter(b => b.edge >= 0.4), said = top.reduce((s, b) => s + b.p, 0) / top.length, hit = top.filter(b => b.won).length / top.length;
-  const over = top.length && hit < said - 0.05 ? ` Above a 40% edge the model is too confident: it said ${pct(said)} and those ${top.length} bets won ${pct(hit)}, so a bigger edge is not a bigger real chance (see Calibration in <b>Backtest</b>).` : '';
+  const big = bets.filter(b => b.edge >= 0.4), said = big.reduce((s, b) => s + b.p, 0) / big.length, hit = big.filter(b => b.won).length / big.length;
+  const over = big.length && hit < said - 0.05 ? ` Above a 40% edge the model is too confident: it said ${pct(said)} and those ${big.length} bets won ${pct(hit)}, so a bigger edge is not a bigger real chance (see Calibration in <b>Backtest</b>).` : '';
   return pickTiles() + `<div class="doc">
   <h2>Do the model's overs make a profit?</h2>
   <p>In the backtest, yes: ${A.n} bets across ${seasons.length} past seasons (${span}) returned <b>${sgn(A.roi * 100, 1)}%</b>, while backing every low-line over in the same leagues without the model returned ${sgn(A.blind_roi * 100, 1)}%. The leagues were chosen on these same seasons, so expect less live. The ${DATA.season.replace('-', '–')} record above is the real test.</p>
