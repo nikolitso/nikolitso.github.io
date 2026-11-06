@@ -197,7 +197,7 @@ a.tile:hover{border-color:var(--gold)}
   <div class="chips" id="chips"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=w16"></script>
+<script src="data.js?v=w18"></script>
 <script src="live.js"></script>
 <script>
 const $ = id => document.getElementById(id);
@@ -226,7 +226,7 @@ LIVE.fixtures = LIVE.fixtures.filter(g => LG[g.lg]);                       // le
 LIVE.picks = (LIVE.picks || []).filter(b => LG[b.lg]);
 if (LIVE.leagues) LIVE.leagues = LIVE.leagues.filter(k => LG[k]);
 
-$('sub').textContent = `${DATA.leagues.length} Leagues · backtest 2023–24 to 2025–26 · 2026–27 record · updated ${LIVE.updated} (Athens)`;
+$('sub').textContent = `${DATA.leagues.length} Leagues · backtest 2021–22 to 2025–26 · 2026–27 record · updated ${LIVE.updated} (Athens)`;
 
 // top tiles: the whole 2026-27 record, as on the Picks tab (ROI = return over wins + losses)
 {
@@ -265,7 +265,7 @@ function renderFindings(){
 }
 
 function renderLeagues(){
-  let h = `<p class="note">Regular-season games from ${sn(DATA.first)} on (play-offs are left out). The model column starts in 2023–24 and is all out of sample. <b>Over %</b>: how often the game went over the closing line. Blind over: backing the over in every game at the average price. Opening and closing line: the average of those picks. Model picks: overs the rule picked (edge above ${Math.round(R.edge*100)}%), count and ROI. Click a league for its seasons.</p>`;
+  let h = `<p class="note">Regular-season games from ${sn(DATA.first)} on (play-offs are left out). The model column starts in 2021–22 and is all out of sample. <b>Over %</b>: how often the game went over the closing line. Blind over: backing the over in every game at the average price. Opening and closing line: the average of those picks. Model picks: overs the rule picked (edge above ${Math.round(R.edge*100)}%), count and ROI. Click a league for its seasons.</p>`;
   h += `<div class="scroll"><table><thead><tr><th>League</th><th class="n">Games</th><th class="n">Total / line</th><th class="n">Over %</th><th class="n">Blind over</th><th class="n">Model picks</th>${LHEAD}</tr></thead><tbody>`;
   const mod = g => g.n ? `${g.n} <span class="${cls(g.roi)}">${roi(g.roi)}</span>` : '<span class="muted">–</span>';
   const row = (label, s, attrs='', list=[]) => `<tr${attrs}><td>${label}</td><td class="n">${s.games}</td><td class="n">${s.avg_total.toFixed(1)} / ${s.avg_line.toFixed(1)}</td><td class="n">${pct(s.over, 1)}</td>
@@ -294,6 +294,7 @@ function renderBacktest(){
               ['Opening line', lineAvg(BT.filter(b => b.open != null), 'open')], ['Closing line', lineAvg(BT, 'close')]]);
   h += `<h2>By season</h2>` + sideTable('Season', S.seasons.map(s => [sn(s.season), BT.filter(x => seasonOf(x) === s.season)]));
   if (lg === 'all'){
+    h += `<h2>By division</h2>` + sideTable('Division', [['Top divisions', 'top'], ['Second divisions', 'second']].map(([label, t]) => [label, BT.filter(x => LG[x.lg].tier === t)]));
     const ls = ALLG.map(l => [l, DATA.bets.filter(b => b.lg === l.key)]).filter(([l, r]) => r.length).sort((a, b) => stat(b[1]).roi - stat(a[1]).roi);
     h += `<h2>By league</h2><p class="note">Unseen seasons. Click a league to see it alone.</p>` + sideTable('League', ls.map(([l, r]) => [`<a href="#view=${view}&lg=${l.key}" style="color:inherit;text-decoration:none">${lgFull(l)}</a>`, r]));
   }
@@ -411,7 +412,7 @@ function renderTesting(){
     open.map(b => `<tr><td data-s="${b.dt}">${dayName(b.dt)} ${b.dt.slice(11)}</td><td>${nm(b.lg)}</td><td class="wr">${b.home} – ${b.away}</td><td class="n"><b>${sd(b)} ${b.line}</b></td><td class="n">${b.px.toFixed(2)}</td><td class="n">${b.mu.toFixed(1)}</td><td class="n pos">${sgn(b.edge*100, 0)}%</td><td class="n">${b.now ?? '–'}</td></tr>`).join('') + '</tbody></table></div>';
   const X = DATA.testbt, cells = r => `<td class="n">${r.open ?? '–'}</td><td class="n">${r.close}</td>`;
   const tail = () => { const list = Object.values(T.names).sort((a, b) => a.localeCompare(b));
-  if (X) h += `<h2>Backtest</h2><p class="note">The same rules on seasons the model had not seen, 2022–23 to 2025–26, overs only. These leagues are here because they fell short in these same seasons, so these figures run low: they show how far each league is from the main list, not what to expect. A league joins before a season with at least 4 picks and ROI above +10%.</p>` +
+  if (X) h += `<h2>Backtest</h2><p class="note">The same rules on seasons the model had not seen, 2021–22 to 2025–26, overs only. These leagues are here because they fell short in these same seasons, so these figures run low: they show how far each league is from the main list, not what to expect. A league joins before a season with at least 4 picks and ROI above +10%.</p>` +
     `<div class="scroll"><table style="max-width:980px">${GHEAD('League', LHEAD)}<tbody>${X.leagues.map(r => grp(r.name, r, '', cells(r))).join('')}${grp('<b>All testing leagues</b>', X.total, '', cells(X.total))}</tbody></table></div>` +
     `<h2>Backtest by season</h2><div class="scroll"><table style="max-width:980px">${GHEAD('Season', LHEAD)}<tbody>${X.seasons.map(r => grp(sn(r.season), r, '', cells(r))).join('')}</tbody></table></div>`;
   h += `<h2>The ${list.length} testing leagues</h2><ul class="lglist">${list.map(x => `<li>${x}</li>`).join('')}</ul>`; return h; };
