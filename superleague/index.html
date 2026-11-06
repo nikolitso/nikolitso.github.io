@@ -540,6 +540,7 @@ function renderMarket(){
 const lc = s => ({sot: 'SoT', saves: 'GK saves', xg: 'xG', result: 'match result'})[s] || L[s].toLowerCase();
 const betName = b => b.stat === 'result' ? ({1: 'Home win', X: 'Draw', 2: 'Away win'})[b.side] : `${b.side === 'over' ? 'Over' : 'Under'} ${b.line} ${lc(b.stat)}`;
 const evPct = x => `${x >= 0 ? '+' : ''}${Math.round(x * 100)}%`;
+const clvPct = x => `${x >= 0 ? '+' : '−'}${Math.abs(x * 100).toFixed(1)}%`;
 
 // minimum EV picked on the Picks tab (10%, 20%, 30%+; default 10%)
 const EV_STEPS = [.10, .20, .30];
@@ -599,6 +600,7 @@ function renderSettled(settled, all){
   const mkts = Object.keys(counts).sort((a, b) => counts[b] - counts[a] || mktName(a).localeCompare(mktName(b)));
   if (stMkt !== 'all' && !counts[stMkt]) stMkt = 'all';
   if (stMkt !== 'all'){ settled = settled.filter(b => b.stat === stMkt); all = summary(settled); }
+  const closed = settled.filter(b => b.clv != null);
   let h = `<h2>Settled</h2><p class="note">Every value pick that has been settled, with what happened, and the running record (equal stakes). ROI = profit ÷ total staked. The minimum EV and the market you pick filter both.</p>
   <div class="chips" id="stmk" style="margin:0 0 18px">${[['all', `All ${Object.values(counts).reduce((a, b) => a + b, 0)}`], ...mkts.map(m => [m, `${mktName(m)} ${counts[m]}`])]
     .map(([m, t]) => `<button class="chip${m === stMkt ? ' on' : ''}" data-s="${m}">${t}</button>`).join('')}</div>`;
@@ -606,10 +608,13 @@ function renderSettled(settled, all){
     <div class="metric"><div class="lbl">Settled so far</div><div class="big">${all.n}</div></div>
     <div class="metric"><div class="lbl">Hit rate</div><div class="big">${all.n ? pct(all.hit) : '–'}</div></div>
     
-    <div class="metric"><div class="lbl">ROI</div><div class="big">${all.n ? evPct(all.roi) : '–'}</div></div></div>`;
+    <div class="metric"><div class="lbl">ROI</div><div class="big">${all.n ? evPct(all.roi) : '–'}</div></div>
+    <div class="metric"><div class="lbl">Avg CLV (${closed.length} of ${all.n})</div><div class="big">${closed.length ? clvPct(avgOf(closed.map(b => b.clv))) : '–'}</div></div>
+    <div class="metric"><div class="lbl">Odds v close</div><div class="big" style="font-size:18px">${closed.length ? `${closed.filter(b => b.odds > b.close).length} better · ${closed.filter(b => b.odds === b.close).length} same · ${closed.filter(b => b.odds < b.close).length} worse` : '–'}</div></div></div>
+    ${closed.length ? `<p class="muted" style="margin:-6px 0 14px;font-size:15.5px"><b>CLV</b> (closing-line value) compares the odds taken with the bookie's last price before kick-off, with the margin removed. Odds that never moved score about −5% to −8%, the margin itself, so <b>Odds v close</b> shows the movement on its own. Picks from 24–25 Oct have no CLV: they were recorded at the last price before kick-off, so there is no later price to compare.</p>` : ''}`;
   if (!settled.length) return h + `<p class="muted" style="margin-top:18px">No settled picks yet at this EV level: the record starts once results for logged picks are in the data.</p>`;
-  h += `<h2>${stMkt === 'all' ? 'All settled picks' : `Settled ${mktName(stMkt).toLowerCase()} picks`}</h2><p class="muted" style="margin:-4px 0 10px;font-size:15.5px">Every pick from EV +${Math.round(valMin * 100)}% with its result, newest first; the record by market, side and EV follows below.</p><div class="scroll"><table class="mk"><thead><tr><th>Date</th><th>Match</th><th>Pick</th><th class="n">Odds</th><th class="n">EV</th><th class="n" title="What happened: the final score for 1X2 picks, the match total for the rest">Actual</th><th class="n">Result</th></tr></thead><tbody>`;
-  for (const b of settled) h += `<tr><td class="muted">${dayName(b.date)}</td><td>${b.home} – ${b.away}</td><td>${betName(b)}</td><td class="n">${b.odds.toFixed(2)}</td><td class="n">${evPct(b.ev)}</td><td class="n"><b>${b.actual ?? '–'}</b></td><td class="n ${b.result === 'won' ? 'w' : 'l'}">${b.result === 'won' ? 'Won +' + (b.odds - 1).toFixed(2) : 'Lost −1'}</td></tr>`;
+  h += `<h2>${stMkt === 'all' ? 'All settled picks' : `Settled ${mktName(stMkt).toLowerCase()} picks`}</h2><p class="muted" style="margin:-4px 0 10px;font-size:15.5px">Every pick from EV +${Math.round(valMin * 100)}% with its result, newest first; the record by market, side and EV follows below.</p><div class="scroll"><table class="mk"><thead><tr><th>Date</th><th>Match</th><th>Pick</th><th class="n">Odds</th><th class="n" title="The bookie's last odds before kick-off for the same line and side">Close</th><th class="n" title="Closing-line value: these odds × the closing chance with the margin taken out − 1">CLV</th><th class="n">EV</th><th class="n" title="What happened: the final score for 1X2 picks, the match total for the rest">Actual</th><th class="n">Result</th></tr></thead><tbody>`;
+  for (const b of settled) h += `<tr><td class="muted">${dayName(b.date)}</td><td>${b.home} – ${b.away}</td><td>${betName(b)}</td><td class="n">${b.odds.toFixed(2)}</td><td class="n muted">${b.clv == null ? '–' : b.close.toFixed(2)}</td><td class="n ${b.clv == null ? 'muted' : b.clv >= 0 ? 'w' : ''}">${b.clv == null ? '–' : clvPct(b.clv)}</td><td class="n">${evPct(b.ev)}</td><td class="n"><b>${b.actual ?? '–'}</b></td><td class="n ${b.result === 'won' ? 'w' : 'l'}">${b.result === 'won' ? 'Won +' + (b.odds - 1).toFixed(2) : 'Lost −1'}</td></tr>`;
   h += '</tbody></table></div>';
   const group = key => settled.reduce((g, b) => ((g[key(b)] ||= []).push(b), g), {});
   const band = b => b.ev >= .3 ? '30%+' : `${Math.floor(b.ev * 10) * 10}–${Math.floor(b.ev * 10) * 10 + 10}%`;
