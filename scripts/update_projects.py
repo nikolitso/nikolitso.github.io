@@ -181,10 +181,10 @@ def basketball():
     return [f"{games} games this season"] if games else []
 
 
-def basketball_overs():
-    d = js_object("/basketball/overs/live.js", r"window\.LIVE\s*=")
+def basketball_totals(folder):
+    d = js_object(f"/basketball/{folder}/live.js", r"window\.LIVE\s*=")
     picks = d.get("picks", [])
-    season = js_object("/basketball/overs/data.js", r"const DATA\s*=").get("cur", {}).get("bets", [])    # the page's 2026-27 record
+    season = js_object(f"/basketball/{folder}/data.js", r"(?:const|window\.)\s*DATA\s*=").get("cur", {}).get("bets", [])    # the page's 2026-27 record
     done = season + [p for p in picks if p.get("done") and p.get("ret") is not None]
     return record(sum(p["ret"] > 0 for p in done), sum(p["ret"] < 0 for p in done),
                   sum(p["ret"] for p in done), sum(not p.get("done") for p in picks))
@@ -196,7 +196,8 @@ CARDS = {                    # slug -> (card href on the homepage, reader)
     "fibaeuropecup": ("/fibaeuropecup/", lambda: basketball_cup("fibaeuropecup")),
     "handball": ("/handball/projections/", handball),
     "basketball": ("/basketball/", basketball),
-    "basketball-overs": ("/basketball/overs/", basketball_overs),
+    "basketball-overs": ("/basketball/overs/", lambda: basketball_totals("overs")),
+    "basketball-women": ("/basketball/women/", lambda: basketball_totals("women")),
     "paok-hub": ("/paok-hub/", paok_hub),
     "paok-basketball": ("/paok-basketball/", paok_basketball),
 }

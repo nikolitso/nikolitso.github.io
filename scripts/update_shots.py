@@ -35,6 +35,7 @@ SHOTS = [
     ("/handball/projections/", "handball"),
     ("/basketball/", "basketball"),
     ("/basketball/overs/", "basketball-overs"),
+    ("/basketball/women/", "basketball-women"),
     ("/paok-hub/", "paok-hub"),
     ("/paok-basketball/", "paok-basketball"),
 ]
