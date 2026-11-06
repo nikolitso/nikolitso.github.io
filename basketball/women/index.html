@@ -245,6 +245,13 @@ function tiles(list){
 // one table row from a {n, w, roi} group
 const grp = (label, g, extra='', more='') => g && g.n ? `<tr${extra}><td>${label}</td><td class="n">${g.n}</td><td class="n">${pct(g.w / g.n, 1)}</td><td class="n">${g.px ? g.px.toFixed(2) : '–'}</td><td class="n ${cls(g.roi)}">${roi(g.roi)}</td>${more}</tr>` : '';
 const LHEAD = '<th class="n">Opening line</th><th class="n">Closing line</th>';
+const bySide = rows => [['o', 'Overs'], ['u', 'Unders']].map(([side, word]) => {   // rows: [label, picks]; one table per side
+  const body = rows.map(([label, list]) => {
+    const r = list.filter(x => x.side === side), n = r.length, sum = f => r.reduce((s, x) => s + f(x), 0);
+    return grp(label, {n, w: r.filter(x => x.ret > 0).length, px: sum(x => x.px) / n, roi: sum(x => x.ret) / n}, '', lineCells(r));
+  }).join('');
+  return body ? `<div class="scroll"><table style="max-width:980px;margin-bottom:24px">${GHEAD(word, LHEAD)}<tbody>${body}</tbody></table></div>` : '';
+}).join('');
 const GHEAD = (first, more='') => `<thead><tr><th>${first}</th><th class="n">Picks</th><th class="n">Hit</th><th class="n">Avg price</th><th class="n">ROI</th>${more}</tr></thead>`;
 // average opening and closing line of a list of bets, as two table cells
 const seasonOf = b => { const y = +b.dt.slice(0, 4); return +b.dt.slice(5, 7) >= 7 ? `${y}-${y + 1}` : `${y - 1}-${y}`; };
@@ -287,32 +294,17 @@ function renderBacktest(){
   const BT = DATA.bets.filter(inLg);
   h += tiles([['Picks', S.rule.n], ['Hit rate', pct(S.rule.w / S.rule.n, 1)], ['ROI', roi(S.rule.roi), cls(S.rule.roi)],
               ['Opening line', lineAvg(BT.filter(b => b.open != null), 'open')], ['Closing line', lineAvg(BT, 'close')]]);
-  h += `<h2>By season</h2><div class="scroll"><table style="max-width:980px">${GHEAD('Season', LHEAD)}<tbody>`;
-  for (const s of S.seasons) h += grp(sn(s.season) + (s.season === DATA.tuned ? ' <span class="muted">(tuned on)</span>' : '') + (s.season === DATA.season ? ' <span class="muted">(so far)</span>' : ''), s, '', lineCells(BT.filter(b => seasonOf(b) === s.season)));
-  h += '</tbody></table></div>';
+  h += `<h2>By season</h2>` + bySide(S.seasons.map(s => [sn(s.season), BT.filter(x => seasonOf(x) === s.season)]));
   if (lg === 'all'){
     h += `<h2>By league</h2><p class="note">Unseen seasons. Click a league to see it alone.</p><div class="scroll"><table style="max-width:980px">${GHEAD('League', LHEAD)}<tbody>`;
     for (const l of DATA.leagues.filter(l => B.leagues[l.key] && B.leagues[l.key].rule.n).sort((a, b) => B.leagues[b.key].rule.roi - B.leagues[a.key].rule.roi))
       h += grp(`<a href="#view=backtest&lg=${l.key}" style="color:inherit;text-decoration:none">${lgFull(l)}</a>`, B.leagues[l.key].rule, '', lineCells(DATA.bets.filter(b => b.lg === l.key)));
     h += '</tbody></table></div>';
   }
-  h += `<h2>By edge</h2><div class="scroll"><table style="max-width:980px">${GHEAD('Edge', LHEAD)}<tbody>`;
   const byEdge = [...BT].sort((x, y) => y.edge - x.edge);   // bets store a rounded edge, so take each row's count from the top
-  for (const e of S.edges) h += grp(`${Math.round(e.edge * 100)}%+`, e, '', lineCells(byEdge.slice(0, e.n)));   // each row counts everything above it, so 6%+ covers the small top rows
-  h += `</tbody></table></div><h2>By month</h2><div class="scroll"><table style="max-width:980px">${GHEAD('Month', LHEAD)}<tbody>`;
-  for (const m of S.months) h += grp(MON[m.m - 1], m, '', lineCells(BT.filter(b => +b.dt.slice(5, 7) === m.m)));
-  h += '</tbody></table></div>';
-  h += `<h2>By line</h2><p class="note">The line of the pick in four bands, overs and unders apart.</p>`;
-  for (const [side, word] of [['o', 'Overs'], ['u', 'Unders']]) {
-    const set = BT.filter(x => x.side === side);
-    if (!set.length) continue;
-    h += `<div class="scroll"><table style="max-width:980px;margin-bottom:24px">${GHEAD(word, LHEAD)}<tbody>`;
-    for (const [label, lo, hi] of [['Under 130', 0, 130], ['130–139.5', 130, 140], ['140–149.5', 140, 150], ['150 and over', 150, 999]]) {
-      const r = set.filter(x => x.line >= lo && x.line < hi), n = r.length, sum = f => r.reduce((s, x) => s + f(x), 0);
-      h += grp(label, {n, w: r.filter(x => x.ret > 0).length, px: sum(x => x.px) / n, roi: sum(x => x.ret) / n}, '', lineCells(r));
-    }
-    h += '</tbody></table></div>';
-  }
+  h += `<h2>By edge</h2>` + bySide(S.edges.map(e => [`${Math.round(e.edge * 100)}%+`, byEdge.slice(0, e.n)]));   // each row counts everything above it
+  h += `<h2>By month</h2>` + bySide(S.months.map(m => [MON[m.m - 1], BT.filter(x => +x.dt.slice(5, 7) === m.m)]));
+  h += `<h2>By line</h2><p class="note">The line of the pick in four bands.</p>` + bySide([['Under 130', 0, 130], ['130–139.5', 130, 140], ['140–149.5', 140, 150], ['150 and over', 150, 999]].map(([label, lo, hi]) => [label, BT.filter(x => x.line >= lo && x.line < hi)]));
   return h + bets();
 }
 
