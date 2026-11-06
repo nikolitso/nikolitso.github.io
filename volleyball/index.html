@@ -198,7 +198,7 @@ a.metric{display:block;color:inherit;text-decoration:none} a.metric:hover{border
   <div class="chips" id="chips"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=d720eb1e"></script>
+<script src="data.js?v=3005f449"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -249,7 +249,7 @@ function pickTiles(){
   const done = DATA.picks.filter(p => 'won' in p), nOpen = DATA.picks.length - done.length, n = done.length;
   const w = done.filter(p => p.won).length, units = done.reduce((s, p) => s + p.profit, 0);
   const avg = `avg of ${n} settled pick${n === 1 ? '' : 's'}`;
-  const t = [['Open picks', nOpen, nOpen ? 'to play →' : 'none right now', '#view=picks'], ['Record', `${w}–${n - w}`, 'win – loss'],
+  const t = [['Open picks', nOpen, nOpen ? 'to play →' : 'none right now', '#view=picks'], ['Record', `${w}–${n - w}`, 'win – loss →', '#view=results'],
              
              ['ROI', n ? `<span class="${cls(units)}">${sgn(units / n * 100, 1)}%</span>` : '–', `${n} settled pick${n === 1 ? '' : 's'}`],
              ['Market line', avgLine(done, 'line'), avg], ['Model line', avgLine(done, 'fair'), avg], ['Actual total', avgLine(done, 'total'), avg]];
