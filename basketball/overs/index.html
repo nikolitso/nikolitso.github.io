@@ -297,7 +297,7 @@ function renderBacktest(){
   }
   h += `<h2>By edge</h2><div class="scroll"><table style="max-width:980px">${GHEAD('Edge above', LHEAD)}<tbody>`;
   const byEdge = [...BT].sort((x, y) => y.edge - x.edge);   // bets store a rounded edge, so take each row's count from the top
-  for (const e of S.edges) h += grp(`${Math.round(e.edge * 100)}%`, e, '', lineCells(byEdge.slice(0, e.n)));
+  for (const e of S.edges.filter(x => x.edge <= 0.08)) h += grp(`${Math.round(e.edge * 100)}%${e.edge === 0.08 ? '+' : ''}`, e, '', lineCells(byEdge.slice(0, e.n)));   // each row counts everything above it, so 8%+ covers the small top rows
   h += `</tbody></table></div><h2>By month</h2><div class="scroll"><table style="max-width:980px">${GHEAD('Month', LHEAD)}<tbody>`;
   for (const m of S.months) h += grp(MON[m.m - 1], m, '', lineCells(BT.filter(b => +b.dt.slice(5, 7) === m.m)));
   h += '</tbody></table></div>';
