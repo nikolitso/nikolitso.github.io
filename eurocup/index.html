@@ -781,6 +781,22 @@ function pickList(){
   }
   return out.sort((x, y) => (x.date + x.time).localeCompare(y.date + y.time) || x.h.localeCompare(y.h));
 }
+// Test, not part of the record: over when the two clubs' expected pace is PACE_GAP+ possessions above the league's, under
+// when below. g.tl = [time, book total, pace against the league, over price, under price], one entry each time something changed
+const PACE_FROM = '2026-11-07', PACE_GAP = 2;
+function paceList(){
+  const out = [];
+  for (const g of (window.ARCHIVE && ARCHIVE.list) || []){
+    const date = g.when.slice(0, 10);
+    if (date < PACE_FROM || g.pd == null || g.bt == null || Math.abs(g.pd) < PACE_GAP) continue;
+    const side = g.pd > 0 ? 1 : -1, f = (g.tl || []).find(x => x[2] * side >= PACE_GAP) || [g.taken, g.bt];
+    const r = arResult(date, g.h, g.a), logged = side > 0 ? g.ov : g.un, pr = logged || PICK_PRICE;
+    const c = r ? (r[6] + r[7] - g.bt) * side : null, res = !r ? null : c > 0 ? 'W' : c < 0 ? 'L' : 'P';
+    out.push({bet: `${side > 0 ? 'Over' : 'Under'} ${g.bt}`, pd: g.pd, firstAt: f[0], line0: String(f[1]), close: String(g.bt), clv: (g.bt - f[1]) * side,
+      date, time: g.when.slice(11), h: g.h, a: g.a, pr, logged: !!logged, r, res, u: !r ? null : res === 'W' ? pr - 1 : res === 'L' ? -1 : 0});
+  }
+  return out.sort((x, y) => (x.date + x.time).localeCompare(y.date + y.time) || x.h.localeCompare(y.h));
+}
 function renderPicks(){
   const box = $('pkView'), all = pickList(), open = all.filter(p => !p.r), done = all.filter(p => p.r);
   const w = done.filter(p => p.res === 'W').length, l = done.filter(p => p.res === 'L').length, pu = done.length - w - l, units = done.reduce((t, p) => t + p.u, 0);
@@ -807,7 +823,27 @@ function renderPicks(){
         <td class="n ${p.res === 'W' ? 'pkw' : p.res === 'L' ? 'l' : 'tag'}"><b>${p.res === 'W' ? 'Won' : p.res === 'L' ? 'Lost' : 'Push'}</b></td></tr>`).join('') + '</table></div>'
       : '<div class="empty">No settled picks yet. Each pick moves here with its result after the game.</div>') +
     (all.dropped.length ? `<h2>Dropped before tip-off</h2><div class="scroll"><table class="fx pjpk"><tr><th class="n">Date</th><th>Pick when it appeared</th><th>Game</th><th class="n">First line</th><th class="n">Close</th><th class="n" title="Points the line moved towards the pick">Vs close</th></tr>` +
-      [...all.dropped].reverse().map(p => `<tr><td class="n">${fmtDate(p.date).slice(0, 5)}</td><td><b>${esc(p.first)}</b></td><td>${esc(p.h)} – ${esc(p.a)}</td><td class="n">${firstLine(p)}</td><td class="n">${esc(p.close)}</td>${vs(p)}</tr>`).join('') + '</table></div>' : '');
+      [...all.dropped].reverse().map(p => `<tr><td class="n">${fmtDate(p.date).slice(0, 5)}</td><td><b>${esc(p.first)}</b></td><td>${esc(p.h)} – ${esc(p.a)}</td><td class="n">${firstLine(p)}</td><td class="n">${esc(p.close)}</td>${vs(p)}</tr>`).join('') + '</table></div>' : '') +
+    paceTest();
+  function paceTest(){
+    const all = paceList(), open = all.filter(p => !p.r), done = all.filter(p => p.r), seen = all.filter(started);
+    const w = done.filter(p => p.res === 'W').length, l = done.filter(p => p.res === 'L').length, pu = done.length - w - l;
+    const avg = seen.length ? seen.reduce((t, p) => t + p.clv, 0) / seen.length : 0, pace = p => `<td class="n">${sgn(p.pd)}</td>`;
+    return `<h2>Test: pace totals</h2><div class="note" style="margin-bottom:14px"><b>Separate from the record above</b>, which is handicaps only. Over when the two clubs' expected pace is ${PACE_GAP}+ possessions above the league's, under when it is ${PACE_GAP}+ below. Book totals looked slow to follow pace: on 2023-24 to now (481 games, an assumed price of 1.87) this went 98–65, but 2025-26 carries it and without that season it is 45–44, so nothing is proven. Logged from ${fmtDate(PACE_FROM)} at real prices and settled at the last line read. <b>Vs close</b> as above.</div>
+    <div class="metrics">
+      ${card('Settled picks', done.length, `${open.length} still to play`)}
+      ${card('Record', done.length ? `${w}–${l}${pu ? `<span class="tag">–${pu}</span>` : ''}` : '–', 'won – lost' + (pu ? ' – push' : ''))}
+      ${card('Hit rate', w + l ? Math.round(w / (w + l) * 100) + '%' : '–', 'makes a profit from about 54%')}
+      ${card('Vs close', seen.length ? `<span class="${cls(avg)}">${sgn(avg)}</span>` : '–', `points a pick, ${seen.length} pick${seen.length === 1 ? '' : 's'}`)}
+    </div>
+    <h2>Open test picks</h2>` + (open.length ? `<div class="scroll"><table class="fx pjpk"><tr><th class="n">Tip-off</th><th>Pick</th><th>Game</th><th class="n" title="Expected possessions against the league's">Pace</th><th class="n">Price</th><th class="n">First line</th></tr>` +
+      open.map(p => `<tr><td class="n">${when(p)}</td><td><b class="hcp">${esc(p.bet)}</b></td><td>${esc(p.h)} – ${esc(p.a)}</td>${pace(p)}<td class="n">${price(p)}</td><td class="n">${firstLine(p)}</td></tr>`).join('') + '</table></div>'
+      : '<div class="empty">No open test picks right now.</div>') +
+    `<h2>Test results</h2>` + (done.length ? `<div class="scroll"><table class="fx pjpk"><tr><th class="n">Date</th><th>Pick</th><th>Game</th><th class="n" title="Expected possessions against the league's">Pace</th><th class="n">Price</th><th class="n">First line</th><th class="n">Close</th><th class="n" title="Points the line moved towards the pick">Vs close</th><th class="n">Score</th><th class="n">Result</th></tr>` +
+      [...done].reverse().map(p => `<tr><td class="n">${fmtDate(p.date).slice(0, 5)}</td><td><b>${esc(p.bet)}</b></td><td>${esc(p.h)} – ${esc(p.a)}</td>${pace(p)}<td class="n">${price(p)}</td><td class="n">${firstLine(p)}</td><td class="n">${esc(p.close)}</td>${vs(p)}<td class="n"><b>${p.r[6]}–${p.r[7]}</b></td>
+        <td class="n ${p.res === 'W' ? 'pkw' : p.res === 'L' ? 'l' : 'tag'}"><b>${p.res === 'W' ? 'Won' : p.res === 'L' ? 'Lost' : 'Push'}</b></td></tr>`).join('') + '</table></div>'
+      : '<div class="empty">No settled test picks yet.</div>');
+  }
 }
 function renderPjCards(P){
   const box = $('pjView');
