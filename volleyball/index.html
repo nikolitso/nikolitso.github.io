@@ -198,7 +198,7 @@ a.gm{color:inherit;text-decoration:none} a.gm:hover{color:var(--gold);text-decor
   <div class="chips" id="chips"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=c4d75c3f"></script>
+<script src="data.js?v=3b9aea8b"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -210,6 +210,9 @@ const gameLink = g => `<a class="gm" href="/volleyball/games/${g.dt.slice(0,10)}
 const pct = x => Math.round(x*100) + '%';
 const sgn = (x, d=1) => (x > 0 ? '+' : x < 0 ? '−' : '') + Math.abs(x).toFixed(d);
 const cls = x => x > 0 ? 'pos' : x < 0 ? 'neg' : '';
+// the model runs too confident (Calibration in Backtest): shown chances keep 60% of its advantage over the price, so shown
+// edge = 60% of the model's. Picks are still chosen on the model's own figures (user, 7 Nov 2026)
+const REAL = 0.6, realP = (p, px) => 1 / px + REAL * (p - 1 / px);
 let view = 'home', lg = 'all';
 const LG = Object.fromEntries(DATA.leagues.map(l => [l.key, l]));
 const sexOf = l => l.women ? 'women' : 'men';
@@ -224,7 +227,7 @@ const one = () => lg === 'all' ? DATA.leagues[0].key : lg;      // tabs that sho
 $('sub').textContent = `${DATA.leagues.length} leagues, women's and men's · ${DATA.season.replace('-','–')} · updated ${DATA.updated} (Athens)`;
 
 function renderProjections(){
-  let h = `<p class="note">Every match in the next 7 days: the chance it goes 3, 4 or 5 sets, the model's line on total points (where over and under are even). Once the market posts a line, the row shows the market line, the average over price and the model's over chance against it. Only <b>picks</b> are highlighted (gold); they are backed and recorded: overs on lines ${DATA.min_line}.5 to ${DATA.low - 0.5}, the matches the market expects to end 3-0, where the edge is above ${DATA.edge*100}%.</p>`;
+  let h = `<p class="note">Every match in the next 7 days: the chance it goes 3, 4 or 5 sets, the model's line on total points (where over and under are even). Once the market posts a line, the row shows the market line, the average over price and the model's over chance against it. Only <b>picks</b> are highlighted (gold); they are backed and recorded: overs on lines ${DATA.min_line}.5 to ${DATA.low - 0.5}, the matches the market expects to end 3-0, where the edge is above ${DATA.edge*100}%. Over chance and Edge are shown corrected, keeping ${REAL * 100}% of the model's advantage over the price, so a pick can show less than ${DATA.edge*100}%.</p>`;
   h += '<p class="note"><a href="/volleyball/games/">Every game, one page each →</a></p>';
   h = pickTiles() + h;
   const fx = DATA.fixtures.filter(inLg);
@@ -238,7 +241,7 @@ function renderProjections(){
       h += `<tr${g.pick ? ' class="pk"' : ''}><td>${g.dt.slice(11)}</td>${lg === 'all' ? `<td>${LG[g.lg].country} ${sexAb(LG[g.lg])}</td>` : ''}
       <td class="wr">${gameLink(g)}${g.pick ? `<span class="badge">Over ${g.mk.line}</span>` : ''}${g.note ? `<div class="flag">${g.note}</div>` : ''}</td>
       <td class="n">${pct(g.p3)}</td><td class="n">${pct(g.p4)}</td><td class="n">${pct(g.p5)}</td><td class="n"><b>${g.fair}</b></td>
-      ${g.mk ? `<td class="n">${g.mk.line}</td><td class="n">${g.mk.over.toFixed(2)}</td><td class="n">${pct(g.p_over)}</td>${g.edge > 0 ? `<td class="n ${cls(g.edge)}">${sgn(g.edge*100, 0)}%</td>` : '<td class="n muted">–</td>'}` : '<td class="n muted" colspan="4">no line yet</td>'}</tr>`;
+      ${g.mk ? `<td class="n">${g.mk.line}</td><td class="n">${g.mk.over.toFixed(2)}</td><td class="n">${pct(realP(g.p_over, g.mk.over))}</td>${g.edge > 0 ? `<td class="n ${cls(g.edge)}">${sgn(g.edge*REAL*100, 0)}%</td>` : '<td class="n muted">–</td>'}` : '<td class="n muted" colspan="4">no line yet</td>'}</tr>`;
     }
     h += '</tbody></table></div>';
   }
@@ -270,9 +273,8 @@ function renderHome(){
   const span = `${seasons[0].replace('-', '–')} to ${seasons.at(-1).replace('-', '–')}`;
   const best = DATA.leagues.map(l => ({l, s: B.leagues[l.key]})).sort((a, b) => b.s.roi - a.s.roi)
     .map(({l, s}) => `${l.country} ${sexAb(l)} ${sgn(s.roi * 100, 1)}%`).join(', ');
-  // the calibration table's top band, in a sentence: only while the model is clearly too confident there
-  const big = bets.filter(b => b.edge >= 0.4), said = big.reduce((s, b) => s + b.p, 0) / big.length, hit = big.filter(b => b.won).length / big.length;
-  const over = big.length && hit < said - 0.05 ? ` Above a 40% edge the model is too confident: it said ${pct(said)} and those ${big.length} bets won ${pct(hit)}, so a bigger edge is not a bigger real chance (see Calibration in <b>Backtest</b>).` : '';
+  const said = bets.reduce((s, b) => s + b.p, 0) / bets.length, hit = bets.filter(b => b.won).length / bets.length;
+  const over = ` The model is too confident: its bets said ${pct(said)} and won ${pct(hit)}. So the over chance and edge shown on Projections, Picks and Results keep only ${REAL * 100}% of its advantage over the price; picks are still chosen on the model's own figure (see Calibration in <b>Backtest</b>).`;
   return pickTiles() + `<div class="doc">
   <h2>Do the model's overs make a profit?</h2>
   <p>Modestly, on the fair test. With each season's leagues chosen in advance from earlier seasons only, the bets returned <b>${sgn(B.fair.roi * 100, 1)}%</b> over ${B.fair.n} bets (${B.fair.first}–${(B.fair.first + 1) % 100} to ${B.fair.last}–${(B.fair.last + 1) % 100}), against ${sgn(B.fair.left_roi * 100, 1)}% in the leagues left out. Across the leagues as they stand now, ${A.n} bets over ${seasons.length} past seasons returned ${sgn(A.roi * 100, 1)}%, but that figure knows which leagues were kept, so it runs high. Backing every low-line over in these leagues without the model returned ${sgn(A.blind_roi * 100, 1)}%. The ${DATA.season.replace('-', '–')} record above is the real test.</p>
@@ -295,12 +297,12 @@ const fairCell = p => p.fair == null ? '<td class="n muted">–</td>' : `<td cla
 
 function renderPicks(){
   const open = DATA.picks.filter(inLg).filter(p => !('won' in p)).sort((a, b) => a.dt.localeCompare(b.dt));
-  let h = `<p class="note">The picks still to play, logged before the first serve: an over on a line from ${DATA.min_line}.5 to ${DATA.low - 0.5}, when the model's chance × the average price is more than ${DATA.edge*100}% above 1. Leagues: ${liveNames()}. Equal stakes. Until the start a pick follows the latest line. Once played it moves to <b>Results</b>.</p>`;
+  let h = `<p class="note">The picks still to play, logged before the first serve: an over on a line from ${DATA.min_line}.5 to ${DATA.low - 0.5}, when the model's chance × the average price is more than ${DATA.edge*100}% above 1. Leagues: ${liveNames()}. Equal stakes. Until the start a pick follows the latest line. Once played it moves to <b>Results</b>. Over chance and Edge are corrected: they keep ${REAL * 100}% of the model's advantage over the price, as the model runs too confident, so a pick can show an edge under ${DATA.edge*100}%.</p>`;
   if (!open.length) return h + '<p class="empty">No open picks. New ones appear once the market posts lines for a match that qualifies.</p>';
   h += `<div class="scroll"><table><thead><tr><th>Date</th>${lg === 'all' ? '<th>League</th>' : ''}<th>Match</th><th class="n">Market line</th><th class="n">Price</th><th class="n">Model line</th><th class="n">Over chance</th><th class="n">Edge</th></tr></thead><tbody>`;
   for (const p of open)
     h += `<tr><td>${short(p.dt)} ${p.dt.slice(11)}</td>${lg === 'all' ? `<td>${LG[p.lg].country} ${sexAb(LG[p.lg])}</td>` : ''}<td class="wr">${p.home} – ${p.away}</td><td class="n">Over ${p.line}</td><td class="n">${p.px.toFixed(2)}</td>
-      ${fairCell(p)}<td class="n">${pct(p.p)}</td><td class="n ${cls(p.edge)}">${sgn(p.edge*100, 0)}%</td></tr>`;
+      ${fairCell(p)}<td class="n">${pct(realP(p.p, p.px))}</td><td class="n ${cls(p.edge)}">${sgn(p.edge*REAL*100, 0)}%</td></tr>`;
   return h + '</tbody></table></div>';
 }
 
@@ -327,7 +329,7 @@ function renderResults(){
   let run = 0;
   const rows = done.map(p => { run += p.profit;
     return `<tr><td>${short(p.dt)}</td>${lg === 'all' ? `<td>${LG[p.lg].country} ${sexAb(LG[p.lg])}</td>` : ''}<td class="wr">${p.home} – ${p.away}</td><td class="n">Over ${p.line}</td><td class="n">${p.px.toFixed(2)}</td>
-      ${fairCell(p)}<td class="n">${pct(p.p)}</td><td class="n">${sgn(p.edge*100, 0)}%</td><td class="n">${p.sets}</td><td class="n ${p.won ? 'w' : 'l'}">${p.total}</td></tr>`; });
+      ${fairCell(p)}<td class="n">${pct(realP(p.p, p.px))}</td><td class="n">${sgn(p.edge*REAL*100, 0)}%</td><td class="n">${p.sets}</td><td class="n ${p.won ? 'w' : 'l'}">${p.total}</td></tr>`; });
   return h + rows.reverse().join('') + '</tbody></table></div>';
 }
 
@@ -350,10 +352,20 @@ function renderSeason(){
   return h + `</tbody></table><p class="note" style="margin-top:12px">Home side: ${(LG[k].home_adv*100).toFixed(1)}% of rallies between equal teams.</p></div></div>`;
 }
 
+// the record tiles of Home and Projections, for the backtest bets of the view (the tuned-on season left out, as in the totals)
+function btTiles(S){
+  const tuned = new Set(DATA.backtest.seasons.filter(s => s.tuned).map(s => s.lg + '|' + s.season));
+  const g = DATA.backtest.bets.filter(b => inLg(b) && !tuned.has(b.lg + '|' + b.season)), avg = `avg of ${g.length} bets`;
+  const t = [['Bets', S.n, 'past seasons'], ['Record', `${S.w}–${S.n - S.w}`, 'win – loss'], ['Hit rate', S.n ? pct(S.w / S.n) : '–', `${S.n} bets`],
+             ['ROI', S.n ? `<span class="${cls(S.roi)}">${sgn(S.roi * 100, 1)}%</span>` : '–', `${S.n} bets`],
+             ['Market line', avgLine(g, 'line'), avg], ['Model line', avgLine(g, 'fair'), avg], ['Actual total', avgLine(g, 'total'), avg]];
+  return `<div class="metrics">${t.map(([l, v, n]) => `<div class="metric"><div class="lbl">${l}</div><div class="big">${v}</div><div class="sm">${n}</div></div>`).join('')}</div>`;
+}
+
 function renderBacktest(){
   const B = DATA.backtest, S = lg === 'all' ? B.all : B.leagues[lg];
   let h = `<p class="note">The live rule run on every past season since ${B.first.slice(0,4)} (the ${DATA.season.replace('-','–')} season is live: its picks are in <b>Picks</b> and <b>Results</b>), each match projected from the earlier matches of that season only, with no pick before both teams have played ${DATA.min_games}, at the closing line and the average price. The settings were tuned on Turkey's women's Sultanlar Ligi 2024-25 alone, so the totals leave that season out and every other season is a test the model never saw. These totals know which leagues were kept, so they run high: Home gives the fair figure. Lines of ${DATA.min_line - 1}.5 or lower are left out. ${S.blind_n ? `<b>Backing every low-line over without the model</b> returned ${sgn(S.blind_roi*100, 1)}% over ${S.blind_n} matches.` : `<b>This league never has a line below ${DATA.low}</b> (its totals run higher), so the rule has had nothing to bet on.`}</p>`;
-  h += tiles([['Bets', S.n], ['Hit rate', S.n ? pct(S.w / S.n) : '–'], ['ROI', sgn(S.roi*100, 1) + '%', cls(S.roi)]]);
+  h += btTiles(S);
   if (lg === 'all'){
     h += `<p class="note">${lg === 'all' && DATA.leagues.some(l => !l.live) ? 'The totals above count the leagues with live picks only. ' : ''}Click a league to see its seasons and bets.</p>`;
     h += `<div class="scroll"><table style="max-width:760px"><thead><tr><th>League</th><th class="n">Bets</th><th class="n">Hit</th><th class="n">ROI</th><th class="n">No model</th></tr></thead><tbody>`;
