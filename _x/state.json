@@ -158,7 +158,8 @@
       "the-definitive-guide-a-z-of-betting",
       "interception-the-secrets-of-modern",
       "football-the-philosophy-behind-the",
-      "tiny-experiments-how-to-live-freely"
+      "tiny-experiments-how-to-live-freely",
+      "game-theory"
     ],
     "log": [
       {
@@ -436,9 +437,15 @@
         "slot": "2026-11-05 14",
         "slug": "tiny-experiments-how-to-live-freely",
         "id": "2118312443432829280"
+      },
+      {
+        "day": "2026-11-06",
+        "slot": "2026-11-06 14",
+        "slug": "game-theory",
+        "id": "2118674811886911670"
       }
     ],
-    "last_day": "2026-11-05"
+    "last_day": "2026-11-06"
   },
   "film": {
     "seen": [
@@ -944,7 +951,7 @@
     ],
     "last_day": "2026-11-05"
   },
-  "last_slot": "2026-11-06 11",
+  "last_slot": "2026-11-06 14",
   "quote": {
     "seen": [
       "1",
