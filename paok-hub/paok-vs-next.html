@@ -112,7 +112,6 @@
   .unavail-row i { flex: none; font-style: normal; font-size: 12px; font-weight: 600; padding: 1px 7px; border-radius: 999px; border: 1px solid currentColor; }
   .unavail-row i.out { color: var(--bad); }
   .unavail-row i.doubtful { color: #d9a441; }
-  .unavail-foot { margin: 10px 0 0; font-size: 12.5px; color: var(--ink-dim); line-height: 1.5; }
   @media (max-width: 640px) { .unavail-grid { grid-template-columns: 1fr; } }
   .meta-pill {
     font-family:var(--an-mono);
@@ -243,7 +242,6 @@
     <section class="unavail" id="unavail" hidden>
       <p class="pos-label"><span class="dot"></span>Unavailable</p>
       <div class="unavail-grid" id="unavail-grid"></div>
-      <p class="unavail-foot" id="unavail-foot"></p>
     </section>
     <p id="load-status" class="sub" style="display:none; margin-top:14px; color:var(--bad);"></p>
 
@@ -484,13 +482,6 @@
           row.appendChild(b); row.appendChild(s); row.appendChild(i); card.appendChild(row);
         });
         grid.appendChild(card);
-      });
-      var foot = document.getElementById('unavail-foot');
-      foot.appendChild(document.createTextNode('From press reports, as of ' + u.updated + ', not official squad lists: '));
-      u.sources.forEach(function (src, n) {
-        if (n) foot.appendChild(document.createTextNode(', '));
-        var a = document.createElement('a'); a.href = src.url; a.target = '_blank'; a.rel = 'noopener'; a.textContent = src.name;
-        foot.appendChild(a);
       });
       document.getElementById('unavail').hidden = false;
     }).catch(function () {});
