@@ -4,10 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Women's basketball totals: is there a gap in the pricing?</title>
-<meta name="description" content="Women's basketball totals in European domestic leagues: market analysis, backtests against the closing line and a live record of two signals.">
+<meta name="description" content="Women's basketball totals in European domestic leagues: backtests against the closing line, picks, projections and findings.">
 <link rel="canonical" href="https://antonisnikolitsopoulos.com/basketball/women/">
 <meta property="og:title" content="Women's basketball totals: is there a gap in the pricing?">
-<meta property="og:description" content="Women's basketball totals in European domestic leagues: market analysis, backtests against the closing line and a live record of two signals.">
+<meta property="og:description" content="Women's basketball totals in European domestic leagues: backtests against the closing line, picks, projections and findings.">
 <meta property="og:url" content="https://antonisnikolitsopoulos.com/basketball/women/">
 <meta property="og:image" content="https://antonisnikolitsopoulos.com/basketball-overs.jpg">
 <meta name="twitter:card" content="summary_large_image">
@@ -184,119 +184,274 @@ a.tile:hover{border-color:var(--gold)}
   <nav class="tabs an-tabs" id="tabs" aria-label="Sections">
     <a href="#view=home" data-view="home" class="on">Home</a>
     <a href="#view=picks" data-view="picks">Picks</a>
+    <a href="#view=leagues" data-view="leagues">Leagues</a>
     <a href="#view=backtest" data-view="backtest">Backtest</a>
+    <a href="#view=projections" data-view="projections">Projections</a>
     <a href="#view=testing" data-view="testing">Testing leagues</a>
-    <a href="#view=market" data-view="market">Market</a>
     <a href="#view=method" data-view="method">How it works</a>
   </nav>
 </div></header>
 <div class="wrap">
   <div class="tiles" id="top"></div>
   <div class="sub" id="sub"></div>
+  <div class="chips" id="chips"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=4"></script>
+<script src="data.js?v=w5"></script>
 <script src="live.js"></script>
 <script>
-const D = window.DATA, L = window.LIVE || {picks: [], updated: ""};
-const out = document.getElementById("out"), $top = document.getElementById("top"), $sub = document.getElementById("sub");
-const sgn = (v, d = 1) => (v > 0 ? "+" : v < 0 ? "−" : "") + Math.abs(v).toFixed(d);
-const pc = v => `<span class="${v > 0 ? "pos" : v < 0 ? "neg" : ""}">${sgn(v)}%</span>`;
-const un = v => `<span class="${v > 0 ? "pos" : v < 0 ? "neg" : ""}">${sgn(v, 2)}u</span>`;
-const when = ts => new Date(ts * 1000).toLocaleString("en-GB", {timeZone: "Europe/Athens", day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit"});
-const mainP = L.picks.filter(p => !p.test), testP = L.picks.filter(p => p.test);
-const done = mainP.filter(p => p.r !== undefined), open = mainP.filter(p => p.r === undefined);
-function rec(ps) {
-  const w = ps.filter(p => p.r > 0).length, l = ps.filter(p => p.r < 0).length, u = ps.reduce((a, p) => a + p.r, 0);
-  return {w, l, u, roi: ps.length ? u / ps.length * 100 : 0, n: ps.length};
-}
-const all = rec(done);
-$top.innerHTML = [["Open picks", open.length], ["Record", `${all.w}–${all.l}`], ["Return", all.n ? un(all.u) : "–"], ["ROI", all.n ? pc(all.roi) : "–"]]
-  .map(([k, v]) => `<div class="tile"><span class="klabel">${k}</span><span class="stat">${v}</span></div>`).join("");
-$sub.textContent = `${D.main} leagues · ${D.test.count} in testing · backtest 2023–24 to Oct 2026 · live test since 6 Nov 2026`;
+const $ = id => document.getElementById(id);
+const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const dayName = s => { const d = new Date(s.slice(0,10)+'T12:00'); return `${DAYS[d.getDay()]} ${d.getDate()} ${MON[d.getMonth()]}`; };
+const short = s => { const d = new Date(s.slice(0,10)+'T12:00'); return `${d.getDate()} ${MON[d.getMonth()]}`; };
+const pct = (x, d=0) => x == null ? '–' : (x*100).toFixed(d) + '%';
+const sgn = (x, d=1) => x == null ? '–' : (x > 0 ? '+' : x < 0 ? '−' : '') + Math.abs(x).toFixed(d);
+const roi = x => x == null ? '–' : sgn(x*100, 1) + '%';
+const cls = x => x > 0 ? 'pos' : x < 0 ? 'neg' : '';
+const sn = s => s.replace('-', '–');
+let view = 'home', lg = 'all', open = null;
+const LG = Object.fromEntries(DATA.leagues.map(l => [l.key, l]));
+const lgName = k => `${LG[k].country} · ${LG[k].name}`;
+const lgFull = l => l.country === 'Europe' ? l.name : `${l.country} <span class="muted">${l.name}</span>`;
+const lgShort = k => LG[k].short;
+const sd = b => b.side === 'u' ? 'Under' : 'Over';
+const inLg = x => lg === 'all' || x.lg === lg;
+const R = DATA.rule;
+const LE = () => LIVE.edge ?? R.edge;
+const RL = k => !LIVE.leagues || LIVE.leagues.includes(k);
+const LIVE = window.LIVE || {updated: DATA.updated, fixtures: DATA.fixtures, picks: [], tracked: 0, start: '6 Nov 2026', taken: {n: 0}, over: {n: 0}, under: {n: 0}, rule: {n: 0}};
+LIVE.fixtures = LIVE.fixtures.filter(g => LG[g.lg]);                       // leagues no longer on the page
+LIVE.picks = (LIVE.picks || []).filter(b => LG[b.lg]);
+if (LIVE.leagues) LIVE.leagues = LIVE.leagues.filter(k => LG[k]);
 
-function tbl(cols, rows) {
-  const id = "t" + Math.random().toString(36).slice(2);
-  return `<div class="scroll"><table class="sortable" id="${id}"><thead><tr>${cols.map(c => `<th class="sort${c.n ? " n" : ""}">${c.h}</th>`).join("")}</tr></thead><tbody>` +
-    rows.map(r => `<tr>${cols.map(c => `<td class="${c.n ? "n" : ""}" data-v="${c.v ? c.v(r) : ""}">${c.f(r)}</td>`).join("")}</tr>`).join("") + `</tbody></table></div>`;
-}
-const STAT = [{h: "", f: r => r.s, v: r => r.s}, {h: "Picks", n: 1, f: r => r.n, v: r => r.n}, {h: "Hit", n: 1, f: r => r.hit.toFixed(1) + "%", v: r => r.hit},
-  {h: "Units", n: 1, f: r => sgn(r.u), v: r => r.u}, {h: "ROI", n: 1, f: r => pc(r.roi), v: r => r.roi},
-  {h: "Open", n: 1, f: r => r.o === undefined ? "–" : r.o.toFixed(1), v: r => r.o}, {h: "Close", n: 1, f: r => r.c === undefined ? "–" : r.c.toFixed(1), v: r => r.c}];
-const stat = (head, rows) => tbl([{...STAT[0], h: head}, ...STAT.slice(1)], rows);
+$('sub').textContent = `${DATA.leagues.length} Leagues · backtest 2023–24 to 2025–26 · 2026–27 record · updated ${LIVE.updated} (Athens)`;
 
-function pickView(done, open) {
-  const P = {model: "Model", gap: "Line gap"};
-  const cols = [{h: "Tip-off", f: p => when(p.ts), v: p => p.ts}, {h: "League", f: p => p.league, v: p => p.league}, {h: "Game", f: p => `${p.home} – ${p.away}`, v: p => p.home},
-    {h: "Signal", f: p => P[p.sig], v: p => p.sig}, {h: "Pick", f: p => `${p.side} ${p.line}`, v: p => p.line}, {h: "Open", n: 1, f: p => p.open ?? "–", v: p => p.open ?? 0}, {h: "Price", n: 1, f: p => p.price.toFixed(2), v: p => p.price}];
-  const res = [...cols, {h: "Close", n: 1, f: p => p.close ?? "–", v: p => p.close ?? 0}, {h: "Total", n: 1, f: p => p.total, v: p => p.total}, {h: "Return", n: 1, f: p => un(p.r), v: p => p.r}];
-  const by = k => rec(done.filter(p => p.sig === k));
-  const row = (n, r) => `<tr><td>${n}</td><td class="n">${r.n}</td><td class="n">${r.w}–${r.l}</td><td class="n">${r.n ? un(r.u) : "–"}</td><td class="n">${r.n ? pc(r.roi) : "–"}</td></tr>`;
-  let h = `<p class="note">Picks are logged at the line and price on offer the first time a signal fires, and never changed. Prices are the average of the books at that line. A few hundred picks are needed before the record says much.</p>`;
-  h += `<h2>Record</h2><div class="scroll"><table><thead><tr><th>Signal</th><th class="n">Picks</th><th class="n">Record</th><th class="n">Return</th><th class="n">ROI</th></tr></thead><tbody>${row("Model", by("model"))}${row("Line gap", by("gap"))}</tbody></table></div>`;
-  h += `<h2>Open picks</h2>` + (open.length ? tbl(cols, [...open].sort((a, b) => a.ts - b.ts)) : `<p class="empty">No open picks.</p>`);
-  h += `<h2>Results</h2>` + (done.length ? tbl(res, [...done].sort((a, b) => b.ts - a.ts)) : `<p class="empty">No results yet.</p>`);
-  return h + (L.updated ? `<p class="muted">Updated ${L.updated} Athens time.</p>` : "");
+// top tiles: the whole 2026-27 record, as on the Picks tab (ROI = return over wins + losses)
+{
+  const set = [...((DATA.cur || {}).bets || []), ...LIVE.picks.filter(b => b.done && b.ret != null)], won = set.filter(b => b.ret > 0).length, lost = set.filter(b => b.ret < 0).length;
+  const units = set.reduce((a, b) => a + b.ret, 0), nOpen = LIVE.picks.filter(b => !b.done).length;
+  // average line bet and average closing line, over every settled 2026-27 bet that has a close
+  const cl = set.filter(b => b.close != null && b.open != null), avg = f => (cl.reduce((a, b) => a + f(b), 0) / cl.length).toFixed(1);
+  $('top').innerHTML = [['Open picks', nOpen, nOpen ? 'to play' : 'none right now'], ['Record', `${won}–${lost}`, 'win – loss'],
+    ['ROI', won + lost ? `<span class="${cls(units)}">${roi(units / (won + lost))}</span>` : '–', `${won + lost} settled picks`],
+    ...(cl.length ? [['Opening line', avg(b => b.open), `avg of ${cl.length} settled picks`], ['Closing line', avg(b => b.close), `avg of ${cl.length} settled picks`], ['Actual total', avg(b => b.total), `avg of ${cl.length} settled picks`]] : [])]
+    .map(([k, v, n]) => `<a class="tile" href="#view=picks"><span class="klabel">${k}</span><span class="stat">${v}</span><span class="small">${n}</span></a>`).join('');
 }
-const V = {
-home() {
-  const a = D.all, s = D.s1.all, b = D.s2.all, m = D.market;
-  return `<div class="verdict"><h2>Is there a gap in the pricing?</h2><p>In the backtest, yes. Two signals made a profit, and the first one held up all the way to the closing line, which the same model does not do in men's basketball. That is a backtest result, not proof: the live record only began on 6 Nov 2026, and the 2026–27 games before that were a loss for the model. Break-even at these prices is about 54.6%.</p></div>
-  <div class="find"><h3><span class="num">1</span>Women's lines barely move</h3><p>${m[0].moved}% of lines moved between open and close in 2025–26, against ${m[1].moved}% in the men's leagues, and by ${m[0].mv} points on average against ${m[1].mv}. The moves add almost nothing: the average miss goes from ${m[0].mae_o} points at the open to ${m[0].mae_c} at the close.</p></div>
-  <div class="find"><h3><span class="num">2</span>A simple team model finds value at the close</h3><p>Overs and unders with an edge above 4%, all leagues: ${a.n.toLocaleString("en-GB")} picks, ${a.hit}% hit, ${sgn(a.roi)}% ROI. The same code on men's games made no reliable profit at the close.</p></div>
-  <div class="find"><h3><span class="num">3</span>A line far from the others is often wrong</h3><p>When one book opened 5 to 12 points from the rest, the favourable side made ${sgn(b.roi)}% over ${b.n} picks, positive in 2024–25, 2025–26 and so far in 2026–27. It is unknown how many of those opening lines could really have been taken, which is what the live test measures.</p></div>
-  <div class="find"><h3><span class="num">4</span>The published leagues were chosen from the same backtest</h3><p>Picks are published from ${D.main} leagues: ${s.n} picks, ${s.hit}% hit, ${sgn(s.roi)}% ROI. Choosing the leagues with hindsight flatters that figure, so the ${sgn(a.roi)}% across all leagues is the fairer guide. Choosing them from earlier seasons only made ${sgn(D.wf.roi)}% against ${sgn(D.wf.rest)}% for the rest, on just ${D.wf.n} picks.</p></div>
-  <div class="find"><h3><span class="num">5</span>Betting blind loses</h3><p>Overs and unders lose in every season once the margin of about 9% is paid. Choosing leagues by their past over rate did not make a reliable profit.</p></div>`;
-},
-picks() { return pickView(done, open); },
-testing() {
-  const t = D.test;
-  let h = `<p class="note">Leagues that did not meet the bar for the main record. They run under the same rules and are logged the same way, but stay out of the main record and the tiles at the top. A league moves up only by a decision to add it.</p>`;
-  h += pickView(testP.filter(p => p.r !== undefined), testP.filter(p => p.r === undefined));
-  return h + `<h2>Backtest</h2><div class="metrics">${[["Picks", t.all.n], ["Hit", t.all.hit + "%"], ["ROI", sgn(t.all.roi) + "%"], ["Units", sgn(t.all.u)]].map(([k, v]) => `<div class="metric"><div class="lbl">${k}</div><div class="big">${v}</div></div>`).join("")}</div>` + stat("League", t.leagues);
-},
-backtest() {
-  const s = D.s1;
-  let h = `<p class="note">The ${D.main} leagues in the main record. <b>They were chosen from these same results, so these figures are flattering.</b> All leagues together made ${sgn(D.all.roi)}% on ${D.all.n.toLocaleString("en-GB")} picks. Each season's model is fitted only on earlier seasons, and the 2026–27 rows are the games before the live test began. Click a column heading to sort.</p>`;
-  h += `<h2>Model at the closing line</h2><div class="metrics">${[["Picks", s.all.n.toLocaleString("en-GB")], ["Hit", s.all.hit + "%"], ["ROI", sgn(s.all.roi) + "%"], ["Units", sgn(s.all.u)], ["Worst run", "−" + s.dd + "u"], ["Opening line", s.all.o.toFixed(1)], ["Closing line", s.all.c.toFixed(1)], ["Actual total", s.all.t.toFixed(1)]].map(([k, v]) => `<div class="metric"><div class="lbl">${k}</div><div class="big">${v}</div></div>`).join("")}</div>`;
-  h += `<div class="cols2"><div>${stat("Season", s.seasons)}</div><div>${stat("Side", s.sides)}</div></div>`;
-  h += `<h2>By line</h2><p class="note">Closing line of the pick, in 10-point bands.</p>` + stat("Line", s.bands);
-  h += `<h2>By edge</h2><p class="note">The rule is 4%+; the 2%+ row shows what a lower bar would have done.</p>` + stat("Edge", s.edges);
-  h += `<h2>By league</h2><p class="note">Most leagues have few picks, so a single league's return says little on its own.</p>` + stat("League", s.leagues);
+
+function tiles(list){
+  return `<div class="metrics">${list.map(([l, v, c]) => `<div class="metric"><div class="lbl">${l}</div><div class="big ${c||''}">${v}</div></div>`).join('')}</div>`;
+}
+
+// one table row from a {n, w, roi} group
+const grp = (label, g, extra='', more='') => g && g.n ? `<tr${extra}><td>${label}</td><td class="n">${g.n}</td><td class="n">${pct(g.w / g.n, 1)}</td><td class="n">${g.px ? g.px.toFixed(2) : '–'}</td><td class="n ${cls(g.roi)}">${roi(g.roi)}</td>${more}</tr>` : '';
+const LHEAD = '<th class="n">Opening line</th><th class="n">Closing line</th>';
+const GHEAD = (first, more='') => `<thead><tr><th>${first}</th><th class="n">Picks</th><th class="n">Hit</th><th class="n">Avg price</th><th class="n">ROI</th>${more}</tr></thead>`;
+// average opening and closing line of a list of bets, as two table cells
+const seasonOf = b => { const y = +b.dt.slice(0, 4); return +b.dt.slice(5, 7) >= 7 ? `${y}-${y + 1}` : `${y - 1}-${y}`; };
+const lineAvg = (list, k) => (list.reduce((a, b) => a + b[k], 0) / list.length).toFixed(1);
+const lineCells = list => { const c = list.filter(b => b.close != null && b.open != null); return c.length ? `<td class="n">${lineAvg(c, 'open')}</td><td class="n">${lineAvg(c, 'close')}</td>` : '<td class="n muted">–</td><td class="n muted">–</td>'; };
+
+function renderFindings(){
+  const F = DATA.findings;
+  let h = `<div class="verdict"><h2>Do the model's picks make a profit?</h2><p>${F.verdict}</p></div>`;
+  if (F.note) h += `<p class="note">${F.note}</p>`;
+  h += tiles(F.tiles.map(t => [t[0], t[1], t[2]]));
+  F.items.forEach((f, i) => { h += `<div class="find"><h3><span class="num">${String(i + 1).padStart(2, '0')}</span>${f.h}</h3><p>${f.p}</p></div>`; });
   return h;
-},
-market() {
-  const m = D.market;
-  let h = `<p class="note">The 2025–26 season, women's competitions next to the men's leagues from the totals study.</p>`;
-  h += tbl([{h: "", f: r => r.s}, {h: "Games", n: 1, f: r => r.games.toLocaleString("en-GB")}, {h: "Avg line", n: 1, f: r => r.line}, {h: "Lines moved", n: 1, f: r => r.moved + "%"}, {h: "Avg move", n: 1, f: r => r.mv}, {h: "Miss at open", n: 1, f: r => r.mae_o}, {h: "Miss at close", n: 1, f: r => r.mae_c}, {h: "Margin", n: 1, f: r => r.mar + "%"}], m);
-  const B = [{h: "Picks", n: 1, f: r => r.n.toLocaleString("en-GB"), v: r => r.n}];
-  const O = [{h: "Over %", n: 1, f: r => r.over.toFixed(1) + "%", v: r => r.over}, {h: "Blind over", n: 1, f: r => pc(r.ro), v: r => r.ro}, {h: "Blind under", n: 1, f: r => pc(r.ru), v: r => r.ru}];
-  h += `<h2>By season</h2>` + tbl([{h: "Season", f: r => r.s, v: r => r.s}, ...B, {h: "Books a game", n: 1, f: r => r.books, v: r => r.books}, ...O], D.seasons);
-  h += `<h2>By league, 2023–24 on</h2><p class="note">Leagues with 100 or more priced games, at the closing line. Choosing leagues from these columns did not make a reliable profit in testing.</p>`;
-  h += tbl([{h: "League", f: r => r.s, v: r => r.s}, ...B, {h: "Avg line", n: 1, f: r => r.line, v: r => r.line}, {h: "Avg total", n: 1, f: r => r.act, v: r => r.act}, ...O], D.leagues);
+}
+
+function renderLeagues(){
+  let h = `<p class="note">Regular-season games from ${sn(DATA.first)} on (play-offs are left out of these market columns). The model column starts in 2023–24 and is all out of sample. <b>Over %</b>: how often the game went over the closing line. Blind over: backing the over in every game at the average price. Opening and closing line: the average of those picks. Model picks: overs and unders the rule picked (edge above ${Math.round(R.edge*100)}%), count and ROI. Click a league for its seasons.</p>`;
+  h += `<div class="scroll"><table><thead><tr><th>League</th><th class="n">Games</th><th class="n">Total / line</th><th class="n">Over %</th><th class="n">Blind over</th><th class="n">Model picks</th>${LHEAD}</tr></thead><tbody>`;
+  const mod = g => g.n ? `${g.n} <span class="${cls(g.roi)}">${roi(g.roi)}</span>` : '<span class="muted">–</span>';
+  const row = (label, s, attrs='', list=[]) => `<tr${attrs}><td>${label}</td><td class="n">${s.games}</td><td class="n">${s.avg_total.toFixed(1)} / ${s.avg_line.toFixed(1)}</td><td class="n">${pct(s.over, 1)}</td>
+    <td class="n ${cls(s.blind_over)}">${roi(s.blind_over)}</td>
+    <td class="n">${mod(s.mo)}</td>${lineCells(list)}</tr>`;
+  const tierName = {europe: 'European competitions', top: 'Top divisions', second: 'Second divisions'};
+  for (const tier of ['europe', 'top', 'second']){
+    if (!DATA.leagues.some(l => l.tier === tier)) continue;
+    h += `<tr><td colspan="8" class="tier" style="padding-top:18px">${tierName[tier]}</td></tr>`;
+    for (const l of DATA.leagues.filter(l => l.tier === tier)){
+      const on = open === l.key;
+      h += row(`<span class="caret">${on ? '▾' : '▸'}</span> ${lgFull(l)}`, l.all, ` class="srow${on ? ' on' : ''}" data-open="${l.key}"`, DATA.bets.filter(b => b.lg === l.key));
+      if (on) for (const s of l.seasons) h += row(sn(s.season) + (s.season === DATA.tuned ? ' (tuned on)' : '') + (s.season === DATA.season ? ' (so far)' : ''), s, ' class="sub"', [...DATA.bets, ...((DATA.cur || {}).bets || [])].filter(b => b.lg === l.key && seasonOf(b) === s.season));
+    }
+  }
+  return h + '</tbody></table></div>';
+}
+
+function renderBacktest(){
+  const B = DATA.backtest, S = lg === 'all' ? B.all : B.leagues[lg];
+  let h = `<p class="note">${B.note} Click a column heading to sort.</p>`;
+  if (!S || !S.rule.n) return h + '<p class="empty">The rule made no picks in this league.</p>';
+  const BT = DATA.bets.filter(inLg);
+  h += tiles([['Picks', S.rule.n], ['Hit rate', pct(S.rule.w / S.rule.n, 1)], ['ROI', roi(S.rule.roi), cls(S.rule.roi)],
+              ['Opening line', lineAvg(BT.filter(b => b.open != null), 'open')], ['Closing line', lineAvg(BT, 'close')]]);
+  h += `<h2>By season</h2><div class="scroll"><table style="max-width:980px">${GHEAD('Season', LHEAD)}<tbody>`;
+  for (const s of S.seasons) h += grp(sn(s.season) + (s.season === DATA.tuned ? ' <span class="muted">(tuned on)</span>' : '') + (s.season === DATA.season ? ' <span class="muted">(so far)</span>' : ''), s, '', lineCells(BT.filter(b => seasonOf(b) === s.season)));
+  h += '</tbody></table></div>';
+  if (lg === 'all'){
+    h += `<h2>By league</h2><p class="note">Unseen seasons. Click a league to see it alone.</p><div class="scroll"><table style="max-width:980px">${GHEAD('League', LHEAD)}<tbody>`;
+    for (const l of DATA.leagues.filter(l => B.leagues[l.key] && B.leagues[l.key].rule.n).sort((a, b) => B.leagues[b.key].rule.roi - B.leagues[a.key].rule.roi))
+      h += grp(`<a href="#view=backtest&lg=${l.key}" style="color:inherit;text-decoration:none">${lgFull(l)}</a>`, B.leagues[l.key].rule, '', lineCells(DATA.bets.filter(b => b.lg === l.key)));
+    h += '</tbody></table></div>';
+  }
+  h += `<h2>By edge</h2><div class="scroll"><table style="max-width:980px">${GHEAD('Edge', LHEAD)}<tbody>`;
+  const byEdge = [...BT].sort((x, y) => y.edge - x.edge);   // bets store a rounded edge, so take each row's count from the top
+  for (const e of S.edges) h += grp(`${Math.round(e.edge * 100)}%+`, e, '', lineCells(byEdge.slice(0, e.n)));   // each row counts everything above it, so 6%+ covers the small top rows
+  h += `</tbody></table></div><h2>By month</h2><div class="scroll"><table style="max-width:980px">${GHEAD('Month', LHEAD)}<tbody>`;
+  for (const m of S.months) h += grp(MON[m.m - 1], m, '', lineCells(BT.filter(b => +b.dt.slice(5, 7) === m.m)));
+  h += '</tbody></table></div>';
+  h += `<h2>By line</h2><p class="note">The line of the pick in 10-point bands.</p><div class="scroll"><table style="max-width:980px">${GHEAD('Line band', LHEAD)}<tbody>`;
+  for (const b of S.lines || []) h += grp(`${b.lo}–${b.lo + 9.5}`, b, '', lineCells(BT.filter(x => x.line >= b.lo && x.line < b.lo + 10)));
+  h += '</tbody></table></div>';
+  return h + bets();
+}
+
+function bets(){
+  const list = DATA.bets.filter(inLg);
+  if (!list.length) return '';
+  let run = 0;
+  const rows = list.map(b => { run += b.ret;
+    return `<tr><td data-s="${b.dt}">${short(b.dt)} ${b.dt.slice(0,4)}</td>${lg === 'all' ? `<td>${lgShort(b.lg)}</td>` : ''}<td class="wr">${b.home} – ${b.away}</td><td class="n">${b.side === 'o' ? 'Over' : 'Under'} ${b.line}</td><td class="n">${b.px.toFixed(2)}</td><td class="n">${b.mu.toFixed(1)}</td><td class="n">${pct(b.p)}</td><td class="n">${sgn(b.edge*100, 0)}%</td><td class="n">${b.close ?? '–'}</td><td class="n ${b.ret > 0 ? 'w' : b.ret < 0 ? 'l' : ''}">${b.total}</td></tr>`; });
+  return `<h2>Every pick, latest first</h2><p class="note">${list.length} picks in unseen seasons${list.length > 400 ? ', the latest 400 shown' : ''}.</p><div class="scroll"><table><thead><tr><th>Date</th>${lg === 'all' ? '<th>League</th>' : ''}<th>Match</th><th class="n">Pick</th><th class="n">Price</th><th class="n">Model</th><th class="n">Chance</th><th class="n">Edge</th><th class="n">Closing line</th><th class="n">Total</th></tr></thead><tbody>${rows.reverse().slice(0, 400).join('')}</tbody></table></div>`;
+}
+
+function renderProjections(){
+  let h = `<p class="note">Games in the next 7 days with the model's projected total (fitted on earlier games only) next to the market's consensus line. Only games that meet the rule (both teams ${LIVE.min_gp ?? 3}+ games) get an edge here, the better of the over and the under; highlighted games are logged in the Picks tab at the line and price shown when they were first seen, and their edge is the one at that moment, while the line and prices keep updating. Click a match for its page, with the projection and how it was produced. Click a column heading to sort.</p>`;
+  const fx = LIVE.fixtures.filter(inLg);
+  if (!fx.length) return h + '<p class="empty">No games in the next 7 days.</p>';
+  const taken = Object.fromEntries(LIVE.picks.map(b => [b.home + '|' + b.away, b]));   // a pick keeps the edge it was taken at
+  const byDay = {};
+  fx.forEach(g => (byDay[g.dt.slice(0,10)] ||= []).push(g));
+  const head = `<thead><tr><th>Time</th>${lg === 'all' ? '<th>League</th>' : ''}<th>Match</th><th class="n">Model</th><th class="n">Line</th><th class="n">Over</th><th class="n">Under</th><th class="n">Over chance</th><th class="n">Edge</th></tr></thead>`;
+  for (const [d, gs] of Object.entries(byDay)){
+    h += `<h2 class="day">${dayName(d)}</h2><div class="scroll"><table class="proj">${head}<tbody>`;
+    for (const g of gs){
+      const t = g.pick && taken[g.home + '|' + g.away], e = t ? t.edge : g.line == null || !(g.ok ?? RL(g.lg)) ? null : Math.max(g.eo, g.eu);
+      h += `<tr${g.pick ? ' class="pk"' : ''}><td>${g.dt.slice(11)}</td>${lg === 'all' ? `<td>${lgShort(g.lg)}</td>` : ''}
+        <td class="wr">${g.slug ? `<a class="gm" href="games/${g.slug}/">${g.home} – ${g.away}</a>` : `${g.home} – ${g.away}`}${g.pick ? `<span class="badge">${g.pick}</span>` : ''}</td><td class="n"><b>${g.mu.toFixed(1)}</b></td>
+        ${g.line == null ? '<td class="n muted" colspan="5">no line yet</td>' : `<td class="n">${g.line}</td><td class="n">${g.op.toFixed(2)}</td><td class="n">${g.up.toFixed(2)}</td><td class="n">${pct(g.p)}</td><td class="n ${t || e > LE() ? 'pos' : 'muted'}">${e == null ? '–' : sgn(e*100, 0) + '%'}</td>`}</tr>`;
+    }
+    h += '</tbody></table></div>';
+  }
   return h;
-},
-method() {
-  return `<div class="doc"><h3><span class="num">1</span>Data</h3><p>${D.games.toLocaleString("en-GB")} priced games in ${D.comps} European domestic leagues from 2020–21, with opening and closing total lines. A book's overtime market settles on the final score and its regulation market on the score after four quarters. Placeholder lines and lines far from any plausible total were removed.</p>
-  <h3><span class="num">2</span>Model</h3><p>Each team gets a points tendency from its earlier games, with recent games counting more and earlier seasons counting less. The settings come from the men's totals model and were not tuned on women's games.</p>
-  <h3><span class="num">3</span>Model signal</h3><ul><li>Overs and unders</li><li>Edge above 4% at the line on offer</li><li>Both teams at least 3 games into the season</li><li>Model within 12 points of the line</li></ul>
-  <h3><span class="num">4</span>Line gap signal</h3><ul><li>At least three books pricing the game</li><li>One book 5 to 12 points from the median of the others</li><li>Take the favourable side at that book: the over at a low line, the under at a high one</li></ul>
-  <h3><span class="num">5</span>Leagues</h3><p>A league joins the main record with at least 20 backtest picks, ROI above +10% and a profit in at least two of the three full seasons from 2023–24. Every other league stays in Testing leagues under the same rules.</p>
-  <h3><span class="num">6</span>Live test</h3><p>The rules were frozen on 6 Nov 2026 and picks are logged about every hour. In the live test the line gap signal uses the lines on offer at that moment, not the reported openings, so every pick is a price that was there to take. Stake limits are not measured, and they can be low in these markets.</p></div>`;
-}};
-function sortable() {
-  out.querySelectorAll("table.sortable").forEach(t => t.querySelectorAll("th").forEach((th, i) => th.onclick = () => {
-    const b = t.tBodies[0], d = th.dataset.d === "1" ? -1 : 1; th.dataset.d = d === 1 ? "1" : "0";
-    const val = r => { const s = r.cells[i].dataset.v, n = parseFloat(s); return s !== "" && !isNaN(n) ? n : s; };
-    [...b.rows].sort((x, y) => { const p = val(x), q = val(y); return (p > q ? 1 : p < q ? -1 : 0) * d; }).forEach(r => b.appendChild(r));
-  }));
 }
-function show() {
-  const v = (location.hash.match(/view=(\w+)/) || [])[1], k = V[v] ? v : "home";
-  document.querySelectorAll("#tabs a").forEach(a => a.classList.toggle("on", a.dataset.view === k));
-  out.innerHTML = V[k](); sortable();
+
+function renderPicks(){
+  // open picks first, then this season's record: October bets (same rules, worked out from results) + bets logged live
+  const open = LIVE.picks.filter(b => !b.done).sort((a, b) => a.dt < b.dt ? -1 : 1);
+  const fx = Object.fromEntries(LIVE.fixtures.map(g => [g.home + '|' + g.away, g]));
+  let h = `<p class="note">Picks to take: overs and unders where the model's edge is above ${Math.round(LE()*100)}% at the line on offer, both teams ${LIVE.min_gp ?? 3}+ games, model within 12 points of the line, equal stakes. ROI = profit ÷ total staked on won and lost picks; pushes are left out. Every hour the model checks every game in the next 7 days; a pick is logged the first time its edge clears the bar, at that line and the average price, and never changed. Updated ${LIVE.updated} (Athens).</p>`;
+  if (!open.length) h += '<p class="empty">No open picks right now. New ones appear here as lines open.</p>';
+  else {
+    h += `<h2>Open picks</h2><div class="scroll"><table class="proj"><thead><tr><th>Tip-off</th><th>League</th><th>Match</th><th class="n">Pick</th><th class="n">Price</th><th class="n">Model total</th><th class="n">Edge</th><th class="n">Line now</th></tr></thead><tbody>` +
+      open.map(b => { const g = fx[b.home + '|' + b.away] || {};
+        return `<tr class="pk"><td data-s="${b.dt}">${dayName(b.dt)} ${b.dt.slice(11)}</td><td>${lgShort(b.lg)}</td><td class="wr">${b.home} – ${b.away}</td><td class="n"><b>${sd(b)} ${b.line}</b></td><td class="n">${b.px.toFixed(2)}</td><td class="n">${g.mu != null ? g.mu.toFixed(1) : '–'}</td><td class="n pos">${sgn(b.edge*100, 0)}%</td><td class="n">${g.line ?? '–'}</td></tr>`; }).join('') +
+      '</tbody></table></div>';
+  }
+  const pre = ((DATA.cur || {}).bets || []).map(b => ({...b, pre: true, done: true, close: b.close ?? null}));
+  const all = [...pre, ...LIVE.picks].sort((a, b) => a.dt < b.dt ? -1 : 1);
+  const set = all.filter(b => b.done && b.ret != null), won = set.filter(b => b.ret > 0).length;
+  const units = set.reduce((a, b) => a + b.ret, 0), nDec = set.filter(b => b.ret !== 0).length, R_ = nDec ? units / nDec : null;
+  const mv = b => (b.close - b.line) * (b.side === 'u' ? -1 : 1), cl = all.filter(b => !b.pre && b.close != null), up = cl.filter(b => mv(b) > 0).length, dn = cl.filter(b => mv(b) < 0).length;
+  h += `<h2>The ${sn(DATA.season)} record</h2>`;
+  h += tiles([['Picks', String(all.length)], ['Settled', String(set.length)], ['Hit rate', set.length ? pct(won / set.length, 1) : '–'],
+              ['ROI', roi(R_), cls(R_)],
+              ['Closing line moved toward the pick', cl.length ? pct(up / cl.length) : '–'], ['Closing line moved against it', cl.length ? pct(dn / cl.length) : '–']]);
+  h += `<p class="note">The closing line moved toward the pick when it ended above an over or below an under; those two tiles cover picks logged live. Picks before ${LIVE.start} come from the same rules applied to those games. A few hundred picks are needed before the record says much. Click a column heading to sort.</p>`;
+  if (!set.length) return h + '<p class="empty">No settled picks yet.</p>';
+  let run = 0;
+  const rows = all.filter(b => b.done).map(b => {   // open picks are in the table above
+    if (b.ret != null) run += b.ret;
+    const res = !b.done ? '<td class="n muted">to play</td>' : b.ret == null ? '<td class="n muted">void</td>' :
+      `<td class="n">${b.total}</td>`;
+    return `<tr><td data-s="${b.dt}">${short(b.dt)}${b.dt.length > 10 ? ' ' + b.dt.slice(11) : ''}</td><td>${lgShort(b.lg)}</td><td class="wr">${b.home} – ${b.away}</td><td class="n"><b>${sd(b)} ${b.line}</b></td>
+      <td class="n">${b.px.toFixed(2)}</td><td class="n pos">${sgn(b.edge*100, 0)}%</td><td class="n">${b.close ?? '–'}</td>${res}</tr>`;
+  });
+  return h + `<h2>Settled picks, latest first</h2><div class="scroll"><table><thead><tr><th>Tip-off</th><th>League</th><th>Match</th><th class="n">Pick</th><th class="n">Price</th><th class="n">Edge</th><th class="n">Closing line</th><th class="n">Total</th></tr></thead><tbody>${rows.reverse().join('')}</tbody></table></div>`;
 }
-addEventListener("hashchange", show); show();
+
+// click a column heading to sort its table (again to reverse); league groups keep their season rows
+function cellAt(r, col){ let i = 0; for (const c of r.cells){ if (col < i + c.colSpan) return c.colSpan > 1 ? null : c; i += c.colSpan; } return null; }
+document.addEventListener('click', e => {
+  const th = e.target.closest('#out th'); if (!th) return;
+  const table = th.closest('table'), tb = table.tBodies[0]; if (!tb) return;
+  let col = 0; for (const x of th.parentNode.children){ if (x === th) break; col += x.colSpan; }
+  const dir = th.classList.contains('sd') ? 'asc' : 'desc', num = th.classList.contains('n');
+  table.querySelectorAll('th').forEach(x => x.classList.remove('sa', 'sd'));
+  th.classList.add(dir === 'asc' ? 'sa' : 'sd');
+  const groups = [];
+  for (const r of [...tb.rows]){
+    if (r.querySelector('td.tier')){ r.style.display = 'none'; continue; }
+    if (r.classList.contains('sub') && groups.length) groups[groups.length - 1].push(r); else groups.push([r]);
+  }
+  const key = r => { const c = cellAt(r, col); if (!c) return null; if (c.dataset.s) return c.dataset.s;
+    const t = c.textContent.replace(/−/g, '-').replace(/,/g, '').trim(); if (!t || t === '–') return null;
+    if (!num) return t.toLowerCase(); const m = t.match(/-?\d+(\.\d+)?/); return m ? parseFloat(m[0]) : null; };
+  groups.sort((a, b) => { const x = key(a[0]), y = key(b[0]); if (x === y) return 0; if (x == null) return 1; if (y == null) return -1;
+    return (x < y ? -1 : 1) * (dir === 'asc' ? 1 : -1); });
+  groups.flat().forEach(r => tb.appendChild(r));
+});
+
+function renderMethod(){ return `<div class="doc">${DATA.method}</div>`; }
+
+document.addEventListener('click', e => {
+  const r = e.target.closest('tr.srow');
+  if (!r || !r.dataset.open) return;
+  open = open === r.dataset.open ? null : r.dataset.open;
+  render();
+});
+
+function renderTesting(){
+  const T = LIVE.test || {names: {}, picks: []}, nm = k => T.names[k] || k, n = Object.keys(T.names).length;
+  let h = `<p class="note">Every domestic league outside the main ${DATA.leagues.length}, run live under the same rules${T.start ? ` since ${T.start}` : ''}: overs and unders, edge above ${Math.round(LE()*100)}% at the line on offer, both teams ${LIVE.min_gp ?? 3}+ games, model within 12 points of the line, equal stakes. ROI = profit ÷ total staked on won and lost picks; pushes are left out. These picks are kept apart and do not count in the record on the other tabs. A league can join the main list once a long run of picks shows a steady profit. Click a column heading to sort.</p>`;
+  const open = T.picks.filter(b => !b.done).sort((a, b) => a.dt < b.dt ? -1 : 1), done = T.picks.filter(b => b.done);
+  const set = done.filter(b => b.ret != null), won = set.filter(b => b.ret > 0).length, units = set.reduce((a, b) => a + b.ret, 0), nDec = set.filter(b => b.ret !== 0).length, R_ = nDec ? units / nDec : null;
+  h += tiles([['Leagues', String(n || '–')], ['Picks', String(T.picks.length)], ['Open picks', String(open.length)], ['Settled', String(set.length)],
+              ['Hit rate', set.length ? pct(won / set.length, 1) : '–'], ['ROI', roi(R_), cls(R_)]]);
+  h += '<h2>Open picks</h2>';
+  h += !open.length ? '<p class="empty">No open picks in the testing leagues right now.</p>' :
+    `<div class="scroll"><table class="proj"><thead><tr><th>Tip-off</th><th>League</th><th>Match</th><th class="n">Pick</th><th class="n">Price</th><th class="n">Model total</th><th class="n">Edge</th><th class="n">Line now</th></tr></thead><tbody>` +
+    open.map(b => `<tr><td data-s="${b.dt}">${dayName(b.dt)} ${b.dt.slice(11)}</td><td>${nm(b.lg)}</td><td class="wr">${b.home} – ${b.away}</td><td class="n"><b>${sd(b)} ${b.line}</b></td><td class="n">${b.px.toFixed(2)}</td><td class="n">${b.mu.toFixed(1)}</td><td class="n pos">${sgn(b.edge*100, 0)}%</td><td class="n">${b.now ?? '–'}</td></tr>`).join('') + '</tbody></table></div>';
+  const tail = () => { const list = Object.values(T.names).sort((a, b) => a.localeCompare(b));
+  h += `<h2>The ${list.length} testing leagues</h2><ul class="lglist">${list.map(x => `<li>${x}</li>`).join('')}</ul>`; return h; };
+  if (!set.length) return tail();
+  const by = {};
+  set.forEach(b => (by[b.lg] ||= []).push(b));
+  h += `<h2>By league</h2><div class="scroll"><table style="max-width:760px"><thead><tr><th>League</th><th class="n">Picks</th><th class="n">Hit rate</th><th class="n">ROI</th></tr></thead><tbody>` +
+    Object.entries(by).map(([k, l]) => [k, l, l.reduce((a, b) => a + b.ret, 0)]).sort((a, b) => b[2] - a[2]).map(([k, l, u]) =>
+      `<tr><td>${nm(k)}</td><td class="n">${l.length}</td><td class="n">${pct(l.filter(b => b.ret > 0).length / l.length, 1)}</td><td class="n ${cls(u)}">${roi(u / (l.filter(b => b.ret !== 0).length || 1))}</td></tr>`).join('') + '</tbody></table></div>';
+  let run = 0;
+  const rows = done.map(b => {
+    if (b.ret != null) run += b.ret;
+    const res = b.ret == null ? '<td class="n muted">void</td>' : `<td class="n">${b.total}</td>`;
+    return `<tr><td data-s="${b.dt}">${short(b.dt)} ${b.dt.slice(11)}</td><td>${nm(b.lg)}</td><td class="wr">${b.home} – ${b.away}</td><td class="n"><b>${sd(b)} ${b.line}</b></td><td class="n">${b.px.toFixed(2)}</td><td class="n pos">${sgn(b.edge*100, 0)}%</td><td class="n">${b.close ?? '–'}</td>${res}</tr>`; });
+  h += `<h2>Settled picks, latest first</h2><div class="scroll"><table><thead><tr><th>Tip-off</th><th>League</th><th>Match</th><th class="n">Pick</th><th class="n">Price</th><th class="n">Edge</th><th class="n">Closing line</th><th class="n">Total</th></tr></thead><tbody>${rows.reverse().join('')}</tbody></table></div>`;
+  return tail();
+}
+
+const RENDER = {home: renderFindings, picks: renderPicks, leagues: renderLeagues, backtest: renderBacktest, projections: renderProjections, testing: renderTesting, method: renderMethod};
+const CHIPS = {backtest: 1, projections: 1};
+function render(){
+  document.querySelectorAll('#tabs a').forEach(a => { a.classList.toggle('on', a.dataset.view === view); a.href = `#view=${a.dataset.view}${lg === 'all' || !CHIPS[a.dataset.view] ? '' : '&lg=' + lg}`; });
+  let keys = DATA.leagues.map(l => l.key);
+  if (view === 'backtest') keys = keys.filter(k => DATA.backtest.leagues[k] && DATA.backtest.leagues[k].rule.n);
+  if (view === 'projections') keys = keys.filter(k => LIVE.fixtures.some(g => g.lg === k));
+  const chips = CHIPS[view] ? [['all', 'All leagues'], ...keys.map(k => [k, lgShort(k)])] : [];
+  $('chips').innerHTML = chips.map(([k, t]) => `<a href="#view=${view}${k === 'all' ? '' : '&lg=' + k}" class="${k === lg ? 'on' : ''}">${t}</a>`).join('');
+  $('top').style.display = $('sub').style.display = view === 'testing' ? 'none' : '';     // the main record stays off the testing tab
+  $('out').innerHTML = RENDER[view]();
+}
+function fromHash(){
+  const m = location.hash.match(/view=(\w+)/), l = location.hash.match(/lg=([\w-]+)/);
+  const old = {live: 'picks', findings: 'home'}, v = m && (old[m[1]] || m[1]);   // old links: Live test is part of Picks, Findings is Home
+  view = RENDER[v] ? v : 'home';
+  lg = l && LG[l[1]] ? l[1] : 'all';
+  render();
+}
+window.addEventListener('hashchange', fromHash);
+fromHash();
 </script>
 </body>
 </html>
