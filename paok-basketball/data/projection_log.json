@@ -1711,45 +1711,45 @@
   "date": "2026-11-07T15:30:00Z",
   "opp": "Vikos Falcons",
   "home": true,
-  "saved": "2026-11-06T02:03:22Z",
-  "paok": 87.2,
-  "oppScore": 73.3,
-  "winProb": 92,
+  "saved": "2026-11-06T14:53:29Z",
+  "paok": 86.8,
+  "oppScore": 73.7,
+  "winProb": 91,
   "lineupSource": "manual",
   "teamStats": {
    "pts": {
-    "paok": 87.2,
-    "opp": 73.3,
+    "paok": 86.8,
+    "opp": 73.7,
     "total": 160.5
    },
    "fg2m": {
-    "paok": 18.9,
-    "opp": 17.6,
-    "total": 36.4
+    "paok": 18.8,
+    "opp": 17.7,
+    "total": 36.5
    },
    "fg3m": {
     "paok": 10.0,
-    "opp": 8.1,
+    "opp": 8.2,
     "total": 18.2
    },
    "ftm": {
-    "paok": 19.3,
+    "paok": 19.2,
     "opp": 13.8,
     "total": 33.1
    },
    "ast": {
-    "paok": 17.5,
-    "opp": 15.4,
+    "paok": 17.4,
+    "opp": 15.5,
     "total": 32.9
    },
    "oreb": {
-    "paok": 9.9,
-    "opp": 10.2,
+    "paok": 10.0,
+    "opp": 10.1,
     "total": 20.1
    },
    "dreb": {
-    "paok": 25.1,
-    "opp": 22.8,
+    "paok": 25.0,
+    "opp": 22.9,
     "total": 47.9
    },
    "tov": {
@@ -1766,7 +1766,7 @@
   "modelTotal": 150.9,
   "line": 161.5,
   "modelMargin": 10.5,
-  "hcp": 14.5,
+  "hcp": 13.5,
   "players": {
    "paok": [
     {
@@ -1996,46 +1996,46 @@
   "date": "2026-11-10T17:00:00Z",
   "opp": "Balkan",
   "home": false,
-  "saved": "2026-11-06T02:03:22Z",
-  "paok": 84.6,
-  "oppScore": 77.0,
+  "saved": "2026-11-06T14:53:29Z",
+  "paok": 84.2,
+  "oppScore": 76.6,
   "winProb": 75,
   "lineupSource": "manual",
   "teamStats": {
    "pts": {
-    "paok": 84.6,
-    "opp": 77.0,
-    "total": 161.6
+    "paok": 84.2,
+    "opp": 76.6,
+    "total": 160.8
    },
    "fg2m": {
-    "paok": 21.1,
-    "opp": 20.7,
-    "total": 41.8
+    "paok": 21.0,
+    "opp": 20.5,
+    "total": 41.6
    },
    "fg3m": {
-    "paok": 8.5,
+    "paok": 8.4,
     "opp": 7.2,
-    "total": 15.7
+    "total": 15.6
    },
    "ftm": {
     "paok": 16.9,
-    "opp": 14.1,
-    "total": 31.1
+    "opp": 14.0,
+    "total": 30.9
    },
    "ast": {
-    "paok": 18.0,
+    "paok": 17.9,
     "opp": 14.9,
-    "total": 32.9
+    "total": 32.7
    },
    "oreb": {
-    "paok": 9.8,
+    "paok": 9.9,
     "opp": 10.2,
-    "total": 20.0
+    "total": 20.1
    },
    "dreb": {
-    "paok": 23.9,
-    "opp": 22.5,
-    "total": 46.4
+    "paok": 24.0,
+    "opp": 22.6,
+    "total": 46.6
    },
    "tov": {
     "paok": 13.7,
@@ -2043,13 +2043,13 @@
     "total": 28.4
    },
    "reb": {
-    "paok": 33.7,
-    "opp": 32.7,
-    "total": 66.4
+    "paok": 33.9,
+    "opp": 32.8,
+    "total": 66.7
    }
   },
   "modelTotal": 157.0,
-  "line": 162.5,
+  "line": 161.5,
   "modelMargin": -0.4,
   "hcp": 9.5,
   "players": {
