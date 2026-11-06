@@ -697,18 +697,27 @@ function bindPj(box){
 // ---------- Picks: every game of the Archive data from PICKS_FROM that met the rule, on what was known before its day.
 // A pick follows the latest line until tip-off, is frozen with the game there, and is settled when the result comes in.
 const PICKS_FROM = '2026-11-05', PICK_PRICE = 1.83;              // PICK_PRICE: counted if no price was logged
+// closing-line value: the line when the game first became a pick against the last line before tip-off.
+// g.ln = [time, book handicap, model handicap, home price, away price], one entry each time something changed
+function pickLine(g, sp, k){
+  const f = (g.ln || []).find(x => { const q = pickOf(g.h, g.a, x[2], x[1], sp); return q && (!k || q.home === k.home); });
+  if (!f) return null;
+  const q = pickOf(g.h, g.a, f[2], f[1], sp), side = q.home ? 1 : -1;
+  return {first: q.bet, firstAt: f[0], line0: sgn(-side * f[1]), close: sgn(-side * g.bh), clv: (g.bh - f[1]) * side};
+}
 function pickList(){
   const spots = {}, out = [];
+  out.dropped = [];
   for (const sn of (window.ARCHIVE && ARCHIVE.list) || []){
     if (sn.date < PICKS_FROM) continue;
     const sp = spots[sn.date] ||= mkSpots(sn.date);
     for (const g of sn.games){
       if (g.mh == null || g.bh == null) continue;
-      const k = pickOf(g.h, g.a, g.mh, g.bh, sp);
-      if (!k) continue;
+      const k = pickOf(g.h, g.a, g.mh, g.bh, sp), L = pickLine(g, sp, k);
+      if (!k){ if (L) out.dropped.push({...L, date: sn.date, time: g.when, h: g.h, a: g.a, r: arResult(sn.date, g.h, g.a)}); continue; }
       const r = arResult(sn.date, g.h, g.a), logged = k.home ? g.oH : g.oA, pr = logged || PICK_PRICE;
       const c = r ? (r[6] - r[7] - g.bh) * (k.home ? 1 : -1) : null, res = !r ? null : c > 0 ? 'W' : c < 0 ? 'L' : 'P';
-      out.push({...k, date: sn.date, time: g.when, h: g.h, a: g.a, pr, logged: !!logged, r, res, u: !r ? null : res === 'W' ? pr - 1 : res === 'L' ? -1 : 0});
+      out.push({...k, ...L, date: sn.date, time: g.when, h: g.h, a: g.a, pr, logged: !!logged, r, res, u: !r ? null : res === 'W' ? pr - 1 : res === 'L' ? -1 : 0});
     }
   }
   return out.sort((x, y) => (x.date + x.time).localeCompare(y.date + y.time) || x.h.localeCompare(y.h));
@@ -720,19 +729,26 @@ function renderPicks(){
   const card = (t, v, sub) => `<div class="metric"><div class="lbl">${t}</div><div class="big2">${v}</div><div class="tag">${sub}</div></div>`;
   const price = p => p.pr.toFixed(2) + (p.logged ? '' : '<span class="tag" title="No price logged: counted at ' + PICK_PRICE.toFixed(2) + '">*</span>');
   const when = p => `${fmtDate(p.date).slice(0, 5)} <span class="tag">${esc(p.time)}</span>`;
-  box.innerHTML = `<div class="note" style="margin-bottom:14px"><b>A pick needs everything in place:</b> a market edge and a model edge (${PJ_EDGE}+ points from the line) on the same side, and the club rating must not disagree. Equal stakes at the logged price. ROI = profit ÷ total staked on won and lost picks; pushes are left out. A pick follows the latest line until tip-off, so it can appear or drop out as the line moves; then it is frozen and settled from the result. The record starts on ${fmtDate(PICKS_FROM)}, after Round 5, and it is too early to read anything into it.</div>
+  const started = p => `${p.date} ${p.time}` <= athens(Date.now());
+  const vs = p => p.clv === undefined ? '<td class="n tag">–</td>' : `<td class="n ${cls(p.clv)}"><b>${sgn(p.clv)}</b></td>`;
+  const firstLine = p => p.line0 === undefined ? '–' : `${esc(p.line0)} <span class="tag" title="First became a pick">${fmtDate(p.firstAt.slice(0, 10)).slice(0, 5)}</span>`;
+  const closed = [...all, ...all.dropped].filter(p => p.clv !== undefined && started(p)), clvAvg = closed.length ? closed.reduce((t, p) => t + p.clv, 0) / closed.length : 0;
+  box.innerHTML = `<div class="note" style="margin-bottom:14px"><b>A pick needs everything in place:</b> a market edge and a model edge (${PJ_EDGE}+ points from the line) on the same side, and the club rating must not disagree. Equal stakes at the logged price. ROI = profit ÷ total staked on won and lost picks; pushes are left out. A pick follows the latest line until tip-off, so it can appear or drop out as the line moves; then it is frozen and settled from the result. <b>Vs close</b> = points the line moved towards the pick between the first time the game became a pick and the last line read before tip-off: above 0 beat the close, the earliest sign of a real edge, long before the record means anything. The average counts picks that dropped out too, because a line moving the pick's way can remove the pick. The record starts on ${fmtDate(PICKS_FROM)}, after Round 5, and it is too early to read anything into it.</div>
     <div class="metrics">
       ${card('Settled picks', done.length, `${open.length} still to play`)}
       ${card('Record', done.length ? `${w}–${l}${pu ? `<span class="tag">–${pu}</span>` : ''}` : '–', 'won – lost' + (pu ? ' – push' : ''))}
       ${card('Hit rate', w + l ? Math.round(w / (w + l) * 100) + '%' : '–', 'makes a profit from about 54%')}
+      ${card('Vs close', closed.length ? `<span class="${cls(clvAvg)}">${sgn(clvAvg)}</span>` : '–', `points a pick, ${closed.length} pick${closed.length === 1 ? '' : 's'}`)}
     </div>
-    <h2>Open picks</h2>` + (open.length ? `<div class="scroll"><table class="fx pjpk"><tr><th class="n">Tip-off</th><th>Pick</th><th>Game</th><th class="n">Price</th><th>Market edge</th><th class="n">Model edge</th><th>Club rating</th></tr>` +
-      open.map(p => `<tr><td class="n">${when(p)}</td><td><b class="hcp">${esc(p.bet)}</b></td><td>${esc(p.h)} – ${esc(p.a)}</td><td class="n">${price(p)}</td><td>${esc(p.market)}</td><td class="n">${p.gap.toFixed(1)} pts</td><td>${esc(p.club)}</td></tr>`).join('') + '</table></div>'
+    <h2>Open picks</h2>` + (open.length ? `<div class="scroll"><table class="fx pjpk"><tr><th class="n">Tip-off</th><th>Pick</th><th>Game</th><th class="n">Price</th><th class="n">First line</th><th>Market edge</th><th class="n">Model edge</th><th>Club rating</th></tr>` +
+      open.map(p => `<tr><td class="n">${when(p)}</td><td><b class="hcp">${esc(p.bet)}</b></td><td>${esc(p.h)} – ${esc(p.a)}</td><td class="n">${price(p)}</td><td class="n">${firstLine(p)}</td><td>${esc(p.market)}</td><td class="n">${p.gap.toFixed(1)} pts</td><td>${esc(p.club)}</td></tr>`).join('') + '</table></div>'
       : '<div class="empty">No open picks right now. A pick appears here as soon as a game has everything in place.</div>') +
-    `<h2>Results</h2>` + (done.length ? `<div class="scroll"><table class="fx pjpk"><tr><th class="n">Date</th><th>Pick</th><th>Game</th><th class="n">Price</th><th class="n">Score</th><th class="n">Result</th></tr>` +
-      [...done].reverse().map(p => `<tr><td class="n">${fmtDate(p.date).slice(0, 5)}</td><td><b>${esc(p.bet)}</b></td><td>${esc(p.h)} – ${esc(p.a)}</td><td class="n">${price(p)}</td><td class="n"><b>${p.r[6]}–${p.r[7]}</b></td>
+    `<h2>Results</h2>` + (done.length ? `<div class="scroll"><table class="fx pjpk"><tr><th class="n">Date</th><th>Pick</th><th>Game</th><th class="n">Price</th><th class="n">First line</th><th class="n">Close</th><th class="n" title="Points the line moved towards the pick">Vs close</th><th class="n">Score</th><th class="n">Result</th></tr>` +
+      [...done].reverse().map(p => `<tr><td class="n">${fmtDate(p.date).slice(0, 5)}</td><td><b>${esc(p.bet)}</b></td><td>${esc(p.h)} – ${esc(p.a)}</td><td class="n">${price(p)}</td><td class="n">${firstLine(p)}</td><td class="n">${p.close === undefined ? '–' : esc(p.close)}</td>${vs(p)}<td class="n"><b>${p.r[6]}–${p.r[7]}</b></td>
         <td class="n ${p.res === 'W' ? 'pkw' : p.res === 'L' ? 'l' : 'tag'}"><b>${p.res === 'W' ? 'Won' : p.res === 'L' ? 'Lost' : 'Push'}</b></td></tr>`).join('') + '</table></div>'
-      : '<div class="empty">No settled picks yet. Each pick moves here with its result after the game.</div>');
+      : '<div class="empty">No settled picks yet. Each pick moves here with its result after the game.</div>') +
+    (all.dropped.length ? `<h2>Dropped before tip-off</h2><div class="scroll"><table class="fx pjpk"><tr><th class="n">Date</th><th>Pick when it appeared</th><th>Game</th><th class="n">First line</th><th class="n">Close</th><th class="n" title="Points the line moved towards the pick">Vs close</th></tr>` +
+      [...all.dropped].reverse().map(p => `<tr><td class="n">${fmtDate(p.date).slice(0, 5)}</td><td><b>${esc(p.first)}</b></td><td>${esc(p.h)} – ${esc(p.a)}</td><td class="n">${firstLine(p)}</td><td class="n">${esc(p.close)}</td>${vs(p)}</tr>`).join('') + '</table></div>' : '');
 }
 function renderPjCards(P){
   const box = $('pjView');
