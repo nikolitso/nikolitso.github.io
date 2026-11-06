@@ -198,7 +198,7 @@ a.metric{display:block;color:inherit;text-decoration:none} a.metric:hover{border
   <div class="chips" id="chips"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=a69387f8"></script>
+<script src="data.js?v=3e4a87b6"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -367,14 +367,14 @@ function renderBacktest(){
     h += `<h2>By season</h2><p class="note">Click a season to see its bets one by one.</p>`;
     h += `<table class="seasons" style="max-width:620px"><thead><tr><th>Season</th><th class="n">Bets</th><th class="n">Won</th><th class="n">Hit</th><th class="n">ROI</th></tr></thead><tbody>`;
     for (const [season, t] of Object.entries(by).sort()) h += `<tr class="srow${season === btSeason ? ' on' : ''}" data-season="${season}"><td><span class="caret">${season === btSeason ? '▾' : '▸'}</span> ${season.replace('-','–')}</td><td class="n">${t.n}</td><td class="n">${t.w}</td><td class="n">${pct(t.w / t.n)}</td><td class="n ${cls(t.pl)}">${sgn(t.pl / t.n * 100, 1)}%</td></tr>`;
-    h += '</tbody></table>' + byMonth() + byLine();
+    h += '</tbody></table>' + byMonth() + byLine() + calibration();
     if (btSeason) h += seasonBets(btSeason);
     return h;
   }
   h += `<p class="note">Click a season to see its bets one by one.</p>`;
   h += `<table class="seasons" style="max-width:560px"><thead><tr><th>Season</th><th class="n">Bets</th><th class="n">Won</th><th class="n">Hit</th><th class="n">ROI</th></tr></thead><tbody>`;
   for (const s of B.seasons.filter(inLg)) h += `<tr class="srow${s.season === btSeason ? ' on' : ''}" data-season="${s.season}"><td><span class="caret">${s.season === btSeason ? '▾' : '▸'}</span> ${s.season.replace('-','–')}${s.tuned ? ' <span class="muted">(tuned on)</span>' : ''}</td><td class="n">${s.n}</td><td class="n">${s.w}</td><td class="n">${pct(s.w/s.n)}</td><td class="n ${cls(s.roi)}">${sgn(s.roi*100, 1)}%</td></tr>`;
-  h += '</tbody></table>' + byMonth() + byLine();
+  h += '</tbody></table>' + byMonth() + byLine() + calibration();
   if (btSeason) h += seasonBets(btSeason);
   return h;
 }
@@ -404,6 +404,26 @@ document.addEventListener('click', e => {
   tSort = tSort.k === k ? {k, d: -tSort.d} : {k, d: k === 'league' ? 1 : -1};
   render();
 });
+
+// is the model's chance right? The same bets by edge and by model chance: what it said against how often the over won
+function calibration(){
+  const tuned = new Set(DATA.backtest.seasons.filter(s => s.tuned).map(s => s.lg + '|' + s.season));
+  const bets = DATA.backtest.bets.filter(b => inLg(b) && !tuned.has(b.lg + '|' + b.season));
+  const mean = (g, f) => g.reduce((s, b) => s + f(b), 0) / g.length;
+  const table = (title, bands, val) => {
+    let t = `<h3 style="margin-top:18px">${title}</h3><div class="scroll"><table style="max-width:760px"><thead><tr><th>Band</th><th class="n">Bets</th><th class="n">Price implies</th><th class="n">Model said</th><th class="n">Actual</th><th class="n">Gap</th><th class="n">ROI</th></tr></thead><tbody>`;
+    for (const [lab, lo, hi] of bands){
+      const g = bets.filter(b => val(b) >= lo && val(b) < hi);
+      if (!g.length) continue;
+      const said = mean(g, b => b.p), hit = mean(g, b => +b.won), roi = mean(g, b => b.ret);
+      t += `<tr><td>${lab}</td><td class="n">${g.length}</td><td class="n">${(mean(g, b => 1 / b.px) * 100).toFixed(1)}%</td><td class="n">${(said * 100).toFixed(1)}%</td><td class="n">${(hit * 100).toFixed(1)}%</td><td class="n ${cls(hit - said)}">${sgn((hit - said) * 100, 1)}</td><td class="n ${cls(roi)}">${sgn(roi * 100, 1)}%</td></tr>`;
+    }
+    return t + '</tbody></table></div>';
+  };
+  return `<h2>Calibration</h2><p class="note">Is the model's chance right? The same bets, comparing what the model said with how often the over actually won. Gap is actual minus model, in percentage points: near zero means the chance can be trusted, negative means the model was too confident. Price implies is 1 ÷ the average price. Small bands move a lot by chance.</p>`
+    + table('By edge', [['5–10%', .05, .1], ['10–20%', .1, .2], ['20–30%', .2, .3], ['30–40%', .3, .4], ['40%+', .4, 9]], b => b.edge)
+    + table('By model chance', [['Under 60%', 0, .6], ['60–70%', .6, .7], ['70–80%', .7, .8], ['80%+', .8, 2]], b => b.p);
+}
 
 // P/L by the market's total line: the live rule's bets in unseen seasons, in 10-point bands (bands of the line's whole part)
 function byLine(){
