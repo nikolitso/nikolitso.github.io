@@ -61,6 +61,15 @@
     letter-spacing: -0.01em; margin: 0;
   }
   .sub { color: var(--ink-dim); font-size: 17px; max-width: 60ch; margin: 0 0 40px; }
+  .next-match { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin: 26px 0 8px; padding: 16px 20px;
+    background: var(--surface); border: 1px solid var(--line); border-left: 3px solid var(--accent); border-radius: 10px;
+    color: inherit; text-decoration: none; }
+  .next-match[hidden] { display: none; }
+  .next-match:hover { border-color: var(--accent); }
+  .next-match .nm-label { display: block; font-family: var(--an-mono); font-size: 12.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-dim); font-weight: 600; }
+  .next-match .nm-teams { display: block; font-size: 22px; font-weight: 800; line-height: 1.25; margin: 3px 0 2px; }
+  .next-match .nm-when { display: block; font-size: 14.5px; color: var(--ink-dim); }
+  .next-match .nm-go { flex: none; color: var(--ink-dim); }
   .section-head {
     margin: 40px 0 14px;
     font-family:var(--an-mono);
@@ -99,6 +108,11 @@
 </div></header>
 <div class="wrap">
 <div class="hub-lead"><p class="hub-intro" style="margin:.4rem 0 0;color:inherit;opacity:.75;max-width:52ch">PAOK FC's seasons in numbers: player stats and ratings, opponents, standings, and results against what the data expected.</p><p class="hub-updated" id="hub-updated" style="margin:.5rem 0 0;color:inherit;opacity:.6;font-family:var(--an-mono);font-size:13.5px" hidden></p></div>
+
+  <a class="next-match" id="next-match" href="paok-vs-next.html" hidden>
+    <span><span class="nm-label">Next match</span><span class="nm-teams" id="nm-teams"></span><span class="nm-when" id="nm-when"></span></span>
+    <span class="nm-go">&rarr;</span>
+  </a>
 
   <p class="section-head">2026&ndash;27 season</p>
   <div class="grid">
@@ -248,6 +262,22 @@
     el.textContent = 'Last update: ' + s.replace(',', '') + (v[1] ? ' · ' + v[1] : '');
     el.hidden = false;
   });
+})();
+</script>
+
+<script>
+(function () {
+  // Next match banner: the first card on Fixtures, so it moves on by itself.
+  fetch('fixtures.html', { cache: 'no-store' }).then(function (r) { return r.ok ? r.text() : ''; }).then(function (t) {
+    var card = new DOMParser().parseFromString(t, 'text/html').querySelector('.match-card');
+    if (!card) return;
+    var sides = card.querySelector('.teams').textContent.trim().replace(/PAOK Thessaloniki FC/g, 'PAOK').split(' vs ');
+    if (sides.length !== 2) return;
+    var when = card.querySelector('.match-meta span'), comp = card.querySelector('.comp-badge');
+    document.getElementById('nm-teams').textContent = sides[0] + ' – ' + sides[1];
+    document.getElementById('nm-when').textContent = [when && when.textContent.trim(), comp && comp.textContent.trim()].filter(Boolean).join(' · ');
+    document.getElementById('next-match').hidden = false;
+  }).catch(function () {});
 })();
 </script>
 
