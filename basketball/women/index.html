@@ -4,10 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Women's basketball totals: is there a gap in the pricing?</title>
-<meta name="description" content="European women's basketball totals: market analysis, backtests against the closing line and a live record of two signals.">
+<meta name="description" content="Women's basketball totals in European domestic leagues: market analysis, backtests against the closing line and a live record of two signals.">
 <link rel="canonical" href="https://antonisnikolitsopoulos.com/basketball/women/">
 <meta property="og:title" content="Women's basketball totals: is there a gap in the pricing?">
-<meta property="og:description" content="European women's basketball totals: market analysis, backtests against the closing line and a live record of two signals.">
+<meta property="og:description" content="Women's basketball totals in European domestic leagues: market analysis, backtests against the closing line and a live record of two signals.">
 <meta property="og:url" content="https://antonisnikolitsopoulos.com/basketball/women/">
 <meta property="og:image" content="https://antonisnikolitsopoulos.com/basketball-overs.jpg">
 <meta name="twitter:card" content="summary_large_image">
@@ -185,6 +185,7 @@ a.tile:hover{border-color:var(--gold)}
     <a href="#view=home" data-view="home" class="on">Home</a>
     <a href="#view=picks" data-view="picks">Picks</a>
     <a href="#view=backtest" data-view="backtest">Backtest</a>
+    <a href="#view=testing" data-view="testing">Testing leagues</a>
     <a href="#view=market" data-view="market">Market</a>
     <a href="#view=method" data-view="method">How it works</a>
   </nav>
@@ -194,7 +195,7 @@ a.tile:hover{border-color:var(--gold)}
   <div class="sub" id="sub"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=2"></script>
+<script src="data.js?v=4"></script>
 <script src="live.js"></script>
 <script>
 const D = window.DATA, L = window.LIVE || {picks: [], updated: ""};
@@ -203,7 +204,8 @@ const sgn = (v, d = 1) => (v > 0 ? "+" : v < 0 ? "−" : "") + Math.abs(v).toFix
 const pc = v => `<span class="${v > 0 ? "pos" : v < 0 ? "neg" : ""}">${sgn(v)}%</span>`;
 const un = v => `<span class="${v > 0 ? "pos" : v < 0 ? "neg" : ""}">${sgn(v, 2)}u</span>`;
 const when = ts => new Date(ts * 1000).toLocaleString("en-GB", {timeZone: "Europe/Athens", day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit"});
-const done = L.picks.filter(p => p.r !== undefined), open = L.picks.filter(p => p.r === undefined);
+const mainP = L.picks.filter(p => !p.test), testP = L.picks.filter(p => p.test);
+const done = mainP.filter(p => p.r !== undefined), open = mainP.filter(p => p.r === undefined);
 function rec(ps) {
   const w = ps.filter(p => p.r > 0).length, l = ps.filter(p => p.r < 0).length, u = ps.reduce((a, p) => a + p.r, 0);
   return {w, l, u, roi: ps.length ? u / ps.length * 100 : 0, n: ps.length};
@@ -211,7 +213,7 @@ function rec(ps) {
 const all = rec(done);
 $top.innerHTML = [["Open picks", open.length], ["Record", `${all.w}–${all.l}`], ["Return", all.n ? un(all.u) : "–"], ["ROI", all.n ? pc(all.roi) : "–"]]
   .map(([k, v]) => `<div class="tile"><span class="klabel">${k}</span><span class="stat">${v}</span></div>`).join("");
-$sub.textContent = `${D.comps} competitions · backtest 2023–24 to Oct 2026 · live test since 6 Nov 2026`;
+$sub.textContent = `${D.main} leagues · ${D.test.count} in testing · backtest 2023–24 to Oct 2026 · live test since 6 Nov 2026`;
 
 function tbl(cols, rows) {
   const id = "t" + Math.random().toString(36).slice(2);
@@ -223,16 +225,7 @@ const STAT = [{h: "", f: r => r.s, v: r => r.s}, {h: "Picks", n: 1, f: r => r.n,
   {h: "Open", n: 1, f: r => r.o === undefined ? "–" : r.o.toFixed(1), v: r => r.o}, {h: "Close", n: 1, f: r => r.c === undefined ? "–" : r.c.toFixed(1), v: r => r.c}];
 const stat = (head, rows) => tbl([{...STAT[0], h: head}, ...STAT.slice(1)], rows);
 
-const V = {
-home() {
-  const a = D.s1.all, b = D.s2.all, m = D.market;
-  return `<div class="verdict"><h2>Is there a gap in the pricing?</h2><p>In the backtest, yes. Two signals made a profit, and the first one held up all the way to the closing line, which the same model does not do in men's basketball. That is a backtest result, not proof: the live record only began on 6 Nov 2026, and the 2026–27 games before that were a loss for the model. Break-even at these prices is about 54.6%.</p></div>
-  <div class="find"><h3><span class="num">1</span>Women's lines barely move</h3><p>${m[0].moved}% of lines moved between open and close in 2025–26, against ${m[1].moved}% in the men's leagues, and by ${m[0].mv} points on average against ${m[1].mv}. The moves add almost nothing: the average miss goes from ${m[0].mae_o} points at the open to ${m[0].mae_c} at the close.</p></div>
-  <div class="find"><h3><span class="num">2</span>A simple team model finds value at the close</h3><p>Overs and unders with an edge above 4%: ${a.n.toLocaleString("en-GB")} picks, ${a.hit}% hit, ${sgn(a.roi)}% ROI. The same code on men's games made no reliable profit at the close.</p></div>
-  <div class="find"><h3><span class="num">3</span>A line far from the others is often wrong</h3><p>When one book opened 5 to 12 points from the rest, the favourable side made ${sgn(b.roi)}% over ${b.n} picks, positive in 2024–25, 2025–26 and so far in 2026–27. It is unknown how many of those opening lines could really have been taken, which is what the live test measures.</p></div>
-  <div class="find"><h3><span class="num">4</span>Betting blind loses</h3><p>Overs and unders lose in every season once the margin of about 9% is paid. Choosing leagues by their past over rate did not make a reliable profit.</p></div>`;
-},
-picks() {
+function pickView(done, open) {
   const P = {model: "Model", gap: "Line gap"};
   const cols = [{h: "Tip-off", f: p => when(p.ts), v: p => p.ts}, {h: "League", f: p => p.league, v: p => p.league}, {h: "Game", f: p => `${p.home} – ${p.away}`, v: p => p.home},
     {h: "Signal", f: p => P[p.sig], v: p => p.sig}, {h: "Pick", f: p => `${p.side} ${p.line}`, v: p => p.line}, {h: "Open", n: 1, f: p => p.open ?? "–", v: p => p.open ?? 0}, {h: "Price", n: 1, f: p => p.price.toFixed(2), v: p => p.price}];
@@ -244,15 +237,32 @@ picks() {
   h += `<h2>Open picks</h2>` + (open.length ? tbl(cols, [...open].sort((a, b) => a.ts - b.ts)) : `<p class="empty">No open picks.</p>`);
   h += `<h2>Results</h2>` + (done.length ? tbl(res, [...done].sort((a, b) => b.ts - a.ts)) : `<p class="empty">No results yet.</p>`);
   return h + (L.updated ? `<p class="muted">Updated ${L.updated} Athens time.</p>` : "");
+}
+const V = {
+home() {
+  const a = D.all, s = D.s1.all, b = D.s2.all, m = D.market;
+  return `<div class="verdict"><h2>Is there a gap in the pricing?</h2><p>In the backtest, yes. Two signals made a profit, and the first one held up all the way to the closing line, which the same model does not do in men's basketball. That is a backtest result, not proof: the live record only began on 6 Nov 2026, and the 2026–27 games before that were a loss for the model. Break-even at these prices is about 54.6%.</p></div>
+  <div class="find"><h3><span class="num">1</span>Women's lines barely move</h3><p>${m[0].moved}% of lines moved between open and close in 2025–26, against ${m[1].moved}% in the men's leagues, and by ${m[0].mv} points on average against ${m[1].mv}. The moves add almost nothing: the average miss goes from ${m[0].mae_o} points at the open to ${m[0].mae_c} at the close.</p></div>
+  <div class="find"><h3><span class="num">2</span>A simple team model finds value at the close</h3><p>Overs and unders with an edge above 4%, all leagues: ${a.n.toLocaleString("en-GB")} picks, ${a.hit}% hit, ${sgn(a.roi)}% ROI. The same code on men's games made no reliable profit at the close.</p></div>
+  <div class="find"><h3><span class="num">3</span>A line far from the others is often wrong</h3><p>When one book opened 5 to 12 points from the rest, the favourable side made ${sgn(b.roi)}% over ${b.n} picks, positive in 2024–25, 2025–26 and so far in 2026–27. It is unknown how many of those opening lines could really have been taken, which is what the live test measures.</p></div>
+  <div class="find"><h3><span class="num">4</span>The published leagues were chosen from the same backtest</h3><p>Picks are published from ${D.main} leagues: ${s.n} picks, ${s.hit}% hit, ${sgn(s.roi)}% ROI. Choosing the leagues with hindsight flatters that figure, so the ${sgn(a.roi)}% across all leagues is the fairer guide. Choosing them from earlier seasons only made ${sgn(D.wf.roi)}% against ${sgn(D.wf.rest)}% for the rest, on just ${D.wf.n} picks.</p></div>
+  <div class="find"><h3><span class="num">5</span>Betting blind loses</h3><p>Overs and unders lose in every season once the margin of about 9% is paid. Choosing leagues by their past over rate did not make a reliable profit.</p></div>`;
+},
+picks() { return pickView(done, open); },
+testing() {
+  const t = D.test;
+  let h = `<p class="note">Leagues that did not meet the bar for the main record. They run under the same rules and are logged the same way, but stay out of the main record and the tiles at the top. A league moves up only by a decision to add it.</p>`;
+  h += pickView(testP.filter(p => p.r !== undefined), testP.filter(p => p.r === undefined));
+  return h + `<h2>Backtest</h2><div class="metrics">${[["Picks", t.all.n], ["Hit", t.all.hit + "%"], ["ROI", sgn(t.all.roi) + "%"], ["Units", sgn(t.all.u)]].map(([k, v]) => `<div class="metric"><div class="lbl">${k}</div><div class="big">${v}</div></div>`).join("")}</div>` + stat("League", t.leagues);
 },
 backtest() {
   const s = D.s1;
-  let h = `<p class="note">Each season's model is fitted only on earlier seasons. The 2026–27 rows are the games before the live test began. Click a column heading to sort.</p>`;
+  let h = `<p class="note">The ${D.main} leagues in the main record. <b>They were chosen from these same results, so these figures are flattering.</b> All leagues together made ${sgn(D.all.roi)}% on ${D.all.n.toLocaleString("en-GB")} picks. Each season's model is fitted only on earlier seasons, and the 2026–27 rows are the games before the live test began. Click a column heading to sort.</p>`;
   h += `<h2>Model at the closing line</h2><div class="metrics">${[["Picks", s.all.n.toLocaleString("en-GB")], ["Hit", s.all.hit + "%"], ["ROI", sgn(s.all.roi) + "%"], ["Units", sgn(s.all.u)], ["Worst run", "−" + s.dd + "u"], ["Opening line", s.all.o.toFixed(1)], ["Closing line", s.all.c.toFixed(1)], ["Actual total", s.all.t.toFixed(1)]].map(([k, v]) => `<div class="metric"><div class="lbl">${k}</div><div class="big">${v}</div></div>`).join("")}</div>`;
   h += `<div class="cols2"><div>${stat("Season", s.seasons)}</div><div>${stat("Side", s.sides)}</div></div>`;
   h += `<h2>By line</h2><p class="note">Closing line of the pick, in 10-point bands.</p>` + stat("Line", s.bands);
   h += `<h2>By edge</h2><p class="note">The rule is 4%+; the 2%+ row shows what a lower bar would have done.</p>` + stat("Edge", s.edges);
-  h += `<h2>By league</h2><p class="note">Most leagues have too few picks to judge on their own, so no league has been dropped.</p>` + stat("League", s.leagues);
+  h += `<h2>By league</h2><p class="note">Most leagues have few picks, so a single league's return says little on its own.</p>` + stat("League", s.leagues);
   return h;
 },
 market() {
@@ -267,11 +277,12 @@ market() {
   return h;
 },
 method() {
-  return `<div class="doc"><h3><span class="num">1</span>Data</h3><p>${D.games.toLocaleString("en-GB")} priced games in ${D.comps} European competitions from 2020–21, with opening and closing total lines. A book's overtime market settles on the final score and its regulation market on the score after four quarters. Placeholder lines and lines far from any plausible total were removed.</p>
+  return `<div class="doc"><h3><span class="num">1</span>Data</h3><p>${D.games.toLocaleString("en-GB")} priced games in ${D.comps} European domestic leagues from 2020–21, with opening and closing total lines. A book's overtime market settles on the final score and its regulation market on the score after four quarters. Placeholder lines and lines far from any plausible total were removed.</p>
   <h3><span class="num">2</span>Model</h3><p>Each team gets a points tendency from its earlier games, with recent games counting more and earlier seasons counting less. The settings come from the men's totals model and were not tuned on women's games.</p>
   <h3><span class="num">3</span>Model signal</h3><ul><li>Overs and unders</li><li>Edge above 4% at the line on offer</li><li>Both teams at least 3 games into the season</li><li>Model within 12 points of the line</li></ul>
   <h3><span class="num">4</span>Line gap signal</h3><ul><li>At least three books pricing the game</li><li>One book 5 to 12 points from the median of the others</li><li>Take the favourable side at that book: the over at a low line, the under at a high one</li></ul>
-  <h3><span class="num">5</span>Live test</h3><p>The rules were frozen on 6 Nov 2026 and picks are logged about every hour. In the live test the line gap signal uses the lines on offer at that moment, not the reported openings, so every pick is a price that was there to take. Stake limits are not measured, and they can be low in these markets.</p></div>`;
+  <h3><span class="num">5</span>Leagues</h3><p>A league joins the main record with at least 20 backtest picks, ROI above +10% and a profit in at least two of the three full seasons from 2023–24. Every other league stays in Testing leagues under the same rules.</p>
+  <h3><span class="num">6</span>Live test</h3><p>The rules were frozen on 6 Nov 2026 and picks are logged about every hour. In the live test the line gap signal uses the lines on offer at that moment, not the reported openings, so every pick is a price that was there to take. Stake limits are not measured, and they can be low in these markets.</p></div>`;
 }};
 function sortable() {
   out.querySelectorAll("table.sortable").forEach(t => t.querySelectorAll("th").forEach((th, i) => th.onclick = () => {
