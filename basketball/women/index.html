@@ -302,9 +302,17 @@ function renderBacktest(){
   h += `</tbody></table></div><h2>By month</h2><div class="scroll"><table style="max-width:980px">${GHEAD('Month', LHEAD)}<tbody>`;
   for (const m of S.months) h += grp(MON[m.m - 1], m, '', lineCells(BT.filter(b => +b.dt.slice(5, 7) === m.m)));
   h += '</tbody></table></div>';
-  h += `<h2>By line</h2><p class="note">The line of the pick in 10-point bands.</p><div class="scroll"><table style="max-width:980px">${GHEAD('Line band', LHEAD)}<tbody>`;
-  for (const b of S.lines || []) h += grp(`${b.lo}–${b.lo + 9.5}`, b, '', lineCells(BT.filter(x => x.line >= b.lo && x.line < b.lo + 10)));
-  h += '</tbody></table></div>';
+  h += `<h2>By line</h2><p class="note">The line of the pick in four bands, overs and unders apart.</p>`;
+  for (const [side, word] of [['o', 'Overs'], ['u', 'Unders']]) {
+    const set = BT.filter(x => x.side === side);
+    if (!set.length) continue;
+    h += `<div class="scroll"><table style="max-width:980px;margin-bottom:24px">${GHEAD(word, LHEAD)}<tbody>`;
+    for (const [label, lo, hi] of [['Under 130', 0, 130], ['130–139.5', 130, 140], ['140–149.5', 140, 150], ['150 and over', 150, 999]]) {
+      const r = set.filter(x => x.line >= lo && x.line < hi), n = r.length, sum = f => r.reduce((s, x) => s + f(x), 0);
+      h += grp(label, {n, w: r.filter(x => x.ret > 0).length, px: sum(x => x.px) / n, roi: sum(x => x.ret) / n}, '', lineCells(r));
+    }
+    h += '</tbody></table></div>';
+  }
   return h + bets();
 }
 
