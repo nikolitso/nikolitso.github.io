@@ -82,7 +82,7 @@ table.tm tr.grp th{color:var(--gold);border-bottom:0;padding-bottom:0}
 .ln b{color:var(--text);font-weight:500}
 .ln .hi{color:var(--win)} .ln .lo{color:var(--loss)}
 th.sort{cursor:pointer;user-select:none} th.sort:hover,th.sort.on{color:var(--gold)}
-.w{color:var(--win)} .l{color:var(--loss)}
+.w{color:var(--win)} .l{color:var(--loss)} td.w,td.w b{color:#4cc47a} td.l,td.l b{color:#ef7a70}
 .muted{color:var(--muted)}
 .empty{color:var(--muted);padding:30px 0;text-align:center}
 .note{font:400 16.5px/1.55 var(--body);color:var(--muted);border-left:2px solid var(--gold);padding:2px 0 2px 14px;margin:0 0 14px;max-width:820px}
@@ -213,6 +213,7 @@ let view = 'home', lg = 'all', open = null;
 const LG = Object.fromEntries(DATA.leagues.map(l => [l.key, l]));
 const lgName = k => `${LG[k].country} · ${LG[k].name}`;
 const lgFull = l => l.country === 'Europe' ? l.name : `${l.country} <span class="muted">${l.name}</span>`;
+const wl = b => b.ret > 0 ? 'w' : b.ret < 0 ? 'l' : '';   // settled winners green, losers red
 const lgShort = k => LG[k].country === 'Europe' ? LG[k].name : LG[k].country;   // EuroLeague and EuroCup share a country
 const inLg = x => lg === 'all' || x.lg === lg;
 const R = DATA.rule;
@@ -312,7 +313,7 @@ function bets(){
   if (!list.length) return '';
   let run = 0;
   const rows = list.map(b => { run += b.ret;
-    return `<tr><td data-s="${b.dt}">${short(b.dt)} ${b.dt.slice(0,4)}</td>${lg === 'all' ? `<td>${lgShort(b.lg)}</td>` : ''}<td class="wr">${b.home} – ${b.away}</td><td class="n">${b.side === 'o' ? 'Over' : 'Under'} ${b.line}</td><td class="n">${b.px.toFixed(2)}</td><td class="n">${b.mu.toFixed(1)}</td><td class="n">${pct(b.p)}</td><td class="n">${sgn(b.edge*100, 0)}%</td><td class="n">${b.close ?? '–'}</td><td class="n ${b.ret > 0 ? 'w' : b.ret < 0 ? 'l' : ''}">${b.total}</td></tr>`; });
+    return `<tr><td data-s="${b.dt}">${short(b.dt)} ${b.dt.slice(0,4)}</td>${lg === 'all' ? `<td>${lgShort(b.lg)}</td>` : ''}<td class="wr">${b.home} – ${b.away}</td><td class="n ${wl(b)}">${b.side === 'o' ? 'Over' : 'Under'} ${b.line}</td><td class="n">${b.px.toFixed(2)}</td><td class="n">${b.mu.toFixed(1)}</td><td class="n">${pct(b.p)}</td><td class="n">${sgn(b.edge*100, 0)}%</td><td class="n">${b.close ?? '–'}</td><td class="n ${wl(b)}">${b.total}</td></tr>`; });
   return `<h2>Every pick, latest first</h2><p class="note">${list.length} backtest picks${list.length > 400 ? ', the latest 400 shown' : ''}.</p><div class="scroll"><table><thead><tr><th>Date</th>${lg === 'all' ? '<th>League</th>' : ''}<th>Match</th><th class="n">Pick</th><th class="n">Price</th><th class="n">Model</th><th class="n">Chance</th><th class="n">Edge</th><th class="n">Closing line</th><th class="n">Total</th></tr></thead><tbody>${rows.reverse().slice(0, 400).join('')}</tbody></table></div>`;
 }
 
@@ -371,9 +372,9 @@ function renderPicks(){
   const rows = all.filter(b => b.done).map(b => {   // open picks are in the table above
     if (b.ret != null) run += b.ret;
     const res = !b.done ? '<td class="n muted">to play</td>' : b.ret == null ? '<td class="n muted">void</td>' :
-      `<td class="n">${b.total}</td>`;
-    return `<tr><td data-s="${b.dt}">${short(b.dt)}${b.dt.length > 10 ? ' ' + b.dt.slice(11) : ''}</td><td>${lgShort(b.lg)}</td><td class="wr">${b.home} – ${b.away}</td><td class="n"><b>Over ${b.line}</b></td>
-      <td class="n">${b.px.toFixed(2)}</td><td class="n pos">${sgn(b.edge*100, 0)}%</td><td class="n">${b.close ?? '–'}</td>${res}</tr>`;
+      `<td class="n ${wl(b)}">${b.total}</td>`;
+    return `<tr><td data-s="${b.dt}">${short(b.dt)}${b.dt.length > 10 ? ' ' + b.dt.slice(11) : ''}</td><td>${lgShort(b.lg)}</td><td class="wr">${b.home} – ${b.away}</td><td class="n ${wl(b)}"><b>Over ${b.line}</b></td>
+      <td class="n">${b.px.toFixed(2)}</td><td class="n">${sgn(b.edge*100, 0)}%</td><td class="n">${b.close ?? '–'}</td>${res}</tr>`;
   });
   return h + `<h2>Settled picks, latest first</h2><div class="scroll"><table><thead><tr><th>Tip-off</th><th>League</th><th>Match</th><th class="n">Pick</th><th class="n">Price</th><th class="n">Edge</th><th class="n">Closing line</th><th class="n">Total</th></tr></thead><tbody>${rows.reverse().join('')}</tbody></table></div>`;
 }
@@ -431,8 +432,8 @@ function renderTesting(){
   let run = 0;
   const rows = done.map(b => {
     if (b.ret != null) run += b.ret;
-    const res = b.ret == null ? '<td class="n muted">void</td>' : `<td class="n">${b.total}</td>`;
-    return `<tr><td data-s="${b.dt}">${short(b.dt)} ${b.dt.slice(11)}</td><td>${nm(b.lg)}</td><td class="wr">${b.home} – ${b.away}</td><td class="n"><b>Over ${b.line}</b></td><td class="n">${b.px.toFixed(2)}</td><td class="n pos">${sgn(b.edge*100, 0)}%</td><td class="n">${b.close ?? '–'}</td>${res}</tr>`; });
+    const res = b.ret == null ? '<td class="n muted">void</td>' : `<td class="n ${wl(b)}">${b.total}</td>`;
+    return `<tr><td data-s="${b.dt}">${short(b.dt)} ${b.dt.slice(11)}</td><td>${nm(b.lg)}</td><td class="wr">${b.home} – ${b.away}</td><td class="n ${wl(b)}"><b>Over ${b.line}</b></td><td class="n">${b.px.toFixed(2)}</td><td class="n">${sgn(b.edge*100, 0)}%</td><td class="n">${b.close ?? '–'}</td>${res}</tr>`; });
   h += `<h2>Settled picks, latest first</h2><div class="scroll"><table><thead><tr><th>Tip-off</th><th>League</th><th>Match</th><th class="n">Pick</th><th class="n">Price</th><th class="n">Edge</th><th class="n">Closing line</th><th class="n">Total</th></tr></thead><tbody>${rows.reverse().join('')}</tbody></table></div>`;
   return tail();
 }
