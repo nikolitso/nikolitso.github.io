@@ -197,7 +197,7 @@ a.tile:hover{border-color:var(--gold)}
   <div class="chips" id="chips"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=26448cbc"></script>
+<script src="data.js?v=0ca8577f"></script>
 <script src="live.js"></script>
 <script>
 const $ = id => document.getElementById(id);
@@ -210,7 +210,8 @@ const roi = x => x == null ? '–' : sgn(x*100, 1) + '%';
 const cls = x => x > 0 ? 'pos' : x < 0 ? 'neg' : '';
 const sn = s => s.replace('-', '–');
 let view = 'home', lg = 'all', open = null;
-const LG = Object.fromEntries([...(DATA.others || []), ...DATA.leagues].map(l => [l.key, l]));   // others: earlier picks in leagues no longer in the rule
+const LG = Object.fromEntries(DATA.leagues.map(l => [l.key, l]));
+if (DATA.cur) DATA.cur.bets = (DATA.cur.bets || []).filter(b => LG[b.lg]);          // domestic leagues only: no record outside the rule's leagues
 const lgName = k => `${LG[k].country} · ${LG[k].name}`;
 const lgFull = l => l.country === 'Europe' ? l.name : `${l.country} <span class="muted">${l.name}</span>`;
 const wl = b => b.ret > 0 ? 'w' : b.ret < 0 ? 'l' : '';   // settled winners green, losers red
@@ -276,16 +277,16 @@ const bandRow = (label, g) => { const n = g.length, sum = f => g.reduce((a, x) =
   return grp(label, {n, w: g.filter(x => x.ret > 0).length, px: n ? sum(x => x.px) / n : 0, roi: n ? sum(x => x.ret) / n : 0}, '', btCells(g)); };
 
 function renderLeagues(){
-  let h = `<p class="note">Regular-season games from ${sn(DATA.first)} on (2020–21 only warms the ratings up; play-offs are left out, as in the rule). The model column starts in 2022–23 and uses earlier games only, but the leagues were chosen with these seasons known. <b>Over %</b>: how often the final score (overtime included) went over the closing line. Blind over: backing the over in every game at the average price. Opening and closing line: the average of those picks. Model overs: overs the rule picked at the opening line (edge above ${Math.round(R.edge*100)}%), count and ROI. Click a league for its seasons and an analysis of all its games below the table.</p>`;
-  h += `<div class="scroll"><table><thead><tr><th>League</th><th class="n">Games</th><th class="n">Total / line</th><th class="n">Over %</th><th class="n">Blind over</th><th class="n">Model overs</th>${LHEAD}</tr></thead><tbody>`;
+  let h = `<p class="note">Regular-season games from ${sn(DATA.first)} on (2020–21 only warms the ratings up; play-offs are left out, as in the rule). <b>Over %</b>: how often the final score (overtime included) went over the closing line. Blind over: backing the over in every game at the average price. Click a league for its seasons and an analysis of all its games below the table.</p>`;
+  h += `<div class="scroll"><table><thead><tr><th>League</th><th class="n">Games</th><th class="n">Total / line</th><th class="n">Over %</th><th class="n">Blind over</th></tr></thead><tbody>`;
   const mod = g => g.n ? `${g.n} <span class="${cls(g.roi)}">${roi(g.roi)}</span>` : '<span class="muted">–</span>';
   const row = (label, s, attrs='', list=[]) => `<tr${attrs}><td>${label}</td><td class="n">${s.games}</td><td class="n">${s.avg_total.toFixed(1)} / ${s.avg_line.toFixed(1)}</td><td class="n">${pct(s.over, 1)}</td>
     <td class="n ${cls(s.blind_over)}">${roi(s.blind_over)}</td>
-    <td class="n">${mod(s.mo)}</td>${lineCells(list)}</tr>`;
+    </tr>`;
   const tierName = {europe: 'European competitions', top: 'Top divisions', second: 'Second divisions'};
   for (const tier of ['europe', 'top', 'second']){
     if (!DATA.leagues.some(l => l.tier === tier)) continue;
-    h += `<tr><td colspan="8" class="tier" style="padding-top:18px">${tierName[tier]}</td></tr>`;
+    h += `<tr><td colspan="5" class="tier" style="padding-top:18px">${tierName[tier]}</td></tr>`;
     for (const l of DATA.leagues.filter(l => l.tier === tier)){
       const on = open === l.key;
       h += row(`<span class="caret">${on ? '▾' : '▸'}</span> ${lgFull(l)}`, l.all, ` class="srow${on ? ' on' : ''}" data-open="${l.key}"`, DATA.bets.filter(b => b.lg === l.key));
@@ -405,7 +406,7 @@ function renderPicks(){
   h += tiles([['Picks', String(all.length)], ['Settled', String(set.length)], ['Hit rate', set.length ? pct(won / set.length, 1) : '–'],
               ['ROI', roi(R_), cls(R_)],
               ['Closing line moved toward the pick', cl.length ? pct(up / cl.length) : '–'], ['Closing line moved against it', cl.length ? pct(dn / cl.length) : '–']]);
-  h += `<p class="note">The closing line moved toward the pick when it ended above the line picked. A few hundred picks are needed before the record says much. Picks before 7 Nov 2026 stay as they were: they were made without the pace and 3-point luck rules, in six leagues, and with the earlier team numbers, which also used last season. From 7 Nov 2026 the rule runs in every top domestic division, with no European competitions; earlier picks in European competitions stay in the record. Click a column heading to sort.</p>`;
+  h += `<p class="note">The closing line moved toward the pick when it ended above the line picked. A few hundred picks are needed before the record says much. Picks before 7 Nov 2026 stay as they were: they were made without the pace and 3-point luck rules, in six leagues, and with the earlier team numbers, which also used last season. From 7 Nov 2026 the rule runs in every top domestic division. European competitions are left out, and their earlier picks were taken out of the record on 8 Nov 2026. Click a column heading to sort.</p>`;
   if (cl.length) {
     const bt = k => DATA.bets.filter(b => b.lg === k && b.close != null);
     h += `<h2>The closing line by league</h2><p class="note">How each league's picks did against the closing line this season. This shows sooner than the record whether the model is reading a league well. Points: the average move from the line picked to the closing line. Backtest: how often the line moved toward the pick in 2022–23 to 2025–26.</p><div class="scroll"><table style="max-width:860px"><thead><tr><th>League</th><th class="n">Picks</th><th class="n">Moved toward</th><th class="n">Moved against</th><th class="n">Points</th><th class="n">Backtest</th></tr></thead><tbody>` +
