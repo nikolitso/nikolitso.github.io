@@ -197,7 +197,7 @@ a.tile:hover{border-color:var(--gold)}
   <div class="chips" id="chips"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=6858cb68"></script>
+<script src="data.js?v=8f0f520c"></script>
 <script src="live.js"></script>
 <script>
 const $ = id => document.getElementById(id);
@@ -312,9 +312,10 @@ function renderBacktest(){
   for (const [label, lo, hi] of [['Under +0.2', -99, 0.2], [`+0.2 to ${LKs()}`, 0.2, LK()]]) h += bandRow(label, BT.filter(x => x.luck >= lo && x.luck < hi));
   h += bandRow(`${LKs()} or more <span class="muted">(skipped)</span>`, SKL);
   h += '</tbody></table></div>';
-  h += `<h2>By edge</h2><div class="scroll"><table style="max-width:1040px">${GHEAD('Edge', BHEAD)}<tbody>`;
-  const byEdge = [...BT].sort((x, y) => y.edge - x.edge);   // bets store a rounded edge, so take each row's count from the top
-  for (const e of S.edges.filter(x => x.edge <= 0.06)) h += grp(`${Math.round(e.edge * 100)}%+`, e, '', btCells(byEdge.slice(0, e.n)));   // each row counts everything above it, so 6%+ covers the small top rows
+  const EP = Math.round(R.edge * 100);
+  h += `<h2>By edge</h2><p class="note">Edge: the model's chance of the over × the price − 1, at the opening line. The first row is the games the rule skips: every other rule met, with an edge above 0 but not above ${EP}%. They are not in any other figure on this page.</p><div class="scroll"><table style="max-width:1040px">${GHEAD('Edge', BHEAD)}<tbody>`;
+  h += bandRow(`0 to ${EP}% <span class="muted">(skipped)</span>`, (DATA.skipped_edge || []).filter(inLg));
+  h += bandRow(`${EP}% to 4%`, BT.filter(x => x.edge < 0.04)) + bandRow('4% or more', BT.filter(x => x.edge >= 0.04));   // every pick is above the bar; stored edges are rounded
   h += '</tbody></table></div>';
   if (lg === 'all'){
     h += `<h2>By league</h2><p class="note">Leagues with a handful of picks say little on their own. Click a league to see it alone.</p><div class="scroll"><table style="max-width:1040px">${GHEAD('League', BHEAD)}<tbody>`;
@@ -322,8 +323,10 @@ function renderBacktest(){
       h += grp(`<a href="#view=backtest&lg=${l.key}" style="color:inherit;text-decoration:none">${lgShort(l.key)}</a>`, B.leagues[l.key].rule, '', btCells(DATA.bets.filter(b => b.lg === l.key)));
     h += '</tbody></table></div>';
   }
-  h += `<h2>By line</h2><p class="note">The opening line in three bands.</p><div class="scroll"><table style="max-width:1040px">${GHEAD('Line band', BHEAD)}<tbody>`;
-  for (const [label, lo, hi] of [['Under 160', 0, 160], ['160–169.5', 160, 170], ['170–179.5', 170, 180]]) h += bandRow(label, BT.filter(x => x.line >= lo && x.line < hi));
+  const ML = LIVE.max_line ?? 180;
+  h += `<h2>By line</h2><p class="note">The opening line. The last row is the games the rule skips: every other rule met, with an opening line of ${ML} or more. They are not in any other figure on this page.</p><div class="scroll"><table style="max-width:1040px">${GHEAD('Line band', BHEAD)}<tbody>`;
+  for (const [label, lo, hi] of [['Under 170', 0, 170], [`170 to ${ML - 0.5}`, 170, ML]]) h += bandRow(label, BT.filter(x => x.line >= lo && x.line < hi));
+  h += bandRow(`${ML} or more <span class="muted">(skipped)</span>`, (DATA.skipped_line || []).filter(inLg));
   h += '</tbody></table></div>';
   h += `<h2>By season</h2><div class="scroll"><table style="max-width:1040px">${GHEAD('Season', BHEAD)}<tbody>`;
   for (const s of S.seasons) h += grp(sn(s.season) + (s.season === DATA.tuned ? ' <span class="muted">(tuned on)</span>' : '') + (s.season === DATA.season ? ' <span class="muted">(so far)</span>' : ''), s, '', btCells(BT.filter(b => seasonOf(b) === s.season)));
