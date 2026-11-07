@@ -233,10 +233,10 @@ $('sub').textContent = `${DATA.leagues.length} Leagues · backtest 2021–22 to 
   const set = [...((DATA.cur || {}).bets || []), ...LIVE.picks.filter(b => b.done && b.ret != null)], won = set.filter(b => b.ret > 0).length, lost = set.filter(b => b.ret < 0).length;
   const units = set.reduce((a, b) => a + b.ret, 0), nOpen = LIVE.picks.filter(b => !b.done).length;
   // average line bet and average closing line, over every settled 2026-27 bet that has a close
-  const cl = set.filter(b => b.close != null && b.open != null), avg = f => (cl.reduce((a, b) => a + f(b), 0) / cl.length).toFixed(1);
+  const cl = set.filter(b => b.close != null && b.line != null), avg = f => (cl.reduce((a, b) => a + f(b), 0) / cl.length).toFixed(1);
   $('top').innerHTML = [['Open picks', nOpen, nOpen ? 'to play' : 'none right now'], ['Record', `${won}–${lost}`, 'win – loss'],
     ['ROI', won + lost ? `<span class="${cls(units)}">${roi(units / (won + lost))}</span>` : '–', `${won + lost} settled picks`],
-    ...(cl.length ? [['Opening line', avg(b => b.open), `avg of ${cl.length} settled picks`], ['Closing line', avg(b => b.close), `avg of ${cl.length} settled picks`], ['Actual total', avg(b => b.total), `avg of ${cl.length} settled picks`]] : [])]
+    ...(cl.length ? [['Line picked', avg(b => b.line), `avg of ${cl.length} settled picks`], ['Closing line', avg(b => b.close), `avg of ${cl.length} settled picks`], ['Actual total', avg(b => b.total), `avg of ${cl.length} settled picks`]] : [])]
     .map(([k, v, n]) => `<a class="tile" href="#view=picks"><span class="klabel">${k}</span><span class="stat">${v}</span><span class="small">${n}</span></a>`).join('');
 }
 
