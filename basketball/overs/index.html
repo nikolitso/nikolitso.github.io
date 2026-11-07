@@ -198,7 +198,7 @@ a.tile:hover{border-color:var(--gold)}
   <div class="chips" id="chips"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=04e7b25f"></script>
+<script src="data.js?v=5b8d11d4"></script>
 <script src="live.js"></script>
 <script>
 const $ = id => document.getElementById(id);
@@ -317,8 +317,8 @@ function renderBacktest(){
   h += '</tbody></table></div>';
   const paced = BT.filter(x => x.pace != null);
   if (paced.length){
-    h += `<h2>By pace</h2><p class="note">EuroLeague and EuroCup picks only: the other four leagues have no possession data. Pace is the two teams' possessions per game so far that season, each with ${LIVE.min_gp ?? 3}+ games, minus the league average, from earlier games only. ${FMs()} or more is a Fast game.</p><div class="scroll"><table style="max-width:980px">${GHEAD('Pace', BHEAD)}<tbody>`;
-    for (const [label, lo, hi] of [['Below 0', -99, 0], ['0 to +0.4', 0, 0.5], ['+0.5 or more', 0.5, 99]]) h += bandRow(label, paced.filter(x => x.pace >= lo && x.pace < hi));
+    h += `<h2>By pace</h2><p class="note">Pace is the two teams' possessions per game so far that season, each with ${LIVE.min_gp ?? 3}+ games, minus the league average, from earlier games only. ${FMs()} or more is a Fast game.</p><div class="scroll"><table style="max-width:980px">${GHEAD('Pace', BHEAD)}<tbody>`;
+    for (const [label, lo, hi] of [['Below 0', -99, 0], ['0 to +0.9', 0, 1], ['+1 or more', 1, 99]]) h += bandRow(label, paced.filter(x => x.pace >= lo && x.pace < hi));
     h += '</tbody></table></div>';
   }
   return h + bets();
@@ -334,7 +334,7 @@ function bets(){
 }
 
 function renderProjections(){
-  let h = `<p class="note">Games in the next 7 days with the model's projected total (fitted on earlier games only) next to the market's consensus line. Pace, for EuroLeague and EuroCup only: the two teams' possessions per game this season against the league average; ${FMs()} or more is a Fast game. Only overs that meet the rule (regular season, both teams ${LIVE.min_gp ?? 3}+ games) get an edge here; highlighted games are logged in the Picks tab at the line and price shown when they were first seen, and their edge is the one at that moment, while the line and prices keep updating. Click a match for its page, with the projection and how it was produced. Click a column heading to sort.</p>`;
+  let h = `<p class="note">Games in the next 7 days with the model's projected total (fitted on earlier games only) next to the market's consensus line. Pace: the two teams' possessions per game this season against the league average; ${FMs()} or more is a Fast game. Only overs that meet the rule (regular season, both teams ${LIVE.min_gp ?? 3}+ games) get an edge here; highlighted games are logged in the Picks tab at the line and price shown when they were first seen, and their edge is the one at that moment, while the line and prices keep updating. Click a match for its page, with the projection and how it was produced. Click a column heading to sort.</p>`;
   const fx = LIVE.fixtures.filter(inLg);
   if (!fx.length) return h + '<p class="empty">No games in the next 7 days.</p>';
   const taken = Object.fromEntries(LIVE.picks.map(b => [b.home + '|' + b.away, b]));   // a pick keeps the edge it was taken at
@@ -356,11 +356,11 @@ function renderProjections(){
 
 function renderFast(){
   const F = LIVE.fast, r = F.rec, n = r.settled, teams = Object.entries(F.teams || {}).filter(([k, v]) => LG[k] && v.length);
-  let h = `<h2>Fast games</h2><p class="note">A tag on EuroLeague and EuroCup picks, not a new rule: every pick stays logged and counted in the record above. A game is tagged when its pace is ${FMs()} or more. Pace is the average of the two teams' possessions per game so far this season, each with ${LIVE.min_gp ?? 3}+ games, minus the league average, and it is fixed when the pick is logged. The other four leagues have no possession data.</p>`;
+  let h = `<h2>Fast games</h2><p class="note">A tag on picks, not a new rule: every pick stays logged and counted in the record above. A game is tagged when its pace is ${FMs()} or more. Pace is the average of the two teams' possessions per game so far this season, each with ${LIVE.min_gp ?? 3}+ games, minus the league average, and it is fixed when the pick is logged.</p>`;
   h += tiles([['Fast picks', String(r.n)], ['Settled', String(n)], ['Hit rate', n ? pct(r.w / n, 1) : '–'], ['ROI', roi(r.roi), cls(r.roi)], ['Backtest picks', String(F.bt.n)], ['Backtest ROI', roi(F.bt.roi), cls(F.bt.roi)]]);
-  h += `<p class="note">Live record since ${F.start}. The backtest covers 2022–23 to 2025–26, and the other 26 EuroLeague and EuroCup picks made −12.0%. The ${FMs()} mark was chosen after seeing those results, and the gain is larger than a strong market should leave, so the tag stays unproven until the live record says otherwise.</p>`;
+  h += `<p class="note">Live record since ${F.start}. The backtest covers 2022–23 to 2025–26, and the other 81 picks made +0.5%. The ${FMs()} mark was chosen after seeing those results, and the gain is larger than a strong market should leave, so the tag stays unproven until the live record says otherwise.</p>`;
   if (teams.length) h += `<h2>Fast teams now</h2><p class="note">Teams at ${FMs()} or more on their own, fastest first. A game's pace uses both teams, so a fast team against a slow one may not be tagged.</p>` +
-    teams.map(([k, v]) => `<p class="note"><b>${LG[k].name}:</b> ${v.map(([t, x]) => `${t} ${sgn(x)}`).join(', ')}</p>`).join('');
+    teams.map(([k, v]) => `<p class="note"><b>${lgShort(k)}:</b> ${v.map(([t, x]) => `${t} ${sgn(x)}`).join(', ')}</p>`).join('');
   return h;
 }
 
