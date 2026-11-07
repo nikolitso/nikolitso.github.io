@@ -196,7 +196,7 @@ a.tile:hover{border-color:var(--gold)}
   <div class="chips" id="chips"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=w36"></script>
+<script src="data.js?v=w37"></script>
 <script src="live.js"></script>
 <script>
 const $ = id => document.getElementById(id);
@@ -292,34 +292,39 @@ function renderBacktest(){
   return h + btBody(BT, S, DATA.bets, ALLG);
 }
 
-// the backtest layout
+// the backtest layout, the same as the overs page: tiles, then pace, edge, league, line, season, month, every pick
+const BHEAD = '<th class="n">Opening line</th><th class="n">Closing line</th><th class="n">Model line</th><th class="n">Actual total</th><th class="n">Pace</th>';
+const btCells = list => { const c = list.filter(b => b.close != null), q = list.filter(b => b.pace != null);
+  return (c.length ? ['line', 'close', 'mu', 'total'].map(k => `<td class="n">${lineAvg(c, k)}</td>`).join('') : '<td class="n muted">–</td>'.repeat(4))
+    + (q.length ? `<td class="n">${sgn(q.reduce((a, b) => a + b.pace, 0) / q.length, 1)}</td>` : '<td class="n muted">–</td>'); };
+const btTable = (first, rows, note='') => `${note ? `<p class="note">${note}</p>` : ''}<div class="scroll"><table style="max-width:980px">${GHEAD(first, BHEAD)}<tbody>${rows.filter(r => r[1].length).map(([label, r]) => grp(label, stat(r), '', btCells(r))).join('')}</tbody></table></div>`;
 function btBody(BT, S, pool, leagues){
   let h = '';
-  const T = stat(BT);
+  const T = stat(BT), C = BT.filter(b => b.close != null);
   h += tiles([['Picks', T.n], ['Hit rate', pct(T.w / T.n, 1)], ['ROI', roi(T.roi), cls(T.roi)],
-              ['Model line', lineAvg(BT, 'mu')], ['Opening line', lineAvg(BT.filter(b => b.open != null), 'open')], ['Closing line', lineAvg(BT, 'close')], ['Result', lineAvg(BT, 'total')]]);
-  h += `<h2>By season</h2>` + sideTable('Season', S.seasons.map(s => [sn(s.season), BT.filter(x => seasonOf(x) === s.season)]));
+              ['Opening line', lineAvg(C, 'line')], ['Closing line', lineAvg(C, 'close')], ['Model line', lineAvg(C, 'mu')], ['Actual total', lineAvg(C, 'total')]]);
+  const known = BT.filter(x => x.pace != null);
+  h += `<h2>By pace</h2>` + btTable('Pace', [['Slower, under −1', -99, -1], ['About average, −1 to +1', -1, 1.01], ['Faster, +1 to +3', 1.01, 3.01], ['Fastest, over +3', 3.01, 99]].map(([label, lo, hi]) => [label, known.filter(x => x.pace >= lo && x.pace < hi)]).concat([['No pace <span class="muted">(no box scores)</span>', BT.filter(x => x.pace == null)]]),
+    'Pace is the points the two teams\' pace added to or took from the model total, from earlier games only. Picks with no pace come from games without box scores, where pace counts as 0.');
+  const byEdge = [...BT].sort((x, y) => y.edge - x.edge);   // bets store a rounded edge, so take each row's count from the top
+  h += `<h2>By edge</h2>` + btTable('Edge', S.edges.map(e => [`${Math.round(e.edge * 100)}%+`, byEdge.slice(0, e.n)]));   // each row counts everything above it
   if (lg === 'all'){
     const ls = leagues.map(l => [l, pool.filter(b => b.lg === l.key)]).filter(([l, r]) => r.length).sort((a, b) => stat(b[1]).roi - stat(a[1]).roi);
-    h += `<h2>By league</h2><p class="note">Leagues chosen with these seasons known. Click a league to see it alone.</p>` + sideTable('League', ls.map(([l, r]) => [`<a href="#view=${view}&lg=${l.key}" style="color:inherit;text-decoration:none">${lgFull(l)}</a>`, r]));
+    h += `<h2>By league</h2>` + btTable('League', ls.map(([l, r]) => [`<a href="#view=${view}&lg=${l.key}" style="color:inherit;text-decoration:none">${lgFull(l)}</a>`, r]), 'Leagues chosen with these seasons known. Click a league to see it alone.');
   }
-  const byEdge = [...BT].sort((x, y) => y.edge - x.edge);   // bets store a rounded edge, so take each row's count from the top
-  h += `<h2>By edge</h2>` + sideTable('Edge', S.edges.map(e => [`${Math.round(e.edge * 100)}%+`, byEdge.slice(0, e.n)]));   // each row counts everything above it
-  h += `<h2>By month</h2>` + sideTable('Month', S.months.map(m => [MON[m.m - 1], BT.filter(x => +x.dt.slice(5, 7) === m.m)]));
-  h += `<h2>By line</h2><p class="note">The line of the pick in three bands.</p>` + sideTable('Line band', [['Under 130', 0, 130], ['130–139.5', 130, 140], ['140 and over', 140, 999]].map(([label, lo, hi]) => [label, BT.filter(x => x.line >= lo && x.line < hi)]));
-  h += `<h2>By line difference</h2><p class="note">How many points the model total, pace included, was above the line of the pick. The 4 to 12 point rule reads the number before pace, so a few picks are more than 12 above here.</p>` + sideTable('Difference', [['4–5.9', 4, 6], ['6–7.9', 6, 8], ['8 and over', 8, 999]].map(([label, lo, hi]) => [label, BT.filter(x => gap(x) >= lo && gap(x) < hi)]).filter(r => r[1].length));
-  const known = BT.filter(x => x.pace != null);
-  if (known.length) h += `<h2>By pace</h2><p class="note">The points pace added to or took from the model total, before the game. Picks with no pace come from games without box scores.</p>` + sideTable('Pace', [['Slower, under −1', -99, -1], ['About average, −1 to +1', -1, 1.01], ['Faster, +1 to +3', 1.01, 3.01], ['Fastest, over +3', 3.01, 99]].map(([label, lo, hi]) => [label, known.filter(x => x.pace >= lo && x.pace < hi)]).concat([['No pace', BT.filter(x => x.pace == null)]]).filter(r => r[1].length));
+  h += `<h2>By line</h2>` + btTable('Line band', [['Under 130', 0, 130], ['130–139.5', 130, 140], ['140 and over', 140, 999]].map(([label, lo, hi]) => [label, BT.filter(x => x.line >= lo && x.line < hi)]), 'The opening line in three bands.');
+  h += `<h2>By line difference</h2>` + btTable('Difference', [['4–5.9', 4, 6], ['6–7.9', 6, 8], ['8 and over', 8, 999]].map(([label, lo, hi]) => [label, BT.filter(x => gap(x) >= lo && gap(x) < hi)]), 'How many points the model total, pace included, was above the line of the pick. The 4 to 12 point rule reads the number before pace, so a few picks are more than 12 above here.');
+  h += `<h2>By season</h2>` + btTable('Season', S.seasons.map(s => [sn(s.season), BT.filter(x => seasonOf(x) === s.season)]));
+  h += `<h2>By month</h2>` + btTable('Month', S.months.map(m => [MON[m.m - 1], BT.filter(x => +x.dt.slice(5, 7) === m.m)]));
   return h + bets(BT);
 }
 
 function bets(list){
   if (!list.length) return '';
-  let run = 0;
-  const rows = list.map(b => { run += b.ret;
-    return `<tr><td data-s="${b.dt}">${short(b.dt)} ${b.dt.slice(0,4)}</td>${lg === 'all' ? `<td>${lgShort(b.lg)}</td>` : ''}<td class="wr">${b.home} – ${b.away}</td><td class="n ${wl(b)}">${b.side === 'o' ? 'Over' : 'Under'} ${b.line}</td><td class="n">${b.px.toFixed(2)}</td><td class="n">${b.mu.toFixed(1)}</td><td class="n">${b.pace == null ? '–' : sgn(b.pace, 1)}</td><td class="n">${b.open ?? '–'}</td><td class="n">${b.close ?? '–'}</td><td class="n">${pct(b.p)}</td><td class="n">${sgn(b.edge*100, 0)}%</td><td class="n ${b.ret > 0 ? 'w' : b.ret < 0 ? 'l' : ''}">${b.total}</td></tr>`; });
-  return `<h2>Every pick, latest first</h2><p class="note">${list.length} backtest picks${list.length > 400 ? ', the latest 400 shown' : ''}.</p><div class="scroll"><table><thead><tr><th>Date</th>${lg === 'all' ? '<th>League</th>' : ''}<th>Match</th><th class="n">Pick</th><th class="n">Price</th><th class="n">Model line</th><th class="n">Pace</th><th class="n">Opening</th><th class="n">Closing</th><th class="n">Chance</th><th class="n">Edge</th><th class="n">Result</th></tr></thead><tbody>${rows.reverse().slice(0, 400).join('')}</tbody></table></div>`;
+  const rows = list.map(b => `<tr><td data-s="${b.dt}">${short(b.dt)} ${b.dt.slice(0,4)}</td>${lg === 'all' ? `<td>${lgShort(b.lg)}</td>` : ''}<td class="wr">${b.home} – ${b.away}</td><td class="n ${wl(b)}">${b.side === 'o' ? 'Over' : 'Under'} ${b.line}</td><td class="n">${b.px.toFixed(2)}</td><td class="n">${b.mu.toFixed(1)}</td><td class="n">${pct(b.p)}</td><td class="n">${sgn(b.edge*100, 0)}%</td><td class="n">${b.close ?? '–'}</td><td class="n ${wl(b)}">${b.total}</td><td class="n">${b.pace == null ? '–' : sgn(b.pace, 1)}</td></tr>`);
+  return `<h2>Every pick, latest first</h2><p class="note">${list.length} backtest picks${list.length > 400 ? ', the latest 400 shown' : ''}. Pace: the points the two teams' pace added to or took from the model total.</p><div class="scroll"><table><thead><tr><th>Date</th>${lg === 'all' ? '<th>League</th>' : ''}<th>Match</th><th class="n">Pick</th><th class="n">Price</th><th class="n">Model</th><th class="n">Chance</th><th class="n">Edge</th><th class="n">Closing line</th><th class="n">Total</th><th class="n">Pace</th></tr></thead><tbody>${rows.reverse().slice(0, 400).join('')}</tbody></table></div>`;
 }
+
 
 function renderProjections(){
   let h = `<p class="note">Games in the next 7 days with the model's projected total (fitted on earlier games only) next to the market's consensus line. Line diff is the model minus the line. Pace is the part of the model total that comes from how much faster or slower these two teams play than the league; it is already in the Model number, and a dash means no box scores. Edge is the over at the price shown, on every game with a line. A game becomes a pick only if it meets every rule: edge above ${(LE()*100).toFixed(0)}%, model before pace 4 to 12 points above the line, both teams ${LIVE.min_gp ?? 4}+ games, regular season. Highlighted games are logged in the Picks tab at the line and price shown when they were first seen, and their edge is the one at that moment, while the line and prices keep updating. Click a match for its page, with the projection and how it was produced. Click a column heading to sort.</p>`;
