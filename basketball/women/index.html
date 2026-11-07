@@ -197,7 +197,7 @@ a.tile:hover{border-color:var(--gold)}
   <div class="chips" id="chips"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=w42"></script>
+<script src="data.js?v=w43"></script>
 <script src="live.js"></script>
 <script>
 const $ = id => document.getElementById(id);
@@ -386,14 +386,14 @@ function renderPicks(){
   h += tiles([['Picks', String(all.length)], ['Settled', String(set.length)], ['Hit rate', set.length ? pct(won / set.length, 1) : '–'],
               ['ROI', roi(R_), cls(R_)],
               ['Closing line moved toward the pick', cl.length ? pct(up / cl.length) : '–'], ['Closing line moved against it', cl.length ? pct(dn / cl.length) : '–']]);
-  h += `<p class="note">The closing line moved toward the pick when it ended above the line picked; those two tiles cover picks logged live. Picks before ${LIVE.start} come from the same rules applied to those games. A few hundred picks are needed before the record says much. Click a column heading to sort.</p>`;
+  h += `<p class="note">The closing line moved toward the pick when it ended above the line picked; those two tiles cover picks logged live. Picks before ${LIVE.start}, marked backtest, are today's rules applied to this season's earlier games: the model and rules were set without them, so they are a fair test, but they were not logged live. A few hundred picks are needed before the record says much. Click a column heading to sort.</p>`;
   if (!set.length) return h + '<p class="empty">No settled picks yet.</p>';
   let run = 0;
   const rows = all.filter(b => b.done).map(b => {   // open picks are in the table above
     if (b.ret != null) run += b.ret;
     const res = !b.done ? '<td class="n muted">to play</td>' : b.ret == null ? '<td class="n muted">void</td>' :
       `<td class="n ${wl(b)}">${b.total}</td>`;
-    return `<tr><td data-s="${b.dt}">${short(b.dt)}${b.dt.length > 10 ? ' ' + b.dt.slice(11) : ''}</td><td>${lgShort(b.lg)}</td><td class="wr">${b.home} – ${b.away}</td><td class="n ${b.done ? wl(b) : ''}"><b>${sd(b)} ${b.line}</b></td>
+    return `<tr><td data-s="${b.dt}">${short(b.dt)}${b.dt.length > 10 ? ' ' + b.dt.slice(11) : ''}${b.pre ? ' <span class="muted">backtest</span>' : ''}</td><td>${lgShort(b.lg)}</td><td class="wr">${b.home} – ${b.away}</td><td class="n ${b.done ? wl(b) : ''}"><b>${sd(b)} ${b.line}</b></td>
       <td class="n">${b.px.toFixed(2)}</td><td class="n">${b.pace == null ? '–' : sgn(b.pace, 1)}</td><td class="n pos">${sgn(b.edge*100, 0)}%</td><td class="n">${b.close ?? '–'}</td>${res}</tr>`;
   });
   return h + `<h2>Settled picks, latest first</h2><div class="scroll"><table><thead><tr><th>Tip-off</th><th>League</th><th>Match</th><th class="n">Pick</th><th class="n">Price</th><th class="n">Pace</th><th class="n">Edge</th><th class="n">Closing line</th><th class="n">Total</th></tr></thead><tbody>${rows.reverse().join('')}</tbody></table></div>`;
