@@ -1711,46 +1711,46 @@
   "date": "2026-11-07T15:30:00Z",
   "opp": "Vikos Falcons",
   "home": true,
-  "saved": "2026-11-06T18:52:28Z",
-  "paok": 87.2,
-  "oppScore": 73.3,
+  "saved": "2026-11-07T01:44:14Z",
+  "paok": 86.5,
+  "oppScore": 73.1,
   "winProb": 92,
   "lineupSource": "manual",
   "teamStats": {
    "pts": {
-    "paok": 87.2,
-    "opp": 73.3,
-    "total": 160.5
+    "paok": 86.5,
+    "opp": 73.1,
+    "total": 159.6
    },
    "fg2m": {
-    "paok": 18.9,
-    "opp": 17.6,
-    "total": 36.4
+    "paok": 18.7,
+    "opp": 17.5,
+    "total": 36.2
    },
    "fg3m": {
     "paok": 10.0,
     "opp": 8.1,
-    "total": 18.2
+    "total": 18.1
    },
    "ftm": {
-    "paok": 19.3,
-    "opp": 13.8,
-    "total": 33.1
-   },
-   "ast": {
-    "paok": 17.5,
-    "opp": 15.4,
+    "paok": 19.2,
+    "opp": 13.7,
     "total": 32.9
    },
+   "ast": {
+    "paok": 17.3,
+    "opp": 15.4,
+    "total": 32.7
+   },
    "oreb": {
-    "paok": 9.9,
+    "paok": 10.0,
     "opp": 10.2,
-    "total": 20.1
+    "total": 20.2
    },
    "dreb": {
-    "paok": 25.1,
-    "opp": 22.8,
-    "total": 47.9
+    "paok": 25.2,
+    "opp": 22.9,
+    "total": 48.1
    },
    "tov": {
     "paok": 11.9,
@@ -1758,15 +1758,15 @@
     "total": 25.1
    },
    "reb": {
-    "paok": 35.0,
-    "opp": 33.0,
-    "total": 68.0
+    "paok": 35.2,
+    "opp": 33.1,
+    "total": 68.3
    }
   },
   "modelTotal": 150.9,
-  "line": 161.5,
+  "line": 160.5,
   "modelMargin": 10.5,
-  "hcp": 14.5,
+  "hcp": 14.0,
   "players": {
    "paok": [
     {
@@ -1996,7 +1996,7 @@
   "date": "2026-11-10T17:00:00Z",
   "opp": "Balkan",
   "home": false,
-  "saved": "2026-11-06T18:52:28Z",
+  "saved": "2026-11-07T01:44:14Z",
   "paok": 84.2,
   "oppScore": 76.6,
   "winProb": 75,
@@ -2025,7 +2025,7 @@
    "ast": {
     "paok": 17.9,
     "opp": 14.9,
-    "total": 32.7
+    "total": 32.8
    },
    "oreb": {
     "paok": 9.9,
@@ -2061,7 +2061,7 @@
      "pts": 14.9,
      "reb": 4.2,
      "ast": 2.4,
-     "pir": 14.3
+     "pir": 14.4
     },
     {
      "name": "Kyle Alexander",
@@ -2127,21 +2127,21 @@
      "pir": 5.1
     },
     {
-     "name": "Athanasios Bazinas",
-     "no": "77",
-     "min": 10,
-     "pts": 3.5,
-     "reb": 1.2,
-     "ast": 0.8,
-     "pir": 3.2
-    },
-    {
      "name": "Nikos Chougkaz",
      "no": "9",
      "min": 14,
      "pts": 3.6,
      "reb": 1.7,
      "ast": 0.5,
+     "pir": 3.3
+    },
+    {
+     "name": "Athanasios Bazinas",
+     "no": "77",
+     "min": 10,
+     "pts": 3.5,
+     "reb": 1.2,
+     "ast": 0.8,
      "pir": 3.2
     },
     {

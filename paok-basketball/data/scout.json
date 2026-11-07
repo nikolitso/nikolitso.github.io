@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-06T18:52:28Z",
+ "updated": "2026-11-07T01:44:14Z",
  "reports": [
   {
    "comp": "EuroCup",
@@ -22,10 +22,10 @@
     "ftp": 75.5,
     "reb": 33.0,
     "oreb": 10.3,
-    "ast": 17.0,
+    "ast": 17.2,
     "tov": 13.5,
     "stl": 8.3,
-    "pir": 95.8,
+    "pir": 96.0,
     "opp_fgp": 50.8,
     "opp_fg3p": 39.4,
     "poss": 76.0,
@@ -36,7 +36,7 @@
      "fg2m": 28.746982664033357,
      "fg3m": 12.06934386657889,
      "ftm": 23.69980250164582,
-     "ast": 22.38314680710994,
+     "ast": 22.602589422865922,
      "fga": 82.07153829273645,
      "oreb": 13.60544217687075,
      "dreb": 29.844195742813255,
@@ -273,11 +273,11 @@
      "min": 31.2,
      "pts": 22.2,
      "reb": 4.3,
-     "ast": 1.7,
+     "ast": 1.8,
      "stl": 1.3,
      "blk": 0.7,
      "tov": 1.7,
-     "pir": 24.5,
+     "pir": 24.7,
      "fg3m": 1.7,
      "fg3a": 36,
      "fg3p": 27.8,
@@ -858,7 +858,7 @@
        "pts": 14.9,
        "reb": 4.2,
        "ast": 2.4,
-       "pir": 14.3
+       "pir": 14.4
       },
       {
        "name": "Kyle Alexander",
@@ -924,21 +924,21 @@
        "pir": 5.1
       },
       {
-       "name": "Athanasios Bazinas",
-       "no": "77",
-       "min": 10,
-       "pts": 3.5,
-       "reb": 1.2,
-       "ast": 0.8,
-       "pir": 3.2
-      },
-      {
        "name": "Nikos Chougkaz",
        "no": "9",
        "min": 14,
        "pts": 3.6,
        "reb": 1.7,
        "ast": 0.5,
+       "pir": 3.3
+      },
+      {
+       "name": "Athanasios Bazinas",
+       "no": "77",
+       "min": 10,
+       "pts": 3.5,
+       "reb": 1.2,
+       "ast": 0.8,
        "pir": 3.2
       },
       {
@@ -1125,7 +1125,7 @@
      "ast": {
       "paok": 17.9,
       "opp": 14.9,
-      "total": 32.7
+      "total": 32.8
      },
      "oreb": {
       "paok": 9.9,
@@ -1972,7 +1972,7 @@
    ],
    "projection": {
     "paok": {
-     "score": 87.2,
+     "score": 86.5,
      "players": [
       {
        "name": "Kyle Alexander",
@@ -2089,7 +2089,7 @@
      "pace": 71.4
     },
     "opp": {
-     "score": 73.3,
+     "score": 73.1,
      "players": [
       {
        "name": "Giannis Karakostas",
@@ -2208,9 +2208,9 @@
     "lineupSource": "manual",
     "note": "PAOK without Osman, who is out for one to two months.",
     "modelTotal": 150.9,
-    "line": 161.5,
+    "line": 160.5,
     "modelMargin": 10.5,
-    "hcp": 14.5,
+    "hcp": 14.0,
     "learned": {
      "games": 962,
      "lineGames": 944,
@@ -2226,39 +2226,39 @@
     },
     "teamStats": {
      "pts": {
-      "paok": 87.2,
-      "opp": 73.3,
-      "total": 160.5
+      "paok": 86.5,
+      "opp": 73.1,
+      "total": 159.6
      },
      "fg2m": {
-      "paok": 18.9,
-      "opp": 17.6,
-      "total": 36.4
+      "paok": 18.7,
+      "opp": 17.5,
+      "total": 36.2
      },
      "fg3m": {
       "paok": 10.0,
       "opp": 8.1,
-      "total": 18.2
+      "total": 18.1
      },
      "ftm": {
-      "paok": 19.3,
-      "opp": 13.8,
-      "total": 33.1
-     },
-     "ast": {
-      "paok": 17.5,
-      "opp": 15.4,
+      "paok": 19.2,
+      "opp": 13.7,
       "total": 32.9
      },
+     "ast": {
+      "paok": 17.3,
+      "opp": 15.4,
+      "total": 32.7
+     },
      "oreb": {
-      "paok": 9.9,
+      "paok": 10.0,
       "opp": 10.2,
-      "total": 20.1
+      "total": 20.2
      },
      "dreb": {
-      "paok": 25.1,
-      "opp": 22.8,
-      "total": 47.9
+      "paok": 25.2,
+      "opp": 22.9,
+      "total": 48.1
      },
      "tov": {
       "paok": 11.9,
@@ -2266,9 +2266,9 @@
       "total": 25.1
      },
      "reb": {
-      "paok": 35.0,
-      "opp": 33.0,
-      "total": 68.0
+      "paok": 35.2,
+      "opp": 33.1,
+      "total": 68.3
      }
     }
    }
