@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-07T13:48:45Z",
+ "updated": "2026-11-07T14:37:12Z",
  "reports": [
   {
    "comp": "EuroCup",
@@ -2084,7 +2084,8 @@
       }
      ],
      "missing": [
-      "Cedi Osman"
+      "Cedi Osman",
+      "Donatas Motiejunas"
      ],
      "pace": 71.4
     },
@@ -2206,7 +2207,7 @@
     "winProb": 92,
     "pace": 71.4,
     "lineupSource": "manual",
-    "note": "PAOK without Osman, who is out for one to two months.",
+    "note": "PAOK without Osman, who is out for one to two months, and Motiejunas.",
     "modelTotal": 151.9,
     "line": 160.5,
     "modelMargin": 11.5,
