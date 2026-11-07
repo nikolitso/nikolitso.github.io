@@ -197,7 +197,7 @@ a.tile:hover{border-color:var(--gold)}
   <div class="chips" id="chips"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=16685618"></script>
+<script src="data.js?v=b33ca67e"></script>
 <script src="live.js"></script>
 <script>
 const $ = id => document.getElementById(id);
@@ -313,14 +313,14 @@ function analysis(k, notes = true){
   let h = tiles([['Picks', S.rule.n], ['Hit rate', pct(S.rule.w / S.rule.n, 1)], ['ROI', roi(S.rule.roi), cls(S.rule.roi)],
               ['Opening line', lineAvg(BT.filter(b => b.close != null), 'line')], ['Closing line', lineAvg(BT.filter(b => b.close != null), 'close')], ['Model line', lineAvg(BT.filter(b => b.close != null), 'mu')], ['Actual total', lineAvg(BT.filter(b => b.close != null), 'total')]]);
   const T = (title, first, body, note='') => `<h2>${title}</h2>${nt(note)}<div class="scroll"><table style="max-width:1040px">${GHEAD(first, BHEAD)}<tbody>${body}</tbody></table></div>`;
-  const SKP = SK.filter(x => x.pace < FM() && x.luck < LK()), SKL = SK.filter(x => x.pace >= FM() && x.luck >= LK());
-  h += T('By pace', 'Pace', bandRow(`Below ${FMs()} <span class="muted">(skipped)</span>`, SKP) + [[`${FMs()} to +1.9`, FM(), 2], ['+2 or more', 2, 99]].map(([label, lo, hi]) => bandRow(label, BT.filter(x => x.pace >= lo && x.pace < hi))).join(''),
-    `Pace is the two teams' possessions per game so far that season, each with ${LIVE.min_gp ?? 3}+ games, minus the league average, from earlier games only. The first row is the games the rule skips: the same rules, 3-point luck under ${LKs()} too, with pace below ${FMs()}. They are not in any other figure on this page.`);
+  const SKL = SK.filter(x => x.luck >= LK());
+  h += T('By pace', 'Pace', [['Below 0', -99, 0], ['0 to +1.9', 0, 2], ['+2 or more', 2, 99]].map(([label, lo, hi]) => bandRow(label, BT.filter(x => x.pace >= lo && x.pace < hi))).join(''),
+    `Pace is the two teams' possessions per game so far that season, each with ${LIVE.min_gp ?? 3}+ games, minus the league average, from earlier games only. Pace is one of the model's signals, so there is no pace rule: faster games get a higher chance.`);
   h += T('By 3-point luck', '3-point luck', [['Under +0.2', -99, 0.2], [`+0.2 to ${LKs()}`, 0.2, LK()]].map(([label, lo, hi]) => bandRow(label, BT.filter(x => x.luck >= lo && x.luck < hi))).join('') + bandRow(`${LKs()} or more <span class="muted">(skipped)</span>`, SKL),
-    `3-point luck: in the two teams' games so far that season, the threes made minus what the league's 3-point rate gives on the same attempts, in points per game, from earlier games only. High luck means the shooting has been hot, which rarely lasts, while the model's projection still counts those points. The last row is the fast games the rule skips: luck of ${LKs()} or more. They are not in any other figure on this page.`);
+    `3-point luck: in the two teams' games so far that season, the threes made minus what the league's 3-point rate gives on the same attempts, in points per game, from earlier games only. High luck means the shooting has been hot, which rarely lasts, while the model's projection still counts those points. The last row is the games the rule skips: luck of ${LKs()} or more. They are not in any other figure on this page.`);
   const EP = Math.round(R.edge * 100);
-  h += T('By edge', 'Edge', Array.from({length: EP}, (_, i) => bandRow(`${i}% to ${i + 1}% <span class="muted">(skipped)</span>`, (DATA.skipped_edge || []).filter(f).filter(x => (i === 0 || x.edge > i / 100) && (i === EP - 1 || x.edge <= (i + 1) / 100)))).join('') + bandRow(`${EP}% to 4%`, BT.filter(x => x.edge < 0.04)) + bandRow('4% or more', BT.filter(x => x.edge >= 0.04)),   // every pick is above the bar; stored edges are rounded
-    `Edge: the model's chance of the over × the price − 1, at the opening line. The first rows are the games the rule skips, in 1% steps: every other rule met, with an edge above 0 but not above ${EP}%. They are not in any other figure on this page.`);
+  h += T('By edge', 'Edge', [[0, EP / 2], [EP / 2, EP]].map(([lo, hi]) => bandRow(`${lo}% to ${hi}% <span class="muted">(skipped)</span>`, (DATA.skipped_edge || []).filter(f).filter(x => (lo === 0 || x.edge > lo / 100) && (hi === EP || x.edge <= hi / 100)))).join('') + bandRow(`${EP}% to ${EP + 4}%`, BT.filter(x => x.edge < (EP + 4) / 100)) + bandRow(`${EP + 4}% or more`, BT.filter(x => x.edge >= (EP + 4) / 100)),   // every pick is above the bar; stored edges are rounded
+    `Edge: the model's chance of the over × the price − 1, at the opening line. The first two rows are the games the rule skips: every other rule met, with an edge above 0 but not above ${EP}%. They are not in any other figure on this page.`);
   const ML = LIVE.max_line ?? 180;
   h += T('By line', 'Line band', [['Under 170', 0, 170], [`170 to ${ML - 0.5}`, 170, ML]].map(([label, lo, hi]) => bandRow(label, BT.filter(x => x.line >= lo && x.line < hi))).join('') + bandRow(`${ML} or more <span class="muted">(skipped)</span>`, (DATA.skipped_line || []).filter(f)),
     `The opening line. The last row is the games the rule skips: every other rule met, with an opening line of ${ML} or more. They are not in any other figure on this page.`);
@@ -353,7 +353,7 @@ function bets(){
 }
 
 function renderProjections(){
-  let h = `<p class="note">Games in the next 7 days with the model's projected total (fitted on earlier games only) next to the market's consensus line. Pace: the two teams' possessions per game this season against the league average. 3-point luck: points per game from threes above the league's 3-point rate in the two teams' games. Only overs that meet the rule (regular season, both teams ${LIVE.min_gp ?? 3}+ games, pace ${FMs()} or more, 3-point luck under ${LKs()}) get an edge here; highlighted games are logged in the Picks tab at the line and price shown when they were first seen, and their edge is the one at that moment, while the line and prices keep updating. Click a match for its page, with the projection and how it was produced. Click a column heading to sort.</p>`;
+  let h = `<p class="note">Games in the next 7 days with the model's projected total (fitted on earlier games only) next to the market's consensus line. Pace: the two teams' possessions per game this season against the league average. 3-point luck: points per game from threes above the league's 3-point rate in the two teams' games. Pace and 3-point luck are signals in the model's chance. Only overs that meet the rule (regular season, both teams ${LIVE.min_gp ?? 3}+ games, 3-point luck under ${LKs()}) get an edge here; highlighted games are logged in the Picks tab at the line and price shown when they were first seen, and their edge is the one at that moment, while the line and prices keep updating. Click a match for its page, with the projection and how it was produced. Click a column heading to sort.</p>`;
   const fx = LIVE.fixtures.filter(inLg);
   if (!fx.length) return h + '<p class="empty">No games in the next 7 days.</p>';
   const taken = Object.fromEntries(LIVE.picks.map(b => [b.home + '|' + b.away, b]));   // a pick keeps the edge it was taken at
@@ -377,7 +377,7 @@ function renderPicks(){
   // open picks first, then this season's record: October bets (same rules, worked out from results) + bets logged live
   const open = LIVE.picks.filter(b => !b.done).sort((a, b) => a.dt < b.dt ? -1 : 1);
   const fx = Object.fromEntries(LIVE.fixtures.map(g => [g.home + '|' + g.away, g]));
-  let h = `<p class="note">Picks to take: overs where the model's edge is above ${Math.round(LE()*100)}% at the line on offer, regular season, both teams ${LIVE.min_gp ?? 3}+ games${LIVE.max_line && LIVE.max_line < 999 ? `, line under ${LIVE.max_line}` : ''}, game pace ${FMs()} or more, 3-point luck under ${LKs()}, equal stakes. ROI = profit ÷ total staked on won and lost picks; pushes are left out. Every hour the model checks every game in the next 7 days; a pick is logged the first time its edge clears the bar, at that line and the average price, and never changed. Take it as early as possible, as the line tends to move toward it. Updated ${LIVE.updated} (Athens).</p>`;
+  let h = `<p class="note">Picks to take: overs where the model's edge is above ${Math.round(LE()*100)}% at the line on offer, regular season, both teams ${LIVE.min_gp ?? 3}+ games${LIVE.max_line && LIVE.max_line < 999 ? `, line under ${LIVE.max_line}` : ''}, 3-point luck under ${LKs()}, equal stakes. The model's chance includes pace and 3-point luck (new model since 8 Nov 2026). ROI = profit ÷ total staked on won and lost picks; pushes are left out. Every hour the model checks every game in the next 7 days; a pick is logged the first time its edge clears the bar, at that line and the average price, and never changed. Take it as early as possible, as the line tends to move toward it. Updated ${LIVE.updated} (Athens).</p>`;
   if (!open.length) h += '<p class="empty">No open picks right now. New ones appear here as lines open.</p>';
   else {
     h += `<h2>Open picks</h2><div class="scroll"><table class="proj"><thead><tr><th>Tip-off</th><th>League</th><th>Match</th><th class="n">Pick</th><th class="n">Price</th><th class="n">Model total</th><th class="n">Edge</th><th class="n">Line now</th><th class="n">Pace</th><th class="n">3-pt luck</th></tr></thead><tbody>` +
@@ -394,7 +394,7 @@ function renderPicks(){
   h += tiles([['Picks', String(all.length)], ['Settled', String(set.length)], ['Hit rate', set.length ? pct(won / set.length, 1) : '–'],
               ['ROI', roi(R_), cls(R_)],
               ['Closing line moved toward the pick', cl.length ? pct(up / cl.length) : '–'], ['Closing line moved against it', cl.length ? pct(dn / cl.length) : '–']]);
-  h += `<p class="note">The closing line moved toward the pick when it ended above the line picked. A few hundred picks are needed before the record says much. Picks before 7 Nov 2026 stay as they were: they were made without the pace and 3-point luck rules, in six leagues, and with the earlier team numbers, which also used last season. From 7 Nov 2026 the rule runs in every top domestic division. European competitions are left out, and their earlier picks were taken out of the record on 8 Nov 2026. Click a column heading to sort.</p>`;
+  h += `<p class="note">The closing line moved toward the pick when it ended above the line picked. A few hundred picks are needed before the record says much. Picks stay as they were logged, under the rules of their day. Before 7 Nov 2026 they came from six leagues, without pace or 3-point luck and with team numbers that also used last season. Since 8 Nov 2026 the model's weights are learned at opening lines with pace and 3-point luck, the edge bar is 8%, and the rule runs in every top domestic division. European competitions are left out, and their earlier picks were taken out of the record on 8 Nov 2026. Click a column heading to sort.</p>`;
   if (!set.length) return h + '<p class="empty">No settled picks yet.</p>';
   let run = 0;
   const rows = all.filter(b => b.done).map(b => {   // open picks are in the table above
