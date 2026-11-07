@@ -198,7 +198,7 @@ a.gm{color:inherit;text-decoration:none} a.gm:hover{color:var(--gold);text-decor
   <div class="chips" id="chips"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=bdeaf1cb"></script>
+<script src="data.js?v=a03d6ddf"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -434,36 +434,37 @@ function calibration(){
   const bets = DATA.backtest.bets.filter(b => inLg(b) && !tuned.has(b.lg + '|' + b.season));
   const mean = (g, f) => g.reduce((s, b) => s + f(b), 0) / g.length;
   const table = (title, bands, val) => {
-    let t = `<h3 style="margin-top:18px">${title}</h3><div class="scroll"><table style="max-width:760px"><thead><tr><th>Band</th><th class="n">Bets</th><th class="n">Price implies</th><th class="n">Model said</th><th class="n">Actual</th><th class="n">Gap</th><th class="n">ROI</th></tr></thead><tbody>`;
+    let t = `<h3 style="margin-top:18px">${title}</h3><div class="scroll"><table style="max-width:1040px"><thead><tr><th>Band</th><th class="n">Bets</th><th class="n">Price implies</th><th class="n">Model said</th><th class="n">Actual</th><th class="n">Gap</th><th class="n">Market line</th><th class="n">Model line</th><th class="n">Actual total</th><th class="n">ROI</th></tr></thead><tbody>`;
     for (const [lab, lo, hi] of bands){
       const g = bets.filter(b => val(b) >= lo && val(b) < hi);
       if (!g.length) continue;
       const said = mean(g, b => b.p), hit = mean(g, b => +b.won), roi = mean(g, b => b.ret);
-      t += `<tr><td>${lab}</td><td class="n">${g.length}</td><td class="n">${(mean(g, b => 1 / b.px) * 100).toFixed(1)}%</td><td class="n">${(said * 100).toFixed(1)}%</td><td class="n">${(hit * 100).toFixed(1)}%</td><td class="n ${cls(hit - said)}">${sgn((hit - said) * 100, 1)}</td><td class="n ${cls(roi)}">${sgn(roi * 100, 1)}%</td></tr>`;
+      t += `<tr><td>${lab}</td><td class="n">${g.length}</td><td class="n">${(mean(g, b => 1 / b.px) * 100).toFixed(1)}%</td><td class="n">${(said * 100).toFixed(1)}%</td><td class="n">${(hit * 100).toFixed(1)}%</td><td class="n ${cls(hit - said)}">${sgn((hit - said) * 100, 1)}</td><td class="n">${avgLine(g, 'line')}</td><td class="n">${avgLine(g, 'fair')}</td><td class="n">${avgLine(g, 'total')}</td><td class="n ${cls(roi)}">${sgn(roi * 100, 1)}%</td></tr>`;
     }
     return t + '</tbody></table></div>';
   };
-  return `<h2>Calibration</h2><p class="note">Is the model's chance right? The same bets, comparing what the model said with how often the over actually won. Gap is actual minus model, in percentage points: near zero means the chance can be trusted, negative means the model was too confident. Price implies is 1 ÷ the average price. Small bands move a lot by chance.</p>`
-    + table('By edge', [['5–10%', .05, .1], ['10–20%', .1, .2], ['20–30%', .2, .3], ['30–40%', .3, .4], ['40%+', .4, 9]], b => b.edge)
-    + table('By model chance', [['Under 60%', 0, .6], ['60–70%', .6, .7], ['70–80%', .7, .8], ['80%+', .8, 2]], b => b.p);
+  return `<h2>Calibration</h2><p class="note">Is the model's chance right? The same bets, comparing what the model said with how often the over actually won. Gap is actual minus model, in percentage points: near zero means the chance can be trusted, negative means the model was too confident. Price implies is 1 ÷ the average price. Market line, Model line and Actual total are averages for the band. Small bands move a lot by chance.</p>`
+    + table('By edge', [['5–10%', .05, .1], ['10–20%', .1, .2], ['20%+', .2, 9]], b => b.edge)
+    + table('By model chance', [['Under 60%', 0, .6], ['60–70%', .6, .7], ['70%+', .7, 2]], b => b.p);
 }
 
-// P/L by the market's total line: the live rule's bets in unseen seasons, in 10-point bands (bands of the line's whole part)
+// P/L by the market's total line: the live rule's bets in unseen seasons, in three bands of the line's whole part
 function byLine(){
   const tuned = new Set(DATA.backtest.seasons.filter(s => s.tuned).map(s => s.lg + '|' + s.season));
   const bets = DATA.backtest.bets.filter(b => inLg(b) && !tuned.has(b.lg + '|' + b.season));
-  const band = b => { const f = Math.floor(b.line); return Math.ceil(f / 10) * 10; };
+  const band = b => { const f = Math.floor(b.line); return f <= 130 ? 130 : f <= 140 ? 140 : DATA.low - 1; };
+  const from = {130: DATA.min_line, 140: 131, [DATA.low - 1]: 141};
   const by = {};
   bets.forEach(b => (by[band(b)] ||= []).push(b));
   let h = `<h2>By line</h2><p class="note">The same bets grouped by the market's total-points line. Equal stakes.</p>`;
-  h += `<div class="scroll"><table style="max-width:620px"><thead><tr><th>Line</th><th class="n">Bets</th><th class="n">Won</th><th class="n">Hit</th><th class="n">ROI</th></tr></thead><tbody>`;
+  h += `<div class="scroll"><table style="max-width:860px"><thead><tr><th>Line</th><th class="n">Bets</th><th class="n">Won</th><th class="n">Hit</th><th class="n">Market line</th><th class="n">Model line</th><th class="n">Actual total</th><th class="n">ROI</th></tr></thead><tbody>`;
   let n = 0, w = 0, pl = 0;
   for (const k of Object.keys(by).map(Number).sort((a, b) => a - b)){
     const g = by[k], gw = g.filter(b => b.won).length, gp = g.reduce((s, b) => s + b.ret, 0);
     n += g.length; w += gw; pl += gp;
-    h += `<tr><td>${k - 9}.5–${Math.min(k, DATA.low - 1)}.5</td><td class="n">${g.length}</td><td class="n">${gw}</td><td class="n">${pct(gw / g.length)}</td><td class="n ${cls(gp)}">${sgn(gp / g.length * 100, 1)}%</td></tr>`;
+    h += `<tr><td>${from[k]}.5–${k}.5</td><td class="n">${g.length}</td><td class="n">${gw}</td><td class="n">${pct(gw / g.length)}</td><td class="n">${avgLine(g, 'line')}</td><td class="n">${avgLine(g, 'fair')}</td><td class="n">${avgLine(g, 'total')}</td><td class="n ${cls(gp)}">${sgn(gp / g.length * 100, 1)}%</td></tr>`;
   }
-  if (n) h += `<tr><td><b>All</b></td><td class="n"><b>${n}</b></td><td class="n"><b>${w}</b></td><td class="n"><b>${pct(w / n)}</b></td><td class="n ${cls(pl)}"><b>${sgn(pl / n * 100, 1)}%</b></td></tr>`;
+  if (n) h += `<tr><td><b>All</b></td><td class="n"><b>${n}</b></td><td class="n"><b>${w}</b></td><td class="n"><b>${pct(w / n)}</b></td><td class="n"><b>${avgLine(bets, 'line')}</b></td><td class="n"><b>${avgLine(bets, 'fair')}</b></td><td class="n"><b>${avgLine(bets, 'total')}</b></td><td class="n ${cls(pl)}"><b>${sgn(pl / n * 100, 1)}%</b></td></tr>`;
   h += '</tbody></table></div>';
   return h;
 }
