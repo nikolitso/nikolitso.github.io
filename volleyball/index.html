@@ -198,7 +198,7 @@ a.gm{color:inherit;text-decoration:none} a.gm:hover{color:var(--gold);text-decor
   <div class="chips" id="chips"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=735a4aac"></script>
+<script src="data.js?v=b11cf275"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -227,7 +227,7 @@ const one = () => lg === 'all' ? DATA.leagues[0].key : lg;      // tabs that sho
 $('sub').textContent = `${DATA.leagues.length} leagues, women's and men's · ${DATA.season.replace('-','–')} · updated ${DATA.updated} (Athens)`;
 
 function renderProjections(){
-  let h = `<p class="note">Every match in the next 7 days: the chance it goes 3, 4 or 5 sets, the model's line on total points (where over and under are even). Once the market posts a line, the row shows the market line, the average over price and the model's over chance against it. Only <b>picks</b> are highlighted (gold); they are backed and recorded: overs on lines ${DATA.min_line}.5 to ${DATA.low - 0.5}, the matches the market expects to end 3-0, where the edge is above ${DATA.edge*100}%. Over chance and Edge are shown corrected, keeping ${REAL * 100}% of the model's advantage over the price, so a pick can show less than ${DATA.edge*100}%.</p>`;
+  let h = `<p class="note">Every match in the next 7 days: the chance it goes 3, 4 or 5 sets, the model's line on total points (where over and under are even). Once the market posts a line, the row shows the market line, the average over price and the model's over chance against it. Only <b>picks</b> are highlighted (gold); they are backed and recorded: overs on lines ${DATA.min_line}.5 to ${DATA.low - 0.5}, the matches the market expects to end 3-0, where the edge is above ${DATA.edge*100}%. Playoff, play-out and placement games are never picks. Over chance and Edge are shown corrected, keeping ${REAL * 100}% of the model's advantage over the price, so a pick can show less than ${DATA.edge*100}%.</p>`;
   h += '<p class="note"><a href="/volleyball/games/">Every game, one page each →</a></p>';
   h = pickTiles() + h;
   const fx = DATA.fixtures.filter(inLg);
@@ -297,7 +297,7 @@ const fairCell = p => p.fair == null ? '<td class="n muted">–</td>' : `<td cla
 
 function renderPicks(){
   const open = DATA.picks.filter(inLg).filter(p => !('won' in p)).sort((a, b) => a.dt.localeCompare(b.dt));
-  let h = `<p class="note">The picks still to play, logged before the first serve: an over on a line from ${DATA.min_line}.5 to ${DATA.low - 0.5}, when the model's chance × the average price is more than ${DATA.edge*100}% above 1. Leagues: ${liveNames()}. Equal stakes. Until the start a pick follows the latest line. Once played it moves to <b>Results</b>. Over chance and Edge are corrected: they keep ${REAL * 100}% of the model's advantage over the price, as the model runs too confident, so a pick can show an edge under ${DATA.edge*100}%.</p>`;
+  let h = `<p class="note">The picks still to play, logged before the first serve: an over on a line from ${DATA.min_line}.5 to ${DATA.low - 0.5}, when the model's chance × the average price is more than ${DATA.edge*100}% above 1. Leagues: ${liveNames()}. Regular-season games only: no playoffs, play-outs or placement games. Equal stakes. Until the start a pick follows the latest line. Once played it moves to <b>Results</b>. Over chance and Edge are corrected: they keep ${REAL * 100}% of the model's advantage over the price, as the model runs too confident, so a pick can show an edge under ${DATA.edge*100}%.</p>`;
   if (!open.length) return h + '<p class="empty">No open picks. New ones appear once the market posts lines for a match that qualifies.</p>';
   h += `<div class="scroll"><table><thead><tr><th>Date</th>${lg === 'all' ? '<th>League</th>' : ''}<th>Match</th><th class="n">Market line</th><th class="n">Price</th><th class="n">Model line</th><th class="n">Over chance</th><th class="n">Edge</th></tr></thead><tbody>`;
   for (const p of open)
@@ -364,7 +364,7 @@ function btTiles(S){
 
 function renderBacktest(){
   const B = DATA.backtest, S = lg === 'all' ? B.all : B.leagues[lg];
-  let h = `<p class="note">The live rule run on every past season since ${B.first.slice(0,4)} (the ${DATA.season.replace('-','–')} season is live: its picks are in <b>Picks</b> and <b>Results</b>), each match projected from the earlier matches of that season only, with no pick before both teams have played ${DATA.min_games}, at the closing line and the average price. The settings were tuned on Turkey's women's Sultanlar Ligi 2024-25 alone, so the totals leave that season out and every other season is a test the model never saw. These totals know which leagues were kept, so they run high: Home gives the fair figure. Lines of ${DATA.min_line - 1}.5 or lower are left out. ${S.blind_n ? `<b>Backing every low-line over without the model</b> returned ${sgn(S.blind_roi*100, 1)}% over ${S.blind_n} matches.` : `<b>This league never has a line below ${DATA.low}</b> (its totals run higher), so the rule has had nothing to bet on.`}</p>`;
+  let h = `<p class="note">The live rule run on every past season since ${B.first.slice(0,4)} (the ${DATA.season.replace('-','–')} season is live: its picks are in <b>Picks</b> and <b>Results</b>), each match projected from the earlier matches of that season only, with no pick before both teams have played ${DATA.min_games}, at the closing line and the average price. The settings were tuned on Turkey's women's Sultanlar Ligi 2024-25 alone, so the totals leave that season out and every other season is a test the model never saw. These totals know which leagues were kept, so they run high: Home gives the fair figure. Lines of ${DATA.min_line - 1}.5 or lower are left out, and so are playoff, play-out and placement games. ${S.blind_n ? `<b>Backing every low-line over without the model</b> returned ${sgn(S.blind_roi*100, 1)}% over ${S.blind_n} matches.` : `<b>This league never has a line below ${DATA.low}</b> (its totals run higher), so the rule has had nothing to bet on.`}</p>`;
   h += btTiles(S);
   if (lg === 'all'){
     h += `<p class="note">${lg === 'all' && DATA.leagues.some(l => !l.live) ? 'The totals above count the leagues with live picks only. ' : ''}Click a league to see its seasons and bets.</p>`;
