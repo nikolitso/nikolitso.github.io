@@ -327,20 +327,20 @@ function bets(){
 }
 
 function renderProjections(){
-  let h = `<p class="note">Games in the next 7 days with the model's projected total (fitted on earlier games only) next to the market's consensus line. Only overs that meet the rule (regular season, both teams ${LIVE.min_gp ?? 3}+ games) get an edge here; highlighted games are logged in the Picks tab at the line and price shown when they were first seen, and their edge is the one at that moment, while the line and prices keep updating. Click a match for its page, with the projection and how it was produced. Click a column heading to sort.</p>`;
+  let h = `<p class="note">Games in the next 7 days with the model's projected total (fitted on earlier games only) next to the market's consensus line. Pace, for EuroLeague and EuroCup only: the two teams' possessions per game this season against the league average; ${sgn(FM())} or more is a Fast game. Only overs that meet the rule (regular season, both teams ${LIVE.min_gp ?? 3}+ games) get an edge here; highlighted games are logged in the Picks tab at the line and price shown when they were first seen, and their edge is the one at that moment, while the line and prices keep updating. Click a match for its page, with the projection and how it was produced. Click a column heading to sort.</p>`;
   const fx = LIVE.fixtures.filter(inLg);
   if (!fx.length) return h + '<p class="empty">No games in the next 7 days.</p>';
   const taken = Object.fromEntries(LIVE.picks.map(b => [b.home + '|' + b.away, b]));   // a pick keeps the edge it was taken at
   const byDay = {};
   fx.forEach(g => (byDay[g.dt.slice(0,10)] ||= []).push(g));
-  const head = `<thead><tr><th>Time</th>${lg === 'all' ? '<th>League</th>' : ''}<th>Match</th><th class="n">Model</th><th class="n">Line</th><th class="n">Over</th><th class="n">Under</th><th class="n">Over chance</th><th class="n">Over edge</th></tr></thead>`;
+  const head = `<thead><tr><th>Time</th>${lg === 'all' ? '<th>League</th>' : ''}<th>Match</th><th class="n">Model</th><th class="n">Line</th><th class="n">Over</th><th class="n">Under</th><th class="n">Over chance</th><th class="n">Over edge</th><th class="n">Pace</th></tr></thead>`;
   for (const [d, gs] of Object.entries(byDay)){
     h += `<h2 class="day">${dayName(d)}</h2><div class="scroll"><table class="proj">${head}<tbody>`;
     for (const g of gs){
-      const t = g.pick && taken[g.home + '|' + g.away], e = t ? t.edge : g.line == null || !(g.ok ?? RL(g.lg)) ? null : g.eo;
+      const t = g.pick && taken[g.home + '|' + g.away], e = t ? t.edge : g.line == null || !(g.ok ?? RL(g.lg)) ? null : g.eo, pc = t ? t.pace : g.pace;
       h += `<tr${g.pick ? ' class="pk"' : ''}><td>${g.dt.slice(11)}</td>${lg === 'all' ? `<td>${lgShort(g.lg)}</td>` : ''}
-        <td class="wr">${g.slug ? `<a class="gm" href="games/${g.slug}/">${g.home} – ${g.away}</a>` : `${g.home} – ${g.away}`}${g.pick ? `<span class="badge">${g.pick}</span>` : ''}${fastTag(t ? t.pace : g.pace)}</td><td class="n"><b>${g.mu.toFixed(1)}</b></td>
-        ${g.line == null ? '<td class="n muted" colspan="5">no line yet</td>' : `<td class="n">${g.line}</td><td class="n">${g.op.toFixed(2)}</td><td class="n">${g.up.toFixed(2)}</td><td class="n">${pct(g.p)}</td><td class="n ${t || e > LE() ? 'pos' : 'muted'}">${e == null ? '–' : sgn(e*100, 0) + '%'}</td>`}</tr>`;
+        <td class="wr">${g.slug ? `<a class="gm" href="games/${g.slug}/">${g.home} – ${g.away}</a>` : `${g.home} – ${g.away}`}${g.pick ? `<span class="badge">${g.pick}</span>` : ''}${fastTag(pc)}</td><td class="n"><b>${g.mu.toFixed(1)}</b></td>
+        ${g.line == null ? '<td class="n muted" colspan="5">no line yet</td>' : `<td class="n">${g.line}</td><td class="n">${g.op.toFixed(2)}</td><td class="n">${g.up.toFixed(2)}</td><td class="n">${pct(g.p)}</td><td class="n ${t || e > LE() ? 'pos' : 'muted'}">${e == null ? '–' : sgn(e*100, 0) + '%'}</td>`}<td class="n">${pc != null ? sgn(pc) : '–'}</td></tr>`;
     }
     h += '</tbody></table></div>';
   }
