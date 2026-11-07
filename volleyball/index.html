@@ -198,7 +198,7 @@ a.gm{color:inherit;text-decoration:none} a.gm:hover{color:var(--gold);text-decor
   <div class="chips" id="chips"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=95e17281"></script>
+<script src="data.js?v=bdeaf1cb"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -353,20 +353,30 @@ function renderSeason(){
 }
 
 // the record tiles of Home and Projections, for the backtest bets of the view (the tuned-on season left out, as in the totals)
-function btTiles(S){
+function btTiles(S, pick = inLg){
   const tuned = new Set(DATA.backtest.seasons.filter(s => s.tuned).map(s => s.lg + '|' + s.season));
-  const g = DATA.backtest.bets.filter(b => inLg(b) && !tuned.has(b.lg + '|' + b.season)), avg = `avg of ${g.length} bets`;
+  const g = DATA.backtest.bets.filter(b => pick(b) && !tuned.has(b.lg + '|' + b.season)), avg = `avg of ${g.length} bets`;
   const t = [['Bets', S.n, 'past seasons'], ['Record', `${S.w}–${S.n - S.w}`, 'win – loss'], ['Hit rate', S.n ? pct(S.w / S.n) : '–', `${S.n} bets`],
              ['ROI', S.n ? `<span class="${cls(S.roi)}">${sgn(S.roi * 100, 1)}%</span>` : '–', `${S.n} bets`],
              ['Market line', avgLine(g, 'line'), avg], ['Model line', avgLine(g, 'fair'), avg], ['Actual total', avgLine(g, 'total'), avg]];
   return `<div class="metrics">${t.map(([l, v, n]) => `<div class="metric"><div class="lbl">${l}</div><div class="big">${v}</div><div class="sm">${n}</div></div>`).join('')}</div>`;
 }
 
+// the same tiles for the women's or the men's leagues alone (All leagues view of Backtest)
+function sexTiles(women){
+  const keys = new Set(DATA.leagues.filter(l => l.live && l.women === women).map(l => l.key));
+  const tuned = new Set(DATA.backtest.seasons.filter(s => s.tuned).map(s => s.lg + '|' + s.season));
+  const pick = b => keys.has(b.lg), g = DATA.backtest.bets.filter(b => pick(b) && !tuned.has(b.lg + '|' + b.season));
+  const w = g.filter(b => b.won).length, roi = g.length ? g.reduce((a, b) => a + b.ret, 0) / g.length : 0;
+  return `<h2>${women ? "Women's" : "Men's"} leagues</h2>` + btTiles({n: g.length, w, roi}, pick);
+}
+
 function renderBacktest(){
   const B = DATA.backtest, S = lg === 'all' ? B.all : B.leagues[lg];
-  let h = `<p class="note">The live rule run on every past season since ${B.first.slice(0,4)} (the ${DATA.season.replace('-','–')} season is live: its picks are in <b>Picks</b> and <b>Results</b>), each match projected from the earlier matches of that season only, with no pick before both teams have played ${DATA.min_games}, at the closing line and the average price. The settings were tuned on Turkey's women's Sultanlar Ligi 2024-25 alone, so the totals leave that season out and every other season is a test the model never saw. These totals know which leagues were kept, so they run high: Home gives the fair figure. Lines of ${DATA.min_line - 1}.5 or lower are left out, and so are playoff, play-out and placement games. ${S.blind_n ? `<b>Backing every low-line over without the model</b> returned ${sgn(S.blind_roi*100, 1)}% over ${S.blind_n} matches.` : `<b>This league never has a line below ${DATA.low}</b> (its totals run higher), so the rule has had nothing to bet on.`}</p>`;
-  h += btTiles(S);
+  let h = `<p class="note">Past seasons since ${B.first.slice(0,4)}, regular-season games only, using the live rule at the closing line and average price. Each match is projected only from earlier matches that season, and no pick is made before both teams have played ${DATA.min_games}. These totals run high because they know which leagues were kept; Home gives the fair figure. ${S.blind_n ? `<b>Backing every low-line over without the model</b> returned ${sgn(S.blind_roi*100, 1)}% over ${S.blind_n.toLocaleString('en-US')} matches.` : `<b>This league never has a line below ${DATA.low}</b> (its totals run higher), so the rule has had nothing to bet on.`}</p>`;
+  h += (lg === 'all' ? '<h2>All leagues</h2>' : '') + btTiles(S);
   if (lg === 'all'){
+    h += sexTiles(true) + sexTiles(false);
     h += `<p class="note">${lg === 'all' && DATA.leagues.some(l => !l.live) ? 'The totals above count the leagues with live picks only. ' : ''}Click a league to see its seasons and bets.</p>`;
     h += `<div class="scroll"><table style="max-width:760px"><thead><tr><th>League</th><th class="n">Bets</th><th class="n">Hit</th><th class="n">ROI</th><th class="n">No model</th></tr></thead><tbody>`;
     for (const l of DATA.leagues){
