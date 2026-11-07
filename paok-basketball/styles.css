@@ -361,3 +361,5 @@ h3.official-h { margin-top: 30px; }
 
 /* inverted blocks: the light card on the night, with readable muted text and rules inside */
 .card.dark { --muted: #4c5260; --ink: var(--an-paper); --line: #c9ccd6; }
+.games > h3 { margin: 24px 0 8px; }
+.games > h3:first-child { margin-top: 4px; }

@@ -223,13 +223,19 @@ const VIEWS = {
     state.filters.schedule = f;
     const list = state.games.filter((g) => f === 'All' || g.comp === f);
     const next = state.games.find((g) => !g.played);
-    let month = '';
-    const rows = list.map((g) => {
-      const m = fmtDate(g.date, { weekday: undefined, day: undefined, month: 'long', year: 'numeric' });
-      const head = m !== month ? `<div class="month">${m}</div>` : '';
-      month = m;
-      return head + gameRow(g, g === next);
-    }).join('');
+    // results first, latest game on top; then the games still to play, in date order
+    const months = (games) => {
+      let month = '';
+      return games.map((g) => {
+        const m = fmtDate(g.date, { weekday: undefined, day: undefined, month: 'long', year: 'numeric' });
+        const head = m !== month ? `<div class="month">${m}</div>` : '';
+        month = m;
+        return head + gameRow(g, g === next);
+      }).join('');
+    };
+    const played = list.filter((g) => g.played).reverse();
+    const upcoming = list.filter((g) => !g.played);
+    const rows = (played.length ? `<h3>Results</h3>${months(played)}` : '') + (upcoming.length ? `<h3>Upcoming</h3>${months(upcoming)}` : '');
     const recChip = (c, label) => {
       const r = record(state.games.filter((g) => g.played && (c === 'All' || g.comp === c)));
       return `<div class="rec ${f === c ? 'on' : ''}"><span>${esc(label)}</span><b>${r.w}–${r.l}</b></div>`;

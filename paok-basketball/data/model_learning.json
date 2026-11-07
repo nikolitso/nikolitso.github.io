@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-07T17:25:31Z",
+ "updated": "2026-11-07T18:42:53Z",
  "comps": {
   "EuroCup": {
    "games": 1093,
@@ -15,14 +15,14 @@
    "marginSd": 11.4
   },
   "GBL": {
-   "games": 962,
-   "lineGames": 944,
-   "homeEdge": 2.17,
-   "totalBias": 1.47,
-   "spreadSd": 9.1,
+   "games": 967,
+   "lineGames": 945,
+   "homeEdge": 2.18,
+   "totalBias": 1.49,
+   "spreadSd": 9.0,
    "lineWeight": 0.89,
    "lineWeightRaw": 0.89,
-   "marginGames": 944,
+   "marginGames": 945,
    "marginWeight": 0.84,
    "marginWeightRaw": 0.84,
    "marginSd": 9.7
@@ -100,6 +100,18 @@
    "realMargin": 2,
    "modelMargin": 8.4,
    "hcp": 9.5
+  },
+  {
+   "comp": "GBL",
+   "opp": "Vikos Falcons",
+   "model": 151.9,
+   "shown": 159.8,
+   "line": 160.5,
+   "real": 160,
+   "margin": 13.6,
+   "realMargin": 26,
+   "modelMargin": 11.5,
+   "hcp": 14.0
   }
  ]
 }
