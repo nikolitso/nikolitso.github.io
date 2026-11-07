@@ -248,7 +248,7 @@ function tiles(list){
 // one table row from a {n, w, roi} group
 const grp = (label, g, extra='', more='') => g && g.n ? `<tr${extra}><td>${label}</td><td class="n">${g.n}</td><td class="n">${pct(g.w / g.n, 1)}</td><td class="n">${g.px ? g.px.toFixed(2) : '–'}</td><td class="n ${cls(g.roi)}">${roi(g.roi)}</td>${more}</tr>` : '';
 const LHEAD = '<th class="n">Opening line</th><th class="n">Closing line</th>';
-const BHEAD = LHEAD + '<th class="n">Actual total</th>';
+const BHEAD = LHEAD + '<th class="n">Model line</th><th class="n">Actual total</th>';
 const GHEAD = (first, more='') => `<thead><tr><th>${first}</th><th class="n">Picks</th><th class="n">Hit</th><th class="n">Avg price</th><th class="n">ROI</th>${more}</tr></thead>`;
 // average opening and closing line of a list of bets, as two table cells
 const seasonOf = b => { const y = +b.dt.slice(0, 4); return +b.dt.slice(5, 7) >= 7 ? `${y}-${y + 1}` : `${y - 1}-${y}`; };
@@ -264,7 +264,7 @@ function renderFindings(){
   return h;
 }
 
-const btCells = list => { const c = list.filter(b => b.close != null); return lineCells(list) + (c.length ? `<td class="n">${lineAvg(c, 'total')}</td>` : '<td class="n muted">–</td>'); };
+const btCells = list => { const c = list.filter(b => b.close != null); return lineCells(list) + (c.length ? `<td class="n">${lineAvg(c, 'mu')}</td><td class="n">${lineAvg(c, 'total')}</td>` : '<td class="n muted">–</td><td class="n muted">–</td>'); };
 
 function renderLeagues(){
   let h = `<p class="note">Regular-season games from ${sn(DATA.first)} on (2020–21 only warms the ratings up; play-offs are left out, as in the rule). The model column starts in 2022–23 and uses earlier games only, but the leagues were chosen with these seasons known. <b>Over %</b>: how often the final score (overtime included) went over the closing line. Blind over: backing the over in every game at the average price. Opening and closing line: the average of those picks. Model overs: overs the rule picked at the opening line (edge above ${Math.round(R.edge*100)}%), count and ROI. Click a league for its seasons.</p>`;
@@ -292,7 +292,7 @@ function renderBacktest(){
   if (!S || !S.rule.n) return h + '<p class="empty">The rule made no picks in this league.</p>';
   const BT = DATA.bets.filter(inLg);
   h += tiles([['Picks', S.rule.n], ['Hit rate', pct(S.rule.w / S.rule.n, 1)], ['ROI', roi(S.rule.roi), cls(S.rule.roi)],
-              ['Opening line', lineAvg(BT.filter(b => b.close != null), 'line')], ['Closing line', lineAvg(BT.filter(b => b.close != null), 'close')], ['Actual total', lineAvg(BT.filter(b => b.close != null), 'total')]]);
+              ['Opening line', lineAvg(BT.filter(b => b.close != null), 'line')], ['Closing line', lineAvg(BT.filter(b => b.close != null), 'close')], ['Model line', lineAvg(BT.filter(b => b.close != null), 'mu')], ['Actual total', lineAvg(BT.filter(b => b.close != null), 'total')]]);
   h += `<h2>By season</h2><div class="scroll"><table style="max-width:980px">${GHEAD('Season', BHEAD)}<tbody>`;
   for (const s of S.seasons) h += grp(sn(s.season) + (s.season === DATA.tuned ? ' <span class="muted">(tuned on)</span>' : '') + (s.season === DATA.season ? ' <span class="muted">(so far)</span>' : ''), s, '', btCells(BT.filter(b => seasonOf(b) === s.season)));
   h += '</tbody></table></div>';
