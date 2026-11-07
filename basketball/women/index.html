@@ -192,6 +192,7 @@ a.tile:hover{border-color:var(--gold)}
 </div></header>
 <div class="wrap">
   <div class="tiles" id="top"></div>
+  <div id="btop"></div>
   <div class="sub" id="sub"></div>
   <div class="chips" id="chips"></div>
   <div id="out"></div>
@@ -314,8 +315,6 @@ const skipped = k => (DATA[k] || []).filter(inLg);
 function btBody(BT, S, pool, leagues){
   let h = '';
   const T = stat(BT), C = BT.filter(b => b.close != null), EP = Math.round(R.edge * 100);
-  h += tiles([['Picks', T.n], ['Hit rate', pct(T.w / T.n, 1)], ['ROI', roi(T.roi), cls(T.roi)],
-              ['Opening line', lineAvg(C, 'line')], ['Closing line', lineAvg(C, 'close')], ['Model line', lineAvg(C, 'mu')], ['Actual total', lineAvg(C, 'total')]]);
   const known = BT.filter(x => x.pace != null);
   h += `<h2>By pace</h2>` + btTable('Pace', [['Slower, under −1', -99, -1], ['About average, −1 to +1', -1, 1.01], ['Faster, +1 to +3', 1.01, 3.01], ['Fastest, over +3', 3.01, 99]].map(([label, lo, hi]) => [label, known.filter(x => x.pace >= lo && x.pace < hi)]).concat([['No pace <span class="muted">(no box scores)</span>', BT.filter(x => x.pace == null)]]),
     'Pace is the points the two teams\' pace added to or took from the model total, from earlier games only. Picks with no pace come from games without box scores, where pace counts as 0. Unlike the overs page, pace is not a rule here: it is already in the model total and the chance, and a pace mark on top cut the profit in testing.');
@@ -440,6 +439,9 @@ function render(){
   if (view === 'projections') keys = keys.filter(k => LIVE.fixtures.some(g => g.lg === k));
   const chips = CHIPS[view] ? [['all', 'All leagues'], ...keys.map(k => [k, lgShort(k)])] : [];
   $('chips').innerHTML = chips.map(([k, t]) => `<a href="#view=${view}${k === 'all' ? '' : '&lg=' + k}" class="${k === lg ? 'on' : ''}">${t}</a>`).join('');
+  $('top').style.display = $('sub').style.display = view === 'backtest' ? 'none' : '';   // the live record tiles are not shown on the backtest
+  const BTb = view === 'backtest' ? DATA.bets.filter(inLg) : [];   // the backtest tiles sit on top of the Backtest tab, where the record tiles are on the other tabs
+  $('btop').innerHTML = BTb.length ? (() => { const T = stat(BTb), C = BTb.filter(b => b.close != null); return tiles([['Picks', T.n], ['Hit rate', pct(T.w / T.n, 1)], ['ROI', roi(T.roi), cls(T.roi)], ['Opening line', lineAvg(C, 'line')], ['Closing line', lineAvg(C, 'close')], ['Model line', lineAvg(C, 'mu')], ['Actual total', lineAvg(C, 'total')]]); })() : '';
   $('out').innerHTML = RENDER[view]();
 }
 function fromHash(){
