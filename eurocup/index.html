@@ -181,7 +181,7 @@ select.peer:focus{outline:2px solid var(--gold)}
 .pjc .lh{font:400 12px var(--mono);color:var(--gold);text-transform:uppercase;letter-spacing:.1em}
 .pjc .lean{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;font-size:15.5px}
 .pjc .lean .k{font:400 12.5px var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.06em;width:70px;flex:none}
-.pjc .lean .pick{font-weight:700}
+.pjc .lean .pick{font-weight:700}.pjc .turn .lean{display:block;font-size:14.5px;line-height:1.45}.pjc .turn .lean .k{display:block;width:auto;margin-bottom:1px}
 .pjc .lean .gp{font:500 13.5px var(--mono);padding:1px 8px;border-radius:999px;border:1px solid var(--line);color:var(--muted)}
 .pjc .lean .gp.big{background:var(--gold);border-color:var(--gold);color:var(--bg)}
 .pjc .lean.none .pick{font-weight:400;color:var(--muted)}
@@ -664,6 +664,25 @@ function pjPick(g){
   const k = o ? pickOf(g.h, g.a, g.mh, o.bh, pjSpots) : null;
   return k && {...k, g};
 }
+// Where the game could turn: for each of the four factors, the attack of one club against the defence of the other,
+// as season ranks (PROJ.factors); the three factors with the widest gap, the side ahead in bold. Context only.
+const FF_MIN = 4, FF_GAP = 6;                                  // games a club needs; rank gap shown as an edge
+const ordn = n => n + (n % 100 >= 11 && n % 100 <= 13 ? 'th' : ['th', 'st', 'nd', 'rd'][n % 10] || 'th');
+const FF = [['Shooting', 'efg', 'shooting (eFG)', 'oefg', 'shot defence (opp eFG)'], ['Turnovers', 'tov', 'ball security (TOV)', 'otov', 'turnovers forced'],
+            ['Rebounding', 'orb', 'offensive rebounds', 'drb', 'defensive rebounds'], ['Free throws', 'ftr', 'getting to the line (FT rate)', 'oftr', 'fouling least (opp FT rate)']];
+function pjTurn(g){
+  const F = (window.PROJ && PROJ.factors) || {}, H = F[g.h], A = F[g.a];
+  if (!H || !A || H.n < FF_MIN || A.n < FF_MIN) return '';
+  const rows = FF.map(([name, ok, ol, dk, dl]) => {
+    const pair = [[g.h, H, g.a, A], [g.a, A, g.h, H]].map(([x, X, y, Y]) => ({x, y, xv: X[ok], yv: Y[dk], gap: Y[dk][1] - X[ok][1]}));
+    const m = Math.abs(pair[0].gap) >= Math.abs(pair[1].gap) ? pair[0] : pair[1];
+    return {name, ol, dl, ...m};
+  }).sort((p, q) => Math.abs(q.gap) - Math.abs(p.gap)).slice(0, 3);
+  const nm = (club, on) => on ? `<b>${esc(club)}</b>` : esc(club);
+  return `<div class="leans turn"><div class="lh" title="Context, not a pick: the market already prices these (EuroCup backtest)">Where the game could turn</div>` +
+    rows.map(r => { const up = Math.abs(r.gap) >= FF_GAP, ax = up && r.gap > 0, dx = up && r.gap < 0;
+      return `<div class="lean"><span class="k">${r.name}</span><span>${nm(r.x, ax)} ${ordn(r.xv[1])} in ${r.ol} <span class="tag">${r.xv[0].toFixed(1)}%</span>, ${nm(r.y, dx)} ${ordn(r.yv[1])} in ${r.dl} <span class="tag">${r.yv[0].toFixed(1)}%</span>${up ? '' : ' <span class="tag">· even</span>'}</span></div>`; }).join('') + '</div>';
+}
 function pjCard(g){
   const o = BOOK[g.h + '|' + g.a];
   const bh = o ? o.bh : null, pb = o ? phi(o.bh / PROJ.spread) : null;
@@ -691,6 +710,7 @@ function pjCard(g){
       <tr><td title="Both as a handicap: Mykonos −8.3 = Mykonos expected to win by 8.3">Handicap</td><td><b class="nm" title="${esc(fav(g.mh, g.h, g.a))}">${esc(fav(g.mh, g.h, g.a))}</b>−${Math.abs(g.mh).toFixed(1)}${g.adj ? '<span class="tag" title="Includes the absences below"> *</span>' : ''}</td><td>${bookHcp}</td></tr>
     </table>
     ${o ? `<div class="leans"><div class="lh">Market so far</div>${pjSpots.hcp(bh)}${clubs ? `<div class="lean"><span class="k">Clubs</span>${clubs}</div>` : ''}</div><div class="leans"><div class="lh">Model leans</div>${leans.join('')}</div>${pick ? `<div class="pkband"><b>Pick: ${esc(pick.bet)}</b><span>market edge + model edge</span></div>` : ''}` : '<div class="noline">No market line yet: it usually appears a day or two before the game.</div>'}
+    ${pjTurn(g)}
     ${out.length ? `<div class="out">Out: ${out.map(([[pl, imp, note], t]) => `${esc(pl)} (${esc(t)}, worth ${imp.toFixed(1)} pts${note ? '; ' + esc(note) : ''})`).join(' · ')}</div>` : ''}
   </div>`;
 }
@@ -860,6 +880,7 @@ function renderPjCards(P){
         <li><b>Clubs</b>: clubs on the underrated or overrated lists of Market Analysis, with their average against the handicap.</li>
         <li><b>Pick</b>: a market edge (a gold market gap) and a model edge (${PJ_EDGE}+ points from the line) on the same side, and the club rating does not disagree: the club is not overrated and its opponent is not underrated.</li>
         <li><b>Model leans</b>: the bet the model prefers at the market's line, and how far apart the two are. Gaps of ${gapMin}+ points are in gold. "No lean" means the two are close.</li>
+        <li><b>Where the game could turn</b>: the four factors (shooting, turnovers, rebounding, free throws), one club's attack against the other's defence, as this season's ranks among the clubs. The three widest gaps are shown, the club ahead in bold (${FF_GAP}+ places apart, otherwise "even"). Context only: in the 2023-24 to 2025-26 backtest the market line already reflected these, so they are not part of any pick.</li>
         <li><b>*</b>: the handicap includes the absences listed on the card.</li></ul></details></div>
     <h2 style="margin-top:6px">Picks</h2>` + (picks.length
       ? `<div class="scroll"><table class="fx pjpk"><tr><th class="n">Time</th><th>Pick</th><th>Game</th><th>Market edge</th><th class="n">Model edge</th><th>Club rating</th></tr>` +
