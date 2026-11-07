@@ -198,7 +198,7 @@ a.gm{color:inherit;text-decoration:none} a.gm:hover{color:var(--gold);text-decor
   <div class="chips" id="chips"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=a03d6ddf"></script>
+<script src="data.js?v=6582ae47"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -253,7 +253,7 @@ function pickTiles(){
   const P = DATA.picks.filter(p => view === 'home' || inLg(p)), done = P.filter(p => 'won' in p), nOpen = P.length - done.length, n = done.length;
   const w = done.filter(p => p.won).length, units = done.reduce((s, p) => s + p.profit, 0);
   const avg = `avg of ${n} settled pick${n === 1 ? '' : 's'}`;
-  const t = [['Open picks', nOpen, nOpen ? 'to play →' : 'none right now', '#view=picks'], ['Record', `${w}–${n - w}`, 'win – loss →', '#view=results'],
+  const t = [['Open picks', nOpen, nOpen ? 'to play →' : 'none right now', '#view=picks'], ['Record', `${w}–${n - w}`, `${n} picks →`, '#view=results'],
              
              ['ROI', n ? `<span class="${cls(units)}">${sgn(units / n * 100, 1)}%</span>` : '–', `${n} settled pick${n === 1 ? '' : 's'}`],
              ['Market line', avgLine(done, 'line'), avg], ['Model line', avgLine(done, 'fair'), avg], ['Actual total', avgLine(done, 'total'), avg]];
@@ -290,7 +290,7 @@ function renderHome(){
 }
 
 function tiles(list){
-  return `<div class="metrics">${list.map(([l, v, c]) => `<div class="metric"><div class="lbl">${l}</div><div class="big ${c||''}">${v}</div></div>`).join('')}</div>`;
+  return `<div class="metrics">${list.map(([l, v, c, sm]) => `<div class="metric"><div class="lbl">${l}</div><div class="big ${c||''}">${v}</div>${sm ? `<div class="sm">${sm}</div>` : ''}</div>`).join('')}</div>`;
 }
 
 const fairCell = p => p.fair == null ? '<td class="n muted">–</td>' : `<td class="n">${p.fair}</td>`;
@@ -312,7 +312,7 @@ function renderResults(){
   const done = DATA.picks.filter(inLg).filter(p => 'won' in p).sort((a, b) => a.dt.localeCompare(b.dt));
   const w = done.filter(p => p.won).length, units = done.reduce((s, p) => s + p.profit, 0);
   let h = `<p class="note">How the picks did: every settled pick since the page went live, at the price logged before the first serve, at equal stakes. ROI = profit ÷ total staked (lines end in .5, so there are no pushes). The page judges itself at <b>100 settled picks</b>; before that, the record is mostly noise.</p>`;
-  if (lg !== 'all') h += tiles([['Settled picks', done.length], ['Record', `${w}–${done.length - w}`], ['Hit rate', done.length ? pct(w / done.length) : '–'],
+  if (lg !== 'all') h += tiles([['Record', `${w}–${done.length - w}`, '', `${done.length} picks`], ['Hit rate', done.length ? pct(w / done.length) : '–'],
               ['ROI', done.length ? sgn(units / done.length * 100, 1) + '%' : '–', cls(units)],
               ['Avg market line', avgLine(done, 'line')], ['Avg model line', avgLine(done, 'fair')], ['Avg actual total', avgLine(done, 'total')]]);
   if (!done.length) return h + '<p class="empty">No settled picks yet. Each pick is added here once its match is played.</p>';
@@ -356,7 +356,7 @@ function renderSeason(){
 function btTiles(S, pick = inLg){
   const tuned = new Set(DATA.backtest.seasons.filter(s => s.tuned).map(s => s.lg + '|' + s.season));
   const g = DATA.backtest.bets.filter(b => pick(b) && !tuned.has(b.lg + '|' + b.season)), avg = `avg of ${g.length} bets`;
-  const t = [['Bets', S.n, 'past seasons'], ['Record', `${S.w}–${S.n - S.w}`, 'win – loss'], ['Hit rate', S.n ? pct(S.w / S.n) : '–', `${S.n} bets`],
+  const t = [['Record', `${S.w}–${S.n - S.w}`, `${S.n} bets`], ['Hit rate', S.n ? pct(S.w / S.n) : '–', `${S.n} bets`],
              ['ROI', S.n ? `<span class="${cls(S.roi)}">${sgn(S.roi * 100, 1)}%</span>` : '–', `${S.n} bets`],
              ['Market line', avgLine(g, 'line'), avg], ['Model line', avgLine(g, 'fair'), avg], ['Actual total', avgLine(g, 'total'), avg]];
   return `<div class="metrics">${t.map(([l, v, n]) => `<div class="metric"><div class="lbl">${l}</div><div class="big">${v}</div><div class="sm">${n}</div></div>`).join('')}</div>`;
