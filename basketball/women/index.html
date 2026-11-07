@@ -431,13 +431,13 @@ document.addEventListener('click', e => {
 });
 
 const RENDER = {home: renderFindings, picks: renderPicks, leagues: renderLeagues, backtest: renderBacktest, projections: renderProjections, method: renderMethod};
-const CHIPS = {backtest: 1, projections: 1};
+const CHIPS = {backtest: 1, projections: 1};   // backtest: no league chips, only a way back after a league is picked in By league
 function render(){
   document.querySelectorAll('#tabs a').forEach(a => { a.classList.toggle('on', a.dataset.view === view); a.href = `#view=${a.dataset.view}${lg === 'all' || !CHIPS[a.dataset.view] ? '' : '&lg=' + lg}`; });
   let keys = ALLG.map(l => l.key);
   if (view === 'backtest') keys = keys.filter(k => DATA.bets.some(b => b.lg === k));
   if (view === 'projections') keys = keys.filter(k => LIVE.fixtures.some(g => g.lg === k));
-  const chips = CHIPS[view] ? [['all', 'All leagues'], ...keys.map(k => [k, lgShort(k)])] : [];
+  const chips = view === 'backtest' ? (lg === 'all' ? [] : [['all', 'All leagues'], [lg, lgShort(lg)]]) : CHIPS[view] ? [['all', 'All leagues'], ...keys.map(k => [k, lgShort(k)])] : [];
   $('chips').innerHTML = chips.map(([k, t]) => `<a href="#view=${view}${k === 'all' ? '' : '&lg=' + k}" class="${k === lg ? 'on' : ''}">${t}</a>`).join('');
   $('top').style.display = $('sub').style.display = view === 'backtest' ? 'none' : '';   // the live record tiles are not shown on the backtest
   const BTb = view === 'backtest' ? DATA.bets.filter(inLg) : [];   // the backtest tiles sit on top of the Backtest tab, where the record tiles are on the other tabs
