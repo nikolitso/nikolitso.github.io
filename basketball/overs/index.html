@@ -184,7 +184,7 @@ a.tile:hover{border-color:var(--gold)}
   <a class="an-brand" href="/basketball/overs/"><svg class="an-mark" aria-hidden="true"><use href="/assets/marks.svg#basketball"/></svg><span><small class="an-kicker">Basketball · Totals</small><h1>Basketball totals</h1></span></a>
   <nav class="tabs an-tabs" id="tabs" aria-label="Sections">
     <a href="#view=home" data-view="home" class="on">Home</a>
-    <a href="#view=picks" data-view="picks">Picks</a>
+    <a href="#view=picks" data-view="picks">Live test</a>
     <a href="#view=leagues" data-view="leagues">Leagues</a>
     <a href="#view=backtest" data-view="backtest">Backtest</a>
     <a href="#view=projections" data-view="projections">Projections</a>
@@ -233,7 +233,7 @@ if (LIVE.leagues) LIVE.leagues = LIVE.leagues.filter(k => LG[k]);
 
 $('sub').textContent = `${DATA.leagues.length} Leagues · backtest 2022–23 to 2025–26 · ${DATA.season.slice(0, 4)}–${DATA.season.slice(7)} record since 1 Oct 2026 · updated ${LIVE.updated} (Athens)`;
 
-// top tiles: the whole 2026-27 record, as on the Picks tab (ROI = return over wins + losses)
+// top tiles: the whole 2026-27 record, as on the Live test tab (ROI = return over wins + losses)
 {
   const set = [...((DATA.cur || {}).bets || []), ...LIVE.picks.filter(b => b.done && b.ret != null)], won = set.filter(b => b.ret > 0).length, lost = set.filter(b => b.ret < 0).length;
   const units = set.reduce((a, b) => a + b.ret, 0), nOpen = LIVE.picks.filter(b => !b.done).length;
@@ -353,7 +353,7 @@ function bets(){
 }
 
 function renderProjections(){
-  let h = `<p class="note">Games in the next 7 days with the model's projected total (fitted on earlier games only) next to the market's consensus line. Pace: the two teams' possessions per game this season against the league average. 3-point luck: points per game from threes above the league's 3-point rate in the two teams' games. Pace and 3-point luck are signals in the model's chance. Only overs that meet the rule (regular season, both teams ${LIVE.min_gp ?? 3}+ games, 3-point luck under ${LKs()}) get an edge here; highlighted games are logged in the Picks tab at the line and price shown when they were first seen, and their edge is the one at that moment, while the line and prices keep updating. Click a match for its page, with the projection and how it was produced. Click a column heading to sort.</p>`;
+  let h = `<p class="note">Games in the next 7 days with the model's projected total (fitted on earlier games only) next to the market's consensus line. Pace: the two teams' possessions per game this season against the league average. 3-point luck: points per game from threes above the league's 3-point rate in the two teams' games. Pace and 3-point luck are signals in the model's chance. Only overs that meet the rule (regular season, both teams ${LIVE.min_gp ?? 3}+ games, 3-point luck under ${LKs()}) get an edge here; highlighted games are logged in the Live test tab at the line and price shown when they were first seen, and their edge is the one at that moment, while the line and prices keep updating. Click a match for its page, with the projection and how it was produced. Click a column heading to sort.</p>`;
   const fx = LIVE.fixtures.filter(inLg);
   if (!fx.length) return h + '<p class="empty">No games in the next 7 days.</p>';
   const taken = Object.fromEntries(LIVE.picks.map(b => [b.home + '|' + b.away, b]));   // a pick keeps the edge it was taken at
