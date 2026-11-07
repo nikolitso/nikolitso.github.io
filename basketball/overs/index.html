@@ -338,7 +338,7 @@ function analysis(k, notes = true){
 
 function renderBacktest(){
   const B = DATA.backtest, S = lg === 'all' ? B.all : B.leagues[lg];
-  let h = `<p class="note">${B.note} Click a column heading to sort.</p>`;
+  let h = '';
   if (!S || !S.rule.n) return h + '<p class="empty">The rule made no picks in this league.</p>';
   return h + analysis(lg) + bets();
 }
@@ -448,6 +448,7 @@ function render(){
   if (view === 'projections') keys = keys.filter(k => LIVE.fixtures.some(g => g.lg === k));
   const chips = CHIPS[view] ? [['all', 'All leagues'], ...keys.map(k => [k, lgShort(k)])] : [];
   $('chips').innerHTML = chips.map(([k, t]) => `<a href="#view=${view}${k === 'all' ? '' : '&lg=' + k}" class="${k === lg ? 'on' : ''}">${t}</a>`).join('');
+  $('top').style.display = $('sub').style.display = view === 'backtest' ? 'none' : '';     // the live record stays off the Backtest tab
   $('out').innerHTML = RENDER[view]();
 }
 function fromHash(){
