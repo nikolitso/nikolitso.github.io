@@ -373,16 +373,6 @@ function renderProjections(){
   return h;
 }
 
-function renderFast(){
-  const F = LIVE.fast, r = F.rec, n = r.settled, teams = Object.entries(F.teams || {}).filter(([k, v]) => LG[k] && v.length);
-  let h = `<h2>Fast games</h2><p class="note">Since ${F.start} only fast games become picks: a pace of ${FMs()} or more. Pace is the average of the two teams' possessions per game so far this season, each with ${LIVE.min_gp ?? 3}+ games, minus the league average, and it is fixed when the pick is logged. These tiles count fast picks only, so they are the clean test of the rule. Since ${LIVE.luck_start || F.start} a fast game is also skipped when its 3-point luck is ${LKs()} or more.</p>`;
-  h += tiles([['Fast picks', String(r.n)], ['Settled', String(n)], ['Hit rate', n ? pct(r.w / n, 1) : '–'], ['ROI', roi(r.roi), cls(r.roi)], ['Backtest picks', String(F.bt.n)], ['Backtest ROI', roi(F.bt.roi), cls(F.bt.roi)]]);
-  h += `<p class="note">The backtest covers 2022–23 to 2025–26. The ${FMs()} and ${LKs()} marks were chosen after seeing those results, and the gain is larger than a strong market should leave, so the rule stays unproven until the live record says otherwise.</p>`;
-  if (teams.length) h += `<h2>Fast teams now</h2><p class="note">Teams at ${FMs()} or more on their own, fastest first. A game's pace uses both teams, so a fast team against a slow one may not qualify.</p>` +
-    teams.map(([k, v]) => `<p class="note"><b>${lgShort(k)}:</b> ${v.map(([t, x]) => `${t} ${sgn(x)}`).join(', ')}</p>`).join('');
-  return h;
-}
-
 function renderPicks(){
   // open picks first, then this season's record: October bets (same rules, worked out from results) + bets logged live
   const open = LIVE.picks.filter(b => !b.done).sort((a, b) => a.dt < b.dt ? -1 : 1);
@@ -405,14 +395,6 @@ function renderPicks(){
               ['ROI', roi(R_), cls(R_)],
               ['Closing line moved toward the pick', cl.length ? pct(up / cl.length) : '–'], ['Closing line moved against it', cl.length ? pct(dn / cl.length) : '–']]);
   h += `<p class="note">The closing line moved toward the pick when it ended above the line picked. A few hundred picks are needed before the record says much. Picks before 7 Nov 2026 stay as they were: they were made without the pace and 3-point luck rules, in six leagues, and with the earlier team numbers, which also used last season. From 7 Nov 2026 the rule runs in every top domestic division. European competitions are left out, and their earlier picks were taken out of the record on 8 Nov 2026. Click a column heading to sort.</p>`;
-  if (cl.length) {
-    const bt = k => DATA.bets.filter(b => b.lg === k && b.close != null);
-    h += `<h2>The closing line by league</h2><p class="note">How each league's picks did against the closing line this season. This shows sooner than the record whether the model is reading a league well. Points: the average move from the line picked to the closing line. Backtest: how often the line moved toward the pick in 2022–23 to 2025–26.</p><div class="scroll"><table style="max-width:860px"><thead><tr><th>League</th><th class="n">Picks</th><th class="n">Moved toward</th><th class="n">Moved against</th><th class="n">Points</th><th class="n">Backtest</th></tr></thead><tbody>` +
-      DATA.leagues.map(l => { const g = cl.filter(b => b.lg === l.key), n = g.length, t = bt(l.key);
-        return `<tr><td>${lgFull(l)}</td><td class="n">${n}</td><td class="n">${n ? pct(g.filter(b => b.close > b.line).length / n) : '–'}</td><td class="n">${n ? pct(g.filter(b => b.close < b.line).length / n) : '–'}</td><td class="n">${n ? sgn(g.reduce((a, b) => a + b.close - b.line, 0) / n) : '–'}</td><td class="n">${t.length ? pct(t.filter(b => b.close > b.line).length / t.length) : '–'}</td></tr>`; }).join('') +
-      '</tbody></table></div>';
-  }
-  if (LIVE.fast) h += renderFast();
   if (!set.length) return h + '<p class="empty">No settled picks yet.</p>';
   let run = 0;
   const rows = all.filter(b => b.done).map(b => {   // open picks are in the table above
