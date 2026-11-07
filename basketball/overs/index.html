@@ -198,7 +198,7 @@ a.tile:hover{border-color:var(--gold)}
   <div class="chips" id="chips"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=35e01e82"></script>
+<script src="data.js?v=ae73cb23"></script>
 <script src="live.js"></script>
 <script>
 const $ = id => document.getElementById(id);
@@ -218,6 +218,9 @@ const wl = b => b.ret > 0 ? 'w' : b.ret < 0 ? 'l' : '';   // settled winners gre
 const FM = () => (LIVE.fast || {}).min ?? 1;
 const FMs = () => FM() > 0 ? '+' + FM() : '0';
 const fastTag = v => v != null && v >= FM() ? '<span class="badge fast">Fast game</span>' : '';
+const LK = () => LIVE.max_luck ?? 0.7;                       // rule 6: 3-point luck under this
+const LKs = () => '+' + LK();
+const luckCell = v => `<td class="n">${v != null ? sgn(v) : '–'}</td>`;
 const lgShort = k => LG[k].country === 'Europe' ? LG[k].name : LG[k].country;   // EuroLeague and EuroCup share a country
 const inLg = x => lg === 'all' || x.lg === lg;
 const R = DATA.rule;
@@ -249,7 +252,7 @@ function tiles(list){
 // one table row from a {n, w, roi} group
 const grp = (label, g, extra='', more='') => g && g.n ? `<tr${extra}><td>${label}</td><td class="n">${g.n}</td><td class="n">${pct(g.w / g.n, 1)}</td><td class="n">${g.px ? g.px.toFixed(2) : '–'}</td><td class="n ${cls(g.roi)}">${roi(g.roi)}</td>${more}</tr>` : '';
 const LHEAD = '<th class="n">Opening line</th><th class="n">Closing line</th>';
-const BHEAD = LHEAD + '<th class="n">Model line</th><th class="n">Actual total</th><th class="n">Pace</th>';
+const BHEAD = LHEAD + '<th class="n">Model line</th><th class="n">Actual total</th><th class="n">Pace</th><th class="n">3-pt luck</th>';
 const GHEAD = (first, more='') => `<thead><tr><th>${first}</th><th class="n">Picks</th><th class="n">Hit</th><th class="n">Avg price</th><th class="n">ROI</th>${more}</tr></thead>`;
 // average opening and closing line of a list of bets, as two table cells
 const seasonOf = b => { const y = +b.dt.slice(0, 4); return +b.dt.slice(5, 7) >= 7 ? `${y}-${y + 1}` : `${y - 1}-${y}`; };
@@ -265,9 +268,10 @@ function renderFindings(){
   return h;
 }
 
-const btCells = list => { const c = list.filter(b => b.close != null), q = list.filter(b => b.pace != null);
+const btCells = list => { const c = list.filter(b => b.close != null), q = list.filter(b => b.pace != null), u = list.filter(b => b.luck != null);
   return lineCells(list) + (c.length ? `<td class="n">${lineAvg(c, 'mu')}</td><td class="n">${lineAvg(c, 'total')}</td>` : '<td class="n muted">–</td><td class="n muted">–</td>')
-    + (q.length ? `<td class="n">${sgn(q.reduce((a, b) => a + b.pace, 0) / q.length)}</td>` : '<td class="n muted">–</td>'); };
+    + (q.length ? `<td class="n">${sgn(q.reduce((a, b) => a + b.pace, 0) / q.length)}</td>` : '<td class="n muted">–</td>')
+    + (u.length ? `<td class="n">${sgn(u.reduce((a, b) => a + b.luck, 0) / u.length)}</td>` : '<td class="n muted">–</td>'); };
 
 const bandRow = (label, g) => { const n = g.length, sum = f => g.reduce((a, x) => a + f(x), 0);
   return grp(label, {n, w: g.filter(x => x.ret > 0).length, px: n ? sum(x => x.px) / n : 0, roi: n ? sum(x => x.ret) / n : 0}, '', btCells(g)); };
@@ -300,26 +304,31 @@ function renderBacktest(){
   h += tiles([['Picks', S.rule.n], ['Hit rate', pct(S.rule.w / S.rule.n, 1)], ['ROI', roi(S.rule.roi), cls(S.rule.roi)],
               ['Opening line', lineAvg(BT.filter(b => b.close != null), 'line')], ['Closing line', lineAvg(BT.filter(b => b.close != null), 'close')], ['Model line', lineAvg(BT.filter(b => b.close != null), 'mu')], ['Actual total', lineAvg(BT.filter(b => b.close != null), 'total')]]);
   // the tables that decide the rule come first: pace, edge, league, line; then season and month
-  h += `<h2>By pace</h2><p class="note">Pace is the two teams' possessions per game so far that season, each with ${LIVE.min_gp ?? 3}+ games, minus the league average, from earlier games only. The first two rows are the games the rule skips: the same rules, with pace below ${FMs()}. They are not in any other figure on this page.</p><div class="scroll"><table style="max-width:980px">${GHEAD('Pace', BHEAD)}<tbody>`;
-  for (const [label, lo, hi] of [['Below 0', -99, 0], ['0 to +0.9', 0, 1]]) h += bandRow(`${label} <span class="muted">(skipped)</span>`, SK.filter(x => x.pace >= lo && x.pace < hi));
+  h += `<h2>By pace</h2><p class="note">Pace is the two teams' possessions per game so far that season, each with ${LIVE.min_gp ?? 3}+ games, minus the league average, from earlier games only. The first two rows are the games the rule skips: the same rules, 3-point luck under ${LKs()} too, with pace below ${FMs()}. They are not in any other figure on this page.</p><div class="scroll"><table style="max-width:1040px">${GHEAD('Pace', BHEAD)}<tbody>`;
+  const SKP = SK.filter(x => x.pace < FM() && x.luck < LK()), SKL = SK.filter(x => x.pace >= FM() && x.luck >= LK());
+  for (const [label, lo, hi] of [['Below 0', -99, 0], ['0 to +0.9', 0, 1]]) h += bandRow(`${label} <span class="muted">(skipped)</span>`, SKP.filter(x => x.pace >= lo && x.pace < hi));
   for (const [label, lo, hi] of [['+1 to +1.9', 1, 2], ['+2 to +2.9', 2, 3], ['+3 or more', 3, 99]]) h += bandRow(label, BT.filter(x => x.pace >= lo && x.pace < hi));
   h += '</tbody></table></div>';
-  h += `<h2>By edge</h2><div class="scroll"><table style="max-width:980px">${GHEAD('Edge', BHEAD)}<tbody>`;
+  h += `<h2>By 3-point luck</h2><p class="note">3-point luck: in the two teams' games so far that season, the threes made minus what the league's 3-point rate gives on the same attempts, in points per game, from earlier games only. High luck means the shooting has been hot, which rarely lasts, while the model's projection still counts those points. The last two rows are the fast games the rule skips: luck of ${LKs()} or more. They are not in any other figure on this page.</p><div class="scroll"><table style="max-width:1040px">${GHEAD('3-point luck', BHEAD)}<tbody>`;
+  for (const [label, lo, hi] of [['Under −0.5', -99, -0.5], ['−0.5 to +0.2', -0.5, 0.2], [`+0.2 to ${LKs()}`, 0.2, LK()]]) h += bandRow(label, BT.filter(x => x.luck >= lo && x.luck < hi));
+  for (const [label, lo, hi] of [[`${LKs()} to +1.5`, LK(), 1.5], ['+1.5 or more', 1.5, 99]]) h += bandRow(`${label} <span class="muted">(skipped)</span>`, SKL.filter(x => x.luck >= lo && x.luck < hi));
+  h += '</tbody></table></div>';
+  h += `<h2>By edge</h2><div class="scroll"><table style="max-width:1040px">${GHEAD('Edge', BHEAD)}<tbody>`;
   const byEdge = [...BT].sort((x, y) => y.edge - x.edge);   // bets store a rounded edge, so take each row's count from the top
   for (const e of S.edges.filter(x => x.edge <= 0.06)) h += grp(`${Math.round(e.edge * 100)}%+`, e, '', btCells(byEdge.slice(0, e.n)));   // each row counts everything above it, so 6%+ covers the small top rows
   h += '</tbody></table></div>';
   if (lg === 'all'){
-    h += `<h2>By league</h2><p class="note">Leagues chosen with these seasons known. Click a league to see it alone.</p><div class="scroll"><table style="max-width:980px">${GHEAD('League', BHEAD)}<tbody>`;
+    h += `<h2>By league</h2><p class="note">Leagues with a handful of picks say little on their own. Click a league to see it alone.</p><div class="scroll"><table style="max-width:1040px">${GHEAD('League', BHEAD)}<tbody>`;
     for (const l of DATA.leagues.filter(l => B.leagues[l.key] && B.leagues[l.key].rule.n).sort((a, b) => B.leagues[b.key].rule.roi - B.leagues[a.key].rule.roi))
-      h += grp(`<a href="#view=backtest&lg=${l.key}" style="color:inherit;text-decoration:none">${lgFull(l)}</a>`, B.leagues[l.key].rule, '', btCells(DATA.bets.filter(b => b.lg === l.key)));
+      h += grp(`<a href="#view=backtest&lg=${l.key}" style="color:inherit;text-decoration:none">${lgShort(l.key)}</a>`, B.leagues[l.key].rule, '', btCells(DATA.bets.filter(b => b.lg === l.key)));
     h += '</tbody></table></div>';
   }
-  h += `<h2>By line</h2><p class="note">The opening line in three bands.</p><div class="scroll"><table style="max-width:980px">${GHEAD('Line band', BHEAD)}<tbody>`;
+  h += `<h2>By line</h2><p class="note">The opening line in three bands.</p><div class="scroll"><table style="max-width:1040px">${GHEAD('Line band', BHEAD)}<tbody>`;
   for (const [label, lo, hi] of [['Under 160', 0, 160], ['160–169.5', 160, 170], ['170–179.5', 170, 180]]) h += bandRow(label, BT.filter(x => x.line >= lo && x.line < hi));
   h += '</tbody></table></div>';
-  h += `<h2>By season</h2><div class="scroll"><table style="max-width:980px">${GHEAD('Season', BHEAD)}<tbody>`;
+  h += `<h2>By season</h2><div class="scroll"><table style="max-width:1040px">${GHEAD('Season', BHEAD)}<tbody>`;
   for (const s of S.seasons) h += grp(sn(s.season) + (s.season === DATA.tuned ? ' <span class="muted">(tuned on)</span>' : '') + (s.season === DATA.season ? ' <span class="muted">(so far)</span>' : ''), s, '', btCells(BT.filter(b => seasonOf(b) === s.season)));
-  h += `</tbody></table></div><h2>By month</h2><div class="scroll"><table style="max-width:980px">${GHEAD('Month', BHEAD)}<tbody>`;
+  h += `</tbody></table></div><h2>By month</h2><div class="scroll"><table style="max-width:1040px">${GHEAD('Month', BHEAD)}<tbody>`;
   for (const m of S.months) h += grp(MON[m.m - 1], m, '', btCells(BT.filter(b => +b.dt.slice(5, 7) === m.m)));
   h += '</tbody></table></div>';
   return h + bets();
@@ -330,25 +339,25 @@ function bets(){
   if (!list.length) return '';
   let run = 0;
   const rows = list.map(b => { run += b.ret;
-    return `<tr><td data-s="${b.dt}">${short(b.dt)} ${b.dt.slice(0,4)}</td>${lg === 'all' ? `<td>${lgShort(b.lg)}</td>` : ''}<td class="wr">${b.home} – ${b.away}</td><td class="n ${wl(b)}">${b.side === 'o' ? 'Over' : 'Under'} ${b.line}</td><td class="n">${b.px.toFixed(2)}</td><td class="n">${b.mu.toFixed(1)}</td><td class="n">${pct(b.p)}</td><td class="n">${sgn(b.edge*100, 0)}%</td><td class="n">${b.close ?? '–'}</td><td class="n ${wl(b)}">${b.total}</td><td class="n">${b.pace != null ? sgn(b.pace) : '–'}</td></tr>`; });
-  return `<h2>Every pick, latest first</h2><p class="note">${list.length} backtest picks${list.length > 400 ? ', the latest 400 shown' : ''}. Pace: the two teams' possessions per game so far that season against the league average.</p><div class="scroll"><table><thead><tr><th>Date</th>${lg === 'all' ? '<th>League</th>' : ''}<th>Match</th><th class="n">Pick</th><th class="n">Price</th><th class="n">Model</th><th class="n">Chance</th><th class="n">Edge</th><th class="n">Closing line</th><th class="n">Total</th><th class="n">Pace</th></tr></thead><tbody>${rows.reverse().slice(0, 400).join('')}</tbody></table></div>`;
+    return `<tr><td data-s="${b.dt}">${short(b.dt)} ${b.dt.slice(0,4)}</td>${lg === 'all' ? `<td>${lgShort(b.lg)}</td>` : ''}<td class="wr">${b.home} – ${b.away}</td><td class="n ${wl(b)}">${b.side === 'o' ? 'Over' : 'Under'} ${b.line}</td><td class="n">${b.px.toFixed(2)}</td><td class="n">${b.mu.toFixed(1)}</td><td class="n">${pct(b.p)}</td><td class="n">${sgn(b.edge*100, 0)}%</td><td class="n">${b.close ?? '–'}</td><td class="n ${wl(b)}">${b.total}</td><td class="n">${b.pace != null ? sgn(b.pace) : '–'}</td>${luckCell(b.luck)}</tr>`; });
+  return `<h2>Every pick, latest first</h2><p class="note">${list.length} backtest picks${list.length > 400 ? ', the latest 400 shown' : ''}. Pace: the two teams' possessions per game so far that season against the league average. Luck: points per game from threes above the league's 3-point rate.</p><div class="scroll"><table><thead><tr><th>Date</th>${lg === 'all' ? '<th>League</th>' : ''}<th>Match</th><th class="n">Pick</th><th class="n">Price</th><th class="n">Model</th><th class="n">Chance</th><th class="n">Edge</th><th class="n">Closing line</th><th class="n">Total</th><th class="n">Pace</th><th class="n">Luck</th></tr></thead><tbody>${rows.reverse().slice(0, 400).join('')}</tbody></table></div>`;
 }
 
 function renderProjections(){
-  let h = `<p class="note">Games in the next 7 days with the model's projected total (fitted on earlier games only) next to the market's consensus line. Pace: the two teams' possessions per game this season against the league average. Only overs that meet the rule (regular season, both teams ${LIVE.min_gp ?? 3}+ games, pace ${FMs()} or more) get an edge here; highlighted games are logged in the Picks tab at the line and price shown when they were first seen, and their edge is the one at that moment, while the line and prices keep updating. Click a match for its page, with the projection and how it was produced. Click a column heading to sort.</p>`;
+  let h = `<p class="note">Games in the next 7 days with the model's projected total (fitted on earlier games only) next to the market's consensus line. Pace: the two teams' possessions per game this season against the league average. 3-point luck: points per game from threes above the league's 3-point rate in the two teams' games. Only overs that meet the rule (regular season, both teams ${LIVE.min_gp ?? 3}+ games, pace ${FMs()} or more, 3-point luck under ${LKs()}) get an edge here; highlighted games are logged in the Picks tab at the line and price shown when they were first seen, and their edge is the one at that moment, while the line and prices keep updating. Click a match for its page, with the projection and how it was produced. Click a column heading to sort.</p>`;
   const fx = LIVE.fixtures.filter(inLg);
   if (!fx.length) return h + '<p class="empty">No games in the next 7 days.</p>';
   const taken = Object.fromEntries(LIVE.picks.map(b => [b.home + '|' + b.away, b]));   // a pick keeps the edge it was taken at
   const byDay = {};
   fx.forEach(g => (byDay[g.dt.slice(0,10)] ||= []).push(g));
-  const head = `<thead><tr><th>Time</th>${lg === 'all' ? '<th>League</th>' : ''}<th>Match</th><th class="n">Model</th><th class="n">Line</th><th class="n">Over</th><th class="n">Over chance</th><th class="n">Over edge</th><th class="n">Pace</th></tr></thead>`;
+  const head = `<thead><tr><th>Time</th>${lg === 'all' ? '<th>League</th>' : ''}<th>Match</th><th class="n">Model</th><th class="n">Line</th><th class="n">Over</th><th class="n">Over chance</th><th class="n">Over edge</th><th class="n">Pace</th><th class="n">3-pt luck</th></tr></thead>`;
   for (const [d, gs] of Object.entries(byDay)){
     h += `<h2 class="day">${dayName(d)}</h2><div class="scroll"><table class="proj">${head}<tbody>`;
     for (const g of gs){
       const t = g.pick && taken[g.home + '|' + g.away], e = t ? t.edge : g.line == null || !(g.ok ?? RL(g.lg)) ? null : g.eo, pc = t ? t.pace : g.pace;
       h += `<tr${g.pick ? ' class="pk"' : ''}><td>${g.dt.slice(11)}</td>${lg === 'all' ? `<td>${lgShort(g.lg)}</td>` : ''}
         <td class="wr">${g.slug ? `<a class="gm" href="games/${g.slug}/">${g.home} – ${g.away}</a>` : `${g.home} – ${g.away}`}${g.pick ? `<span class="badge">${g.pick}</span>` : ''}${fastTag(pc)}</td><td class="n"><b>${g.mu.toFixed(1)}</b></td>
-        ${g.line == null ? '<td class="n muted" colspan="4">no line yet</td>' : `<td class="n">${g.line}</td><td class="n">${g.op.toFixed(2)}</td><td class="n">${pct(g.p)}</td><td class="n ${t || e > LE() ? 'pos' : 'muted'}">${e == null ? '–' : sgn(e*100, 0) + '%'}</td>`}<td class="n">${pc != null ? sgn(pc) : '–'}</td></tr>`;
+        ${g.line == null ? '<td class="n muted" colspan="4">no line yet</td>' : `<td class="n">${g.line}</td><td class="n">${g.op.toFixed(2)}</td><td class="n">${pct(g.p)}</td><td class="n ${t || e > LE() ? 'pos' : 'muted'}">${e == null ? '–' : sgn(e*100, 0) + '%'}</td>`}<td class="n">${pc != null ? sgn(pc) : '–'}</td>${luckCell(t && t.luck != null ? t.luck : g.luck)}</tr>`;
     }
     h += '</tbody></table></div>';
   }
@@ -357,9 +366,9 @@ function renderProjections(){
 
 function renderFast(){
   const F = LIVE.fast, r = F.rec, n = r.settled, teams = Object.entries(F.teams || {}).filter(([k, v]) => LG[k] && v.length);
-  let h = `<h2>Fast games</h2><p class="note">Since ${F.start} only fast games become picks: a pace of ${FMs()} or more. Pace is the average of the two teams' possessions per game so far this season, each with ${LIVE.min_gp ?? 3}+ games, minus the league average, and it is fixed when the pick is logged. These tiles count fast picks only, so they are the clean test of the rule.</p>`;
+  let h = `<h2>Fast games</h2><p class="note">Since ${F.start} only fast games become picks: a pace of ${FMs()} or more. Pace is the average of the two teams' possessions per game so far this season, each with ${LIVE.min_gp ?? 3}+ games, minus the league average, and it is fixed when the pick is logged. These tiles count fast picks only, so they are the clean test of the rule. Since ${LIVE.luck_start || F.start} a fast game is also skipped when its 3-point luck is ${LKs()} or more.</p>`;
   h += tiles([['Fast picks', String(r.n)], ['Settled', String(n)], ['Hit rate', n ? pct(r.w / n, 1) : '–'], ['ROI', roi(r.roi), cls(r.roi)], ['Backtest picks', String(F.bt.n)], ['Backtest ROI', roi(F.bt.roi), cls(F.bt.roi)]]);
-  h += `<p class="note">The backtest covers 2022–23 to 2025–26. The ${FMs()} mark was chosen after seeing those results, and the gain is larger than a strong market should leave, so the rule stays unproven until the live record says otherwise.</p>`;
+  h += `<p class="note">The backtest covers 2022–23 to 2025–26. The ${FMs()} and ${LKs()} marks were chosen after seeing those results, and the gain is larger than a strong market should leave, so the rule stays unproven until the live record says otherwise.</p>`;
   if (teams.length) h += `<h2>Fast teams now</h2><p class="note">Teams at ${FMs()} or more on their own, fastest first. A game's pace uses both teams, so a fast team against a slow one may not qualify.</p>` +
     teams.map(([k, v]) => `<p class="note"><b>${lgShort(k)}:</b> ${v.map(([t, x]) => `${t} ${sgn(x)}`).join(', ')}</p>`).join('');
   return h;
@@ -369,12 +378,12 @@ function renderPicks(){
   // open picks first, then this season's record: October bets (same rules, worked out from results) + bets logged live
   const open = LIVE.picks.filter(b => !b.done).sort((a, b) => a.dt < b.dt ? -1 : 1);
   const fx = Object.fromEntries(LIVE.fixtures.map(g => [g.home + '|' + g.away, g]));
-  let h = `<p class="note">Picks to take: overs where the model's edge is above ${Math.round(LE()*100)}% at the line on offer, regular season, both teams ${LIVE.min_gp ?? 3}+ games${LIVE.max_line && LIVE.max_line < 999 ? `, line under ${LIVE.max_line}` : ''}, game pace ${FMs()} or more, equal stakes. ROI = profit ÷ total staked on won and lost picks; pushes are left out. Every hour the model checks every game in the next 7 days; a pick is logged the first time its edge clears the bar, at that line and the average price, and never changed. Take it as early as possible, as the line tends to move toward it. Updated ${LIVE.updated} (Athens).</p>`;
+  let h = `<p class="note">Picks to take: overs where the model's edge is above ${Math.round(LE()*100)}% at the line on offer, regular season, both teams ${LIVE.min_gp ?? 3}+ games${LIVE.max_line && LIVE.max_line < 999 ? `, line under ${LIVE.max_line}` : ''}, game pace ${FMs()} or more, 3-point luck under ${LKs()}, equal stakes. ROI = profit ÷ total staked on won and lost picks; pushes are left out. Every hour the model checks every game in the next 7 days; a pick is logged the first time its edge clears the bar, at that line and the average price, and never changed. Take it as early as possible, as the line tends to move toward it. Updated ${LIVE.updated} (Athens).</p>`;
   if (!open.length) h += '<p class="empty">No open picks right now. New ones appear here as lines open.</p>';
   else {
-    h += `<h2>Open picks</h2><div class="scroll"><table class="proj"><thead><tr><th>Tip-off</th><th>League</th><th>Match</th><th class="n">Pick</th><th class="n">Price</th><th class="n">Model total</th><th class="n">Edge</th><th class="n">Line now</th><th class="n">Pace</th></tr></thead><tbody>` +
+    h += `<h2>Open picks</h2><div class="scroll"><table class="proj"><thead><tr><th>Tip-off</th><th>League</th><th>Match</th><th class="n">Pick</th><th class="n">Price</th><th class="n">Model total</th><th class="n">Edge</th><th class="n">Line now</th><th class="n">Pace</th><th class="n">3-pt luck</th></tr></thead><tbody>` +
       open.map(b => { const g = fx[b.home + '|' + b.away] || {};
-        return `<tr class="pk"><td data-s="${b.dt}">${dayName(b.dt)} ${b.dt.slice(11)}</td><td>${lgShort(b.lg)}</td><td class="wr">${b.home} – ${b.away}${fastTag(b.pace)}</td><td class="n"><b>Over ${b.line}</b></td><td class="n">${b.px.toFixed(2)}</td><td class="n">${g.mu != null ? g.mu.toFixed(1) : '–'}</td><td class="n pos">${sgn(b.edge*100, 0)}%</td><td class="n">${g.line ?? '–'}</td><td class="n">${b.pace != null ? sgn(b.pace) : '–'}</td></tr>`; }).join('') +
+        return `<tr class="pk"><td data-s="${b.dt}">${dayName(b.dt)} ${b.dt.slice(11)}</td><td>${lgShort(b.lg)}</td><td class="wr">${b.home} – ${b.away}${fastTag(b.pace)}</td><td class="n"><b>Over ${b.line}</b></td><td class="n">${b.px.toFixed(2)}</td><td class="n">${g.mu != null ? g.mu.toFixed(1) : '–'}</td><td class="n pos">${sgn(b.edge*100, 0)}%</td><td class="n">${g.line ?? '–'}</td><td class="n">${b.pace != null ? sgn(b.pace) : '–'}</td>${luckCell(b.luck ?? g.luck)}</tr>`; }).join('') +
       '</tbody></table></div>';
   }
   const pre = ((DATA.cur || {}).bets || []).map(b => ({...b, side: 'o', pre: true, done: true, close: b.close ?? null}));
@@ -386,7 +395,7 @@ function renderPicks(){
   h += tiles([['Picks', String(all.length)], ['Settled', String(set.length)], ['Hit rate', set.length ? pct(won / set.length, 1) : '–'],
               ['ROI', roi(R_), cls(R_)],
               ['Closing line moved toward the pick', cl.length ? pct(up / cl.length) : '–'], ['Closing line moved against it', cl.length ? pct(dn / cl.length) : '–']]);
-  h += `<p class="note">The closing line moved toward the pick when it ended above the line picked. A few hundred picks are needed before the record says much. Picks before 7 Nov 2026 stay as they were: they were made without the pace rule and with the earlier team numbers, which also used last season. Click a column heading to sort.</p>`;
+  h += `<p class="note">The closing line moved toward the pick when it ended above the line picked. A few hundred picks are needed before the record says much. Picks before 7 Nov 2026 stay as they were: they were made without the pace and 3-point luck rules, in six leagues, and with the earlier team numbers, which also used last season. From 7 Nov 2026 the rule runs in every top division and European competition. Click a column heading to sort.</p>`;
   if (cl.length) {
     const bt = k => DATA.bets.filter(b => b.lg === k && b.close != null);
     h += `<h2>The closing line by league</h2><p class="note">How each league's picks did against the closing line this season. This shows sooner than the record whether the model is reading a league well. Points: the average move from the line picked to the closing line. Backtest: how often the line moved toward the pick in 2022–23 to 2025–26.</p><div class="scroll"><table style="max-width:860px"><thead><tr><th>League</th><th class="n">Picks</th><th class="n">Moved toward</th><th class="n">Moved against</th><th class="n">Points</th><th class="n">Backtest</th></tr></thead><tbody>` +
@@ -439,8 +448,8 @@ document.addEventListener('click', e => {
 });
 
 function renderTesting(){
-  const T = LIVE.test || {names: {}, picks: []}, nm = k => T.names[k] || k, n = Object.keys(T.names).length;
-  let h = `<p class="note">Every league outside the main ${DATA.leagues.length}, run live under the same rules${T.start ? ` since ${T.start}` : ''}, with the pace rule (${FMs()} or more) from 7 Nov 2026: overs only, edge above ${Math.round(LE()*100)}% at the line on offer, regular season, both teams ${LIVE.min_gp ?? 3}+ games${LIVE.max_line && LIVE.max_line < 999 ? `, line under ${LIVE.max_line}` : ''}, equal stakes. ROI = profit ÷ total staked on won and lost picks; pushes are left out. These picks are kept apart and do not count in the record on the other tabs. A league can join the main list once a long run of picks shows a steady profit. Click a column heading to sort.</p>`;
+  const T = LIVE.test || {names: {}, picks: []}, nm = k => (T.all || {})[k] || T.names[k] || k, n = Object.keys(T.names).length;
+  let h = `<p class="note">Every league outside the main ${DATA.leagues.length}, run live under the same rules${T.start ? ` since ${T.start}` : ''}, with the pace rule (${FMs()} or more) and the 3-point luck rule (under ${LKs()}) from 7 Nov 2026. The top divisions tested here moved into the main list on 7 Nov 2026; their earlier test picks stay on this tab: overs only, edge above ${Math.round(LE()*100)}% at the line on offer, regular season, both teams ${LIVE.min_gp ?? 3}+ games${LIVE.max_line && LIVE.max_line < 999 ? `, line under ${LIVE.max_line}` : ''}, equal stakes. ROI = profit ÷ total staked on won and lost picks; pushes are left out. These picks are kept apart and do not count in the record on the other tabs. A league can join the main list once a long run of picks shows a steady profit. Click a column heading to sort.</p>`;
   const open = T.picks.filter(b => !b.done).sort((a, b) => a.dt < b.dt ? -1 : 1), done = T.picks.filter(b => b.done);
   const set = done.filter(b => b.ret != null), won = set.filter(b => b.ret > 0).length, units = set.reduce((a, b) => a + b.ret, 0), nDec = set.filter(b => b.ret !== 0).length, R_ = nDec ? units / nDec : null;
   h += tiles([['Leagues', String(n || '–')], ['Picks', String(T.picks.length)], ['Open picks', String(open.length)], ['Settled', String(set.length)],
