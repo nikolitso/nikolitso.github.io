@@ -159,7 +159,8 @@
       "interception-the-secrets-of-modern",
       "football-the-philosophy-behind-the",
       "tiny-experiments-how-to-live-freely",
-      "game-theory"
+      "game-theory",
+      "the-logic-of-sports-betting"
     ],
     "log": [
       {
@@ -443,9 +444,15 @@
         "slot": "2026-11-06 14",
         "slug": "game-theory",
         "id": "2118674811886911670"
+      },
+      {
+        "day": "2026-11-07",
+        "slot": "2026-11-07 14",
+        "slug": "the-logic-of-sports-betting",
+        "id": "2119037203443843470"
       }
     ],
-    "last_day": "2026-11-06"
+    "last_day": "2026-11-07"
   },
   "film": {
     "seen": [
@@ -958,7 +965,7 @@
     ],
     "last_day": "2026-11-06"
   },
-  "last_slot": "2026-11-07 11",
+  "last_slot": "2026-11-07 14",
   "quote": {
     "seen": [
       "1",
