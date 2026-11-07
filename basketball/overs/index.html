@@ -198,7 +198,7 @@ a.tile:hover{border-color:var(--gold)}
   <div class="chips" id="chips"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=ae73cb23"></script>
+<script src="data.js?v=9a572f77"></script>
 <script src="live.js"></script>
 <script>
 const $ = id => document.getElementById(id);
@@ -218,7 +218,7 @@ const wl = b => b.ret > 0 ? 'w' : b.ret < 0 ? 'l' : '';   // settled winners gre
 const FM = () => (LIVE.fast || {}).min ?? 1;
 const FMs = () => FM() > 0 ? '+' + FM() : '0';
 const fastTag = v => v != null && v >= FM() ? '<span class="badge fast">Fast game</span>' : '';
-const LK = () => LIVE.max_luck ?? 0.7;                       // rule 6: 3-point luck under this
+const LK = () => LIVE.max_luck ?? 1.5;                       // rule 6: 3-point luck under this
 const LKs = () => '+' + LK();
 const luckCell = v => `<td class="n">${v != null ? sgn(v) : '–'}</td>`;
 const lgShort = k => LG[k].country === 'Europe' ? LG[k].name : LG[k].country;   // EuroLeague and EuroCup share a country
@@ -310,8 +310,8 @@ function renderBacktest(){
   for (const [label, lo, hi] of [['+1 to +1.9', 1, 2], ['+2 to +2.9', 2, 3], ['+3 or more', 3, 99]]) h += bandRow(label, BT.filter(x => x.pace >= lo && x.pace < hi));
   h += '</tbody></table></div>';
   h += `<h2>By 3-point luck</h2><p class="note">3-point luck: in the two teams' games so far that season, the threes made minus what the league's 3-point rate gives on the same attempts, in points per game, from earlier games only. High luck means the shooting has been hot, which rarely lasts, while the model's projection still counts those points. The last two rows are the fast games the rule skips: luck of ${LKs()} or more. They are not in any other figure on this page.</p><div class="scroll"><table style="max-width:1040px">${GHEAD('3-point luck', BHEAD)}<tbody>`;
-  for (const [label, lo, hi] of [['Under −0.5', -99, -0.5], ['−0.5 to +0.2', -0.5, 0.2], [`+0.2 to ${LKs()}`, 0.2, LK()]]) h += bandRow(label, BT.filter(x => x.luck >= lo && x.luck < hi));
-  for (const [label, lo, hi] of [[`${LKs()} to +1.5`, LK(), 1.5], ['+1.5 or more', 1.5, 99]]) h += bandRow(`${label} <span class="muted">(skipped)</span>`, SKL.filter(x => x.luck >= lo && x.luck < hi));
+  for (const [label, lo, hi] of [['Under −0.5', -99, -0.5], ['−0.5 to +0.2', -0.5, 0.2], ['+0.2 to +0.7', 0.2, 0.7], [`+0.7 to ${LKs()}`, 0.7, LK()]]) h += bandRow(label, BT.filter(x => x.luck >= lo && x.luck < hi));
+  for (const [label, lo, hi] of [[`${LKs()} to +2.5`, LK(), 2.5], ['+2.5 or more', 2.5, 99]]) h += bandRow(`${label} <span class="muted">(skipped)</span>`, SKL.filter(x => x.luck >= lo && x.luck < hi));
   h += '</tbody></table></div>';
   h += `<h2>By edge</h2><div class="scroll"><table style="max-width:1040px">${GHEAD('Edge', BHEAD)}<tbody>`;
   const byEdge = [...BT].sort((x, y) => y.edge - x.edge);   // bets store a rounded edge, so take each row's count from the top
