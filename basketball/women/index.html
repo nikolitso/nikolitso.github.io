@@ -197,7 +197,7 @@ a.tile:hover{border-color:var(--gold)}
   <div class="chips" id="chips"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=w41"></script>
+<script src="data.js?v=w42"></script>
 <script src="live.js"></script>
 <script>
 const $ = id => document.getElementById(id);
@@ -345,7 +345,7 @@ function bets(list){
 
 
 function renderProjections(){
-  let h = `<p class="note">Games in the next 7 days where both teams have played ${LIVE.min_gp ?? 4}+ games, with the model's projected total (fitted on earlier games only) next to the market's consensus line. Line diff is the model minus the line. Pace is the part of the model total that comes from how much faster or slower these two teams play than the league; it is already in the Model number, and a dash means no box scores. Edge is the over at the price shown, on every game with a line. A game becomes a pick only if it meets every rule: edge above ${(LE()*100).toFixed(0)}%, model before pace 4 to 12 points above the line, both teams ${LIVE.min_gp ?? 4}+ games, regular season. Highlighted games are logged in the Picks tab at the line and price shown when they were first seen, and their edge is the one at that moment, while the line and prices keep updating. Click a match for its page, with the projection and how it was produced. Click a column heading to sort.</p>`;
+  let h = `<p class="note">Games in the next 7 days where both teams have played ${LIVE.min_gp ?? 4}+ games, with the model's projected total (fitted on earlier games only) next to the market's consensus line. Line diff is the model minus the line. Pace is the part of the model total that comes from how much faster or slower these two teams play than the league; it is already in the Model number, and a dash means no box scores. Edge is the over at the price shown, on every game with a line. A game becomes a pick only if it meets every rule: edge above ${(LE()*100).toFixed(0)}%, model before pace 4 to 12 points above the line, both teams ${LIVE.min_gp ?? 4}+ games, regular season, a line ending in .5. Highlighted games are logged in the Picks tab at the line and price shown when they were first seen, and their edge is the one at that moment, while the line and prices keep updating. Click a match for its page, with the projection and how it was produced. Click a column heading to sort.</p>`;
   const fx = LIVE.fixtures.filter(inLg);
   if (!fx.length) return h + '<p class="empty">No games in the next 7 days.</p>';
   const taken = Object.fromEntries(LIVE.picks.map(b => [b.home + '|' + b.away, b]));   // a pick keeps the edge it was taken at
@@ -369,7 +369,7 @@ function renderPicks(){
   // open picks first, then this season's record: October bets (same rules, worked out from results) + bets logged live
     const open = LIVE.picks.filter(b => !b.done).sort((a, b) => a.dt < b.dt ? -1 : 1);
   const fx = Object.fromEntries(LIVE.fixtures.map(g => [g.home + '|' + g.away, g]));
-  let h = `<p class="note">Picks to take: overs where the model's edge is above ${Math.round(LE()*100)}% at the line on offer, both teams ${LIVE.min_gp ?? 4}+ games, model before pace 4 to 12 points above the line, regular season only, equal stakes. The model total and the chance include pace where box scores exist. ROI = profit ÷ total staked on won and lost picks; pushes are left out. Every hour the model checks every game in the next 7 days; a pick is logged the first time its edge clears the bar, at that line and the average price, and never changed. Updated ${LIVE.updated} (Athens).</p>`;
+  let h = `<p class="note">Picks to take: overs where the model's edge is above ${Math.round(LE()*100)}% at the line on offer, both teams ${LIVE.min_gp ?? 4}+ games, model before pace 4 to 12 points above the line, regular season only, lines ending in .5 only, equal stakes. The model total and the chance include pace where box scores exist. ROI = profit ÷ total staked on won and lost picks; pushes are left out. Every hour the model checks every game in the next 7 days; a pick is logged the first time its edge clears the bar, at that line and the average price, and never changed. Updated ${LIVE.updated} (Athens).</p>`;
   if (!open.length) h += '<p class="empty">No open picks right now. New ones appear here as lines open.</p>';
   else {
     h += `<h2>Open picks</h2><div class="scroll"><table class="proj"><thead><tr><th>Tip-off</th><th>League</th><th>Match</th><th class="n">Pick</th><th class="n">Price</th><th class="n">Model total</th><th class="n">Pace</th><th class="n">Edge</th><th class="n">Line now</th></tr></thead><tbody>` +
