@@ -156,6 +156,7 @@ table.proj tr.pk td{background:var(--an-accent-soft)}table.proj tr.pk td:first-c
 /* seven tiles in one row at desktop width */
 .metrics{grid-template-columns:repeat(auto-fit,minmax(min(140px,40vw),1fr))}
 .badge{display:inline-block;font:500 12.5px var(--mono);letter-spacing:.06em;text-transform:uppercase;background:var(--gold);color:var(--an-on-accent);border-radius:4px;padding:2px 7px;margin-left:8px;vertical-align:2px}
+.badge.fast{background:transparent;color:var(--gold);box-shadow:inset 0 0 0 1px var(--gold)}
 .find{border-left:3px solid var(--gold);padding:2px 0 2px 16px;margin:0 0 22px;max-width:860px}
 .find h3{font:600 20px var(--serif);margin:0 0 4px}
 .find p{margin:0;color:var(--text)}
@@ -197,7 +198,7 @@ a.tile:hover{border-color:var(--gold)}
   <div class="chips" id="chips"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=a6524e85"></script>
+<script src="data.js?v=f5d6a67f"></script>
 <script src="live.js"></script>
 <script>
 const $ = id => document.getElementById(id);
@@ -214,6 +215,8 @@ const LG = Object.fromEntries(DATA.leagues.map(l => [l.key, l]));
 const lgName = k => `${LG[k].country} · ${LG[k].name}`;
 const lgFull = l => l.country === 'Europe' ? l.name : `${l.country} <span class="muted">${l.name}</span>`;
 const wl = b => b.ret > 0 ? 'w' : b.ret < 0 ? 'l' : '';   // settled winners green, losers red
+const FM = () => (LIVE.fast || {}).min ?? 0.5;
+const fastTag = v => v != null && v >= FM() ? '<span class="badge fast">Fast game</span>' : '';
 const lgShort = k => LG[k].country === 'Europe' ? LG[k].name : LG[k].country;   // EuroLeague and EuroCup share a country
 const inLg = x => lg === 'all' || x.lg === lg;
 const R = DATA.rule;
@@ -330,11 +333,21 @@ function renderProjections(){
     for (const g of gs){
       const t = g.pick && taken[g.home + '|' + g.away], e = t ? t.edge : g.line == null || !(g.ok ?? RL(g.lg)) ? null : g.eo;
       h += `<tr${g.pick ? ' class="pk"' : ''}><td>${g.dt.slice(11)}</td>${lg === 'all' ? `<td>${lgShort(g.lg)}</td>` : ''}
-        <td class="wr">${g.slug ? `<a class="gm" href="games/${g.slug}/">${g.home} – ${g.away}</a>` : `${g.home} – ${g.away}`}${g.pick ? `<span class="badge">${g.pick}</span>` : ''}</td><td class="n"><b>${g.mu.toFixed(1)}</b></td>
+        <td class="wr">${g.slug ? `<a class="gm" href="games/${g.slug}/">${g.home} – ${g.away}</a>` : `${g.home} – ${g.away}`}${g.pick ? `<span class="badge">${g.pick}</span>` : ''}${fastTag(t ? t.pace : g.pace)}</td><td class="n"><b>${g.mu.toFixed(1)}</b></td>
         ${g.line == null ? '<td class="n muted" colspan="5">no line yet</td>' : `<td class="n">${g.line}</td><td class="n">${g.op.toFixed(2)}</td><td class="n">${g.up.toFixed(2)}</td><td class="n">${pct(g.p)}</td><td class="n ${t || e > LE() ? 'pos' : 'muted'}">${e == null ? '–' : sgn(e*100, 0) + '%'}</td>`}</tr>`;
     }
     h += '</tbody></table></div>';
   }
+  return h;
+}
+
+function renderFast(){
+  const F = LIVE.fast, r = F.rec, n = r.settled, teams = Object.entries(F.teams || {}).filter(([k, v]) => LG[k] && v.length);
+  let h = `<h2>Fast games</h2><p class="note">A tag on EuroLeague and EuroCup picks, not a new rule: every pick stays logged and counted in the record above. A game is tagged when its pace is ${sgn(F.min)} or more. Pace is the average of the two teams' possessions per game so far this season, each with ${LIVE.min_gp ?? 3}+ games, minus the league average, and it is fixed when the pick is logged. The other four leagues have no possession data.</p>`;
+  h += tiles([['Fast picks', String(r.n)], ['Settled', String(n)], ['Hit rate', n ? pct(r.w / n, 1) : '–'], ['ROI', roi(r.roi), cls(r.roi)], ['Backtest picks', String(F.bt.n)], ['Backtest ROI', roi(F.bt.roi), cls(F.bt.roi)]]);
+  h += `<p class="note">Live record since ${F.start}. The backtest covers 2022–23 to 2025–26, and the other 50 EuroLeague and EuroCup picks made +10.2%. The ${sgn(F.min)} mark was chosen after seeing those results, and the gain is larger than a strong market should leave, so the tag stays unproven until the live record says otherwise.</p>`;
+  if (teams.length) h += `<h2>Fast teams now</h2><p class="note">Teams at ${sgn(F.min)} or more on their own. A game's pace uses both teams, so a fast team against a slow one may not be tagged.</p>` +
+    teams.map(([k, v]) => `<p class="note"><b>${LG[k].name}:</b> ${v.map(([t, x]) => `${t} ${sgn(x)}`).join(', ')}</p>`).join('');
   return h;
 }
 
@@ -345,9 +358,9 @@ function renderPicks(){
   let h = `<p class="note">Picks to take: overs where the model's edge is above ${Math.round(LE()*100)}% at the line on offer, regular season, both teams ${LIVE.min_gp ?? 3}+ games${LIVE.max_line && LIVE.max_line < 999 ? `, line under ${LIVE.max_line}` : ''}, equal stakes. ROI = profit ÷ total staked on won and lost picks; pushes are left out. Every hour the model checks every game in the next 7 days; a pick is logged the first time its edge clears the bar, at that line and the average price, and never changed. Take it as early as possible, as the line tends to move toward it. Updated ${LIVE.updated} (Athens).</p>`;
   if (!open.length) h += '<p class="empty">No open picks right now. New ones appear here as lines open.</p>';
   else {
-    h += `<h2>Open picks</h2><div class="scroll"><table class="proj"><thead><tr><th>Tip-off</th><th>League</th><th>Match</th><th class="n">Pick</th><th class="n">Price</th><th class="n">Model total</th><th class="n">Edge</th><th class="n">Line now</th></tr></thead><tbody>` +
+    h += `<h2>Open picks</h2><div class="scroll"><table class="proj"><thead><tr><th>Tip-off</th><th>League</th><th>Match</th><th class="n">Pick</th><th class="n">Price</th><th class="n">Model total</th><th class="n">Edge</th><th class="n">Line now</th><th class="n">Pace</th></tr></thead><tbody>` +
       open.map(b => { const g = fx[b.home + '|' + b.away] || {};
-        return `<tr class="pk"><td data-s="${b.dt}">${dayName(b.dt)} ${b.dt.slice(11)}</td><td>${lgShort(b.lg)}</td><td class="wr">${b.home} – ${b.away}</td><td class="n"><b>Over ${b.line}</b></td><td class="n">${b.px.toFixed(2)}</td><td class="n">${g.mu != null ? g.mu.toFixed(1) : '–'}</td><td class="n pos">${sgn(b.edge*100, 0)}%</td><td class="n">${g.line ?? '–'}</td></tr>`; }).join('') +
+        return `<tr class="pk"><td data-s="${b.dt}">${dayName(b.dt)} ${b.dt.slice(11)}</td><td>${lgShort(b.lg)}</td><td class="wr">${b.home} – ${b.away}${fastTag(b.pace)}</td><td class="n"><b>Over ${b.line}</b></td><td class="n">${b.px.toFixed(2)}</td><td class="n">${g.mu != null ? g.mu.toFixed(1) : '–'}</td><td class="n pos">${sgn(b.edge*100, 0)}%</td><td class="n">${g.line ?? '–'}</td><td class="n">${b.pace != null ? sgn(b.pace) : '–'}</td></tr>`; }).join('') +
       '</tbody></table></div>';
   }
   const pre = ((DATA.cur || {}).bets || []).map(b => ({...b, side: 'o', pre: true, done: true, close: b.close ?? null}));
@@ -367,13 +380,14 @@ function renderPicks(){
         return `<tr><td>${lgFull(l)}</td><td class="n">${n}</td><td class="n">${n ? pct(g.filter(b => b.close > b.line).length / n) : '–'}</td><td class="n">${n ? pct(g.filter(b => b.close < b.line).length / n) : '–'}</td><td class="n">${n ? sgn(g.reduce((a, b) => a + b.close - b.line, 0) / n) : '–'}</td><td class="n">${t.length ? pct(t.filter(b => b.close > b.line).length / t.length) : '–'}</td></tr>`; }).join('') +
       '</tbody></table></div>';
   }
+  if (LIVE.fast) h += renderFast();
   if (!set.length) return h + '<p class="empty">No settled picks yet.</p>';
   let run = 0;
   const rows = all.filter(b => b.done).map(b => {   // open picks are in the table above
     if (b.ret != null) run += b.ret;
     const res = !b.done ? '<td class="n muted">to play</td>' : b.ret == null ? '<td class="n muted">void</td>' :
       `<td class="n ${wl(b)}">${b.total}</td>`;
-    return `<tr><td data-s="${b.dt}">${short(b.dt)}${b.dt.length > 10 ? ' ' + b.dt.slice(11) : ''}</td><td>${lgShort(b.lg)}</td><td class="wr">${b.home} – ${b.away}</td><td class="n ${wl(b)}"><b>Over ${b.line}</b></td>
+    return `<tr><td data-s="${b.dt}">${short(b.dt)}${b.dt.length > 10 ? ' ' + b.dt.slice(11) : ''}</td><td>${lgShort(b.lg)}</td><td class="wr">${b.home} – ${b.away}${fastTag(b.pace)}</td><td class="n ${wl(b)}"><b>Over ${b.line}</b></td>
       <td class="n">${b.px.toFixed(2)}</td><td class="n">${sgn(b.edge*100, 0)}%</td><td class="n">${b.close ?? '–'}</td>${res}</tr>`;
   });
   return h + `<h2>Settled picks, latest first</h2><div class="scroll"><table><thead><tr><th>Tip-off</th><th>League</th><th>Match</th><th class="n">Pick</th><th class="n">Price</th><th class="n">Edge</th><th class="n">Closing line</th><th class="n">Total</th></tr></thead><tbody>${rows.reverse().join('')}</tbody></table></div>`;
