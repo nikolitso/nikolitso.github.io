@@ -198,7 +198,7 @@ a.tile:hover{border-color:var(--gold)}
   <div class="chips" id="chips"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=a4e371a9"></script>
+<script src="data.js?v=35e01e82"></script>
 <script src="live.js"></script>
 <script>
 const $ = id => document.getElementById(id);
@@ -296,11 +296,17 @@ function renderBacktest(){
   const B = DATA.backtest, S = lg === 'all' ? B.all : B.leagues[lg];
   let h = `<p class="note">${B.note} Click a column heading to sort.</p>`;
   if (!S || !S.rule.n) return h + '<p class="empty">The rule made no picks in this league.</p>';
-  const BT = DATA.bets.filter(inLg);
+  const BT = DATA.bets.filter(inLg), SK = (DATA.skipped || []).filter(inLg);
   h += tiles([['Picks', S.rule.n], ['Hit rate', pct(S.rule.w / S.rule.n, 1)], ['ROI', roi(S.rule.roi), cls(S.rule.roi)],
               ['Opening line', lineAvg(BT.filter(b => b.close != null), 'line')], ['Closing line', lineAvg(BT.filter(b => b.close != null), 'close')], ['Model line', lineAvg(BT.filter(b => b.close != null), 'mu')], ['Actual total', lineAvg(BT.filter(b => b.close != null), 'total')]]);
-  h += `<h2>By season</h2><div class="scroll"><table style="max-width:980px">${GHEAD('Season', BHEAD)}<tbody>`;
-  for (const s of S.seasons) h += grp(sn(s.season) + (s.season === DATA.tuned ? ' <span class="muted">(tuned on)</span>' : '') + (s.season === DATA.season ? ' <span class="muted">(so far)</span>' : ''), s, '', btCells(BT.filter(b => seasonOf(b) === s.season)));
+  // the tables that decide the rule come first: pace, edge, league, line; then season and month
+  h += `<h2>By pace</h2><p class="note">Pace is the two teams' possessions per game so far that season, each with ${LIVE.min_gp ?? 3}+ games, minus the league average, from earlier games only. The first two rows are the games the rule skips: the same rules, with pace below ${FMs()}. They are not in any other figure on this page.</p><div class="scroll"><table style="max-width:980px">${GHEAD('Pace', BHEAD)}<tbody>`;
+  for (const [label, lo, hi] of [['Below 0', -99, 0], ['0 to +0.9', 0, 1]]) h += bandRow(`${label} <span class="muted">(skipped)</span>`, SK.filter(x => x.pace >= lo && x.pace < hi));
+  for (const [label, lo, hi] of [['+1 to +1.9', 1, 2], ['+2 to +2.9', 2, 3], ['+3 or more', 3, 99]]) h += bandRow(label, BT.filter(x => x.pace >= lo && x.pace < hi));
+  h += '</tbody></table></div>';
+  h += `<h2>By edge</h2><div class="scroll"><table style="max-width:980px">${GHEAD('Edge', BHEAD)}<tbody>`;
+  const byEdge = [...BT].sort((x, y) => y.edge - x.edge);   // bets store a rounded edge, so take each row's count from the top
+  for (const e of S.edges.filter(x => x.edge <= 0.06)) h += grp(`${Math.round(e.edge * 100)}%+`, e, '', btCells(byEdge.slice(0, e.n)));   // each row counts everything above it, so 6%+ covers the small top rows
   h += '</tbody></table></div>';
   if (lg === 'all'){
     h += `<h2>By league</h2><p class="note">Leagues chosen with these seasons known. Click a league to see it alone.</p><div class="scroll"><table style="max-width:980px">${GHEAD('League', BHEAD)}<tbody>`;
@@ -308,21 +314,14 @@ function renderBacktest(){
       h += grp(`<a href="#view=backtest&lg=${l.key}" style="color:inherit;text-decoration:none">${lgFull(l)}</a>`, B.leagues[l.key].rule, '', btCells(DATA.bets.filter(b => b.lg === l.key)));
     h += '</tbody></table></div>';
   }
-  h += `<h2>By edge</h2><div class="scroll"><table style="max-width:980px">${GHEAD('Edge', BHEAD)}<tbody>`;
-  const byEdge = [...BT].sort((x, y) => y.edge - x.edge);   // bets store a rounded edge, so take each row's count from the top
-  for (const e of S.edges.filter(x => x.edge <= 0.06)) h += grp(`${Math.round(e.edge * 100)}%+`, e, '', btCells(byEdge.slice(0, e.n)));   // each row counts everything above it, so 6%+ covers the small top rows
-  h += `</tbody></table></div><h2>By month</h2><div class="scroll"><table style="max-width:980px">${GHEAD('Month', BHEAD)}<tbody>`;
-  for (const m of S.months) h += grp(MON[m.m - 1], m, '', btCells(BT.filter(b => +b.dt.slice(5, 7) === m.m)));
-  h += '</tbody></table></div>';
   h += `<h2>By line</h2><p class="note">The opening line in three bands.</p><div class="scroll"><table style="max-width:980px">${GHEAD('Line band', BHEAD)}<tbody>`;
   for (const [label, lo, hi] of [['Under 160', 0, 160], ['160–169.5', 160, 170], ['170–179.5', 170, 180]]) h += bandRow(label, BT.filter(x => x.line >= lo && x.line < hi));
   h += '</tbody></table></div>';
-  const paced = BT.filter(x => x.pace != null);
-  if (paced.length){
-    h += `<h2>By pace</h2><p class="note">Pace is the two teams' possessions per game so far that season, each with ${LIVE.min_gp ?? 3}+ games, minus the league average, from earlier games only. Games below ${FMs()} are not picks.</p><div class="scroll"><table style="max-width:980px">${GHEAD('Pace', BHEAD)}<tbody>`;
-    for (const [label, lo, hi] of [['+1 to +1.9', 1, 2], ['+2 to +2.9', 2, 3], ['+3 or more', 3, 99]]) h += bandRow(label, paced.filter(x => x.pace >= lo && x.pace < hi));
-    h += '</tbody></table></div>';
-  }
+  h += `<h2>By season</h2><div class="scroll"><table style="max-width:980px">${GHEAD('Season', BHEAD)}<tbody>`;
+  for (const s of S.seasons) h += grp(sn(s.season) + (s.season === DATA.tuned ? ' <span class="muted">(tuned on)</span>' : '') + (s.season === DATA.season ? ' <span class="muted">(so far)</span>' : ''), s, '', btCells(BT.filter(b => seasonOf(b) === s.season)));
+  h += `</tbody></table></div><h2>By month</h2><div class="scroll"><table style="max-width:980px">${GHEAD('Month', BHEAD)}<tbody>`;
+  for (const m of S.months) h += grp(MON[m.m - 1], m, '', btCells(BT.filter(b => +b.dt.slice(5, 7) === m.m)));
+  h += '</tbody></table></div>';
   return h + bets();
 }
 
