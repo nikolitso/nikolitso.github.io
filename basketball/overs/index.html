@@ -308,8 +308,11 @@ function renderBacktest(){
   h += `</tbody></table></div><h2>By month</h2><div class="scroll"><table style="max-width:980px">${GHEAD('Month', BHEAD)}<tbody>`;
   for (const m of S.months) h += grp(MON[m.m - 1], m, '', btCells(BT.filter(b => +b.dt.slice(5, 7) === m.m)));
   h += '</tbody></table></div>';
-  h += `<h2>By line</h2><p class="note">The opening line in 10-point bands.</p><div class="scroll"><table style="max-width:980px">${GHEAD('Line band', BHEAD)}<tbody>`;
-  for (const b of S.lines || []) h += grp(`${b.lo}–${b.lo + 9.5}`, b, '', btCells(BT.filter(x => x.line >= b.lo && x.line < b.lo + 10)));
+  h += `<h2>By line</h2><p class="note">The opening line in three bands.</p><div class="scroll"><table style="max-width:980px">${GHEAD('Line band', BHEAD)}<tbody>`;
+  for (const [label, lo, hi] of [['Under 160', 0, 160], ['160–169.5', 160, 170], ['170–179.5', 170, 180]]){
+    const g = BT.filter(x => x.line >= lo && x.line < hi), n = g.length, sum = f => g.reduce((a, x) => a + f(x), 0);
+    h += grp(label, {n, w: g.filter(x => x.ret > 0).length, px: n ? sum(x => x.px) / n : 0, roi: n ? sum(x => x.ret) / n : 0}, '', btCells(g));
+  }
   h += '</tbody></table></div>';
   return h + bets();
 }
