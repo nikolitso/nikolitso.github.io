@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-07T14:37:12Z",
+ "updated": "2026-11-07T17:25:31Z",
  "reports": [
   {
    "comp": "EuroCup",
@@ -1972,7 +1972,7 @@
    ],
    "projection": {
     "paok": {
-     "score": 86.7,
+     "score": 82.4,
      "players": [
       {
        "name": "Kyle Alexander",
@@ -2090,7 +2090,7 @@
      "pace": 71.4
     },
     "opp": {
-     "score": 73.1,
+     "score": 70.9,
      "players": [
       {
        "name": "Giannis Karakostas",
@@ -2204,14 +2204,14 @@
      "missing": [],
      "pace": 71.4
     },
-    "winProb": 92,
+    "winProb": 90,
     "pace": 71.4,
     "lineupSource": "manual",
     "note": "PAOK without Osman, who is out for one to two months, and Motiejunas.",
     "modelTotal": 151.9,
-    "line": 160.5,
+    "line": null,
     "modelMargin": 11.5,
-    "hcp": 14.0,
+    "hcp": null,
     "learned": {
      "games": 962,
      "lineGames": 944,
@@ -2227,39 +2227,39 @@
     },
     "teamStats": {
      "pts": {
-      "paok": 86.7,
-      "opp": 73.1,
-      "total": 159.8
+      "paok": 82.4,
+      "opp": 70.9,
+      "total": 153.3
      },
      "fg2m": {
-      "paok": 18.8,
-      "opp": 17.5,
-      "total": 36.3
+      "paok": 17.8,
+      "opp": 17.0,
+      "total": 34.8
      },
      "fg3m": {
-      "paok": 10.0,
-      "opp": 8.1,
-      "total": 18.1
+      "paok": 9.5,
+      "opp": 7.9,
+      "total": 17.4
      },
      "ftm": {
-      "paok": 19.2,
-      "opp": 13.7,
-      "total": 32.9
+      "paok": 18.3,
+      "opp": 13.3,
+      "total": 31.6
      },
      "ast": {
-      "paok": 17.4,
-      "opp": 15.4,
-      "total": 32.7
+      "paok": 16.5,
+      "opp": 14.9,
+      "total": 31.4
      },
      "oreb": {
-      "paok": 10.0,
-      "opp": 10.2,
-      "total": 20.2
+      "paok": 10.4,
+      "opp": 10.4,
+      "total": 20.9
      },
      "dreb": {
-      "paok": 25.2,
-      "opp": 22.9,
-      "total": 48.1
+      "paok": 25.8,
+      "opp": 23.9,
+      "total": 49.7
      },
      "tov": {
       "paok": 11.9,
@@ -2267,9 +2267,9 @@
       "total": 25.1
      },
      "reb": {
-      "paok": 35.2,
-      "opp": 33.1,
-      "total": 68.3
+      "paok": 36.2,
+      "opp": 34.3,
+      "total": 70.6
      }
     }
    }
