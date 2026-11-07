@@ -221,7 +221,7 @@ const R = DATA.rule;
 const LE = () => LIVE.edge ?? R.edge;
 const RL = k => !LIVE.leagues || LIVE.leagues.includes(k);
 const LIVE = window.LIVE || {updated: DATA.updated, fixtures: DATA.fixtures, picks: [], tracked: 0, start: '6 Nov 2026', taken: {n: 0}, over: {n: 0}, under: {n: 0}, rule: {n: 0}};
-LIVE.fixtures = LIVE.fixtures.filter(g => LG[g.lg]);                       // leagues no longer on the page
+LIVE.fixtures = LIVE.fixtures.filter(g => LG[g.lg] && (!g.gp || Math.min(...g.gp) >= (LIVE.min_gp ?? 4)));   // leagues no longer on the page; games only once both teams have the minimum games
 LIVE.picks = (LIVE.picks || []).filter(b => LG[b.lg]);
 if (LIVE.leagues) LIVE.leagues = LIVE.leagues.filter(k => LG[k]);
 
@@ -327,7 +327,7 @@ function bets(list){
 
 
 function renderProjections(){
-  let h = `<p class="note">Games in the next 7 days with the model's projected total (fitted on earlier games only) next to the market's consensus line. Line diff is the model minus the line. Pace is the part of the model total that comes from how much faster or slower these two teams play than the league; it is already in the Model number, and a dash means no box scores. Edge is the over at the price shown, on every game with a line. A game becomes a pick only if it meets every rule: edge above ${(LE()*100).toFixed(0)}%, model before pace 4 to 12 points above the line, both teams ${LIVE.min_gp ?? 4}+ games, regular season. Highlighted games are logged in the Picks tab at the line and price shown when they were first seen, and their edge is the one at that moment, while the line and prices keep updating. Click a match for its page, with the projection and how it was produced. Click a column heading to sort.</p>`;
+  let h = `<p class="note">Games in the next 7 days where both teams have played ${LIVE.min_gp ?? 4}+ games, with the model's projected total (fitted on earlier games only) next to the market's consensus line. Line diff is the model minus the line. Pace is the part of the model total that comes from how much faster or slower these two teams play than the league; it is already in the Model number, and a dash means no box scores. Edge is the over at the price shown, on every game with a line. A game becomes a pick only if it meets every rule: edge above ${(LE()*100).toFixed(0)}%, model before pace 4 to 12 points above the line, both teams ${LIVE.min_gp ?? 4}+ games, regular season. Highlighted games are logged in the Picks tab at the line and price shown when they were first seen, and their edge is the one at that moment, while the line and prices keep updating. Click a match for its page, with the projection and how it was produced. Click a column heading to sort.</p>`;
   const fx = LIVE.fixtures.filter(inLg);
   if (!fx.length) return h + '<p class="empty">No games in the next 7 days.</p>';
   const taken = Object.fromEntries(LIVE.picks.map(b => [b.home + '|' + b.away, b]));   // a pick keeps the edge it was taken at
