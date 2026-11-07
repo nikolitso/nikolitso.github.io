@@ -276,7 +276,7 @@ const bandRow = (label, g) => { const n = g.length, sum = f => g.reduce((a, x) =
   return grp(label, {n, w: g.filter(x => x.ret > 0).length, px: n ? sum(x => x.px) / n : 0, roi: n ? sum(x => x.ret) / n : 0}, '', btCells(g)); };
 
 function renderLeagues(){
-  let h = `<p class="note">Regular-season games from ${sn(DATA.first)} on (2020–21 only warms the ratings up; play-offs are left out, as in the rule). The model column starts in 2022–23 and uses earlier games only, but the leagues were chosen with these seasons known. <b>Over %</b>: how often the final score (overtime included) went over the closing line. Blind over: backing the over in every game at the average price. Opening and closing line: the average of those picks. Model overs: overs the rule picked at the opening line (edge above ${Math.round(R.edge*100)}%), count and ROI. Click a league for its seasons.</p>`;
+  let h = `<p class="note">Regular-season games from ${sn(DATA.first)} on (2020–21 only warms the ratings up; play-offs are left out, as in the rule). The model column starts in 2022–23 and uses earlier games only, but the leagues were chosen with these seasons known. <b>Over %</b>: how often the final score (overtime included) went over the closing line. Blind over: backing the over in every game at the average price. Opening and closing line: the average of those picks. Model overs: overs the rule picked at the opening line (edge above ${Math.round(R.edge*100)}%), count and ROI. Click a league for its seasons and its analysis below the table.</p>`;
   h += `<div class="scroll"><table><thead><tr><th>League</th><th class="n">Games</th><th class="n">Total / line</th><th class="n">Over %</th><th class="n">Blind over</th><th class="n">Model overs</th>${LHEAD}</tr></thead><tbody>`;
   const mod = g => g.n ? `${g.n} <span class="${cls(g.roi)}">${roi(g.roi)}</span>` : '<span class="muted">–</span>';
   const row = (label, s, attrs='', list=[]) => `<tr${attrs}><td>${label}</td><td class="n">${s.games}</td><td class="n">${s.avg_total.toFixed(1)} / ${s.avg_line.toFixed(1)}</td><td class="n">${pct(s.over, 1)}</td>
@@ -292,50 +292,50 @@ function renderLeagues(){
       if (on) for (const s of l.seasons) h += row(sn(s.season) + (s.season === DATA.tuned ? ' (tuned on)' : '') + (s.season === DATA.season ? ' (so far)' : ''), s, ' class="sub"', [...DATA.bets, ...((DATA.cur || {}).bets || [])].filter(b => b.lg === l.key && seasonOf(b) === s.season));
     }
   }
-  return h + '</tbody></table></div>';
+  h += '</tbody></table></div>';
+  const L_ = open && LG[open], S_ = open && DATA.backtest.leagues[open];
+  if (!L_) return h + '<p class="note">Click a league for its analysis: the same tables as the Backtest tab, for that league alone.</p>';
+  h += `<h2 id="lgan" style="margin-top:32px">${lgFull(L_)}: analysis</h2><p class="note">The Backtest tab's tables for this league alone, 2022–23 to 2025–26. The rows marked skipped are games the rule does not pick; the Backtest tab explains each table. Small leagues have few picks, so read the rows as rough.</p>`;
+  return h + (S_ && S_.rule.n ? analysis(open, false) : '<p class="empty">The rule made no picks in this league.</p>');
+}
+
+function analysis(k, notes = true){
+  // the tables that decide the rule, for one league or all: pace, luck, edge, line, stage, then season and month
+  const B = DATA.backtest, S = k === 'all' ? B.all : B.leagues[k], f = x => k === 'all' || x.lg === k, nt = s => notes ? `<p class="note">${s}</p>` : '';
+  const BT = DATA.bets.filter(f), SK = (DATA.skipped || []).filter(f);
+  let h = tiles([['Picks', S.rule.n], ['Hit rate', pct(S.rule.w / S.rule.n, 1)], ['ROI', roi(S.rule.roi), cls(S.rule.roi)],
+              ['Opening line', lineAvg(BT.filter(b => b.close != null), 'line')], ['Closing line', lineAvg(BT.filter(b => b.close != null), 'close')], ['Model line', lineAvg(BT.filter(b => b.close != null), 'mu')], ['Actual total', lineAvg(BT.filter(b => b.close != null), 'total')]]);
+  const T = (title, first, body, note='') => `<h2>${title}</h2>${nt(note)}<div class="scroll"><table style="max-width:1040px">${GHEAD(first, BHEAD)}<tbody>${body}</tbody></table></div>`;
+  const SKP = SK.filter(x => x.pace < FM() && x.luck < LK()), SKL = SK.filter(x => x.pace >= FM() && x.luck >= LK());
+  h += T('By pace', 'Pace', bandRow(`Below ${FMs()} <span class="muted">(skipped)</span>`, SKP) + [['+1 to +1.9', 1, 2], ['+2 or more', 2, 99]].map(([label, lo, hi]) => bandRow(label, BT.filter(x => x.pace >= lo && x.pace < hi))).join(''),
+    `Pace is the two teams' possessions per game so far that season, each with ${LIVE.min_gp ?? 3}+ games, minus the league average, from earlier games only. The first row is the games the rule skips: the same rules, 3-point luck under ${LKs()} too, with pace below ${FMs()}. They are not in any other figure on this page.`);
+  h += T('By 3-point luck', '3-point luck', [['Under +0.2', -99, 0.2], [`+0.2 to ${LKs()}`, 0.2, LK()]].map(([label, lo, hi]) => bandRow(label, BT.filter(x => x.luck >= lo && x.luck < hi))).join('') + bandRow(`${LKs()} or more <span class="muted">(skipped)</span>`, SKL),
+    `3-point luck: in the two teams' games so far that season, the threes made minus what the league's 3-point rate gives on the same attempts, in points per game, from earlier games only. High luck means the shooting has been hot, which rarely lasts, while the model's projection still counts those points. The last row is the fast games the rule skips: luck of ${LKs()} or more. They are not in any other figure on this page.`);
+  const EP = Math.round(R.edge * 100);
+  h += T('By edge', 'Edge', bandRow(`0 to ${EP}% <span class="muted">(skipped)</span>`, (DATA.skipped_edge || []).filter(f)) + bandRow(`${EP}% to 4%`, BT.filter(x => x.edge < 0.04)) + bandRow('4% or more', BT.filter(x => x.edge >= 0.04)),   // every pick is above the bar; stored edges are rounded
+    `Edge: the model's chance of the over × the price − 1, at the opening line. The first row is the games the rule skips: every other rule met, with an edge above 0 but not above ${EP}%. They are not in any other figure on this page.`);
+  const ML = LIVE.max_line ?? 180;
+  h += T('By line', 'Line band', [['Under 170', 0, 170], [`170 to ${ML - 0.5}`, 170, ML]].map(([label, lo, hi]) => bandRow(label, BT.filter(x => x.line >= lo && x.line < hi))).join('') + bandRow(`${ML} or more <span class="muted">(skipped)</span>`, (DATA.skipped_line || []).filter(f)),
+    `The opening line. The last row is the games the rule skips: every other rule met, with an opening line of ${ML} or more. They are not in any other figure on this page.`);
+  h += T('By stage', 'Stage', bandRow('Regular season', BT) + bandRow('Play-offs <span class="muted">(skipped)</span>', (DATA.skipped_po || []).filter(f)),
+    `The second row is the play-off games the rule skips: every other rule met, with the model's chance worked out as for a regular-season game. The model has a play-off signal of its own that on its own keeps it off play-off overs, so this row shows what would happen without it. Pace and 3-point luck there use the whole season so far. They are not in any other figure on this page.`);
+  h += T('By season', 'Season', S.seasons.map(s => grp(sn(s.season) + (s.season === DATA.tuned ? ' <span class="muted">(tuned on)</span>' : '') + (s.season === DATA.season ? ' <span class="muted">(so far)</span>' : ''), s, '', btCells(BT.filter(b => seasonOf(b) === s.season)))).join(''));
+  const SKJ = (DATA.skipped_jan || []).filter(f);
+  let mo = '';
+  for (const mm of [9, 10, 11, 12, 1, 2, 3, 4, 5, 6]) {
+    if (mm === 1) { if (SKJ.length) mo += bandRow(`Jan <span class="muted">(skipped)</span>`, SKJ); continue; }
+    const m = S.months.find(x => x.m === mm);
+    if (m) mo += grp(MON[m.m - 1], m, '', btCells(BT.filter(b => +b.dt.slice(5, 7) === m.m)));
+  }
+  h += T('By month', 'Month', mo, 'The January row is the games the rule skips: every other rule met. They are not in any other figure on this page.');
+  return h;
 }
 
 function renderBacktest(){
   const B = DATA.backtest, S = lg === 'all' ? B.all : B.leagues[lg];
   let h = `<p class="note">${B.note} Click a column heading to sort.</p>`;
   if (!S || !S.rule.n) return h + '<p class="empty">The rule made no picks in this league.</p>';
-  const BT = DATA.bets.filter(inLg), SK = (DATA.skipped || []).filter(inLg);
-  h += tiles([['Picks', S.rule.n], ['Hit rate', pct(S.rule.w / S.rule.n, 1)], ['ROI', roi(S.rule.roi), cls(S.rule.roi)],
-              ['Opening line', lineAvg(BT.filter(b => b.close != null), 'line')], ['Closing line', lineAvg(BT.filter(b => b.close != null), 'close')], ['Model line', lineAvg(BT.filter(b => b.close != null), 'mu')], ['Actual total', lineAvg(BT.filter(b => b.close != null), 'total')]]);
-  // the tables that decide the rule come first: pace, edge, league, line; then season and month
-  h += `<h2>By pace</h2><p class="note">Pace is the two teams' possessions per game so far that season, each with ${LIVE.min_gp ?? 3}+ games, minus the league average, from earlier games only. The first row is the games the rule skips: the same rules, 3-point luck under ${LKs()} too, with pace below ${FMs()}. They are not in any other figure on this page.</p><div class="scroll"><table style="max-width:1040px">${GHEAD('Pace', BHEAD)}<tbody>`;
-  const SKP = SK.filter(x => x.pace < FM() && x.luck < LK()), SKL = SK.filter(x => x.pace >= FM() && x.luck >= LK());
-  h += bandRow(`Below ${FMs()} <span class="muted">(skipped)</span>`, SKP);
-  for (const [label, lo, hi] of [['+1 to +1.9', 1, 2], ['+2 or more', 2, 99]]) h += bandRow(label, BT.filter(x => x.pace >= lo && x.pace < hi));
-  h += '</tbody></table></div>';
-  h += `<h2>By 3-point luck</h2><p class="note">3-point luck: in the two teams' games so far that season, the threes made minus what the league's 3-point rate gives on the same attempts, in points per game, from earlier games only. High luck means the shooting has been hot, which rarely lasts, while the model's projection still counts those points. The last row is the fast games the rule skips: luck of ${LKs()} or more. They are not in any other figure on this page.</p><div class="scroll"><table style="max-width:1040px">${GHEAD('3-point luck', BHEAD)}<tbody>`;
-  for (const [label, lo, hi] of [['Under +0.2', -99, 0.2], [`+0.2 to ${LKs()}`, 0.2, LK()]]) h += bandRow(label, BT.filter(x => x.luck >= lo && x.luck < hi));
-  h += bandRow(`${LKs()} or more <span class="muted">(skipped)</span>`, SKL);
-  h += '</tbody></table></div>';
-  const EP = Math.round(R.edge * 100);
-  h += `<h2>By edge</h2><p class="note">Edge: the model's chance of the over × the price − 1, at the opening line. The first row is the games the rule skips: every other rule met, with an edge above 0 but not above ${EP}%. They are not in any other figure on this page.</p><div class="scroll"><table style="max-width:1040px">${GHEAD('Edge', BHEAD)}<tbody>`;
-  h += bandRow(`0 to ${EP}% <span class="muted">(skipped)</span>`, (DATA.skipped_edge || []).filter(inLg));
-  h += bandRow(`${EP}% to 4%`, BT.filter(x => x.edge < 0.04)) + bandRow('4% or more', BT.filter(x => x.edge >= 0.04));   // every pick is above the bar; stored edges are rounded
-  h += '</tbody></table></div>';
-  const ML = LIVE.max_line ?? 180;
-  h += `<h2>By line</h2><p class="note">The opening line. The last row is the games the rule skips: every other rule met, with an opening line of ${ML} or more. They are not in any other figure on this page.</p><div class="scroll"><table style="max-width:1040px">${GHEAD('Line band', BHEAD)}<tbody>`;
-  for (const [label, lo, hi] of [['Under 170', 0, 170], [`170 to ${ML - 0.5}`, 170, ML]]) h += bandRow(label, BT.filter(x => x.line >= lo && x.line < hi));
-  h += bandRow(`${ML} or more <span class="muted">(skipped)</span>`, (DATA.skipped_line || []).filter(inLg));
-  h += '</tbody></table></div>';
-  h += `<h2>By stage</h2><p class="note">The second row is the play-off games the rule skips: every other rule met, with the model's chance worked out as for a regular-season game. The model has a play-off signal of its own that on its own keeps it off play-off overs, so this row shows what would happen without it. Pace and 3-point luck there use the whole season so far. They are not in any other figure on this page.</p><div class="scroll"><table style="max-width:1040px">${GHEAD('Stage', BHEAD)}<tbody>`;
-  h += bandRow('Regular season', BT) + bandRow('Play-offs <span class="muted">(skipped)</span>', (DATA.skipped_po || []).filter(inLg));
-  h += '</tbody></table></div>';
-  h += `<h2>By season</h2><div class="scroll"><table style="max-width:1040px">${GHEAD('Season', BHEAD)}<tbody>`;
-  for (const s of S.seasons) h += grp(sn(s.season) + (s.season === DATA.tuned ? ' <span class="muted">(tuned on)</span>' : '') + (s.season === DATA.season ? ' <span class="muted">(so far)</span>' : ''), s, '', btCells(BT.filter(b => seasonOf(b) === s.season)));
-  h += `</tbody></table></div><h2>By month</h2><p class="note">The January row is the games the rule skips: every other rule met. They are not in any other figure on this page.</p><div class="scroll"><table style="max-width:1040px">${GHEAD('Month', BHEAD)}<tbody>`;
-  const SKJ = (DATA.skipped_jan || []).filter(inLg);
-  for (const mm of [9, 10, 11, 12, 1, 2, 3, 4, 5, 6]) {
-    if (mm === 1) { if (SKJ.length) h += bandRow(`Jan <span class="muted">(skipped)</span>`, SKJ); continue; }
-    const m = S.months.find(x => x.m === mm);
-    if (m) h += grp(MON[m.m - 1], m, '', btCells(BT.filter(b => +b.dt.slice(5, 7) === m.m)));
-  }
-  h += '</tbody></table></div>';
-  return h + bets();
+  return h + analysis(lg) + bets();
 }
 
 function bets(){
@@ -449,6 +449,7 @@ document.addEventListener('click', e => {
   if (!r || !r.dataset.open) return;
   open = open === r.dataset.open ? null : r.dataset.open;
   render();
+  if (open && view === 'leagues') { const a = document.getElementById('lgan'); if (a) a.scrollIntoView({behavior: 'smooth', block: 'start'}); }
 });
 
 const RENDER = {home: renderFindings, picks: renderPicks, leagues: renderLeagues, backtest: renderBacktest, projections: renderProjections, method: renderMethod};
