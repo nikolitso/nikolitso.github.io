@@ -217,7 +217,7 @@ const lgFull = l => l.country === 'Europe' ? l.name : `${l.country} <span class=
 const wl = b => b.ret > 0 ? 'w' : b.ret < 0 ? 'l' : '';   // settled winners green, losers red
 const FM = () => (LIVE.fast || {}).min ?? 1;
 const FMs = () => FM() > 0 ? '+' + FM() : '0';
-const fastTag = v => v != null && v >= FM() ? '<span class="badge fast">Fast game</span>' : '';
+const fastTag = v => '';                                    // no Fast game tag since 8 Nov 2026: pace is a signal in the model
 const LK = () => LIVE.max_luck ?? 1.5;                       // rule 6: 3-point luck under this
 const LKs = () => '+' + LK();
 const luckCell = v => `<td class="n">${v != null ? sgn(v) : '–'}</td>`;
