@@ -197,7 +197,7 @@ a.tile:hover{border-color:var(--gold)}
   <div class="chips" id="chips"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=be396162"></script>
+<script src="data.js?v=16685618"></script>
 <script src="live.js"></script>
 <script>
 const $ = id => document.getElementById(id);
@@ -327,14 +327,12 @@ function analysis(k, notes = true){
   h += T('By stage', 'Stage', bandRow('Regular season', BT) + bandRow('Play-offs <span class="muted">(skipped)</span>', (DATA.skipped_po || []).filter(f)),
     `The second row is the play-off games the rule skips: every other rule met, with the model's chance worked out as for a regular-season game. The model has a play-off signal of its own that on its own keeps it off play-off overs, so this row shows what would happen without it. Pace and 3-point luck there use the whole season so far. They are not in any other figure on this page.`);
   h += T('By season', 'Season', S.seasons.map(s => grp(sn(s.season) + (s.season === DATA.tuned ? ' <span class="muted">(tuned on)</span>' : '') + (s.season === DATA.season ? ' <span class="muted">(so far)</span>' : ''), s, '', btCells(BT.filter(b => seasonOf(b) === s.season)))).join(''));
-  const SKJ = (DATA.skipped_jan || []).filter(f);
   let mo = '';
   for (const mm of [9, 10, 11, 12, 1, 2, 3, 4, 5, 6]) {
-    if (mm === 1) { if (SKJ.length) mo += bandRow(`Jan <span class="muted">(skipped)</span>`, SKJ); continue; }
     const m = S.months.find(x => x.m === mm);
     if (m) mo += grp(MON[m.m - 1], m, '', btCells(BT.filter(b => +b.dt.slice(5, 7) === m.m)));
   }
-  h += T('By month', 'Month', mo, 'The January row is the games the rule skips: every other rule met. They are not in any other figure on this page.');
+  h += T('By month', 'Month', mo);
   return h;
 }
 
@@ -355,7 +353,7 @@ function bets(){
 }
 
 function renderProjections(){
-  let h = `<p class="note">Games in the next 7 days with the model's projected total (fitted on earlier games only) next to the market's consensus line. Pace: the two teams' possessions per game this season against the league average. 3-point luck: points per game from threes above the league's 3-point rate in the two teams' games. Only overs that meet the rule (regular season, both teams ${LIVE.min_gp ?? 3}+ games, pace ${FMs()} or more, 3-point luck under ${LKs()}, not in January) get an edge here; highlighted games are logged in the Picks tab at the line and price shown when they were first seen, and their edge is the one at that moment, while the line and prices keep updating. Click a match for its page, with the projection and how it was produced. Click a column heading to sort.</p>`;
+  let h = `<p class="note">Games in the next 7 days with the model's projected total (fitted on earlier games only) next to the market's consensus line. Pace: the two teams' possessions per game this season against the league average. 3-point luck: points per game from threes above the league's 3-point rate in the two teams' games. Only overs that meet the rule (regular season, both teams ${LIVE.min_gp ?? 3}+ games, pace ${FMs()} or more, 3-point luck under ${LKs()}) get an edge here; highlighted games are logged in the Picks tab at the line and price shown when they were first seen, and their edge is the one at that moment, while the line and prices keep updating. Click a match for its page, with the projection and how it was produced. Click a column heading to sort.</p>`;
   const fx = LIVE.fixtures.filter(inLg);
   if (!fx.length) return h + '<p class="empty">No games in the next 7 days.</p>';
   const taken = Object.fromEntries(LIVE.picks.map(b => [b.home + '|' + b.away, b]));   // a pick keeps the edge it was taken at
@@ -389,7 +387,7 @@ function renderPicks(){
   // open picks first, then this season's record: October bets (same rules, worked out from results) + bets logged live
   const open = LIVE.picks.filter(b => !b.done).sort((a, b) => a.dt < b.dt ? -1 : 1);
   const fx = Object.fromEntries(LIVE.fixtures.map(g => [g.home + '|' + g.away, g]));
-  let h = `<p class="note">Picks to take: overs where the model's edge is above ${Math.round(LE()*100)}% at the line on offer, regular season, both teams ${LIVE.min_gp ?? 3}+ games${LIVE.max_line && LIVE.max_line < 999 ? `, line under ${LIVE.max_line}` : ''}, game pace ${FMs()} or more, 3-point luck under ${LKs()}, no picks in January, equal stakes. ROI = profit ÷ total staked on won and lost picks; pushes are left out. Every hour the model checks every game in the next 7 days; a pick is logged the first time its edge clears the bar, at that line and the average price, and never changed. Take it as early as possible, as the line tends to move toward it. Updated ${LIVE.updated} (Athens).</p>`;
+  let h = `<p class="note">Picks to take: overs where the model's edge is above ${Math.round(LE()*100)}% at the line on offer, regular season, both teams ${LIVE.min_gp ?? 3}+ games${LIVE.max_line && LIVE.max_line < 999 ? `, line under ${LIVE.max_line}` : ''}, game pace ${FMs()} or more, 3-point luck under ${LKs()}, equal stakes. ROI = profit ÷ total staked on won and lost picks; pushes are left out. Every hour the model checks every game in the next 7 days; a pick is logged the first time its edge clears the bar, at that line and the average price, and never changed. Take it as early as possible, as the line tends to move toward it. Updated ${LIVE.updated} (Athens).</p>`;
   if (!open.length) h += '<p class="empty">No open picks right now. New ones appear here as lines open.</p>';
   else {
     h += `<h2>Open picks</h2><div class="scroll"><table class="proj"><thead><tr><th>Tip-off</th><th>League</th><th>Match</th><th class="n">Pick</th><th class="n">Price</th><th class="n">Model total</th><th class="n">Edge</th><th class="n">Line now</th><th class="n">Pace</th><th class="n">3-pt luck</th></tr></thead><tbody>` +
