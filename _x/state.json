@@ -705,7 +705,8 @@
       "marina",
       "a-quiet-life",
       "silent-heart",
-      "the-double-hour"
+      "the-double-hour",
+      "after-love"
     ],
     "log": [
       {
@@ -961,11 +962,17 @@
         "slot": "2026-11-06 20",
         "slug": "the-double-hour",
         "id": "2118765413366370447"
+      },
+      {
+        "day": "2026-11-07",
+        "slot": "2026-11-07 20",
+        "slug": "after-love",
+        "id": "2119127799072280677"
       }
     ],
-    "last_day": "2026-11-06"
+    "last_day": "2026-11-07"
   },
-  "last_slot": "2026-11-07 14",
+  "last_slot": "2026-11-07 20",
   "quote": {
     "seen": [
       "1",
