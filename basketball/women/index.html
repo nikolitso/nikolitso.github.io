@@ -196,7 +196,7 @@ a.tile:hover{border-color:var(--gold)}
   <div class="chips" id="chips"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=w32"></script>
+<script src="data.js?v=w33"></script>
 <script src="live.js"></script>
 <script>
 const $ = id => document.getElementById(id);
@@ -309,6 +309,8 @@ function btBody(BT, S, pool, leagues){
   h += `<h2>By month</h2>` + sideTable('Month', S.months.map(m => [MON[m.m - 1], BT.filter(x => +x.dt.slice(5, 7) === m.m)]));
   h += `<h2>By line</h2><p class="note">The line of the pick in three bands.</p>` + sideTable('Line band', [['Under 130', 0, 130], ['130–139.5', 130, 140], ['140 and over', 140, 999]].map(([label, lo, hi]) => [label, BT.filter(x => x.line >= lo && x.line < hi)]));
   h += `<h2>By line difference</h2><p class="note">How many points the model total, pace included, was above the line of the pick. The 4 to 12 point rule reads the number before pace, so some picks fall outside that range here.</p>` + sideTable('Difference', [['Under 4', -99, 4], ['4–5.9', 4, 6], ['6–7.9', 6, 8], ['8–12', 8, 12.01], ['Over 12', 12.01, 999]].map(([label, lo, hi]) => [label, BT.filter(x => gap(x) >= lo && gap(x) < hi)]).filter(r => r[1].length));
+  const known = BT.filter(x => x.pace != null);
+  if (known.length) h += `<h2>By pace</h2><p class="note">The points pace added to or took from the model total, before the game. Picks with no pace come from games without box scores.</p>` + sideTable('Pace', [['Slower, under −1', -99, -1], ['About average, −1 to +1', -1, 1.01], ['Faster, +1 to +3', 1.01, 3.01], ['Fastest, over +3', 3.01, 99]].map(([label, lo, hi]) => [label, known.filter(x => x.pace >= lo && x.pace < hi)]).concat([['No pace', BT.filter(x => x.pace == null)]]).filter(r => r[1].length));
   return h + bets(BT);
 }
 
@@ -316,8 +318,8 @@ function bets(list){
   if (!list.length) return '';
   let run = 0;
   const rows = list.map(b => { run += b.ret;
-    return `<tr><td data-s="${b.dt}">${short(b.dt)} ${b.dt.slice(0,4)}</td>${lg === 'all' ? `<td>${lgShort(b.lg)}</td>` : ''}<td class="wr">${b.home} – ${b.away}</td><td class="n ${wl(b)}">${b.side === 'o' ? 'Over' : 'Under'} ${b.line}</td><td class="n">${b.px.toFixed(2)}</td><td class="n">${b.mu.toFixed(1)}</td><td class="n">${b.open ?? '–'}</td><td class="n">${b.close ?? '–'}</td><td class="n">${sgn(gap(b), 1)}</td><td class="n">${pct(b.p)}</td><td class="n">${sgn(b.edge*100, 0)}%</td><td class="n ${b.ret > 0 ? 'w' : b.ret < 0 ? 'l' : ''}">${b.total}</td></tr>`; });
-  return `<h2>Every pick, latest first</h2><p class="note">${list.length} backtest picks${list.length > 400 ? ', the latest 400 shown' : ''}.</p><div class="scroll"><table><thead><tr><th>Date</th>${lg === 'all' ? '<th>League</th>' : ''}<th>Match</th><th class="n">Pick</th><th class="n">Price</th><th class="n">Model line</th><th class="n">Opening</th><th class="n">Closing</th><th class="n">Line diff</th><th class="n">Chance</th><th class="n">Edge</th><th class="n">Result</th></tr></thead><tbody>${rows.reverse().slice(0, 400).join('')}</tbody></table></div>`;
+    return `<tr><td data-s="${b.dt}">${short(b.dt)} ${b.dt.slice(0,4)}</td>${lg === 'all' ? `<td>${lgShort(b.lg)}</td>` : ''}<td class="wr">${b.home} – ${b.away}</td><td class="n ${wl(b)}">${b.side === 'o' ? 'Over' : 'Under'} ${b.line}</td><td class="n">${b.px.toFixed(2)}</td><td class="n">${b.mu.toFixed(1)}</td><td class="n">${b.pace == null ? '–' : sgn(b.pace, 1)}</td><td class="n">${b.open ?? '–'}</td><td class="n">${b.close ?? '–'}</td><td class="n">${sgn(gap(b), 1)}</td><td class="n">${pct(b.p)}</td><td class="n">${sgn(b.edge*100, 0)}%</td><td class="n ${b.ret > 0 ? 'w' : b.ret < 0 ? 'l' : ''}">${b.total}</td></tr>`; });
+  return `<h2>Every pick, latest first</h2><p class="note">${list.length} backtest picks${list.length > 400 ? ', the latest 400 shown' : ''}.</p><div class="scroll"><table><thead><tr><th>Date</th>${lg === 'all' ? '<th>League</th>' : ''}<th>Match</th><th class="n">Pick</th><th class="n">Price</th><th class="n">Model line</th><th class="n">Pace</th><th class="n">Opening</th><th class="n">Closing</th><th class="n">Line diff</th><th class="n">Chance</th><th class="n">Edge</th><th class="n">Result</th></tr></thead><tbody>${rows.reverse().slice(0, 400).join('')}</tbody></table></div>`;
 }
 
 function renderProjections(){
