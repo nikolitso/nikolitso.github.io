@@ -787,14 +787,14 @@ function profileCard(r, p, regulars, emptyText) {
 }
 
 function ratingsExplainer() {
-  const m = state.ratings.minutesToHalf;
-  if (!m) return '';
   const comps = Object.entries(state.ratings.comps);
-  const counts = comps.map(([c, v]) => `${v.rated} in the ${compName(c)}`).join(' and ');
+  if (!comps.length) return '';
+  const counts = comps.map(([c, v]) => `${v.rated} in the ${compName(c)}, from ${v.minMinutes} minutes played`).join(' and ');
+  const settle = comps.map(([c, v]) => `${v.minutesToHalf.off} minutes for Offence and ${v.minutesToHalf.def} for Defence in the ${compName(c)}`).join(', and ');
   return `<h3>How the ratings work</h3>
-    <div class="card"><p>Each player is compared with everyone rated in the same competition (${counts}, from ${comps[0][1].minMinutes} minutes played). <b>Elite</b> is the top 10%, <b>Good</b> the next 20%, <b>Average</b> the middle 40%, <b>Below average</b> the next 20% and <b>Weak</b> the bottom 10%. On All games, the competitions count by minutes played. Full profile has the number and its likely range.</p>
-    <p><b>Offence</b> counts points, missed shots, assists, offensive rebounds, turnovers and fouls drawn per 40 minutes. <b>Defence</b> counts defensive rebounds, steals, blocks and fouls. The weights are half the official PIR weights and half measured from four EuroCup seasons, the mix that best predicted teams' later results. The Greek League uses the same weights.</p>
-    <p>Few minutes pull a rating towards the league average. Offence takes about ${m.off} minutes to be half signal and half noise, Defence about ${m.def}, so early-season ratings move a lot.</p>
+    <div class="card"><p>Each player is compared with everyone rated in the same competition (${counts}). <b>Elite</b> is the top 10%, <b>Good</b> the next 20%, <b>Average</b> the middle 40%, <b>Below average</b> the next 20% and <b>Weak</b> the bottom 10%. On All games, the competitions count by minutes played. Full profile has the number and its likely range.</p>
+    <p><b>Offence</b> counts points, missed shots, assists, offensive rebounds, turnovers and fouls drawn per 40 minutes. <b>Defence</b> counts defensive rebounds, steals, blocks and fouls. The weights are half the official PIR weights and half measured from four EuroCup seasons, the mix that best predicted teams' later results. The Greek League uses the same weights: tested on four of its own seasons, weights measured there predicted no better.</p>
+    <p>Few minutes pull a rating towards the league average. A rating is half signal and half noise after about ${settle}, so early-season ratings move a lot.</p>
     <p>Box scores miss most of defence, such as staying in front of your man, and they favour big men, who collect the rebounds and blocks. Read Defence as what a player adds in the box score, not as his whole defensive game.</p>
     <p class="muted">The sentence on each card names stats in the top or bottom quarter of the league. The Full profile bars show where a player stands among rated players; playmaking, rebounding, steals &amp; blocks, turnovers and fouls are per 40 minutes.</p></div>`;
 }
