@@ -1,7 +1,7 @@
 name: Site · FIBA Europe Cup
 
 # The /fibaeuropecup/ pipeline (scripts in nikolitso/BettingSignal, fibaeuropecup/), on GitHub instead of the PC:
-#   07:35 Athens   update.py          results, fixtures and odds (Flashscore), player stats (FIBA), projections
+#   07:35 Athens   update.py          results, fixtures and odds (Flashscore), player stats and pace (FIBA), projections
 #   hourly 10-21   matchday_odds.py   today's games: Flashscore lines, projections
 # Both commit and push the fibaeuropecup/ files here. The "Update all sites" button runs the full update.
 # scripts/fiba_runner.py starts them: Flashscore shows a runner outside Greece other bookmakers than the Greek ones
