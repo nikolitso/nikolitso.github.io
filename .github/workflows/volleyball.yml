@@ -1,10 +1,10 @@
 name: Site · Volleyball
 
-# /volleyball/: results and fixtures from Flashscore, odds, ratings, projections and picks, the page and the
-# homepage card. Scripts and data in nikolitso/BettingSignal (volleyball/). Twice a day; "Update all sites" too.
+# /volleyball/: results, fixtures, odds, ratings, projections and picks, the page and the
+# homepage card. Scripts and data in nikolitso/BettingSignal (volleyball/). Every 2 hours; "Update all sites" too.
 on:
   schedule:
-    - cron: "0 7,11 * * *"   # 09:00 and 13:00 Athens in winter (10:00 and 14:00 in summer)
+    - cron: "0 */2 * * *"    # every 2 hours on the even UTC hour (odd hours Athens in winter, even in summer)
   workflow_dispatch:          # Run workflow button: Actions tab, or the GitHub mobile app
 
 permissions:
