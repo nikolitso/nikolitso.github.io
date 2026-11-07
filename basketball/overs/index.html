@@ -198,7 +198,7 @@ a.tile:hover{border-color:var(--gold)}
   <div class="chips" id="chips"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=0eb05c0d"></script>
+<script src="data.js?v=a79aa05e"></script>
 <script src="live.js"></script>
 <script>
 const $ = id => document.getElementById(id);
@@ -317,8 +317,8 @@ function renderBacktest(){
   h += '</tbody></table></div>';
   const paced = BT.filter(x => x.pace != null);
   if (paced.length){
-    h += `<h2>By pace</h2><p class="note">Pace is the two teams' possessions per game so far that season, each with ${LIVE.min_gp ?? 3}+ games, minus the league average, from earlier games only. ${FMs()} or more is a Fast game.</p><div class="scroll"><table style="max-width:980px">${GHEAD('Pace', BHEAD)}<tbody>`;
-    for (const [label, lo, hi] of [['Below 0', -99, 0], ['0 to +0.9', 0, 1], ['+1 or more', 1, 99]]) h += bandRow(label, paced.filter(x => x.pace >= lo && x.pace < hi));
+    h += `<h2>By pace</h2><p class="note">Pace is the two teams' possessions per game so far that season, each with ${LIVE.min_gp ?? 3}+ games, minus the league average, from earlier games only. Games below ${FMs()} are not picks.</p><div class="scroll"><table style="max-width:980px">${GHEAD('Pace', BHEAD)}<tbody>`;
+    for (const [label, lo, hi] of [['+1 to +1.9', 1, 2], ['+2 to +2.9', 2, 3], ['+3 or more', 3, 99]]) h += bandRow(label, paced.filter(x => x.pace >= lo && x.pace < hi));
     h += '</tbody></table></div>';
   }
   return h + bets();
@@ -334,7 +334,7 @@ function bets(){
 }
 
 function renderProjections(){
-  let h = `<p class="note">Games in the next 7 days with the model's projected total (fitted on earlier games only) next to the market's consensus line. Pace: the two teams' possessions per game this season against the league average; ${FMs()} or more is a Fast game. Only overs that meet the rule (regular season, both teams ${LIVE.min_gp ?? 3}+ games) get an edge here; highlighted games are logged in the Picks tab at the line and price shown when they were first seen, and their edge is the one at that moment, while the line and prices keep updating. Click a match for its page, with the projection and how it was produced. Click a column heading to sort.</p>`;
+  let h = `<p class="note">Games in the next 7 days with the model's projected total (fitted on earlier games only) next to the market's consensus line. Pace: the two teams' possessions per game this season against the league average. Only overs that meet the rule (regular season, both teams ${LIVE.min_gp ?? 3}+ games, pace ${FMs()} or more) get an edge here; highlighted games are logged in the Picks tab at the line and price shown when they were first seen, and their edge is the one at that moment, while the line and prices keep updating. Click a match for its page, with the projection and how it was produced. Click a column heading to sort.</p>`;
   const fx = LIVE.fixtures.filter(inLg);
   if (!fx.length) return h + '<p class="empty">No games in the next 7 days.</p>';
   const taken = Object.fromEntries(LIVE.picks.map(b => [b.home + '|' + b.away, b]));   // a pick keeps the edge it was taken at
@@ -356,10 +356,10 @@ function renderProjections(){
 
 function renderFast(){
   const F = LIVE.fast, r = F.rec, n = r.settled, teams = Object.entries(F.teams || {}).filter(([k, v]) => LG[k] && v.length);
-  let h = `<h2>Fast games</h2><p class="note">A tag on picks, not a new rule: every pick stays logged and counted in the record above. A game is tagged when its pace is ${FMs()} or more. Pace is the average of the two teams' possessions per game so far this season, each with ${LIVE.min_gp ?? 3}+ games, minus the league average, and it is fixed when the pick is logged.</p>`;
+  let h = `<h2>Fast games</h2><p class="note">Since ${F.start} only fast games become picks: a pace of ${FMs()} or more. Pace is the average of the two teams' possessions per game so far this season, each with ${LIVE.min_gp ?? 3}+ games, minus the league average, and it is fixed when the pick is logged. These tiles count fast picks only, so they are the clean test of the rule.</p>`;
   h += tiles([['Fast picks', String(r.n)], ['Settled', String(n)], ['Hit rate', n ? pct(r.w / n, 1) : '–'], ['ROI', roi(r.roi), cls(r.roi)], ['Backtest picks', String(F.bt.n)], ['Backtest ROI', roi(F.bt.roi), cls(F.bt.roi)]]);
-  h += `<p class="note">Live record since ${F.start}. The backtest covers 2022–23 to 2025–26, and the other 237 picks made +3.5%. The ${FMs()} mark was chosen after seeing those results, and the gain is larger than a strong market should leave, so the tag stays unproven until the live record says otherwise.</p>`;
-  if (teams.length) h += `<h2>Fast teams now</h2><p class="note">Teams at ${FMs()} or more on their own, fastest first. A game's pace uses both teams, so a fast team against a slow one may not be tagged.</p>` +
+  h += `<p class="note">The backtest covers 2022–23 to 2025–26. The ${FMs()} mark was chosen after seeing those results, and the gain is larger than a strong market should leave, so the rule stays unproven until the live record says otherwise.</p>`;
+  if (teams.length) h += `<h2>Fast teams now</h2><p class="note">Teams at ${FMs()} or more on their own, fastest first. A game's pace uses both teams, so a fast team against a slow one may not qualify.</p>` +
     teams.map(([k, v]) => `<p class="note"><b>${lgShort(k)}:</b> ${v.map(([t, x]) => `${t} ${sgn(x)}`).join(', ')}</p>`).join('');
   return h;
 }
@@ -368,7 +368,7 @@ function renderPicks(){
   // open picks first, then this season's record: October bets (same rules, worked out from results) + bets logged live
   const open = LIVE.picks.filter(b => !b.done).sort((a, b) => a.dt < b.dt ? -1 : 1);
   const fx = Object.fromEntries(LIVE.fixtures.map(g => [g.home + '|' + g.away, g]));
-  let h = `<p class="note">Picks to take: overs where the model's edge is above ${Math.round(LE()*100)}% at the line on offer, regular season, both teams ${LIVE.min_gp ?? 3}+ games${LIVE.max_line && LIVE.max_line < 999 ? `, line under ${LIVE.max_line}` : ''}, equal stakes. ROI = profit ÷ total staked on won and lost picks; pushes are left out. Every hour the model checks every game in the next 7 days; a pick is logged the first time its edge clears the bar, at that line and the average price, and never changed. Take it as early as possible, as the line tends to move toward it. Updated ${LIVE.updated} (Athens).</p>`;
+  let h = `<p class="note">Picks to take: overs where the model's edge is above ${Math.round(LE()*100)}% at the line on offer, regular season, both teams ${LIVE.min_gp ?? 3}+ games${LIVE.max_line && LIVE.max_line < 999 ? `, line under ${LIVE.max_line}` : ''}, game pace ${FMs()} or more, equal stakes. ROI = profit ÷ total staked on won and lost picks; pushes are left out. Every hour the model checks every game in the next 7 days; a pick is logged the first time its edge clears the bar, at that line and the average price, and never changed. Take it as early as possible, as the line tends to move toward it. Updated ${LIVE.updated} (Athens).</p>`;
   if (!open.length) h += '<p class="empty">No open picks right now. New ones appear here as lines open.</p>';
   else {
     h += `<h2>Open picks</h2><div class="scroll"><table class="proj"><thead><tr><th>Tip-off</th><th>League</th><th>Match</th><th class="n">Pick</th><th class="n">Price</th><th class="n">Model total</th><th class="n">Edge</th><th class="n">Line now</th><th class="n">Pace</th></tr></thead><tbody>` +
@@ -385,7 +385,7 @@ function renderPicks(){
   h += tiles([['Picks', String(all.length)], ['Settled', String(set.length)], ['Hit rate', set.length ? pct(won / set.length, 1) : '–'],
               ['ROI', roi(R_), cls(R_)],
               ['Closing line moved toward the pick', cl.length ? pct(up / cl.length) : '–'], ['Closing line moved against it', cl.length ? pct(dn / cl.length) : '–']]);
-  h += `<p class="note">The closing line moved toward the pick when it ended above the line picked. A few hundred picks are needed before the record says much. Picks before 7 Nov 2026 were made with the earlier team numbers, which also used last season. Click a column heading to sort.</p>`;
+  h += `<p class="note">The closing line moved toward the pick when it ended above the line picked. A few hundred picks are needed before the record says much. Picks before 7 Nov 2026 stay as they were: they were made without the pace rule and with the earlier team numbers, which also used last season. Click a column heading to sort.</p>`;
   if (cl.length) {
     const bt = k => DATA.bets.filter(b => b.lg === k && b.close != null);
     h += `<h2>The closing line by league</h2><p class="note">How each league's picks did against the closing line this season. This shows sooner than the record whether the model is reading a league well. Points: the average move from the line picked to the closing line. Backtest: how often the line moved toward the pick in 2022–23 to 2025–26.</p><div class="scroll"><table style="max-width:860px"><thead><tr><th>League</th><th class="n">Picks</th><th class="n">Moved toward</th><th class="n">Moved against</th><th class="n">Points</th><th class="n">Backtest</th></tr></thead><tbody>` +
@@ -439,7 +439,7 @@ document.addEventListener('click', e => {
 
 function renderTesting(){
   const T = LIVE.test || {names: {}, picks: []}, nm = k => T.names[k] || k, n = Object.keys(T.names).length;
-  let h = `<p class="note">Every league outside the main ${DATA.leagues.length}, run live under the same rules${T.start ? ` since ${T.start}` : ''}: overs only, edge above ${Math.round(LE()*100)}% at the line on offer, regular season, both teams ${LIVE.min_gp ?? 3}+ games${LIVE.max_line && LIVE.max_line < 999 ? `, line under ${LIVE.max_line}` : ''}, equal stakes. ROI = profit ÷ total staked on won and lost picks; pushes are left out. These picks are kept apart and do not count in the record on the other tabs. A league can join the main list once a long run of picks shows a steady profit. Click a column heading to sort.</p>`;
+  let h = `<p class="note">Every league outside the main ${DATA.leagues.length}, run live under the same rules, without the pace rule${T.start ? `, since ${T.start}` : ''}: overs only, edge above ${Math.round(LE()*100)}% at the line on offer, regular season, both teams ${LIVE.min_gp ?? 3}+ games${LIVE.max_line && LIVE.max_line < 999 ? `, line under ${LIVE.max_line}` : ''}, equal stakes. ROI = profit ÷ total staked on won and lost picks; pushes are left out. These picks are kept apart and do not count in the record on the other tabs. A league can join the main list once a long run of picks shows a steady profit. Click a column heading to sort.</p>`;
   const open = T.picks.filter(b => !b.done).sort((a, b) => a.dt < b.dt ? -1 : 1), done = T.picks.filter(b => b.done);
   const set = done.filter(b => b.ret != null), won = set.filter(b => b.ret > 0).length, units = set.reduce((a, b) => a + b.ret, 0), nDec = set.filter(b => b.ret !== 0).length, R_ = nDec ? units / nDec : null;
   h += tiles([['Leagues', String(n || '–')], ['Picks', String(T.picks.length)], ['Open picks', String(open.length)], ['Settled', String(set.length)],
