@@ -198,7 +198,7 @@ a.tile:hover{border-color:var(--gold)}
   <div class="chips" id="chips"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=f5d6a67f"></script>
+<script src="data.js?v=ad7e963f"></script>
 <script src="live.js"></script>
 <script>
 const $ = id => document.getElementById(id);
@@ -266,6 +266,9 @@ function renderFindings(){
 
 const btCells = list => { const c = list.filter(b => b.close != null); return lineCells(list) + (c.length ? `<td class="n">${lineAvg(c, 'mu')}</td><td class="n">${lineAvg(c, 'total')}</td>` : '<td class="n muted">–</td><td class="n muted">–</td>'); };
 
+const bandRow = (label, g) => { const n = g.length, sum = f => g.reduce((a, x) => a + f(x), 0);
+  return grp(label, {n, w: g.filter(x => x.ret > 0).length, px: n ? sum(x => x.px) / n : 0, roi: n ? sum(x => x.ret) / n : 0}, '', btCells(g)); };
+
 function renderLeagues(){
   let h = `<p class="note">Regular-season games from ${sn(DATA.first)} on (2020–21 only warms the ratings up; play-offs are left out, as in the rule). The model column starts in 2022–23 and uses earlier games only, but the leagues were chosen with these seasons known. <b>Over %</b>: how often the final score (overtime included) went over the closing line. Blind over: backing the over in every game at the average price. Opening and closing line: the average of those picks. Model overs: overs the rule picked at the opening line (edge above ${Math.round(R.edge*100)}%), count and ROI. Click a league for its seasons.</p>`;
   h += `<div class="scroll"><table><thead><tr><th>League</th><th class="n">Games</th><th class="n">Total / line</th><th class="n">Over %</th><th class="n">Blind over</th><th class="n">Model overs</th>${LHEAD}</tr></thead><tbody>`;
@@ -309,11 +312,14 @@ function renderBacktest(){
   for (const m of S.months) h += grp(MON[m.m - 1], m, '', btCells(BT.filter(b => +b.dt.slice(5, 7) === m.m)));
   h += '</tbody></table></div>';
   h += `<h2>By line</h2><p class="note">The opening line in three bands.</p><div class="scroll"><table style="max-width:980px">${GHEAD('Line band', BHEAD)}<tbody>`;
-  for (const [label, lo, hi] of [['Under 160', 0, 160], ['160–169.5', 160, 170], ['170–179.5', 170, 180]]){
-    const g = BT.filter(x => x.line >= lo && x.line < hi), n = g.length, sum = f => g.reduce((a, x) => a + f(x), 0);
-    h += grp(label, {n, w: g.filter(x => x.ret > 0).length, px: n ? sum(x => x.px) / n : 0, roi: n ? sum(x => x.ret) / n : 0}, '', btCells(g));
-  }
+  for (const [label, lo, hi] of [['Under 160', 0, 160], ['160–169.5', 160, 170], ['170–179.5', 170, 180]]) h += bandRow(label, BT.filter(x => x.line >= lo && x.line < hi));
   h += '</tbody></table></div>';
+  const paced = BT.filter(x => x.pace != null);
+  if (paced.length){
+    h += `<h2>By pace</h2><p class="note">EuroLeague and EuroCup picks only: the other four leagues have no possession data. Pace is the two teams' possessions per game so far that season, each with ${LIVE.min_gp ?? 3}+ games, minus the league average, from earlier games only. ${sgn(FM())} or more is a Fast game.</p><div class="scroll"><table style="max-width:980px">${GHEAD('Pace', BHEAD)}<tbody>`;
+    for (const [label, lo, hi] of [['Below 0', -99, 0], ['0 to +0.4', 0, FM()], [`${sgn(FM())} or more`, FM(), 99]]) h += bandRow(label, paced.filter(x => x.pace >= lo && x.pace < hi));
+    h += '</tbody></table></div>';
+  }
   return h + bets();
 }
 
@@ -351,7 +357,7 @@ function renderFast(){
   const F = LIVE.fast, r = F.rec, n = r.settled, teams = Object.entries(F.teams || {}).filter(([k, v]) => LG[k] && v.length);
   let h = `<h2>Fast games</h2><p class="note">A tag on EuroLeague and EuroCup picks, not a new rule: every pick stays logged and counted in the record above. A game is tagged when its pace is ${sgn(F.min)} or more. Pace is the average of the two teams' possessions per game so far this season, each with ${LIVE.min_gp ?? 3}+ games, minus the league average, and it is fixed when the pick is logged. The other four leagues have no possession data.</p>`;
   h += tiles([['Fast picks', String(r.n)], ['Settled', String(n)], ['Hit rate', n ? pct(r.w / n, 1) : '–'], ['ROI', roi(r.roi), cls(r.roi)], ['Backtest picks', String(F.bt.n)], ['Backtest ROI', roi(F.bt.roi), cls(F.bt.roi)]]);
-  h += `<p class="note">Live record since ${F.start}. The backtest covers 2022–23 to 2025–26, and the other 50 EuroLeague and EuroCup picks made +10.2%. The ${sgn(F.min)} mark was chosen after seeing those results, and the gain is larger than a strong market should leave, so the tag stays unproven until the live record says otherwise.</p>`;
+  h += `<p class="note">Live record since ${F.start}. The backtest covers 2022–23 to 2025–26, and the other 54 EuroLeague and EuroCup picks made +12.6%. The ${sgn(F.min)} mark was chosen after seeing those results, and the gain is larger than a strong market should leave, so the tag stays unproven until the live record says otherwise.</p>`;
   if (teams.length) h += `<h2>Fast teams now</h2><p class="note">Teams at ${sgn(F.min)} or more on their own. A game's pace uses both teams, so a fast team against a slow one may not be tagged.</p>` +
     teams.map(([k, v]) => `<p class="note"><b>${LG[k].name}:</b> ${v.map(([t, x]) => `${t} ${sgn(x)}`).join(', ')}</p>`).join('');
   return h;
