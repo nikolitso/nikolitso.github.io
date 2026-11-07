@@ -198,7 +198,7 @@ a.tile:hover{border-color:var(--gold)}
   <div class="chips" id="chips"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=5b8d11d4"></script>
+<script src="data.js?v=0eb05c0d"></script>
 <script src="live.js"></script>
 <script>
 const $ = id => document.getElementById(id);
@@ -215,8 +215,8 @@ const LG = Object.fromEntries(DATA.leagues.map(l => [l.key, l]));
 const lgName = k => `${LG[k].country} · ${LG[k].name}`;
 const lgFull = l => l.country === 'Europe' ? l.name : `${l.country} <span class="muted">${l.name}</span>`;
 const wl = b => b.ret > 0 ? 'w' : b.ret < 0 ? 'l' : '';   // settled winners green, losers red
-const FM = () => (LIVE.fast || {}).min ?? 0;
-const FMs = () => FM() > 0 ? sgn(FM()) : '0';
+const FM = () => (LIVE.fast || {}).min ?? 1;
+const FMs = () => FM() > 0 ? '+' + FM() : '0';
 const fastTag = v => v != null && v >= FM() ? '<span class="badge fast">Fast game</span>' : '';
 const lgShort = k => LG[k].country === 'Europe' ? LG[k].name : LG[k].country;   // EuroLeague and EuroCup share a country
 const inLg = x => lg === 'all' || x.lg === lg;
@@ -358,7 +358,7 @@ function renderFast(){
   const F = LIVE.fast, r = F.rec, n = r.settled, teams = Object.entries(F.teams || {}).filter(([k, v]) => LG[k] && v.length);
   let h = `<h2>Fast games</h2><p class="note">A tag on picks, not a new rule: every pick stays logged and counted in the record above. A game is tagged when its pace is ${FMs()} or more. Pace is the average of the two teams' possessions per game so far this season, each with ${LIVE.min_gp ?? 3}+ games, minus the league average, and it is fixed when the pick is logged.</p>`;
   h += tiles([['Fast picks', String(r.n)], ['Settled', String(n)], ['Hit rate', n ? pct(r.w / n, 1) : '–'], ['ROI', roi(r.roi), cls(r.roi)], ['Backtest picks', String(F.bt.n)], ['Backtest ROI', roi(F.bt.roi), cls(F.bt.roi)]]);
-  h += `<p class="note">Live record since ${F.start}. The backtest covers 2022–23 to 2025–26, and the other 81 picks made +0.5%. The ${FMs()} mark was chosen after seeing those results, and the gain is larger than a strong market should leave, so the tag stays unproven until the live record says otherwise.</p>`;
+  h += `<p class="note">Live record since ${F.start}. The backtest covers 2022–23 to 2025–26, and the other 237 picks made +3.5%. The ${FMs()} mark was chosen after seeing those results, and the gain is larger than a strong market should leave, so the tag stays unproven until the live record says otherwise.</p>`;
   if (teams.length) h += `<h2>Fast teams now</h2><p class="note">Teams at ${FMs()} or more on their own, fastest first. A game's pace uses both teams, so a fast team against a slow one may not be tagged.</p>` +
     teams.map(([k, v]) => `<p class="note"><b>${lgShort(k)}:</b> ${v.map(([t, x]) => `${t} ${sgn(x)}`).join(', ')}</p>`).join('');
   return h;
