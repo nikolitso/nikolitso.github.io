@@ -196,7 +196,7 @@ a.tile:hover{border-color:var(--gold)}
   <div class="chips" id="chips"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=w30"></script>
+<script src="data.js?v=w31"></script>
 <script src="live.js"></script>
 <script>
 const $ = id => document.getElementById(id);
@@ -321,20 +321,20 @@ function bets(list){
 }
 
 function renderProjections(){
-  let h = `<p class="note">Games in the next 7 days with the model's projected total (fitted on earlier games only) next to the market's consensus line. Line diff is the model minus the line. Edge is the over at the price shown, on every game with a line. A game becomes a pick only if it meets every rule: edge above ${(LE()*100).toFixed(0)}%, model 4 to 12 points above the line, both teams ${LIVE.min_gp ?? 4}+ games, regular season. Highlighted games are logged in the Picks tab at the line and price shown when they were first seen, and their edge is the one at that moment, while the line and prices keep updating. Click a match for its page, with the projection and how it was produced. Click a column heading to sort.</p>`;
+  let h = `<p class="note">Games in the next 7 days with the model's projected total (fitted on earlier games only) next to the market's consensus line. Line diff is the model minus the line. Pace is how much faster or slower these two teams play than the league, in points; it counts toward the chance, and a dash means no box scores. Edge is the over at the price shown, on every game with a line. A game becomes a pick only if it meets every rule: edge above ${(LE()*100).toFixed(0)}%, model 4 to 12 points above the line, both teams ${LIVE.min_gp ?? 4}+ games, regular season. Highlighted games are logged in the Picks tab at the line and price shown when they were first seen, and their edge is the one at that moment, while the line and prices keep updating. Click a match for its page, with the projection and how it was produced. Click a column heading to sort.</p>`;
   const fx = LIVE.fixtures.filter(inLg);
   if (!fx.length) return h + '<p class="empty">No games in the next 7 days.</p>';
   const taken = Object.fromEntries(LIVE.picks.map(b => [b.home + '|' + b.away, b]));   // a pick keeps the edge it was taken at
   const byDay = {};
   fx.forEach(g => (byDay[g.dt.slice(0,10)] ||= []).push(g));
-  const head = `<thead><tr><th>Time</th>${lg === 'all' ? '<th>League</th>' : ''}<th>Match</th><th class="n">Model</th><th class="n">Line</th><th class="n">Line diff</th><th class="n">Over</th><th class="n">Over chance</th><th class="n">Edge</th></tr></thead>`;
+  const head = `<thead><tr><th>Time</th>${lg === 'all' ? '<th>League</th>' : ''}<th>Match</th><th class="n">Model</th><th class="n">Line</th><th class="n">Line diff</th><th class="n">Pace</th><th class="n">Over</th><th class="n">Over chance</th><th class="n">Edge</th></tr></thead>`;
   for (const [d, gs] of Object.entries(byDay)){
     h += `<h2 class="day">${dayName(d)}</h2><div class="scroll"><table class="proj">${head}<tbody>`;
     for (const g of gs){
       const t = g.pick && taken[g.home + '|' + g.away], e = t ? t.edge : g.line == null ? null : g.eo;
       h += `<tr${g.pick ? ' class="pk"' : ''}><td>${g.dt.slice(11)}</td>${lg === 'all' ? `<td>${lgShort(g.lg)}</td>` : ''}
         <td class="wr">${g.slug ? `<a class="gm" href="games/${g.slug}/">${g.home} – ${g.away}</a>` : `${g.home} – ${g.away}`}${g.pick ? `<span class="badge">${g.pick}</span>` : ''}</td><td class="n"><b>${g.mu.toFixed(1)}</b></td>
-        ${g.line == null ? '<td class="n muted" colspan="5">no line yet</td>' : `<td class="n">${g.line}</td><td class="n">${sgn(gap(g), 1)}</td><td class="n">${g.op.toFixed(2)}</td><td class="n">${pct(g.p)}</td><td class="n ${t || (g.ok && e > LE()) ? 'pos' : 'muted'}">${e == null ? '–' : sgn(Math.round(e*100), 0) + '%'}</td>`}</tr>`;
+        ${g.line == null ? '<td class="n muted" colspan="6">no line yet</td>' : `<td class="n">${g.line}</td><td class="n">${sgn(gap(g), 1)}</td><td class="n">${g.pace == null ? '–' : sgn(g.pace, 1)}</td><td class="n">${g.op.toFixed(2)}</td><td class="n">${pct(g.p)}</td><td class="n ${t || (g.ok && e > LE()) ? 'pos' : 'muted'}">${e == null ? '–' : sgn(Math.round(e*100), 0) + '%'}</td>`}</tr>`;
     }
     h += '</tbody></table></div>';
   }
