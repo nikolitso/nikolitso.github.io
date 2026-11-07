@@ -249,7 +249,7 @@ function tiles(list){
 // one table row from a {n, w, roi} group
 const grp = (label, g, extra='', more='') => g && g.n ? `<tr${extra}><td>${label}</td><td class="n">${g.n}</td><td class="n">${pct(g.w / g.n, 1)}</td><td class="n">${g.px ? g.px.toFixed(2) : '–'}</td><td class="n ${cls(g.roi)}">${roi(g.roi)}</td>${more}</tr>` : '';
 const LHEAD = '<th class="n">Opening line</th><th class="n">Closing line</th>';
-const BHEAD = LHEAD + '<th class="n">Model line</th><th class="n">Actual total</th>';
+const BHEAD = LHEAD + '<th class="n">Model line</th><th class="n">Actual total</th><th class="n">Pace</th>';
 const GHEAD = (first, more='') => `<thead><tr><th>${first}</th><th class="n">Picks</th><th class="n">Hit</th><th class="n">Avg price</th><th class="n">ROI</th>${more}</tr></thead>`;
 // average opening and closing line of a list of bets, as two table cells
 const seasonOf = b => { const y = +b.dt.slice(0, 4); return +b.dt.slice(5, 7) >= 7 ? `${y}-${y + 1}` : `${y - 1}-${y}`; };
@@ -265,7 +265,9 @@ function renderFindings(){
   return h;
 }
 
-const btCells = list => { const c = list.filter(b => b.close != null); return lineCells(list) + (c.length ? `<td class="n">${lineAvg(c, 'mu')}</td><td class="n">${lineAvg(c, 'total')}</td>` : '<td class="n muted">–</td><td class="n muted">–</td>'); };
+const btCells = list => { const c = list.filter(b => b.close != null), q = list.filter(b => b.pace != null);
+  return lineCells(list) + (c.length ? `<td class="n">${lineAvg(c, 'mu')}</td><td class="n">${lineAvg(c, 'total')}</td>` : '<td class="n muted">–</td><td class="n muted">–</td>')
+    + (q.length ? `<td class="n">${sgn(q.reduce((a, b) => a + b.pace, 0) / q.length)}</td>` : '<td class="n muted">–</td>'); };
 
 const bandRow = (label, g) => { const n = g.length, sum = f => g.reduce((a, x) => a + f(x), 0);
   return grp(label, {n, w: g.filter(x => x.ret > 0).length, px: n ? sum(x => x.px) / n : 0, roi: n ? sum(x => x.ret) / n : 0}, '', btCells(g)); };
@@ -329,8 +331,8 @@ function bets(){
   if (!list.length) return '';
   let run = 0;
   const rows = list.map(b => { run += b.ret;
-    return `<tr><td data-s="${b.dt}">${short(b.dt)} ${b.dt.slice(0,4)}</td>${lg === 'all' ? `<td>${lgShort(b.lg)}</td>` : ''}<td class="wr">${b.home} – ${b.away}</td><td class="n ${wl(b)}">${b.side === 'o' ? 'Over' : 'Under'} ${b.line}</td><td class="n">${b.px.toFixed(2)}</td><td class="n">${b.mu.toFixed(1)}</td><td class="n">${pct(b.p)}</td><td class="n">${sgn(b.edge*100, 0)}%</td><td class="n">${b.close ?? '–'}</td><td class="n ${wl(b)}">${b.total}</td></tr>`; });
-  return `<h2>Every pick, latest first</h2><p class="note">${list.length} backtest picks${list.length > 400 ? ', the latest 400 shown' : ''}.</p><div class="scroll"><table><thead><tr><th>Date</th>${lg === 'all' ? '<th>League</th>' : ''}<th>Match</th><th class="n">Pick</th><th class="n">Price</th><th class="n">Model</th><th class="n">Chance</th><th class="n">Edge</th><th class="n">Closing line</th><th class="n">Total</th></tr></thead><tbody>${rows.reverse().slice(0, 400).join('')}</tbody></table></div>`;
+    return `<tr><td data-s="${b.dt}">${short(b.dt)} ${b.dt.slice(0,4)}</td>${lg === 'all' ? `<td>${lgShort(b.lg)}</td>` : ''}<td class="wr">${b.home} – ${b.away}</td><td class="n ${wl(b)}">${b.side === 'o' ? 'Over' : 'Under'} ${b.line}</td><td class="n">${b.px.toFixed(2)}</td><td class="n">${b.mu.toFixed(1)}</td><td class="n">${pct(b.p)}</td><td class="n">${sgn(b.edge*100, 0)}%</td><td class="n">${b.close ?? '–'}</td><td class="n ${wl(b)}">${b.total}</td><td class="n">${b.pace != null ? sgn(b.pace) : '–'}</td></tr>`; });
+  return `<h2>Every pick, latest first</h2><p class="note">${list.length} backtest picks${list.length > 400 ? ', the latest 400 shown' : ''}. Pace: the two teams' possessions per game so far that season against the league average.</p><div class="scroll"><table><thead><tr><th>Date</th>${lg === 'all' ? '<th>League</th>' : ''}<th>Match</th><th class="n">Pick</th><th class="n">Price</th><th class="n">Model</th><th class="n">Chance</th><th class="n">Edge</th><th class="n">Closing line</th><th class="n">Total</th><th class="n">Pace</th></tr></thead><tbody>${rows.reverse().slice(0, 400).join('')}</tbody></table></div>`;
 }
 
 function renderProjections(){
