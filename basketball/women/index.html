@@ -197,7 +197,7 @@ a.tile:hover{border-color:var(--gold)}
   <div class="chips" id="chips"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=w43"></script>
+<script src="data.js?v=w44"></script>
 <script src="live.js"></script>
 <script>
 const $ = id => document.getElementById(id);
@@ -317,7 +317,7 @@ function btBody(BT, S, pool, leagues){
   const T = stat(BT), C = BT.filter(b => b.close != null), EP = Math.round(R.edge * 100);
   const known = BT.filter(x => x.pace != null);
   h += `<h2>By pace</h2>` + btTable('Pace', [['Slower, under −1', -99, -1], ['About average, −1 to +1', -1, 1.01], ['Faster, +1 to +3', 1.01, 3.01], ['Fastest, over +3', 3.01, 99]].map(([label, lo, hi]) => [label, known.filter(x => x.pace >= lo && x.pace < hi)]).concat([['No pace <span class="muted">(no box scores)</span>', BT.filter(x => x.pace == null)]]),
-    'Pace is the points the two teams\' pace added to or took from the model total, from earlier games only. Picks with no pace come from games without box scores, where pace counts as 0. Unlike the overs page, pace is not a rule here: it is already in the model total and the chance, and a pace mark on top cut the profit in testing.');
+    'Pace is the points the two teams\' pace added to or took from the model total, from earlier games only. Picks with no pace come from games without box scores, where pace counts as 0. Pace is not a rule here: it is already in the model total and the chance, and a pace mark on top cut the profit in testing.');
   const lk = BT.filter(x => x.luck != null);
   h += `<h2>By 3-point luck</h2>` + btTable('3-point luck', [['Under −1.5', -99, -1.5], ['−1.5 to 0', -1.5, 0], ['0 to +1.5', 0, 1.5], ['+1.5 or more', 1.5, 99]].map(([label, lo, hi]) => [label, lk.filter(x => x.luck >= lo && x.luck < hi)]).concat([['No luck figure', BT.filter(x => x.luck == null)]]),
     '3-point luck, as on the overs page: in the two teams\' games so far that season, the threes made minus what the league\'s 3-point rate gives on the same attempts, in points per game, from earlier games only. It is not a rule here: on women\'s games the picks with hot shooting (+1.5 or more) did better than the rest, the opposite of the men\'s leagues, so skipping them, as the overs page does, would have cut the profit. Picks with no luck figure come from games without 3-point data.');
@@ -332,7 +332,7 @@ function btBody(BT, S, pool, leagues){
   h += `<h2>By stage</h2>` + btTable('Stage', [['Regular season', BT], [`Play-offs${SKIPPED}`, skipped('skipped_po')]],
     'The second row is the play-off games the rule skips: every other rule met, with the chance worked out as for a regular-season game.');
   h += `<h2>By season</h2>` + btTable('Season', S.seasons.map(s => [sn(s.season), BT.filter(x => seasonOf(x) === s.season)]));
-  h += `<h2>By month</h2>` + btTable('Month', S.months.map(m => [MON[m.m - 1], BT.filter(x => +x.dt.slice(5, 7) === m.m)]), 'January stays in: unlike the men\'s leagues, women\'s January picks made a profit, so the overs page\'s no-January rule would have cut it.');
+  h += `<h2>By month</h2>` + btTable('Month', S.months.map(m => [MON[m.m - 1], BT.filter(x => +x.dt.slice(5, 7) === m.m)]), 'January stays in: women\'s January picks made a profit in every season.');
   return h + bets(BT);
 }
 
