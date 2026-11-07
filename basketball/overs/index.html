@@ -197,7 +197,7 @@ a.tile:hover{border-color:var(--gold)}
   <div class="chips" id="chips"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=8f0f520c"></script>
+<script src="data.js?v=7db3a7fd"></script>
 <script src="live.js"></script>
 <script>
 const $ = id => document.getElementById(id);
@@ -327,6 +327,9 @@ function renderBacktest(){
   h += `<h2>By line</h2><p class="note">The opening line. The last row is the games the rule skips: every other rule met, with an opening line of ${ML} or more. They are not in any other figure on this page.</p><div class="scroll"><table style="max-width:1040px">${GHEAD('Line band', BHEAD)}<tbody>`;
   for (const [label, lo, hi] of [['Under 170', 0, 170], [`170 to ${ML - 0.5}`, 170, ML]]) h += bandRow(label, BT.filter(x => x.line >= lo && x.line < hi));
   h += bandRow(`${ML} or more <span class="muted">(skipped)</span>`, (DATA.skipped_line || []).filter(inLg));
+  h += '</tbody></table></div>';
+  h += `<h2>By stage</h2><p class="note">The second row is the play-off games the rule skips: every other rule met, with the model's chance worked out as for a regular-season game. The model has a play-off signal of its own that on its own keeps it off play-off overs, so this row shows what would happen without it. Pace and 3-point luck there use the whole season so far. They are not in any other figure on this page.</p><div class="scroll"><table style="max-width:1040px">${GHEAD('Stage', BHEAD)}<tbody>`;
+  h += bandRow('Regular season', BT) + bandRow('Play-offs <span class="muted">(skipped)</span>', (DATA.skipped_po || []).filter(inLg));
   h += '</tbody></table></div>';
   h += `<h2>By season</h2><div class="scroll"><table style="max-width:1040px">${GHEAD('Season', BHEAD)}<tbody>`;
   for (const s of S.seasons) h += grp(sn(s.season) + (s.season === DATA.tuned ? ' <span class="muted">(tuned on)</span>' : '') + (s.season === DATA.season ? ' <span class="muted">(so far)</span>' : ''), s, '', btCells(BT.filter(b => seasonOf(b) === s.season)));
