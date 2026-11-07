@@ -197,7 +197,7 @@ a.tile:hover{border-color:var(--gold)}
   <div class="chips" id="chips"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=0ca8577f"></script>
+<script src="data.js?v=be396162"></script>
 <script src="live.js"></script>
 <script>
 const $ = id => document.getElementById(id);
@@ -314,7 +314,7 @@ function analysis(k, notes = true){
               ['Opening line', lineAvg(BT.filter(b => b.close != null), 'line')], ['Closing line', lineAvg(BT.filter(b => b.close != null), 'close')], ['Model line', lineAvg(BT.filter(b => b.close != null), 'mu')], ['Actual total', lineAvg(BT.filter(b => b.close != null), 'total')]]);
   const T = (title, first, body, note='') => `<h2>${title}</h2>${nt(note)}<div class="scroll"><table style="max-width:1040px">${GHEAD(first, BHEAD)}<tbody>${body}</tbody></table></div>`;
   const SKP = SK.filter(x => x.pace < FM() && x.luck < LK()), SKL = SK.filter(x => x.pace >= FM() && x.luck >= LK());
-  h += T('By pace', 'Pace', bandRow(`Below ${FMs()} <span class="muted">(skipped)</span>`, SKP) + [['+1 to +1.9', 1, 2], ['+2 or more', 2, 99]].map(([label, lo, hi]) => bandRow(label, BT.filter(x => x.pace >= lo && x.pace < hi))).join(''),
+  h += T('By pace', 'Pace', bandRow(`Below ${FMs()} <span class="muted">(skipped)</span>`, SKP) + [[`${FMs()} to +1.9`, FM(), 2], ['+2 or more', 2, 99]].map(([label, lo, hi]) => bandRow(label, BT.filter(x => x.pace >= lo && x.pace < hi))).join(''),
     `Pace is the two teams' possessions per game so far that season, each with ${LIVE.min_gp ?? 3}+ games, minus the league average, from earlier games only. The first row is the games the rule skips: the same rules, 3-point luck under ${LKs()} too, with pace below ${FMs()}. They are not in any other figure on this page.`);
   h += T('By 3-point luck', '3-point luck', [['Under +0.2', -99, 0.2], [`+0.2 to ${LKs()}`, 0.2, LK()]].map(([label, lo, hi]) => bandRow(label, BT.filter(x => x.luck >= lo && x.luck < hi))).join('') + bandRow(`${LKs()} or more <span class="muted">(skipped)</span>`, SKL),
     `3-point luck: in the two teams' games so far that season, the threes made minus what the league's 3-point rate gives on the same attempts, in points per game, from earlier games only. High luck means the shooting has been hot, which rarely lasts, while the model's projection still counts those points. The last row is the fast games the rule skips: luck of ${LKs()} or more. They are not in any other figure on this page.`);
