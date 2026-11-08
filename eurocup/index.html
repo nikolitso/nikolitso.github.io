@@ -171,7 +171,7 @@ select.peer:focus{outline:2px solid var(--gold)}
 .pjc .teams{font:600 18px/1.3 var(--serif);margin:4px 0 10px;min-height:2.6em;display:flex;flex-wrap:wrap;align-content:flex-end}
 .pjc table{table-layout:fixed}
 .pjc .nm{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.pjc .teams span{font:400 14.5px var(--body);color:var(--muted);margin:0 6px}
+.pjc a.teams{color:inherit;text-decoration:none}.pjc a.teams:hover{color:var(--gold)}.pjc .teams span{font:400 14.5px var(--body);color:var(--muted);margin:0 6px}
 .pjc table{width:100%;border-collapse:collapse;font-size:15.5px}
 .pjc th{font:400 12px var(--mono);padding:0 4px 5px;border-bottom:1px solid var(--line);text-align:left}
 .pjc td{padding:7px 4px;border-bottom:1px solid color-mix(in srgb,var(--line) 60%,transparent);vertical-align:top}
@@ -703,8 +703,7 @@ function pjCard(g){
   const out = [...g.outH.map(x => [x, g.h]), ...g.outA.map(x => [x, g.a])];
   return `<div class="pjc${hot ? ' hot' : ''}" id="pj-${esc((g.h + '-' + g.a).replace(/[^A-Za-z0-9]+/g, '-'))}">
     <div class="when"><span>${g.when.slice(11)} · ${esc(g.round)}${g.when <= athens(Date.now()) ? ' · <b>started</b>' : ''}</span><span>${esc(code(teams[g.h]))} – ${esc(code(teams[g.a]))}</span></div>
-    <div class="teams">${esc(g.h)}<span>vs</span>${esc(g.a)}</div>
-    <a class="gp" href="${gameHref(g)}">game page →</a>
+    <a class="teams" href="${gameHref(g)}" title="Open the game page">${esc(g.h)}<span>vs</span>${esc(g.a)}</a>
     <table><tr><th></th><th>Model</th><th>Market</th></tr>
       <tr><td title="Chance to win the game">Winner</td><td>${winner(g.ph)}</td><td>${pb === null ? '<span class="tag">–</span>' : `<span title="From the market's handicap">${winner(pb)}</span>`}</td></tr>
       <tr><td title="Both as a handicap: Mykonos −8.3 = Mykonos expected to win by 8.3">Handicap</td><td><b class="nm" title="${esc(fav(g.mh, g.h, g.a))}">${esc(fav(g.mh, g.h, g.a))}</b>−${Math.abs(g.mh).toFixed(1)}${g.adj ? '<span class="tag" title="Includes the absences below"> *</span>' : ''}</td><td>${bookHcp}</td></tr>
