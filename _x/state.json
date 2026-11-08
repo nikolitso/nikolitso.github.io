@@ -160,7 +160,8 @@
       "football-the-philosophy-behind-the",
       "tiny-experiments-how-to-live-freely",
       "game-theory",
-      "the-logic-of-sports-betting"
+      "the-logic-of-sports-betting",
+      "soccer-analytics-an-introduction"
     ],
     "log": [
       {
@@ -450,9 +451,15 @@
         "slot": "2026-11-07 14",
         "slug": "the-logic-of-sports-betting",
         "id": "2119037203443843470"
+      },
+      {
+        "day": "2026-11-08",
+        "slot": "2026-11-08 14",
+        "slug": "soccer-analytics-an-introduction",
+        "id": "2119399584912773314"
       }
     ],
-    "last_day": "2026-11-07"
+    "last_day": "2026-11-08"
   },
   "film": {
     "seen": [
@@ -972,7 +979,7 @@
     ],
     "last_day": "2026-11-07"
   },
-  "last_slot": "2026-11-08 11",
+  "last_slot": "2026-11-08 14",
   "quote": {
     "seen": [
       "1",
