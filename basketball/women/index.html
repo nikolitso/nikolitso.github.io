@@ -367,7 +367,7 @@ function renderPicks(){
   else {
     h += `<h2>Open picks</h2><div class="scroll"><table class="proj"><thead><tr><th>Tip-off</th><th>League</th><th>Match</th><th class="n">Pick</th><th class="n">Price</th><th class="n">Model total</th><th class="n">Edge</th><th class="n">Line now</th><th class="n">Pace</th></tr></thead><tbody>` +
       open.map(b => { const g = fx[b.home + '|' + b.away] || {};
-        return `<tr class="pk"><td data-s="${b.dt}">${dayName(b.dt)} ${b.dt.slice(11)}</td><td>${lgShort(b.lg)}</td><td class="wr">${b.home} – ${b.away}</td><td class="n"><b>${sd(b)} ${b.line}</b></td><td class="n">${b.px.toFixed(2)}</td><td class="n">${(g.mu ?? b.mu).toFixed(1)}</td><td class="n pos">${sgn(b.edge*100, 0)}%</td><td class="n">${g.line ?? b.now ?? '–'}</td><td class="n">${(g.pace ?? b.pace) == null ? '–' : sgn(g.pace ?? b.pace, 1)}</td></tr>`; }).join('') +
+        return `<tr class="pk"><td data-s="${b.dt}">${dayName(b.dt)} ${b.dt.slice(11)}</td><td>${lgShort(b.lg)}</td><td class="wr">${g.slug ? `<a class="gm" href="games/${g.slug}/">${b.home} – ${b.away}</a>` : `${b.home} – ${b.away}`}</td><td class="n"><b>${sd(b)} ${b.line}</b></td><td class="n">${b.px.toFixed(2)}</td><td class="n">${(g.mu ?? b.mu).toFixed(1)}</td><td class="n pos">${sgn(b.edge*100, 0)}%</td><td class="n">${g.line ?? b.now ?? '–'}</td><td class="n">${(g.pace ?? b.pace) == null ? '–' : sgn(g.pace ?? b.pace, 1)}</td></tr>`; }).join('') +
       '</tbody></table></div>';
   }
   const pre = ((DATA.cur || {}).bets || []).map(b => ({...b, pre: true, done: true, close: b.close ?? null}));
