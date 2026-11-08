@@ -197,7 +197,7 @@ a.tile:hover{border-color:var(--gold)}
   <div class="chips" id="chips"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=w45"></script>
+<script src="data.js?v=w46"></script>
 <script src="live.js"></script>
 <script>
 const $ = id => document.getElementById(id);
@@ -221,7 +221,7 @@ const inLg = x => lg === 'all' || x.lg === lg;
 const R = DATA.rule;
 const LE = () => LIVE.edge ?? R.edge;
 const RL = k => !LIVE.leagues || LIVE.leagues.includes(k);
-const LIVE = window.LIVE || {updated: DATA.updated, fixtures: DATA.fixtures, picks: [], tracked: 0, start: '6 Nov 2026', taken: {n: 0}, over: {n: 0}, under: {n: 0}, rule: {n: 0}};
+const LIVE = window.LIVE || {updated: DATA.updated, fixtures: DATA.fixtures, picks: [], tracked: 0, start: '7 Nov 2026', taken: {n: 0}, over: {n: 0}, under: {n: 0}, rule: {n: 0}};
 LIVE.fixtures = LIVE.fixtures.filter(g => LG[g.lg] && (!g.gp || Math.min(...g.gp) >= (LIVE.min_gp ?? 4)));   // leagues no longer on the page; games only once both teams have the minimum games
 LIVE.picks = (LIVE.picks || []).filter(b => LG[b.lg]);
 if (LIVE.leagues) LIVE.leagues = LIVE.leagues.filter(k => LG[k]);
@@ -386,7 +386,7 @@ function renderPicks(){
   h += tiles([['Picks', String(all.length)], ['Settled', String(set.length)], ['Hit rate', set.length ? pct(won / set.length, 1) : '–'],
               ['ROI', roi(R_), cls(R_)],
               ['Closing line moved toward the pick', cl.length ? pct(up / cl.length) : '–'], ['Closing line moved against it', cl.length ? pct(dn / cl.length) : '–']]);
-  h += `<p class="note">The closing line moved toward the pick when it ended above the line picked; those two tiles cover picks logged live. Picks before ${LIVE.start}, marked backtest, are today's rules applied to this season's earlier games: the model and rules were set without them, so they are a fair test, but they were not logged live. A few hundred picks are needed before the record says much. Click a column heading to sort.</p>`;
+  h += `<p class="note">The closing line moved toward the pick when it ended above the line picked; those two tiles cover picks logged live. The record starts on ${LIVE.start}. A few hundred picks are needed before the record says much. Click a column heading to sort.</p>`;
   if (!set.length) return h + '<p class="empty">No settled picks yet.</p>';
   let run = 0;
   const rows = all.filter(b => b.done).map(b => {   // open picks are in the table above
