@@ -4,7 +4,7 @@ name: Site · Volleyball
 # homepage card. Scripts and data in nikolitso/BettingSignal (volleyball/). Every 2 hours; "Update all sites" too.
 on:
   schedule:
-    - cron: "0 */2 * * *"    # every 2 hours on the even UTC hour (odd hours Athens in winter, even in summer)
+    - cron: "17 */2 * * *"   # every 2 hours, 17 min past the even UTC hour (on-the-hour runs get dropped by GitHub)
   workflow_dispatch:          # Run workflow button: Actions tab, or the GitHub mobile app
 
 permissions:
