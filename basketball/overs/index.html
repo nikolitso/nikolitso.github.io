@@ -197,7 +197,7 @@ a.tile:hover{border-color:var(--gold)}
   <div class="chips" id="chips"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=36f18a1b"></script>
+<script src="data.js?v=6a11156a"></script>
 <script src="live.js"></script>
 <script>
 const $ = id => document.getElementById(id);
@@ -330,8 +330,8 @@ function analysis(k, notes = true){
               ...(() => { const c = BT.filter(b => b.close != null); return c.length ? [['Closing line moved toward the pick', pct(c.filter(b => b.close > b.line).length / c.length)], ['Closing line moved against it', pct(c.filter(b => b.close < b.line).length / c.length)]] : []; })()]);
   const T = (title, first, body, note='') => `<h2>${title}</h2>${nt(note)}<div class="scroll"><table style="max-width:1040px">${GHEAD(first, BHEAD)}<tbody>${body}</tbody></table></div>`;
   const SKL = SK.filter(x => x.luck >= LK());
-  h += T('By pace', 'Pace', [['Below 0', -99, 0], ['0 to +1.9', 0, 2], ['+2 or more', 2, 99]].map(([label, lo, hi]) => bandRow(label, BT.filter(x => x.pace != null && x.pace >= lo && x.pace < hi))).join('') + bandRow('Not known yet <span class="muted">(a team under 3 games)</span>', BT.filter(x => x.pace == null)),
-    `Pace is the two teams' possessions per game so far that season, each with ${LIVE.min_gp ?? 3}+ games, minus the league average, from earlier games only. Pace is one of the model's signals, so there is no pace rule: faster games get a higher chance. Before a team has 3 games, pace and 3-point luck are not known yet and count as 0.`);
+  h += T('By pace', 'Pace', [['Below 0', -99, 0], ['0 to +1.9', 0, 2], ['+2 or more', 2, 99]].map(([label, lo, hi]) => bandRow(label, BT.filter(x => x.pace >= lo && x.pace < hi))).join(''),
+    `Pace is the two teams' possessions per game so far that season, each with ${LIVE.min_gp ?? 3}+ games, minus the league average, from earlier games only. Pace is one of the model's signals, so there is no pace rule: faster games get a higher chance.`);
   h += T('By 3-point luck', '3-point luck', [['Under +0.2', -99, 0.2], [`+0.2 to ${LKs()}`, 0.2, LK()]].map(([label, lo, hi]) => bandRow(label, BT.filter(x => x.luck >= lo && x.luck < hi))).join('') + bandRow(`${LKs()} or more <span class="muted">(skipped)</span>`, SKL),
     `3-point luck: in the two teams' games so far that season, the threes made minus what the league's 3-point rate gives on the same attempts, in points per game, from earlier games only. High luck means the shooting has been hot, which rarely lasts, while the model's projection still counts those points. The last row is the games the rule skips: luck of ${LKs()} or more. They are not in any other figure on this page.`);
   h += T('By line', 'Line band', [['Under 170', 0, 170], ['170 to 179.5', 170, 180], ['180 or more', 180, 999]].map(([label, lo, hi]) => bandRow(label, BT.filter(x => x.line >= lo && x.line < hi))).join(''),
@@ -352,7 +352,7 @@ function liveTables(L){
   // the Backtest tab's tables for the settled live picks
   const T = (title, first, body, note='') => `<h2>${title}</h2>${note ? `<p class="note">${note}</p>` : ''}<div class="scroll"><table style="max-width:1040px">${GHEAD(first, BHEAD)}<tbody>${body}</tbody></table></div>`;
   const band = (list, bands, key) => bands.map(([label, lo, hi]) => bandRow(label, list.filter(x => x[key] != null && x[key] >= lo && x[key] < hi))).join('');
-  let h = T('By pace', 'Pace', band(L, [['Below 0', -99, 0], ['0 to +1.9', 0, 2], ['+2 or more', 2, 99]], 'pace') + bandRow('Not known yet', L.filter(x => x.pace == null)),
+  let h = T('By pace', 'Pace', band(L, [['Below 0', -99, 0], ['0 to +1.9', 0, 2], ['+2 or more', 2, 99]], 'pace'),
     `Settled live picks, the same bands as the Backtest tab. With few picks these tables say little; they show whether the live picks behave like the backtest.`);
   h += T('By 3-point luck', '3-point luck', band(L, [['Under +0.2', -99, 0.2], [`+0.2 to ${LKs()}`, 0.2, LK()]], 'luck'));
   h += T('By line', 'Line band', band(L, [['Under 170', 0, 170], ['170 to 179.5', 170, 180], ['180 or more', 180, 999]], 'line'));
