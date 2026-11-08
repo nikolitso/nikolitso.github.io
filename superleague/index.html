@@ -162,7 +162,6 @@ th.rs{cursor:pointer;user-select:none} th.rs:hover,th.rs.on{color:var(--gold)}
   <nav class="tabs an-tabs" id="tabs" aria-label="Sections">
     <a href="#view=projections" data-view="projections" class="on">Projections</a>
     <a href="#view=picks" data-view="picks">Picks</a>
-    <a href="#view=market" data-view="market">Vs Market</a>
     <a href="#view=teams" data-view="teams">Teams</a>
     <a href="#view=refs" data-view="refs">Referees</a>
     <a href="#view=research" data-view="research">Research</a>
@@ -476,62 +475,6 @@ function renderMethod(){
   <p>The model only sees past match stats. It doesn't know about injuries, suspensions, rotation, a new coach, the weather, or how much a game matters (derbies, cup weeks, the end of the season). Factor those in yourself, especially for cards and fouls, where the model barely beats the league average.</p>
   <p>Research: <a href="/superleague/research/europe/">the Big 4 after a European game</a>, ten seasons of league games played three or four days after a European match, against small clubs and in derbies.</p>
   </div>`;
-  return h;
-}
-
-// Vs Market: the market's main line for each stat (the one closest to 50/50), its fair
-// over chance with the margin removed, and ours on the same line
-const BOOK_STATS = ['goals','corners','cards','sot','shots','fouls','saves'];
-const pts = d => `${d > 0 ? '+' : ''}${Math.round(d * 100)}`;
-// Vs Market shows a difference only from 10 points (as displayed, after rounding)
-const big10 = d => Math.abs(Math.round(d * 100)) >= 10;
-
-function marketRows(g){
-  const m = g.market, out = [];
-  for (const s of BOOK_STATS){
-    const ls = m.stats[s];
-    if (!ls || !ls.length) continue;
-    const [ln, ov, un, fair, ours] = ls.reduce((a, b) => Math.abs(b[3] - .5) < Math.abs(a[3] - .5) ? b : a);
-    out.push({s, ln, ov, un, fair, ours, diff: ours - fair, total: g.stats[s].total});
-  }
-  return out;
-}
-
-function renderMarket(){
-  const games = D.fixtures.filter(g => g.market);
-  if (!games.length) return '<p class="empty">No market odds for this round yet.</p>';
-  const T = D.market_test;
-  let h = `<p class="note">The market's odds for this round next to the model, for every stat${D.odds_pulled ? ` (pulled ${dayName(D.odds_pulled.slice(0,10))} ${D.odds_pulled.slice(11)} Athens)` : ''}. For each stat the line is the market's main one (closest to 50/50). <b>Market %</b> is the market's chance of over with its margin taken out; <b>Model %</b> is the model's chance on the same line, and <b>Model odds</b> are those chances turned into odds with a ${Math.round((MARGIN - 1) * 100)}% margin, comparable with the market's. Differences of 10 points or more are highlighted. This is the full comparison, including markets we don't trust; the short list of picks worth considering, with their record, is on <a href="#view=picks" style="color:var(--gold)" onclick="setView('picks')">Picks</a>.</p>
-  <p class="note"><b>On result and goals the market has been sharper than the model:</b> over ${T.games} games since ${T.since}, its closing odds predicted results better (log loss ${T.ll_market.toFixed(3)} vs ${T.ll_ours.toFixed(3)}), and backing the model's disagreements lost ${Math.round(-T.roi_1x2 * 100)}% per pick on 1X2 and ${Math.round(-T.roi_ou * 100 * 10) / 10}% on over/under 2.5. For the other stats, read the differences with care: the market's shots lines run about 2 shots above the model in every game, which looks like a different way of counting shots rather than value. Every pull of the market's odds is saved so this can be checked after a few rounds.</p>`;
-  const all = [];
-  games.forEach(g => marketRows(g).forEach(r => all.push({...r, g})));
-  const big = all.filter(r => Math.abs(r.diff) >= .1 && r.s !== 'shots').sort((a, b) => Math.abs(b.diff) - Math.abs(a.diff)).slice(0, 8);
-  if (big.length){
-    h += `<h2>Biggest differences</h2><div class="scroll"><table class="mk"><thead><tr><th>Match</th><th>Stat</th><th class="n">Model total</th><th class="n">Line</th><th class="n">Market %</th><th class="n">Model %</th><th class="n">Diff</th><th class="n">Model side · market odds</th></tr></thead><tbody>`;
-    for (const r of big) h += `<tr><td>${r.g.home} – ${r.g.away}</td><td>${L[r.s]}</td><td class="n">${f(r.total, r.s)}</td><td class="n">${r.ln}</td><td class="n">${pct(r.fair)}</td><td class="n tot">${pct(r.ours)}</td><td class="n ${r.diff > 0 ? 'w' : 'l'}">${pts(r.diff)}</td><td class="n">${r.diff > 0 ? 'Over ' + r.ov.toFixed(2) : 'Under ' + r.un.toFixed(2)}</td></tr>`;
-    h += '</tbody></table></div>';
-  }
-  const byDay = {};
-  games.forEach(g => (byDay[g.kickoff.slice(0,10)] ||= []).push(g));
-  for (const [d, gs] of Object.entries(byDay)){
-    h += `<h2 class="day">${dayName(d)}</h2><div class="stack">`;
-    for (const g of gs){
-      const res = g.market.result, mr = [g.result.home, g.result.draw, g.result.away];
-      h += `<div class="card"><div class="ko">${g.kickoff.slice(11)}${g.started ? ' <span class="live">Started</span> <span class="muted" style="font-size:13.5px;letter-spacing:0">closing odds, last pull before kick-off</span>' : ''}</div><h3><a href="${gameHref(g)}" title="This game's own page: the projection, the lines, and after the game what happened">${g.home} <span class="muted">–</span> ${g.away}</a></h3>${sampleHtml(g)}<div class="mkcols">`;
-      if (res) h += `<table class="mk"><thead><tr><th>Result</th><th class="n">1</th><th class="n">X</th><th class="n">2</th></tr></thead><tbody>
-        <tr><td class="muted">Market odds</td>${res.odds.map(o => `<td class="n">${o.toFixed(2)}</td>`).join('')}</tr>
-        <tr><td class="muted">Model odds</td>${mr.map(p => `<td class="n tot">${modelOdds(p)}</td>`).join('')}</tr>
-        <tr><td class="muted">Market %</td>${res.fair.map(p => `<td class="n">${pct(p)}</td>`).join('')}</tr>
-        <tr><td class="muted">Model %</td>${mr.map((p, i) => `<td class="n tot">${pct(p)} ${big10(p - res.fair[i]) ? `<span class="${p > res.fair[i] ? 'w' : 'l'}" style="font-size:12.5px">${pts(p - res.fair[i])}</span>` : ''}</td>`).join('')}</tr></tbody></table>`;
-      h += `<table class="mk"><thead><tr><th>Stat</th><th class="n">Model total</th><th class="n">Line</th><th class="n">Market odds<br>over · under</th><th class="n">Model odds<br>over · under</th><th class="n">Market %</th><th class="n">Model %</th><th class="n">Diff</th></tr></thead><tbody>`;
-      for (const r of marketRows(g)){
-        const hot = big10(r.diff);
-        h += `<tr><td>${L[r.s]}</td><td class="n">${f(r.total, r.s)}</td><td class="n">${r.ln}</td><td class="n muted">${r.ov.toFixed(2)} · ${r.un.toFixed(2)}</td><td class="n tot">${modelOdds(r.ours)} · ${modelOdds(1 - r.ours)}</td><td class="n">${pct(r.fair)}</td><td class="n tot">${pct(r.ours)}</td><td class="n ${r.diff > 0 ? 'w' : 'l'}">${hot ? pts(r.diff) : ''}</td></tr>`;
-      }
-      h += '</tbody></table></div></div>';
-    }
-    h += '</div>';
-  }
   return h;
 }
 
@@ -989,7 +932,7 @@ function renderResearch(){
 }
 function render(){
   $('tip').style.display = 'none';
-  $('out').innerHTML = {projections: renderProjections, picks: renderValue, market: renderMarket, teams: renderTeams, refs: renderRefs, research: renderResearch, method: renderMethod}[view]();
+  $('out').innerHTML = {projections: renderProjections, picks: renderValue, teams: renderTeams, refs: renderRefs, research: renderResearch, method: renderMethod}[view]();
   if (view === 'refs') bindRefs();
   document.querySelectorAll('#pjmode button').forEach(b => b.onclick = () => { pjMode = b.dataset.m; render(); });
   const chips = (id, set) => document.querySelectorAll(`#${id} .chip`).forEach(b => b.onclick = () => { set(b.dataset.s); render(); });
@@ -1000,7 +943,7 @@ function render(){
 }
 function setView(v){
   if (['value', 'open', 'settled'].includes(v)) v = 'picks';   // old links
-  view = ['projections','picks','market','teams','refs','research','method'].includes(v) ? v : 'projections';
+  view = ['projections','picks','teams','refs','research','method'].includes(v) ? v : 'projections';
   document.querySelectorAll('#tabs a').forEach(a => a.classList.toggle('on', a.dataset.view === view));
   render();
 }
