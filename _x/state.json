@@ -713,7 +713,8 @@
       "a-quiet-life",
       "silent-heart",
       "the-double-hour",
-      "after-love"
+      "after-love",
+      "the-mafia-kills-only-in-summer"
     ],
     "log": [
       {
@@ -975,11 +976,17 @@
         "slot": "2026-11-07 20",
         "slug": "after-love",
         "id": "2119127799072280677"
+      },
+      {
+        "day": "2026-11-08",
+        "slot": "2026-11-08 20",
+        "slug": "the-mafia-kills-only-in-summer",
+        "id": "2119490180180549869"
       }
     ],
-    "last_day": "2026-11-07"
+    "last_day": "2026-11-08"
   },
-  "last_slot": "2026-11-08 14",
+  "last_slot": "2026-11-08 20",
   "quote": {
     "seen": [
       "1",
