@@ -197,7 +197,7 @@ a.tile:hover{border-color:var(--gold)}
   <div class="chips" id="chips"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=w48"></script>
+<script src="data.js?v=w49"></script>
 <script src="live.js"></script>
 <script>
 const $ = id => document.getElementById(id);
@@ -221,7 +221,8 @@ const inLg = x => lg === 'all' || x.lg === lg;
 const R = DATA.rule;
 const LE = () => LIVE.edge ?? R.edge;
 const RL = k => !LIVE.leagues || LIVE.leagues.includes(k);
-const LIVE = window.LIVE || {updated: DATA.updated, fixtures: DATA.fixtures, picks: [], tracked: 0, start: '9 Nov 2026', taken: {n: 0}, over: {n: 0}, under: {n: 0}, rule: {n: 0}};
+const LIVE = window.LIVE || {updated: DATA.updated, fixtures: DATA.fixtures, picks: [], tracked: 0, start: '8 Nov 2026', taken: {n: 0}, over: {n: 0}, under: {n: 0}, rule: {n: 0}};
+LIVE.allfx = LIVE.fixtures.filter(g => LG[g.lg] && DATA.leagues.some(l => l.key === g.lg));   // every game this week in the leagues, for the league list on Projections
 LIVE.fixtures = LIVE.fixtures.filter(g => LG[g.lg] && (!g.gp || Math.min(...g.gp) >= (LIVE.min_gp ?? 4)));   // leagues no longer on the page; games only once both teams have the minimum games
 LIVE.picks = (LIVE.picks || []).filter(b => LG[b.lg]);
 if (LIVE.leagues) LIVE.leagues = LIVE.leagues.filter(k => LG[k]);
@@ -340,7 +341,10 @@ function bets(list){
 function renderProjections(){
   let h = `<p class="note">Games in the next 7 days where both teams have played ${LIVE.min_gp ?? 4}+ games, with the model's projected total (fitted on earlier games only) next to the market's consensus line. Line diff is the model minus the line. Pace is the part of the model total that comes from how much faster or slower these two teams play than the league; it is already in the Model number, and a dash means no box scores. Edge is the over at the price shown, on every game with a line. A game becomes a pick only if it meets every rule: edge above ${(LE()*100).toFixed(0)}%, model before pace at least 4 points above the line, both teams ${LIVE.min_gp ?? 4}+ games, regular season, a line ending in .5. Highlighted games are logged in the Live test tab at the line and price shown when they were first seen, and their edge is the one at that moment, while the line and prices keep updating. Click a match for its page, with the projection and how it was produced. Click a column heading to sort.</p>`;
   const fx = LIVE.fixtures.filter(inLg);
-  if (!fx.length) return h + '<p class="empty">No games in the next 7 days.</p>';
+  const ls = DATA.leagues.filter(l => lg === 'all' || l.key === lg).map(l => { const a = LIVE.allfx.filter(g => g.lg === l.key).sort((x, y) => x.dt < y.dt ? -1 : 1); return [l, a, a.filter(g => !g.gp || Math.min(...g.gp) >= (LIVE.min_gp ?? 4)).length]; })
+    .sort((x, y) => y[1].length - x[1].length || lgFull(x[0]).localeCompare(lgFull(y[0])));
+  h += `<h2>The ${DATA.leagues.length} leagues this week</h2><div class="scroll"><table style="max-width:760px"><thead><tr><th>League</th><th class="n">Games, next 7 days</th><th class="n">Next game</th><th class="n">Shown below</th></tr></thead><tbody>${ls.map(([l, a, n]) => `<tr><td><a href="#view=projections&lg=${l.key}" style="color:inherit;text-decoration:none">${lgFull(l)}</a></td><td class="n${a.length ? '' : ' muted'}">${a.length || 'none'}</td><td class="n${a.length ? '' : ' muted'}">${a.length ? dayName(a[0].dt) + ' ' + a[0].dt.slice(11) : '–'}</td><td class="n${n ? '' : ' muted'}">${n}</td></tr>`).join('')}</tbody></table></div><p class="note">Shown below: games where both teams have played ${LIVE.min_gp ?? 4}+ games this season, the only ones the rule can pick. Click a league to see it alone.</p>`;
+  if (!fx.length) return h + '<p class="empty">No games in the next 7 days where both teams have the minimum games.</p>';
   const taken = Object.fromEntries(LIVE.picks.map(b => [b.home + '|' + b.away, b]));   // a pick keeps the edge it was taken at
   const byDay = {};
   fx.forEach(g => (byDay[g.dt.slice(0,10)] ||= []).push(g));
@@ -429,8 +433,9 @@ function render(){
   document.querySelectorAll('#tabs a').forEach(a => { a.classList.toggle('on', a.dataset.view === view); a.href = `#view=${a.dataset.view}${lg === 'all' || !CHIPS[a.dataset.view] ? '' : '&lg=' + lg}`; });
   let keys = ALLG.map(l => l.key);
   if (view === 'backtest') keys = keys.filter(k => DATA.bets.some(b => b.lg === k));
-  if (view === 'projections') keys = keys.filter(k => LIVE.fixtures.some(g => g.lg === k));
-  const chips = view === 'backtest' ? (lg === 'all' ? [] : [['all', 'All leagues'], [lg, lgShort(lg)]]) : CHIPS[view] ? [['all', 'All leagues'], ...keys.map(k => [k, lgShort(k)])] : [];
+  if (view === 'projections') keys = DATA.leagues.map(l => l.key);   // all the leagues, with this week's game count
+  const nfx = k => LIVE.allfx.filter(g => g.lg === k).length;
+  const chips = view === 'backtest' ? (lg === 'all' ? [] : [['all', 'All leagues'], [lg, lgShort(lg)]]) : view === 'projections' ? [['all', 'All leagues'], ...keys.map(k => [k, `${lgShort(k)} <span class="muted">${nfx(k)}</span>`])] : CHIPS[view] ? [['all', 'All leagues'], ...keys.map(k => [k, lgShort(k)])] : [];
   $('chips').innerHTML = chips.map(([k, t]) => `<a href="#view=${view}${k === 'all' ? '' : '&lg=' + k}" class="${k === lg ? 'on' : ''}">${t}</a>`).join('');
   $('top').style.display = $('sub').style.display = view === 'backtest' ? 'none' : '';   // the live record tiles are not shown on the backtest
   const BTb = view === 'backtest' ? DATA.bets.filter(inLg) : [];   // the backtest tiles sit on top of the Backtest tab, where the record tiles are on the other tabs
