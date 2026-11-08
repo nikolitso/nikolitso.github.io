@@ -163,7 +163,6 @@ th.rs{cursor:pointer;user-select:none} th.rs:hover,th.rs.on{color:var(--gold)}
     <a href="#view=projections" data-view="projections" class="on">Projections</a>
     <a href="#view=picks" data-view="picks">Picks</a>
     <a href="#view=market" data-view="market">Vs Market</a>
-    <a href="#view=results" data-view="results">Results</a>
     <a href="#view=teams" data-view="teams">Teams</a>
     <a href="#view=refs" data-view="refs">Referees</a>
     <a href="#view=research" data-view="research">Research</a>
@@ -191,7 +190,7 @@ const dec = s => ['xg','goals'].includes(s) ? 2 : 1;
 const f = (x, s) => x == null ? '–' : (+x).toFixed(s === 'possession' ? 0 : dec(s));
 // actual counts are whole numbers
 const fa = x => x == null ? '–' : String(Math.round(x));
-let view = 'projections', pjMode = 'match', pjStat = 'goals', rsStat = 'goals', tmStat = 'goals', tmSort = ['for', -1];
+let view = 'projections', pjMode = 'match', pjStat = 'goals', tmStat = 'goals', tmSort = ['for', -1];
 
 $('sub').textContent = `${D.season.replace('-','–')} · updated ${D.updated} (Athens) · ratings from the ${D.history.games} games since ${D.history.from}–${String(+D.history.from + 1).slice(2)}`;
 
@@ -329,25 +328,6 @@ function renderProjections(){
     const x = g.stats[s];
     const rf = (s === 'cards' || s === 'fouls') && g.ref && !g.ref.pending ? ` <span class="muted" style="font-size:13.5px">· ${g.ref.name}${g.ref.games ? ' ' + mult(g.ref[s]) : ''}</span>` : '';
     h += `<tr><td class="muted">${dayName(g.kickoff)} ${g.kickoff.slice(11)}${g.started ? ' <span class="live">Started</span>' : ''}</td><td>${g.home} – ${g.away}${rf}${tenureLine(g)}</td><td class="n">${f(x.home,s)}</td><td class="n">${f(x.away,s)}</td><td class="n tot">${f(x.total,s)}</td><td class="ln">${linesHtml(x.lines)}</td></tr>`;
-  }
-  return h + '</tbody></table></div>';
-}
-
-function renderResults(){
-  const s = rsStat;
-  let h = `<p class="note">Every game this season, with the projection the model would have made the day before it (only earlier games used) next to what happened.</p>
-    <div class="bar">${chipsHtml('rsstat', s, ORDER)}</div>`;
-  const rows = D.results.filter(g => g.stats[s][2] != null);
-  let err = 0;
-  rows.forEach(g => { const [ph, pa, ah, aa] = g.stats[s]; err += Math.abs(ph + pa - ah - aa); });
-  h += `<div class="metrics"><div class="metric"><div class="lbl">Games</div><div class="big">${rows.length}</div></div>
-    <div class="metric"><div class="lbl">Avg miss, match total</div><div class="big">${rows.length ? (err/rows.length).toFixed(2) : '–'}</div></div></div>`;
-  h += `<div class="scroll"><table><thead><tr><th>Date</th><th>Match</th><th class="n">Projected</th><th class="n">Actual</th><th class="n">Proj. total</th><th class="n">Actual total</th><th class="n">Miss</th></tr></thead><tbody>`;
-  for (const g of rows){
-    const [ph, pa, ah, aa] = g.stats[s];
-    const miss = ah + aa - ph - pa;
-    h += `<tr><td class="muted">${dayName(g.date)}</td><td>${g.home} – ${g.away}</td><td class="n">${f(ph,s)} – ${f(pa,s)}</td><td class="n">${fa(ah)} – ${fa(aa)}</td><td class="n">${f(ph+pa,s)}</td><td class="n tot">${fa(ah+aa)}</td>`+
-      `<td class="n muted">${miss > 0 ? '+' : ''}${f(miss,s)}</td></tr>`;
   }
   return h + '</tbody></table></div>';
 }
@@ -1009,18 +989,18 @@ function renderResearch(){
 }
 function render(){
   $('tip').style.display = 'none';
-  $('out').innerHTML = {projections: renderProjections, picks: renderValue, market: renderMarket, results: renderResults, teams: renderTeams, refs: renderRefs, research: renderResearch, method: renderMethod}[view]();
+  $('out').innerHTML = {projections: renderProjections, picks: renderValue, market: renderMarket, teams: renderTeams, refs: renderRefs, research: renderResearch, method: renderMethod}[view]();
   if (view === 'refs') bindRefs();
   document.querySelectorAll('#pjmode button').forEach(b => b.onclick = () => { pjMode = b.dataset.m; render(); });
   const chips = (id, set) => document.querySelectorAll(`#${id} .chip`).forEach(b => b.onclick = () => { set(b.dataset.s); render(); });
-  chips('pjstat', s => pjStat = s); chips('rsstat', s => rsStat = s); chips('tmstat', s => tmStat = s);
+  chips('pjstat', s => pjStat = s); chips('tmstat', s => tmStat = s);
   document.querySelectorAll('#stmk .chip').forEach(b => b.onclick = () => { stMkt = b.dataset.s; try { localStorage.setItem('sl-stmkt', stMkt); } catch (e) {} render(); });
   document.querySelectorAll('#valmin button').forEach(b => b.onclick = () => { valMin = +b.dataset.v; try { localStorage.setItem('sl-valmin', valMin); } catch (e) {} render(); });
   document.querySelectorAll('th.sort').forEach(t => t.onclick = () => { const k = t.dataset.k; tmSort = [k, tmSort[0] === k ? -tmSort[1] : (k === 'team' ? 1 : -1)]; render(); });
 }
 function setView(v){
   if (['value', 'open', 'settled'].includes(v)) v = 'picks';   // old links
-  view = ['projections','picks','market','results','teams','refs','research','method'].includes(v) ? v : 'projections';
+  view = ['projections','picks','market','teams','refs','research','method'].includes(v) ? v : 'projections';
   document.querySelectorAll('#tabs a').forEach(a => a.classList.toggle('on', a.dataset.view === view));
   render();
 }
