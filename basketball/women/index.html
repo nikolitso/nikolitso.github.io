@@ -183,7 +183,7 @@ a.tile:hover{border-color:var(--gold)}
   <a class="an-brand" href="/basketball/women/"><svg class="an-mark" aria-hidden="true"><use href="/assets/marks.svg#basketball"/></svg><span><small class="an-kicker">Basketball · Women</small><h1>Women's basketball totals</h1></span></a>
   <nav class="tabs an-tabs" id="tabs" aria-label="Sections">
     <a href="#view=home" data-view="home" class="on">Home</a>
-    <a href="#view=picks" data-view="picks">Live test</a>
+    <a href="#view=livetest" data-view="livetest">Live test</a>
     <a href="#view=leagues" data-view="leagues">Leagues</a>
     <a href="#view=backtest" data-view="backtest">Backtest</a>
     <a href="#view=projections" data-view="projections">Projections</a>
@@ -197,7 +197,7 @@ a.tile:hover{border-color:var(--gold)}
   <div class="chips" id="chips"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=w50"></script>
+<script src="data.js?v=w51"></script>
 <script src="live.js"></script>
 <script>
 const $ = id => document.getElementById(id);
@@ -222,7 +222,6 @@ const R = DATA.rule;
 const LE = () => LIVE.edge ?? R.edge;
 const RL = k => !LIVE.leagues || LIVE.leagues.includes(k);
 const LIVE = window.LIVE || {updated: DATA.updated, fixtures: DATA.fixtures, picks: [], tracked: 0, start: '8 Nov 2026', taken: {n: 0}, over: {n: 0}, under: {n: 0}, rule: {n: 0}};
-LIVE.allfx = LIVE.fixtures.filter(g => LG[g.lg] && DATA.leagues.some(l => l.key === g.lg));   // every game this week in the leagues, for the league list on Projections
 LIVE.fixtures = LIVE.fixtures.filter(g => LG[g.lg] && (!g.gp || Math.min(...g.gp) >= (LIVE.min_gp ?? 4)));   // leagues no longer on the page; games only once both teams have the minimum games
 LIVE.picks = (LIVE.picks || []).filter(b => LG[b.lg]);
 if (LIVE.leagues) LIVE.leagues = LIVE.leagues.filter(k => LG[k]);
@@ -245,7 +244,7 @@ $('sub').textContent = `${DATA.leagues.length} Leagues · backtest 2021–22 to 
     ['Model line', avg(mu, b => b.mu), `avg of ${mu.length} settled picks`], ['Actual total', avg(cl, b => b.total), `avg of ${cl.length} settled picks`],
     ['Closing line moved toward the pick', cl.length ? pct(cl.filter(b => b.close > b.line).length / cl.length) : '–', `of ${cl.length} settled picks`],
     ['Closing line moved against it', cl.length ? pct(cl.filter(b => b.close < b.line).length / cl.length) : '–', `of ${cl.length} settled picks`]]
-    .map(([k, v, n]) => `<a class="tile" href="#view=picks"><span class="klabel">${k}</span><span class="stat">${v}</span><span class="small">${n}</span></a>`).join('');
+    .map(([k, v, n]) => `<a class="tile" href="#view=livetest"><span class="klabel">${k}</span><span class="stat">${v}</span><span class="small">${n}</span></a>`).join('');
 }
 
 function tiles(list){
@@ -336,6 +335,9 @@ function btBody(BT, S, pool, leagues){
   const lk = BT.filter(x => x.luck != null);
   h += `<h2>By 3-point luck</h2>` + btTable('3-point luck', [['Under −1.5', -99, -1.5], ['−1.5 to 0', -1.5, 0], ['0 to +1.5', 0, 1.5], ['+1.5 or more', 1.5, 99]].map(([label, lo, hi]) => [label, lk.filter(x => x.luck >= lo && x.luck < hi)]).concat([['No luck figure', BT.filter(x => x.luck == null)]]),
     '3-point luck: in the two teams\' games so far that season, the threes made minus what the league\'s 3-point rate gives on the same attempts, in points per game, from earlier games only. It is not a rule here: on women\'s games the picks with hot shooting (+1.5 or more) did better than the rest, the opposite of the men\'s leagues, so skipping them, as the overs page does, would have cut the profit. Picks with no luck figure come from games without 3-point data.');
+  const SE = skipped('skipped_edge');
+  h += `<h2>By edge</h2>` + btTable('Edge', [[`0% to ${EP / 2}%${SKIPPED}`, SE.filter(x => x.edge <= EP / 200)], [`${EP / 2}% to ${EP}%${SKIPPED}`, SE.filter(x => x.edge > EP / 200)], [`${EP}% to ${EP + 4}%`, BT.filter(x => x.edge < (EP + 4) / 100)], [`${EP + 4}% or more`, BT.filter(x => x.edge >= (EP + 4) / 100)]],
+    `Edge: the model's chance of the over × the price − 1, at the opening line. The first two rows are the games the rule skips: every other rule met, with an edge above 0 but not above ${EP}%. They are not in any other figure on this page.`);
   h += `<h2>By line</h2>` + btTable('Line band', [['Under 130', 0, 130], ['130–139.5', 130, 140], ['140 and over', 140, 999]].map(([label, lo, hi]) => [label, BT.filter(x => x.line >= lo && x.line < hi)]), 'The opening line in three bands.');
   const SG = skipped('skipped_gap');
   h += `<h2>By line difference</h2>` + btTable('Difference', [[`Under 4${SKIPPED}`, SG.filter(x => x.g0 < 4)], ['4–5.9', BT.filter(x => x.g0 < 6)], ['6–7.9', BT.filter(x => x.g0 >= 6 && x.g0 < 8)], ['8–11.9', BT.filter(x => x.g0 >= 8 && x.g0 < 12)], ['12 and over', BT.filter(x => x.g0 >= 12)]],
@@ -356,11 +358,8 @@ function bets(list){
 
 
 function renderProjections(){
-  let h = `<p class="note">Games in the next 7 days where both teams have played ${LIVE.min_gp ?? 4}+ games, with the model's projected total (fitted on earlier games only) next to the market's consensus line. Pace is the part of the model total that comes from how much faster or slower these two teams play than the league; it is already in the Model number, and a dash means no box scores. Line diff: the model before pace minus the line, the number the 4-point rule reads. Edge is the over at the price shown, on every game with a line. A game becomes a pick only if it meets every rule: edge above ${(LE()*100).toFixed(0)}%, model before pace at least 4 points above the line, both teams ${LIVE.min_gp ?? 4}+ games, regular season, a line ending in .5. Highlighted games are logged in the Live test tab at the line and price shown when they were first seen, and their edge is the one at that moment, while the line and prices keep updating. Click a match for its page, with the projection and how it was produced. Click a column heading to sort.</p>`;
+  let h = `<p class="note">Games in the next 7 days where both teams have played ${LIVE.min_gp ?? 4}+ games, with the model's projected total (fitted on earlier games only) next to the market's consensus line. Pace is the part of the model total that comes from how much faster or slower these two teams play than the league; it is already in the Model number, and a dash means no box scores. Line diff: the model before pace minus the line, the number the 4-point rule reads. Over edge is shown only for games that meet every other rule: edge above ${(LE()*100).toFixed(0)}%, model before pace at least 4 points above the line, both teams ${LIVE.min_gp ?? 4}+ games, regular season, a line ending in .5; a game becomes a pick when its edge is also above the bar. Highlighted games are logged in the Live test tab at the line and price shown when they were first seen, and their edge is the one at that moment, while the line and prices keep updating. Click a match for its page, with the projection and how it was produced. Click a column heading to sort.</p>`;
   const fx = LIVE.fixtures.filter(inLg);
-  const ls = DATA.leagues.filter(l => lg === 'all' || l.key === lg).map(l => { const a = LIVE.allfx.filter(g => g.lg === l.key).sort((x, y) => x.dt < y.dt ? -1 : 1); return [l, a, a.filter(g => !g.gp || Math.min(...g.gp) >= (LIVE.min_gp ?? 4)).length]; })
-    .sort((x, y) => y[1].length - x[1].length || lgFull(x[0]).localeCompare(lgFull(y[0])));
-  h += `<h2>The ${DATA.leagues.length} leagues this week</h2><div class="scroll"><table style="max-width:760px"><thead><tr><th>League</th><th class="n">Games, next 7 days</th><th class="n">Next game</th><th class="n">Shown below</th></tr></thead><tbody>${ls.map(([l, a, n]) => `<tr><td><a href="#view=projections&lg=${l.key}" style="color:inherit;text-decoration:none">${lgFull(l)}</a></td><td class="n${a.length ? '' : ' muted'}">${a.length || 'none'}</td><td class="n${a.length ? '' : ' muted'}">${a.length ? dayName(a[0].dt) + ' ' + a[0].dt.slice(11) : '–'}</td><td class="n${n ? '' : ' muted'}">${n}</td></tr>`).join('')}</tbody></table></div><p class="note">Shown below: games where both teams have played ${LIVE.min_gp ?? 4}+ games this season, the only ones the rule can pick. Click a league to see it alone.</p>`;
   if (!fx.length) return h + '<p class="empty">No games in the next 7 days where both teams have the minimum games.</p>';
   const taken = Object.fromEntries(LIVE.picks.map(b => [b.home + '|' + b.away, b]));   // a pick keeps the edge it was taken at
   const byDay = {};
@@ -369,7 +368,7 @@ function renderProjections(){
   for (const [d, gs] of Object.entries(byDay)){
     h += `<h2 class="day">${dayName(d)}</h2><div class="scroll"><table class="proj">${head}<tbody>`;
     for (const g of gs){
-      const t = g.pick && taken[g.home + '|' + g.away], e = t ? t.edge : g.line == null ? null : g.eo;
+      const t = g.pick && taken[g.home + '|' + g.away], e = t ? t.edge : g.line == null || !g.ok ? null : g.eo;
       h += `<tr${g.pick ? ' class="pk"' : ''}><td>${g.dt.slice(11)}</td>${lg === 'all' ? `<td>${lgShort(g.lg)}</td>` : ''}
         <td class="wr">${g.slug ? `<a class="gm" href="games/${g.slug}/">${g.home} – ${g.away}</a>` : `${g.home} – ${g.away}`}${g.pick ? `<span class="badge">${g.pick}</span>` : ''}</td><td class="n"><b>${g.mu.toFixed(1)}</b></td>
         ${g.line == null ? '<td class="n muted" colspan="6">no line yet</td>' : `<td class="n">${g.line}</td><td class="n">${g.op.toFixed(2)}</td><td class="n">${pct(g.p)}</td><td class="n ${t || (g.ok && e > LE()) ? 'pos' : 'muted'}">${e == null ? '–' : sgn(Math.round(e*100), 0) + '%'}</td><td class="n">${g.pace == null ? '–' : sgn(g.pace, 1)}</td><td class="n">${sgn(Math.round((g.mu - (g.pace ?? 0) - g.line) * 10) / 10, 1)}</td>`}</tr>`;
@@ -379,11 +378,24 @@ function renderProjections(){
   return h;
 }
 
+function liveTables(L){
+  // the Backtest tab's tables for the settled live picks
+  const EP = Math.round(R.edge * 100), band = (list, bands, key) => bands.map(([label, lo, hi]) => [label, list.filter(x => x[key] != null && x[key] >= lo && x[key] < hi)]);
+  let h = `<h2>By pace</h2>` + btTable('Pace', band(L, [['Slower, under −1', -99, -1], ['About average, −1 to +1', -1, 1.01], ['Faster, +1 to +3', 1.01, 3.01], ['Fastest, over +3', 3.01, 99]], 'pace'),
+    'Settled live picks, the same bands as the Backtest tab. With few picks these tables say little; they show whether the live picks behave like the backtest.');
+  h += `<h2>By line</h2>` + btTable('Line band', band(L, [['Under 130', 0, 130], ['130–139.5', 130, 140], ['140 and over', 140, 999]], 'line'));
+  h += `<h2>By edge</h2>` + btTable("Model's edge", band(L, [[`${EP}% to ${EP + 4}%`, EP / 100, (EP + 4) / 100], [`${EP + 4}% to ${EP + 8}%`, (EP + 4) / 100, (EP + 8) / 100], [`${EP + 8}% or more`, (EP + 8) / 100, 99]], 'edge'));
+  const lgs = [...new Set(L.map(b => b.lg))].sort((a, b) => lgShort(a) < lgShort(b) ? -1 : 1);
+  h += `<h2>By league</h2>` + btTable('League', lgs.map(k => [lgShort(k), L.filter(b => b.lg === k)]));
+  h += `<h2>By month</h2>` + btTable('Month', [9, 10, 11, 12, 1, 2, 3, 4, 5, 6].map(mm => [MON[mm - 1], L.filter(b => +b.dt.slice(5, 7) === mm)]));
+  return h;
+}
+
 function renderPicks(){
   // open picks first, then this season's record: October bets (same rules, worked out from results) + bets logged live
     const open = LIVE.picks.filter(b => !b.done).sort((a, b) => a.dt < b.dt ? -1 : 1);
   const fx = Object.fromEntries(LIVE.fixtures.map(g => [g.home + '|' + g.away, g]));
-  let h = `<p class="note">Picks to take: overs where the model's edge is above ${Math.round(LE()*100)}% at the line on offer, both teams ${LIVE.min_gp ?? 4}+ games, model before pace at least 4 points above the line, regular season only, lines ending in .5 only, equal stakes. The model total and the chance include pace where box scores exist. ROI = profit ÷ total staked on won and lost picks; pushes are left out. Every hour the model checks every game in the next 7 days; a pick is logged the first time its edge clears the bar, at that line and the average price, and never changed. Updated ${LIVE.updated} (Athens).</p>`;
+  let h = `<p class="note"><b>The pick.</b> The over, when the model's edge is above ${Math.round(LE()*100)}%: regular season, both teams ${LIVE.min_gp ?? 4}+ games in, the model before pace at least 4 points above the line, and a line ending in .5.<br><b>When.</b> Every hour the model checks the next 7 days. A pick is logged the first time its edge clears the bar, at that line and the average price, and never changed. Women's lines rarely move, so there is no rush to take it.<br><b>Scoring.</b> Equal stakes. ROI is profit ÷ amount staked; pushes don't count. Updated ${LIVE.updated} (Athens).</p>`;
   if (!open.length) h += '<p class="empty">No open picks right now. New ones appear here as lines open.</p>';
   else {
     h += `<h2>Open picks</h2><div class="scroll"><table class="proj"><thead><tr><th>Tip-off</th><th>League</th><th>Match</th><th class="n">Pick</th><th class="n">Price</th><th class="n">Model total</th><th class="n">Edge</th><th class="n">Line now</th><th class="n">Pace</th><th class="n">Line diff</th></tr></thead><tbody>` +
@@ -399,6 +411,7 @@ function renderPicks(){
   h += `<h2>The ${sn(DATA.season)} record</h2>`;
   h += `<p class="note">The closing line moved toward the pick when it ended above the line picked. A few hundred picks are needed before the record says much. Picks stay as they were logged, under the rules of their day. The record starts on ${LIVE.start}, under the rules in How it works. Click a column heading to sort.</p>`;
   if (!set.length) return h + '<p class="empty">No settled picks yet.</p>';
+  h += liveTables(set.filter(b => !b.pre));
   let run = 0;
   const rows = all.filter(b => b.done).map(b => {   // open picks are in the table above
     if (b.ret != null) run += b.ret;
@@ -442,15 +455,14 @@ document.addEventListener('click', e => {
   if (open && view === 'leagues') { const a = document.getElementById('lgan'); if (a) a.scrollIntoView({behavior: 'smooth', block: 'start'}); }
 });
 
-const RENDER = {home: renderFindings, picks: renderPicks, leagues: renderLeagues, backtest: renderBacktest, projections: renderProjections, method: renderMethod};
-const CHIPS = {backtest: 1, projections: 1};   // backtest: no league chips, only a way back after a league is picked in By league
+const RENDER = {home: renderFindings, livetest: renderPicks, leagues: renderLeagues, backtest: renderBacktest, projections: renderProjections, method: renderMethod};
+const CHIPS = {projections: 1};
 function render(){
   document.querySelectorAll('#tabs a').forEach(a => { a.classList.toggle('on', a.dataset.view === view); a.href = `#view=${a.dataset.view}${lg === 'all' || !CHIPS[a.dataset.view] ? '' : '&lg=' + lg}`; });
   let keys = ALLG.map(l => l.key);
   if (view === 'backtest') keys = keys.filter(k => DATA.bets.some(b => b.lg === k));
-  if (view === 'projections') keys = DATA.leagues.map(l => l.key);   // all the leagues, with this week's game count
-  const nfx = k => LIVE.allfx.filter(g => g.lg === k).length;
-  const chips = view === 'backtest' ? (lg === 'all' ? [] : [['all', 'All leagues'], [lg, lgShort(lg)]]) : view === 'projections' ? [['all', 'All leagues'], ...keys.map(k => [k, `${lgShort(k)} <span class="muted">${nfx(k)}</span>`])] : CHIPS[view] ? [['all', 'All leagues'], ...keys.map(k => [k, lgShort(k)])] : [];
+  if (view === 'projections') keys = DATA.leagues.map(l => l.key).filter(k => LIVE.fixtures.some(g => g.lg === k));
+  const chips = CHIPS[view] ? [['all', 'All leagues'], ...keys.map(k => [k, lgShort(k)])] : [];
   $('chips').innerHTML = chips.map(([k, t]) => `<a href="#view=${view}${k === 'all' ? '' : '&lg=' + k}" class="${k === lg ? 'on' : ''}">${t}</a>`).join('');
   $('top').style.display = $('sub').style.display = view === 'backtest' ? 'none' : '';   // the live record tiles are not shown on the backtest
   const BTb = view === 'backtest' ? DATA.bets.filter(inLg) : [];   // the backtest tiles sit on top of the Backtest tab, where the record tiles are on the other tabs
@@ -459,7 +471,7 @@ function render(){
 }
 function fromHash(){
   const m = location.hash.match(/view=(\w+)/), l = location.hash.match(/lg=([\w-]+)/);
-  const old = {live: 'picks', findings: 'home', picksover: 'picks', picksunder: 'picks', overs: 'backtest', unders: 'backtest', testing: 'backtest'}, v = m && (old[m[1]] || m[1]);   // old links: Live test is part of Picks, Findings is Home
+  const old = {live: 'livetest', picks: 'livetest', findings: 'home', picksover: 'livetest', picksunder: 'livetest', overs: 'backtest', unders: 'backtest', testing: 'backtest'}, v = m && (old[m[1]] || m[1]);   // old links: Live test is part of Picks, Findings is Home
   view = RENDER[v] ? v : 'home';
   lg = l && LG[l[1]] ? l[1] : 'all';
   render();
