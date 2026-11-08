@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-08T01:11:43Z",
+ "updated": "2026-11-08T14:08:54Z",
  "reports": [
   {
    "comp": "EuroCup",
@@ -1251,47 +1251,47 @@
    },
    "league": {
     "pts": 78.5,
-    "fg2m": 18.1,
-    "fg2a": 35.8,
-    "fg3m": 8.9,
-    "fg3a": 25.8,
+    "fg2m": 18.0,
+    "fg2a": 35.6,
+    "fg3m": 9.0,
+    "fg3a": 25.9,
     "ftm": 15.6,
-    "fta": 21.9,
-    "oreb": 10.8,
+    "fta": 22.0,
+    "oreb": 10.6,
     "dreb": 25.7,
-    "reb": 36.4,
-    "ast": 16.6,
-    "stl": 7.3,
+    "reb": 36.3,
+    "ast": 16.7,
+    "stl": 7.4,
     "tov": 13.6,
     "blk": 3.0,
     "pf": 22.3,
-    "pir": 84.0,
-    "gp": 80,
-    "w": 40,
+    "pir": 84.1,
+    "gp": 82,
+    "w": 41,
     "allowed": 78.5,
-    "fgp": 43.8,
+    "fgp": 43.9,
     "fg2p": 50.6,
-    "fg3p": 34.4,
-    "ftp": 71.5,
-    "opp_fgp": 43.8,
+    "fg3p": 34.6,
+    "ftp": 71.1,
+    "opp_fgp": 43.9,
     "poss": 74.1,
     "pace": 73.4,
     "ortg": 106.0,
     "drtg": 106.0,
-    "efg": 51.0,
-    "ts": 55.1,
+    "efg": 51.2,
+    "ts": 55.2,
     "tovPct": 18.3,
-    "orebPct": 29.5,
-    "ftr": 25.3,
-    "astPct": 61.4,
-    "par3": 41.9,
+    "orebPct": 29.3,
+    "ftr": 25.4,
+    "astPct": 61.8,
+    "par3": 42.1,
     "fgm": 27.0,
-    "fga": 61.7,
-    "opp_efg": 51.0,
+    "fga": 61.5,
+    "opp_efg": 51.2,
     "forcedTov": 18.3,
-    "drebPct": 70.5,
-    "opp_ftr": 25.3,
-    "l": 40,
+    "drebPct": 70.7,
+    "opp_ftr": 25.4,
+    "l": 41,
     "net": 0.0
    },
    "impact": [
@@ -1936,7 +1936,7 @@
        "name": "Breein Tyree",
        "no": "5",
        "min": 19,
-       "pts": 10.6,
+       "pts": 10.7,
        "reb": 1.7,
        "ast": 1.1,
        "pir": 9.1
@@ -1972,7 +1972,7 @@
        "name": "Naz Mitrou-Long",
        "no": "1",
        "min": 16,
-       "pts": 7.0,
+       "pts": 7.1,
        "reb": 2.5,
        "ast": 1.8,
        "pir": 7.8
@@ -2147,12 +2147,12 @@
     "pace": 70.1,
     "lineupSource": "manual",
     "note": "PAOK without Osman, who is out for one to two months.",
-    "modelTotal": 145.0,
+    "modelTotal": 145.2,
     "line": 157.5,
     "modelMargin": -1.0,
     "hcp": 6.5,
     "learned": {
-     "games": 967,
+     "games": 968,
      "lineGames": 945,
      "homeEdge": 2.18,
      "totalBias": 1.49,
@@ -2171,17 +2171,17 @@
       "total": 156.3
      },
      "fg2m": {
-      "paok": 17.7,
-      "opp": 18.9,
+      "paok": 17.6,
+      "opp": 18.8,
       "total": 36.5
      },
      "fg3m": {
-      "paok": 9.3,
+      "paok": 9.4,
       "opp": 7.5,
-      "total": 16.8
+      "total": 16.9
      },
      "ftm": {
-      "paok": 17.5,
+      "paok": 17.4,
       "opp": 15.2,
       "total": 32.7
      },
@@ -2191,14 +2191,14 @@
       "total": 31.6
      },
      "oreb": {
-      "paok": 10.4,
-      "opp": 10.1,
-      "total": 20.5
+      "paok": 10.3,
+      "opp": 10.0,
+      "total": 20.3
      },
      "dreb": {
-      "paok": 24.0,
-      "opp": 22.9,
-      "total": 47.0
+      "paok": 24.1,
+      "opp": 23.0,
+      "total": 47.1
      },
      "tov": {
       "paok": 12.8,
@@ -2208,7 +2208,7 @@
      "reb": {
       "paok": 34.4,
       "opp": 33.0,
-      "total": 67.5
+      "total": 67.4
      }
     }
    }

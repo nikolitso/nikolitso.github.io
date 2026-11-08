@@ -1996,7 +1996,7 @@
   "date": "2026-11-10T17:00:00Z",
   "opp": "Balkan",
   "home": false,
-  "saved": "2026-11-08T01:11:43Z",
+  "saved": "2026-11-08T14:08:54Z",
   "paok": 78.9,
   "oppScore": 79.3,
   "winProb": 49,
@@ -2281,7 +2281,7 @@
   "date": "2026-11-14T15:30:00Z",
   "opp": "Karditsa",
   "home": false,
-  "saved": "2026-11-08T01:11:43Z",
+  "saved": "2026-11-08T14:08:54Z",
   "paok": 80.8,
   "oppScore": 75.5,
   "winProb": 71,
@@ -2293,17 +2293,17 @@
     "total": 156.3
    },
    "fg2m": {
-    "paok": 17.7,
-    "opp": 18.9,
+    "paok": 17.6,
+    "opp": 18.8,
     "total": 36.5
    },
    "fg3m": {
-    "paok": 9.3,
+    "paok": 9.4,
     "opp": 7.5,
-    "total": 16.8
+    "total": 16.9
    },
    "ftm": {
-    "paok": 17.5,
+    "paok": 17.4,
     "opp": 15.2,
     "total": 32.7
    },
@@ -2313,14 +2313,14 @@
     "total": 31.6
    },
    "oreb": {
-    "paok": 10.4,
-    "opp": 10.1,
-    "total": 20.5
+    "paok": 10.3,
+    "opp": 10.0,
+    "total": 20.3
    },
    "dreb": {
-    "paok": 24.0,
-    "opp": 22.9,
-    "total": 47.0
+    "paok": 24.1,
+    "opp": 23.0,
+    "total": 47.1
    },
    "tov": {
     "paok": 12.8,
@@ -2330,10 +2330,10 @@
    "reb": {
     "paok": 34.4,
     "opp": 33.0,
-    "total": 67.5
+    "total": 67.4
    }
   },
-  "modelTotal": 145.0,
+  "modelTotal": 145.2,
   "line": 157.5,
   "modelMargin": -1.0,
   "hcp": 6.5,
@@ -2361,7 +2361,7 @@
      "name": "Breein Tyree",
      "no": "5",
      "min": 19,
-     "pts": 10.6,
+     "pts": 10.7,
      "reb": 1.7,
      "ast": 1.1,
      "pir": 9.1
@@ -2397,7 +2397,7 @@
      "name": "Naz Mitrou-Long",
      "no": "1",
      "min": 16,
-     "pts": 7.0,
+     "pts": 7.1,
      "reb": 2.5,
      "ast": 1.8,
      "pir": 7.8
