@@ -4,7 +4,7 @@ name: Site · Handball
 # (scripts in handball/projector there). 03:00, 09:00, then hourly 12:00-21:00 Athens; the "Update all sites" button runs it too.
 on:
   schedule:
-    - cron: "0 1,7,10-19 * * *"   # 03:00 and 09:00, then hourly 12:00-21:00 Athens in winter (an hour later in summer), for match-day lines
+    - cron: "0 1,5-19 * * *"   # 03:00, then hourly 07:00-21:00 Athens in winter (an hour later in summer), for match-day lines
   workflow_dispatch:          # Run workflow button: Actions tab, or the GitHub mobile app
 
 permissions:
