@@ -197,7 +197,7 @@ a.tile:hover{border-color:var(--gold)}
   <div class="chips" id="chips"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=b33ca67e"></script>
+<script src="data.js?v=9f8fb751"></script>
 <script src="live.js"></script>
 <script>
 const $ = id => document.getElementById(id);
@@ -211,7 +211,7 @@ const cls = x => x > 0 ? 'pos' : x < 0 ? 'neg' : '';
 const sn = s => s.replace('-', '–');
 let view = 'home', lg = 'all', open = null;
 const LG = Object.fromEntries(DATA.leagues.map(l => [l.key, l]));
-if (DATA.cur) DATA.cur.bets = (DATA.cur.bets || []).filter(b => LG[b.lg]);          // domestic leagues only: no record outside the rule's leagues
+if (DATA.cur) DATA.cur.bets = [];                                 // the record starts on 8 Nov 2026 with the current model          // domestic leagues only: no record outside the rule's leagues
 const lgName = k => `${LG[k].country} · ${LG[k].name}`;
 const lgFull = l => l.country === 'Europe' ? l.name : `${l.country} <span class="muted">${l.name}</span>`;
 const wl = b => b.ret > 0 ? 'w' : b.ret < 0 ? 'l' : '';   // settled winners green, losers red
@@ -231,7 +231,7 @@ LIVE.fixtures = LIVE.fixtures.filter(g => LG[g.lg]);                       // le
 LIVE.picks = (LIVE.picks || []).filter(b => LG[b.lg]);
 if (LIVE.leagues) LIVE.leagues = LIVE.leagues.filter(k => LG[k]);
 
-$('sub').textContent = `${DATA.leagues.length} Leagues · backtest 2022–23 to 2025–26 · ${DATA.season.slice(0, 4)}–${DATA.season.slice(7)} record since 1 Oct 2026 · updated ${LIVE.updated} (Athens)`;
+$('sub').textContent = `${DATA.leagues.length} Leagues · backtest 2022–23 to 2025–26 · ${DATA.season.slice(0, 4)}–${DATA.season.slice(7)} record since 8 Nov 2026 · updated ${LIVE.updated} (Athens)`;
 
 // top tiles: the whole 2026-27 record, as on the Live test tab (ROI = return over wins + losses)
 {
@@ -319,9 +319,6 @@ function analysis(k, notes = true){
     `Pace is the two teams' possessions per game so far that season, each with ${LIVE.min_gp ?? 3}+ games, minus the league average, from earlier games only. Pace is one of the model's signals, so there is no pace rule: faster games get a higher chance.`);
   h += T('By 3-point luck', '3-point luck', [['Under +0.2', -99, 0.2], [`+0.2 to ${LKs()}`, 0.2, LK()]].map(([label, lo, hi]) => bandRow(label, BT.filter(x => x.luck >= lo && x.luck < hi))).join('') + bandRow(`${LKs()} or more <span class="muted">(skipped)</span>`, SKL),
     `3-point luck: in the two teams' games so far that season, the threes made minus what the league's 3-point rate gives on the same attempts, in points per game, from earlier games only. High luck means the shooting has been hot, which rarely lasts, while the model's projection still counts those points. The last row is the games the rule skips: luck of ${LKs()} or more. They are not in any other figure on this page.`);
-  const EP = Math.round(R.edge * 100);
-  h += T('By edge', 'Edge', [[0, EP / 2], [EP / 2, EP]].map(([lo, hi]) => bandRow(`${lo}% to ${hi}% <span class="muted">(skipped)</span>`, (DATA.skipped_edge || []).filter(f).filter(x => (lo === 0 || x.edge > lo / 100) && (hi === EP || x.edge <= hi / 100)))).join('') + bandRow(`${EP}% to ${EP + 4}%`, BT.filter(x => x.edge < (EP + 4) / 100)) + bandRow(`${EP + 4}% or more`, BT.filter(x => x.edge >= (EP + 4) / 100)),   // every pick is above the bar; stored edges are rounded
-    `Edge: the model's chance of the over × the price − 1, at the opening line. The first two rows are the games the rule skips: every other rule met, with an edge above 0 but not above ${EP}%. They are not in any other figure on this page.`);
   const ML = LIVE.max_line ?? 180;
   h += T('By line', 'Line band', [['Under 170', 0, 170], [`170 to ${ML - 0.5}`, 170, ML]].map(([label, lo, hi]) => bandRow(label, BT.filter(x => x.line >= lo && x.line < hi))).join('') + bandRow(`${ML} or more <span class="muted">(skipped)</span>`, (DATA.skipped_line || []).filter(f)),
     `The opening line. The last row is the games the rule skips: every other rule met, with an opening line of ${ML} or more. They are not in any other figure on this page.`);
@@ -338,14 +335,11 @@ function analysis(k, notes = true){
 }
 
 function renderBacktest(){
-  const B = DATA.backtest, S = lg === 'all' ? B.all : B.leagues[lg];
-  let h = '';
-  if (!S || !S.rule.n) return h + '<p class="empty">The rule made no picks in this league.</p>';
-  return h + analysis(lg) + bets();
+  return analysis('all') + bets();                            // all leagues: no league buttons on this tab
 }
 
 function bets(){
-  const list = DATA.bets.filter(inLg);
+  const list = DATA.bets;
   if (!list.length) return '';
   let run = 0;
   const rows = list.map(b => { run += b.ret;
@@ -395,7 +389,7 @@ function renderPicks(){
   h += tiles([['Picks', String(all.length)], ['Settled', String(set.length)], ['Hit rate', set.length ? pct(won / set.length, 1) : '–'],
               ['ROI', roi(R_), cls(R_)],
               ['Closing line moved toward the pick', cl.length ? pct(up / cl.length) : '–'], ['Closing line moved against it', cl.length ? pct(dn / cl.length) : '–']]);
-  h += `<p class="note">The closing line moved toward the pick when it ended above the line picked. A few hundred picks are needed before the record says much. Picks stay as they were logged, under the rules of their day. Before 7 Nov 2026 they came from six leagues, without pace or 3-point luck and with team numbers that also used last season. Since 8 Nov 2026 the model's weights are learned at opening lines with pace and 3-point luck, the edge bar is 8%, and the rule runs in every top domestic division. European competitions are left out, and their earlier picks were taken out of the record on 8 Nov 2026. Click a column heading to sort.</p>`;
+  h += `<p class="note">The closing line moved toward the pick when it ended above the line picked. A few hundred picks are needed before the record says much. The record starts on 8 Nov 2026 with the current model: weights learned at opening lines with pace and 3-point luck, an edge above 8%, every top domestic division. Picks made before that, under older rules, are not counted. Click a column heading to sort.</p>`;
   if (!set.length) return h + '<p class="empty">No settled picks yet.</p>';
   let run = 0;
   const rows = all.filter(b => b.done).map(b => {   // open picks are in the table above
@@ -441,7 +435,7 @@ document.addEventListener('click', e => {
 });
 
 const RENDER = {home: renderFindings, picks: renderPicks, leagues: renderLeagues, backtest: renderBacktest, projections: renderProjections, method: renderMethod};
-const CHIPS = {backtest: 1, projections: 1};
+const CHIPS = {projections: 1};
 function render(){
   document.querySelectorAll('#tabs a').forEach(a => { a.classList.toggle('on', a.dataset.view === view); a.href = `#view=${a.dataset.view}${lg === 'all' || !CHIPS[a.dataset.view] ? '' : '&lg=' + lg}`; });
   let keys = DATA.leagues.map(l => l.key);
