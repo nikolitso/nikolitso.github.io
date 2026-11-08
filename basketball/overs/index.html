@@ -238,10 +238,17 @@ $('sub').textContent = `${DATA.leagues.length} Leagues · backtest 2022–23 to 
   const set = [...((DATA.cur || {}).bets || []), ...LIVE.picks.filter(b => b.done && b.ret != null)], won = set.filter(b => b.ret > 0).length, lost = set.filter(b => b.ret < 0).length;
   const units = set.reduce((a, b) => a + b.ret, 0), nOpen = LIVE.picks.filter(b => !b.done).length;
   // average line bet and average closing line, over every settled 2026-27 bet that has a close
-  const cl = set.filter(b => b.close != null), avg = f => (cl.reduce((a, b) => a + f(b), 0) / cl.length).toFixed(1);
-  $('top').innerHTML = [['Open picks', nOpen, nOpen ? 'to play' : 'none right now'], ['Record', `${won}–${lost}`, 'win – loss'],
-    ['ROI', won + lost ? `<span class="${cls(units)}">${roi(units / (won + lost))}</span>` : '–', `${won + lost} settled picks`],
-    ...(cl.length ? [['Opening line', avg(b => b.line), `avg of ${cl.length} settled picks`], ['Closing line', avg(b => b.close), `avg of ${cl.length} settled picks`], ['Actual total', avg(b => b.total), `avg of ${cl.length} settled picks`]] : [])]
+  const cl = set.filter(b => b.close != null), avg = (L, f) => L.length ? (L.reduce((a, b) => a + f(b), 0) / L.length).toFixed(1) : '–';
+  // the same picks at the closing line and price (overs); pushes left out, as for the ROI at opening
+  const cc = cl.filter(b => b.cpx != null && b.total !== b.close), uc = cc.reduce((a, b) => a + (b.total > b.close ? b.cpx - 1 : -1), 0);
+  const mu = set.filter(b => b.mu != null), nS = `${set.length} settled picks`;
+  $('top').innerHTML = [['Open picks', nOpen, nOpen ? 'to play' : 'none right now'], ['Picks', set.length, 'settled'], ['Hit rate', won + lost ? pct(won / (won + lost), 1) : '–', `${won}–${lost} win – loss`],
+    ['ROI at opening', won + lost ? `<span class="${cls(units)}">${roi(units / (won + lost))}</span>` : '–', nS],
+    ['ROI at closing', cc.length ? `<span class="${cls(uc)}">${roi(uc / cc.length)}</span>` : '–', `${cc.length} settled picks`],
+    ['Opening line', avg(cl, b => b.line), `avg of ${cl.length} settled picks`], ['Closing line', avg(cl, b => b.close), `avg of ${cl.length} settled picks`],
+    ['Model line', avg(mu, b => b.mu), `avg of ${mu.length} settled picks`], ['Actual total', avg(cl, b => b.total), `avg of ${cl.length} settled picks`],
+    ['Closing line moved toward the pick', cl.length ? pct(cl.filter(b => b.close > b.line).length / cl.length) : '–', `of ${cl.length} settled picks`],
+    ['Closing line moved against it', cl.length ? pct(cl.filter(b => b.close < b.line).length / cl.length) : '–', `of ${cl.length} settled picks`]]
     .map(([k, v, n]) => `<a class="tile" href="#view=picks"><span class="klabel">${k}</span><span class="stat">${v}</span><span class="small">${n}</span></a>`).join('');
 }
 
@@ -392,9 +399,6 @@ function renderPicks(){
   const units = set.reduce((a, b) => a + b.ret, 0), nDec = set.filter(b => b.ret !== 0).length, R_ = nDec ? units / nDec : null;
   const cl = all.filter(b => b.close != null), up = cl.filter(b => b.close > b.line).length, dn = cl.filter(b => b.close < b.line).length;
   h += `<h2>The ${sn(DATA.season)} record</h2>`;
-  h += tiles([['Picks', String(all.length)], ['Settled', String(set.length)], ['Hit rate', set.length ? pct(won / set.length, 1) : '–'],
-              ['ROI', roi(R_), cls(R_)],
-              ['Closing line moved toward the pick', cl.length ? pct(up / cl.length) : '–'], ['Closing line moved against it', cl.length ? pct(dn / cl.length) : '–']]);
   h += `<p class="note">The closing line moved toward the pick when it ended above the line picked. A few hundred picks are needed before the record says much. The record starts on 8 Nov 2026 with the current model: weights learned at opening lines with pace and 3-point luck, an edge above 8%, every top domestic division. Picks made before that, under older rules, are not counted. Click a column heading to sort.</p>`;
   if (!set.length) return h + '<p class="empty">No settled picks yet.</p>';
   let run = 0;
