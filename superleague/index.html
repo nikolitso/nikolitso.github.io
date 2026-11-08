@@ -108,6 +108,15 @@ th.sort{cursor:pointer;user-select:none} th.sort:hover,th.sort.on{color:var(--go
 .calc i{font-style:normal;color:var(--muted);font-size:13.5px}
 .calc b{color:var(--gold);font-weight:500}
 table.mini{margin:0 0 16px}
+.rs-lede{font-size:16px;margin:4px 0 16px;max-width:68ch}
+a.rs-card{display:block;color:inherit;text-decoration:none;padding:18px;transition:border-color .15s}
+a.rs-card:hover{border-color:var(--an-accent)}
+.rs-card h2{margin:4px 0 6px}
+.rs-card p{margin:0 0 14px;max-width:68ch}
+.rs-facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin:0 0 12px}
+.rs-fact{border:1px solid var(--line);border-radius:8px;padding:10px 12px;font-size:13.5px;line-height:1.45}
+.rs-fact b{display:block;font:400 26px/1.1 var(--an-display);margin-bottom:3px}
+.rs-go{color:var(--an-accent);font-size:14px}
 .abbr{display:none}
 .charts{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(440px,100%),1fr));gap:18px;margin:6px 0 10px}
 .chart{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px 12px;min-width:0}
@@ -157,6 +166,7 @@ th.rs{cursor:pointer;user-select:none} th.rs:hover,th.rs.on{color:var(--gold)}
     <a href="#view=results" data-view="results">Results</a>
     <a href="#view=teams" data-view="teams">Teams</a>
     <a href="#view=refs" data-view="refs">Referees</a>
+    <a href="#view=research" data-view="research">Research</a>
     <a href="#view=method" data-view="method">How it works</a>
   </nav>
 </div></header>
@@ -974,9 +984,25 @@ function bindRefs(){
   });
 }
 
+function renderResearch(){
+  const box = (n, t) => `<div class="rs-fact"><b>${n}</b>${t}</div>`;
+  return `<p class="rs-lede">Studies of Super League games behind the model: what was found, and whether it changed anything.</p>
+  <a class="card rs-card" href="/superleague/research/europe/">
+    <small class="muted">8 Nov 2026 · ten seasons, 2016–17 to now</small>
+    <h2>The Big 4 after a European game</h2>
+    <p>What happens when Olympiakos, PAOK, AEK or Panathinaikos play a league game three or four days after a European match, against the small clubs and in derbies.</p>
+    <div class="rs-facts">
+      ${box('2.56', 'goals per game when a Big-4 side hosts a small club after Europe, against 2.84 when rested')}
+      ${box('48%', 'of those home games went over 2.5 goals, against 58% when rested')}
+      ${box('45%', 'over 2.5 in Big-4 v small games after Europe, while the odds expected 52%')}
+      ${box('+1 card', 'per game in derbies after Europe (6.5 against 5.5), with the result unchanged')}
+    </div>
+    <span class="rs-go">Read the study →</span>
+  </a>`;
+}
 function render(){
   $('tip').style.display = 'none';
-  $('out').innerHTML = {projections: renderProjections, picks: renderValue, market: renderMarket, results: renderResults, teams: renderTeams, refs: renderRefs, method: renderMethod}[view]();
+  $('out').innerHTML = {projections: renderProjections, picks: renderValue, market: renderMarket, results: renderResults, teams: renderTeams, refs: renderRefs, research: renderResearch, method: renderMethod}[view]();
   if (view === 'refs') bindRefs();
   document.querySelectorAll('#pjmode button').forEach(b => b.onclick = () => { pjMode = b.dataset.m; render(); });
   const chips = (id, set) => document.querySelectorAll(`#${id} .chip`).forEach(b => b.onclick = () => { set(b.dataset.s); render(); });
@@ -987,7 +1013,7 @@ function render(){
 }
 function setView(v){
   if (['value', 'open', 'settled'].includes(v)) v = 'picks';   // old links
-  view = ['projections','picks','market','results','teams','refs','method'].includes(v) ? v : 'projections';
+  view = ['projections','picks','market','results','teams','refs','research','method'].includes(v) ? v : 'projections';
   document.querySelectorAll('#tabs a').forEach(a => a.classList.toggle('on', a.dataset.view === view));
   render();
 }
