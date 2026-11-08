@@ -184,7 +184,7 @@ a.tile:hover{border-color:var(--gold)}
   <a class="an-brand" href="/basketball/overs/"><svg class="an-mark" aria-hidden="true"><use href="/assets/marks.svg#basketball"/></svg><span><small class="an-kicker">Basketball · Totals</small><h1>Basketball totals</h1></span></a>
   <nav class="tabs an-tabs" id="tabs" aria-label="Sections">
     <a href="#view=home" data-view="home" class="on">Home</a>
-    <a href="#view=picks" data-view="picks">Live test</a>
+    <a href="#view=livetest" data-view="livetest">Live test</a>
     <a href="#view=leagues" data-view="leagues">Leagues</a>
     <a href="#view=backtest" data-view="backtest">Backtest</a>
     <a href="#view=projections" data-view="projections">Projections</a>
@@ -249,7 +249,7 @@ $('sub').textContent = `${DATA.leagues.length} Leagues · backtest 2022–23 to 
     ['Model line', avg(mu, b => b.mu), `avg of ${mu.length} settled picks`], ['Actual total', avg(cl, b => b.total), `avg of ${cl.length} settled picks`],
     ['Closing line moved toward the pick', cl.length ? pct(cl.filter(b => b.close > b.line).length / cl.length) : '–', `of ${cl.length} settled picks`],
     ['Closing line moved against it', cl.length ? pct(cl.filter(b => b.close < b.line).length / cl.length) : '–', `of ${cl.length} settled picks`]]
-    .map(([k, v, n]) => `<a class="tile" href="#view=picks"><span class="klabel">${k}</span><span class="stat">${v}</span><span class="small">${n}</span></a>`).join('');
+    .map(([k, v, n]) => `<a class="tile" href="#view=livetest"><span class="klabel">${k}</span><span class="stat">${v}</span><span class="small">${n}</span></a>`).join('');
 }
 
 function tiles(list){
@@ -348,6 +348,23 @@ function analysis(k, notes = true){
   return h;
 }
 
+function liveTables(L){
+  // the Backtest tab's tables for the settled live picks
+  const T = (title, first, body, note='') => `<h2>${title}</h2>${note ? `<p class="note">${note}</p>` : ''}<div class="scroll"><table style="max-width:1040px">${GHEAD(first, BHEAD)}<tbody>${body}</tbody></table></div>`;
+  const band = (list, bands, key) => bands.map(([label, lo, hi]) => bandRow(label, list.filter(x => x[key] != null && x[key] >= lo && x[key] < hi))).join('');
+  let h = T('By pace', 'Pace', band(L, [['Below 0', -99, 0], ['0 to +1.9', 0, 2], ['+2 or more', 2, 99]], 'pace'),
+    `Settled live picks, the same bands as the Backtest tab. With few picks these tables say little; they show whether the live picks behave like the backtest.`);
+  h += T('By 3-point luck', '3-point luck', band(L, [['Under +0.2', -99, 0.2], [`+0.2 to ${LKs()}`, 0.2, LK()]], 'luck'));
+  h += T('By line', 'Line band', band(L, [['Under 170', 0, 170], ['170 to 179.5', 170, 180], ['180 or more', 180, 999]], 'line'));
+  h += T('By edge', "Model's edge", band(L, [['8% to 12%', 0.08, 0.12], ['12% to 16%', 0.12, 0.16], ['16% or more', 0.16, 99]], 'edge'));
+  const lgs = [...new Set(L.map(b => b.lg))].sort((a, b) => lgShort(a) < lgShort(b) ? -1 : 1);
+  h += T('By league', 'League', lgs.map(k => bandRow(lgShort(k), L.filter(b => b.lg === k))).join(''));
+  let mo = '';
+  for (const mm of [9, 10, 11, 12, 1, 2, 3, 4, 5, 6]) { const g = L.filter(b => +b.dt.slice(5, 7) === mm); if (g.length) mo += bandRow(MON[mm - 1], g); }
+  h += T('By month', 'Month', mo);
+  return h;
+}
+
 function renderBacktest(){
   return analysis('all') + bets();                            // all leagues: no league buttons on this tab
 }
@@ -402,6 +419,7 @@ function renderPicks(){
   h += `<h2>The ${sn(DATA.season)} record</h2>`;
   h += `<p class="note">The closing line moved toward the pick when it ended above the line picked. A few hundred picks are needed before the record says much. The record starts on 8 Nov 2026 with the current model: weights learned at opening lines with pace and 3-point luck, an edge above 8%, every top domestic division. Picks made before that, under older rules, are not counted. Click a column heading to sort.</p>`;
   if (!set.length) return h + '<p class="empty">No settled picks yet.</p>';
+  h += liveTables(set.filter(b => !b.pre));
   let run = 0;
   const rows = all.filter(b => b.done).map(b => {   // open picks are in the table above
     if (b.ret != null) run += b.ret;
@@ -445,7 +463,7 @@ document.addEventListener('click', e => {
   if (open && view === 'leagues') { const a = document.getElementById('lgan'); if (a) a.scrollIntoView({behavior: 'smooth', block: 'start'}); }
 });
 
-const RENDER = {home: renderFindings, picks: renderPicks, leagues: renderLeagues, backtest: renderBacktest, projections: renderProjections, method: renderMethod};
+const RENDER = {home: renderFindings, livetest: renderPicks, leagues: renderLeagues, backtest: renderBacktest, projections: renderProjections, method: renderMethod};
 const CHIPS = {projections: 1};
 function render(){
   document.querySelectorAll('#tabs a').forEach(a => { a.classList.toggle('on', a.dataset.view === view); a.href = `#view=${a.dataset.view}${lg === 'all' || !CHIPS[a.dataset.view] ? '' : '&lg=' + lg}`; });
@@ -459,7 +477,7 @@ function render(){
 }
 function fromHash(){
   const m = location.hash.match(/view=(\w+)/), l = location.hash.match(/lg=([\w-]+)/);
-  const old = {live: 'picks', findings: 'home'}, v = m && (old[m[1]] || m[1]);   // old links: Live test is part of Picks, Findings is Home
+  const old = {live: 'livetest', picks: 'livetest', findings: 'home'}, v = m && (old[m[1]] || m[1]);   // old links: Picks is now Live test, Findings is Home
   view = RENDER[v] ? v : 'home';
   lg = l && LG[l[1]] ? l[1] : 'all';
   render();
