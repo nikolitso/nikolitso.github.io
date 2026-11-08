@@ -904,17 +904,29 @@ function paceSection(games, comp) {
         ${pctRow('Free throw rate (FTM per 100 FGA)', 'ftr')}
         ${pctRow('Assisted baskets (AST / FGM)', 'astPct')}
       </tbody></table></div>
-    <div class="card" style="max-width:760px;margin-top:16px">
-      <h3>How to read these</h3>
-      <ul class="legend">
-        <li><b>Possessions</b><span class="muted">How many times a team had the ball: shots + turnovers + trips to the line − offensive rebounds (each one keeps the same possession alive). Both teams get roughly the same number.</span></li>
-        <li><b>Off. / Def. rating</b><span class="muted">Points scored / allowed per 100 possessions. Removes the effect of tempo, so a slow and a fast team can be compared fairly.</span></li>
-        <li><b>Net rating</b><span class="muted">Offensive minus defensive rating: how many points per 100 possessions PAOK outscore opponents by.</span></li>
-        <li><b>eFG% / TS%</b><span class="muted">Shooting efficiency that counts a three as worth more (eFG%), and also free throws (TS%).</span></li>
-        <li><b>TOV% / OREB%</b><span class="muted">Share of possessions lost to turnovers; share of own missed shots rebounded. Green = PAOK better than opponents.</span></li>
-      </ul>
-    </div>
+    ${metricsExplained()}
 `;
+}
+function metricsExplained() {
+  const rows = [
+    ['Possessions', '', 'Field goal attempts + 0.44 × free throw attempts + turnovers − offensive rebounds, averaged over the two teams', 'How many times a team had the ball. An offensive rebound keeps the same possession alive, so it is taken off. Both teams get about the same number.'],
+    ['Pace', '', 'Possessions per 40 minutes (overtime counted)', 'Higher means a faster game. It describes a style, not a level of quality.'],
+    ['ORTG', 'Offensive rating', 'Points scored per 100 possessions', 'Higher is better. Using 100 possessions removes the effect of pace, so slow and fast teams compare fairly.'],
+    ['DRTG', 'Defensive rating', 'Points allowed per 100 possessions', 'Lower is better.'],
+    ['NETRTG', 'Net rating', 'ORTG minus DRTG', 'Higher is better. A positive value means the team outscores opponents over the same number of possessions.'],
+    ['eFG%', 'Effective field goal %', '(Two-pointers made + 1.5 × three-pointers made) ÷ field goal attempts', 'Higher is better. Fairer than plain FG% because a three is worth more than a two.'],
+    ['TS%', 'True shooting %', 'Points ÷ (2 × (field goal attempts + 0.44 × free throw attempts))', 'Higher is better. Like eFG%, but free throws count too.'],
+    ['TOV%', 'Turnover %', 'Turnovers ÷ possessions', 'Lower is better.'],
+    ['OREB%', 'Offensive rebound %', 'Offensive rebounds ÷ (own offensive rebounds + opponent defensive rebounds)', 'Higher is better: the share of the team\'s own misses it gets back.'],
+    ['FT rate', 'Free throw rate', 'Free throws made per 100 field goal attempts', 'Higher is better: how often the team gets to the line and scores there.'],
+    ['AST%', 'Assisted baskets', 'Assists ÷ field goals made', 'Higher means more of the scoring comes from passing. It describes a style more than a level of quality.'],
+  ];
+  return `<h3 class="metrics-h">The metrics</h3>
+    <div class="table-wrap metrics" style="max-width:860px"><table>
+      <thead><tr><th class="l">Metric</th><th class="l">How it is calculated</th><th class="l">How to read it</th></tr></thead>
+      <tbody>${rows.map(([k, name, calc, read]) => `<tr><td class="l"><b>${k}</b>${name ? `<div class="muted">${name}</div>` : ''}</td><td class="l">${calc}</td><td class="l">${read}</td></tr>`).join('')}</tbody>
+    </table></div>
+    <p class="note">In the table above, green = PAOK better than their opponents.</p>`;
 }
 
 /* ---------- league averages and ranks ---------- */

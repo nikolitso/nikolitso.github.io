@@ -363,3 +363,7 @@ h3.official-h { margin-top: 30px; }
 .card.dark { --muted: #4c5260; --ink: var(--an-paper); --line: #c9ccd6; }
 .games > h3 { margin: 24px 0 8px; }
 .games > h3:first-child { margin-top: 4px; }
+.metrics-h { margin-top: 26px; }
+.metrics td, .metrics th { white-space: normal; vertical-align: top; text-align: left; line-height: 1.4; }
+.metrics td:first-child { min-width: 120px; }
+.metrics td .muted { font-size: 12.5px; }
