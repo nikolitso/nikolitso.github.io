@@ -152,6 +152,14 @@ def greek_cup():
             f"{len(d['games'])} games"]
 
 
+def mid_europe():
+    d = js_object("/football/mid-europe/data.js", r"window\.D\s*=")
+    P = d.get("picks") or []
+    done = [p for p in P if p.get("result")]
+    return record(sum(p["result"] == "W" for p in done), sum(p["result"] == "L" for p in done),
+                  sum(p["profit"] for p in done), sum(not p.get("result") for p in P))
+
+
 def basketball_cup(folder):
     d = js_object(f"/{folder}/projections.js", r"window\.PROJ\s*=")
     games = upcoming(d.get("list", []), lambda g: g["when"])
@@ -192,6 +200,7 @@ def basketball_totals(folder):
 CARDS = {                    # slug -> (card href on the homepage, reader)
     "superleague": ("/superleague/", superleague),
     "greek-cup": ("/football/greek-cup/", greek_cup),
+    "mid-europe": ("/football/mid-europe/", mid_europe),
     "eurocup": ("/eurocup/", lambda: basketball_cup("eurocup")),
     "fibaeuropecup": ("/fibaeuropecup/", lambda: basketball_cup("fibaeuropecup")),
     "handball": ("/handball/projections/", handball),
