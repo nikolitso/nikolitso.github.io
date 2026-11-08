@@ -192,8 +192,8 @@ a.tile:hover{border-color:var(--gold)}
   </nav>
 </div></header>
 <div class="wrap">
+  <div class="sub" id="sub" style="margin:0 0 12px"></div>
   <div class="tiles" id="top"></div>
-  <div class="sub" id="sub"></div>
   <div class="chips" id="chips"></div>
   <div id="out"></div>
 </div>
@@ -231,7 +231,7 @@ LIVE.fixtures = LIVE.fixtures.filter(g => LG[g.lg]);                       // le
 LIVE.picks = (LIVE.picks || []).filter(b => LG[b.lg]);
 if (LIVE.leagues) LIVE.leagues = LIVE.leagues.filter(k => LG[k]);
 
-$('sub').textContent = `${DATA.leagues.length} Leagues · backtest 2022–23 to 2025–26 · ${DATA.season.slice(0, 4)}–${DATA.season.slice(7)} record since 8 Nov 2026 · updated ${LIVE.updated} (Athens)`;
+$('sub').innerHTML = `<b>Updated ${LIVE.updated} (Athens)</b> · ${DATA.leagues.length} leagues · backtest 2022–23 to 2025–26 · ${DATA.season.slice(0, 4)}–${DATA.season.slice(7)} record since 8 Nov 2026`;
 
 // top tiles: the whole 2026-27 record, as on the Live test tab (ROI = return over wins + losses)
 {
@@ -406,7 +406,7 @@ function renderPicks(){
   // open picks first, then this season's record: October bets (same rules, worked out from results) + bets logged live
   const open = LIVE.picks.filter(b => !b.done).sort((a, b) => a.dt < b.dt ? -1 : 1);
   const fx = Object.fromEntries(LIVE.fixtures.map(g => [g.home + '|' + g.away, g]));
-  let h = `<p class="note"><b>The pick.</b> The over, when the model's edge is above ${Math.round(LE()*100)}%: regular season, both teams ${LIVE.min_gp ?? 3}+ games in${LIVE.max_line && LIVE.max_line < 999 ? `, line under ${LIVE.max_line}` : ''}, and not after hot 3-point shooting (luck ${LKs()} or more).<br><b>When.</b> Every hour the model checks the next 7 days. A pick is logged the first time its edge clears the bar, at that line and the average price, and never changed. Take it early: the line usually moves toward it.<br><b>Scoring.</b> Equal stakes. ROI is profit ÷ amount staked; pushes don't count. Updated ${LIVE.updated} (Athens).</p>`;
+  let h = `<p class="note"><b>The pick.</b> The over, when the model's edge is above ${Math.round(LE()*100)}%: regular season, both teams ${LIVE.min_gp ?? 3}+ games in${LIVE.max_line && LIVE.max_line < 999 ? `, line under ${LIVE.max_line}` : ''}, and not after hot 3-point shooting (luck ${LKs()} or more).<br><b>When.</b> Every hour the model checks the next 7 days. A pick is logged the first time its edge clears the bar, at that line and the average price, and never changed. Take it early: the line usually moves toward it.<br><b>Scoring.</b> Equal stakes. ROI is profit ÷ amount staked; pushes don't count.</p>`;
   if (!open.length) h += '<p class="empty">No open picks right now. New ones appear here as lines open.</p>';
   else {
     h += `<h2>Open picks</h2><div class="scroll"><table class="proj"><thead><tr><th>Tip-off</th><th>League</th><th>Match</th><th class="n">Pick</th><th class="n">Price</th><th class="n">Model total</th><th class="n">Edge</th><th class="n">Line now</th><th class="n">Pace</th><th class="n">3-pt luck</th></tr></thead><tbody>` +
