@@ -549,9 +549,7 @@ function renderSettled(settled, all){
   h += `<div class="metrics">
     <div class="metric"><div class="lbl">Settled so far</div><div class="big">${all.n}</div></div>
     <div class="metric"><div class="lbl">Hit rate</div><div class="big">${all.n ? pct(all.hit) : '–'}</div></div>
-    
     <div class="metric"><div class="lbl">ROI</div><div class="big">${all.n ? evPct(all.roi) : '–'}</div></div>
-    <div class="metric"><div class="lbl">Avg CLV (${closed.length} of ${all.n})</div><div class="big">${closed.length ? clvPct(avgOf(closed.map(b => b.clv))) : '–'}</div></div>
     <div class="metric"><div class="lbl">Odds v close</div><div class="big" style="font-size:18px">${closed.length ? `${closed.filter(b => b.odds > b.close).length} better · ${closed.filter(b => b.odds === b.close).length} same · ${closed.filter(b => b.odds < b.close).length} worse` : '–'}</div></div></div>
     ${closed.length ? `<p class="muted" style="margin:-6px 0 14px;font-size:15.5px"><b>CLV</b> (closing-line value) compares the odds taken with the bookie's last price before kick-off, with the margin removed. Odds that never moved score about −5% to −10%, the margin itself, so <b>Odds v close</b> shows the movement on its own. Picks from 24–25 Oct have no CLV: they were recorded at the last price before kick-off, so there is no later price to compare.</p>` : ''}`;
   if (!settled.length) return h + `<p class="muted" style="margin-top:18px">No settled picks yet at this EV level: the record starts once results for logged picks are in the data.</p>`;
