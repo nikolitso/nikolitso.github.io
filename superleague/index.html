@@ -280,6 +280,13 @@ function contextHtml(g){
       if (withTeam.length) rows.push(ctxRow('Referee with', withTeam.map(([t, xs]) => `${t} <b>${wdl(xs, t)}</b> in ${xs.length}, ${avgOf(xs.map(x => teamGame(x, t).cards)).toFixed(1)} cards a game`).join(' · ')));
     }
   }
+  if (g.europe){
+    const EU = {home: 'Since 2016–17, a Big-4 side at home to a small club after Europe: <b>2.56</b> goals a game (2.84 rested), over 2.5 in <b>48%</b> (58% rested)',
+      away: 'Since 2016–17, a Big-4 side away to a small club after Europe: 2.35 goals a game (2.41 rested), over 2.5 in <b>41%</b> while the odds expected 47%',
+      one: 'Since 2016–17, derbies with one side after Europe: result and goals as usual, <b>6.5</b> cards a game (5.5 otherwise)',
+      both: 'Since 2016–17, derbies with both sides after Europe: 2.9 goals and 6.3 cards a game, from only 12 games'};
+    rows.push(ctxRow('After Europe', `${g.europe.lines.join('. ')}. ${EU[g.europe.key] || ''} · not in the model · <a href="/superleague/research/europe/">study</a>`));
+  }
   if (!rows.length) return '';
   return `<div class="ctx"><h4>Context</h4>${rows.join('')}</div>`;
 }
