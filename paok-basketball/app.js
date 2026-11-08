@@ -874,6 +874,7 @@ function paceStats(games) {
       ts: (100 * sum(a, 'pts')) / (2 * (fga + 0.44 * sum(a, 'fta'))),
       tovPct: (100 * sum(a, 'tov')) / poss,
       orebPct: (100 * sum(a, 'oreb')) / (sum(a, 'oreb') + sum(b, 'dreb') || 1),
+      rebPct: (100 * (sum(a, 'oreb') + sum(a, 'dreb'))) / (sum(a, 'oreb') + sum(a, 'dreb') + sum(b, 'oreb') + sum(b, 'dreb') || 1),
       ftr: fga ? (100 * sum(a, 'ftm')) / fga : null,
       astPct: fgm ? (100 * sum(a, 'ast')) / fgm : null,
     };
@@ -901,6 +902,7 @@ function paceSection(games, comp) {
         ${pctRow('True shooting % (TS%)', 'ts')}
         ${pctRow('Turnover % (TOV%)', 'tovPct', false)}
         ${pctRow('Offensive rebound % (OREB%)', 'orebPct')}
+        ${pctRow('Total rebound % (REB%)', 'rebPct')}
         ${pctRow('Free throw rate (FTM per 100 FGA)', 'ftr')}
         ${pctRow('Assisted baskets (AST / FGM)', 'astPct')}
       </tbody></table></div>
@@ -918,6 +920,7 @@ function metricsExplained() {
     ['TS%', 'True shooting %', 'Points ÷ (2 × (field goal attempts + 0.44 × free throw attempts))', 'Higher is better. Like eFG%, but free throws count too.'],
     ['TOV%', 'Turnover %', 'Turnovers ÷ possessions', 'Lower is better.'],
     ['OREB%', 'Offensive rebound %', 'Offensive rebounds ÷ (own offensive rebounds + opponent defensive rebounds)', 'Higher is better: the share of the team\'s own misses it gets back.'],
+    ['REB%', 'Total rebound %', 'Team rebounds ÷ all rebounds in the game (both teams, offensive and defensive)', 'Higher is better. Above 50% means the team wins the rebounding battle.'],
     ['FT rate', 'Free throw rate', 'Free throws made per 100 field goal attempts', 'Higher is better: how often the team gets to the line and scores there.'],
     ['AST%', 'Assisted baskets', 'Assists ÷ field goals made', 'Higher means more of the scoring comes from passing. It describes a style more than a level of quality.'],
   ];
