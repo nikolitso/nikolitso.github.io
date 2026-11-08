@@ -1,7 +1,7 @@
 {
  "competition": "Stoiximan GBL",
  "season": "2026-27",
- "updated": "2026-11-08T14:07:29Z",
+ "updated": "2026-11-08T17:34:13Z",
  "source": "https://www.esake.gr/",
  "roster": [
   {
@@ -3358,6 +3358,18 @@
   },
   {
    "pos": 3,
+   "team": "Olympiacos",
+   "paok": false,
+   "pts": 10,
+   "gp": 6,
+   "w": 6,
+   "l": 0,
+   "pf": 515,
+   "pa": 407,
+   "diff": 108
+  },
+  {
+   "pos": 4,
    "team": "Karditsa",
    "paok": false,
    "pts": 10,
@@ -3369,7 +3381,7 @@
    "diff": 18
   },
   {
-   "pos": 4,
+   "pos": 5,
    "team": "Panathinaikos",
    "paok": false,
    "pts": 9,
@@ -3381,7 +3393,7 @@
    "diff": 87
   },
   {
-   "pos": 5,
+   "pos": 6,
    "team": "Kolossos",
    "paok": false,
    "pts": 9,
@@ -3393,7 +3405,7 @@
    "diff": -7
   },
   {
-   "pos": 6,
+   "pos": 7,
    "team": "Peristeri",
    "paok": false,
    "pts": 9,
@@ -3403,18 +3415,6 @@
    "pf": 483,
    "pa": 525,
    "diff": -42
-  },
-  {
-   "pos": 7,
-   "team": "Olympiacos",
-   "paok": false,
-   "pts": 8,
-   "gp": 5,
-   "w": 5,
-   "l": 0,
-   "pf": 432,
-   "pa": 326,
-   "diff": 106
   },
   {
    "pos": 8,
@@ -3454,6 +3454,18 @@
   },
   {
    "pos": 11,
+   "team": "Maroussi",
+   "paok": false,
+   "pts": 7,
+   "gp": 6,
+   "w": 1,
+   "l": 5,
+   "pf": 455,
+   "pa": 489,
+   "diff": -34
+  },
+  {
+   "pos": 12,
    "team": "Mykonos",
    "paok": false,
    "pts": 7,
@@ -3463,18 +3475,6 @@
    "pf": 441,
    "pa": 507,
    "diff": -66
-  },
-  {
-   "pos": 12,
-   "team": "Vikos Falcons",
-   "paok": false,
-   "pts": 7,
-   "gp": 6,
-   "w": 1,
-   "l": 5,
-   "pf": 448,
-   "pa": 524,
-   "diff": -76
   },
   {
    "pos": 13,
@@ -3490,15 +3490,15 @@
   },
   {
    "pos": 14,
-   "team": "Maroussi",
+   "team": "Vikos Falcons",
    "paok": false,
-   "pts": 6,
-   "gp": 5,
+   "pts": 7,
+   "gp": 6,
    "w": 1,
-   "l": 4,
-   "pf": 374,
-   "pa": 406,
-   "diff": -32
+   "l": 5,
+   "pf": 448,
+   "pa": 524,
+   "diff": -76
   }
  ]
 }
