@@ -4,10 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Basketball totals: overs at the opening line</title>
-<meta name="description" content="Basketball totals in 33 European domestic top divisions: four seasons of backtests at the opening line, a live record and projections.">
+<meta name="description" content="Basketball totals in 44 domestic top divisions in Europe and Latin America: four seasons of backtests at the opening line, a live record and projections.">
 <link rel="canonical" href="https://antonisnikolitsopoulos.com/basketball/overs/">
 <meta property="og:title" content="Basketball totals: overs at the opening line">
-<meta property="og:description" content="Basketball totals in 33 European domestic top divisions: four seasons of backtests at the opening line, a live record and projections.">
+<meta property="og:description" content="Basketball totals in 44 domestic top divisions in Europe and Latin America: four seasons of backtests at the opening line, a live record and projections.">
 <meta property="og:url" content="https://antonisnikolitsopoulos.com/basketball/overs/">
 <meta property="og:image" content="https://antonisnikolitsopoulos.com/basketball-overs.jpg">
 <meta name="twitter:card" content="summary_large_image">
@@ -197,7 +197,7 @@ a.tile:hover{border-color:var(--gold)}
   <div class="chips" id="chips"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=6a11156a"></script>
+<script src="data.js?v=805acd60"></script>
 <script src="live.js"></script>
 <script>
 const $ = id => document.getElementById(id);
@@ -298,8 +298,8 @@ function renderLeagues(){
     return `<td class="n">${d.length}</td><td class="n">${pct(w / d.length, 1)}</td><td class="n ${cls(u)}">${u >= 0 ? '+' : '−'}${Math.abs(u).toFixed(1)}</td>` +
       `<td class="n ${cls(u)}">${roi(u / d.length)}</td><td class="n ${c.length ? cls(uc) : 'muted'}">${c.length ? roi(uc / c.length) : '–'}</td>`;
   }
-  const tierName = {europe: 'European competitions', top: 'Top divisions', second: 'Second divisions'};
-  for (const tier of ['europe', 'top', 'second']){
+  const tierName = {europe: 'European competitions', top: 'Europe', latam: 'Latin America', second: 'Second divisions'};
+  for (const tier of ['europe', 'top', 'latam', 'second']){
     if (!DATA.leagues.some(l => l.tier === tier)) continue;
     h += `<tr><td colspan="10" class="tier" style="padding-top:18px">${tierName[tier]}</td></tr>`;
     for (const l of DATA.leagues.filter(l => l.tier === tier)){
