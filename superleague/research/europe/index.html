@@ -32,6 +32,10 @@ td.hi{background:var(--an-accent-soft);font-weight:600}
 .fact{background:var(--an-soft);border:1px solid var(--an-rule);border-radius:10px;padding:12px 14px;font-size:14px;line-height:1.5}
 .fact b{display:block;font:400 30px/1.1 var(--an-display);margin-bottom:4px}
 .fact span{color:var(--an-muted)}
+a.fact{display:block;color:inherit;text-decoration:none;transition:border-color .15s}
+a.fact:hover{border-color:var(--an-accent)}
+a.fact:after{content:"See the numbers →";display:block;margin-top:6px;font-size:12.5px;color:var(--an-accent)}
+h2{scroll-margin-top:16px}
 .nav{display:flex;justify-content:space-between;gap:16px;margin-top:36px;font-size:14px;flex-wrap:wrap}
 .nav a,.wrap p a,.wrap li a{color:var(--an-accent);text-decoration:none}
 .nav a:hover,.wrap p a:hover,.wrap li a:hover{text-decoration:underline}
@@ -49,13 +53,13 @@ td.hi{background:var(--an-accent-soft);font-weight:600}
 <p class=lede>What happens when Olympiakos, PAOK, AEK or Panathinaikos play a league game <b>three or four days after a European match</b>? This covers the Super League from 2016–17 to 18 Oct 2026 and the Big 4's 416 European games in that time.</p>
 
 <div class="facts">
-  <div class="fact"><b>2.56</b>goals per game when a Big-4 side hosts a small club after Europe, against 2.84 when rested</div>
-  <div class="fact"><b>48%</b>of those home games went over 2.5 goals, against 58% when rested</div>
-  <div class="fact"><b>40%</b>over 2.5 in all Big-4 v small games after Europe since 2024–25, while the odds expected 53%</div>
-  <div class="fact"><b>+1 card</b>per game in derbies after Europe (6.5 against 5.5), with the result unchanged</div>
+  <a class="fact" href="#small-clubs"><b>2.56</b>goals per game when a Big-4 side hosts a small club after Europe, against 2.84 when rested</a>
+  <a class="fact" href="#small-clubs"><b>48%</b>of those home games went over 2.5 goals, against 58% when rested</a>
+  <a class="fact" href="#odds"><b>45%</b>over 2.5 in Big-4 v small games after Europe since 2016–17, while the odds expected 52%</a>
+  <a class="fact" href="#derbies"><b>+1 card</b>per game in derbies after Europe (6.5 against 5.5), with the result unchanged</a>
 </div>
 
-<h2>Against the small clubs: fewer goals, mostly at home</h2>
+<h2 id="small-clubs">Against the small clubs: fewer goals, mostly at home</h2>
 <p>Every Big-4 v small game since 2016–17. Averages per game, with the Big-4 side either rested or three or four days after a European game:</p>
 <table>
 <tr><th>Per game</th><th class=n>At home, rested</th><th class=n>At home, after Europe</th><th class=n>Away, rested</th><th class=n>Away, after Europe</th></tr>
@@ -69,16 +73,20 @@ td.hi{background:var(--an-accent-soft);font-weight:600}
 <p>The Big-4 side still wins as often, but scores less, so the game has fewer goals. The drop is clear <b>at home</b>: 2.84 goals a game falls to 2.56, and over 2.5 from 58% to 48%. Away it is small.</p>
 <p>The raw averages slightly understate it, because the teams that play in Europe are usually the strongest that season. Comparing each team only with its own other games in the same season, games after Europe have about <b>0.5 fewer goals at home</b> and 0.2 fewer away. The Big-4 side's own goals drop by 0.5 at home and 0.3 away, while it concedes no more.</p>
 
-<h2>The odds expect the win, not the low score</h2>
-<p>Big-4 v small games since 2024–25, compared with the closing odds:</p>
-<table style="max-width:640px">
+<h2 id="odds">The odds see the win, not the low score</h2>
+<p>The same Big-4 v small games since 2016–17, compared with the odds before kick-off:</p>
+<table>
 <tr><th>Big-4 side</th><th class=n>Games</th><th class=n>Big-4 won</th><th class=n>Odds expected</th><th class=n>Over 2.5 goals</th><th class=n>Odds expected</th></tr>
-<tr><td>Rested</td><td class=n>116</td><td class=n>71%</td><td class=n>70%</td><td class=n>56%</td><td class=n>54%</td></tr>
-<tr><td>After Europe</td><td class=n>67</td><td class=n>72%</td><td class=n>68%</td><td class="n hi">40%</td><td class=n>53%</td></tr>
+<tr><td>At home, rested</td><td class=n>364</td><td class=n>79%</td><td class=n>72%</td><td class=n>59%</td><td class=n>53%</td></tr>
+<tr><td>At home, after Europe</td><td class=n>112</td><td class=n>79%</td><td class=n>74%</td><td class="n hi">48%</td><td class=n>55%</td></tr>
+<tr><td>Away, rested</td><td class=n>387</td><td class=n>60%</td><td class=n>57%</td><td class=n>43%</td><td class=n>46%</td></tr>
+<tr><td>Away, after Europe</td><td class=n>88</td><td class=n>62%</td><td class=n>61%</td><td class="n hi">41%</td><td class=n>47%</td></tr>
 </table>
-<p>A tired Big-4 side still wins about as often as the odds say. But its games went over 2.5 goals far less often than the odds expected. With only 67 games, this is worth watching, not yet proven.</p>
+<p><b>The win:</b> the Big 4 won a few points more often than the odds expected in every row, tired or not. So playing in Europe doesn't open a gap on the result.</p>
+<p><b>The goals:</b> when the Big-4 side was rested, games went over 2.5 about as often as the odds expected, or more at home. After Europe they went over 6–7 points less often than expected, at home and away. The odds hardly move for a tired Big-4 side, but the goals do.</p>
+<p class=note>Odds are the average across books with the margin removed: closing odds from 2019–20, average pre-match odds before that.</p>
 
-<h2>Derbies: no effect on the result</h2>
+<h2 id="derbies">Derbies: no effect on the result</h2>
 <p>Since 2016–17 there have been 207 derbies between the Big 4. In 27 of them, only one side had played in Europe three or four days earlier. That side did about as well as usual:</p>
 <table style="max-width:560px">
 <tr><th>Side after Europe</th><th class=n>Won</th><th class=n>Drew</th><th class=n>Lost</th><th class=n>Points per game</th><th class=n>Usual in derbies</th></tr>
@@ -96,7 +104,7 @@ td.hi{background:var(--an-accent-soft);font-weight:600}
 
 <h2>What changed in the model</h2>
 <ul>
-  <li><b>Nothing for European games, for now.</b> The odds already price the result, and the goals and derby cards findings rest on small samples. Both will be checked again as games come in.</li>
+  <li><b>Nothing for European games, for now.</b> The odds already price the result. The goals finding holds over ten seasons and may be added later; the derby cards rest on 27 games. Both will be checked again as games come in.</li>
   <li><b>Fouls by type of game, added on 8 Nov 2026.</b> While checking this, Big-4 v small games turned out to have about 1.5 fewer fouls than the model projected, every season. Their projected fouls are now cut by about 4%. See <a href="/superleague/#view=method">How it works</a>.</li>
 </ul>
 
