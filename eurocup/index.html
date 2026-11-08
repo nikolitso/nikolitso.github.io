@@ -633,7 +633,7 @@ function mkSpots(before){
   // a market gap: one side has won 54%+ of 20 or more games, as "Worth watching" on Market Analysis
   const line = (name, k, who) => {
     const x = rec[k] || {w: 0, l: 0}, n = x.w + x.l, gap = n >= 20 && Math.max(x.w, x.l) / n >= 0.54;
-    return `<div class="lean"><span class="k">${name}</span><span class="pick">${esc(k)}</span><span class="gp${gap ? ' big' : ''}" title="How this kind of game has gone against the lines this season">${who} ${x.w}–${x.l}${gap ? ' · market gap' : ''}</span></div>`;
+    return `<div class="lean"><span class="k">${name}</span><span class="pick">${esc(k)}</span>${gap ? `<span class="gp big" title="This kind of game against the lines this season: ${who} ${x.w}–${x.l}">market gap</span>` : ''}</div>`;
   };
   // the side of a market gap: 1 home, -1 away, 0 none
   const edge = bh => {
@@ -665,21 +665,21 @@ function pjPick(g){
   return k && {...k, g};
 }
 // Where the game could turn: for each of the four factors, the attack of one club against the defence of the other,
-// as season ranks (PROJ.factors); the three factors with the widest gap, the side ahead in bold. Context only.
-const FF_MIN = 4, FF_GAP = 6;                                  // games a club needs; rank gap shown as an edge
+// as ranks within the group from group games only (PROJ.factors); the three factors with the widest gap, the side ahead in bold. Context only.
+const FF_MIN = 4, FF_GAP = 3;                                  // games a club needs; rank gap shown as an edge
 const ordn = n => n + (n % 100 >= 11 && n % 100 <= 13 ? 'th' : ['th', 'st', 'nd', 'rd'][n % 10] || 'th');
 const FF = [['Shooting', 'efg', 'shooting (eFG)', 'oefg', 'shot defence (opp eFG)'], ['Turnovers', 'tov', 'ball security (TOV)', 'otov', 'turnovers forced'],
             ['Rebounding', 'orb', 'offensive rebounds', 'drb', 'defensive rebounds'], ['Free throws', 'ftr', 'getting to the line (FT rate)', 'oftr', 'fouling least (opp FT rate)']];
 function pjTurn(g){
   const F = (window.PROJ && PROJ.factors) || {}, H = F[g.h], A = F[g.a];
-  if (!H || !A || H.n < FF_MIN || A.n < FF_MIN) return '';
+  if (!H || !A || H.grp !== A.grp || H.n < FF_MIN || A.n < FF_MIN) return '';
   const rows = FF.map(([name, ok, ol, dk, dl]) => {
     const pair = [[g.h, H, g.a, A], [g.a, A, g.h, H]].map(([x, X, y, Y]) => ({x, y, xv: X[ok], yv: Y[dk], gap: Y[dk][1] - X[ok][1]}));
     const m = Math.abs(pair[0].gap) >= Math.abs(pair[1].gap) ? pair[0] : pair[1];
     return {name, ol, dl, ...m};
   }).sort((p, q) => Math.abs(q.gap) - Math.abs(p.gap)).slice(0, 3);
   const nm = (club, on) => on ? `<b>${esc(club)}</b>` : esc(club);
-  return `<div class="leans turn"><div class="lh" title="Context, not a pick: the market already prices these (EuroCup backtest)">Where the game could turn</div>` +
+  return `<div class="leans turn"><div class="lh" title="Ranks among the 8 clubs of the group, from the group's games only. Context, not a pick: the market already prices these (EuroCup backtest)">Where the game could turn <span class="tag">· in the group</span></div>` +
     rows.map(r => { const up = Math.abs(r.gap) >= FF_GAP, ax = up && r.gap > 0, dx = up && r.gap < 0;
       return `<div class="lean"><span class="k">${r.name}</span><span>${nm(r.x, ax)} ${ordn(r.xv[1])} in ${r.ol} <span class="tag">${r.xv[0].toFixed(1)}%</span>, ${nm(r.y, dx)} ${ordn(r.yv[1])} in ${r.dl} <span class="tag">${r.yv[0].toFixed(1)}%</span>${up ? '' : ' <span class="tag">· even</span>'}</span></div>`; }).join('') + '</div>';
 }
@@ -876,11 +876,11 @@ function renderPjCards(P){
       <div class="warn"><b>Not a sure thing.</b> The model uses past results and the injury list, no other news, and has not proven an edge over the market. This pick rule is new and has no record yet.</div>
       <details><summary>How to read a card</summary><ul><li><b>Winner</b>: the chance to win (the market's worked out from its handicap).</li>
         <li><b>Handicap</b>: the expected winning margin, written like a market line: Mykonos −8.3 = Mykonos by 8.3.</li>
-        <li><b>Market so far</b>: the kind of game the line makes it, and its record against the lines this season (<a class="back" href="#view=market" data-go="market">Market Analysis</a>). Gold = one side has won 54%+ of 20 or more games: a possible market gap, still not proven.</li>
+        <li><b>Market so far</b>: the kind of game the line makes it. A gold <b>market gap</b> appears when one side of that kind of game has won 54%+ of 20 or more this season (<a class="back" href="#view=market" data-go="market">Market Analysis</a>): a possible gap, still not proven.</li>
         <li><b>Clubs</b>: clubs on the underrated or overrated lists of Market Analysis, with their average against the handicap.</li>
         <li><b>Pick</b>: a market edge (a gold market gap) and a model edge (${PJ_EDGE}+ points from the line) on the same side, and the club rating does not disagree: the club is not overrated and its opponent is not underrated.</li>
         <li><b>Model leans</b>: the bet the model prefers at the market's line, and how far apart the two are. Gaps of ${gapMin}+ points are in gold. "No lean" means the two are close.</li>
-        <li><b>Where the game could turn</b>: the four factors (shooting, turnovers, rebounding, free throws), one club's attack against the other's defence, as this season's ranks among the clubs. The three widest gaps are shown, the club ahead in bold (${FF_GAP}+ places apart, otherwise "even"). Context only: in the 2023-24 to 2025-26 backtest the market line already reflected these, so they are not part of any pick.</li>
+        <li><b>Where the game could turn</b>: the four factors (shooting, turnovers, rebounding, free throws), one club's attack against the other's defence, as ranks among the 8 clubs of their group, from the group's games only. The three widest gaps are shown, the club ahead in bold (${FF_GAP}+ places apart, otherwise "even"). Context only: in the 2023-24 to 2025-26 backtest the market line already reflected these, so they are not part of any pick.</li>
         <li><b>*</b>: the handicap includes the absences listed on the card.</li></ul></details></div>
     <h2 style="margin-top:6px">Picks</h2>` + (picks.length
       ? `<div class="scroll"><table class="fx pjpk"><tr><th class="n">Time</th><th>Pick</th><th>Game</th><th>Market edge</th><th class="n">Model edge</th><th>Club rating</th></tr>` +
