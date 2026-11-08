@@ -1996,46 +1996,46 @@
   "date": "2026-11-10T17:00:00Z",
   "opp": "Balkan",
   "home": false,
-  "saved": "2026-11-07T18:42:53Z",
-  "paok": 84.2,
-  "oppScore": 76.6,
-  "winProb": 75,
+  "saved": "2026-11-08T01:11:43Z",
+  "paok": 78.9,
+  "oppScore": 79.3,
+  "winProb": 49,
   "lineupSource": "manual",
   "teamStats": {
    "pts": {
-    "paok": 84.2,
-    "opp": 76.6,
-    "total": 160.8
+    "paok": 78.9,
+    "opp": 79.3,
+    "total": 158.2
    },
    "fg2m": {
-    "paok": 21.0,
-    "opp": 20.5,
-    "total": 41.6
+    "paok": 19.7,
+    "opp": 21.3,
+    "total": 41.0
    },
    "fg3m": {
-    "paok": 8.4,
-    "opp": 7.2,
-    "total": 15.6
+    "paok": 7.9,
+    "opp": 7.4,
+    "total": 15.3
    },
    "ftm": {
-    "paok": 16.9,
-    "opp": 14.0,
-    "total": 30.9
+    "paok": 15.8,
+    "opp": 14.5,
+    "total": 30.3
    },
    "ast": {
-    "paok": 17.9,
-    "opp": 14.9,
-    "total": 32.8
+    "paok": 16.8,
+    "opp": 15.4,
+    "total": 32.2
    },
    "oreb": {
-    "paok": 9.9,
-    "opp": 10.2,
-    "total": 20.1
+    "paok": 10.4,
+    "opp": 9.9,
+    "total": 20.4
    },
    "dreb": {
-    "paok": 24.0,
-    "opp": 22.6,
-    "total": 46.6
+    "paok": 23.3,
+    "opp": 23.9,
+    "total": 47.3
    },
    "tov": {
     "paok": 13.7,
@@ -2043,77 +2043,77 @@
     "total": 28.4
    },
    "reb": {
-    "paok": 33.9,
-    "opp": 32.8,
-    "total": 66.7
+    "paok": 33.7,
+    "opp": 33.8,
+    "total": 67.7
    }
   },
   "modelTotal": 157.0,
-  "line": 161.5,
+  "line": null,
   "modelMargin": -0.4,
-  "hcp": 9.5,
+  "hcp": null,
   "players": {
    "paok": [
     {
      "name": "Marcus Foster",
      "no": "17",
-     "min": 26,
-     "pts": 14.9,
-     "reb": 4.2,
-     "ast": 2.4,
-     "pir": 14.4
+     "min": 25,
+     "pts": 14.5,
+     "reb": 4.1,
+     "ast": 2.3,
+     "pir": 14.0
     },
     {
      "name": "Kyle Alexander",
      "no": "8",
      "min": 21,
-     "pts": 8.2,
-     "reb": 5.7,
+     "pts": 8.0,
+     "reb": 5.6,
      "ast": 0.9,
-     "pir": 13.2
+     "pir": 13.0
     },
     {
      "name": "Breein Tyree",
      "no": "5",
      "min": 19,
-     "pts": 13.5,
+     "pts": 13.4,
      "reb": 2.2,
      "ast": 1.4,
-     "pir": 12.4
+     "pir": 12.3
     },
     {
      "name": "Nick Calathes",
      "no": "33",
-     "min": 23,
-     "pts": 8.1,
-     "reb": 4.5,
-     "ast": 5.6,
-     "pir": 11.1
-    },
-    {
-     "name": "Raiquan Gray",
-     "no": "0",
-     "min": 23,
-     "pts": 4.9,
-     "reb": 2.6,
-     "ast": 2.0,
-     "pir": 6.6
+     "min": 22,
+     "pts": 7.8,
+     "reb": 4.3,
+     "ast": 5.4,
+     "pir": 10.7
     },
     {
      "name": "Trevor Hudgins",
      "no": "12",
-     "min": 16,
-     "pts": 6.5,
+     "min": 17,
+     "pts": 6.6,
      "reb": 1.7,
      "ast": 2.0,
-     "pir": 6.5
+     "pir": 6.7
+    },
+    {
+     "name": "Raiquan Gray",
+     "no": "0",
+     "min": 22,
+     "pts": 4.8,
+     "reb": 2.5,
+     "ast": 2.0,
+     "pir": 6.4
     },
     {
      "name": "Ben Moore",
      "no": "26",
-     "min": 18,
-     "pts": 5.0,
-     "reb": 3.3,
+     "min": 17,
+     "pts": 4.9,
+     "reb": 3.2,
      "ast": 0.5,
      "pir": 5.9
     },
@@ -2121,10 +2121,19 @@
      "name": "Naz Mitrou Long",
      "no": "1",
      "min": 16,
-     "pts": 6.0,
+     "pts": 6.2,
      "reb": 1.5,
      "ast": 1.1,
-     "pir": 5.1
+     "pir": 5.3
+    },
+    {
+     "name": "Dimitris Kaklamanakis",
+     "no": "14",
+     "min": 7,
+     "pts": 2.0,
+     "reb": 1.9,
+     "ast": 0.5,
+     "pir": 3.4
     },
     {
      "name": "Nikos Chougkaz",
@@ -2139,28 +2148,19 @@
      "name": "Athanasios Bazinas",
      "no": "77",
      "min": 10,
-     "pts": 3.5,
-     "reb": 1.2,
+     "pts": 3.3,
+     "reb": 1.1,
      "ast": 0.8,
-     "pir": 3.2
+     "pir": 3.1
     },
     {
      "name": "Nikolaos Persidis",
      "no": "18",
-     "min": 9,
-     "pts": 2.8,
-     "reb": 1.5,
+     "min": 10,
+     "pts": 3.1,
+     "reb": 1.6,
      "ast": 0.6,
-     "pir": 2.7
-    },
-    {
-     "name": "Dimitris Kaklamanakis",
-     "no": "14",
-     "min": 6,
-     "pts": 1.5,
-     "reb": 1.5,
-     "ast": 0.3,
-     "pir": 2.5
+     "pir": 3.0
     }
    ],
    "opp": [
@@ -2281,46 +2281,46 @@
   "date": "2026-11-14T15:30:00Z",
   "opp": "Karditsa",
   "home": false,
-  "saved": "2026-11-07T18:42:53Z",
-  "paok": 72.7,
-  "oppScore": 73.7,
-  "winProb": 46,
+  "saved": "2026-11-08T01:11:43Z",
+  "paok": 80.8,
+  "oppScore": 75.5,
+  "winProb": 71,
   "lineupSource": "manual",
   "teamStats": {
    "pts": {
-    "paok": 72.7,
-    "opp": 73.7,
-    "total": 146.4
+    "paok": 80.8,
+    "opp": 75.5,
+    "total": 156.3
    },
    "fg2m": {
-    "paok": 15.9,
-    "opp": 18.4,
-    "total": 34.3
+    "paok": 17.7,
+    "opp": 18.9,
+    "total": 36.5
    },
    "fg3m": {
-    "paok": 8.4,
-    "opp": 7.3,
-    "total": 15.7
+    "paok": 9.3,
+    "opp": 7.5,
+    "total": 16.8
    },
    "ftm": {
-    "paok": 15.7,
-    "opp": 14.9,
-    "total": 30.6
+    "paok": 17.5,
+    "opp": 15.2,
+    "total": 32.7
    },
    "ast": {
-    "paok": 15.5,
-    "opp": 14.0,
-    "total": 29.5
+    "paok": 17.3,
+    "opp": 14.3,
+    "total": 31.6
    },
    "oreb": {
-    "paok": 11.3,
-    "opp": 10.3,
-    "total": 21.6
+    "paok": 10.4,
+    "opp": 10.1,
+    "total": 20.5
    },
    "dreb": {
-    "paok": 24.5,
-    "opp": 24.9,
-    "total": 49.4
+    "paok": 24.0,
+    "opp": 22.9,
+    "total": 47.0
    },
    "tov": {
     "paok": 12.8,
@@ -2328,15 +2328,15 @@
     "total": 25.3
    },
    "reb": {
-    "paok": 35.8,
-    "opp": 35.2,
-    "total": 71.0
+    "paok": 34.4,
+    "opp": 33.0,
+    "total": 67.5
    }
   },
   "modelTotal": 145.0,
-  "line": null,
+  "line": 157.5,
   "modelMargin": -1.0,
-  "hcp": null,
+  "hcp": 6.5,
   "players": {
    "paok": [
     {
