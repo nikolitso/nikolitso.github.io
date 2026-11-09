@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-09T20:57:56Z",
+ "updated": "2026-11-09T21:07:16Z",
  "reports": [
   {
    "comp": "GBL",
@@ -1914,7 +1914,7 @@
    ],
    "projection": {
     "paok": {
-     "score": 78.0,
+     "score": 85.2,
      "players": [
       {
        "name": "Marcus Foster",
@@ -2032,7 +2032,7 @@
      "pace": 74.1
     },
     "opp": {
-     "score": 79.3,
+     "score": 76.2,
      "players": [
       {
        "name": "Javante Mccoy",
@@ -2146,14 +2146,14 @@
      "missing": [],
      "pace": 74.1
     },
-    "winProb": 46,
+    "winProb": 79,
     "pace": 74.1,
     "lineupSource": "manual",
     "note": "PAOK without Osman, who is out for one to two months, and Gray.",
     "modelTotal": 156.1,
-    "line": null,
+    "line": 162.5,
     "modelMargin": -1.3,
-    "hcp": null,
+    "hcp": 11.5,
     "learned": {
      "games": 1093,
      "lineGames": 1032,
@@ -2169,39 +2169,39 @@
     },
     "teamStats": {
      "pts": {
-      "paok": 78.0,
-      "opp": 79.3,
-      "total": 157.3
+      "paok": 85.2,
+      "opp": 76.2,
+      "total": 161.4
      },
      "fg2m": {
-      "paok": 19.5,
-      "opp": 21.3,
-      "total": 40.8
+      "paok": 21.3,
+      "opp": 20.4,
+      "total": 41.7
      },
      "fg3m": {
-      "paok": 7.8,
-      "opp": 7.4,
-      "total": 15.2
+      "paok": 8.5,
+      "opp": 7.1,
+      "total": 15.6
      },
      "ftm": {
-      "paok": 15.6,
-      "opp": 14.5,
-      "total": 30.2
+      "paok": 17.1,
+      "opp": 14.0,
+      "total": 31.0
      },
      "ast": {
-      "paok": 16.6,
-      "opp": 15.4,
-      "total": 32.0
+      "paok": 18.2,
+      "opp": 14.8,
+      "total": 32.9
      },
      "oreb": {
-      "paok": 10.5,
-      "opp": 9.9,
-      "total": 20.5
+      "paok": 9.8,
+      "opp": 10.3,
+      "total": 20.0
      },
      "dreb": {
-      "paok": 23.3,
-      "opp": 24.2,
-      "total": 47.5
+      "paok": 24.2,
+      "opp": 22.3,
+      "total": 46.5
      },
      "tov": {
       "paok": 13.7,
@@ -2209,9 +2209,9 @@
       "total": 28.4
      },
      "reb": {
-      "paok": 33.8,
-      "opp": 34.1,
-      "total": 68.0
+      "paok": 34.0,
+      "opp": 32.6,
+      "total": 66.5
      }
     }
    }
