@@ -6,11 +6,13 @@ const spct = (x, d = 1) => x == null ? '–' : (x > 0 ? '+' : '') + (x * 100).to
 const odds = p => p ? (1 / p).toFixed(2) : '–';
 const esc = s => String(s).replace(/[&<>"]/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[c]));
 const cls = x => x == null ? '' : x > 0 ? 'pos' : 'neg';
-const state = {view: 'gaps', group: 'all', when: 'open', lg: 'all', tlg: D.leagues[0].key, open: null, sort: null};
+const state = {view: 'gaps', mkt: '1x2', when: 'open', lg: 'all', tlg: D.leagues[0].key, open: null, sort: null};
 try { Object.assign(state, JSON.parse(sessionStorage.getItem('me-state') || '{}')); } catch (e) {}
 const save = () => { try { sessionStorage.setItem('me-state', JSON.stringify(state)); } catch (e) {} };
 
 const gaps = D.angles.filter(a => a.verdict === 'gap'), leads = D.angles.filter(a => a.verdict === 'lead');
+const mktOf = a => /ou2\.5/.test(a.key) ? 'ou2.5' : '1x2';
+const SEL = {'1x2': ['Home', 'Draw', 'Away'], 'ou2.5': ['Over 2.5', 'Under 2.5']};
 const tested = D.leagues.reduce((s, l) => s + l.games, 0);
 $('#sub').textContent = `${D.leagues.length} leagues · ${tested.toLocaleString('en-GB')} games tested, 2023-24 to now · updated ${D.updated.replace('T', ' ').replace('Z', ' UTC')}`;
 
@@ -40,56 +42,40 @@ function angleDetail(a) {
 const ANG_HEAD = `<thead><tr><th>Rule</th><th class="n">Bets</th><th class="n">ROI</th><th class="n" title="One standard error of the ROI">±</th><th class="n" title="Closing line value: opening price against the margin-free closing price">CLV</th><th class="n" title="2023-24 and 2024-25">Tuning ROI</th><th class="n" title="2025-26 and 2026-27 so far">Check ROI</th><th>Verdict</th></tr></thead>`;
 
 function viewGaps() {
-  const G = [['all', 'All'], ['model', 'Model edge'], ['xg', 'xG luck'], ['flat', 'Every game'], ['band', 'By price']];
-  const list = D.angles.filter(a => (state.group === 'all' || a.group === state.group) && a.key.includes(state.when === 'open' ? '_open' : '_clos'));
-  const passed = gaps.length ? `<table class="ang">${ANG_HEAD}<tbody>${gaps.map(a => angleRow(a) + (state.open === a.key ? angleDetail(a) : '')).join('')}</tbody></table>`
-    : `<p class="note">None of the ${D.angles.length} rules passes yet. See the verdicts below for how close each one comes.</p>`;
-  let html = pills() + `<p class="lede">A <b>gap</b> is a betting rule that, on past games, (1) had at least 150 bets, (2) beat the closing price on average (CLV above zero, so it is bet at opening prices) and (3) made a profit both in the seasons used to set the model up (2023-24, 2024-25) and in the seasons after (2025-26, 2026-27 so far). The rule was set before the results were seen. Prices are the best of the Greek-licensed books; CLV is measured against the margin-free closing price of about 20 UK books.</p>
+  if (!['1x2', 'ou2.5'].includes(state.mkt)) state.mkt = '1x2';
+  const order = {model: 0, side: 1, flat: 2, band: 3};
+  const list = D.angles.filter(a => mktOf(a) === state.mkt && a.key.includes(state.when === 'open' ? '_open' : '_clos'))
+    .sort((a, b) => order[a.group] - order[b.group]);
+  const tbl = xs => `<table class="ang">${ANG_HEAD}<tbody>${xs.map(a => angleRow(a) + (state.open === a.key ? angleDetail(a) : '')).join('')}</tbody></table>`;
+  const live = D.pick ? D.angles.find(x => x.key === D.pick.key) : null;
+  const passed = gaps.length ? tbl(gaps) + (live ? `<p class="note">The live picks follow <b>${esc(live.label)}</b>: of the rules that pass, it is the one that also made the same profit on the ten leagues added after the model's settings were fixed. Expect a small edge.</p>` : '')
+    : `<p class="note">None of the ${D.angles.length} rules passes yet, so no picks are posted. The tables below show how close each one comes.</p>`;
+  return pills() + `<p class="lede">Two markets only: <b>1X2</b> and <b>over/under 2.5 goals</b>. A <b>gap</b> is a betting rule that, on past games, (1) had at least 150 bets, (2) beat the closing price on average (CLV above zero, so it is bet at opening prices) and (3) made a profit both in the seasons used to set the model up (2023-24, 2024-25) and in the seasons after (2025-26, 2026-27 so far). The rule was set before the results were seen.</p>
   <h2>Gaps that pass</h2>${passed}
-  ${leads.length ? `<h2>Leads</h2><p class="note">Profit in both the tuning and the check seasons, but no support from the closing price: the CLV is below zero, or the bet is struck at closing prices, where CLV cannot be measured. Watched, not bet.</p><table class="ang">${ANG_HEAD}<tbody>${leads.map(a => angleRow(a) + (state.open === a.key ? angleDetail(a) : '')).join('')}</tbody></table>` : ''}
-  ${oosTable()}
+  ${leads.length ? `<h2>Leads</h2><p class="note">Profit in both the tuning and the check seasons, but no support from the closing price. Watched, not bet.</p>${tbl(leads)}` : ''}
+  <h2>Every rule tested</h2>
+  <div class="bar"><div class="seg">${[['1x2', '1X2'], ['ou2.5', 'Over/under 2.5']].map(([k, l]) => `<button class="${state.mkt === k ? 'on' : ''}" data-m="${k}">${l}</button>`).join('')}</div>
+  <div class="seg">${[['open', 'Opening price'], ['close', 'Closing price']].map(([k, l]) => `<button class="${state.when === k ? 'on' : ''}" data-w="${k}">${l}</button>`).join('')}</div></div>
+  <p class="note">Prices are the best of the Greek-licensed books; CLV is against the margin-free closing price of about 20 UK books. Click a rule for its leagues and seasons.</p>
+  ${tbl(list)}
   <h2>Does the model know more than the price?</h2>
   <p class="note">Log loss: lower is more accurate. <b>Move</b>: the share of the model's disagreement with the opening price that the closing price takes up (0% means the market ignores what the model sees; a clear positive number means the opening price is beatable). <b>Blend</b>: the weight the model earns next to the opening price, fitted on 2023-25.</p>
-  ${infoTable()}
-  <h2>Every rule tested</h2>
-  <div class="bar"><div class="chips">${G.map(([k, l]) => `<button class="chip${state.group === k ? ' on' : ''}" data-g="${k}">${l}</button>`).join('')}</div>
-  <div class="seg">${[['open', 'Opening price'], ['close', 'Closing price']].map(([k, l]) => `<button class="${state.when === k ? 'on' : ''}" data-w="${k}">${l}</button>`).join('')}</div></div>
-  <p class="note">Click a rule for its leagues and seasons.</p>
-  <table class="ang">${ANG_HEAD}<tbody>${list.map(a => angleRow(a) + (state.open === a.key ? angleDetail(a) : '')).join('')}</tbody></table>`;
-  return html;
-}
-
-function oosTable() {
-  if (!D.leagues.some(l => l.batch === 2)) return '';
-  const keys = ['mbt_open_10', 'mbt_open_15', 'mbt_open_20', 'mah_open_15', 'mah_open_20'];
-  const agg = (a, b) => {
-    let n = 0, p = 0, nc = 0, c = 0;
-    for (const [k, s] of Object.entries(a.by_league)) {
-      if (!LG[k] || LG[k].batch !== b || !s.n) continue;
-      n += s.n; p += s.roi * s.n; if (s.clv != null) { nc += s.nclv; c += s.clv * s.nclv; }
-    }
-    return n ? `<td class="n">${n}</td><td class="n ${cls(p / n)}">${spct(p / n)}</td><td class="n ${cls(nc ? c / nc : null)}">${nc ? spct(c / nc) : '–'}</td>` : '<td class="n">0</td><td class="n">–</td><td class="n">–</td>';
-  };
-  const rows = keys.map(k => D.angles.find(a => a.key === k)).filter(Boolean)
-    .map(a => `<tr><td class="wrapc">${esc(a.label)}</td>${agg(a, 1)}${agg(a, 2)}</tr>`).join('');
-  const names = b => D.leagues.filter(l => l.batch === b).map(l => l.country).join(', ');
-  return `<h2>Out-of-sample check: the leagues added later</h2>
-  <p class="note">The BTTS gap was first found on the first ten leagues (${names(1)}). Ten more were added afterwards with the model's settings frozen (${names(2)}), so their games are a fresh test of the same rules. Verdicts at the top use all twenty.</p>
-  <table><thead><tr><th>Rule</th><th class="n">First ten: bets</th><th class="n">ROI</th><th class="n">CLV</th><th class="n">Added ten: bets</th><th class="n">ROI</th><th class="n">CLV</th></tr></thead><tbody>${rows}</tbody></table>`;
+  ${infoTable()}`;
 }
 
 function infoTable() {
   const c = (i, m) => { const x = i && i[m]; return x; };
   const rows = D.leagues.map(l => {
-    const i = l.info, a = i['1x2'] || {}, o = i['ou2.5'] || {}, b = i.btts || {};
+    const i = l.info, a = i['1x2'] || {}, o = i['ou2.5'] || {};
     const mv = x => x && x.move != null ? `<span class="${x.move - 2 * x.move_se > 0 ? 'pos' : ''}">${(x.move * 100).toFixed(0)}%</span>` : '–';
     return `<tr><td>${l.country}</td><td class="n">${a.n || '–'}</td>
-      <td class="n">${a.ll_model ?? '–'}</td><td class="n">${a.ll_open ?? '–'}</td><td class="n">${a.ll_close ?? '–'}</td>
-      <td class="n">${mv(a)}</td><td class="n">${mv(o)}</td><td class="n">${mv(b)}</td>
+      <td class="n">${a.ll_model ?? '–'}</td><td class="n">${a.ll_open ?? '–'}</td>
+      <td class="n">${o.ll_model ?? '–'}</td><td class="n">${o.ll_open ?? '–'}</td>
+      <td class="n">${mv(a)}</td><td class="n">${mv(o)}</td>
       <td class="n">${a.w_open != null ? pct(a.w_open, 0) : '–'}</td><td class="n">${o.w_open != null ? pct(o.w_open, 0) : '–'}</td></tr>`;
   }).join('');
-  return `<table><thead><tr><th>League</th><th class="n">Games</th><th class="n">1X2 model</th><th class="n">1X2 opening</th><th class="n">1X2 closing</th>
-    <th class="n">Move 1X2</th><th class="n">Move O/U</th><th class="n">Move BTTS</th><th class="n">Blend 1X2</th><th class="n">Blend O/U</th></tr></thead><tbody>${rows}</tbody></table>`;
+  return `<table><thead><tr><th>League</th><th class="n">Games</th><th class="n">1X2 model</th><th class="n">1X2 opening</th>
+    <th class="n">O/U model</th><th class="n">O/U opening</th><th class="n">Move 1X2</th><th class="n">Move O/U</th><th class="n">Blend 1X2</th><th class="n">Blend O/U</th></tr></thead><tbody>${rows}</tbody></table>`;
 }
 
 function chipsLg(key, all = true) {
@@ -102,7 +88,7 @@ function viewUpcoming() {
   const tf = new Intl.DateTimeFormat('en-GB', {hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Athens'});
   const gs = D.upcoming.filter(u => state.lg === 'all' || u.lg === state.lg);
   let html = `<div class="bar">${chipsLg('lg')}</div><p class="note">The next 14 days. <b>Model</b>: the xG model's chance and fair odds. <b>Market</b>: the margin-free price of about 20 UK books, now (and at opening). <b>Best</b>: best Greek-licensed price now. <b>Gap</b>: model chance × best price − 1. A gap here is not a pick: on its own it has not passed the rule (see Gaps). Times are Athens time.</p>`;
-  if (!gs.length) return html + '<p class="note">No games in the next 8 days.</p>';
+  if (!gs.length) return html + '<p class="note">No games in the next 14 days.</p>';
   let day = '';
   html += '<div class="grid">';
   for (const u of gs) {
@@ -123,29 +109,29 @@ function viewUpcoming() {
       <h3>${esc(u.home)} – ${esc(u.away)}</h3>
       <div class="xgl">Model xG ${u.xg[0].toFixed(2)} – ${u.xg[1].toFixed(2)}${u.luck[0] != null || u.luck[1] != null ? ` · goals − xG, last 8: ${lk(u.luck[0]) || '–'} / ${lk(u.luck[1]) || '–'}` : ''}</div>
       <table class="mk"><thead><tr><th></th><th class="n">Model</th><th class="n">Fair</th><th class="n">Market</th><th class="n">Open</th><th class="n">Best</th><th class="n">Gap</th></tr></thead><tbody>
-      ${tbl('1x2', ['Home', 'Draw', 'Away'])}${tbl('ou2.5', ['Over 2.5', 'Under 2.5'])}${tbl('btts', ['BTTS yes', 'BTTS no'])}</tbody></table></div>`;
+      ${tbl('1x2', SEL['1x2'])}${tbl('ou2.5', SEL['ou2.5'])}</tbody></table></div>`;
   }
   return html + '</div>';
 }
 
 function viewPicks() {
-  const P = D.picks || [], done = P.filter(p => p.result), open = P.filter(p => !p.result);
+  const P = D.picks || [], done = P.filter(p => p.result), open = P.filter(p => !p.result), pk = D.pick;
   const w = done.filter(p => p.result === 'W').length, prof = done.reduce((s, p) => s + p.profit, 0);
-  const rule = D.angles.find(a => a.key === (D.pick || {}).key) || {}, edgeMin = (D.pick || {}).edge || 0.1;
+  const rule = pk ? D.angles.find(a => a.key === pk.key) || {} : null;
   const fmt = new Intl.DateTimeFormat('en-GB', {weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Athens'});
-  const sel = p => p.sel === 0 ? 'BTTS yes' : 'BTTS no';
+  const sel = p => (SEL[p.market] || [])[p.sel] || '–';
   const row = p => `<tr><td>${fmt.format(new Date(p.dt.replace('Z', ':00Z')))}</td><td>${LG[p.lg].country}</td><td class="wrapc">${esc(p.home)} – ${esc(p.away)}</td><td>${sel(p)}</td>
     <td class="n">${p.odds.toFixed(2)}</td><td class="n">${odds(p.prob)}</td><td class="n pos">${spct(p.edge, 0)}</td>${p.result ? `<td class="n">${p.score}</td><td class="n ${p.profit > 0 ? 'pos' : 'neg'}">${p.profit > 0 ? '+' : ''}${p.profit.toFixed(2)}</td>` : ''}</tr>`;
   const head = res => `<thead><tr><th>Kick-off</th><th>League</th><th>Game</th><th>Bet</th><th class="n">Price</th><th class="n">Model odds</th><th class="n">Edge</th>${res ? '<th class="n">Score</th><th class="n">Units</th>' : ''}</tr></thead>`;
-  return `<div class="facts">
+  const facts = `<div class="facts">
     <span class="fact">${done.length ? `<b>Record ${w}–${done.length - w}</b> · ROI ${spct(prof / done.length)}` : 'No settled picks yet'}</span>
     <span class="fact">${open.length ? `<b>${open.length}</b>open ${open.length === 1 ? 'pick' : 'picks'}` : 'No open picks'}</span>
-    <span class="fact"><b>${spct(rule.roi)}</b>backtest ROI, ${rule.n} bets</span>
-    <span class="fact"><b>${spct(rule.clv)}</b>backtest CLV</span>
-  </div>
-  <p class="lede">The one rule that passed (see Gaps): <b>both teams to score, when the model's chance times the best Greek-licensed price is at least ${(1 + edgeMin).toFixed(2)}</b>. A pick is posted the first time a game reaches that edge in the 8 days before kick-off and keeps that price. Flat 1 unit. The edge is at opening prices: bet early, as the price tends to move towards the model by kick-off. Expect a small edge: on the ten leagues added as an out-of-sample check these bets beat the closing price but only broke even, so the backtest ROI above is the optimistic end.</p>
-  <h2>Open picks</h2>${open.length ? `<table>${head(false)}<tbody>${open.map(row).join('')}</tbody></table>` : '<p class="note">None right now.</p>'}
-  <h2>Settled</h2>${done.length ? `<table>${head(true)}<tbody>${done.slice().reverse().map(row).join('')}</tbody></table>` : '<p class="note">None yet: the live record starts on 9 November 2026.</p>'}`;
+    ${rule ? `<span class="fact"><b>${spct(rule.roi)}</b>backtest ROI, ${rule.n} bets</span><span class="fact"><b>${spct(rule.clv)}</b>backtest CLV</span>` : ''}
+  </div>`;
+  const lede = rule ? `<p class="lede">The rule that passed (see Gaps): <b>${esc(rule.label)}</b>. A pick is posted the first time a game reaches that edge at the best Greek-licensed price in the 8 days before kick-off and keeps that price. Flat 1 unit. Expect a small edge; on past games the bets beat the closing price on average.</p>`
+    : `<p class="lede">No 1X2 or over/under 2.5 rule has passed the test yet (see Gaps), so no picks are posted. Picks start only when a rule passes; the Upcoming tab shows the model's prices for every game in the meantime.</p>`;
+  return facts + lede + (P.length ? `<h2>Open picks</h2>${open.length ? `<table>${head(false)}<tbody>${open.map(row).join('')}</tbody></table>` : '<p class="note">None right now.</p>'}
+  <h2>Settled</h2>${done.length ? `<table>${head(true)}<tbody>${done.slice().reverse().map(row).join('')}</tbody></table>` : '<p class="note">None yet.</p>'}` : '');
 }
 
 function viewLeagues() {
@@ -178,9 +164,9 @@ function viewHow() {
   <h2>xG where there is none</h2>
   <p>FotMob publishes xG for some of these leagues and seasons only (the Leagues tab shows which). Elsewhere the model uses an estimate from the box score, fitted on the ${px.full.n.toLocaleString('en-GB')} team-games that have both: xG ≈ ${px.full.coef[0]} × big chances + ${px.full.coef[1]} × other shots in the box + ${px.full.coef[2]} × shots from outside + ${px.full.coef[3]} × shots on target (correlation with real xG ${px.full.r}). Where big chances are not counted: ${px.basic.coef[0]} × shots + ${px.basic.coef[1]} × shots on target (correlation ${px.basic.r}).</p>
   <h2>Prices</h2>
-  <p>Opening and closing odds of about 20 UK books and of the Greek-licensed books, for 1X2, over/under 2.5, both teams to score and the Asian handicap. The margin is removed with the power method, which puts more of it on longshots, as books do. Bets are struck at the best Greek-licensed price. CLV (closing line value) is the opening price times the margin-free closing chance, minus one: over many bets, beating the closing price is the best sign that an edge is real, and it needs far fewer bets than profit to show.</p>
+  <p>Two markets: 1X2 and over/under 2.5 goals. Opening and closing odds of about 20 UK books and of the Greek-licensed books. The margin is removed with the power method, which puts more of it on longshots, as books do. Bets are struck at the best Greek-licensed price. CLV (closing line value) is the opening price times the margin-free closing chance, minus one: over many bets, beating the closing price is the best sign that an edge is real, and it needs far fewer bets than profit to show.</p>
   <h2>The rule for a gap</h2>
-  <p>Set before the results were seen: at least 150 bets, CLV above zero, and a profit both in the tuning seasons (2023-24, 2024-25, used to choose the model's settings) and in the check seasons (2025-26 and 2026-27 so far), which the settings never saw. A rule that passes is a lead, not a proof: ten leagues and dozens of rules give luck many chances.</p>
+  <p>Set before the results were seen: at least 150 bets, CLV above zero, and a profit both in the tuning seasons (2023-24, 2024-25, used to choose the model's settings) and in the check seasons (2025-26 and 2026-27 so far), which the settings never saw. A rule that passes is a lead, not a proof: twenty leagues and dozens of rules give luck many chances. Ten of the leagues (${D.leagues.filter(l => l.batch === 2).map(l => l.country).join(', ')}) were added after the model's settings were fixed, so they never shaped them.</p>
   <h2>Data</h2>
   <p>Results, xG and box scores from FotMob; odds from a public odds feed. Updated daily.</p>
   </div>`;
@@ -192,9 +178,9 @@ function render() {
   save();
 }
 out.addEventListener('click', e => {
-  const t = e.target.closest('[data-g],[data-w],[data-k],[data-lg],[data-tlg],[data-s]');
+  const t = e.target.closest('[data-m],[data-w],[data-k],[data-lg],[data-tlg],[data-s]');
   if (!t) return;
-  if (t.dataset.g) state.group = t.dataset.g;
+  if (t.dataset.m) { state.mkt = t.dataset.m; state.open = null; }
   else if (t.dataset.w) state.when = t.dataset.w;
   else if (t.dataset.k) state.open = state.open === t.dataset.k ? null : t.dataset.k;
   else if (t.dataset.lg) state.lg = t.dataset.lg;
