@@ -61,11 +61,25 @@ function gapTable(X, title) {
   return `<h2>${title}</h2><table><thead><tr><th>Gap</th>${NM.map(t => `<th class="n">${t}</th><th class="n">P/L</th>`).join('')}<th class="n">All bets</th><th class="n">P/L</th><th class="n">ROI</th></tr></thead>
     <tbody>${G.map(g => row(g.lo === 10 ? '10%+' : `${g.lo}–${g.lo + 1}%`, k => get(g, k))).join('')}${row('All 2%+', k => sum(G.map(g => get(g, k))), 1)}</tbody></table>`;
 }
+function calTable(X, title) {
+  if (!X) return '';
+  const G = (X.gaps || []).filter(g => g.cal), K = ['home', 'away', 'over', 'under'];
+  if (!G.length) return '';
+  const pl = g => K.reduce((s, k) => s + ((g[k] || {}).pl || 0), 0);
+  const row = (lab, c, p, b) => { const o = b ? '<b>' : '', e = b ? '</b>' : ''; return !c.n ? '' : `<tr${b ? ' class="tot"' : ''}><td>${o}${lab}${e}</td><td class="n">${o}${c.n.toLocaleString('en-GB')}${e}</td><td class="n">${o}${pct(c.exp / c.n)}${e}</td><td class="n">${o}${pct(c.won / c.n)}${e}</td><td class="n">${o}${spct(c.gap / c.n)}${e}</td><td class="n ${cls(p)}">${o}${spct(p / c.n)}${e}</td><td class="n">${o}${(p / c.gap * 100).toFixed(0)}%${e}</td></tr>`; };
+  const sum = gs => [gs.reduce((s, g) => ({n: s.n + g.cal.n, gap: s.gap + g.cal.gap, exp: s.exp + g.cal.exp, won: s.won + g.cal.won}), {n: 0, gap: 0, exp: 0, won: 0}), gs.reduce((s, g) => s + pl(g), 0)];
+  const GR = [['2–4%', g => g.lo < 4], ['4–8%', g => g.lo >= 4 && g.lo < 8], ['8%+', g => g.lo >= 8], ['All 2%+', () => true]];
+  return `<h2>${title}</h2><table><thead><tr><th>Gap</th><th class="n">Bets</th><th class="n">Wins expected</th><th class="n">Wins actual</th><th class="n">Gap promised</th><th class="n">ROI</th><th class="n">Share kept</th></tr></thead>
+    <tbody>${GR.map(([lab, f], i) => row(lab, ...sum(G.filter(f)), i === 3)).join('')}</tbody></table>`;
+}
 function viewGaps() {
   const M = grp('men'), W = grp('women');
   return `<p class="note">2023-24 to now, opening prices. Every bet with a gap of 2% or more, grouped by the size of the gap: the best price against the market's margin-free price. For each side: the number of bets and the profit or loss in units at 1 unit a bet. The draw is never bet.</p>
   ${gapTable(M, `Men${M ? ' · ' + M.leagues.length + ' leagues' : ''}`)}
-  ${gapTable(W, `Women${W ? ' · ' + W.leagues.length + ' leagues' : ''}`)}`;
+  ${gapTable(W, `Women${W ? ' · ' + W.leagues.length + ' leagues' : ''}`)}
+  <p class="note" style="margin-top:34px"><b>Calibration.</b> Is the gap real? <b>Wins expected</b>: the share of bets the market's margin-free price says should win. <b>Wins actual</b>: the share that did. If the two match, the market price is right and the bet earns the gap. <b>Gap promised</b> is the average gap of the bets, <b>ROI</b> what they returned, <b>Share kept</b> the ROI as a share of the gap promised: 100% means the whole gap was earned.</p>
+  ${calTable(M, 'Calibration · men')}
+  ${calTable(W, 'Calibration · women')}`;
 }
 
 // ---------- How it works ----------
@@ -79,7 +93,7 @@ function viewHow() {
   <h2>The gap</h2>
   <p>Take the market's price: the odds of about 20 books with their margin removed (the power method, which puts more of the margin on longshots, as books do). Take the best price on offer at the same moment. The gap is best price × market chance − 1. No model and no team ratings: the market itself is the yardstick.</p>
   <h2>The backtest</h2>
-  <p>Every game from 2023-24 to now, at opening prices. Each time the gap on a home win, an away win, over 2.5 or under 2.5 was at least ${GAP(D)}, one unit is bet on it at the best price. The tables show those bets per league and side, with the ROI. One league's numbers rest on few bets, so the row for all leagues together is the one to read. The Backtest tab groups the same bets by the size of the gap, from 2–3% up to 10% and more, with the profit or loss of each group.</p>
+  <p>Every game from 2023-24 to now, at opening prices. Each time the gap on a home win, an away win, over 2.5 or under 2.5 was at least ${GAP(D)}, one unit is bet on it at the best price. The tables show those bets per league and side, with the ROI. One league's numbers rest on few bets, so the row for all leagues together is the one to read. The Backtest tab groups the same bets by the size of the gap, from 2–3% up to 10% and more, with the profit or loss of each group, and a calibration table: the share of bets the market price said would win against the share that did, and the ROI against the gap promised.</p>
   <h2>Why it can work</h2>
   <p>Some prices open before the market settles, or are shaded, and for a while stand above it. They are corrected quickly: at closing prices the gap is much smaller, so it has to be taken early.</p>
   <h2>Betting rules</h2>
@@ -91,7 +105,7 @@ function viewHow() {
   </div>`;
 }
 
-const VIEWS = ['men', 'women', 'backtest', 'how'];
+const VIEWS = ['backtest', 'men', 'women', 'how'];
 function render() {
   document.querySelectorAll('#tabs a[data-view]').forEach(a => a.classList.toggle('on', a.dataset.view === state.view));
   const X = state.view === 'men' || state.view === 'women' ? grp(state.view) : null;
@@ -108,7 +122,7 @@ out.addEventListener('click', e => {
 });
 function route() {
   const m = location.hash.match(/view=(\w+)/);
-  state.view = m && VIEWS.includes(m[1]) ? m[1] : HOME;      // no hash and old links (picks, upcoming, leagues) land on the page's own table
+  state.view = m && VIEWS.includes(m[1]) ? m[1] : 'backtest';      // no hash and old links (picks, upcoming, leagues) land on the Backtest tab
   render();
 }
 window.addEventListener('hashchange', route);
