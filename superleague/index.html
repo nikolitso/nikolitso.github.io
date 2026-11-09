@@ -282,8 +282,8 @@ function contextHtml(g){
     }
   }
   if (g.europe){
-    const EU = {home: 'Since 2016–17, a Big-4 side at home to a small club after Europe: <b>2.56</b> goals a game (2.84 rested), over 2.5 in <b>48%</b> (58% rested)',
-      away: 'Since 2016–17, a Big-4 side away to a small club after Europe: 2.35 goals a game (2.41 rested), over 2.5 in <b>41%</b> while the odds expected 47%',
+    const EU = {home: 'Since 2016–17, a Big-4 side at home to a small club after Europe: <b>2.61</b> goals a game (2.84 rested), over 2.5 in <b>50%</b> (58% rested)',
+      away: 'Since 2016–17, a Big-4 side away to a small club after Europe: 2.34 goals a game (2.42 rested), over 2.5 in <b>41%</b> while the odds expected 47%',
       one: 'Since 2016–17, derbies with one side after Europe: result and goals as usual, <b>6.5</b> cards a game (5.5 otherwise)',
       both: 'Since 2016–17, derbies with both sides after Europe: 2.9 goals and 6.3 cards a game, from only 12 games'};
     rows.push(ctxRow('After Europe', `${g.europe.lines.join('. ')}. ${EU[g.europe.key] || ''} · not in the model · <a href="/superleague/research/europe/">study</a>`));
@@ -955,13 +955,13 @@ function renderResearch(){
   const box = (n, t) => `<div class="rs-fact"><b>${n}</b>${t}</div>`;
   return `<p class="rs-lede">Studies of Super League games behind the model: what was found, and whether it changed anything.</p>
   <a class="card rs-card" href="/superleague/research/europe/">
-    <small class="muted">8 Nov 2026 · ten seasons, 2016–17 to now</small>
+    <small class="muted">Updated 9 Nov 2026 · ten seasons, 2016–17 to now</small>
     <h2>The Big 4 after a European game</h2>
     <p>What happens when Olympiakos, PAOK, AEK or Panathinaikos play a league game three or four days after a European match, against the small clubs and in derbies.</p>
     <div class="rs-facts">
-      ${box('2.56', 'goals per game when a Big-4 side hosts a small club after Europe, against 2.84 when rested')}
-      ${box('48%', 'of those home games went over 2.5 goals, against 58% when rested')}
-      ${box('45%', 'over 2.5 in Big-4 v small games after Europe, while the odds expected 52%')}
+      ${box('2.61', 'goals per game when a Big-4 side hosts a small club after Europe, against 2.84 when rested')}
+      ${box('50%', 'of those home games went over 2.5 goals, against 58% when rested')}
+      ${box('46%', 'over 2.5 in Big-4 v small games after Europe, while the odds expected 52%')}
       ${box('+1 card', 'per game in derbies after Europe (6.5 against 5.5), with the result unchanged')}
     </div>
     <span class="rs-go">Read the study →</span>
