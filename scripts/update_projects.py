@@ -153,10 +153,10 @@ def greek_cup():
 
 
 def mid_europe():
-    # research card: no picks (rules not set yet), so the pills are the size of the two backtests
+    # research card: no picks (rules not set yet), so the pills are the size of the backtest
     m = js_object("/football/research/data.js", r"window\.D\s*=")
-    w = js_object("/football/women-europe/data.js", r"window\.D\s*=")
-    return [f"{len(m['leagues'])} men's leagues", f"{len(w['leagues'])} women's leagues"]
+    n = len(m.get("bets", {}).get("l", []))
+    return [f"{len(m['leagues'])} leagues"] + ([f"{n:,} bets tested"] if n else [])
 
 
 def basketball_cup(folder):

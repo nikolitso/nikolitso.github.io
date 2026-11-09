@@ -39,6 +39,10 @@ body{margin:0;background:var(--bg);color:var(--text);font:17px/1.5 var(--body)}
 .chip{background:none;border:1px solid var(--line);border-radius:999px;color:var(--muted);font:500 13.5px var(--mono);padding:5px 12px;cursor:pointer}
 .chip:hover{color:var(--text)}
 .chip.on{background:var(--gold);border-color:var(--gold);color:var(--an-on-accent)}
+.flt{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;margin:0 0 10px}
+.fl{font:400 12.5px var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.08em;min-width:128px}
+.flt+.facts,.flt+p.note{margin-top:18px}
+table.lgs td,table.lgs th{padding-left:6px;padding-right:6px}
 .facts{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 14px}
 .fact{border:1px solid var(--line);border-radius:999px;padding:6px 14px;font-size:15px;color:var(--muted)}
 .fact b{font:500 15px var(--mono);color:var(--gold);margin-right:4px}
@@ -92,8 +96,7 @@ table.mk td{font-size:15.5px}
   <a class="an-brand" href="/football/research/"><svg class="an-mark" aria-hidden="true"><use href="/assets/marks.svg#football"/></svg><span><small class="an-kicker">Football · Research</small></span></a>
   <nav class="tabs an-tabs" id="tabs" aria-label="Sections">
     <a href="#view=backtest" data-view="backtest">Backtest</a>
-    <a href="#view=men" data-view="men">Backtest men</a>
-    <a href="#view=women" data-view="women">Backtest women</a>
+    <a href="#view=men" data-view="men">Leagues</a>
     <a href="#view=how" data-view="how">How it works</a>
   </nav>
 </div></header>
@@ -101,7 +104,7 @@ table.mk td{font-size:15.5px}
   <div class="sub" id="sub"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=16"></script>
-<script src="app.js?v=18"></script>
+<script src="data.js?v=17"></script>
+<script src="app.js?v=19"></script>
 </body>
 </html>

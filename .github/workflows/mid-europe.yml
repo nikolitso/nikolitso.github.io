@@ -1,10 +1,9 @@
 name: Site · Mid-Europe Gaps
 
-# /football/research/ (39 men's European leagues) and /football/women-europe/ (14 women's leagues); the list is in
-# BettingSignal mid-europe/leagues.py (batches 1-3 men, 9 women). Live rule since 10 Nov 2026: the price gap (best
-# Greek-licensed price 2%+ above the UK books' margin-free price) in 1X2 and over/under 2.5. Results, xG and box scores from FotMob, event ids and opening/closing odds from
-# the odds feed, the xG model, the research tables and the live picks (data/picks_log.json and picks_log_women.json, frozen at first post).
-# Scripts and data in nikolitso/BettingSignal (mid-europe/). Three times a day, so picks are caught near the opening price.
+# /football/research/: the price gap (best price against the market's margin-free price) in 1X2 and over/under 2.5 in
+# European men's leagues; the list is in BettingSignal mid-europe/leagues.py (women's leagues dropped 10 Nov 2026).
+# Results, event ids and opening/closing odds, then the backtest bets for the page (data.js) and the picks log.
+# Scripts and data in nikolitso/BettingSignal (mid-europe/). Three times a day, so prices are caught near the opening.
 on:
   schedule:
     - cron: "0 7,12,18 * * *"   # 09:00, 14:00 and 20:00 Athens in winter
@@ -32,6 +31,6 @@ jobs:
           requirements: -r _bs/mid-europe/requirements.txt
           browser: "true"
           run: python -u update.py
-          pages: football/research/data.js football/women-europe/data.js
+          pages: football/research/data.js
           label: Mid-Europe Gaps
           token: ${{ secrets.SITES_TOKEN }}

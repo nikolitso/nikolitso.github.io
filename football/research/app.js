@@ -1,119 +1,159 @@
 (() => {
 const D = window.D, $ = s => document.querySelector(s), out = $('#out');
-const LG = Object.fromEntries(D.leagues.map(l => [l.key, l]));
-const dup = {}; D.leagues.forEach(l => { dup[l.country] = (dup[l.country] || 0) + 1; });
-D.leagues.forEach(l => { l.label = dup[l.country] > 1 ? l.country + ' ' + l.name : l.country; });
+const L = D.leagues;
 const pct = (x, d = 1) => x == null ? '–' : (x * 100).toFixed(d) + '%';
 const spct = (x, d = 1) => x == null ? '–' : (x > 0 ? '+' : '') + (x * 100).toFixed(d) + '%';
-const odds = p => p ? (1 / p).toFixed(2) : '–';
-const esc = s => String(s).replace(/[&<>"]/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'}[c]));
+const num = n => n.toLocaleString('en-GB');
 const cls = x => x == null ? '' : x > 0 ? 'pos' : 'neg';
-const HOME = D.women ? 'women' : 'men';
-const state = {view: HOME};
-try { Object.assign(state, JSON.parse(sessionStorage.getItem('pg-state2') || '{}')); } catch (e) {}
-const save = () => { try { sessionStorage.setItem('pg-state2', JSON.stringify(state)); } catch (e) {} };
+const GAP0 = Math.round((((D.pick || {}).edges || {})['1x2'] || 0.02) * 100);
 
-// both pages show men AND women: the other group's data.js is read as JSON
-const OTHER = D.women ? '/football/research/data.js' : '/football/women-europe/data.js';
-let D2 = null;
-fetch(OTHER + '?v=' + encodeURIComponent(D.updated)).then(r => r.text()).then(t => {
-  D2 = JSON.parse(t.slice(t.indexOf('=') + 1, t.lastIndexOf(';')));
-  render();
-}).catch(() => {});
-const grp = g => (g === 'women') === !!D.women ? D : D2;
-const GAP = X => Math.round((((X.pick || {}).edges || {})['1x2'] || 0.02) * 100) + '%';
+// ---------- the bets: one entry per backtest bet, filtered and grouped here ----------
+const B = D.bets, N = B.l.length;
+const Q = new Float32Array(N), P = new Float32Array(N);        // market chance, profit at 1 unit
+for (let i = 0; i < N; i++) { Q[i] = (1 + B.g[i] / 1000) / (B.o[i] / 100); P[i] = B.w[i] ? B.o[i] / 100 - 1 : -1; }
+const YRS = [...new Set(B.y)].sort((a, b) => a - b);
+const season = y => `${2023 + y}-${24 + y}`;
+const SIDES = ['Home wins', 'Away wins', 'Overs', 'Unders'];
+const GAPS = [2, 3, 4, 5, 6, 8, 10], CH = [[0, 'All'], [25, '25%+'], [35, '35%+'], [45, '45%+']];
+const GROUPS = [['all', 'All', () => true], ['nob5', 'Without the big five', t => t !== 0], ['b5', 'Big five', t => t === 0],
+  ['top', 'Other top divisions', t => t === 1], ['low', 'Lower divisions', t => t === 2]];
+const TIER = ['Big five top divisions', 'Other top divisions', 'Lower divisions'];
+const MIN = 100;                                               // fewer bets than this: numbers greyed
 
-// ---------- Backtest (one table per group: leagues x home wins, away wins, overs, unders) ----------
-function viewLeagues(g) {
-  const X = grp(g);
-  if (!X) return '<p class="note">Loading…</p>';
-  const c = (x, b) => x && x.n ? `<td class="n">${b ? '<b>' : ''}${x.n.toLocaleString('en-GB')}${b ? '</b>' : ''}</td><td class="n ${cls(x.roi)}">${b ? '<b>' : ''}${spct(x.roi)}${b ? '</b>' : ''}</td>` : '<td class="n">0</td><td class="n">–</td>';
-  const sd = (l, k, f) => { const x = (l.sides || {})[k]; return x && x.n ? x[f] : (f === 'n' ? 0 : null); };
-  const SIDE = [['home', 'Home wins'], ['away', 'Away wins'], ['over', 'Overs'], ['under', 'Unders']];
-  const COLS = [['country', 'Country', l => l.country], ['name', 'League', l => l.name], ['games', 'Games', l => l.games],
-    ['gap2', 'Gap 2%+', l => l.gap2]].concat(...SIDE.map(([k, t]) => [[k + 'n', t, l => sd(l, k, 'n')], [k + 'r', 'ROI', l => sd(l, k, 'roi')]]));
+const state = {view: 'backtest', f: {gap: GAP0, q: 0, lg: 'all', side: [1, 1, 1, 1]}};
+try { Object.assign(state, JSON.parse(sessionStorage.getItem('pg-state3') || '{}')); } catch (e) {}
+const save = () => { try { sessionStorage.setItem('pg-state3', JSON.stringify(state)); } catch (e) {} };
+
+function index(noGap) {                                        // bets that pass the filters (noGap: ignore the gap filter)
+  const f = state.f, g = GROUPS.find(x => x[0] === f.lg) || GROUPS[0], idx = [];
+  for (let i = 0; i < N; i++)
+    if ((noGap || B.g[i] >= f.gap * 10) && Q[i] * 100 >= f.q && f.side[B.s[i]] && g[2](L[B.l[i]].tier)) idx.push(i);
+  return idx;
+}
+function agg(idx, pred) {
+  const a = {n: 0, pl: 0, exp: 0, won: 0, gap: 0, sq: 0, y: YRS.map(() => ({n: 0, pl: 0})), s: SIDES.map(() => ({n: 0, pl: 0}))};
+  for (const i of idx) {
+    if (pred && !pred(i)) continue;
+    a.n++; a.pl += P[i]; a.sq += P[i] * P[i]; a.exp += Q[i]; a.won += B.w[i]; a.gap += B.g[i] / 1000;
+    const y = a.y[YRS.indexOf(B.y[i])]; y.n++; y.pl += P[i];
+    const s = a.s[B.s[i]]; s.n++; s.pl += P[i];
+  }
+  a.roi = a.n ? a.pl / a.n : null;
+  a.se = a.n > 1 ? Math.sqrt(Math.max(a.sq / a.n - a.roi * a.roi, 0) / a.n) : null;
+  return a;
+}
+const units = x => (x > 0 ? '+' : '') + x.toFixed(1);
+const roiCell = (x, min = MIN) => !x.n ? '<td class="n mut">–</td>' : `<td class="n ${x.n < min ? 'mut' : cls(x.pl)}" title="${num(x.n)} bets">${spct(x.pl / x.n)}</td>`;
+
+// one row of numbers for a group of bets: size, calibration, result, and the ROI of each season
+const HEAD = () => `<th class="n">Bets</th><th class="n">Gap</th><th class="n">ROI</th><th class="n">±</th><th class="n">P/L</th><th class="n">Wins exp.</th><th class="n">Wins actual</th><th class="n">Kept</th>${YRS.map(y => `<th class="n">${season(y)}</th>`).join('')}`;
+function cells(a) {
+  if (!a.n) return `<td class="n">0</td>${'<td class="n mut">–</td>'.repeat(7 + YRS.length)}`;
+  const m = a.n < MIN;
+  return `<td class="n">${num(a.n)}</td><td class="n">${pct(a.gap / a.n)}</td><td class="n ${m ? 'mut' : cls(a.pl)}">${spct(a.roi)}</td><td class="n mut">${a.se == null ? '–' : (a.se * 100).toFixed(1)}</td>
+    <td class="n ${m ? 'mut' : cls(a.pl)}">${units(a.pl)}</td><td class="n">${pct(a.exp / a.n)}</td><td class="n">${pct(a.won / a.n)}</td><td class="n${m ? ' mut' : ''}">${m ? '–' : (a.pl / a.gap * 100).toFixed(0) + '%'}</td>${a.y.map(y => roiCell(y, 50)).join('')}`;
+}
+function table(title, first, rows, idx, total) {
+  const body = rows.map(([lab, pred]) => { const a = agg(idx, pred); return a.n ? `<tr><td>${lab}</td>${cells(a)}</tr>` : ''; }).join('');
+  return `<h2>${title}</h2><table><thead><tr><th>${first}</th>${HEAD()}</tr></thead><tbody>${body}${total ? `<tr class="tot"><td><b>${total}</b></td>${cells(agg(idx))}</tr>` : ''}</tbody></table>`;
+}
+
+function filters() {
+  const f = state.f, chip = (k, v, t, on) => `<button class="chip${on ? ' on' : ''}" data-f="${k}" data-v="${v}">${t}</button>`;
+  return `<div class="flt"><span class="fl">Gap of at least</span><div class="chips">${GAPS.filter(g => g >= GAP0).map(g => chip('gap', g, g + '%', f.gap === g)).join('')}</div></div>
+  <div class="flt"><span class="fl">Market chance</span><div class="chips">${CH.map(([v, t]) => chip('q', v, t, f.q === v)).join('')}</div></div>
+  <div class="flt"><span class="fl">Leagues</span><div class="chips">${GROUPS.map(([k, t]) => chip('lg', k, t, f.lg === k)).join('')}</div></div>
+  <div class="flt"><span class="fl">Bets on</span><div class="chips">${SIDES.map((t, i) => chip('side', i, t, f.side[i])).join('')}</div></div>`;
+}
+const filtered = () => { const f = state.f; return f.gap !== GAP0 || f.q || f.lg !== 'all' || f.side.some(x => !x); };
+
+// ---------- Backtest ----------
+function viewBacktest() {
+  const idx = index(), all = agg(idx), f = state.f;
+  const rest = (() => { const k = new Set(idx), o = []; for (let i = 0; i < N; i++) if (!k.has(i)) o.push(i); return agg(o); })();
+  const fact = (b, t) => `<span class="fact"><b>${b}</b>${t}</span>`;
+  const pills = all.n ? `<div class="facts">${fact(num(all.n), 'bets')}${fact(spct(all.roi), 'ROI')}${fact(units(all.pl), 'units P/L')}${fact(pct(all.exp / all.n), 'wins expected')}${fact(pct(all.won / all.n), 'wins actual')}${fact((all.pl / all.gap * 100).toFixed(0) + '%', 'of the gap kept')}${rest.n ? fact(spct(rest.roi), `ROI of the ${num(rest.n)} bets left out`) : ''}</div>` : '<p class="note">No bets pass these filters.</p>';
+  const band = (lo, hi) => i => B.g[i] >= lo * 10 && B.g[i] < hi * 10, qb = (lo, hi) => i => Q[i] * 100 >= lo && Q[i] * 100 < hi;
+  const GB = [[2, 3], [3, 4], [4, 5], [5, 6], [6, 8], [8, 10], [10, 15], [15, 999]].filter(([lo]) => lo >= GAP0);
+  const QB = [[0, 15], [15, 25], [25, 35], [35, 45], [45, 55], [55, 65], [65, 101]];
+  const ladder = index(true);
+  const bySeason = YRS.map(y => { const a = agg(idx, i => B.y[i] === y); return `<tr><td>${season(y)}</td>${a.s.map(s => `<td class="n">${num(s.n)}</td>${roiCell(s)}`).join('')}<td class="n">${num(a.n)}</td><td class="n ${a.n < MIN ? 'mut' : cls(a.pl)}">${units(a.pl)}</td>${roiCell(a)}<td class="n">${a.n ? pct(a.exp / a.n) : '–'}</td><td class="n">${a.n ? pct(a.won / a.n) : '–'}</td></tr>`; }).join('');
+  return `<p class="note">2023-24 to now, opening prices, 1 unit a bet. Every bet with a gap of ${GAP0}% or more between the best price and the market's margin-free price. The draw is never bet. Choose a rule with the filters: every table below is recounted for it.</p>
+  ${filters()}
+  ${pills}
+  ${table('By minimum gap', 'Gap of at least', [2, 3, 4, 5, 6, 8, 10, 12, 15].filter(g => g >= GAP0).map(g => [g + '%+', i => B.g[i] >= g * 10]), ladder)}
+  <h2>By season</h2><table><thead><tr><th>Season</th>${SIDES.map(t => `<th class="n">${t}</th><th class="n">ROI</th>`).join('')}<th class="n">All bets</th><th class="n">P/L</th><th class="n">ROI</th><th class="n">Wins exp.</th><th class="n">Wins actual</th></tr></thead><tbody>${bySeason}</tbody></table>
+  ${table('By side', 'Bets on', SIDES.map((t, s) => [t, i => B.s[i] === s]), idx, 'All')}
+  ${table('By league group', 'Leagues', TIER.map((t, k) => [t, i => L[B.l[i]].tier === k]), idx, 'All')}
+  ${table('By market chance', 'Chance', QB.map(([lo, hi]) => [hi > 100 ? lo + '%+' : lo ? `${lo}–${hi}%` : `Under ${hi}%`, qb(lo, hi)]), idx, 'All')}
+  ${table('By gap size', 'Gap', GB.map(([lo, hi]) => [hi > 100 ? lo + '%+' : `${lo}–${hi}%`, band(lo, hi)]), idx, 'All')}
+  <p class="note" style="margin-top:26px"><b>How to read.</b> <b>Gap</b>: the average gap of the bets, what they promise. <b>ROI</b>: what they returned at flat stakes. <b>±</b>: one standard error of the ROI in points; a ROI smaller than about twice it cannot be told from zero. <b>Wins exp.</b>: the share of bets the market's margin-free price says should win. <b>Wins actual</b>: the share that did. <b>Kept</b>: the ROI as a share of the gap promised, 100% means the whole gap was earned. The season columns show the ROI of each season: a rule worth using is positive in all of them. Seasons played inside one calendar year count with the season that starts that year. Grey numbers rest on fewer than ${MIN} bets (50 for one season). <b>By minimum gap</b> ignores the gap filter; <b>market chance</b> is the chance of the bet winning by the market price, so under 35% means an outsider.</p>`;
+}
+
+// ---------- Leagues: the same filtered bets, league by league ----------
+function viewLeagues() {
+  const idx = index(), g = GROUPS.find(x => x[0] === state.f.lg) || GROUPS[0];
+  const by = L.map(() => []); idx.forEach(i => by[B.l[i]].push(i));
+  const list = L.map((l, k) => ({l, a: agg(by[k])})).filter(x => g[2](x.l.tier));
+  const COLS = [['country', 'Country', x => x.l.country], ['name', 'League', x => x.l.name], ['games', 'Games', x => x.l.games], ['gap2', 'Gap 2%+', x => x.l.gap2]]
+    .concat(...SIDES.map((t, s) => [['n' + s, t, x => x.a.s[s].n], ['r' + s, 'ROI', x => x.a.s[s].n ? x.a.s[s].pl / x.a.s[s].n : null]]),
+      [['n', 'All bets', x => x.a.n], ['r', 'ROI', x => x.a.roi]]);
   const srt = state.sort || {}, col = COLS.find(x => x[0] === srt.col);
-  const list = X.leagues.slice();
   if (col) list.sort((p, q) => {
     const x = col[2](p), y = col[2](q);
     if (x == null || y == null) return x == null ? (y == null ? 0 : 1) : -1;   // blanks always last
     return (typeof x === 'string' ? x.localeCompare(y) : x - y) * srt.dir;
   });
-  const tot = k => { const n = X.leagues.reduce((s, l) => s + sd(l, k, 'n'), 0); return {n, roi: n ? X.leagues.reduce((s, l) => s + (sd(l, k, 'roi') || 0) * sd(l, k, 'n'), 0) / n : null}; };
-  const games = X.leagues.reduce((s, l) => s + l.games, 0);
-  const rows = list.map(l => `<tr><td>${l.country}</td><td>${l.name}</td><td class="n">${l.games.toLocaleString('en-GB')}</td>
-    <td class="n">${pct(l.gap2, 0)}</td>${SIDE.map(([k]) => c((l.sides || {})[k])).join('')}</tr>`).join('');
+  const c = (x, b) => { const o = b ? '<b>' : '', e = b ? '</b>' : ''; return x.n ? `<td class="n">${o}${num(x.n)}${e}</td><td class="n ${x.n < MIN && !b ? 'mut' : cls(x.pl)}">${o}${spct(x.pl / x.n)}${e}</td>` : '<td class="n">0</td><td class="n mut">–</td>'; };
+  const tot = agg(idx), games = list.reduce((s, x) => s + x.l.games, 0);
+  const rows = list.map(x => `<tr><td>${x.l.country}</td><td>${x.l.name}</td><td class="n">${num(x.l.games)}</td><td class="n">${pct(x.l.gap2, 0)}</td>${x.a.s.map(s => c(s)).join('')}${c(x.a)}</tr>`).join('');
   const head = COLS.map(([k, t], i) => `<th data-sort="${k}" class="sortable${i > 1 ? ' n' : ''}" title="Sort">${t}${srt.col === k ? (srt.dir > 0 ? ' ▲' : ' ▼') : ''}</th>`).join('');
-  return `<p class="note">2023-24 to now, opening prices. <b>Gap 2%+</b>: share of games where the home or away opening price was at least 2% above the market. Then every bet at a ${GAP(X)} gap or more in each league, split into home wins, away wins, overs and unders (the draw is never bet), each with its ROI at flat stakes. One league's ROI rests on few bets; the first row is all leagues together. Click a column to sort.</p>
+  return `<p class="note">2023-24 to now, opening prices. <b>Gap 2%+</b>: share of games where the home or away opening price was at least 2% above the market. Then the bets that pass the filters in each league, split into home wins, away wins, overs and unders, each with its ROI at flat stakes. One league's ROI rests on few bets (grey under ${MIN}) and a league's past ROI says little about its next season; the first row is all leagues together. Click a column to sort.</p>
+  ${filters()}
   <style>th.sortable{cursor:pointer;user-select:none;white-space:nowrap}th.sortable:hover{text-decoration:underline}</style>
-  <table><thead><tr>${head}</tr></thead><tbody><tr class="tot"><td><b>All</b></td><td><b>${X.leagues.length} leagues</b></td><td class="n"><b>${games.toLocaleString('en-GB')}</b></td><td class="n"></td>${SIDE.map(([k]) => c(tot(k), 1)).join('')}</tr>${rows}</tbody></table>`;
-}
-
-// ---------- Backtest by gap size: men and women ----------
-function gapTable(X, title) {
-  if (!X) return `<h2>${title}</h2><p class="note">Loading…</p>`;
-  const K = ['home', 'away', 'over', 'under'], NM = ['Home wins', 'Away wins', 'Overs', 'Unders'];
-  const u = x => (x > 0 ? '+' : '') + x.toFixed(1);
-  const cell = (x, b) => { const o = b ? '<b>' : '', c = b ? '</b>' : ''; return x.n ? `<td class="n">${o}${x.n.toLocaleString('en-GB')}${c}</td><td class="n ${cls(x.pl)}">${o}${u(x.pl)}${c}</td>` : '<td class="n">0</td><td class="n">–</td>'; };
-  const sum = xs => xs.reduce((s, x) => ({n: s.n + x.n, pl: s.pl + x.pl}), {n: 0, pl: 0});
-  const G = X.gaps || [], get = (g, k) => g[k] || {n: 0, pl: 0};
-  const row = (lab, f, b) => { const a = sum(K.map(f)), o = b ? '<b>' : '', c = b ? '</b>' : ''; return `<tr${b ? ' class="tot"' : ''}><td>${o}${lab}${c}</td>${K.map(k => cell(f(k), b)).join('')}${cell(a, b)}<td class="n ${cls(a.pl)}">${o}${a.n ? spct(a.pl / a.n) : '–'}${c}</td></tr>`; };
-  return `<h2>${title}</h2><table><thead><tr><th>Gap</th>${NM.map(t => `<th class="n">${t}</th><th class="n">P/L</th>`).join('')}<th class="n">All bets</th><th class="n">P/L</th><th class="n">ROI</th></tr></thead>
-    <tbody>${G.map(g => row(g.lo === 10 ? '10%+' : `${g.lo}–${g.lo + 1}%`, k => get(g, k))).join('')}${row('All 2%+', k => sum(G.map(g => get(g, k))), 1)}</tbody></table>`;
-}
-function calTable(X, title) {
-  if (!X) return '';
-  const G = (X.gaps || []).filter(g => g.cal), K = ['home', 'away', 'over', 'under'];
-  if (!G.length) return '';
-  const pl = g => K.reduce((s, k) => s + ((g[k] || {}).pl || 0), 0);
-  const row = (lab, c, p, b) => { const o = b ? '<b>' : '', e = b ? '</b>' : ''; return !c.n ? '' : `<tr${b ? ' class="tot"' : ''}><td>${o}${lab}${e}</td><td class="n">${o}${c.n.toLocaleString('en-GB')}${e}</td><td class="n">${o}${pct(c.exp / c.n)}${e}</td><td class="n">${o}${pct(c.won / c.n)}${e}</td><td class="n">${o}${spct(c.gap / c.n)}${e}</td><td class="n ${cls(p)}">${o}${spct(p / c.n)}${e}</td><td class="n">${o}${(p / c.gap * 100).toFixed(0)}%${e}</td></tr>`; };
-  const sum = gs => [gs.reduce((s, g) => ({n: s.n + g.cal.n, gap: s.gap + g.cal.gap, exp: s.exp + g.cal.exp, won: s.won + g.cal.won}), {n: 0, gap: 0, exp: 0, won: 0}), gs.reduce((s, g) => s + pl(g), 0)];
-  const GR = [['2–4%', g => g.lo < 4], ['4–8%', g => g.lo >= 4 && g.lo < 8], ['8%+', g => g.lo >= 8], ['All 2%+', () => true]];
-  return `<h2>${title}</h2><table><thead><tr><th>Gap</th><th class="n">Bets</th><th class="n">Wins expected</th><th class="n">Wins actual</th><th class="n">Gap promised</th><th class="n">ROI</th><th class="n">Share kept</th></tr></thead>
-    <tbody>${GR.map(([lab, f], i) => row(lab, ...sum(G.filter(f)), i === 3)).join('')}</tbody></table>`;
-}
-function viewGaps() {
-  const M = grp('men'), W = grp('women');
-  return `<p class="note">2023-24 to now, opening prices. Every bet with a gap of 2% or more, grouped by the size of the gap: the best price against the market's margin-free price. For each side: the number of bets and the profit or loss in units at 1 unit a bet. The draw is never bet.</p>
-  ${gapTable(M, `Men${M ? ' · ' + M.leagues.length + ' leagues' : ''}`)}
-  ${gapTable(W, `Women${W ? ' · ' + W.leagues.length + ' leagues' : ''}`)}
-  <p class="note" style="margin-top:34px"><b>Calibration.</b> Is the gap real? <b>Wins expected</b>: the share of bets the market's margin-free price says should win. <b>Wins actual</b>: the share that did. If the two match, the market price is right and the bet earns the gap. <b>Gap promised</b> is the average gap of the bets, <b>ROI</b> what they returned, <b>Share kept</b> the ROI as a share of the gap promised: 100% means the whole gap was earned.</p>
-  ${calTable(M, 'Calibration · men')}
-  ${calTable(W, 'Calibration · women')}`;
+  <table class="lgs"><thead><tr>${head}</tr></thead><tbody><tr class="tot"><td><b>All</b></td><td><b>${list.length} leagues</b></td><td class="n"><b>${num(games)}</b></td><td class="n"></td>${tot.s.map(s => c(s, 1)).join('')}${c(tot, 1)}</tr>${rows}</tbody></table>`;
 }
 
 // ---------- How it works ----------
 function viewHow() {
-  const M = grp('men'), W = grp('women'), names = X => X.leagues.map(l => l.country + ' ' + l.name).join(', ');
+  const names = L.map(l => l.country + ' ' + l.name).join(', ');
   return `<div class="prose">
   <h2>What this is</h2>
   <p>A search for wrong prices in European football. Two markets: the match result (home or away win; the draw is never bet) and over/under 2.5 goals.</p>
-  ${M ? `<p><b>Men, ${M.leagues.length} leagues</b>: ${names(M)}.</p>` : ''}
-  ${W ? `<p><b>Women, ${W.leagues.length} leagues</b>: ${names(W)}.</p>` : ''}
+  <p><b>${L.length} men's leagues</b>: ${names}.</p>
   <h2>The gap</h2>
   <p>Take the market's price: the odds of about 20 books with their margin removed (the power method, which puts more of the margin on longshots, as books do). Take the best price on offer at the same moment. The gap is best price × market chance − 1. No model and no team ratings: the market itself is the yardstick.</p>
   <h2>The backtest</h2>
-  <p>Every game from 2023-24 to now, at opening prices. Each time the gap on a home win, an away win, over 2.5 or under 2.5 was at least ${GAP(D)}, one unit is bet on it at the best price. The tables show those bets per league and side, with the ROI. One league's numbers rest on few bets, so the row for all leagues together is the one to read. The Backtest tab groups the same bets by the size of the gap, from 2–3% up to 10% and more, with the profit or loss of each group, and a calibration table: the share of bets the market price said would win against the share that did, and the ROI against the gap promised.</p>
+  <p>Every game from 2023-24 to now, at opening prices. Each time the gap on a home win, an away win, over 2.5 or under 2.5 was at least ${GAP0}%, one unit is bet on it at the best price.</p>
+  <p>The Backtest tab is built for choosing a rule. Four filters cut the bets: the minimum gap, the market chance of the bet (the chance of it winning by the market price, so a low chance means an outsider), the league group (the big five top divisions of England, Spain, Germany, Italy and France, the other top divisions, the lower divisions) and the side. Every table is recounted for the bets that pass, and a pill shows the ROI of the bets left out, so a filter can be judged by what it removes.</p>
+  <p>Each table row shows the number of bets, the average gap they promised, the ROI, its standard error, the profit or loss, the share of bets the market price said would win against the share that did, the part of the gap that was kept, and the ROI of each season. A rule is worth using when the result holds in every season, not only in the total. The Leagues tab shows the same bets league by league; one league's numbers rest on few bets and its past ROI says little about its next season.</p>
   <h2>Why it can work</h2>
   <p>Some prices open before the market settles, or are shaded, and for a while stand above it. They are corrected quickly: at closing prices the gap is much smaller, so it has to be taken early.</p>
   <h2>Betting rules</h2>
-  <p>None yet. These pages are the test results; the rules for picks will be set later from them.</p>
+  <p>None yet. These pages are the test results; the rules for picks will be set from them.</p>
   <h2>What was tried and dropped</h2>
   <p>An xG team model and detailed match data (lineups, missing starters, finishing, set pieces, rest, squad value) were tested against the opening price. None of them added anything the price did not already know, so they are not used.</p>
+  <p>Women's leagues were tested the same way. The market price there is less accurate: the bets won less often than it said and kept under half of the gap, so the women's leagues were dropped and more men's leagues added.</p>
   <h2>Data</h2>
   <p>Opening and closing odds from a public odds feed. Updated three times a day.</p>
   </div>`;
 }
 
-const VIEWS = ['backtest', 'men', 'women', 'how'];
+const VIEWS = ['backtest', 'men', 'how'];
 function render() {
   document.querySelectorAll('#tabs a[data-view]').forEach(a => a.classList.toggle('on', a.dataset.view === state.view));
-  const X = state.view === 'men' || state.view === 'women' ? grp(state.view) : null;
-  $('#sub').textContent = (X ? `${X.leagues.length} leagues · ${X.leagues.reduce((s, l) => s + l.games, 0).toLocaleString('en-GB')} games tested, 2023-24 to now · ` : '') + `updated ${D.updated.replace('T', ' ').replace('Z', ' UTC')}`;
-  out.innerHTML = state.view === 'how' ? viewHow() : state.view === 'backtest' ? viewGaps() : viewLeagues(state.view);
+  $('#sub').textContent = `${L.length} leagues · ${num(L.reduce((s, l) => s + l.games, 0))} games tested, 2023-24 to now · updated ${D.updated.replace('T', ' ').replace('Z', ' UTC')}`;
+  out.innerHTML = state.view === 'how' ? viewHow() : state.view === 'men' ? viewLeagues() : viewBacktest();
   save();
 }
 out.addEventListener('click', e => {
+  const c = e.target.closest('[data-f]');
+  if (c) {
+    const f = state.f, k = c.dataset.f, v = c.dataset.v;
+    if (k === 'side') { f.side[+v] = f.side[+v] ? 0 : 1; if (!f.side.some(x => x)) f.side = [1, 1, 1, 1]; }
+    else f[k] = k === 'lg' ? v : +v;
+    return render();
+  }
   const t = e.target.closest('[data-sort]');
   if (!t) return;
   const k = t.dataset.sort, s = state.sort || {};
@@ -122,7 +162,7 @@ out.addEventListener('click', e => {
 });
 function route() {
   const m = location.hash.match(/view=(\w+)/);
-  state.view = m && VIEWS.includes(m[1]) ? m[1] : 'backtest';      // no hash and old links (picks, upcoming, leagues) land on the Backtest tab
+  state.view = m && VIEWS.includes(m[1]) ? m[1] : 'backtest';      // no hash and old links (picks, upcoming, leagues, women) land on the Backtest tab
   render();
 }
 window.addEventListener('hashchange', route);
