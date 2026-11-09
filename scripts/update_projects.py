@@ -153,11 +153,10 @@ def greek_cup():
 
 
 def mid_europe():
-    d = js_object("/football/research/data.js", r"window\.D\s*=")
-    P = d.get("picks") or []
-    done = [p for p in P if p.get("result")]
-    return record(sum(p["result"] == "W" for p in done), sum(p["result"] == "L" for p in done),
-                  sum(p["profit"] for p in done), sum(not p.get("result") for p in P))
+    # research card: no picks (rules not set yet), so the pills are the size of the two backtests
+    m = js_object("/football/research/data.js", r"window\.D\s*=")
+    w = js_object("/football/women-europe/data.js", r"window\.D\s*=")
+    return [f"{len(m['leagues'])} men's leagues", f"{len(w['leagues'])} women's leagues"]
 
 
 def basketball_cup(folder):
