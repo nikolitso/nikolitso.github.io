@@ -161,7 +161,8 @@
       "tiny-experiments-how-to-live-freely",
       "game-theory",
       "the-logic-of-sports-betting",
-      "soccer-analytics-an-introduction"
+      "soccer-analytics-an-introduction",
+      "make-your-mark"
     ],
     "log": [
       {
@@ -457,9 +458,15 @@
         "slot": "2026-11-08 14",
         "slug": "soccer-analytics-an-introduction",
         "id": "2119399584912773314"
+      },
+      {
+        "day": "2026-11-09",
+        "slot": "2026-11-09 14",
+        "slug": "make-your-mark",
+        "id": "2119761979631907231"
       }
     ],
-    "last_day": "2026-11-08"
+    "last_day": "2026-11-09"
   },
   "film": {
     "seen": [
@@ -986,7 +993,7 @@
     ],
     "last_day": "2026-11-08"
   },
-  "last_slot": "2026-11-09 11",
+  "last_slot": "2026-11-09 14",
   "quote": {
     "seen": [
       "1",
