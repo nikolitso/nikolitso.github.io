@@ -507,6 +507,7 @@
       "behind-the-haystacks",
       "birthday-boy",
       "blue-is-the-warmest-colour",
+      "brave-new-love",
       "broken-vein",
       "brothers",
       "calle-malaga",
@@ -721,7 +722,8 @@
       "silent-heart",
       "the-double-hour",
       "after-love",
-      "the-mafia-kills-only-in-summer"
+      "the-mafia-kills-only-in-summer",
+      "brave-new-love"
     ],
     "log": [
       {
@@ -989,11 +991,17 @@
         "slot": "2026-11-08 20",
         "slug": "the-mafia-kills-only-in-summer",
         "id": "2119490180180549869"
+      },
+      {
+        "day": "2026-11-09",
+        "slot": "2026-11-09 20",
+        "slug": "brave-new-love",
+        "id": "2119852581715390623"
       }
     ],
-    "last_day": "2026-11-08"
+    "last_day": "2026-11-09"
   },
-  "last_slot": "2026-11-09 14",
+  "last_slot": "2026-11-09 20",
   "quote": {
     "seen": [
       "1",
