@@ -929,7 +929,10 @@ const XV = {updated: '9 Nov 2026', rounds: 10, rows: [
   ['Levadiakos', 4.5, 0, 'No goal in its first eight games, but improving: beat Aris 3\u20130 and led at AEK (Kopnan, Poupescu). The coach stays calm.'],
   ['Atromitos', 4, 0.5, 'Recovering: the 0\u20130 at OFI was a very good point. Still struggles to score.'],
   ['Volos', 3.5, 0, 'Ineffective, with long dull spells. Lost to Kifisia from a winning position. Gonzalez is the one player who stands out.'],
-  ['Panetolikos', 3, -0.5, 'Top of the table after three rounds, now in steep decline: cannot score and lost 0\u20135 at AEK and 0\u20133 at Aris. A surprise for a team coached by Anastasiou.']
+  ['Panetolikos', 3, -0.5, 'Top of the table after three rounds, now in steep decline: cannot score and lost 0\u20135 at AEK and 0\u20133 at Aris. Anastasiou was sacked on 9 Nov after seven straight league defeats; a new coach is the next thing to watch.']
+], news: [
+  // newest first: [date, team, type, text]
+  ['2026-11-09', 'Panetolikos', 'Coach', 'Giannis Anastasiou sacked after seven straight league defeats.']
 ], themes: [
   'Panathinaikos\u2019 lead is growing; Olympiakos and PAOK lost the most ground in round 10.',
   'Home and away are two different leagues for AEK, Panathinaikos and Aris.',
@@ -941,7 +944,9 @@ function renderExperts(){
   let h = `<p class="rs-lede">How the teams look to an experienced Greek football analyst, from his match reviews of every round so far (rounds 1\u2013${XV.rounds}). The ratings out of 10 are a summary of his views, not his own scores, and are not used by the model. Updated ${XV.updated}.</p>
   <div class="scroll"><table class="xv"><thead><tr><th class="n">#</th><th>Team</th><th class="n">Rating</th><th class="n">Change</th><th>Expert view</th></tr></thead><tbody>`;
   XV.rows.forEach(([t, r, c, txt], i) => h += `<tr><td class="n muted">${i + 1}</td><td><b>${t}</b></td><td class="n tot">${r}</td><td class="n">${ch(c)}</td><td class="xvc">${txt}</td></tr>`);
-  h += `</tbody></table></div><h2>What stands out</h2><ul class="xvl">${XV.themes.map(t => `<li>${t}</li>`).join('')}</ul>`;
+  h += `</tbody></table></div>`;
+  if (XV.news.length) h += `<h2>Team news</h2><p class="note">Injuries, suspensions and coach changes since the ratings, checked daily. Not used by the model.</p><div class="scroll"><table class="xv"><thead><tr><th>Date</th><th>Team</th><th>News</th></tr></thead><tbody>${XV.news.map(([d, t, k, x]) => `<tr><td class="muted">${dayName(d)}</td><td><b>${t}</b></td><td class="xvc"><span class="muted">${k}:</span> ${x}</td></tr>`).join('')}</tbody></table></div>`;
+  h += `<h2>What stands out</h2><ul class="xvl">${XV.themes.map(t => `<li>${t}</li>`).join('')}</ul>`;
   return h;
 }
 function renderResearch(){
