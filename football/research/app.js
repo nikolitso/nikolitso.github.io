@@ -49,6 +49,25 @@ function viewLeagues(g) {
   <table><thead><tr>${head}</tr></thead><tbody><tr class="tot"><td><b>All</b></td><td><b>${X.leagues.length} leagues</b></td><td class="n"><b>${games.toLocaleString('en-GB')}</b></td><td class="n"></td>${SIDE.map(([k]) => c(tot(k), 1)).join('')}</tr>${rows}</tbody></table>`;
 }
 
+// ---------- Backtest by gap size: men and women ----------
+function gapTable(X, title) {
+  if (!X) return `<h2>${title}</h2><p class="note">Loading…</p>`;
+  const K = ['home', 'away', 'over', 'under'], NM = ['Home wins', 'Away wins', 'Overs', 'Unders'];
+  const u = x => (x > 0 ? '+' : '') + x.toFixed(1);
+  const cell = (x, b) => { const o = b ? '<b>' : '', c = b ? '</b>' : ''; return x.n ? `<td class="n">${o}${x.n.toLocaleString('en-GB')}${c}</td><td class="n ${cls(x.pl)}">${o}${u(x.pl)}${c}</td>` : '<td class="n">0</td><td class="n">–</td>'; };
+  const sum = xs => xs.reduce((s, x) => ({n: s.n + x.n, pl: s.pl + x.pl}), {n: 0, pl: 0});
+  const G = X.gaps || [], get = (g, k) => g[k] || {n: 0, pl: 0};
+  const row = (lab, f, b) => { const a = sum(K.map(f)), o = b ? '<b>' : '', c = b ? '</b>' : ''; return `<tr${b ? ' class="tot"' : ''}><td>${o}${lab}${c}</td>${K.map(k => cell(f(k), b)).join('')}${cell(a, b)}<td class="n ${cls(a.pl)}">${o}${a.n ? spct(a.pl / a.n) : '–'}${c}</td></tr>`; };
+  return `<h2>${title}</h2><table><thead><tr><th>Gap</th>${NM.map(t => `<th class="n">${t}</th><th class="n">P/L</th>`).join('')}<th class="n">All bets</th><th class="n">P/L</th><th class="n">ROI</th></tr></thead>
+    <tbody>${G.map(g => row(g.lo === 10 ? '10%+' : `${g.lo}–${g.lo + 1}%`, k => get(g, k))).join('')}${row('All 2%+', k => sum(G.map(g => get(g, k))), 1)}</tbody></table>`;
+}
+function viewGaps() {
+  const M = grp('men'), W = grp('women');
+  return `<p class="note">2023-24 to now, opening prices. Every bet with a gap of 2% or more, grouped by the size of the gap: the best price against the market's margin-free price. For each side: the number of bets and the profit or loss in units at 1 unit a bet. The draw is never bet.</p>
+  ${gapTable(M, `Men${M ? ' · ' + M.leagues.length + ' leagues' : ''}`)}
+  ${gapTable(W, `Women${W ? ' · ' + W.leagues.length + ' leagues' : ''}`)}`;
+}
+
 // ---------- How it works ----------
 function viewHow() {
   const M = grp('men'), W = grp('women'), names = X => X.leagues.map(l => l.country + ' ' + l.name).join(', ');
@@ -60,7 +79,7 @@ function viewHow() {
   <h2>The gap</h2>
   <p>Take the market's price: the odds of about 20 books with their margin removed (the power method, which puts more of the margin on longshots, as books do). Take the best price on offer at the same moment. The gap is best price × market chance − 1. No model and no team ratings: the market itself is the yardstick.</p>
   <h2>The backtest</h2>
-  <p>Every game from 2023-24 to now, at opening prices. Each time the gap on a home win, an away win, over 2.5 or under 2.5 was at least ${GAP(D)}, one unit is bet on it at the best price. The tables show those bets per league and side, with the ROI. One league's numbers rest on few bets, so the row for all leagues together is the one to read.</p>
+  <p>Every game from 2023-24 to now, at opening prices. Each time the gap on a home win, an away win, over 2.5 or under 2.5 was at least ${GAP(D)}, one unit is bet on it at the best price. The tables show those bets per league and side, with the ROI. One league's numbers rest on few bets, so the row for all leagues together is the one to read. The Backtest tab groups the same bets by the size of the gap, from 2–3% up to 10% and more, with the profit or loss of each group.</p>
   <h2>Why it can work</h2>
   <p>Some prices open before the market settles, or are shaded, and for a while stand above it. They are corrected quickly: at closing prices the gap is much smaller, so it has to be taken early.</p>
   <h2>Betting rules</h2>
@@ -72,12 +91,12 @@ function viewHow() {
   </div>`;
 }
 
-const VIEWS = ['men', 'women', 'how'];
+const VIEWS = ['men', 'women', 'backtest', 'how'];
 function render() {
   document.querySelectorAll('#tabs a[data-view]').forEach(a => a.classList.toggle('on', a.dataset.view === state.view));
-  const X = state.view === 'how' ? null : grp(state.view);
+  const X = state.view === 'men' || state.view === 'women' ? grp(state.view) : null;
   $('#sub').textContent = (X ? `${X.leagues.length} leagues · ${X.leagues.reduce((s, l) => s + l.games, 0).toLocaleString('en-GB')} games tested, 2023-24 to now · ` : '') + `updated ${D.updated.replace('T', ' ').replace('Z', ' UTC')}`;
-  out.innerHTML = state.view === 'how' ? viewHow() : viewLeagues(state.view);
+  out.innerHTML = state.view === 'how' ? viewHow() : state.view === 'backtest' ? viewGaps() : viewLeagues(state.view);
   save();
 }
 out.addEventListener('click', e => {
@@ -89,7 +108,7 @@ out.addEventListener('click', e => {
 });
 function route() {
   const m = location.hash.match(/view=(\w+)/);
-  state.view = m && VIEWS.includes(m[1]) ? m[1] : HOME;      // no hash and old links (picks, backtest, upcoming, leagues) land on the page's own table
+  state.view = m && VIEWS.includes(m[1]) ? m[1] : HOME;      // no hash and old links (picks, upcoming, leagues) land on the page's own table
   render();
 }
 window.addEventListener('hashchange', route);
