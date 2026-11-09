@@ -1,7 +1,8 @@
 name: Site · Mid-Europe Gaps
 
-# /football/mid-europe/: ten mid-tier European leagues (Austria, Czechia, Slovakia, Hungary, Switzerland, Poland,
-# Denmark, Croatia, Romania, Serbia). Results, xG and box scores from FotMob, event ids and opening/closing odds from
+# /football/mid-europe/: twenty mid-tier European leagues (list in BettingSignal mid-europe/leagues.py: Austria to
+# Serbia found the BTTS gap; Belgium, Netherlands, Scotland, Greece, Turkey, Israel, Norway, Sweden, Finland, Ireland
+# added 9 Nov 2026 as an out-of-sample check). Results, xG and box scores from FotMob, event ids and opening/closing odds from
 # the odds feed, the xG model, the research tables and the live BTTS picks (data/picks_log.json, frozen at first post).
 # Scripts and data in nikolitso/BettingSignal (mid-europe/). Three times a day, so picks are caught near the opening price.
 on:
