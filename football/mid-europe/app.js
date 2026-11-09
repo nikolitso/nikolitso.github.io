@@ -43,12 +43,12 @@ const ANG_HEAD = `<thead><tr><th>Rule</th><th class="n">Bets</th><th class="n">R
 
 function viewGaps() {
   if (!['1x2', 'ou2.5'].includes(state.mkt)) state.mkt = '1x2';
-  const order = {model: 0, side: 1, flat: 2, band: 3};
+  const order = {price: 0, model: 1, side: 2, flat: 3, band: 4};
   const list = D.angles.filter(a => mktOf(a) === state.mkt && a.key.includes(state.when === 'open' ? '_open' : '_clos'))
     .sort((a, b) => order[a.group] - order[b.group]);
   const tbl = xs => `<table class="ang">${ANG_HEAD}<tbody>${xs.map(a => angleRow(a) + (state.open === a.key ? angleDetail(a) : '')).join('')}</tbody></table>`;
-  const live = D.pick ? D.angles.find(x => x.key === D.pick.key) : null;
-  const passed = gaps.length ? tbl(gaps) + (live ? `<p class="note">The live picks follow <b>${esc(live.label)}</b>: of the rules that pass, it is the one that also made the same profit on the ten leagues added after the model's settings were fixed. Expect a small edge.</p>` : '')
+  const live = D.pick ? D.angles.filter(x => (D.pick.keys || []).includes(x.key)) : [];
+  const passed = gaps.length ? tbl(gaps) + (live.length ? `<p class="note">The live picks follow the <b>price gap</b> rules at 2% (${live.map(a => esc(a.label.split(':')[0])).join(' and ')}): no model, just the best Greek-licensed price against the margin-free price of the UK books. They made a profit in every season block and every group of leagues, and the bets beat the closing price. The edge is in the opening prices and shrinks by kick-off (see the Closing price switch), so it has to be taken early.</p>` : '')
     : `<p class="note">None of the ${D.angles.length} rules passes yet, so no picks are posted. The tables below show how close each one comes.</p>`;
   return pills() + `<p class="lede">Two markets only: <b>1X2</b> and <b>over/under 2.5 goals</b>. A <b>gap</b> is a betting rule that, on past games, (1) had at least 150 bets, (2) beat the closing price on average (CLV above zero, so it is bet at opening prices) and (3) made a profit both in the seasons used to set the model up (2023-24, 2024-25) and in the seasons after (2025-26, 2026-27 so far). The rule was set before the results were seen.</p>
   <h2>Gaps that pass</h2>${passed}
@@ -58,9 +58,23 @@ function viewGaps() {
   <div class="seg">${[['open', 'Opening price'], ['close', 'Closing price']].map(([k, l]) => `<button class="${state.when === k ? 'on' : ''}" data-w="${k}">${l}</button>`).join('')}</div></div>
   <p class="note">Prices are the best of the Greek-licensed books; CLV is against the margin-free closing price of about 20 UK books. Click a rule for its leagues and seasons.</p>
   ${tbl(list)}
+  ${studyTable()}
   <h2>Does the model know more than the price?</h2>
   <p class="note">Log loss: lower is more accurate. <b>Move</b>: the share of the model's disagreement with the opening price that the closing price takes up (0% means the market ignores what the model sees; a clear positive number means the opening price is beatable). <b>Blend</b>: the weight the model earns next to the opening price, fitted on 2023-25.</p>
   ${infoTable()}`;
+}
+
+function studyTable() {
+  const S = D.study || [];
+  if (!S.length) return '';
+  const NM = {model: 'xG model', npmodel: 'xG model, no penalties, red cards discounted', luck: 'Goals − non-penalty xG (luck)', fin: 'Finishing and keeping (xG on target − xG)',
+    form5: 'Points − expected points, last 5', setp: 'Set-piece share of xG', rest: 'Days of rest', miss: 'Regular starters missing from the last XI',
+    mv: 'Starting XI market value', tot_xg: 'Recent xG for + against, both teams', tot_luck: 'Recent goals − xG, both teams'};
+  const g = x => x ? `<span class="${x.gain - 2 * x.se > 0 ? 'pos' : 'mut'}">${x.gain > 0 ? '+' : ''}${x.gain.toFixed(2)} ± ${x.se.toFixed(2)}</span>` : '–';
+  const rows = S.map(t => `<tr><td class="wrapc">${NM[t.metric] || t.metric}</td><td>${t.market === '1x2' ? '1X2' : 'O/U 2.5'}</td><td class="n">${g(t.check_seasons)}</td><td class="n">${g(t.added_leagues)}</td><td class="n">${(t.close_moves * 100).toFixed(1)}%</td></tr>`).join('');
+  return `<h2>Detailed match metrics: do they know more than the opening price?</h2>
+  <p class="note">Each metric is taken only from games before the one being priced and added on top of the margin-free opening price, with its weight fitted on 2023-25 in the first ten leagues. <b>Gain</b>: how much better the opening price plus the metric predicts results, in thousandths of log loss per game (above zero is better; gold only when it is more than two standard errors). <b>Close moves</b>: how far the closing price moves with the metric. None of them adds anything worth betting on: the opening price already holds what they know.</p>
+  <table><thead><tr><th>Metric</th><th>Market</th><th class="n">Gain, 2025-27</th><th class="n">Gain, added leagues</th><th class="n">Close moves</th></tr></thead><tbody>${rows}</tbody></table>`;
 }
 
 function infoTable() {
@@ -87,7 +101,7 @@ function viewUpcoming() {
   const fmt = new Intl.DateTimeFormat('en-GB', {weekday: 'short', day: 'numeric', month: 'short', timeZone: 'Europe/Athens'});
   const tf = new Intl.DateTimeFormat('en-GB', {hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Athens'});
   const gs = D.upcoming.filter(u => state.lg === 'all' || u.lg === state.lg);
-  let html = `<div class="bar">${chipsLg('lg')}</div><p class="note">The next 14 days. <b>Model</b>: the xG model's chance and fair odds. <b>Market</b>: the margin-free price of about 20 UK books, now (and at opening). <b>Best</b>: best Greek-licensed price now. <b>Gap</b>: model chance × best price − 1. A gap here is not a pick: on its own it has not passed the rule (see Gaps). Times are Athens time.</p>`;
+  let html = `<div class="bar">${chipsLg('lg')}</div><p class="note">The next 14 days. <b>Model</b>: the xG model's chance and fair odds. <b>Market</b>: the margin-free price of about 20 UK books, now (and at opening). <b>Best</b>: best Greek-licensed price now. <b>vs UK</b>: best price × UK market chance − 1, the live rule (gold at 2% or more). <b>Gap</b>: model chance × best price − 1, for reference only. Times are Athens time.</p>`;
   if (!gs.length) return html + '<p class="note">No games in the next 14 days.</p>';
   let day = '';
   html += '<div class="grid">';
@@ -98,17 +112,17 @@ function viewUpcoming() {
     const tbl = (k, labs) => {
       const m = u.mod[k], mk = u.mk[k];
       return labs.map((lab, i) => {
-        const best = mk.gr ? mk.gr.best[i] : null, gap = best ? m[i] * best - 1 : null;
+        const best = mk.gr ? mk.gr.best[i] : null, gap = best ? m[i] * best - 1 : null, vu = best && mk.now ? mk.now.fair[i] * best - 1 : null;
         return `<tr><td>${lab}</td><td class="n">${pct(m[i], 0)}</td><td class="n">${odds(m[i])}</td>
           <td class="n">${mk.now ? odds(mk.now.fair[i]) : '–'}</td><td class="n mut">${mk.open ? odds(mk.open.fair[i]) : '–'}</td>
-          <td class="n">${best ? best.toFixed(2) : '–'}</td><td class="n ${gap != null && gap >= 0.05 ? 'pos' : ''}">${gap == null ? '–' : spct(gap, 0)}</td></tr>`;
+          <td class="n">${best ? best.toFixed(2) : '–'}</td><td class="n ${vu != null && vu >= 0.02 ? 'pos' : ''}">${vu == null ? '–' : spct(vu, 0)}</td><td class="n mut">${gap == null ? '–' : spct(gap, 0)}</td></tr>`;
       }).join('');
     };
     const lk = x => x == null ? '' : `<span class="${x > 0 ? 'hot' : 'cold'}">${x > 0 ? '+' : ''}${x}</span>`;
     html += `<div class="card"><div class="top"><span class="lgtag">${LG[u.lg].country}</span> <span class="ko">${tf.format(d)}</span></div>
       <h3>${esc(u.home)} – ${esc(u.away)}</h3>
       <div class="xgl">Model xG ${u.xg[0].toFixed(2)} – ${u.xg[1].toFixed(2)}${u.luck[0] != null || u.luck[1] != null ? ` · goals − xG, last 8: ${lk(u.luck[0]) || '–'} / ${lk(u.luck[1]) || '–'}` : ''}</div>
-      <table class="mk"><thead><tr><th></th><th class="n">Model</th><th class="n">Fair</th><th class="n">Market</th><th class="n">Open</th><th class="n">Best</th><th class="n">Gap</th></tr></thead><tbody>
+      <table class="mk"><thead><tr><th></th><th class="n">Model</th><th class="n">Fair</th><th class="n">Market</th><th class="n">Open</th><th class="n">Best</th><th class="n">vs UK</th><th class="n">Gap</th></tr></thead><tbody>
       ${tbl('1x2', SEL['1x2'])}${tbl('ou2.5', SEL['ou2.5'])}</tbody></table></div>`;
   }
   return html + '</div>';
@@ -117,18 +131,20 @@ function viewUpcoming() {
 function viewPicks() {
   const P = D.picks || [], done = P.filter(p => p.result), open = P.filter(p => !p.result), pk = D.pick;
   const w = done.filter(p => p.result === 'W').length, prof = done.reduce((s, p) => s + p.profit, 0);
-  const rule = pk ? D.angles.find(a => a.key === pk.key) || {} : null;
+  const rs = pk ? D.angles.filter(a => (pk.keys || [pk.key]).includes(a.key)) : [];
+  const rn = rs.reduce((s, a) => s + a.n, 0);
+  const rule = rs.length ? {n: rn, roi: rs.reduce((s, a) => s + a.roi * a.n, 0) / rn, clv: rs.reduce((s, a) => s + (a.clv || 0) * a.n, 0) / rn} : null;
   const fmt = new Intl.DateTimeFormat('en-GB', {weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Athens'});
-  const sel = p => (SEL[p.market] || [])[p.sel] || '–';
+  const sel = p => ((SEL[p.market] || [])[p.sel] || '–') + (p.market === '1x2' ? ' (1X2)' : '');
   const row = p => `<tr><td>${fmt.format(new Date(p.dt.replace('Z', ':00Z')))}</td><td>${LG[p.lg].country}</td><td class="wrapc">${esc(p.home)} – ${esc(p.away)}</td><td>${sel(p)}</td>
     <td class="n">${p.odds.toFixed(2)}</td><td class="n">${odds(p.prob)}</td><td class="n pos">${spct(p.edge, 0)}</td>${p.result ? `<td class="n">${p.score}</td><td class="n ${p.profit > 0 ? 'pos' : 'neg'}">${p.profit > 0 ? '+' : ''}${p.profit.toFixed(2)}</td>` : ''}</tr>`;
-  const head = res => `<thead><tr><th>Kick-off</th><th>League</th><th>Game</th><th>Bet</th><th class="n">Price</th><th class="n">Model odds</th><th class="n">Edge</th>${res ? '<th class="n">Score</th><th class="n">Units</th>' : ''}</tr></thead>`;
+  const head = res => `<thead><tr><th>Kick-off</th><th>League</th><th>Game</th><th>Bet</th><th class="n">Price</th><th class="n" title="Margin-free price of the UK books when the pick was posted">UK fair</th><th class="n">Edge</th>${res ? '<th class="n">Score</th><th class="n">Units</th>' : ''}</tr></thead>`;
   const facts = `<div class="facts">
     <span class="fact">${done.length ? `<b>Record ${w}–${done.length - w}</b> · ROI ${spct(prof / done.length)}` : 'No settled picks yet'}</span>
     <span class="fact">${open.length ? `<b>${open.length}</b>open ${open.length === 1 ? 'pick' : 'picks'}` : 'No open picks'}</span>
     ${rule ? `<span class="fact"><b>${spct(rule.roi)}</b>backtest ROI, ${rule.n} bets</span><span class="fact"><b>${spct(rule.clv)}</b>backtest CLV</span>` : ''}
   </div>`;
-  const lede = rule ? `<p class="lede">The rule that passed (see Gaps): <b>${esc(rule.label)}</b>. A pick is posted the first time a game reaches that edge at the best Greek-licensed price in the 8 days before kick-off and keeps that price. Flat 1 unit. Expect a small edge; on past games the bets beat the closing price on average.</p>`
+  const lede = rule ? `<p class="lede">The rule that passed (see Gaps): <b>back the best Greek-licensed price in 1X2 or over/under 2.5 when it is at least ${Math.round((pk.edge || 0.02) * 100)}% above the margin-free price of the UK books</b>. No model: the UK market is the yardstick. A pick is posted the first time a game reaches that edge in the 8 days before kick-off, from prices read three times a day, and keeps that price. Flat 1 unit. The backtest uses opening prices; the live record shows how much of the edge is still there when the prices are read.</p>`
     : `<p class="lede">No 1X2 or over/under 2.5 rule has passed the test yet (see Gaps), so no picks are posted. Picks start only when a rule passes; the Upcoming tab shows the model's prices for every game in the meantime.</p>`;
   return facts + lede + (P.length ? `<h2>Open picks</h2>${open.length ? `<table>${head(false)}<tbody>${open.map(row).join('')}</tbody></table>` : '<p class="note">None right now.</p>'}
   <h2>Settled</h2>${done.length ? `<table>${head(true)}<tbody>${done.slice().reverse().map(row).join('')}</tbody></table>` : '<p class="note">None yet.</p>'}` : '');
@@ -164,11 +180,13 @@ function viewHow() {
   <h2>xG where there is none</h2>
   <p>FotMob publishes xG for some of these leagues and seasons only (the Leagues tab shows which). Elsewhere the model uses an estimate from the box score, fitted on the ${px.full.n.toLocaleString('en-GB')} team-games that have both: xG ≈ ${px.full.coef[0]} × big chances + ${px.full.coef[1]} × other shots in the box + ${px.full.coef[2]} × shots from outside + ${px.full.coef[3]} × shots on target (correlation with real xG ${px.full.r}). Where big chances are not counted: ${px.basic.coef[0]} × shots + ${px.basic.coef[1]} × shots on target (correlation ${px.basic.r}).</p>
   <h2>Prices</h2>
-  <p>Two markets: 1X2 and over/under 2.5 goals. Opening and closing odds of about 20 UK books and of the Greek-licensed books. The margin is removed with the power method, which puts more of it on longshots, as books do. Bets are struck at the best Greek-licensed price. CLV (closing line value) is the opening price times the margin-free closing chance, minus one: over many bets, beating the closing price is the best sign that an edge is real, and it needs far fewer bets than profit to show.</p>
+  <p>Two markets: 1X2 and over/under 2.5 goals. Opening and closing odds of about 20 UK books and of the Greek-licensed books. The <b>price gap</b> rules use no model: they back the best Greek-licensed price when it is above the UK books' margin-free price by a set margin. The margin is removed with the power method, which puts more of it on longshots, as books do. Bets are struck at the best Greek-licensed price. CLV (closing line value) is the opening price times the margin-free closing chance, minus one: over many bets, beating the closing price is the best sign that an edge is real, and it needs far fewer bets than profit to show.</p>
   <h2>The rule for a gap</h2>
   <p>Set before the results were seen: at least 150 bets, CLV above zero, and a profit both in the tuning seasons (2023-24, 2024-25, used to choose the model's settings) and in the check seasons (2025-26 and 2026-27 so far), which the settings never saw. A rule that passes is a lead, not a proof: twenty leagues and dozens of rules give luck many chances. Ten of the leagues (${D.leagues.filter(l => l.batch === 2).map(l => l.country).join(', ')}) were added after the model's settings were fixed, so they never shaped them.</p>
+  <h2>Detailed metrics</h2>
+  <p>Beyond xG, every game's lineups, substitutions, goal and red-card minutes, shots and starting XI market values are read from FotMob. From them come non-penalty xG, finishing (xG on target minus xG), set-piece share, points against expected points, days of rest, regular starters missing from the last lineup, and squad value. Each was tested as a correction to the opening price (Gaps tab); none helped.</p>
   <h2>Data</h2>
-  <p>Results, xG and box scores from FotMob; odds from a public odds feed. Updated daily.</p>
+  <p>Results, xG, box scores, lineups and match events from FotMob; odds from a public odds feed. Updated three times a day.</p>
   </div>`;
 }
 
