@@ -153,7 +153,7 @@ def greek_cup():
 
 
 def mid_europe():
-    d = js_object("/football/mid-europe/data.js", r"window\.D\s*=")
+    d = js_object("/football/research/data.js", r"window\.D\s*=")
     P = d.get("picks") or []
     done = [p for p in P if p.get("result")]
     return record(sum(p["result"] == "W" for p in done), sum(p["result"] == "L" for p in done),
@@ -200,7 +200,7 @@ def basketball_totals(folder):
 CARDS = {                    # slug -> (card href on the homepage, reader)
     "superleague": ("/superleague/", superleague),
     "greek-cup": ("/football/greek-cup/", greek_cup),
-    "mid-europe": ("/football/mid-europe/", mid_europe),
+    "mid-europe": ("/football/research/", mid_europe),
     "eurocup": ("/eurocup/", lambda: basketball_cup("eurocup")),
     "fibaeuropecup": ("/fibaeuropecup/", lambda: basketball_cup("fibaeuropecup")),
     "handball": ("/handball/projections/", handball),
