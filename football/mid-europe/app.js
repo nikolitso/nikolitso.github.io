@@ -1,6 +1,8 @@
 (() => {
 const D = window.D, $ = s => document.querySelector(s), out = $('#out');
 const LG = Object.fromEntries(D.leagues.map(l => [l.key, l]));
+const dup = {}; D.leagues.forEach(l => { dup[l.country] = (dup[l.country] || 0) + 1; });
+D.leagues.forEach(l => { l.label = dup[l.country] > 1 ? l.country + ' ' + l.name : l.country; });
 const pct = (x, d = 1) => x == null ? '–' : (x * 100).toFixed(d) + '%';
 const spct = (x, d = 1) => x == null ? '–' : (x > 0 ? '+' : '') + (x * 100).toFixed(d) + '%';
 const odds = p => p ? (1 / p).toFixed(2) : '–';
@@ -35,7 +37,7 @@ function angleRow(a) {
 function angleDetail(a) {
   const rows = (o, name) => Object.entries(o).map(([k, s]) => `<tr><td>${esc(name ? name(k) : k)}</td><td class="n">${s.n}</td><td class="n ${cls(s.roi)}">${spct(s.roi)}</td><td class="n ${cls(s.clv)}">${spct(s.clv)}</td></tr>`).join('');
   return `<tr class="detail"><td colspan="8"><div class="mkcols2">
-    <table><thead><tr><th>League</th><th class="n">Bets</th><th class="n">ROI</th><th class="n">CLV</th></tr></thead><tbody>${rows(a.by_league, k => LG[k] ? LG[k].country : k)}</tbody></table>
+    <table><thead><tr><th>League</th><th class="n">Bets</th><th class="n">ROI</th><th class="n">CLV</th></tr></thead><tbody>${rows(a.by_league, k => LG[k] ? LG[k].label : k)}</tbody></table>
     <table><thead><tr><th>Season</th><th class="n">Bets</th><th class="n">ROI</th><th class="n">CLV</th></tr></thead><tbody>${rows(a.by_season)}</tbody></table>
   </div></td></tr>`;
 }
@@ -48,7 +50,7 @@ function viewGaps() {
     .sort((a, b) => order[a.group] - order[b.group]);
   const tbl = xs => `<table class="ang">${ANG_HEAD}<tbody>${xs.map(a => angleRow(a) + (state.open === a.key ? angleDetail(a) : '')).join('')}</tbody></table>`;
   const live = D.pick ? D.angles.filter(x => (D.pick.keys || []).includes(x.key)) : [];
-  const passed = gaps.length ? tbl(gaps) + (live.length ? `<p class="note">The live picks follow the <b>price gap</b> rules at 2% (${live.map(a => esc(a.label.split(':')[0])).join(' and ')}): no model, just the best Greek-licensed price against the margin-free price of the UK books. They made a profit in every season block and every group of leagues, and the bets beat the closing price. The edge is in the opening prices and shrinks by kick-off (see the Closing price switch), so it has to be taken early.</p>` : '')
+  const passed = gaps.length ? tbl(gaps) + (live.length ? `<p class="note">The live picks follow the <b>price gap</b> rules at 2% (${live.map(a => esc(a.label.split(':')[0])).join(' and ')}): no model, just the best Greek-licensed price against the margin-free price of the UK books. ${D.women ? "In the women's leagues the 1X2 bets only broke even in 2023-25 and made their profit in 2025-27; the bets beat the closing price in both markets." : 'They made a profit in every season block and every group of leagues, and the bets beat the closing price.'} The edge is in the opening prices and shrinks by kick-off (see the Closing price switch), so it has to be taken early.</p>` : '')
     : `<p class="note">None of the ${D.angles.length} rules passes yet, so no picks are posted. The tables below show how close each one comes.</p>`;
   return pills() + `<p class="lede">Two markets only: <b>1X2</b> and <b>over/under 2.5 goals</b>. A <b>gap</b> is a betting rule that, on past games, (1) had at least 150 bets, (2) beat the closing price on average (CLV above zero, so it is bet at opening prices) and (3) made a profit both in the seasons used to set the model up (2023-24, 2024-25) and in the seasons after (2025-26, 2026-27 so far). The rule was set before the results were seen.</p>
   <h2>Gaps that pass</h2>${passed}
@@ -73,7 +75,7 @@ function studyTable() {
   const g = x => x ? `<span class="${x.gain - 2 * x.se > 0 ? 'pos' : 'mut'}">${x.gain > 0 ? '+' : ''}${x.gain.toFixed(2)} ± ${x.se.toFixed(2)}</span>` : '–';
   const rows = S.map(t => `<tr><td class="wrapc">${NM[t.metric] || t.metric}</td><td>${t.market === '1x2' ? '1X2' : 'O/U 2.5'}</td><td class="n">${g(t.check_seasons)}</td><td class="n">${g(t.added_leagues)}</td><td class="n">${(t.close_moves * 100).toFixed(1)}%</td></tr>`).join('');
   return `<h2>Detailed match metrics: do they know more than the opening price?</h2>
-  <p class="note">Each metric is taken only from games before the one being priced and added on top of the margin-free opening price, with its weight fitted on 2023-25 in the first ten leagues. <b>Gain</b>: how much better the opening price plus the metric predicts results, in thousandths of log loss per game (above zero is better; gold only when it is more than two standard errors). <b>Close moves</b>: how far the closing price moves with the metric. None of them adds anything worth betting on: the opening price already holds what they know.</p>
+  <p class="note">Each metric is taken only from games before the one being priced and added on top of the margin-free opening price, with its weight fitted on 2023-25${D.women ? '' : ' in the first ten leagues'}. <b>Gain</b>: how much better the opening price plus the metric predicts results, in thousandths of log loss per game (above zero is better; gold only when it is more than two standard errors). <b>Close moves</b>: how far the closing price moves with the metric. None of them adds anything worth betting on: the opening price already holds what they know.</p>
   <table><thead><tr><th>Metric</th><th>Market</th><th class="n">Gain, 2025-27</th><th class="n">Gain, added leagues</th><th class="n">Close moves</th></tr></thead><tbody>${rows}</tbody></table>`;
 }
 
@@ -82,7 +84,7 @@ function infoTable() {
   const rows = D.leagues.map(l => {
     const i = l.info, a = i['1x2'] || {}, o = i['ou2.5'] || {};
     const mv = x => x && x.move != null ? `<span class="${x.move - 2 * x.move_se > 0 ? 'pos' : ''}">${(x.move * 100).toFixed(0)}%</span>` : '–';
-    return `<tr><td>${l.country}</td><td class="n">${a.n || '–'}</td>
+    return `<tr><td>${l.label}</td><td class="n">${a.n || '–'}</td>
       <td class="n">${a.ll_model ?? '–'}</td><td class="n">${a.ll_open ?? '–'}</td>
       <td class="n">${o.ll_model ?? '–'}</td><td class="n">${o.ll_open ?? '–'}</td>
       <td class="n">${mv(a)}</td><td class="n">${mv(o)}</td>
@@ -93,7 +95,7 @@ function infoTable() {
 }
 
 function chipsLg(key, all = true) {
-  const opts = (all ? [['all', 'All']] : []).concat(D.leagues.map(l => [l.key, l.country]));
+  const opts = (all ? [['all', 'All']] : []).concat(D.leagues.map(l => [l.key, l.label]));
   return `<div class="chips">${opts.map(([k, l]) => `<button class="chip${state[key] === k ? ' on' : ''}" data-${key}="${k}">${l}</button>`).join('')}</div>`;
 }
 
@@ -119,7 +121,7 @@ function viewUpcoming() {
       }).join('');
     };
     const lk = x => x == null ? '' : `<span class="${x > 0 ? 'hot' : 'cold'}">${x > 0 ? '+' : ''}${x}</span>`;
-    html += `<div class="card"><div class="top"><span class="lgtag">${LG[u.lg].country}</span> <span class="ko">${tf.format(d)}</span></div>
+    html += `<div class="card"><div class="top"><span class="lgtag">${LG[u.lg].label}</span> <span class="ko">${tf.format(d)}</span></div>
       <h3>${esc(u.home)} – ${esc(u.away)}</h3>
       <div class="xgl">Model xG ${u.xg[0].toFixed(2)} – ${u.xg[1].toFixed(2)}${u.luck[0] != null || u.luck[1] != null ? ` · goals − xG, last 8: ${lk(u.luck[0]) || '–'} / ${lk(u.luck[1]) || '–'}` : ''}</div>
       <table class="mk"><thead><tr><th></th><th class="n">Model</th><th class="n">Fair</th><th class="n">Market</th><th class="n">Open</th><th class="n">Best</th><th class="n">vs UK</th><th class="n">Gap</th></tr></thead><tbody>
@@ -136,7 +138,7 @@ function viewPicks() {
   const rule = rs.length ? {n: rn, roi: rs.reduce((s, a) => s + a.roi * a.n, 0) / rn, clv: rs.reduce((s, a) => s + (a.clv || 0) * a.n, 0) / rn} : null;
   const fmt = new Intl.DateTimeFormat('en-GB', {weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Athens'});
   const sel = p => ((SEL[p.market] || [])[p.sel] || '–') + (p.market === '1x2' ? ' (1X2)' : '');
-  const row = p => `<tr><td>${fmt.format(new Date(p.dt.replace('Z', ':00Z')))}</td><td>${LG[p.lg].country}</td><td class="wrapc">${esc(p.home)} – ${esc(p.away)}</td><td>${sel(p)}</td>
+  const row = p => `<tr><td>${fmt.format(new Date(p.dt.replace('Z', ':00Z')))}</td><td>${LG[p.lg].label}</td><td class="wrapc">${esc(p.home)} – ${esc(p.away)}</td><td>${sel(p)}</td>
     <td class="n">${p.odds.toFixed(2)}</td><td class="n">${odds(p.prob)}</td><td class="n pos">${spct(p.edge, 0)}</td>${p.result ? `<td class="n">${p.score}</td><td class="n ${p.profit > 0 ? 'pos' : 'neg'}">${p.profit > 0 ? '+' : ''}${p.profit.toFixed(2)}</td>` : ''}</tr>`;
   const head = res => `<thead><tr><th>Kick-off</th><th>League</th><th>Game</th><th>Bet</th><th class="n">Price</th><th class="n" title="Margin-free price of the UK books when the pick was posted">UK fair</th><th class="n">Edge</th>${res ? '<th class="n">Score</th><th class="n">Units</th>' : ''}</tr></thead>`;
   const facts = `<div class="facts">
@@ -174,7 +176,7 @@ function viewHow() {
   const p = D.params, px = D.proxy;
   return `<div class="prose">
   <h2>What this is</h2>
-  <p>A search for wrong prices in ${D.leagues.length} mid-tier European leagues: ${D.leagues.map(l => l.country).join(', ')}. It builds an xG model of every team, compares it with the bookmakers' prices at opening and at closing, and tests a list of betting rules on every game since 2023-24.</p>
+  <p>A search for wrong prices in ${D.leagues.length} European ${D.women ? "women's " : ''}leagues: ${D.leagues.map(l => l.country + ' ' + l.name).join(', ')}. It builds an xG model of every team, compares it with the bookmakers' prices at opening and at closing, and tests a list of betting rules on every game since 2023-24.</p>
   <h2>The model</h2>
   <p>Each team has an attack and a defence rating. A game's expected goals are exp(league level + home edge + attack − opponent's defence). The ratings are fitted on every earlier game with more weight on recent ones (half-life ${p.hl} days) and a pull towards average (strength ${p.lam}). What they are fitted on is a mix of chances and goals: ${Math.round(p.w * 100)}% xG and ${Math.round((1 - p.w) * 100)}% goals. Newly promoted teams start ${p.new} below average. Expected goals turn into score chances with a Poisson model with a small correction for low scores (ρ = ${p.rho}). Every game is predicted only from the games before its day.</p>
   <h2>xG where there is none</h2>
@@ -182,7 +184,7 @@ function viewHow() {
   <h2>Prices</h2>
   <p>Two markets: 1X2 and over/under 2.5 goals. Opening and closing odds of about 20 UK books and of the Greek-licensed books. The <b>price gap</b> rules use no model: they back the best Greek-licensed price when it is above the UK books' margin-free price by a set margin. The margin is removed with the power method, which puts more of it on longshots, as books do. Bets are struck at the best Greek-licensed price. CLV (closing line value) is the opening price times the margin-free closing chance, minus one: over many bets, beating the closing price is the best sign that an edge is real, and it needs far fewer bets than profit to show.</p>
   <h2>The rule for a gap</h2>
-  <p>Set before the results were seen: at least 150 bets, CLV above zero, and a profit both in the tuning seasons (2023-24, 2024-25, used to choose the model's settings) and in the check seasons (2025-26 and 2026-27 so far), which the settings never saw. A rule that passes is a lead, not a proof: twenty leagues and dozens of rules give luck many chances. Ten of the leagues (${D.leagues.filter(l => l.batch === 2).map(l => l.country).join(', ')}) were added after the model's settings were fixed, so they never shaped them.</p>
+  <p>Set before the results were seen: at least 150 bets, CLV above zero, and a profit both in the tuning seasons (2023-24, 2024-25, used to choose the model's settings) and in the check seasons (2025-26 and 2026-27 so far), which the settings never saw. A rule that passes is a lead, not a proof: ${D.leagues.length} leagues and dozens of rules give luck many chances.${D.leagues.some(l => l.batch === 2) ? ` Only the first ten leagues (${D.leagues.filter(l => l.batch === 1).map(l => l.country).join(', ')}) were used to set the model up; the others were added later, so they never shaped it.` : ' The model\'s settings were fixed on men\'s leagues and never tuned on these.'}</p>
   <h2>Detailed metrics</h2>
   <p>Beyond xG, every game's lineups, substitutions, goal and red-card minutes, shots and starting XI market values are read from FotMob. From them come non-penalty xG, finishing (xG on target minus xG), set-piece share, points against expected points, days of rest, regular starters missing from the last lineup, and squad value. Each was tested as a correction to the opening price (Gaps tab); none helped.</p>
   <h2>Data</h2>
