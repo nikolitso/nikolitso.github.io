@@ -55,7 +55,7 @@ function viewPicks() {
 // ---------- Backtest ----------
 const HEAD = `<thead><tr><th>Rule</th><th class="n">Bets</th><th class="n">ROI</th><th class="n" title="One standard error of the ROI">±</th><th class="n" title="Closing line value: the price taken against the market's margin-free closing price">CLV</th><th>Verdict</th><th class="n" title="2026-27 so far: the live test, not used for the verdict">2026-27 bets</th><th class="n" title="2026-27 so far: the live test, not used for the verdict">2026-27 ROI</th></tr></thead>`;
 function ruleRow(a) {
-  const v = a.verdict === 'gap' ? '<span class="tag ok">Passes</span>' : a.verdict === 'lead' ? '<span class="tag">Lead</span>' : a.verdict === 'too few' ? '<span class="tag">Too few</span>' : '<span class="tag no">No</span>';
+  const v = VD(a);
   const isLive = (pk.keys || []).includes(a.combo || a.key) && a.edge === EDG[a.market];
   return `<tr class="click${state.open === a.key ? ' sel' : ''}" data-k="${a.key}"><td class="wrapc">${esc(a.label)}${isLive ? ' <span class="tag ok">Live</span>' : ''}</td><td class="n">${a.n.toLocaleString('en-GB')}</td>
     <td class="n ${cls(a.roi)}">${spct(a.roi)}</td><td class="n">${a.se ? '±' + (a.se * 100).toFixed(1) : '–'}</td>
@@ -69,6 +69,27 @@ function ruleDetail(a) {
     <table><thead><tr><th>Season</th><th class="n">Bets</th><th class="n">ROI</th><th class="n">CLV</th></tr></thead><tbody>${rows(a.by_season)}</tbody></table>
   </div></td></tr>`;
 }
+// both pages show the live rule per side for men AND women: the other group's data.js is read as JSON
+const OTHER = D.women ? '/football/research/data.js' : '/football/women-europe/data.js';
+let D2 = null;
+fetch(OTHER + '?v=' + encodeURIComponent(D.updated)).then(r => r.text()).then(t => {
+  D2 = JSON.parse(t.slice(t.indexOf('=') + 1, t.lastIndexOf(';')));
+  if (state.view === 'backtest') render();
+}).catch(() => {});
+const VD = a => a.verdict === 'gap' ? '<span class="tag ok">Passes</span>' : a.verdict === 'lead' ? '<span class="tag">Lead</span>' : a.verdict === 'too few' ? '<span class="tag">Too few</span>' : '<span class="tag no">No</span>';
+function sideTable(X, title) {
+  if (!X) return `<h2>${title}</h2><p class="note">Loading…</p>`;
+  const P = X.pick || {}, E = P.edges || {}, NM = {home: 'Home wins', away: 'Away wins', over: 'Overs', under: 'Unders'};
+  const rows = ['home', 'away', 'over', 'under'].map(k => X.angles.find(a => a.group === 'side' && a.side === k && a.when === 'open' && a.edge === E[a.market])).filter(Boolean);
+  const cmb = X.angles.filter(a => (P.keys || []).includes(a.key));
+  const w = (f, g) => { const n = cmb.reduce((s, a) => s + g(a).n, 0); return n ? cmb.reduce((s, a) => s + (g(a)[f] || 0) * g(a).n, 0) / n : null; };
+  const tn = cmb.reduce((s, a) => s + a.n, 0), ln = cmb.reduce((s, a) => s + (a.t2 ? a.t2.n : 0), 0);
+  const r = a => `<tr><td>${NM[a.side]}</td><td class="n">${a.n.toLocaleString('en-GB')}</td><td class="n ${cls(a.roi)}">${spct(a.roi)}</td><td class="n">${a.se ? '±' + (a.se * 100).toFixed(1) : '–'}</td>
+    <td class="n ${cls(a.clv)}">${spct(a.clv)}</td><td>${VD(a)}</td><td class="n">${a.t2 ? a.t2.n.toLocaleString('en-GB') : '–'}</td><td class="n ${cls(a.t2 && a.t2.roi)}">${a.t2 && a.t2.n ? spct(a.t2.roi) : '–'}</td></tr>`;
+  const tr = w('roi', a => a), tc = w('clv', a => a), lr = w('roi', a => a.t2 || {n: 0});
+  return `<h2>${title}</h2><table class="ang"><thead><tr><th>Side, live rule (${Math.round((E['1x2'] || 0) * 100)}% gap, opening prices)</th><th class="n">Bets</th><th class="n">ROI</th><th class="n" title="One standard error of the ROI">±</th><th class="n" title="Closing line value: the price taken against the market's margin-free closing price">CLV</th><th>Verdict</th><th class="n" title="2026-27 so far: the live test, not used for the verdict">2026-27 bets</th><th class="n" title="2026-27 so far: the live test, not used for the verdict">2026-27 ROI</th></tr></thead>
+    <tbody>${rows.map(r).join('')}<tr class="tot"><td><b>All four</b></td><td class="n"><b>${tn.toLocaleString('en-GB')}</b></td><td class="n ${cls(tr)}"><b>${spct(tr)}</b></td><td class="n"></td><td class="n ${cls(tc)}">${spct(tc)}</td><td></td><td class="n">${ln.toLocaleString('en-GB')}</td><td class="n ${cls(lr)}">${spct(lr)}</td></tr></tbody></table>`;
+}
 function viewBacktest() {
   const bt = liveSummary();
   const ORD = ['home', 'away', 'over', 'under'];
@@ -76,6 +97,9 @@ function viewBacktest() {
   const tbl = xs => `<table class="ang">${HEAD}<tbody>${xs.map(a => ruleRow(a) + (state.open === a.key ? ruleDetail(a) : '')).join('')}</tbody></table>`;
   return `${bt ? `<div class="facts"><span class="fact"><b>${bt.n.toLocaleString('en-GB')}</b>backtest bets on the live rule, 2023-26</span><span class="fact"><b>${spct(bt.roi)}</b>ROI</span><span class="fact"><b>${spct(bt.clv)}</b>CLV</span></div>` : ''}
   <p class="lede">The best price of the books we bet with against the market's margin-free price at the same moment. <b>Backtest</b>: every game from 2023-24 to 2025-26; bets, ROI and CLV are for those seasons. A rule <b>passes</b> if it had at least 150 bets there, beat the closing price on average (CLV above zero) and made a profit. <b>Live test</b>: 2026-27 so far, shown in the last two columns and not used to pass or pick a rule.</p>
+  ${sideTable(D.women ? D2 : D, `Men · ${(D.women ? D2 : D) ? (D.women ? D2 : D).leagues.length + ' leagues' : ''}`)}
+  ${sideTable(D.women ? D : D2, `Women · ${(D.women ? D : D2) ? (D.women ? D : D2).leagues.length + ' leagues' : ''}`)}
+  <h2>Every gap size · ${D.women ? 'women' : 'men'}</h2>
   <div class="bar"><div class="seg">${[['open', 'Opening prices'], ['clos', 'Closing prices']].map(([k, l]) => `<button class="${state.when === k ? 'on' : ''}" data-w="${k}">${l}</button>`).join('')}</div></div>
   <p class="note">${state.when === 'open' ? 'Opening prices are where the gap is: the books we bet with open some prices above the market, and most of those are corrected by kick-off.' : 'At closing prices the gap is smaller and less steady; CLV cannot be measured here, so these rules can only be leads.'} Each row is one side: home wins, away wins, overs or unders (draws are never bet); the live rule bets all four sides at the rows marked Live. Click a row for its leagues and seasons.</p>
   ${tbl(list)}`;
