@@ -115,11 +115,25 @@ function viewLeagues() {
   const a = D.angles.find(a => a.key === (pk.keys || [])[0]) || {by_league: {}};
   const o = D.angles.find(a => a.key === (pk.keys || [])[1]) || {by_league: {}};
   const c = (x) => x && x.n ? `<td class="n">${x.n}</td><td class="n ${cls(x.roi)}">${spct(x.roi)}</td>` : '<td class="n">0</td><td class="n">–</td>';
-  const rows = D.leagues.map(l => `<tr><td>${l.country}</td><td>${l.name}</td><td class="n">${l.games.toLocaleString('en-GB')}</td>
+  const st = (x, f) => x && x.n ? x[f] : null;
+  const COLS = [['country', 'Country', l => l.country], ['name', 'League', l => l.name], ['games', 'Games', l => l.games],
+    ['gap2', 'Gap 2%+', l => l.gap2], ['an', '1X2 bets', l => st(a.by_league[l.key], 'n') || 0], ['aroi', 'ROI', l => st(a.by_league[l.key], 'roi')],
+    ['on', 'O/U bets', l => st(o.by_league[l.key], 'n') || 0], ['oroi', 'ROI', l => st(o.by_league[l.key], 'roi')],
+    ['home', 'Home win', l => l.home], ['draw', 'Draw', l => l.draw], ['over', 'Over 2.5', l => l.over]];
+  const srt = state.sort || {}, col = COLS.find(x => x[0] === srt.col);
+  const list = D.leagues.slice();
+  if (col) list.sort((p, q) => {
+    const x = col[2](p), y = col[2](q);
+    if (x == null || y == null) return x == null ? (y == null ? 0 : 1) : -1;   // blanks always last
+    return (typeof x === 'string' ? x.localeCompare(y) : x - y) * srt.dir;
+  });
+  const rows = list.map(l => `<tr><td>${l.country}</td><td>${l.name}</td><td class="n">${l.games.toLocaleString('en-GB')}</td>
     <td class="n">${pct(l.gap2, 0)}</td>${c(a.by_league[l.key])}${c(o.by_league[l.key])}
     <td class="n">${pct(l.home, 0)}</td><td class="n">${pct(l.draw, 0)}</td><td class="n">${pct(l.over, 0)}</td></tr>`).join('');
-  return `<p class="note">2023-24 to now. <b>Gap 2%+</b>: share of games where some 1X2 opening price was at least 2% above the market. Then the live rule's backtest per league, at opening prices: bets and ROI in 1X2 and in over/under 2.5. One league's ROI rests on few bets; judge the rule on all of them together.</p>
-  <table><thead><tr><th>Country</th><th>League</th><th class="n">Games</th><th class="n">Gap 2%+</th><th class="n">1X2 bets</th><th class="n">ROI</th><th class="n">O/U bets</th><th class="n">ROI</th><th class="n">Home win</th><th class="n">Draw</th><th class="n">Over 2.5</th></tr></thead><tbody>${rows}</tbody></table>`;
+  const head = COLS.map(([k, t], i) => `<th data-sort="${k}" class="sortable${i > 1 ? ' n' : ''}" title="Sort">${t}${srt.col === k ? (srt.dir > 0 ? ' ▲' : ' ▼') : ''}</th>`).join('');
+  return `<p class="note">2023-24 to now. <b>Gap 2%+</b>: share of games where some 1X2 opening price was at least 2% above the market. Then the live rule's backtest per league, at opening prices: bets and ROI in 1X2 and in over/under 2.5. One league's ROI rests on few bets; judge the rule on all of them together. Click a column to sort.</p>
+  <style>th.sortable{cursor:pointer;user-select:none;white-space:nowrap}th.sortable:hover{text-decoration:underline}</style>
+  <table><thead><tr>${head}</tr></thead><tbody>${rows}</tbody></table>`;
 }
 
 // ---------- How it works ----------
@@ -146,9 +160,13 @@ function render() {
   save();
 }
 out.addEventListener('click', e => {
-  const t = e.target.closest('[data-w],[data-k],[data-lg]');
+  const t = e.target.closest('[data-w],[data-k],[data-lg],[data-sort]');
   if (!t) return;
-  if (t.dataset.w) { state.when = t.dataset.w; state.open = null; }
+  if (t.dataset.sort) {
+    const k = t.dataset.sort, s = state.sort || {};
+    state.sort = {col: k, dir: s.col === k ? -s.dir : (k === 'country' || k === 'name' ? 1 : -1)};
+  }
+  else if (t.dataset.w) { state.when = t.dataset.w; state.open = null; }
   else if (t.dataset.k) state.open = state.open === t.dataset.k ? null : t.dataset.k;
   else if (t.dataset.lg) state.lg = t.dataset.lg;
   render();
