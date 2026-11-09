@@ -138,14 +138,23 @@ window.SLREF = {
     ["2026-08-30", "Atromitos - PAOK", "1-2", "Tzilos", 8.4, null, "Experienced and in control at Peristeri; kept discipline with correct whistles."],
     ["2026-08-30", "Kifisia - AEK", "1-1", "Fotias (UEFA A)", 8.0, null, "Managed the game, but inconsistent: no second yellow for a shirt-pull he has punished in similar cases."],
     ["2026-08-30", "Asteras - Olympiakos", "0-1", "Polychronis (UEFA B)", 8.2, null, "Corrected a wrong yellow via VAR and rightly refused a penalty."],
-    ["2026-08-30", "Aris - OFI", "2-1", "Papapetrou (UEFA A)", 8.5, null, "Unfazed by the atmosphere at Harilaou; fair and successful."],
+    ["2026-08-30", "Aris - OFI", "2-1", "Papapetrou (UEFA A)", 8.5, "Aris", "Unfazed by the atmosphere at Harilaou; fair and successful. The referees' committee later ruled that an Aris player should have been sent off."],
     ["2026-08-29", "Volos - Iraklis", "1-1", "Tsimenteridis", 8.0, null, "Slow to send off Iraklis' Italian coach for smoking on the pitch, and kept an Iraklis player waiting off the field for 90 seconds. Equaliser correctly allowed."],
     ["2026-08-29", "Panaitolikos - Kalamata", "2-0", "Tsetsilas", null, null, "No diaititis.gr report."],
     ["2026-08-23", "Panaitolikos - Asteras", "3-1", "Katopis", 8.4, null, "Serious and fair in his top-flight debut, watched by the referees' chief."],
     ["2026-08-23", "PAOK - Levadiakos", "4-0", "Evangelou", 8.4, null, "Steady and correct at Toumba; got through it easily without showing a single yellow."],
     ["2026-08-23", "OFI - Volos", "2-0", "Gioumatzidis", 8.1, null, "Missed a hard-to-see trip on Kostoulas; VAR stepped in correctly. Otherwise no issues."],
     ["2026-08-22", "Kalamata - Aris", "2-3", "Zampalas", 7.4, null, "Lost control: awarded a non-existent penalty to Aris (then reversed it) and missed Bolivar's slap, which VAR turned into a red card. VAR rescued the result."],
-    ["2026-08-22", "Olympiakos - Atromitos", "1-0", "Tsakalidis (UEFA B)", 8.5, null, "By the book: sent off Olympiakos' Rodinei for a stamp, clear penalty, calm throughout, excellent assistants."],
+    ["2026-08-22", "Olympiakos - Atromitos", "1-0", "Tsakalidis (UEFA B)", 8.5, null, "By the book: sent off Olympiakos' Rodinei for a stamp, clear penalty, calm throughout, excellent assistants. The referees' committee later ruled that a second Olympiakos player should also have been sent off, for a challenge on an Atromitos player."],
     ["2026-08-22", "AEK - Iraklis", "4-0", "Matsoukas (UEFA B)", 8.3, null, "Correct calls; rightly disallowed a Pinas goal after a VAR check."]
+  ],
+  // referees' committee rulings shown to the referees (seminar, 9-10 Nov 2026), newest game first:
+  // [date, match, score, referee, ruling, team the error went for or null]
+  "committee": [
+    ["2026-11-08", "AEK - Levadiakos", "2-1", "Moschou (UEFA B)", "The penalty for AEK, given after a VAR review (Koumparakis), was wrong: no handball offence by the Levadiakos player.", "AEK"],
+    ["2026-11-08", "Iraklis - Panathinaikos", "1-2", "Evangelou", "A player should have had a second yellow card, and been sent off, in the 73rd minute.", null],
+    ["2026-11-01", "PAOK - Asteras", "2-1", "Matsoukas (UEFA B)", "Kenny's first yellow card was wrong, so PAOK should not have gone down to ten men when he got his second.", "Asteras"],
+    ["2026-08-30", "Aris - OFI", "2-1", "Papapetrou (UEFA A)", "An Aris player should have been sent off.", "Aris"],
+    ["2026-08-22", "Olympiakos - Atromitos", "1-0", "Tsakalidis (UEFA B)", "Besides Rodinei's red card, a second Olympiakos player should have been sent off, for a challenge on an Atromitos player: Olympiakos should have finished with nine.", "Olympiakos"]
   ]
 };

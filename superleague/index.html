@@ -820,7 +820,7 @@ function renderRefs(){
   const R = window.SLREF;
   if (!R) return '<p class="empty">Referee data is not available.</p>';
   const all = refGameList(), T = all ? refTables(all) : R;
-  const sec = [['rf-cards', 'Card averages'], ['rf-odds', 'By the odds'], ['rf-big4', 'Big-4 games'], ['rf-small', 'Other games'], ['rf-report', 'Referee reports'], ['rf-rating', 'Ratings']];
+  const sec = [['rf-cards', 'Card averages'], ['rf-odds', 'By the odds'], ['rf-big4', 'Big-4 games'], ['rf-small', 'Other games'], ['rf-report', 'Referee reports'], ['rf-ked', 'Committee rulings'], ['rf-rating', 'Ratings']];
   let h = `<p class="note">How many cards each referee shows, how cards follow the odds, and how each referee did this season. Card numbers cover league games since 2024–25 (Big-4 against Big-4 since 2021–22); ratings and comments are from diaititis.gr's referee reports. ${T.live ? `Worked out from all ${T.games} league games since 2024–25 in our own match data (the same games the model uses), refreshed with every update, so each round is in once its results are (last update ${window.SLREFGAMES.updated}, Athens). Cards are every yellow and red shown; home odds are the market's average closing 1X2 price.` : `A snapshot from ${dayName(R.updated)}; it switches to tables worked out from every game once those have all been read.`} Click a referee's name to see their games.</p>
     <div class="jump">${sec.map(([id, t]) => `<button class="chip" data-jump="${id}">${t}</button>`).join('')}</div>`;
 
@@ -865,6 +865,13 @@ function renderRefs(){
     <div class="scroll"><table class="mk rp sortable"><thead><tr><th data-ord>Date</th><th>Match</th><th class="n">Score</th><th>Referee</th><th class="n">Rating</th><th>Favoured</th><th data-nosort>Comment</th></tr></thead><tbody>`;
   for (const r of R.report) h += `<tr><td class="muted">${ddmm(r[0])}</td><td>${r[1].replace(' - ', ' – ')}</td><td class="n">${r[2].replace('-', '–')}</td><td>${refLink(r[3])}</td><td class="n">${rate(r[4])}</td><td>${r[5] ?? '<span class="muted">–</span>'}</td><td class="cm">${r[6]}</td></tr>`;
   h += '</tbody></table></div>';
+
+  if (R.committee) {
+    h += `<h2 id="rf-ked">Referees' committee rulings 2026–27</h2><p class="note">Calls the referees' committee later ruled wrong, shown to the referees at their November seminar. <b>Went for</b> names the team the error helped.</p>
+    <div class="scroll"><table class="mk rp sortable"><thead><tr><th data-ord>Date</th><th>Match</th><th class="n">Score</th><th>Referee</th><th>Went for</th><th data-nosort>Ruling</th></tr></thead><tbody>`;
+    for (const r of R.committee) h += `<tr><td class="muted">${ddmm(r[0])}</td><td>${r[1].replace(' - ', ' – ')}</td><td class="n">${r[2].replace('-', '–')}</td><td>${refLink(r[3])}</td><td>${r[5] ?? '<span class="muted">–</span>'}</td><td class="cm">${r[4]}</td></tr>`;
+    h += '</tbody></table></div>';
+  }
 
   const rt = refRatings(R);
   h += `<h2 id="rf-rating">Referee ratings 2026–27</h2><p class="note">Average diaititis.gr rating per Greek referee this season, worked out from the reports above (referees from abroad left out).</p>
