@@ -117,6 +117,8 @@ a.rs-card:hover{border-color:var(--an-accent)}
 .rs-fact{border:1px solid var(--line);border-radius:8px;padding:10px 12px;font-size:13.5px;line-height:1.45}
 .rs-fact b{display:block;font:400 26px/1.1 var(--an-display);margin-bottom:3px}
 .rs-go{color:var(--an-accent);font-size:14px}
+table.xv td{vertical-align:top}table.xv td.xvc{white-space:normal;font-size:15px;line-height:1.5;max-width:720px}
+.xvl{max-width:72ch;line-height:1.6}
 .abbr{display:none}
 .charts{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(440px,100%),1fr));gap:18px;margin:6px 0 10px}
 .chart{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px 12px;min-width:0}
@@ -164,6 +166,7 @@ th.rs{cursor:pointer;user-select:none} th.rs:hover,th.rs.on{color:var(--gold)}
     <a href="#view=picks" data-view="picks">Picks</a>
     <a href="#view=teams" data-view="teams">Teams</a>
     <a href="#view=refs" data-view="refs">Referees</a>
+    <a href="#view=experts" data-view="experts">Expert view</a>
     <a href="#view=research" data-view="research">Research</a>
     <a href="#view=method" data-view="method">How it works</a>
   </nav>
@@ -911,6 +914,36 @@ function bindRefs(){
   });
 }
 
+// Expert view: ratings out of 10, built from a Greek football analyst's round-by-round match reviews
+const XV = {updated: '9 Nov 2026', rounds: 10, rows: [
+  ['Panathinaikos', 8, -0.5, 'Still clearly the best team and the title favourite. Unbeatable at home (14 goals in its first 4 home games), a deep squad, and an easy run to the end of the first round. Down half a point because the away form keeps showing: Antino loses his head and Taborda doesn\u2019t score away. Without Ounahi (out long-term) and Kangwa it looks like last season\u2019s team.'],
+  ['AEK', 7, 0, 'Two teams in one: about a 9 at home, a 5 away. At home the only Greek side with organised attacking play (Varga, Jovic, Mayer, Vitalis). Away it is casual, has no midfield screen since Pineda left and concedes after leading. Champions League fatigue shows mostly in the head. Gacinovic is a useful option off the bench.'],
+  ['Olympiakos', 6.5, 0, 'Clearly better under Imanol: won the derby with a plan, Ortega is a big-club keeper and the substitutes keep scoring. But goals are still the main problem, the midfield changes too often, and some players think every game can be won 1\u20130. Ortega\u2019s mistake against PAOK cost a win. The five points dropped against Volos and OFI weigh heavily, and the run to Christmas is very hard.'],
+  ['OFI', 6.5, 0, 'The best of the rest: organised, a good atmosphere, and a coach (Kontis) who prepares every game well. Nikolaou leads the defence; Nous, Athanasiou and Kontro make the goals. Won at Olympiakos and beat PAOK. Its weak spot is the Thursday\u2013Sunday weeks: tired again in the 0\u20130 with Atromitos.'],
+  ['PAOK', 6, 0.5, 'Up after the 1\u20131 at Olympiakos: with ten players out it allowed only three or four good shots. Lisi has found a midfield (Taylor, Zafeiris, Santamaria) and Zivkovic is decisive. Still fragile: lost at home to Kalamata, tends to fall apart after taking the lead, and the fans are unhappy with the owner.'],
+  ['Kifisia', 6, 0, 'Comeback specialists: came from behind against Iraklis and Volos and nearly took a point off Olympiakos. Sagal has taken over the goals and Pombo is the steadiest midfielder in the league. The coach (Leto) reads opponents well. A calm season.'],
+  ['Aris', 6, 0, 'Strong at home, where it has learned to open packed defences; Rastic is the key player and Kadewere is in form. Unreliable away: 0\u20135 at AEK and 0\u20133 at Levadiakos point to a mentality problem. Misses penalties.'],
+  ['Kalamata', 6, 0, 'Promoted, with character and quality up front, and a new hero every week. Won at PAOK and deserved to win at Asteras. The defence is weak, and it still has no home ground of its own.'],
+  ['Asteras', 4.5, 0, 'Bartolo carries the team. Gets results against big sides (drew with AEK and OFI, nearly took a point at PAOK) but gave up quickly at Panathinaikos. Has an interim coach.'],
+  ['Iraklis', 4.5, 0, 'Mazzarri sets the team up well but loses games at the end, with odd substitutions and silly penalties. Turmoil with the club over transfers and with referees. Hard to beat at home.'],
+  ['Levadiakos', 4.5, 0, 'No goal in its first eight games, but improving: beat Aris 3\u20130 and led at AEK (Kopnan, Poupescu). The coach stays calm.'],
+  ['Atromitos', 4, 0.5, 'Recovering: the 0\u20130 at OFI was a very good point. Still struggles to score.'],
+  ['Volos', 3.5, 0, 'Ineffective, with long dull spells. Lost to Kifisia from a winning position. Gonzalez is the one player who stands out.'],
+  ['Panetolikos', 3, -0.5, 'Top of the table after three rounds, now in steep decline: cannot score and lost 0\u20135 at AEK and 0\u20133 at Aris. A surprise for a team coached by Anastasiou.']
+], themes: [
+  'Panathinaikos\u2019 lead is growing; Olympiakos and PAOK lost the most ground in round 10.',
+  'Home and away are two different leagues for AEK, Panathinaikos and Aris.',
+  'European nights themselves don\u2019t tire teams; Thursday\u2013Sunday weeks do (OFI most of all).',
+  'Panetolikos, Volos and Atromitos look the weakest; Levadiakos is starting to climb.'
+]};
+function renderExperts(){
+  const ch = c => c > 0 ? `<span class="w">\u25b2 ${c}</span>` : c < 0 ? `<span class="l">\u25bc ${-c}</span>` : '<span class="muted">=</span>';
+  let h = `<p class="rs-lede">How the teams look to an experienced Greek football analyst, from his match reviews of every round so far (rounds 1\u2013${XV.rounds}). The ratings out of 10 are a summary of his views, not his own scores, and are not used by the model. Updated ${XV.updated}.</p>
+  <div class="scroll"><table class="xv"><thead><tr><th class="n">#</th><th>Team</th><th class="n">Rating</th><th class="n">Change</th><th>Expert view</th></tr></thead><tbody>`;
+  XV.rows.forEach(([t, r, c, txt], i) => h += `<tr><td class="n muted">${i + 1}</td><td><b>${t}</b></td><td class="n tot">${r}</td><td class="n">${ch(c)}</td><td class="xvc">${txt}</td></tr>`);
+  h += `</tbody></table></div><h2>What stands out</h2><ul class="xvl">${XV.themes.map(t => `<li>${t}</li>`).join('')}</ul>`;
+  return h;
+}
 function renderResearch(){
   const box = (n, t) => `<div class="rs-fact"><b>${n}</b>${t}</div>`;
   return `<p class="rs-lede">Studies of Super League games behind the model: what was found, and whether it changed anything.</p>
@@ -929,7 +962,7 @@ function renderResearch(){
 }
 function render(){
   $('tip').style.display = 'none';
-  $('out').innerHTML = {projections: renderProjections, picks: renderValue, teams: renderTeams, refs: renderRefs, research: renderResearch, method: renderMethod}[view]();
+  $('out').innerHTML = {projections: renderProjections, picks: renderValue, teams: renderTeams, refs: renderRefs, experts: renderExperts, research: renderResearch, method: renderMethod}[view]();
   if (view === 'refs') bindRefs();
   document.querySelectorAll('#pjmode button').forEach(b => b.onclick = () => { pjMode = b.dataset.m; render(); });
   const chips = (id, set) => document.querySelectorAll(`#${id} .chip`).forEach(b => b.onclick = () => { set(b.dataset.s); render(); });
@@ -940,7 +973,7 @@ function render(){
 }
 function setView(v){
   if (['value', 'open', 'settled'].includes(v)) v = 'picks';   // old links
-  view = ['projections','picks','teams','refs','research','method'].includes(v) ? v : 'projections';
+  view = ['projections','picks','teams','refs','experts','research','method'].includes(v) ? v : 'projections';
   document.querySelectorAll('#tabs a').forEach(a => a.classList.toggle('on', a.dataset.view === view));
   render();
 }
