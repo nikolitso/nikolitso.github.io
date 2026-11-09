@@ -56,7 +56,7 @@ function viewPicks() {
 const HEAD = `<thead><tr><th>Rule</th><th class="n">Bets</th><th class="n">ROI</th><th class="n" title="One standard error of the ROI">±</th><th class="n" title="Closing line value: the price taken against the market's margin-free closing price">CLV</th><th>Verdict</th><th class="n" title="2026-27 so far: the live test, not used for the verdict">2026-27 bets</th><th class="n" title="2026-27 so far: the live test, not used for the verdict">2026-27 ROI</th></tr></thead>`;
 function ruleRow(a) {
   const v = a.verdict === 'gap' ? '<span class="tag ok">Passes</span>' : a.verdict === 'lead' ? '<span class="tag">Lead</span>' : a.verdict === 'too few' ? '<span class="tag">Too few</span>' : '<span class="tag no">No</span>';
-  const isLive = (pk.keys || []).includes(a.key);
+  const isLive = (pk.keys || []).includes(a.combo || a.key) && a.edge === EDG[a.market];
   return `<tr class="click${state.open === a.key ? ' sel' : ''}" data-k="${a.key}"><td class="wrapc">${esc(a.label)}${isLive ? ' <span class="tag ok">Live</span>' : ''}</td><td class="n">${a.n.toLocaleString('en-GB')}</td>
     <td class="n ${cls(a.roi)}">${spct(a.roi)}</td><td class="n">${a.se ? '±' + (a.se * 100).toFixed(1) : '–'}</td>
     <td class="n ${cls(a.clv)}">${spct(a.clv)}</td><td>${v}</td><td class="n">${a.t2 ? a.t2.n.toLocaleString('en-GB') : '–'}</td>
@@ -71,12 +71,13 @@ function ruleDetail(a) {
 }
 function viewBacktest() {
   const bt = liveSummary();
-  const list = D.angles.filter(a => a.when === state.when);
+  const ORD = ['home', 'away', 'over', 'under'];
+  const list = D.angles.filter(a => a.group === 'side' && a.when === state.when).sort((p, q) => ORD.indexOf(p.side) - ORD.indexOf(q.side) || p.edge - q.edge);
   const tbl = xs => `<table class="ang">${HEAD}<tbody>${xs.map(a => ruleRow(a) + (state.open === a.key ? ruleDetail(a) : '')).join('')}</tbody></table>`;
   return `${bt ? `<div class="facts"><span class="fact"><b>${bt.n.toLocaleString('en-GB')}</b>backtest bets on the live rule, 2023-26</span><span class="fact"><b>${spct(bt.roi)}</b>ROI</span><span class="fact"><b>${spct(bt.clv)}</b>CLV</span></div>` : ''}
   <p class="lede">The best price of the books we bet with against the market's margin-free price at the same moment. <b>Backtest</b>: every game from 2023-24 to 2025-26; bets, ROI and CLV are for those seasons. A rule <b>passes</b> if it had at least 150 bets there, beat the closing price on average (CLV above zero) and made a profit. <b>Live test</b>: 2026-27 so far, shown in the last two columns and not used to pass or pick a rule.</p>
   <div class="bar"><div class="seg">${[['open', 'Opening prices'], ['clos', 'Closing prices']].map(([k, l]) => `<button class="${state.when === k ? 'on' : ''}" data-w="${k}">${l}</button>`).join('')}</div></div>
-  <p class="note">${state.when === 'open' ? 'Opening prices are where the gap is: the books we bet with open some prices above the market, and most of those are corrected by kick-off.' : 'At closing prices the gap is smaller and less steady; CLV cannot be measured here, so these rules can only be leads.'} Click a rule for its leagues and seasons.</p>
+  <p class="note">${state.when === 'open' ? 'Opening prices are where the gap is: the books we bet with open some prices above the market, and most of those are corrected by kick-off.' : 'At closing prices the gap is smaller and less steady; CLV cannot be measured here, so these rules can only be leads.'} Each row is one side: home wins, away wins, overs or unders (draws are never bet); the live rule bets all four sides at the rows marked Live. Click a row for its leagues and seasons.</p>
   ${tbl(list)}`;
 }
 
@@ -146,7 +147,7 @@ function viewHow() {
   <h2>What was tried and dropped</h2>
   <p>An xG team model and detailed match data (lineups, missing starters, finishing, set pieces, rest, squad value) were tested against the opening price. None of them added anything the price did not already know, so they are not used.</p>
   <h2>Data</h2>
-  <p>Results from FotMob; opening and closing odds from a public odds feed. Updated three times a day.</p>
+  <p>Opening and closing odds from a public odds feed. Updated three times a day.</p>
   </div>`;
 }
 
