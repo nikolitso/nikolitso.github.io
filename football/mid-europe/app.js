@@ -47,6 +47,7 @@ function viewGaps() {
   let html = pills() + `<p class="lede">A <b>gap</b> is a betting rule that, on past games, (1) had at least 150 bets, (2) beat the closing price on average (CLV above zero, so it is bet at opening prices) and (3) made a profit both in the seasons used to set the model up (2023-24, 2024-25) and in the seasons after (2025-26, 2026-27 so far). The rule was set before the results were seen. Prices are the best of the Greek-licensed books; CLV is measured against the margin-free closing price of about 20 UK books.</p>
   <h2>Gaps that pass</h2>${passed}
   ${leads.length ? `<h2>Leads</h2><p class="note">Profit in both the tuning and the check seasons, but no support from the closing price: the CLV is below zero, or the bet is struck at closing prices, where CLV cannot be measured. Watched, not bet.</p><table class="ang">${ANG_HEAD}<tbody>${leads.map(a => angleRow(a) + (state.open === a.key ? angleDetail(a) : '')).join('')}</tbody></table>` : ''}
+  ${oosTable()}
   <h2>Does the model know more than the price?</h2>
   <p class="note">Log loss: lower is more accurate. <b>Move</b>: the share of the model's disagreement with the opening price that the closing price takes up (0% means the market ignores what the model sees; a clear positive number means the opening price is beatable). <b>Blend</b>: the weight the model earns next to the opening price, fitted on 2023-25.</p>
   ${infoTable()}
@@ -56,6 +57,25 @@ function viewGaps() {
   <p class="note">Click a rule for its leagues and seasons.</p>
   <table class="ang">${ANG_HEAD}<tbody>${list.map(a => angleRow(a) + (state.open === a.key ? angleDetail(a) : '')).join('')}</tbody></table>`;
   return html;
+}
+
+function oosTable() {
+  if (!D.leagues.some(l => l.batch === 2)) return '';
+  const keys = ['mbt_open_10', 'mbt_open_15', 'mbt_open_20', 'mah_open_15', 'mah_open_20'];
+  const agg = (a, b) => {
+    let n = 0, p = 0, nc = 0, c = 0;
+    for (const [k, s] of Object.entries(a.by_league)) {
+      if (!LG[k] || LG[k].batch !== b || !s.n) continue;
+      n += s.n; p += s.roi * s.n; if (s.clv != null) { nc += s.nclv; c += s.clv * s.nclv; }
+    }
+    return n ? `<td class="n">${n}</td><td class="n ${cls(p / n)}">${spct(p / n)}</td><td class="n ${cls(nc ? c / nc : null)}">${nc ? spct(c / nc) : '–'}</td>` : '<td class="n">0</td><td class="n">–</td><td class="n">–</td>';
+  };
+  const rows = keys.map(k => D.angles.find(a => a.key === k)).filter(Boolean)
+    .map(a => `<tr><td class="wrapc">${esc(a.label)}</td>${agg(a, 1)}${agg(a, 2)}</tr>`).join('');
+  const names = b => D.leagues.filter(l => l.batch === b).map(l => l.country).join(', ');
+  return `<h2>Out-of-sample check: the leagues added later</h2>
+  <p class="note">The BTTS gap was first found on the first ten leagues (${names(1)}). Ten more were added afterwards with the model's settings frozen (${names(2)}), so their games are a fresh test of the same rules. Verdicts at the top use all twenty.</p>
+  <table><thead><tr><th>Rule</th><th class="n">First ten: bets</th><th class="n">ROI</th><th class="n">CLV</th><th class="n">Added ten: bets</th><th class="n">ROI</th><th class="n">CLV</th></tr></thead><tbody>${rows}</tbody></table>`;
 }
 
 function infoTable() {
@@ -111,7 +131,7 @@ function viewUpcoming() {
 function viewPicks() {
   const P = D.picks || [], done = P.filter(p => p.result), open = P.filter(p => !p.result);
   const w = done.filter(p => p.result === 'W').length, prof = done.reduce((s, p) => s + p.profit, 0);
-  const rule = D.angles.find(a => a.key === 'mbt_open_15') || {};
+  const rule = D.angles.find(a => a.key === (D.pick || {}).key) || {}, edgeMin = (D.pick || {}).edge || 0.1;
   const fmt = new Intl.DateTimeFormat('en-GB', {weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Athens'});
   const sel = p => p.sel === 0 ? 'BTTS yes' : 'BTTS no';
   const row = p => `<tr><td>${fmt.format(new Date(p.dt.replace('Z', ':00Z')))}</td><td>${LG[p.lg].country}</td><td class="wrapc">${esc(p.home)} – ${esc(p.away)}</td><td>${sel(p)}</td>
@@ -123,7 +143,7 @@ function viewPicks() {
     <span class="fact"><b>${spct(rule.roi)}</b>backtest ROI, ${rule.n} bets</span>
     <span class="fact"><b>${spct(rule.clv)}</b>backtest CLV</span>
   </div>
-  <p class="lede">The one rule that passed (see Gaps): <b>both teams to score, when the model's chance times the best Greek-licensed price is at least 1.15</b>. A pick is posted the first time a game reaches that edge in the 8 days before kick-off and keeps that price. Flat 1 unit. The edge is at opening prices: bet early, as the price tends to move towards the model by kick-off.</p>
+  <p class="lede">The one rule that passed (see Gaps): <b>both teams to score, when the model's chance times the best Greek-licensed price is at least ${(1 + edgeMin).toFixed(2)}</b>. A pick is posted the first time a game reaches that edge in the 8 days before kick-off and keeps that price. Flat 1 unit. The edge is at opening prices: bet early, as the price tends to move towards the model by kick-off. Expect a small edge: on the ten leagues added as an out-of-sample check these bets beat the closing price but only broke even, so the backtest ROI above is the optimistic end.</p>
   <h2>Open picks</h2>${open.length ? `<table>${head(false)}<tbody>${open.map(row).join('')}</tbody></table>` : '<p class="note">None right now.</p>'}
   <h2>Settled</h2>${done.length ? `<table>${head(true)}<tbody>${done.slice().reverse().map(row).join('')}</tbody></table>` : '<p class="note">None yet: the live record starts on 9 November 2026.</p>'}`;
 }
@@ -152,11 +172,11 @@ function viewHow() {
   const p = D.params, px = D.proxy;
   return `<div class="prose">
   <h2>What this is</h2>
-  <p>A search for prices that are wrong in ten mid-tier European leagues: Austria, Czechia, Slovakia, Hungary, Switzerland, Poland, Denmark, Croatia, Romania and Serbia. It builds an xG model of every team, compares it with the bookmakers' prices at opening and at closing, and tests a list of betting rules on every game since 2023-24.</p>
+  <p>A search for wrong prices in ${D.leagues.length} mid-tier European leagues: ${D.leagues.map(l => l.country).join(', ')}. It builds an xG model of every team, compares it with the bookmakers' prices at opening and at closing, and tests a list of betting rules on every game since 2023-24.</p>
   <h2>The model</h2>
   <p>Each team has an attack and a defence rating. A game's expected goals are exp(league level + home edge + attack − opponent's defence). The ratings are fitted on every earlier game with more weight on recent ones (half-life ${p.hl} days) and a pull towards average (strength ${p.lam}). What they are fitted on is a mix of chances and goals: ${Math.round(p.w * 100)}% xG and ${Math.round((1 - p.w) * 100)}% goals. Newly promoted teams start ${p.new} below average. Expected goals turn into score chances with a Poisson model with a small correction for low scores (ρ = ${p.rho}). Every game is predicted only from the games before its day.</p>
   <h2>xG where there is none</h2>
-  <p>FotMob publishes xG for some of these leagues and seasons only. Elsewhere the model uses an estimate from the box score, fitted on the ${px.full.n.toLocaleString('en-GB')} team-games that have both: xG ≈ ${px.full.coef[0]} × big chances + ${px.full.coef[1]} × other shots in the box + ${px.full.coef[2]} × shots from outside + ${px.full.coef[3]} × shots on target (correlation with real xG ${px.full.r}). Where big chances are not counted: ${px.basic.coef[0]} × shots + ${px.basic.coef[1]} × shots on target (correlation ${px.basic.r}).</p>
+  <p>FotMob publishes xG for some of these leagues and seasons only (the Leagues tab shows which). Elsewhere the model uses an estimate from the box score, fitted on the ${px.full.n.toLocaleString('en-GB')} team-games that have both: xG ≈ ${px.full.coef[0]} × big chances + ${px.full.coef[1]} × other shots in the box + ${px.full.coef[2]} × shots from outside + ${px.full.coef[3]} × shots on target (correlation with real xG ${px.full.r}). Where big chances are not counted: ${px.basic.coef[0]} × shots + ${px.basic.coef[1]} × shots on target (correlation ${px.basic.r}).</p>
   <h2>Prices</h2>
   <p>Opening and closing odds of about 20 UK books and of the Greek-licensed books, for 1X2, over/under 2.5, both teams to score and the Asian handicap. The margin is removed with the power method, which puts more of it on longshots, as books do. Bets are struck at the best Greek-licensed price. CLV (closing line value) is the opening price times the margin-free closing chance, minus one: over many bets, beating the closing price is the best sign that an edge is real, and it needs far fewer bets than profit to show.</p>
   <h2>The rule for a gap</h2>
