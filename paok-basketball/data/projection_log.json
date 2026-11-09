@@ -1996,7 +1996,7 @@
   "date": "2026-11-10T17:00:00Z",
   "opp": "Balkan",
   "home": false,
-  "saved": "2026-11-08T17:35:54Z",
+  "saved": "2026-11-09T01:30:40Z",
   "paok": 78.9,
   "oppScore": 79.3,
   "winProb": 49,
@@ -2281,7 +2281,7 @@
   "date": "2026-11-14T15:30:00Z",
   "opp": "Karditsa",
   "home": false,
-  "saved": "2026-11-08T17:35:54Z",
+  "saved": "2026-11-09T01:30:40Z",
   "paok": 80.8,
   "oppScore": 75.5,
   "winProb": 71,
@@ -2293,7 +2293,7 @@
     "total": 156.3
    },
    "fg2m": {
-    "paok": 17.6,
+    "paok": 17.7,
     "opp": 18.8,
     "total": 36.5
    },
@@ -2305,12 +2305,12 @@
    "ftm": {
     "paok": 17.4,
     "opp": 15.2,
-    "total": 32.7
+    "total": 32.6
    },
    "ast": {
     "paok": 17.3,
-    "opp": 14.3,
-    "total": 31.6
+    "opp": 14.4,
+    "total": 31.7
    },
    "oreb": {
     "paok": 10.3,
@@ -2318,9 +2318,9 @@
     "total": 20.3
    },
    "dreb": {
-    "paok": 24.1,
-    "opp": 23.0,
-    "total": 47.1
+    "paok": 24.0,
+    "opp": 22.9,
+    "total": 46.9
    },
    "tov": {
     "paok": 12.8,
@@ -2328,12 +2328,12 @@
     "total": 25.3
    },
    "reb": {
-    "paok": 34.4,
-    "opp": 33.0,
-    "total": 67.4
+    "paok": 34.3,
+    "opp": 32.9,
+    "total": 67.2
    }
   },
-  "modelTotal": 145.2,
+  "modelTotal": 145.4,
   "line": 157.5,
   "modelMargin": -1.0,
   "hcp": 6.5,

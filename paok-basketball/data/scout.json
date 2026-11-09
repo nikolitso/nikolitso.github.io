@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-08T17:35:54Z",
+ "updated": "2026-11-09T01:30:40Z",
  "reports": [
   {
    "comp": "EuroCup",
@@ -142,6 +142,7 @@
     "forcedTov": 19.6,
     "drebPct": 68.0,
     "opp_ftr": 25.1,
+    "rebPct": 50.0,
     "l": 24,
     "net": 0.0
    },
@@ -1250,48 +1251,49 @@
     "drebPct": 70.0
    },
    "league": {
-    "pts": 78.5,
+    "pts": 78.6,
     "fg2m": 18.0,
-    "fg2a": 35.6,
+    "fg2a": 35.5,
     "fg3m": 9.0,
-    "fg3a": 25.9,
-    "ftm": 15.6,
-    "fta": 22.0,
+    "fg3a": 26.0,
+    "ftm": 15.5,
+    "fta": 21.8,
     "oreb": 10.6,
-    "dreb": 25.7,
-    "reb": 36.3,
-    "ast": 16.7,
+    "dreb": 25.6,
+    "reb": 36.2,
+    "ast": 16.8,
     "stl": 7.4,
     "tov": 13.6,
     "blk": 3.0,
-    "pf": 22.3,
-    "pir": 84.1,
-    "gp": 82,
-    "w": 41,
-    "allowed": 78.5,
-    "fgp": 43.9,
-    "fg2p": 50.6,
-    "fg3p": 34.6,
+    "pf": 22.2,
+    "pir": 84.3,
+    "gp": 84,
+    "w": 42,
+    "allowed": 78.6,
+    "fgp": 44.0,
+    "fg2p": 50.8,
+    "fg3p": 34.7,
     "ftp": 71.1,
-    "opp_fgp": 43.9,
+    "opp_fgp": 44.0,
     "poss": 74.1,
     "pace": 73.4,
-    "ortg": 106.0,
-    "drtg": 106.0,
-    "efg": 51.2,
-    "ts": 55.2,
-    "tovPct": 18.3,
+    "ortg": 106.1,
+    "drtg": 106.1,
+    "efg": 51.3,
+    "ts": 55.3,
+    "tovPct": 18.4,
     "orebPct": 29.3,
-    "ftr": 25.4,
-    "astPct": 61.8,
-    "par3": 42.1,
+    "ftr": 25.3,
+    "astPct": 62.3,
+    "par3": 42.2,
     "fgm": 27.0,
     "fga": 61.5,
-    "opp_efg": 51.2,
-    "forcedTov": 18.3,
+    "opp_efg": 51.3,
+    "forcedTov": 18.4,
     "drebPct": 70.7,
-    "opp_ftr": 25.4,
-    "l": 41,
+    "opp_ftr": 25.3,
+    "rebPct": 50.0,
+    "l": 42,
     "net": 0.0
    },
    "impact": [
@@ -2147,14 +2149,14 @@
     "pace": 70.1,
     "lineupSource": "manual",
     "note": "PAOK without Osman, who is out for one to two months.",
-    "modelTotal": 145.2,
+    "modelTotal": 145.4,
     "line": 157.5,
     "modelMargin": -1.0,
     "hcp": 6.5,
     "learned": {
-     "games": 968,
+     "games": 969,
      "lineGames": 945,
-     "homeEdge": 2.18,
+     "homeEdge": 2.19,
      "totalBias": 1.49,
      "spreadSd": 9.0,
      "lineWeight": 0.89,
@@ -2171,7 +2173,7 @@
       "total": 156.3
      },
      "fg2m": {
-      "paok": 17.6,
+      "paok": 17.7,
       "opp": 18.8,
       "total": 36.5
      },
@@ -2183,12 +2185,12 @@
      "ftm": {
       "paok": 17.4,
       "opp": 15.2,
-      "total": 32.7
+      "total": 32.6
      },
      "ast": {
       "paok": 17.3,
-      "opp": 14.3,
-      "total": 31.6
+      "opp": 14.4,
+      "total": 31.7
      },
      "oreb": {
       "paok": 10.3,
@@ -2196,9 +2198,9 @@
       "total": 20.3
      },
      "dreb": {
-      "paok": 24.1,
-      "opp": 23.0,
-      "total": 47.1
+      "paok": 24.0,
+      "opp": 22.9,
+      "total": 46.9
      },
      "tov": {
       "paok": 12.8,
@@ -2206,9 +2208,9 @@
       "total": 25.3
      },
      "reb": {
-      "paok": 34.4,
-      "opp": 33.0,
-      "total": 67.4
+      "paok": 34.3,
+      "opp": 32.9,
+      "total": 67.2
      }
     }
    }
