@@ -1996,46 +1996,46 @@
   "date": "2026-11-10T17:00:00Z",
   "opp": "Balkan",
   "home": false,
-  "saved": "2026-11-09T17:15:46Z",
-  "paok": 78.9,
+  "saved": "2026-11-09T20:57:56Z",
+  "paok": 78.0,
   "oppScore": 79.3,
-  "winProb": 49,
+  "winProb": 46,
   "lineupSource": "manual",
   "teamStats": {
    "pts": {
-    "paok": 78.9,
+    "paok": 78.0,
     "opp": 79.3,
-    "total": 158.2
+    "total": 157.3
    },
    "fg2m": {
-    "paok": 19.7,
+    "paok": 19.5,
     "opp": 21.3,
-    "total": 41.0
+    "total": 40.8
    },
    "fg3m": {
-    "paok": 7.9,
+    "paok": 7.8,
     "opp": 7.4,
-    "total": 15.3
+    "total": 15.2
    },
    "ftm": {
-    "paok": 15.8,
+    "paok": 15.6,
     "opp": 14.5,
-    "total": 30.3
+    "total": 30.2
    },
    "ast": {
-    "paok": 16.8,
+    "paok": 16.6,
     "opp": 15.4,
-    "total": 32.2
+    "total": 32.0
    },
    "oreb": {
-    "paok": 10.4,
+    "paok": 10.5,
     "opp": 9.9,
-    "total": 20.4
+    "total": 20.5
    },
    "dreb": {
     "paok": 23.3,
-    "opp": 23.9,
-    "total": 47.3
+    "opp": 24.2,
+    "total": 47.5
    },
    "tov": {
     "paok": 13.7,
@@ -2043,124 +2043,124 @@
     "total": 28.4
    },
    "reb": {
-    "paok": 33.7,
-    "opp": 33.8,
-    "total": 67.7
+    "paok": 33.8,
+    "opp": 34.1,
+    "total": 68.0
    }
   },
-  "modelTotal": 157.0,
+  "modelTotal": 156.1,
   "line": null,
-  "modelMargin": -0.4,
+  "modelMargin": -1.3,
   "hcp": null,
   "players": {
    "paok": [
     {
      "name": "Marcus Foster",
      "no": "17",
-     "min": 25,
-     "pts": 14.5,
-     "reb": 4.1,
-     "ast": 2.3,
-     "pir": 14.0
+     "min": 28,
+     "pts": 14.9,
+     "reb": 4.5,
+     "ast": 2.5,
+     "pir": 15.4
     },
     {
      "name": "Kyle Alexander",
      "no": "8",
-     "min": 21,
-     "pts": 8.0,
-     "reb": 5.6,
-     "ast": 0.9,
-     "pir": 13.0
+     "min": 23,
+     "pts": 8.3,
+     "reb": 6.2,
+     "ast": 1.0,
+     "pir": 14.3
     },
     {
      "name": "Breein Tyree",
      "no": "5",
-     "min": 19,
-     "pts": 13.4,
-     "reb": 2.2,
-     "ast": 1.4,
-     "pir": 12.3
+     "min": 20,
+     "pts": 13.9,
+     "reb": 2.4,
+     "ast": 1.6,
+     "pir": 13.5
     },
     {
      "name": "Nick Calathes",
      "no": "33",
-     "min": 22,
-     "pts": 7.8,
-     "reb": 4.3,
-     "ast": 5.4,
-     "pir": 10.7
+     "min": 24,
+     "pts": 8.1,
+     "reb": 4.7,
+     "ast": 5.9,
+     "pir": 11.8
     },
     {
      "name": "Trevor Hudgins",
      "no": "12",
-     "min": 17,
-     "pts": 6.6,
-     "reb": 1.7,
-     "ast": 2.0,
-     "pir": 6.7
-    },
-    {
-     "name": "Raiquan Gray",
-     "no": "0",
-     "min": 22,
-     "pts": 4.8,
-     "reb": 2.5,
-     "ast": 2.0,
-     "pir": 6.4
+     "min": 19,
+     "pts": 6.9,
+     "reb": 1.9,
+     "ast": 2.3,
+     "pir": 7.3
     },
     {
      "name": "Ben Moore",
      "no": "26",
-     "min": 17,
-     "pts": 4.9,
-     "reb": 3.2,
-     "ast": 0.5,
-     "pir": 5.9
+     "min": 19,
+     "pts": 5.1,
+     "reb": 3.5,
+     "ast": 0.6,
+     "pir": 6.4
     },
     {
      "name": "Naz Mitrou Long",
      "no": "1",
-     "min": 16,
-     "pts": 6.2,
-     "reb": 1.5,
-     "ast": 1.1,
-     "pir": 5.3
+     "min": 18,
+     "pts": 6.4,
+     "reb": 1.7,
+     "ast": 1.2,
+     "pir": 5.8
     },
     {
      "name": "Dimitris Kaklamanakis",
      "no": "14",
-     "min": 7,
+     "min": 8,
      "pts": 2.0,
-     "reb": 1.9,
-     "ast": 0.5,
-     "pir": 3.4
+     "reb": 2.1,
+     "ast": 0.6,
+     "pir": 3.8
     },
     {
      "name": "Nikos Chougkaz",
      "no": "9",
-     "min": 14,
-     "pts": 3.6,
-     "reb": 1.7,
-     "ast": 0.5,
-     "pir": 3.3
+     "min": 15,
+     "pts": 3.7,
+     "reb": 1.9,
+     "ast": 0.6,
+     "pir": 3.6
     },
     {
      "name": "Athanasios Bazinas",
      "no": "77",
-     "min": 10,
-     "pts": 3.3,
-     "reb": 1.1,
-     "ast": 0.8,
-     "pir": 3.1
+     "min": 11,
+     "pts": 3.4,
+     "reb": 1.2,
+     "ast": 0.9,
+     "pir": 3.4
     },
     {
      "name": "Nikolaos Persidis",
      "no": "18",
-     "min": 10,
-     "pts": 3.1,
-     "reb": 1.6,
-     "ast": 0.6,
-     "pir": 3.0
+     "min": 11,
+     "pts": 3.2,
+     "reb": 1.8,
+     "ast": 0.7,
+     "pir": 3.3
+    },
+    {
+     "name": "Donatas Motiejunas",
+     "no": "20",
+     "min": 5,
+     "pts": 1.5,
+     "reb": 0.8,
+     "ast": 0.3,
+     "pir": 1.6
     }
    ],
    "opp": [
@@ -2281,7 +2281,7 @@
   "date": "2026-11-14T15:30:00Z",
   "opp": "Karditsa",
   "home": false,
-  "saved": "2026-11-09T17:15:46Z",
+  "saved": "2026-11-09T20:57:56Z",
   "paok": 80.8,
   "oppScore": 75.5,
   "winProb": 71,
