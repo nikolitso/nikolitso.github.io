@@ -162,7 +162,8 @@
       "game-theory",
       "the-logic-of-sports-betting",
       "soccer-analytics-an-introduction",
-      "make-your-mark"
+      "make-your-mark",
+      "the-numbers-game-why-everything-you"
     ],
     "log": [
       {
@@ -464,9 +465,15 @@
         "slot": "2026-11-09 14",
         "slug": "make-your-mark",
         "id": "2119761979631907231"
+      },
+      {
+        "day": "2026-11-10",
+        "slot": "2026-11-10 14",
+        "slug": "the-numbers-game-why-everything-you",
+        "id": "2120124374032540081"
       }
     ],
-    "last_day": "2026-11-09"
+    "last_day": "2026-11-10"
   },
   "film": {
     "seen": [
@@ -1001,7 +1008,7 @@
     ],
     "last_day": "2026-11-09"
   },
-  "last_slot": "2026-11-10 11",
+  "last_slot": "2026-11-10 14",
   "quote": {
     "seen": [
       "1",
