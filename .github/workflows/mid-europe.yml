@@ -4,10 +4,10 @@ name: Site · Football Research
 # European men's leagues; the list is in BettingSignal mid-europe/leagues.py (women's leagues dropped 10 Nov 2026).
 # Results, event ids and opening/closing odds, then the backtest bets for the page (data.js), one file of bets per
 # league for the league pages (lg/) and the picks log.
-# Scripts and data in nikolitso/BettingSignal (mid-europe/). Three times a day, so prices are caught near the opening.
+# Scripts and data in nikolitso/BettingSignal (mid-europe/). Every hour, so prices are caught near the opening.
 on:
   schedule:
-    - cron: "0 7,12,18 * * *"   # 09:00, 14:00 and 20:00 Athens in winter
+    - cron: "23 * * * *"   # every hour (user, 10 Nov 2026); a run takes about 35 minutes
   workflow_dispatch:
   push:
     branches: [main]
