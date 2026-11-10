@@ -134,7 +134,7 @@ table.xv td{vertical-align:top}table.xv td.xvc{white-space:normal;font-size:15px
 tr.avg td,tr.few td{color:var(--muted)} tr.avg td:first-child{font-style:italic}
 tr.sum td{border-top:1px solid var(--line);font-weight:600}
 table.rp td.cm{white-space:normal;min-width:320px;font-size:16px;line-height:1.45;color:var(--muted)}
-table.rp td{vertical-align:top}
+table.rp td{vertical-align:top}table.rp.kd td.cm{min-width:200px}
 .rate{display:inline-block;min-width:40px;text-align:center;border-radius:999px;padding:1px 8px;font:500 14px var(--mono)}
 .r-good{background:var(--an-accent-soft);color:var(--win)} .r-mid{background:var(--an-soft);color:var(--text)}
 .r-warn{background:var(--an-accent-soft);color:var(--gold)} .r-bad{background:var(--an-bad-soft);color:var(--loss)}
@@ -868,7 +868,7 @@ function renderRefs(){
 
   if (R.committee) {
     h += `<h2 id="rf-ked">Referees' committee rulings 2026–27</h2><p class="note">Calls the referees' committee (chief Stéphane Lannoy) later ruled wrong, shown to the referees by its VAR expert Paolo Valeri at their 9–10 November seminar. <b>Went for</b> names the team the error helped; the comments add what came out around each case.</p>
-    <div class="scroll"><table class="mk rp sortable"><thead><tr><th data-ord>Date</th><th>Match</th><th class="n">Score</th><th>Referee</th><th>Went for</th><th data-nosort>Ruling</th><th data-nosort>Comment</th></tr></thead><tbody>`;
+    <div class="scroll"><table class="mk rp kd sortable"><thead><tr><th data-ord>Date</th><th>Match</th><th class="n">Score</th><th>Referee</th><th>Went for</th><th data-nosort>Ruling</th><th data-nosort>Comment</th></tr></thead><tbody>`;
     for (const r of R.committee) h += `<tr><td class="muted">${ddmm(r[0])}</td><td>${r[1].replace(' - ', ' – ')}</td><td class="n">${r[2].replace('-', '–')}</td><td>${refLink(r[3])}</td><td>${r[5] ?? '<span class="muted">–</span>'}</td><td class="cm">${r[4]}</td><td class="cm">${r[6] ?? ''}</td></tr>`;
     h += '</tbody></table></div>';
   }
