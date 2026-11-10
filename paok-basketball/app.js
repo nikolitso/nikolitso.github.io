@@ -655,7 +655,7 @@ VIEWS.coach = function coach() {
     <div class="card dark coach-hero">
       ${staff.photo ? `<img src="${esc(staff.photo)}" alt="Andrea Trinchieri" loading="lazy">` : ''}
       <div><div class="label">Head coach</div><div class="big">Andrea Trinchieri</div>
-        <p class="muted" style="margin:6px 0 0">What he says before and after every game, translated into English. Read together, it shows how he thinks about the team, the season and the game.</p></div>
+        <p class="muted" style="margin:6px 0 0">What he says before and after every game. Read together, it shows how he thinks about the team, the season and the game.</p></div>
     </div>
     <h2>His philosophy</h2>
     <div class="grid three coach-themes">${(c.themes || []).map((t) => `<div class="card"><h3>${esc(t.title)}</h3><p>${esc(t.text)}</p></div>`).join('')}</div>

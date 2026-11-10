@@ -1,6 +1,6 @@
 {
   "_note": "Andrea Trinchieri's words, translated into English and lightly shortened. games[]: linked to the schedule by comp + code; pre = before the game, post = after. ref = where it was said/reported (not shown on the site). focus (post entries): the stat he said must improve, checked on the site against PAOK's next game; stat = tovPct | drebPct | oppEfg | ortg | drtg.",
-  "updated": "2026-11-07",
+  "updated": "2026-11-10",
   "themes": [
     {
       "title": "Effort is the one thing he guarantees",
@@ -311,6 +311,22 @@
       "setting": "Flash interview and press conference",
       "quote": "I don't like numbers. I'm happy about the record, but is it a title? No. Have we achieved anything? No. The good thing is that we are improving and answering Cedi's absence on the floor. Cedi Osman, as a player and as a person, is irreplaceable, and everyone raised their level for him. I have good news: the operation was a complete success. It bothers me, but it isn't a funeral: his minutes have to be shared among the others, and with him out for the next months we must find the best possible chemistry with the players we have. That is my job and I'll be fully committed to it. Today we controlled the game for 40 minutes, with good defence in the first and third quarters and a very good start at both ends; beyond getting the ball inside, I wanted the ball to move. Giving minutes to everyone wasn't an experiment, we try everything in practice. The good is the biggest enemy of the perfect, so don't expect us to relax. On signings, ask the management; it's hard to find a player at this time of year. I don't read the rumours, and their success rate is under 5%: I have never spoken to those players. I protect my players with all my strength. Imagine getting on the bus every morning and reading that someone is coming to take your place.",
       "ref": "https://www.gazzetta.gr/basketball/basket-league/2584557/trinkieri-prepei-na-broyme-tin-kalyteri-dynati-himeia ; https://www.metrosport.gr/trinkieri-paiksame-kai-gia-ton-cedi1332757-1332757 ; https://www.hlektra.gr/xespasma-trinkieri-fantasteite-na-diavazete-kathe-mera-oti-kapoios-erchetai-na-parei-ti-thesi-sas/"
+    },
+    {
+      "comp": "EuroCup",
+      "code": "111",
+      "when": "pre",
+      "setting": "Media day and pre-game statement",
+      "quote": "There's no time to think, only time to prepare and be ready. We've played on a Tuesday many times, which means one day less to prepare, but that's how it is. If we make the mistake of looking at their place in the standings, we'll have a long night: they are newcomers to the competition, with nothing to lose, and they recently won a very hard game in Sarajevo, where Bahcesehir lost and we only won at the end. It will be a very physical game. We need to raise our level of consistency in everything: timing on offence, and on defence concentration, attention to detail, discipline and of course rebounds. The team is gaining confidence and improving, but improvement is a process that never ends. Against Vikos the players reacted exactly as I expected; the energy that appears when you lose an important player, I have to find a way to prolong it. We have a big gap at forward and the management is doing its best to find someone to help us. The market is very difficult right now, there aren't many free players; we're looking at everything. But I can't coach thinking about the clouds, the weather or the wind. I coach the players I have.",
+      "ref": "https://www.eurohoops.net/el/eurocup-el/2032707/trinkieri-echoume-megalo-keno-stous-forgouornt-poli-diskoli-i-agora-afti-ti-stigmi/ ; https://www.paok24.com/mpasket/652089/trinkieri-mas-perimenei-ena-skliro-paichnidi/"
+    },
+    {
+      "comp": "EuroCup",
+      "code": "111",
+      "when": "post",
+      "setting": "Post-game statement",
+      "quote": "We were solid on defence for 34 minutes and we moved the ball well, we made our open shots and controlled the game. I'm thinking about the process and the next game. We have a lot to improve, both individually and as a team.",
+      "ref": "https://www.gazzetta.gr/basketball/eurocup/2585440/trinkieri-ehoyme-polla-na-beltiosoyme-kai-atomika-kai-omadika"
     }
   ]
 }
