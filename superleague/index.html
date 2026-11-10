@@ -179,7 +179,7 @@ th.rs{cursor:pointer;user-select:none} th.rs:hover,th.rs.on{color:var(--gold)}
 <div class="tip" id="tip"></div>
 <dialog id="refdlg" aria-labelledby="refdlg-h"><div class="dh"><h2 id="refdlg-h"></h2><button class="x" id="refdlg-x">Close ✕</button></div><div class="db" id="refdlg-b"></div></dialog>
 <script src="data.js?v=8222e2b4"></script>
-<script src="referees.js?v=80ae8207"></script>
+<script src="referees.js?v=835a694a"></script>
 <script src="referee-games.js?v=47c0bb46" onerror="window.SLREFGAMES=null"></script>
 <script>
 const D = window.SL, $ = id => document.getElementById(id);
@@ -867,9 +867,9 @@ function renderRefs(){
   h += '</tbody></table></div>';
 
   if (R.committee) {
-    h += `<h2 id="rf-ked">Referees' committee rulings 2026–27</h2><p class="note">Calls the referees' committee later ruled wrong, shown to the referees at their November seminar. <b>Went for</b> names the team the error helped.</p>
-    <div class="scroll"><table class="mk rp sortable"><thead><tr><th data-ord>Date</th><th>Match</th><th class="n">Score</th><th>Referee</th><th>Went for</th><th data-nosort>Ruling</th></tr></thead><tbody>`;
-    for (const r of R.committee) h += `<tr><td class="muted">${ddmm(r[0])}</td><td>${r[1].replace(' - ', ' – ')}</td><td class="n">${r[2].replace('-', '–')}</td><td>${refLink(r[3])}</td><td>${r[5] ?? '<span class="muted">–</span>'}</td><td class="cm">${r[4]}</td></tr>`;
+    h += `<h2 id="rf-ked">Referees' committee rulings 2026–27</h2><p class="note">Calls the referees' committee (chief Stéphane Lannoy) later ruled wrong, shown to the referees by its VAR expert Paolo Valeri at their 9–10 November seminar. <b>Went for</b> names the team the error helped; the comments add what came out around each case.</p>
+    <div class="scroll"><table class="mk rp sortable"><thead><tr><th data-ord>Date</th><th>Match</th><th class="n">Score</th><th>Referee</th><th>Went for</th><th data-nosort>Ruling</th><th data-nosort>Comment</th></tr></thead><tbody>`;
+    for (const r of R.committee) h += `<tr><td class="muted">${ddmm(r[0])}</td><td>${r[1].replace(' - ', ' – ')}</td><td class="n">${r[2].replace('-', '–')}</td><td>${refLink(r[3])}</td><td>${r[5] ?? '<span class="muted">–</span>'}</td><td class="cm">${r[4]}</td><td class="cm">${r[6] ?? ''}</td></tr>`;
     h += '</tbody></table></div>';
   }
 
