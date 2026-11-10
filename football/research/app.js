@@ -16,20 +16,22 @@ for (let i = 0; i < N; i++) { Q[i] = (1 + B.g[i] / 1000) / (B.o[i] / 100); P[i] 
 const YRS = [...new Set(B.y)].sort((a, b) => a - b);
 const season = y => `${2023 + y}-${24 + y}`;
 const SIDES = ['Home wins', 'Away wins', 'Overs', 'Unders'];
-const GAPS = [2, 3, 4, 5, 6, 8, 10], CH = [[0, 'All'], [25, '25%+'], [35, '35%+'], [45, '45%+']];
+const GAPS = [2, 3, 4, 5, 6, 8, 10];
 const GROUPS = [['all', 'All', () => true], ['nob5', 'Without the big five', t => t !== 0], ['b5', 'Big five', t => t === 0],
   ['top', 'Other top divisions', t => t === 1], ['low', 'Lower divisions', t => t === 2]];
 const TIER = ['Big five top divisions', 'Other top divisions', 'Lower divisions'];
 const MIN = 100;                                               // fewer bets than this: numbers greyed
 
-const state = {view: 'backtest', f: {gap: RG, q: 0, lg: 'nob5', side: [1, 1, 1, 1]}};     // the filters start on the betting rule
-try { Object.assign(state, JSON.parse(sessionStorage.getItem('pg-state4') || '{}')); } catch (e) {}
-const save = () => { try { sessionStorage.setItem('pg-state4', JSON.stringify(state)); } catch (e) {} };
+const state = {view: 'backtest', f: {gap: RG, od: [[null, null], [null, null], [null, null], [null, null]], lg: 'nob5', side: [1, 1, 1, 1]}};     // the filters start on the betting rule
+try { Object.assign(state, JSON.parse(sessionStorage.getItem('pg-state5') || '{}')); } catch (e) {}
+const save = () => { try { sessionStorage.setItem('pg-state5', JSON.stringify(state)); } catch (e) {} };
 
 function index(noGap) {                                        // bets that pass the filters (noGap: ignore the gap filter)
   const f = state.f, g = GROUPS.find(x => x[0] === f.lg) || GROUPS[0], idx = [];
-  for (let i = 0; i < N; i++)
-    if ((noGap || B.g[i] >= f.gap * 10) && Q[i] * 100 >= f.q && f.side[B.s[i]] && g[2](L[B.l[i]].tier)) idx.push(i);
+  for (let i = 0; i < N; i++) {
+    const r = f.od[B.s[i]], o = B.o[i];                          // odds range of the bet's own selection
+    if ((noGap || B.g[i] >= f.gap * 10) && (r[0] == null || o >= r[0] * 100 - 1e-6) && (r[1] == null || o <= r[1] * 100 + 1e-6) && f.side[B.s[i]] && g[2](L[B.l[i]].tier)) idx.push(i);
+  }
   return idx;
 }
 function agg(idx, pred) {
@@ -48,12 +50,12 @@ const units = x => (x > 0 ? '+' : '') + x.toFixed(1);
 const roiCell = (x, min = MIN) => !x.n ? '<td class="n mut">–</td>' : `<td class="n ${x.n < min ? 'mut' : cls(x.pl)}" title="${num(x.n)} bets">${spct(x.pl / x.n)}</td>`;
 
 // one row of numbers for a group of bets: size, calibration, result, and the ROI of each season
-const HEAD = () => `<th class="n">Bets</th><th class="n">Gap</th><th class="n">ROI</th><th class="n">±</th><th class="n">P/L</th><th class="n">Wins exp.</th><th class="n">Wins actual</th><th class="n">Kept</th>${YRS.map(y => `<th class="n">${season(y)}</th>`).join('')}`;
+const HEAD = () => `<th class="n">Bets</th><th class="n">Gap</th><th class="n">ROI</th><th class="n">±</th><th class="n">P/L</th>${YRS.map(y => `<th class="n">${season(y)}</th>`).join('')}`;
 function cells(a) {
-  if (!a.n) return `<td class="n">0</td>${'<td class="n mut">–</td>'.repeat(7 + YRS.length)}`;
+  if (!a.n) return `<td class="n">0</td>${'<td class="n mut">–</td>'.repeat(4 + YRS.length)}`;
   const m = a.n < MIN;
   return `<td class="n">${num(a.n)}</td><td class="n">${pct(a.gap / a.n)}</td><td class="n ${m ? 'mut' : cls(a.pl)}">${spct(a.roi)}</td><td class="n mut">${a.se == null ? '–' : (a.se * 100).toFixed(1)}</td>
-    <td class="n ${m ? 'mut' : cls(a.pl)}">${units(a.pl)}</td><td class="n">${pct(a.exp / a.n)}</td><td class="n">${pct(a.won / a.n)}</td><td class="n${m ? ' mut' : ''}">${m ? '–' : (a.pl / a.gap * 100).toFixed(0) + '%'}</td>${a.y.map(y => roiCell(y, 50)).join('')}`;
+    <td class="n ${m ? 'mut' : cls(a.pl)}">${units(a.pl)}</td>${a.y.map(y => roiCell(y, 50)).join('')}`;
 }
 function table(title, first, rows, idx, total) {
   const body = rows.map(([lab, pred]) => { const a = agg(idx, pred); return a.n ? `<tr><td>${lab}</td>${cells(a)}</tr>` : ''; }).join('');
@@ -62,10 +64,11 @@ function table(title, first, rows, idx, total) {
 
 function filters() {
   const f = state.f, chip = (k, v, t, on) => `<button class="chip${on ? ' on' : ''}" data-f="${k}" data-v="${v}">${t}</button>`;
-  return `<div class="flt"><span class="fl">Gap of at least</span><div class="chips">${GAPS.filter(g => g >= GAP0).map(g => chip('gap', g, g + '%', f.gap === g)).join('')}</div></div>
-  <div class="flt"><span class="fl">Market chance</span><div class="chips">${CH.map(([v, t]) => chip('q', v, t, f.q === v)).join('')}</div></div>
+  return `<style>.od{display:inline-flex;align-items:center;gap:6px;font:500 13.5px var(--mono);color:var(--muted);margin-right:10px}.od.off{opacity:.4}.od input{width:62px;background:none;border:1px solid var(--line);border-radius:8px;color:var(--text);font:500 13.5px var(--mono);padding:4px 6px}.od input:focus{outline:none;border-color:var(--gold)}</style>
+  <div class="flt"><span class="fl">EV%</span><div class="chips">${GAPS.filter(g => g >= GAP0).map(g => chip('gap', g, g + '%', f.gap === g)).join('')}</div></div>
   <div class="flt"><span class="fl">Leagues</span><div class="chips">${GROUPS.map(([k, t]) => chip('lg', k, t, f.lg === k)).join('')}</div></div>
-  <div class="flt"><span class="fl">Bets on</span><div class="chips">${SIDES.map((t, i) => chip('side', i, t, f.side[i])).join('')}</div></div>`;
+  <div class="flt"><span class="fl">Bets on</span><div class="chips">${SIDES.map((t, i) => chip('side', i, t, f.side[i])).join('')}</div></div>
+  <div class="flt"><span class="fl">Odds range</span><div class="chips">${SIDES.map((t, i) => `<label class="od${f.side[i] ? '' : ' off'}">${t} ${[0, 1].map(k => `<input type="number" min="1" step="0.05" inputmode="decimal" placeholder="${k ? 'max' : 'min'}" aria-label="${t}, ${k ? 'highest' : 'lowest'} odds" data-od="${i}" data-k="${k}" value="${f.od[i][k] == null ? '' : f.od[i][k]}">`).join('<span>–</span>')}</label>`).join('')}</div></div>`;
 }
 
 // ---------- Backtest ----------
@@ -74,21 +77,21 @@ function viewBacktest() {
   const rest = (() => { const k = new Set(idx), o = []; for (let i = 0; i < N; i++) if (!k.has(i)) o.push(i); return agg(o); })();
   const fact = (b, t) => `<span class="fact"><b>${b}</b>${t}</span>`;
   const pills = all.n ? `<div class="facts">${fact(num(all.n), 'bets')}${fact(spct(all.roi), 'ROI')}${fact(units(all.pl), 'units P/L')}${fact(pct(all.exp / all.n), 'wins expected')}${fact(pct(all.won / all.n), 'wins actual')}${fact((all.pl / all.gap * 100).toFixed(0) + '%', 'of the gap kept')}${rest.n ? fact(spct(rest.roi), `ROI of the ${num(rest.n)} bets left out`) : ''}</div>` : '<p class="note">No bets pass these filters.</p>';
-  const band = (lo, hi) => i => B.g[i] >= lo * 10 && B.g[i] < hi * 10, qb = (lo, hi) => i => Q[i] * 100 >= lo && Q[i] * 100 < hi;
+  const band = (lo, hi) => i => B.g[i] >= lo * 10 && B.g[i] < hi * 10, ob = (lo, hi) => i => B.o[i] >= lo * 100 && B.o[i] < hi * 100;
   const GB = [[2, 3], [3, 4], [4, 5], [5, 6], [6, 8], [8, 10], [10, 15], [15, 999]].filter(([lo]) => lo >= GAP0);
-  const QB = [[0, 15], [15, 25], [25, 35], [35, 45], [45, 55], [55, 65], [65, 101]];
+  const OB = [[1, 1.5], [1.5, 1.8], [1.8, 2.1], [2.1, 2.5], [2.5, 3], [3, 4], [4, 6], [6, 999]];
   const ladder = index(true);
-  const bySeason = YRS.map(y => { const a = agg(idx, i => B.y[i] === y); return `<tr><td>${season(y)}</td>${a.s.map(s => `<td class="n">${num(s.n)}</td>${roiCell(s)}`).join('')}<td class="n">${num(a.n)}</td><td class="n ${a.n < MIN ? 'mut' : cls(a.pl)}">${units(a.pl)}</td>${roiCell(a)}<td class="n">${a.n ? pct(a.exp / a.n) : '–'}</td><td class="n">${a.n ? pct(a.won / a.n) : '–'}</td></tr>`; }).join('');
+  const bySeason = YRS.map(y => { const a = agg(idx, i => B.y[i] === y); return `<tr><td>${season(y)}</td>${a.s.map(s => `<td class="n">${num(s.n)}</td>${roiCell(s)}`).join('')}<td class="n">${num(a.n)}</td><td class="n ${a.n < MIN ? 'mut' : cls(a.pl)}">${units(a.pl)}</td>${roiCell(a)}</tr>`; }).join('');
   return `<p class="note">2023-24 to now, opening prices, 1 unit a bet. Every bet with a gap of ${GAP0}% or more between the best price and the market's margin-free price. The draw is never bet. The filters start on the betting rule (gap of ${RG}% or more, without the big five); change them to compare other rules: every table below is recounted.</p>
   ${filters()}
   ${pills}
-  ${table('By minimum gap', 'Gap of at least', [2, 3, 4, 5, 6, 8, 10, 12, 15].filter(g => g >= GAP0).map(g => [g + '%+', i => B.g[i] >= g * 10]), ladder)}
-  <h2>By season</h2><table><thead><tr><th>Season</th>${SIDES.map(t => `<th class="n">${t}</th><th class="n">ROI</th>`).join('')}<th class="n">All bets</th><th class="n">P/L</th><th class="n">ROI</th><th class="n">Wins exp.</th><th class="n">Wins actual</th></tr></thead><tbody>${bySeason}</tbody></table>
+  ${table('By minimum gap', 'EV%', [2, 3, 4, 5, 6, 8, 10, 12, 15].filter(g => g >= GAP0).map(g => [g + '%+', i => B.g[i] >= g * 10]), ladder)}
+  <h2>By season</h2><table><thead><tr><th>Season</th>${SIDES.map(t => `<th class="n">${t}</th><th class="n">ROI</th>`).join('')}<th class="n">All bets</th><th class="n">P/L</th><th class="n">ROI</th></tr></thead><tbody>${bySeason}</tbody></table>
   ${table('By side', 'Bets on', SIDES.map((t, s) => [t, i => B.s[i] === s]), idx, 'All')}
   ${table('By league group', 'Leagues', TIER.map((t, k) => [t, i => L[B.l[i]].tier === k]), idx, 'All')}
-  ${table('By market chance', 'Chance', QB.map(([lo, hi]) => [hi > 100 ? lo + '%+' : lo ? `${lo}–${hi}%` : `Under ${hi}%`, qb(lo, hi)]), idx, 'All')}
+  ${table('By odds', 'Odds', OB.map(([lo, hi]) => [hi > 100 ? lo.toFixed(2) + '+' : lo === 1 ? `Under ${hi.toFixed(2)}` : `${lo.toFixed(2)}–${(hi - 0.01).toFixed(2)}`, ob(lo, hi)]), idx, 'All')}
   ${table('By gap size', 'Gap', GB.map(([lo, hi]) => [hi > 100 ? lo + '%+' : `${lo}–${hi}%`, band(lo, hi)]), idx, 'All')}
-  <p class="note" style="margin-top:26px"><b>How to read.</b> <b>Gap</b>: the average gap of the bets, what they promise. <b>ROI</b>: what they returned at flat stakes. <b>±</b>: one standard error of the ROI in points; a ROI smaller than about twice it cannot be told from zero. <b>Wins exp.</b>: the share of bets the market's margin-free price says should win. <b>Wins actual</b>: the share that did. <b>Kept</b>: the ROI as a share of the gap promised, 100% means the whole gap was earned. The season columns show the ROI of each season: a rule worth using is positive in all of them. Seasons played inside one calendar year count with the season that starts that year. Grey numbers rest on fewer than ${MIN} bets (50 for one season). <b>By minimum gap</b> ignores the gap filter; <b>market chance</b> is the chance of the bet winning by the market price, so under 35% means an outsider.</p>`;
+  <p class="note" style="margin-top:26px"><b>How to read.</b> <b>Gap</b>: the average gap of the bets, what they promise. <b>ROI</b>: what they returned at flat stakes. <b>±</b>: one standard error of the ROI in points; a ROI smaller than about twice it cannot be told from zero. The season columns show the ROI of each season: a rule worth using is positive in all of them. Seasons played inside one calendar year count with the season that starts that year. Grey numbers rest on fewer than ${MIN} bets (50 for one season). The pills also show the share of bets the market's margin-free price says should win, the share that did, and the ROI as a share of the gap promised (100% means the whole gap was earned). <b>EV%</b> is the smallest gap a bet must have; <b>By minimum gap</b> ignores that filter. <b>Odds range</b>: the lowest and highest price allowed, set for each selection on its own; an empty box means no limit.</p>`;
 }
 
 // ---------- Picks: live bets of the rule ----------
@@ -146,8 +149,8 @@ function viewHow() {
   <p>Take the market's price: the odds of about 20 books with their margin removed (the power method, which puts more of the margin on longshots, as books do). Take the best price on offer at the same moment. The gap is best price × market chance − 1. No model and no team ratings: the market itself is the yardstick.</p>
   <h2>The backtest</h2>
   <p>Every game from 2023-24 to now, at opening prices. Each time the gap on a home win, an away win, over 2.5 or under 2.5 was at least ${GAP0}%, one unit is bet on it at the best price.</p>
-  <p>The Backtest tab is built for choosing a rule. Four filters cut the bets: the minimum gap, the market chance of the bet (the chance of it winning by the market price, so a low chance means an outsider), the league group (the big five top divisions of England, Spain, Germany, Italy and France, the other top divisions, the lower divisions) and the side. Every table is recounted for the bets that pass, and a pill shows the ROI of the bets left out, so a filter can be judged by what it removes.</p>
-  <p>Each table row shows the number of bets, the average gap they promised, the ROI, its standard error, the profit or loss, the share of bets the market price said would win against the share that did, the part of the gap that was kept, and the ROI of each season. A rule is worth using when the result holds in every season, not only in the total. The Leagues tab shows the same bets league by league; one league's numbers rest on few bets and its past ROI says little about its next season.</p>
+  <p>The Backtest tab is built for choosing a rule. Four filters cut the bets: the minimum gap (EV%), the league group (the big five top divisions of England, Spain, Germany, Italy and France, the other top divisions, the lower divisions), the side, and an odds range set for each side on its own. Every table is recounted for the bets that pass, and a pill shows the ROI of the bets left out, so a filter can be judged by what it removes.</p>
+  <p>Each table row shows the number of bets, the average gap they promised, the ROI, its standard error, the profit or loss, and the ROI of each season. A rule is worth using when the result holds in every season, not only in the total. The Leagues tab shows the same bets league by league; one league's numbers rest on few bets and its past ROI says little about its next season.</p>
   <h2>Why it can work</h2>
   <p>Some prices open before the market settles, or are shaded, and for a while stand above it. They are corrected quickly: at closing prices the gap is much smaller, so it has to be taken early.</p>
   <h2>Betting rules</h2>
@@ -181,6 +184,13 @@ out.addEventListener('click', e => {
   if (!t) return;
   const k = t.dataset.sort, s = state.sort || {};
   state.sort = {col: k, dir: s.col === k ? -s.dir : (k === 'country' || k === 'name' ? 1 : -1)};
+  render();
+});
+out.addEventListener('change', e => {                          // odds range boxes
+  const b = e.target.closest('[data-od]');
+  if (!b) return;
+  const v = parseFloat(b.value);
+  state.f.od[+b.dataset.od][+b.dataset.k] = v >= 1 ? v : null;
   render();
 });
 function route() {
