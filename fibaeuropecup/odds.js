@@ -1,7 +1,7 @@
 // Bookmaker lines for upcoming fixtures, keyed by the fixture's home and away club.
 // sp = handicap on the home side (+ means the home side is the underdog), spH / spA = its odds home / away,
 // tot = points total, ov / un = odds over / under, mlH / mlA = money line odds (null when not offered).
-window.ODDS = {"updated": "2026-11-04", "source": "pre-game lines, earlier ones kept", "list": [
+window.ODDS = {"updated": "2026-11-10", "source": "pre-game lines, earlier ones kept", "list": [
   {"h": "AEK Larnaca", "a": "Tartu Ulikool", "sp": -5.5, "spH": 1.83, "spA": 1.83, "tot": 165.5, "ov": 1.83, "un": 1.83, "mlH": 1.19, "mlA": 4.0},
   {"h": "CSM Oradea", "a": "VEF Riga", "sp": -3.5, "spH": 1.83, "spA": 1.83, "tot": 172.5, "ov": 1.83, "un": 1.83, "mlH": 1.62, "mlA": 2.1},
   {"h": "Esenler Erokspor", "a": "SCM Craiova", "sp": -19.5, "spH": 1.83, "spA": 1.83, "tot": 163.5, "ov": 1.83, "un": 1.83, "mlH": 1.01, "mlA": 11.5},
@@ -66,5 +66,6 @@ window.ODDS = {"updated": "2026-11-04", "source": "pre-game lines, earlier ones 
   {"h": "Esenler Erokspor", "a": "Sporting CP", "sp": -16.5, "spH": 1.83, "spA": 1.9, "tot": 161.5, "ov": 1.83, "un": 1.85, "mlH": 1.06, "mlA": 7.0},
   {"h": "Korfez Basket", "a": "Bashkimi", "sp": -19.5, "spH": 1.86, "spA": 1.86, "tot": 167.5, "ov": 1.86, "un": 1.86, "mlH": 1.06, "mlA": 9.0},
   {"h": "Geneva Lions", "a": "BC Prievidza", "sp": -3.5, "spH": 1.83, "spA": 1.85, "tot": 168.5, "ov": 1.83, "un": 1.83, "mlH": 1.55, "mlA": 2.25},
-  {"h": "Oostende", "a": "Szolnoki Olaj", "sp": -4.5, "spH": 1.85, "spA": 1.83, "tot": 162.5, "ov": 1.8, "un": 1.87, "mlH": 1.48, "mlA": 2.4}
+  {"h": "Oostende", "a": "Szolnoki Olaj", "sp": -4.5, "spH": 1.85, "spA": 1.83, "tot": 162.5, "ov": 1.8, "un": 1.87, "mlH": 1.48, "mlA": 2.4},
+  {"h": "Manchester Basketball", "a": "Chalon/Saone", "sp": 10.5, "spH": 1.86, "spA": 1.86, "tot": 164.5, "ov": 1.89, "un": 1.83, "mlH": 4.6, "mlA": 1.18}
 ]};
