@@ -5,7 +5,7 @@ const pct = (x, d = 1) => x == null ? '–' : (x * 100).toFixed(d) + '%';
 const spct = (x, d = 1) => x == null ? '–' : (x > 0 ? '+' : '') + (x * 100).toFixed(d) + '%';
 const num = n => n.toLocaleString('en-GB');
 const cls = x => x == null ? '' : x > 0 ? 'pos' : 'neg';
-const GAP0 = Math.round((((D.pick || {}).edges || {})['1x2'] || 0.02) * 100);
+const GAP0 = 6;                                                // the smallest EV the page shows (the data carries every bet from 2%)
 // the betting rule: minimum gap and league groups (1 top divisions, 2 lower divisions)
 const RULE = D.rule || {gap: 0.08, odds_above: 1.5, tiers: [1, 2], since: '2026-11-10'}, RG = Math.round(RULE.gap * 100);
 const RO = RULE.odds_above || 0, ROT = RO.toFixed(2), RMIN = RO ? Math.round(RO * 100 + 1) / 100 : null;     // prices of RO or below are skipped
@@ -17,15 +17,15 @@ for (let i = 0; i < N; i++) { Q[i] = (1 + B.g[i] / 1000) / (B.o[i] / 100); P[i] 
 const YRS = [...new Set(B.y)].sort((a, b) => a - b);
 const season = y => `${2023 + y}-${24 + y}`;
 const SIDES = ['Home wins', 'Away wins', 'Overs', 'Unders'];
-const GAPS = [2, 3, 4, 5, 6, 8, 10];
+const GAPS = [6, 8, 10, 12, 14, 16];
 const GROUPS = [['all', 'All', () => true],
   ['top', 'Top divisions', t => t === 1], ['low', 'Lower divisions', t => t === 2]];
 const TIER = ['', 'Top divisions', 'Lower divisions'];
 const MIN = 100;                                               // fewer bets than this: numbers greyed
 
 const state = {view: 'picks', f: {gap: RG, od: [[RMIN, null], [RMIN, null], [RMIN, null], [RMIN, null]], lg: 'all', side: [1, 1, 1, 1]}};     // the filters start on the betting rule
-try { Object.assign(state, JSON.parse(sessionStorage.getItem('pg-state8') || '{}')); } catch (e) {}
-const save = () => { try { sessionStorage.setItem('pg-state8', JSON.stringify(state)); } catch (e) {} };
+try { Object.assign(state, JSON.parse(sessionStorage.getItem('pg-state9') || '{}')); } catch (e) {}
+const save = () => { try { sessionStorage.setItem('pg-state9', JSON.stringify(state)); } catch (e) {} };
 
 function index(noGap) {                                        // bets that pass the filters (noGap: ignore the gap filter)
   const f = state.f, g = GROUPS.find(x => x[0] === f.lg) || GROUPS[0], idx = [];
@@ -66,7 +66,7 @@ function table(title, first, rows, idx, total) {
 function filters() {
   const f = state.f, chip = (k, v, t, on) => `<button class="chip${on ? ' on' : ''}" data-f="${k}" data-v="${v}">${t}</button>`;
   return `<style>.od{display:inline-flex;align-items:center;gap:6px;font:500 13.5px var(--mono);color:var(--muted);margin-right:10px}.od.off{opacity:.4}.od input{width:62px;background:none;border:1px solid var(--line);border-radius:8px;color:var(--text);font:500 13.5px var(--mono);padding:4px 6px}.od input:focus{outline:none;border-color:var(--gold)}</style>
-  <div class="flt"><span class="fl">EV%</span><div class="chips">${GAPS.filter(g => g >= GAP0).map(g => chip('gap', g, g + '%', f.gap === g)).join('')}</div></div>
+  <div class="flt"><span class="fl">EV%</span><div class="chips">${GAPS.filter(g => g >= GAP0).map(g => chip('gap', g, g + '%+', f.gap === g)).join('')}</div></div>
   <div class="flt"><span class="fl">Leagues</span><div class="chips">${GROUPS.map(([k, t]) => chip('lg', k, t, f.lg === k)).join('')}</div></div>
   <div class="flt"><span class="fl">Bets on</span><div class="chips">${SIDES.map((t, i) => chip('side', i, t, f.side[i])).join('')}</div></div>
   <div class="flt"><span class="fl">Odds range</span><div class="chips">${SIDES.map((t, i) => `<label class="od${f.side[i] ? '' : ' off'}">${t} ${[0, 1].map(k => `<input type="number" min="1" step="0.05" inputmode="decimal" placeholder="${k ? 'max' : 'min'}" aria-label="${t}, ${k ? 'highest' : 'lowest'} odds" data-od="${i}" data-k="${k}" value="${f.od[i][k] == null ? '' : f.od[i][k]}">`).join('<span>–</span>')}</label>`).join('')}</div></div>`;
@@ -78,7 +78,7 @@ function viewBacktest() {
   const fact = (b, t) => `<span class="fact"><b>${b}</b>${t}</span>`;
   const pills = all.n ? `<div class="facts">${fact(num(all.n), 'bets')}${fact(spct(all.roi), 'ROI')}${fact(units(all.pl), 'units P/L')}</div>` : '<p class="note">No bets pass these filters.</p>';
   const band = (lo, hi) => i => B.g[i] >= lo * 10 && B.g[i] < hi * 10, ob = (lo, hi) => i => B.o[i] >= lo * 100 && B.o[i] < hi * 100;
-  const GB = [[2, 3], [3, 4], [4, 5], [5, 6], [6, 8], [8, 10], [10, 15], [15, 999]].filter(([lo]) => lo >= GAP0);
+  const GB = [[6, 8], [8, 10], [10, 12], [12, 14], [14, 16], [16, 999]];
   const OB = [[1, 1.5], [1.5, 1.8], [1.8, 2.1], [2.1, 2.5], [2.5, 3], [3, 4], [4, 6], [6, 999]];
   // side columns only for the sides chosen, and none when one side is chosen (they would repeat the total)
   const on = f.side.filter(x => x).length > 1 ? SIDES.map((t, k) => k).filter(k => f.side[k]) : [];
@@ -156,7 +156,7 @@ function viewHow() {
   <p>Some prices open before the market settles, or are shaded, and for a while stand above it. They are corrected quickly: at closing prices the EV is much smaller, so it has to be taken early.</p>
   <h2>Betting rules</h2>
   <p>Set on 10 November 2026 from the backtest. A bet is made when the EV is <b>${RG}% or more</b> and the price is <b>above ${ROT}</b>, on a home win, an away win, over 2.5 or under 2.5 goals, in every league on this page. One unit a bet.</p>
-  <p>Why 8%. The return grows with the EV: the bigger the EV, the more the bets returned, and bets with an EV of 8% or more returned about twice as much as all bets with 2% or more. The rule made a profit in every season of the test, and when it was chosen on the first two seasons alone it returned about the same in the two that followed. It leaves fewer bets: about a quarter of those with an EV of 2% or more.</p>
+  <p>Why 8%. The return grows with the EV: the bigger the EV, the more the bets returned, bets with an EV between 6% and 8% returned about 6%, those with 8% or more about 15%. The rule made a profit in every season of the test, and when it was chosen on the first two seasons alone it returned about the same in the two that followed. It keeps about two thirds of the bets with an EV of 6% or more.</p>
   <p>Why prices of ${ROT} or below are skipped. They were the weakest part of the test: 201 bets with an EV of 8% or more returned 5.1%, against 15.2% for the rest, with one losing season. A short price leaves little room for a wrong price.</p>
   <p>Picks are logged on the Picks tab from that date: the first time a game within 8 days shows an EV of ${RG}% or more and a price above ${ROT}, at the price on offer then. The Backtest tab opens on the rule; the other filters stay so other rules can be compared with it.</p>
   <h2>What was tried and dropped</h2>
