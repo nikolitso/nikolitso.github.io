@@ -111,7 +111,7 @@ function viewPicks() {
   const ps = (D.picks || []).filter(p => key[p.lg] && RULE.tiers.includes(key[p.lg].tier) && RULE.markets.includes(p.market) && p.edge + 1e-9 >= RULE.gap && p.odds > RO + 1e-9 && p.posted.slice(0, 10) >= RULE.since);
   const open = ps.filter(p => !p.result), done = ps.filter(p => p.result).reverse();
   const won = done.filter(p => p.result === 'W').length, pl = done.reduce((s, p) => s + p.profit, 0);
-  const bt = agg((() => { const o = []; for (let i = 0; i < N; i++) if (B.g[i] >= RG * 10 && B.o[i] > RO * 100 + 1e-6 && RULE.tiers.includes(L[B.l[i]].tier)) o.push(i); return o; })());
+  const bt = agg((() => { const o = []; for (let i = 0; i < N; i++) if (B.s[i] < 2 && B.g[i] >= RG * 10 && B.o[i] > RO * 100 + 1e-6 && RULE.tiers.includes(L[B.l[i]].tier)) o.push(i); return o; })());
   const fact = (b, t) => `<span class="fact"><b>${b}</b>${t}</span>`;
   const when = s => new Date(s).toLocaleString('en-GB', {weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit'});
   const bet = p => p.market === '1x2' ? (p.sel === 0 ? p.home : p.away) + ' to win' : (p.sel === 0 ? 'Over' : 'Under') + ' 2.5 goals';
