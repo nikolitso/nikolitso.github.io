@@ -74,9 +74,8 @@ function filters() {
 // ---------- Backtest ----------
 function viewBacktest() {
   const idx = index(), all = agg(idx), f = state.f;
-  const rest = (() => { const k = new Set(idx), o = []; for (let i = 0; i < N; i++) if (!k.has(i)) o.push(i); return agg(o); })();
   const fact = (b, t) => `<span class="fact"><b>${b}</b>${t}</span>`;
-  const pills = all.n ? `<div class="facts">${fact(num(all.n), 'bets')}${fact(spct(all.roi), 'ROI')}${fact(units(all.pl), 'units P/L')}${rest.n ? fact(spct(rest.roi), `ROI of the ${num(rest.n)} bets left out`) : ''}</div>` : '<p class="note">No bets pass these filters.</p>';
+  const pills = all.n ? `<div class="facts">${fact(num(all.n), 'bets')}${fact(spct(all.roi), 'ROI')}${fact(units(all.pl), 'units P/L')}</div>` : '<p class="note">No bets pass these filters.</p>';
   const band = (lo, hi) => i => B.g[i] >= lo * 10 && B.g[i] < hi * 10, ob = (lo, hi) => i => B.o[i] >= lo * 100 && B.o[i] < hi * 100;
   const GB = [[2, 3], [3, 4], [4, 5], [5, 6], [6, 8], [8, 10], [10, 15], [15, 999]].filter(([lo]) => lo >= GAP0);
   const OB = [[1, 1.5], [1.5, 1.8], [1.8, 2.1], [2.1, 2.5], [2.5, 3], [3, 4], [4, 6], [6, 999]];
@@ -147,7 +146,7 @@ function viewHow() {
   <p>Take the market's price: the odds of about 20 books with their margin removed (the power method, which puts more of the margin on longshots, as books do). Take the best price on offer at the same moment. The gap is best price × market chance − 1. No model and no team ratings: the market itself is the yardstick.</p>
   <h2>The backtest</h2>
   <p>Every game from 2023-24 to now, at opening prices. Each time the gap on a home win, an away win, over 2.5 or under 2.5 was at least ${GAP0}%, one unit is bet on it at the best price.</p>
-  <p>The Backtest tab is built for choosing a rule. Four filters cut the bets: the minimum gap (EV%), the league group (top divisions, lower divisions), the side, and an odds range set for each side on its own. Every table is recounted for the bets that pass, and a pill shows the ROI of the bets left out, so a filter can be judged by what it removes.</p>
+  <p>The Backtest tab is built for choosing a rule. Four filters cut the bets: the minimum gap (EV%), the league group (top divisions, lower divisions), the side, and an odds range set for each side on its own. Every table is recounted for the bets that pass.</p>
   <p>Each table row shows the number of bets, the average gap they promised, the ROI, its standard error, the profit or loss, and the ROI of each season. A rule is worth using when the result holds in every season, not only in the total. The Leagues tab shows the same bets league by league; one league's numbers rest on few bets and its past ROI says little about its next season.</p>
   <h2>Why it can work</h2>
   <p>Some prices open before the market settles, or are shaded, and for a while stand above it. They are corrected quickly: at closing prices the gap is much smaller, so it has to be taken early.</p>
