@@ -48,15 +48,15 @@ function agg(idx, pred) {
   return a;
 }
 const units = x => (x > 0 ? '+' : '') + x.toFixed(1);
-const roiCell = (x, min = MIN) => !x.n ? '<td class="n mut">–</td>' : `<td class="n ${x.n < min ? 'mut' : cls(x.pl)}" title="${num(x.n)} bets">${spct(x.pl / x.n)}</td>`;
+const roiCell = (x, min = MIN) => !x.n ? '<td class="n mut">–</td>' : `<td class="n ${cls(x.pl)}${x.n < min ? ' few' : ''}" title="${num(x.n)} bets">${spct(x.pl / x.n)}</td>`;
 
 // one row of numbers for a group of bets: size, calibration, result, and the ROI of each season
 const HEAD = () => `<th class="n">Bets</th><th class="n">EV%</th><th class="n">ROI</th><th class="n">±</th><th class="n">P/L</th>${YRS.map(y => `<th class="n">${season(y)}</th>`).join('')}`;
 function cells(a) {
   if (!a.n) return `<td class="n">0</td>${'<td class="n mut">–</td>'.repeat(4 + YRS.length)}`;
   const m = a.n < MIN;
-  return `<td class="n">${num(a.n)}</td><td class="n">${pct(a.gap / a.n)}</td><td class="n ${m ? 'mut' : cls(a.pl)}">${spct(a.roi)}</td><td class="n mut">${a.se == null ? '–' : (a.se * 100).toFixed(1)}</td>
-    <td class="n ${m ? 'mut' : cls(a.pl)}">${units(a.pl)}</td>${a.y.map(y => roiCell(y, 50)).join('')}`;
+  return `<td class="n">${num(a.n)}</td><td class="n">${pct(a.gap / a.n)}</td><td class="n ${cls(a.pl)}${m ? ' few' : ''}">${spct(a.roi)}</td><td class="n mut">${a.se == null ? '–' : (a.se * 100).toFixed(1)}</td>
+    <td class="n ${cls(a.pl)}${m ? ' few' : ''}">${units(a.pl)}</td>${a.y.map(y => roiCell(y, 50)).join('')}`;
 }
 function table(title, first, rows, idx, total) {
   const body = rows.map(([lab, pred]) => { const a = agg(idx, pred); return a.n ? `<tr><td>${lab}</td>${cells(a)}</tr>` : ''; }).join('');
@@ -82,7 +82,7 @@ function viewBacktest() {
   const OB = [[1, 1.5], [1.5, 1.8], [1.8, 2.1], [2.1, 2.5], [2.5, 3], [3, 4], [4, 6], [6, 999]];
   // side columns only for the sides chosen, and none when one side is chosen (they would repeat the total)
   const on = f.side.filter(x => x).length > 1 ? SIDES.map((t, k) => k).filter(k => f.side[k]) : [];
-  const bySeason = YRS.map(y => { const a = agg(idx, i => B.y[i] === y); return `<tr><td>${season(y)}</td>${a.s.map((s, k) => on.includes(k) ? `<td class="n">${num(s.n)}</td>${roiCell(s)}` : '').join('')}<td class="n">${num(a.n)}</td><td class="n ${a.n < MIN ? 'mut' : cls(a.pl)}">${units(a.pl)}</td>${roiCell(a)}</tr>`; }).join('');
+  const bySeason = YRS.map(y => { const a = agg(idx, i => B.y[i] === y); return `<tr><td>${season(y)}</td>${a.s.map((s, k) => on.includes(k) ? `<td class="n">${num(s.n)}</td>${roiCell(s)}` : '').join('')}<td class="n">${num(a.n)}</td><td class="n ${cls(a.pl)}${a.n < MIN ? ' few' : ''}">${units(a.pl)}</td>${roiCell(a)}</tr>`; }).join('');
   return `<p class="note">2023-24 to now, opening prices, 1 unit a bet. Every bet with an EV of ${GAP0}% or more: the best price against the market's margin-free price. The draw is never bet. The filters start on the betting rule (EV of ${RG}% or more, prices above ${ROT}); change them to compare other rules: every table below is recounted.</p>
   ${filters()}
   ${pills}
@@ -91,7 +91,7 @@ function viewBacktest() {
   ${f.lg !== 'all' ? '' : table('By league group', 'Leagues', TIER.map((t, k) => [t, i => L[B.l[i]].tier === k]), idx, 'All')}
   ${table('By odds', 'Odds', OB.map(([lo, hi]) => [hi > 100 ? lo.toFixed(2) + '+' : lo === 1 ? `Under ${hi.toFixed(2)}` : `${lo.toFixed(2)}–${(hi - 0.01).toFixed(2)}`, ob(lo, hi)]), idx, 'All')}
   ${table('By EV%', 'EV%', GB.map(([lo, hi]) => [hi > 100 ? lo + '%+' : `${lo}–${hi}%`, band(lo, hi)]), idx, 'All')}
-  <p class="note" style="margin-top:26px"><b>How to read.</b> <b>EV%</b>: the average EV of the bets, what they promise. <b>ROI</b>: what they returned at flat stakes. <b>±</b>: one standard error of the ROI in points; a ROI smaller than about twice it cannot be told from zero. The season columns show the ROI of each season: a rule worth using is positive in all of them. Seasons played inside one calendar year count with the season that starts that year. Grey numbers rest on fewer than ${MIN} bets (50 for one season). The <b>EV%</b> filter is the smallest EV a bet must have. <b>Odds range</b>: the lowest and highest price allowed, set for each selection on its own; an empty box means no limit.</p>`;
+  <p class="note" style="margin-top:26px"><b>How to read.</b> <b>EV%</b>: the average EV of the bets, what they promise. <b>ROI</b>: what they returned at flat stakes. <b>±</b>: one standard error of the ROI in points; a ROI smaller than about twice it cannot be told from zero. The season columns show the ROI of each season: a rule worth using is positive in all of them. Seasons played inside one calendar year count with the season that starts that year. Green is a profit, red a loss. Faded numbers rest on fewer than ${MIN} bets (50 for one season). The <b>EV%</b> filter is the smallest EV a bet must have. <b>Odds range</b>: the lowest and highest price allowed, set for each selection on its own; an empty box means no limit.</p>`;
 }
 
 // ---------- Picks: live bets of the rule ----------
@@ -129,11 +129,11 @@ function viewLeagues() {
     if (x == null || y == null) return x == null ? (y == null ? 0 : 1) : -1;   // blanks always last
     return (typeof x === 'string' ? x.localeCompare(y) : x - y) * srt.dir;
   });
-  const c = (x, b) => { const o = b ? '<b>' : '', e = b ? '</b>' : ''; return x.n ? `<td class="n">${o}${num(x.n)}${e}</td><td class="n ${x.n < MIN && !b ? 'mut' : cls(x.pl)}">${o}${spct(x.pl / x.n)}${e}</td>` : '<td class="n">0</td><td class="n mut">–</td>'; };
+  const c = (x, b) => { const o = b ? '<b>' : '', e = b ? '</b>' : ''; return x.n ? `<td class="n">${o}${num(x.n)}${e}</td><td class="n ${cls(x.pl)}${x.n < MIN && !b ? ' few' : ''}">${o}${spct(x.pl / x.n)}${e}</td>` : '<td class="n">0</td><td class="n mut">–</td>'; };
   const tot = agg(idx), games = list.reduce((s, x) => s + x.l.games, 0);
   const rows = list.map(x => `<tr><td>${x.l.country}</td><td>${x.l.name}</td><td class="n">${num(x.l.games)}</td><td class="n">${pct(x.l.gap2, 0)}</td>${on.map(s => c(x.a.s[s])).join('')}${c(x.a)}</tr>`).join('');
   const head = COLS.map(([k, t], i) => `<th data-sort="${k}" class="sortable${i > 1 ? ' n' : ''}" title="Sort">${t}${srt.col === k ? (srt.dir > 0 ? ' ▲' : ' ▼') : ''}</th>`).join('');
-  return `<p class="note">2023-24 to now, opening prices. <b>EV 2%+</b>: share of games where the home or away opening price was at least 2% above the market. Then the bets that pass the filters in each league, split by the sides chosen, each with its ROI at flat stakes. One league's ROI rests on few bets (grey under ${MIN}) and a league's past ROI says little about its next season; the first row is all leagues together. Click a column to sort.</p>
+  return `<p class="note">2023-24 to now, opening prices. <b>EV 2%+</b>: share of games where the home or away opening price was at least 2% above the market. Then the bets that pass the filters in each league, split by the sides chosen, each with its ROI at flat stakes. One league's ROI rests on few bets (faded under ${MIN}) and a league's past ROI says little about its next season; the first row is all leagues together. Click a column to sort.</p>
   ${filters()}
   <style>table.lgs th,table.lgs td{padding-left:5px;padding-right:5px}th.sortable{cursor:pointer;user-select:none;white-space:nowrap}th.sortable:hover{text-decoration:underline}</style>
   <table class="lgs"><thead><tr>${head}</tr></thead><tbody><tr class="tot"><td><b>All</b></td><td><b>${list.length} leagues</b></td><td class="n"><b>${num(games)}</b></td><td class="n"></td>${on.map(s => c(tot.s[s], 1)).join('')}${c(tot, 1)}</tr>${rows}</tbody></table>`;
