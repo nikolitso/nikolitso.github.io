@@ -37,18 +37,22 @@ function index(lg) {                                           // bets that pass
     if (pass(B.s[i], B.g[i], B.o[i]) && (lg == null ? g[2](L[B.l[i]].tier) : B.l[i] === lg)) idx.push(i);
   return idx;
 }
-// the same filters on the closing-price bets (D.cbets): the bets a rule would make from the last prices before kick-off
-const C = D.cbets;
-function closing(lg, rule) {
-  if (!C) return null;
-  const g = GROUPS.find(x => x[0] === state.f.lg) || GROUPS[0], a = {n: 0, pl: 0};
-  for (let i = 0; i < C.l.length; i++) {
-    const ok = rule ? C.s[i] < 2 && C.g[i] >= RG * 10 && C.o[i] > RO * 100 + 1e-6 : pass(C.s[i], C.g[i], C.o[i]) && (lg == null ? g[2](L[C.l[i]].tier) : C.l[i] === lg);
-    if (ok) { a.n++; a.pl += C.w[i] ? C.o[i] / 100 - 1 : -1; }
-  }
+// the same bets settled at the closing price of the selection (B.c, x100; 0 when the price was gone by the close)
+function closing(idx) {
+  if (!B.c) return null;
+  const a = {n: 0, pl: 0};
+  for (const i of idx) if (B.c[i]) { a.n++; a.pl += B.w[i] ? B.c[i] / 100 - 1 : -1; }
   a.roi = a.n ? a.pl / a.n : null;
   return a;
 }
+// which way the market went after the bet: share of bets whose market chance rose by the close, and whose fell (B.v)
+function moved(idx) {
+  if (!B.v) return null;
+  let n = 0, up = 0, dn = 0;
+  for (const i of idx) if (B.v[i] !== -9999) { n++; if (B.v[i] > 0) up++; else if (B.v[i] < 0) dn++; }
+  return n ? {n, up: up / n, dn: dn / n} : null;
+}
+const movePill = m => m ? `<span class="fact">Closing line: <b style="margin-left:4px">${pct(m.up, 0)}</b>moved towards the bet · <b>${pct(m.dn, 0)}</b>against</span>` : '';
 function agg(idx, pred) {
   const a = {n: 0, pl: 0, exp: 0, won: 0, gap: 0, sq: 0, y: YRS.map(() => ({n: 0, pl: 0})), s: SIDES.map(() => ({n: 0, pl: 0}))};
   for (const i of idx) {
@@ -92,8 +96,8 @@ const RULETXT = `home and away wins with an EV of ${RG}% or more, prices above $
 function viewBacktest(lg) {
   const idx = index(lg), all = agg(idx), f = state.f;
   const fact = (b, t) => `<span class="fact"><b>${b}</b>${t}</span>`;
-  const cl = closing(lg), pill = (lab, a) => `<span class="fact">${lab}: <b style="margin-left:4px">${a.n ? spct(a.roi) : '–'}</b>ROI · ${num(a.n)} bets · ${a.n ? units(a.pl) : '0'} units</span>`;
-  const pills = all.n || (cl && cl.n) ? `<div class="facts">${pill('Opening prices', all)}${cl ? pill('Closing prices', cl) : ''}</div>` : '<p class="note">No bets pass these filters.</p>';
+  const cl = closing(idx), pill = (lab, a) => `<span class="fact">${lab}: <b style="margin-left:4px">${a.n ? spct(a.roi) : '–'}</b>ROI · ${num(a.n)} bets · ${a.n ? units(a.pl) : '0'} units</span>`;
+  const pills = all.n || (cl && cl.n) ? `<div class="facts">${pill('Opening prices', all)}${cl ? pill('Closing prices', cl) : ''}${movePill(moved(idx))}</div>` : '<p class="note">No bets pass these filters.</p>';
   const band = (lo, hi) => i => B.g[i] >= lo * 10 && B.g[i] < hi * 10, ob = (lo, hi) => i => B.o[i] >= lo * 100 && B.o[i] < hi * 100;
   const GB = [[8, 10], [10, 12], [12, 14], [14, 16], [16, 999]];
   const OB = [[1, 2], [2, 2.5], [2.5, 3], [3, 4], [4, 999]];
@@ -104,7 +108,7 @@ function viewBacktest(lg) {
   <h2>By season</h2><table data-t="By season"><thead><tr><th>Season</th>${on.map(k => `<th class="n">${SIDES[k]}</th><th class="n">ROI</th>`).join('')}<th class="n">All bets</th><th class="n">P/L</th><th class="n">ROI</th></tr></thead><tbody>${bySeason}</tbody></table>
   ${on.length ? table('By side', 'Bets on', SIDES.map((t, s) => [t, i => B.s[i] === s]), idx, 'All') : ''}`;
   if (lg != null) return tables;                               // a league's page: the headline tables only
-  return `<p class="note">2023-24 to now, regular league games only (no play-offs), 1 unit a bet. Every bet with an EV of ${GAP0}% or more: the best price against the market's margin-free price. The draw is never bet. The two pills are the same filters tested twice, at opening prices and at closing prices (the last before kick-off); the tables below are the opening-price bets. The filters start on the betting rule (${RULETXT}); change them to compare other rules: every table below is recounted.</p>
+  return `<p class="note">2023-24 to now, regular league games only (no play-offs), 1 unit a bet. Every bet with an EV of ${GAP0}% or more: the best price against the market's margin-free price. The draw is never bet. The two pills are the same bets settled twice: at the opening price, and at the price the same selection had at the close (the last before kick-off). <b>Closing line</b>: the share of the bets whose market chance was higher at the close than at the opening (the market moved towards the bet) and the share where it was lower. The tables below use the opening price. The filters start on the betting rule (${RULETXT}); change them to compare other rules: every table below is recounted.</p>
   <p class="note">${PRIOR}</p>
   ${filters()}
   ${pills}
@@ -125,17 +129,17 @@ function viewPicks() {
   const ps = (D.picks || []).filter(p => key[p.lg] && RULE.tiers.includes(key[p.lg].tier) && RULE.markets.includes(p.market) && p.edge + 1e-9 >= RULE.gap && p.odds > RO + 1e-9 && p.posted.slice(0, 10) >= RULE.since);
   const open = ps.filter(p => !p.result), done = ps.filter(p => p.result).reverse();
   const won = done.filter(p => p.result === 'W').length, pl = done.reduce((s, p) => s + p.profit, 0);
-  const bt = agg((() => { const o = []; for (let i = 0; i < N; i++) if (B.s[i] < 2 && B.g[i] >= RG * 10 && B.o[i] > RO * 100 + 1e-6 && RULE.tiers.includes(L[B.l[i]].tier)) o.push(i); return o; })());
+  const ri = (() => { const o = []; for (let i = 0; i < N; i++) if (B.s[i] < 2 && B.g[i] >= RG * 10 && B.o[i] > RO * 100 + 1e-6 && RULE.tiers.includes(L[B.l[i]].tier)) o.push(i); return o; })(), bt = agg(ri);
   const fact = (b, t) => `<span class="fact"><b>${b}</b>${t}</span>`;
   const when = s => new Date(s).toLocaleString('en-GB', {weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit'});
   const bet = p => p.market === '1x2' ? (p.sel === 0 ? p.home : p.away) + ' to win' : (p.sel === 0 ? 'Over' : 'Under') + ' 2.5 goals';
   const row = (p, d) => `<tr${p.fair ? ' class="exp" title="Show how the pick was made"' : ''}><td>${when(p.dt)}</td><td>${key[p.lg].country} · ${key[p.lg].name}</td><td>${p.home} – ${p.away}</td><td><b>${bet(p)}</b></td><td class="n">${p.odds.toFixed(2)}</td><td class="n">${pct(p.prob, 0)}</td><td class="n">${spct(p.edge)}</td>${d ? `<td class="n">${p.score}</td><td class="n ${cls(p.profit)}">${p.result === 'W' ? 'Won' : 'Lost'}</td><td class="n ${cls(p.profit)}">${(p.profit > 0 ? '+' : '') + p.profit.toFixed(2)}</td>` : ''}</tr>${p.fair ? `<tr class="detail" hidden><td colspan="${d ? 10 : 7}">${analysis({mi: p.market === '1x2' ? 0 : 1, s: p.sel, fair: p.fair, best: p.best, nw: p.nw, nb: p.nb, home: p.home, away: p.away, ev: p.edge, live: 1, score: p.score, won: p.result ? p.result === 'W' : null})}</td></tr>` : ''}`;
   const head = d => `<thead><tr><th>Kick-off</th><th>League</th><th>Game</th><th>Bet</th><th class="n">Price</th><th class="n">Chance</th><th class="n">EV%</th>${d ? '<th class="n">Score</th><th class="n">Result</th><th class="n">P/L</th>' : ''}</tr></thead>`;
   return `${PKCSS}<p class="note"><b>The rule.</b> Bet a home or an away win when the best price is ${RG}% or more above the market's margin-free price (EV ${RG}%+). Prices of ${ROT} or below are skipped. One unit a bet. Picks are logged from ${new Date(RULE.since).toLocaleDateString('en-GB', {day: 'numeric', month: 'long', year: 'numeric'})}.</p>
-  <div class="facts">${done.length ? fact(`${won}–${done.length - won}`, 'record') + fact(spct(pl / done.length), 'ROI') : fact('0', 'settled picks')}${fact(open.length, open.length === 1 ? 'open pick' : 'open picks')}${fact(spct(bt.roi), `ROI of the rule at opening prices, ${num(bt.n)} bets`)}${(c => c && c.n ? fact(spct(c.roi), `ROI at closing prices, ${num(c.n)} bets`) : '')(closing(null, 1))}</div>
+  <div class="facts">${done.length ? fact(`${won}–${done.length - won}`, 'record') + fact(spct(pl / done.length), 'ROI') : fact('0', 'settled picks')}${fact(open.length, open.length === 1 ? 'open pick' : 'open picks')}${fact(spct(bt.roi), `ROI of the rule at opening prices, ${num(bt.n)} bets`)}${(c => c && c.n ? fact(spct(c.roi), `ROI of the same bets at closing prices`) : '')(closing(ri))}${movePill(moved(ri))}</div>
   <h2>Open picks</h2>${open.length ? `<table class="pk">${head(0)}<tbody>${open.map(p => row(p, 0)).join('')}</tbody></table>` : '<p class="note">No open picks now. Prices are checked every hour, for games up to 8 days ahead.</p>'}
   ${done.length ? `<h2>Settled picks</h2><table class="pk">${head(1)}<tbody>${done.map(p => row(p, 1)).join('')}</tbody></table>` : ''}
-  <p class="note" style="margin-top:26px">A pick is logged the first time the EV reaches the rule's level and keeps that price until the game is settled; one pick a game and market. <b>Chance</b>: the chance of the bet winning by the market price. Times are local. The two backtest pills are the same rule at opening prices and at closing prices (the last prices before kick-off): by the close most of the high prices are gone, so far fewer bets are left. A live pick is taken at the price found when the page is updated, between the two, so its results can differ from both. Click a pick to see the prices it was made from.</p>`;
+  <p class="note" style="margin-top:26px">A pick is logged the first time the EV reaches the rule's level and keeps that price until the game is settled; one pick a game and market. <b>Chance</b>: the chance of the bet winning by the market price. Times are local. The two backtest pills are the same bets twice: taken at the opening price, and taken at the price the same selection had at the close (the last before kick-off). The gap between them is what waiting costs. <b>Closing line</b>: the share of the bets whose market chance rose between the opening and the close, and the share where it fell. A live pick is taken at the price found when the page is updated, between the two, so its results can differ from both. Click a pick to see the prices it was made from.</p>`;
 }
 
 // ---------- Leagues: the same filtered bets, league by league ----------
@@ -233,10 +237,10 @@ function viewHow() {
   <h2>The backtest</h2>
   <p>Every regular league game from 2023-24 to now (play-offs and finals are left out), at opening prices. Each time the EV on a home win or an away win was at least ${GAP0}%, one unit is bet on it at the best price.</p>
   <p>${PRIOR}</p>
-  <p>The Backtest tab is built for choosing a rule. Filters cut the bets: the minimum EV, the league group (top divisions, lower divisions), the side, and an odds range set for each side on its own. Every table is recounted for the bets that pass. Every rule is tested twice: at opening prices, and at closing prices, the last before kick-off. The two pills above the tables show both; the tables are the opening-price bets.</p>
+  <p>The Backtest tab is built for choosing a rule. Filters cut the bets: the minimum EV, the league group (top divisions, lower divisions), the side, and an odds range set for each side on its own. Every table is recounted for the bets that pass. Every rule is read twice: the bets at their opening price, and the same bets at the price the selection had at the close, the last before kick-off. The two pills above the tables show both; the tables use the opening price. A third pill shows how often the market's own chance for the bet rose by the close and how often it fell.</p>
   <p>Each table row shows the number of bets, the average EV they promised, the ROI, its standard error, the profit or loss, and the ROI of each season. The tables split the bets by season, side, league group, round of the season, month of the game, odds and EV. A rule is worth using when the result holds in every season, not only in the total. The Leagues tab shows the same bets league by league; one league's numbers rest on few bets and its past ROI says little about its next season. Each league opens on a page of its own with every bet listed: a click on a bet shows the market chance and the best price of every outcome when the prices opened, the EV of each side, why that side was bet, and then how the market closed and how the game ended.</p>
   <h2>Why it can work</h2>
-  <p>Some prices open before the market settles, or are shaded, and for a while stand above it. They are corrected quickly: by the closing prices most of them are gone and far fewer bets pass the rule, so it has to be taken early.</p>
+  <p>Some prices open before the market settles, or are shaded, and for a while stand above it. They are corrected quickly: the same bets taken at the closing price return far less, so the price has to be taken early.</p>
   <h2>Betting rules</h2>
   <p>Set on 10 November 2026 from the backtest. A home or an away win is bet when the EV is <b>${RG}% or more</b> and the price is <b>above ${ROT}</b>. The draw is not bet. Every league on this page, one unit a bet.</p>
   <p>Why 10%. The return grows with the EV: the bigger the EV, the more the bets returned. Home and away wins with an EV of 10% or more returned 19.0% on 2,773 bets, with a profit in every season of the test. Those between 8% and 10% returned 12.5% on 1,249 bets: also a profit, but a smaller one, and they are left out.</p>
