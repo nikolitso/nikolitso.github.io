@@ -90,6 +90,29 @@ function filters(noLg) {
   <div class="flt"><span class="fl">Odds range</span><div class="chips">${SIDES.map((t, i) => `<label class="od${f.side[i] ? '' : ' off'}">${t} ${[0, 1].map(k => `<input type="number" min="1" step="0.05" inputmode="decimal" placeholder="${k ? 'max' : 'min'}" aria-label="${t}, ${k ? 'highest' : 'lowest'} odds" data-od="${i}" data-k="${k}" value="${f.od[i][k] == null ? '' : f.od[i][k]}">`).join('<span>–</span>')}</label>`).join('')}</div></div>`;
 }
 
+// ---------- where the profit comes from: one book, a few teams? ----------
+function concentration(idx) {
+  if (!B.b || !idx.length) return '';
+  const all = agg(idx), nb = D.books || 0;
+  const cnt = [...Array(nb)].map(() => 0); idx.forEach(i => cnt[B.b[i]]++);
+  const byBook = table('By book', 'Best price from', cnt.map((n, k) => [`Book ${k + 1}`, i => B.b[i] === k]), idx, 'All');
+  const s2 = {n: 0, pl: 0, od: 0}; let one = 0;
+  for (const i of idx) { if (B.p[i]) { s2.n++; s2.od += B.p[i] / 100; s2.pl += B.w[i] ? B.p[i] / 100 - 1 : -1; } else one++; }
+  const tm = new Map();
+  for (const i of idx) { const a = tm.get(B.t[i]) || {n: 0, pl: 0, l: B.l[i]}; a.n++; a.pl += P[i]; tm.set(B.t[i], a); }
+  const list = [...tm.entries()].sort((a, b) => b[1].pl - a[1].pl), top = list.slice(0, 10), set = new Set(top.map(x => x[0]));
+  const rest = agg(idx, i => !set.has(B.t[i])), topPl = top.reduce((s, x) => s + x[1].pl, 0), winners = list.filter(x => x[1].pl > 0).length;
+  const rows = top.map(([k, a]) => `<tr><td>${D.teams[k]}</td><td>${L[a.l].country} · ${L[a.l].name}</td><td class="n">${num(a.n)}</td><td class="n ${cls(a.pl)}">${units(a.pl)}</td><td class="n ${cls(a.pl)} few">${spct(a.pl / a.n)}</td></tr>`).join('');
+  const lead = cnt.length ? cnt[0] / idx.length : 0;
+  return `<h2>Concentration</h2>
+  <p class="note">Does the result rest on one book or on a few teams? <b>By book</b>: which book had the best price at the opening, the one the bet is made at. The books are numbered by how many bets they supply and are not named. Book 1 had the best price in ${pct(lead, 0)} of these bets.</p>
+  ${byBook}
+  <p class="note" style="margin-top:14px"><b>At the second-best price.</b> The same bets taken from the next book instead: ${s2.n ? `<b class="${cls(s2.pl)}">${spct(s2.pl / s2.n)}</b> ROI on ${num(s2.n)} bets, ${units(s2.pl)} units, average price ${(s2.od / s2.n).toFixed(2)}` : 'no bet had a second price'}${one ? ` (${num(one)} bets had one book only)` : ''}. The best price returned ${spct(all.roi)} at an average of ${(all.od / all.n).toFixed(2)}.</p>
+  <h2>By team</h2>
+  <p class="note">${num(list.length)} teams were bet on; ${num(winners)} of them made a profit. The ten most profitable made ${units(topPl)} of the ${units(all.pl)} units. Without them the other bets returned <b class="${cls(rest.pl)}">${spct(rest.roi)}</b> on ${num(rest.n)} bets.</p>
+  <table data-t="By team"><thead><tr><th>Team bet on</th><th>League</th><th class="n">Bets</th><th class="n">P/L</th><th class="n">ROI</th></tr></thead><tbody>${rows}</tbody></table>`;
+}
+
 // ---------- Backtest ----------
 const PRIOR = `Only data that was known before the game are used.`;
 const RULETXT = `home and away wins with an EV of ${RG}% or more, prices above ${ROT}`;
@@ -119,6 +142,7 @@ function viewBacktest(lg) {
   ${B.m ? table('By month', 'Month', [7, 8, 9, 10, 11, 12, 1, 2, 3, 4, 5, 6].map(m => [MONTHS[m - 1], i => B.m[i] === m]), idx, 'All') : ''}
   ${table('By odds', 'Odds', OB.map(([lo, hi]) => [hi > 100 ? lo.toFixed(2) + '+' : lo === 1 ? `Under ${hi.toFixed(2)}` : `${lo.toFixed(2)}–${(hi - 0.01).toFixed(2)}`, ob(lo, hi)]), idx, 'All')}
   ${table('By EV%', 'EV%', GB.map(([lo, hi]) => [hi > 100 ? lo + '%+' : `${lo}–${hi}%`, band(lo, hi)]), idx, 'All')}
+  ${concentration(idx)}
   <p class="note" style="margin-top:26px"><b>How to read.</b> <b>EV%</b>: the average EV of the bets, what they promise. <b>ROI</b>: what they returned at flat stakes. <b>±</b>: one standard error of the ROI in points; a ROI smaller than about twice it cannot be told from zero. The season columns show the ROI of each season: a rule worth using is positive in all of them. Seasons played inside one calendar year count with the season that starts that year. <b>By round</b> is the round of the league season the game belonged to, so the first rows are the start of a season; games without a round (play-offs, finals) are not in the test. <b>By month</b> is the month the game was played, from July, when most seasons start, to June. Green is a profit, red a loss. Faded numbers rest on fewer than ${MIN} bets (50 for one season). The <b>EV%</b> filter is the smallest EV a bet must have. <b>Odds range</b>: the lowest and highest price allowed, set for each selection on its own; an empty box means no limit. Click a column heading to sort a table by it; click the first column to go back to the usual order.</p>`;
 }
 
@@ -240,7 +264,7 @@ function viewHow() {
   <p>Every regular league game from 2023-24 to now (play-offs and finals are left out), at opening prices. Each time the EV on a home win or an away win was at least ${GAP0}%, one unit is bet on it at the best price.</p>
   <p>${PRIOR}</p>
   <p>The Backtest tab is built for choosing a rule. Filters cut the bets: the minimum EV, the league group (top divisions, lower divisions), the side, and an odds range set for each side on its own. Every table is recounted for the bets that pass. Every rule is read twice: the bets at their opening price, and the same bets at the price the selection had at the close, the last before kick-off. The two pills above the tables show both; the tables use the opening price. A third pill shows how often the market's own chance for the bet rose by the close and how often it fell.</p>
-  <p>Each table row shows the number of bets, the average EV they promised, the ROI, its standard error, the profit or loss, and the ROI of each season. The tables split the bets by season, side, league group, round of the season, month of the game, odds and EV. A rule is worth using when the result holds in every season, not only in the total. The Leagues tab shows the same bets league by league; one league's numbers rest on few bets and its past ROI says little about its next season. Each league opens on a page of its own with every bet listed: a click on a bet shows the market chance and the best price of every outcome when the prices opened, the EV of each side, why that side was bet, and then how the market closed and how the game ended.</p>
+  <p>Each table row shows the number of bets, the average EV they promised, the ROI, its standard error, the profit or loss, and the ROI of each season. The tables split the bets by season, side, league group, round of the season, month of the game, odds and EV. A last section, Concentration, shows which book had the best price (the books are numbered, not named), what the same bets returned at the second-best price, and how much of the profit comes from the ten best teams. A rule is worth using when the result holds in every season, not only in the total. The Leagues tab shows the same bets league by league; one league's numbers rest on few bets and its past ROI says little about its next season. Each league opens on a page of its own with every bet listed: a click on a bet shows the market chance and the best price of every outcome when the prices opened, the EV of each side, why that side was bet, and then how the market closed and how the game ended.</p>
   <h2>Why it can work</h2>
   <p>Some prices open before the market settles, or are shaded, and for a while stand above it. They are corrected quickly: the same bets taken at the closing price return far less, so the price has to be taken early.</p>
   <h2>Betting rules</h2>
