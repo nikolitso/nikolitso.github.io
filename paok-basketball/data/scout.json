@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-10T04:01:34Z",
+ "updated": "2026-11-10T15:29:15Z",
  "reports": [
   {
    "comp": "EuroCup",
@@ -1915,7 +1915,7 @@
    ],
    "projection": {
     "paok": {
-     "score": 80.8,
+     "score": 81.2,
      "players": [
       {
        "name": "Ben Moore",
@@ -2032,7 +2032,7 @@
      "pace": 70.1
     },
     "opp": {
-     "score": 75.5,
+     "score": 75.1,
      "players": [
       {
        "name": "Ja’Vier Francis",
@@ -2146,14 +2146,14 @@
      "missing": [],
      "pace": 70.1
     },
-    "winProb": 71,
+    "winProb": 74,
     "pace": 70.1,
     "lineupSource": "manual",
     "note": "PAOK without Osman, who is out for one to two months.",
     "modelTotal": 145.4,
     "line": 157.5,
     "modelMargin": -1.0,
-    "hcp": 6.5,
+    "hcp": 7.5,
     "learned": {
      "games": 969,
      "lineGames": 945,
@@ -2169,13 +2169,13 @@
     },
     "teamStats": {
      "pts": {
-      "paok": 80.8,
-      "opp": 75.5,
+      "paok": 81.2,
+      "opp": 75.1,
       "total": 156.3
      },
      "fg2m": {
       "paok": 17.7,
-      "opp": 18.8,
+      "opp": 18.7,
       "total": 36.5
      },
      "fg3m": {
@@ -2184,23 +2184,23 @@
       "total": 16.9
      },
      "ftm": {
-      "paok": 17.4,
-      "opp": 15.2,
+      "paok": 17.5,
+      "opp": 15.1,
       "total": 32.6
      },
      "ast": {
-      "paok": 17.3,
-      "opp": 14.4,
+      "paok": 17.4,
+      "opp": 14.3,
       "total": 31.7
      },
      "oreb": {
       "paok": 10.3,
-      "opp": 10.0,
+      "opp": 10.1,
       "total": 20.3
      },
      "dreb": {
-      "paok": 24.0,
-      "opp": 22.9,
+      "paok": 24.1,
+      "opp": 22.8,
       "total": 46.9
      },
      "tov": {
@@ -2209,7 +2209,7 @@
       "total": 25.3
      },
      "reb": {
-      "paok": 34.3,
+      "paok": 34.4,
       "opp": 32.9,
       "total": 67.2
      }

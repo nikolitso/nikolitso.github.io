@@ -1996,7 +1996,7 @@
   "date": "2026-11-10T17:00:00Z",
   "opp": "Balkan",
   "home": false,
-  "saved": "2026-11-10T04:01:34Z",
+  "saved": "2026-11-10T15:29:15Z",
   "paok": 85.2,
   "oppScore": 76.2,
   "winProb": 79,
@@ -2281,20 +2281,20 @@
   "date": "2026-11-14T15:30:00Z",
   "opp": "Karditsa",
   "home": false,
-  "saved": "2026-11-10T04:01:34Z",
-  "paok": 80.8,
-  "oppScore": 75.5,
-  "winProb": 71,
+  "saved": "2026-11-10T15:29:15Z",
+  "paok": 81.2,
+  "oppScore": 75.1,
+  "winProb": 74,
   "lineupSource": "manual",
   "teamStats": {
    "pts": {
-    "paok": 80.8,
-    "opp": 75.5,
+    "paok": 81.2,
+    "opp": 75.1,
     "total": 156.3
    },
    "fg2m": {
     "paok": 17.7,
-    "opp": 18.8,
+    "opp": 18.7,
     "total": 36.5
    },
    "fg3m": {
@@ -2303,23 +2303,23 @@
     "total": 16.9
    },
    "ftm": {
-    "paok": 17.4,
-    "opp": 15.2,
+    "paok": 17.5,
+    "opp": 15.1,
     "total": 32.6
    },
    "ast": {
-    "paok": 17.3,
-    "opp": 14.4,
+    "paok": 17.4,
+    "opp": 14.3,
     "total": 31.7
    },
    "oreb": {
     "paok": 10.3,
-    "opp": 10.0,
+    "opp": 10.1,
     "total": 20.3
    },
    "dreb": {
-    "paok": 24.0,
-    "opp": 22.9,
+    "paok": 24.1,
+    "opp": 22.8,
     "total": 46.9
    },
    "tov": {
@@ -2328,7 +2328,7 @@
     "total": 25.3
    },
    "reb": {
-    "paok": 34.3,
+    "paok": 34.4,
     "opp": 32.9,
     "total": 67.2
    }
@@ -2336,7 +2336,7 @@
   "modelTotal": 145.4,
   "line": 157.5,
   "modelMargin": -1.0,
-  "hcp": 6.5,
+  "hcp": 7.5,
   "players": {
    "paok": [
     {
