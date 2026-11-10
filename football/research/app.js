@@ -30,11 +30,11 @@ try { Object.assign(state, JSON.parse(sessionStorage.getItem('pg-state13') || '{
 const save = () => { try { sessionStorage.setItem('pg-state13', JSON.stringify(state)); } catch (e) {} };
 
 // does a bet pass the filters: side 0-3, EV in 0.1%, odds x100
-const pass = (s, g, o) => { const f = state.f, r = f.od[s]; return f.side[s] && g >= f.gap * 10 && (r[0] == null || o >= r[0] * 100 - 1e-6) && (r[1] == null || o <= r[1] * 100 + 1e-6); };
+const pass = (s, g, o, rd) => { const f = state.f, r = f.od[s]; return f.side[s] && (rd == null || rd >= (f.rd || 1)) && g >= f.gap * 10 && (r[0] == null || o >= r[0] * 100 - 1e-6) && (r[1] == null || o <= r[1] * 100 + 1e-6); };
 function index(lg) {                                           // bets that pass the filters (lg: one league only, by its index)
   const g = GROUPS.find(x => x[0] === state.f.lg) || GROUPS[0], idx = [];
   for (let i = 0; i < N; i++)
-    if (pass(B.s[i], B.g[i], B.o[i]) && (lg == null ? g[2](L[B.l[i]].tier) : B.l[i] === lg)) idx.push(i);
+    if (pass(B.s[i], B.g[i], B.o[i], B.r ? B.r[i] : null) && (lg == null ? g[2](L[B.l[i]].tier) : B.l[i] === lg)) idx.push(i);
   return idx;
 }
 // the same bets settled at the closing price of the selection (B.c, x100; 0 when the price was gone by the close)
@@ -86,6 +86,7 @@ function filters(noLg) {
   return `<style>th.sortable{cursor:pointer;user-select:none;white-space:nowrap}th.sortable:hover{text-decoration:underline}.od{display:inline-flex;align-items:center;gap:6px;font:500 13.5px var(--mono);color:var(--muted);margin-right:10px}.od.off{opacity:.4}.od input{width:62px;background:none;border:1px solid var(--line);border-radius:8px;color:var(--text);font:500 13.5px var(--mono);padding:4px 6px}.od input:focus{outline:none;border-color:var(--gold)}</style>
   <div class="flt"><span class="fl">EV%</span><div class="chips">${GAPS.map(g => chip('gap', g, g + '%+', f.gap === g)).join('')}</div></div>
   ${noLg ? '' : `<div class="flt"><span class="fl">Leagues</span><div class="chips">${GROUPS.map(([k, t]) => chip('lg', k, t, f.lg === k)).join('')}</div></div>`}
+  ${B.r ? `<div class="flt"><span class="fl">From round</span><div class="chips">${[1, 2, 3, 4, 5, 6, 8, 10].map(k => chip('rd', k, k === 1 ? 'All' : k + '+', (f.rd || 1) === k)).join('')}</div></div>` : ''}
   <div class="flt"><span class="fl">Bets on</span><div class="chips">${SIDES.map((t, i) => chip('side', i, t, f.side[i])).join('')}</div></div>
   <div class="flt"><span class="fl">Odds range</span><div class="chips">${SIDES.map((t, i) => `<label class="od${f.side[i] ? '' : ' off'}">${t} ${[0, 1].map(k => `<input type="number" min="1" step="0.05" inputmode="decimal" placeholder="${k ? 'max' : 'min'}" aria-label="${t}, ${k ? 'highest' : 'lowest'} odds" data-od="${i}" data-k="${k}" value="${f.od[i][k] == null ? '' : f.od[i][k]}">`).join('<span>–</span>')}</label>`).join('')}</div></div>`;
 }
@@ -143,7 +144,7 @@ function viewBacktest(lg) {
   ${table('By odds', 'Odds', OB.map(([lo, hi]) => [hi > 100 ? lo.toFixed(2) + '+' : lo === 1 ? `Under ${hi.toFixed(2)}` : `${lo.toFixed(2)}–${(hi - 0.01).toFixed(2)}`, ob(lo, hi)]), idx, 'All')}
   ${table('By EV%', 'EV%', GB.map(([lo, hi]) => [hi > 100 ? lo + '%+' : `${lo}–${hi}%`, band(lo, hi)]), idx, 'All')}
   ${concentration(idx)}
-  <p class="note" style="margin-top:26px"><b>How to read.</b> <b>EV%</b>: the average EV of the bets, what they promise. <b>ROI</b>: what they returned at flat stakes. <b>±</b>: one standard error of the ROI in points; a ROI smaller than about twice it cannot be told from zero. The season columns show the ROI of each season: a rule worth using is positive in all of them. Seasons played inside one calendar year count with the season that starts that year. <b>By round</b> is the round of the league season the game belonged to, so the first rows are the start of a season; games without a round (play-offs, finals) are not in the test. <b>By month</b> is the month the game was played, from July, when most seasons start, to June. Green is a profit, red a loss. Faded numbers rest on fewer than ${MIN} bets (50 for one season). The <b>EV%</b> filter is the smallest EV a bet must have. <b>Odds range</b>: the lowest and highest price allowed, set for each selection on its own; an empty box means no limit. Click a column heading to sort a table by it; click the first column to go back to the usual order.</p>`;
+  <p class="note" style="margin-top:26px"><b>How to read.</b> <b>EV%</b>: the average EV of the bets, what they promise. <b>ROI</b>: what they returned at flat stakes. <b>±</b>: one standard error of the ROI in points; a ROI smaller than about twice it cannot be told from zero. The season columns show the ROI of each season: a rule worth using is positive in all of them. Seasons played inside one calendar year count with the season that starts that year. <b>By round</b> is the round of the league season the game belonged to, so the first rows are the start of a season; games without a round (play-offs, finals) are not in the test. <b>By month</b> is the month the game was played, from July, when most seasons start, to June. Green is a profit, red a loss. Faded numbers rest on fewer than ${MIN} bets (50 for one season). The <b>EV%</b> filter is the smallest EV a bet must have. <b>From round</b> leaves out the first rounds of each season: 4+ keeps the bets from round 4 on. <b>Odds range</b>: the lowest and highest price allowed, set for each selection on its own; an empty box means no limit. Click a column heading to sort a table by it; click the first column to go back to the usual order.</p>`;
 }
 
 // ---------- Picks: live bets of the rule ----------
@@ -229,7 +230,7 @@ function viewLeague() {
   if (loading[l.key] === 2) list = '<p class="note">The bets of this league could not be loaded.</p>';
   if (rows) {
     const side = r => r[5] * 2 + (r[5] === 0 ? (r[6] === 2 ? 1 : 0) : r[6]);
-    const xs = rows.filter(r => pass(side(r), r[14], Math.round(r[8][r[6]] * 100)));
+    const xs = rows.filter(r => pass(side(r), r[14], Math.round(r[8][r[6]] * 100), r.length > 15 ? r[15] : null));
     const hasR = rows.some(r => r.length > 15);
     const day = s => new Date(s + 'T12:00:00Z').toLocaleDateString('en-GB', {day: 'numeric', month: 'short', year: 'numeric'});
     const body = xs.map(r => {
@@ -263,7 +264,7 @@ function viewHow() {
   <h2>The backtest</h2>
   <p>Every regular league game from 2023-24 to now (play-offs and finals are left out), at opening prices. Each time the EV on a home win or an away win was at least ${GAP0}%, one unit is bet on it at the best price.</p>
   <p>${PRIOR}</p>
-  <p>The Backtest tab is built for choosing a rule. Filters cut the bets: the minimum EV, the league group (top divisions, lower divisions), the side, and an odds range set for each side on its own. Every table is recounted for the bets that pass. Every rule is read twice: the bets at their opening price, and the same bets at the price the selection had at the close, the last before kick-off. The two pills above the tables show both; the tables use the opening price. A third pill shows how often the market's own chance for the bet rose by the close and how often it fell.</p>
+  <p>The Backtest tab is built for choosing a rule. Filters cut the bets: the minimum EV, the league group (top divisions, lower divisions), the first round of the season to bet from, the side, and an odds range set for each side on its own. Every table is recounted for the bets that pass. Every rule is read twice: the bets at their opening price, and the same bets at the price the selection had at the close, the last before kick-off. The two pills above the tables show both; the tables use the opening price. A third pill shows how often the market's own chance for the bet rose by the close and how often it fell.</p>
   <p>Each table row shows the number of bets, the average EV they promised, the ROI, its standard error, the profit or loss, and the ROI of each season. The tables split the bets by season, side, league group, round of the season, month of the game, odds and EV. A last section, Concentration, shows which book had the best price (the books are numbered, not named), what the same bets returned at the second-best price, and how much of the profit comes from the ten best teams. A rule is worth using when the result holds in every season, not only in the total. The Leagues tab shows the same bets league by league; one league's numbers rest on few bets and its past ROI says little about its next season. Each league opens on a page of its own with every bet listed: a click on a bet shows the market chance and the best price of every outcome when the prices opened, the EV of each side, why that side was bet, and then how the market closed and how the game ended.</p>
   <h2>Why it can work</h2>
   <p>Some prices open before the market settles, or are shaded, and for a while stand above it. They are corrected quickly: the same bets taken at the closing price return far less, so the price has to be taken early.</p>
