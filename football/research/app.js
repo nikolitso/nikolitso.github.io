@@ -5,9 +5,9 @@ const pct = (x, d = 1) => x == null ? '–' : (x * 100).toFixed(d) + '%';
 const spct = (x, d = 1) => x == null ? '–' : (x > 0 ? '+' : '') + (x * 100).toFixed(d) + '%';
 const num = n => n.toLocaleString('en-GB');
 const cls = x => x == null ? '' : x > 0 ? 'pos' : 'neg';
-const GAP0 = 6;                                                // the smallest EV the page shows (the data carries every bet from 2%)
+const GAP0 = 8;                                                // the smallest EV the page shows (the data carries every bet from 2%)
 // the betting rule: minimum gap and league groups (1 top divisions, 2 lower divisions)
-const RULE = Object.assign({gap: 0.08, markets: ['1x2'], odds_above: 1.5, tiers: [1, 2], since: '2026-11-10'}, D.rule || {});
+const RULE = Object.assign({gap: 0.10, markets: ['1x2'], odds_above: 1.5, tiers: [1, 2], since: '2026-11-10'}, D.rule || {});
 const RG = Math.round(RULE.gap * 100);                        // minimum EV of the rule
 const RO = RULE.odds_above || 0, ROT = RO.toFixed(2), RMIN = RO ? Math.round(RO * 100 + 1) / 100 : null;     // prices of RO or below are skipped
 
@@ -18,7 +18,7 @@ for (let i = 0; i < N; i++) { Q[i] = (1 + B.g[i] / 1000) / (B.o[i] / 100); P[i] 
 const YRS = [...new Set(B.y)].sort((a, b) => a - b);
 const season = y => `${2023 + y}-${24 + y}`;
 const SIDES = ['Home wins', 'Away wins'];
-const GAPS = [6, 8, 10, 12, 14, 16];
+const GAPS = [8, 10, 12, 14, 16];
 const GROUPS = [['all', 'All', () => true],
   ['top', 'Top divisions', t => t === 1], ['low', 'Lower divisions', t => t === 2]];
 const TIER = ['', 'Top divisions', 'Lower divisions'];
@@ -26,8 +26,8 @@ const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 
 const MIN = 100;                                               // fewer bets than this: numbers greyed
 
 const state = {view: 'picks', f: {gap: RG, od: [[RMIN, null], [RMIN, null]], lg: 'all', side: [1, 1]}};     // the filters start on the betting rule
-try { Object.assign(state, JSON.parse(sessionStorage.getItem('pg-state12') || '{}')); } catch (e) {}
-const save = () => { try { sessionStorage.setItem('pg-state12', JSON.stringify(state)); } catch (e) {} };
+try { Object.assign(state, JSON.parse(sessionStorage.getItem('pg-state13') || '{}')); } catch (e) {}
+const save = () => { try { sessionStorage.setItem('pg-state13', JSON.stringify(state)); } catch (e) {} };
 
 // does a bet pass the filters: side 0-3, EV in 0.1%, odds x100
 const pass = (s, g, o) => { const f = state.f, r = f.od[s]; return f.side[s] && g >= f.gap * 10 && (r[0] == null || o >= r[0] * 100 - 1e-6) && (r[1] == null || o <= r[1] * 100 + 1e-6); };
@@ -82,7 +82,7 @@ function viewBacktest(lg) {
   const fact = (b, t) => `<span class="fact"><b>${b}</b>${t}</span>`;
   const pills = all.n ? `<div class="facts">${fact(num(all.n), 'bets')}${fact(spct(all.roi), 'ROI')}${fact(units(all.pl), 'units P/L')}</div>` : '<p class="note">No bets pass these filters.</p>';
   const band = (lo, hi) => i => B.g[i] >= lo * 10 && B.g[i] < hi * 10, ob = (lo, hi) => i => B.o[i] >= lo * 100 && B.o[i] < hi * 100;
-  const GB = [[6, 8], [8, 10], [10, 12], [12, 14], [14, 16], [16, 999]];
+  const GB = [[8, 10], [10, 12], [12, 14], [14, 16], [16, 999]];
   const OB = [[1, 2], [2, 2.5], [2.5, 3], [3, 4], [4, 999]];
   // side columns only for the sides chosen, and none when one side is chosen (they would repeat the total)
   const on = f.side.filter(x => x).length > 1 ? SIDES.map((t, k) => k).filter(k => f.side[k]) : [];
@@ -224,7 +224,7 @@ function viewHow() {
   <p>Some prices open before the market settles, or are shaded, and for a while stand above it. They are corrected quickly: by the closing prices most of them are gone and far fewer bets pass the rule, so it has to be taken early.</p>
   <h2>Betting rules</h2>
   <p>Set on 10 November 2026 from the backtest. A home or an away win is bet when the EV is <b>${RG}% or more</b> and the price is <b>above ${ROT}</b>. The draw is not bet. Every league on this page, one unit a bet.</p>
-  <p>Why 8%. The return grows with the EV: the bigger the EV, the more the bets returned. Home and away wins with an EV of 8% or more returned 17.0% on 4,119 bets, with a profit in every season of the test.</p>
+  <p>Why 10%. The return grows with the EV: the bigger the EV, the more the bets returned. Home and away wins with an EV of 10% or more returned 18.7% on 2,816 bets, with a profit in every season of the test. Those between 8% and 10% returned 13.5% on 1,303 bets: also a profit, but a smaller one, and they are left out.</p>
   <p>Why prices of ${ROT} or below are skipped. They were the weakest part of the test: 201 bets with an EV of 8% or more returned 5.1%, against 15.2% for the rest, with one losing season. A short price leaves little room for a wrong price.</p>
   <p>Picks are logged on the Picks tab from that date: the first time a game within 8 days meets the rule, at the price on offer then. The Backtest tab opens on the rule; the other filters stay so other rules can be compared with it.</p>
   <h2>What was tried and dropped</h2>
