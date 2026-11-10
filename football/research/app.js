@@ -110,7 +110,7 @@ function viewLeagues() {
   const head = COLS.map(([k, t], i) => `<th data-sort="${k}" class="sortable${i > 1 ? ' n' : ''}" title="Sort">${t}${srt.col === k ? (srt.dir > 0 ? ' ▲' : ' ▼') : ''}</th>`).join('');
   return `<p class="note">2023-24 to now, opening prices. <b>Gap 2%+</b>: share of games where the home or away opening price was at least 2% above the market. Then the bets that pass the filters in each league, split into home wins, away wins, overs and unders, each with its ROI at flat stakes. One league's ROI rests on few bets (grey under ${MIN}) and a league's past ROI says little about its next season; the first row is all leagues together. Click a column to sort.</p>
   ${filters()}
-  <style>th.sortable{cursor:pointer;user-select:none;white-space:nowrap}th.sortable:hover{text-decoration:underline}</style>
+  <style>table.lgs th,table.lgs td{padding-left:5px;padding-right:5px}th.sortable{cursor:pointer;user-select:none;white-space:nowrap}th.sortable:hover{text-decoration:underline}</style>
   <table class="lgs"><thead><tr>${head}</tr></thead><tbody><tr class="tot"><td><b>All</b></td><td><b>${list.length} leagues</b></td><td class="n"><b>${num(games)}</b></td><td class="n"></td>${tot.s.map(s => c(s, 1)).join('')}${c(tot, 1)}</tr>${rows}</tbody></table>`;
 }
 
