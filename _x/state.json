@@ -730,7 +730,8 @@
       "the-double-hour",
       "after-love",
       "the-mafia-kills-only-in-summer",
-      "brave-new-love"
+      "brave-new-love",
+      "walk-on-water"
     ],
     "log": [
       {
@@ -1004,11 +1005,17 @@
         "slot": "2026-11-09 20",
         "slug": "brave-new-love",
         "id": "2119852581715390623"
+      },
+      {
+        "day": "2026-11-10",
+        "slot": "2026-11-10 20",
+        "slug": "walk-on-water",
+        "id": "2120214973028737346"
       }
     ],
-    "last_day": "2026-11-09"
+    "last_day": "2026-11-10"
   },
-  "last_slot": "2026-11-10 14",
+  "last_slot": "2026-11-10 20",
   "quote": {
     "seen": [
       "1",
