@@ -98,5 +98,8 @@ window.MARKET = {"updated": "2026-11-10", "list": [
 {"date": "2026-11-05", "h": "Tenerife", "a": "Cluj-Napoca", "bh": 11.5, "bt": 174.5},
 {"date": "2026-11-10", "h": "Balkan", "a": "PAOK", "bh": -13.5, "bt": 158.5},
 {"date": "2026-11-10", "h": "Cluj-Napoca", "a": "Turk Telekom", "bh": -3.5, "bt": 171.5},
-{"date": "2026-11-10", "h": "Neptunas", "a": "Slask Wroclaw", "bh": 6.5, "bt": 173.5}
+{"date": "2026-11-10", "h": "JL Bourg", "a": "Buducnost", "bh": 3.5, "bt": 174.5},
+{"date": "2026-11-10", "h": "Neptunas", "a": "Slask Wroclaw", "bh": 6.5, "bt": 173.5},
+{"date": "2026-11-10", "h": "Rostock", "a": "Cedevita Olimpija", "bh": 2.5, "bt": 163.5},
+{"date": "2026-11-10", "h": "Trento", "a": "Tofas", "bh": -2.5, "bt": 172.5}
 ]};
