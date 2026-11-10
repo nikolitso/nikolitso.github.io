@@ -76,9 +76,13 @@ function cells(a) {
   return `<td class="n">${num(a.n)}</td><td class="n">${pct(a.gap / a.n)}</td><td class="n ${cls(a.pl)}${m ? ' few' : ''}">${spct(a.roi)}</td><td class="n mut">${a.se == null ? '–' : (a.se * 100).toFixed(1)}</td>
     <td class="n ${cls(a.pl)}${m ? ' few' : ''}">${units(a.pl)}</td>${a.y.map(y => roiCell(y, 50)).join('')}`;
 }
+// REG[table title][row label] = the test a bet must pass to belong to that row; a click on a row lists those games
+let REG = {};
 function table(title, first, rows, idx, total) {
-  const body = rows.map(([lab, pred]) => { const a = agg(idx, pred); return a.n ? `<tr><td>${lab}</td>${cells(a)}</tr>` : ''; }).join('');
-  return `<h2>${title}</h2><table data-t="${title}"><thead><tr><th>${first}</th>${HEAD()}</tr></thead><tbody>${body}${total ? `<tr class="tot"><td><b>${total}</b></td>${cells(agg(idx))}</tr>` : ''}</tbody></table>`;
+  REG[title] = Object.fromEntries(rows);
+  if (total) REG[title][total] = () => true;
+  const body = rows.map(([lab, pred]) => { const a = agg(idx, pred); return a.n ? `<tr data-row="${lab}" title="Show the games"><td>${lab}</td>${cells(a)}</tr>` : ''; }).join('');
+  return `<h2>${title}</h2><table data-t="${title}"><thead><tr><th>${first}</th>${HEAD()}</tr></thead><tbody>${body}${total ? `<tr class="tot" data-row="${total}" title="Show the games"><td><b>${total}</b></td>${cells(agg(idx))}</tr>` : ''}</tbody></table>`;
 }
 
 // odds presets: one click sets the range of both sides (the boxes under them still take any range)
@@ -106,7 +110,8 @@ function concentration(idx) {
   for (const i of idx) { const a = tm.get(B.t[i]) || {n: 0, pl: 0, l: B.l[i]}; a.n++; a.pl += P[i]; tm.set(B.t[i], a); }
   const list = [...tm.entries()].sort((a, b) => b[1].pl - a[1].pl), top = list.slice(0, 10), set = new Set(top.map(x => x[0]));
   const rest = agg(idx, i => !set.has(B.t[i])), topPl = top.reduce((s, x) => s + x[1].pl, 0), winners = list.filter(x => x[1].pl > 0).length;
-  const rows = top.map(([k, a]) => `<tr><td>${D.teams[k]}</td><td>${L[a.l].country} · ${L[a.l].name}</td><td class="n">${num(a.n)}</td><td class="n ${cls(a.pl)}">${units(a.pl)}</td><td class="n ${cls(a.pl)} few">${spct(a.pl / a.n)}</td></tr>`).join('');
+  REG['By team'] = Object.fromEntries(top.map(([k]) => [D.teams[k], i => B.t[i] === k]));
+  const rows = top.map(([k, a]) => `<tr data-row="${D.teams[k]}" title="Show the games"><td>${D.teams[k]}</td><td>${L[a.l].country} · ${L[a.l].name}</td><td class="n">${num(a.n)}</td><td class="n ${cls(a.pl)}">${units(a.pl)}</td><td class="n ${cls(a.pl)} few">${spct(a.pl / a.n)}</td></tr>`).join('');
   const lead = cnt.length ? cnt[0] / idx.length : 0;
   return `<h2>Concentration</h2>
   <p class="note">Does the result rest on one book or on a few teams? <b>By book</b>: which book had the best price at the opening, the one the bet is made at. The books are numbered by how many bets they supply and are not named. Book 1 had the best price in ${pct(lead, 0)} of these bets.</p>
@@ -130,12 +135,14 @@ function viewBacktest(lg) {
   const OB = [[1, 2], [2, 2.5], [2.5, 3], [3, 4], [4, 999]];
   // side columns only for the sides chosen, and none when one side is chosen (they would repeat the total)
   const on = f.side.filter(x => x).length > 1 ? SIDES.map((t, k) => k).filter(k => f.side[k]) : [];
-  const bySeason = YRS.map(y => { const a = agg(idx, i => B.y[i] === y); return `<tr><td>${season(y)}</td>${a.s.map((s, k) => on.includes(k) ? `<td class="n">${num(s.n)}</td>${roiCell(s)}` : '').join('')}<td class="n">${num(a.n)}</td><td class="n ${cls(a.pl)}${a.n < MIN ? ' few' : ''}">${units(a.pl)}</td>${roiCell(a)}</tr>`; }).join('');
+  REG._idx = idx;
+  REG['By season'] = Object.fromEntries(YRS.map(y => [season(y), i => B.y[i] === y]));
+  const bySeason = YRS.map(y => { const a = agg(idx, i => B.y[i] === y); return `<tr data-row="${season(y)}" title="Show the games"><td>${season(y)}</td>${a.s.map((s, k) => on.includes(k) ? `<td class="n">${num(s.n)}</td>${roiCell(s)}` : '').join('')}<td class="n">${num(a.n)}</td><td class="n ${cls(a.pl)}${a.n < MIN ? ' few' : ''}">${units(a.pl)}</td>${roiCell(a)}</tr>`; }).join('');
   const tables = `${pills}
   <h2>By season</h2><table data-t="By season"><thead><tr><th>Season</th>${on.map(k => `<th class="n">${SIDES[k]}</th><th class="n">ROI</th>`).join('')}<th class="n">All bets</th><th class="n">P/L</th><th class="n">ROI</th></tr></thead><tbody>${bySeason}</tbody></table>
   ${on.length ? table('By side', 'Bets on', SIDES.map((t, s) => [t, i => B.s[i] === s]), idx, 'All') : ''}`;
   if (lg != null) return tables;                               // a league's page: the headline tables only
-  return `<p class="note">2023-24 to now, regular league games only (no play-offs), 1 unit a bet. Every bet with an EV of ${GAP0}% or more: the best price against the market's margin-free price. The draw is never bet. The two pills are the same bets settled twice: at the opening price, and at the price the same selection had at the close (the last before kick-off). <b>Average price</b>: the mean odds of the bets, at the opening and at the close. <b>Closing line</b>: the share of the bets whose market chance was higher at the close than at the opening (the market moved towards the bet) and the share where it was lower. The tables below use the opening price. The filters start on the betting rule (${RULETXT}); change them to compare other rules: every table below is recounted.</p>
+  return `${PKCSS}<p class="note">2023-24 to now, regular league games only (no play-offs), 1 unit a bet. Every bet with an EV of ${GAP0}% or more: the best price against the market's margin-free price. The draw is never bet. The two pills are the same bets settled twice: at the opening price, and at the price the same selection had at the close (the last before kick-off). <b>Average price</b>: the mean odds of the bets, at the opening and at the close. <b>Closing line</b>: the share of the bets whose market chance was higher at the close than at the opening (the market moved towards the bet) and the share where it was lower. The tables below use the opening price. The filters start on the betting rule (${RULETXT}); change them to compare other rules: every table below is recounted.</p>
   <p class="note">${PRIOR}</p>
   ${filters()}
   ${pills}
@@ -147,11 +154,11 @@ function viewBacktest(lg) {
   ${table('By odds', 'Odds', OB.map(([lo, hi]) => [hi > 100 ? lo.toFixed(2) + '+' : lo === 1 ? `Under ${hi.toFixed(2)}` : `${lo.toFixed(2)}–${(hi - 0.01).toFixed(2)}`, ob(lo, hi)]), idx, 'All')}
   ${table('By EV%', 'EV%', GB.map(([lo, hi]) => [hi > 100 ? lo + '%+' : `${lo}–${hi}%`, band(lo, hi)]), idx, 'All')}
   ${concentration(idx)}
-  <p class="note" style="margin-top:26px"><b>How to read.</b> <b>EV%</b>: the average EV of the bets, what they promise. <b>ROI</b>: what they returned at flat stakes. <b>±</b>: one standard error of the ROI in points; a ROI smaller than about twice it cannot be told from zero. The season columns show the ROI of each season: a rule worth using is positive in all of them. Seasons played inside one calendar year count with the season that starts that year. <b>By round</b> is the round of the league season the game belonged to, so the first rows are the start of a season; games without a round (play-offs, finals) are not in the test. <b>By month</b> is the month the game was played, from July, when most seasons start, to June. Green is a profit, red a loss. Faded numbers rest on fewer than ${MIN} bets (50 for one season). The <b>EV%</b> filter is the smallest EV a bet must have. <b>From round</b> leaves out the first rounds of each season: 4+ keeps the bets from round 4 on. <b>Odds</b>: one click sets a price band for both sides. <b>Odds range</b>: the lowest and highest price allowed, set for each selection on its own; an empty box means no limit. Click a column heading to sort a table by it; click the first column to go back to the usual order.</p>`;
+  <p class="note" style="margin-top:26px"><b>How to read.</b> <b>EV%</b>: the average EV of the bets, what they promise. <b>ROI</b>: what they returned at flat stakes. <b>±</b>: one standard error of the ROI in points; a ROI smaller than about twice it cannot be told from zero. The season columns show the ROI of each season: a rule worth using is positive in all of them. Seasons played inside one calendar year count with the season that starts that year. <b>By round</b> is the round of the league season the game belonged to, so the first rows are the start of a season; games without a round (play-offs, finals) are not in the test. <b>By month</b> is the month the game was played, from July, when most seasons start, to June. Green is a profit, red a loss. Faded numbers rest on fewer than ${MIN} bets (50 for one season). The <b>EV%</b> filter is the smallest EV a bet must have. <b>From round</b> leaves out the first rounds of each season: 4+ keeps the bets from round 4 on. <b>Odds</b>: one click sets a price band for both sides. <b>Odds range</b>: the lowest and highest price allowed, set for each selection on its own; an empty box means no limit. Click a column heading to sort a table by it; click the first column to go back to the usual order. <b>Click any row of a table to list the games behind it</b>, each with the prices the bet was made from.</p>`;
 }
 
 // ---------- Picks: live bets of the rule ----------
-const PKCSS = `<style>a.lk{color:inherit;text-decoration:underline;text-decoration-color:var(--muted);text-underline-offset:3px}a.lk:hover{color:var(--gold)}table.pk td{white-space:normal}table.pk td.n{white-space:nowrap}tr.exp{cursor:pointer}tr.exp:hover td{background:color-mix(in srgb,var(--line) 35%,transparent)}tr.detail>td{padding:6px 8px 18px 22px}.an p{margin:8px 0;max-width:820px;color:var(--muted);font-size:15.5px}.an p b{color:var(--text)}table.ant{width:auto;margin:6px 0 10px}table.ant td,table.ant th{white-space:nowrap;padding:5px 14px 5px 0;font-size:15.5px}</style>`;
+const PKCSS = `<style>table[data-t] tbody tr[data-row]{cursor:pointer}table[data-t] tbody tr[data-row]:hover td{background:color-mix(in srgb,var(--line) 35%,transparent)}table[data-t] tbody tr.sel td{background:color-mix(in srgb,var(--gold) 14%,transparent)}.mt{margin:12px 0 30px;padding-left:14px;border-left:2px solid var(--gold)}a.lk{color:inherit;text-decoration:underline;text-decoration-color:var(--muted);text-underline-offset:3px}a.lk:hover{color:var(--gold)}table.pk td{white-space:normal}table.pk td.n{white-space:nowrap}tr.exp{cursor:pointer}tr.exp:hover td{background:color-mix(in srgb,var(--line) 35%,transparent)}tr.detail>td{padding:6px 8px 18px 22px}.an p{margin:8px 0;max-width:820px;color:var(--muted);font-size:15.5px}.an p b{color:var(--text)}table.ant{width:auto;margin:6px 0 10px}table.ant td,table.ant th{white-space:nowrap;padding:5px 14px 5px 0;font-size:15.5px}</style>`;
 function viewPicks() {
   const key = {}; L.forEach(l => key[l.key] = l);
   const ps = (D.picks || []).filter(p => key[p.lg] && RULE.tiers.includes(key[p.lg].tier) && RULE.markets.includes(p.market) && p.edge + 1e-9 >= RULE.gap && p.odds > RO + 1e-9 && p.posted.slice(0, 10) >= RULE.since);
@@ -215,6 +222,47 @@ function analysis(o) {
   <p><b>The bet.</b> ${names[o.s]} at ${o.best[o.s].toFixed(2)}, the side with the highest EV: ${o.best[o.s].toFixed(2)} × ${pct(o.fair[o.s])} − 1 = ${spct(ev)}. ${why}</p>${after}</div>`;
 }
 
+// a list of bets, newest first as given; each row opens how the bet was made. showLg: a League column (bets of many leagues)
+function betTable(items, showLg) {
+  const hasR = items.some(x => x.r.length > 15), span = 9 + (hasR ? 1 : 0) + (showLg ? 1 : 0);
+  const day = s => new Date(s + 'T12:00:00Z').toLocaleDateString('en-GB', {day: 'numeric', month: 'short', year: 'numeric'});
+  const body = items.map(({r, l}) => {
+    const won = r[5] === 0 ? (r[6] === 0 ? r[3] > r[4] : r[4] > r[3]) : (r[6] === 0 ? r[3] + r[4] > 2.5 : r[3] + r[4] < 2.5), o = r[8][r[6]], pl = won ? o - 1 : -1;
+    const bet = r[5] === 0 ? (r[6] === 0 ? r[1] : r[2]) + ' to win' : (r[6] === 0 ? 'Over' : 'Under') + ' 2.5 goals';
+    return `<tr class="exp" title="Show how the bet was made"><td>${day(r[0])}</td>${showLg ? `<td>${l.country} · ${l.name}</td>` : ''}${hasR ? `<td class="n">${r[15] || '–'}</td>` : ''}<td>${r[1]} – ${r[2]}</td><td class="n">${r[3]}-${r[4]}</td><td><b>${bet}</b></td><td class="n">${o.toFixed(2)}</td><td class="n">${pct(r[7][r[6]], 0)}</td><td class="n">${spct(r[14] / 1000)}</td><td class="n ${cls(pl)}">${won ? 'Won' : 'Lost'}</td><td class="n ${cls(pl)}">${(pl > 0 ? '+' : '') + pl.toFixed(2)}</td></tr>
+    <tr class="detail" hidden><td colspan="${span}">${analysis({mi: r[5], s: r[6], fair: r[7], best: r[8], nw: r[9], nb: r[10], fc: r[11], bc: r[12], wavg: r[16], margin: r[17], home: r[1], away: r[2], ev: r[14] / 1000, score: `${r[3]}-${r[4]}`, won})}</td></tr>`;
+  }).join('');
+  return `<table class="pk"><thead><tr><th>Date</th>${showLg ? '<th>League</th>' : ''}${hasR ? '<th class="n">Round</th>' : ''}<th>Game</th><th class="n">Score</th><th>Bet</th><th class="n">Price</th><th class="n">Chance</th><th class="n">EV%</th><th class="n">Result</th><th class="n">P/L</th></tr></thead><tbody>${body}</tbody></table>`;
+}
+
+// the games behind one table row (state.open = {t: table, row: label}): shown under that table
+const MAXGAMES = 400;
+function loadLg(keys) {
+  return Promise.all(keys.map(k => new Promise(res => {
+    if ((window.LG || {})[k]) return res();
+    const s = document.createElement('script');
+    s.src = `lg/${k}.js?v=${encodeURIComponent(D.updated)}`; s.onload = res; s.onerror = res;
+    document.head.appendChild(s);
+  })));
+}
+function showMatches(scroll) {
+  const o = state.open;
+  if (!o || !B.k || !REG._idx) return;
+  const tb = [...out.querySelectorAll('table[data-t]')].find(x => x.dataset.t === o.t), pred = (REG[o.t] || {})[o.row];
+  if (!tb || !pred) return;
+  [...tb.tBodies[0].rows].forEach(tr => tr.classList.toggle('sel', tr.dataset.row === o.row));
+  const ix = REG._idx.filter(pred), keys = [...new Set(ix.map(i => L[B.l[i]].key))], box = document.createElement('div');
+  box.className = 'mt'; tb.after(box);
+  if (keys.some(k => !(window.LG || {})[k])) {
+    box.innerHTML = '<p class="note">Loading the games…</p>';
+    loadLg(keys).then(() => { if (state.open === o) { showMatches.scroll = scroll; render(); } });
+    return;
+  }
+  const items = ix.map(i => ({r: (LG[L[B.l[i]].key] || [])[B.k[i]], l: L[B.l[i]]})).filter(x => x.r).sort((p, q) => p.r[0] < q.r[0] ? 1 : p.r[0] > q.r[0] ? -1 : 0);
+  box.innerHTML = `<p class="note"><b>${o.t}: ${o.row}.</b> ${num(items.length)} ${items.length === 1 ? 'bet' : 'bets, newest first'}${items.length > MAXGAMES ? `; the last ${MAXGAMES} are listed` : ''}. Click a bet to see how it was made; click the row again to close. <a class="lk" href="#" data-close="1">Close</a></p>${betTable(items.slice(0, MAXGAMES), state.view !== 'lg')}`;
+  if (scroll) box.scrollIntoView({block: 'nearest', behavior: 'smooth'});
+}
+
 // ---------- one league: its numbers and every bet, each with the prices it was made from ----------
 const loading = {};
 function viewLeague() {
@@ -234,15 +282,7 @@ function viewLeague() {
   if (rows) {
     const side = r => r[5] * 2 + (r[5] === 0 ? (r[6] === 2 ? 1 : 0) : r[6]);
     const xs = rows.filter(r => pass(side(r), r[14], Math.round(r[8][r[6]] * 100), r.length > 15 ? r[15] : null));
-    const hasR = rows.some(r => r.length > 15);
-    const day = s => new Date(s + 'T12:00:00Z').toLocaleDateString('en-GB', {day: 'numeric', month: 'short', year: 'numeric'});
-    const body = xs.map(r => {
-      const won = r[5] === 0 ? (r[6] === 0 ? r[3] > r[4] : r[4] > r[3]) : (r[6] === 0 ? r[3] + r[4] > 2.5 : r[3] + r[4] < 2.5), o = r[8][r[6]], pl = won ? o - 1 : -1;
-      const bet = r[5] === 0 ? (r[6] === 0 ? r[1] : r[2]) + ' to win' : (r[6] === 0 ? 'Over' : 'Under') + ' 2.5 goals';
-      return `<tr class="exp" title="Show how the bet was made"><td>${day(r[0])}</td>${hasR ? `<td class="n">${r[15] || '–'}</td>` : ''}<td>${r[1]} – ${r[2]}</td><td class="n">${r[3]}-${r[4]}</td><td><b>${bet}</b></td><td class="n">${o.toFixed(2)}</td><td class="n">${pct(r[7][r[6]], 0)}</td><td class="n">${spct(r[14] / 1000)}</td><td class="n ${cls(pl)}">${won ? 'Won' : 'Lost'}</td><td class="n ${cls(pl)}">${(pl > 0 ? '+' : '') + pl.toFixed(2)}</td></tr>
-      <tr class="detail" hidden><td colspan="${hasR ? 10 : 9}">${analysis({mi: r[5], s: r[6], fair: r[7], best: r[8], nw: r[9], nb: r[10], fc: r[11], bc: r[12], wavg: r[16], margin: r[17], home: r[1], away: r[2], ev: r[14] / 1000, score: `${r[3]}-${r[4]}`, won})}</td></tr>`;
-    }).join('');
-    list = xs.length ? `<table class="pk"><thead><tr><th>Date</th>${hasR ? '<th class="n">Round</th>' : ''}<th>Game</th><th class="n">Score</th><th>Bet</th><th class="n">Price</th><th class="n">Chance</th><th class="n">EV%</th><th class="n">Result</th><th class="n">P/L</th></tr></thead><tbody>${body}</tbody></table>` : '<p class="note">No bets pass these filters.</p>';
+    list = xs.length ? betTable(xs.map(r => ({r}))) : '<p class="note">No bets pass these filters.</p>';
   }
   return `${PKCSS}<p class="note"><a class="lk" href="#view=men">← All leagues</a></p>
   <h2 style="margin-top:6px">${l.country} · ${l.name}</h2>
@@ -268,7 +308,7 @@ function viewHow() {
   <p>Every regular league game from 2023-24 to now (play-offs and finals are left out), at opening prices. Each time the EV on a home win or an away win was at least ${GAP0}%, one unit is bet on it at the best price.</p>
   <p>${PRIOR}</p>
   <p>The Backtest tab is built for choosing a rule. Filters cut the bets: the minimum EV, the league group (top divisions, lower divisions), the first round of the season to bet from, the side, and an odds range set for each side on its own. Every table is recounted for the bets that pass. Every rule is read twice: the bets at their opening price, and the same bets at the price the selection had at the close, the last before kick-off. The two pills above the tables show both; the tables use the opening price. A third pill shows how often the market's own chance for the bet rose by the close and how often it fell.</p>
-  <p>Each table row shows the number of bets, the average EV they promised, the ROI, its standard error, the profit or loss, and the ROI of each season. The tables split the bets by season, side, league group, round of the season, month of the game, odds and EV. A last section, Concentration, shows which book had the best price (the books are numbered, not named), what the same bets returned at the second-best price, and how much of the profit comes from the ten best teams. A rule is worth using when the result holds in every season, not only in the total. The Leagues tab shows the same bets league by league; one league's numbers rest on few bets and its past ROI says little about its next season. Each league opens on a page of its own with every bet listed: a click on a bet shows the market chance and the best price of every outcome when the prices opened, the EV of each side, why that side was bet, and then how the market closed and how the game ended.</p>
+  <p>Each table row shows the number of bets, the average EV they promised, the ROI, its standard error, the profit or loss, and the ROI of each season. Every table row can be clicked to list the games behind it, and each game opens to show how the bet was made. The tables split the bets by season, side, league group, round of the season, month of the game, odds and EV. A last section, Concentration, shows which book had the best price (the books are numbered, not named), what the same bets returned at the second-best price, and how much of the profit comes from the ten best teams. A rule is worth using when the result holds in every season, not only in the total. The Leagues tab shows the same bets league by league; one league's numbers rest on few bets and its past ROI says little about its next season. Each league opens on a page of its own with every bet listed: a click on a bet shows the market chance and the best price of every outcome when the prices opened, the EV of each side, why that side was bet, and then how the market closed and how the game ended.</p>
   <h2>Why it can work</h2>
   <p>Some prices open before the market settles, or are shaded, and for a while stand above it. They are corrected quickly: the same bets taken at the closing price return far less, so the price has to be taken early.</p>
   <h2>Betting rules</h2>
@@ -302,6 +342,7 @@ function sortTables() {
 }
 const VIEWS = ['picks', 'backtest', 'men', 'lg', 'how'];
 function render() {
+  REG = {};
   document.querySelectorAll('#tabs a[data-view]').forEach(a => a.classList.toggle('on', a.dataset.view === (state.view === 'lg' ? 'men' : state.view)));
   // the line under the tabs counts the leagues in view: the league group chosen on Backtest and Leagues, one league on its page
   const grp = GROUPS.find(x => x[0] === state.f.lg) || GROUPS[0], one = state.view === 'lg' && L.find(l => l.key === state.lgk);
@@ -309,6 +350,7 @@ function render() {
   $('#sub').textContent = `${shown.length === L.length ? `${L.length} leagues` : one ? `${one.country} · ${one.name}` : `${shown.length} of ${L.length} leagues (${grp[1].toLowerCase()})`} · ${num(shown.reduce((s, l) => s + l.games, 0))} games tested, 2023-24 to now · updated ${D.updated.replace('T', ' ').replace('Z', ' UTC')}`;
   out.innerHTML = state.view === 'how' ? viewHow() : state.view === 'picks' ? viewPicks() : state.view === 'men' ? viewLeagues() : state.view === 'lg' ? viewLeague() : viewBacktest();
   sortTables();
+  showMatches(showMatches.scroll); showMatches.scroll = 0;
   save();
 }
 out.addEventListener('click', e => {
@@ -320,6 +362,14 @@ out.addEventListener('click', e => {
     if (k === 'side') { f.side[+v] = f.side[+v] ? 0 : 1; if (!f.side.some(x => x)) f.side = [1, 1]; }
     else if (k === 'odp') f.od = f.od.map(() => [ODDS[+v][0], ODDS[+v][1]]);
     else f[k] = k === 'lg' ? v : +v;
+    return render();
+  }
+  if (e.target.closest('[data-close]')) { e.preventDefault(); state.open = null; return render(); }
+  const row = e.target.closest('table[data-t] tbody tr[data-row]');   // a table row: list the games behind it (again: close)
+  if (row) {
+    const tname = row.closest('table').dataset.t, o = state.open;
+    state.open = o && o.t === tname && o.row === row.dataset.row ? null : {t: tname, row: row.dataset.row};
+    showMatches.scroll = 1;
     return render();
   }
   const h = e.target.closest('table[data-t] th');
@@ -345,7 +395,7 @@ function route() {
   const m = location.hash.match(/view=(\w+)/);
   const k = location.hash.match(/[&#]k=(\w+)/);
   state.lgk = k ? k[1] : null;
-  if ((m && m[1]) !== state.view) window.scrollTo(0, 0);
+  if ((m && m[1]) !== state.view) { window.scrollTo(0, 0); state.open = null; }
   state.view = m && VIEWS.includes(m[1]) ? m[1] : 'picks';         // no hash and old links (upcoming, leagues, women) land on the Picks tab
   render();
 }
