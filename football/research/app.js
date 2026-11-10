@@ -7,7 +7,7 @@ const num = n => n.toLocaleString('en-GB');
 const cls = x => x == null ? '' : x > 0 ? 'pos' : 'neg';
 const GAP0 = Math.round((((D.pick || {}).edges || {})['1x2'] || 0.02) * 100);
 // the betting rule: minimum gap and league groups (1 top divisions, 2 lower divisions)
-const RULE = D.rule || {gap: 0.05, tiers: [1, 2], since: '2026-11-10'}, RG = Math.round(RULE.gap * 100);
+const RULE = D.rule || {gap: 0.08, tiers: [1, 2], since: '2026-11-10'}, RG = Math.round(RULE.gap * 100);
 
 // ---------- the bets: one entry per backtest bet, filtered and grouped here ----------
 const B = D.bets, N = B.l.length;
@@ -23,8 +23,8 @@ const TIER = ['', 'Top divisions', 'Lower divisions'];
 const MIN = 100;                                               // fewer bets than this: numbers greyed
 
 const state = {view: 'backtest', f: {gap: RG, od: [[null, null], [null, null], [null, null], [null, null]], lg: 'all', side: [1, 1, 1, 1]}};     // the filters start on the betting rule
-try { Object.assign(state, JSON.parse(sessionStorage.getItem('pg-state6') || '{}')); } catch (e) {}
-const save = () => { try { sessionStorage.setItem('pg-state6', JSON.stringify(state)); } catch (e) {} };
+try { Object.assign(state, JSON.parse(sessionStorage.getItem('pg-state7') || '{}')); } catch (e) {}
+const save = () => { try { sessionStorage.setItem('pg-state7', JSON.stringify(state)); } catch (e) {} };
 
 function index(noGap) {                                        // bets that pass the filters (noGap: ignore the gap filter)
   const f = state.f, g = GROUPS.find(x => x[0] === f.lg) || GROUPS[0], idx = [];
@@ -80,18 +80,16 @@ function viewBacktest() {
   const band = (lo, hi) => i => B.g[i] >= lo * 10 && B.g[i] < hi * 10, ob = (lo, hi) => i => B.o[i] >= lo * 100 && B.o[i] < hi * 100;
   const GB = [[2, 3], [3, 4], [4, 5], [5, 6], [6, 8], [8, 10], [10, 15], [15, 999]].filter(([lo]) => lo >= GAP0);
   const OB = [[1, 1.5], [1.5, 1.8], [1.8, 2.1], [2.1, 2.5], [2.5, 3], [3, 4], [4, 6], [6, 999]];
-  const ladder = index(true);
   const bySeason = YRS.map(y => { const a = agg(idx, i => B.y[i] === y); return `<tr><td>${season(y)}</td>${a.s.map(s => `<td class="n">${num(s.n)}</td>${roiCell(s)}`).join('')}<td class="n">${num(a.n)}</td><td class="n ${a.n < MIN ? 'mut' : cls(a.pl)}">${units(a.pl)}</td>${roiCell(a)}</tr>`; }).join('');
   return `<p class="note">2023-24 to now, opening prices, 1 unit a bet. Every bet with a gap of ${GAP0}% or more between the best price and the market's margin-free price. The draw is never bet. The filters start on the betting rule (gap of ${RG}% or more); change them to compare other rules: every table below is recounted.</p>
   ${filters()}
   ${pills}
-  ${table('By minimum gap', 'EV%', [2, 3, 4, 5, 6, 8, 10, 12, 15].filter(g => g >= GAP0).map(g => [g + '%+', i => B.g[i] >= g * 10]), ladder)}
   <h2>By season</h2><table><thead><tr><th>Season</th>${SIDES.map(t => `<th class="n">${t}</th><th class="n">ROI</th>`).join('')}<th class="n">All bets</th><th class="n">P/L</th><th class="n">ROI</th></tr></thead><tbody>${bySeason}</tbody></table>
   ${table('By side', 'Bets on', SIDES.map((t, s) => [t, i => B.s[i] === s]), idx, 'All')}
   ${table('By league group', 'Leagues', TIER.map((t, k) => [t, i => L[B.l[i]].tier === k]), idx, 'All')}
   ${table('By odds', 'Odds', OB.map(([lo, hi]) => [hi > 100 ? lo.toFixed(2) + '+' : lo === 1 ? `Under ${hi.toFixed(2)}` : `${lo.toFixed(2)}–${(hi - 0.01).toFixed(2)}`, ob(lo, hi)]), idx, 'All')}
   ${table('By gap size', 'Gap', GB.map(([lo, hi]) => [hi > 100 ? lo + '%+' : `${lo}–${hi}%`, band(lo, hi)]), idx, 'All')}
-  <p class="note" style="margin-top:26px"><b>How to read.</b> <b>Gap</b>: the average gap of the bets, what they promise. <b>ROI</b>: what they returned at flat stakes. <b>±</b>: one standard error of the ROI in points; a ROI smaller than about twice it cannot be told from zero. The season columns show the ROI of each season: a rule worth using is positive in all of them. Seasons played inside one calendar year count with the season that starts that year. Grey numbers rest on fewer than ${MIN} bets (50 for one season). <b>EV%</b> is the smallest gap a bet must have; <b>By minimum gap</b> ignores that filter. <b>Odds range</b>: the lowest and highest price allowed, set for each selection on its own; an empty box means no limit.</p>`;
+  <p class="note" style="margin-top:26px"><b>How to read.</b> <b>Gap</b>: the average gap of the bets, what they promise. <b>ROI</b>: what they returned at flat stakes. <b>±</b>: one standard error of the ROI in points; a ROI smaller than about twice it cannot be told from zero. The season columns show the ROI of each season: a rule worth using is positive in all of them. Seasons played inside one calendar year count with the season that starts that year. Grey numbers rest on fewer than ${MIN} bets (50 for one season). <b>EV%</b> is the smallest gap a bet must have. <b>Odds range</b>: the lowest and highest price allowed, set for each selection on its own; an empty box means no limit.</p>`;
 }
 
 // ---------- Picks: live bets of the rule ----------
@@ -155,7 +153,7 @@ function viewHow() {
   <p>Some prices open before the market settles, or are shaded, and for a while stand above it. They are corrected quickly: at closing prices the gap is much smaller, so it has to be taken early.</p>
   <h2>Betting rules</h2>
   <p>Set on 10 November 2026 from the backtest. A bet is made when the gap is <b>${RG}% or more</b>, on a home win, an away win, over 2.5 or under 2.5 goals, in every league on this page. One unit a bet.</p>
-  <p>Why 5%. The return grows with the gap: bets with a gap of 5% or more returned clearly more than the smaller ones. The rule made a profit in every season of the test, and when it was chosen on the first two seasons alone it returned the same in the two that followed.</p>
+  <p>Why 8%. The return grows with the gap: the bigger the gap, the more the bets returned, and bets with a gap of 8% or more returned about twice as much as all bets with 2% or more. The rule made a profit in every season of the test, and when it was chosen on the first two seasons alone it returned about the same in the two that followed. It leaves fewer bets: about a quarter of those with a gap of 2% or more.</p>
   <p>Picks are logged on the Picks tab from that date: the first time a game within 8 days shows a gap of ${RG}% or more, at the price on offer then. The Backtest tab opens on the rule; the other filters stay so other rules can be compared with it.</p>
   <h2>What was tried and dropped</h2>
   <p>An xG team model and detailed match data (lineups, missing starters, finishing, set pieces, rest, squad value) were tested against the opening price. None of them added anything the price did not already know, so they are not used.</p>
