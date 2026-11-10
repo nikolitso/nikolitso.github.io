@@ -81,6 +81,8 @@ function table(title, first, rows, idx, total) {
   return `<h2>${title}</h2><table data-t="${title}"><thead><tr><th>${first}</th>${HEAD()}</tr></thead><tbody>${body}${total ? `<tr class="tot"><td><b>${total}</b></td>${cells(agg(idx))}</tr>` : ''}</tbody></table>`;
 }
 
+// odds presets: one click sets the range of both sides (the boxes under them still take any range)
+const ODDS = [[RMIN, null, 'All'], [RMIN || 1.01, 1.99, `${(RMIN || 1.01).toFixed(2)}–1.99`], [2, 2.49, '2.00–2.49'], [2.5, 2.99, '2.50–2.99'], [3, 3.99, '3.00–3.99'], [4, null, '4.00+']];
 function filters(noLg) {
   const f = state.f, chip = (k, v, t, on) => `<button class="chip${on ? ' on' : ''}" data-f="${k}" data-v="${v}">${t}</button>`;
   return `<style>th.sortable{cursor:pointer;user-select:none;white-space:nowrap}th.sortable:hover{text-decoration:underline}.od{display:inline-flex;align-items:center;gap:6px;font:500 13.5px var(--mono);color:var(--muted);margin-right:10px}.od.off{opacity:.4}.od input{width:62px;background:none;border:1px solid var(--line);border-radius:8px;color:var(--text);font:500 13.5px var(--mono);padding:4px 6px}.od input:focus{outline:none;border-color:var(--gold)}</style>
@@ -88,6 +90,7 @@ function filters(noLg) {
   ${noLg ? '' : `<div class="flt"><span class="fl">Leagues</span><div class="chips">${GROUPS.map(([k, t]) => chip('lg', k, t, f.lg === k)).join('')}</div></div>`}
   ${B.r ? `<div class="flt"><span class="fl">From round</span><div class="chips">${[1, 2, 3, 4, 5, 6, 8, 10].map(k => chip('rd', k, k === 1 ? 'All' : k + '+', (f.rd || 1) === k)).join('')}</div></div>` : ''}
   <div class="flt"><span class="fl">Bets on</span><div class="chips">${SIDES.map((t, i) => chip('side', i, t, f.side[i])).join('')}</div></div>
+  <div class="flt"><span class="fl">Odds</span><div class="chips">${ODDS.map(([lo, hi, lab], k) => chip('odp', k, lab, f.od.every(r => r[0] === lo && r[1] === hi))).join('')}</div></div>
   <div class="flt"><span class="fl">Odds range</span><div class="chips">${SIDES.map((t, i) => `<label class="od${f.side[i] ? '' : ' off'}">${t} ${[0, 1].map(k => `<input type="number" min="1" step="0.05" inputmode="decimal" placeholder="${k ? 'max' : 'min'}" aria-label="${t}, ${k ? 'highest' : 'lowest'} odds" data-od="${i}" data-k="${k}" value="${f.od[i][k] == null ? '' : f.od[i][k]}">`).join('<span>–</span>')}</label>`).join('')}</div></div>`;
 }
 
@@ -144,7 +147,7 @@ function viewBacktest(lg) {
   ${table('By odds', 'Odds', OB.map(([lo, hi]) => [hi > 100 ? lo.toFixed(2) + '+' : lo === 1 ? `Under ${hi.toFixed(2)}` : `${lo.toFixed(2)}–${(hi - 0.01).toFixed(2)}`, ob(lo, hi)]), idx, 'All')}
   ${table('By EV%', 'EV%', GB.map(([lo, hi]) => [hi > 100 ? lo + '%+' : `${lo}–${hi}%`, band(lo, hi)]), idx, 'All')}
   ${concentration(idx)}
-  <p class="note" style="margin-top:26px"><b>How to read.</b> <b>EV%</b>: the average EV of the bets, what they promise. <b>ROI</b>: what they returned at flat stakes. <b>±</b>: one standard error of the ROI in points; a ROI smaller than about twice it cannot be told from zero. The season columns show the ROI of each season: a rule worth using is positive in all of them. Seasons played inside one calendar year count with the season that starts that year. <b>By round</b> is the round of the league season the game belonged to, so the first rows are the start of a season; games without a round (play-offs, finals) are not in the test. <b>By month</b> is the month the game was played, from July, when most seasons start, to June. Green is a profit, red a loss. Faded numbers rest on fewer than ${MIN} bets (50 for one season). The <b>EV%</b> filter is the smallest EV a bet must have. <b>From round</b> leaves out the first rounds of each season: 4+ keeps the bets from round 4 on. <b>Odds range</b>: the lowest and highest price allowed, set for each selection on its own; an empty box means no limit. Click a column heading to sort a table by it; click the first column to go back to the usual order.</p>`;
+  <p class="note" style="margin-top:26px"><b>How to read.</b> <b>EV%</b>: the average EV of the bets, what they promise. <b>ROI</b>: what they returned at flat stakes. <b>±</b>: one standard error of the ROI in points; a ROI smaller than about twice it cannot be told from zero. The season columns show the ROI of each season: a rule worth using is positive in all of them. Seasons played inside one calendar year count with the season that starts that year. <b>By round</b> is the round of the league season the game belonged to, so the first rows are the start of a season; games without a round (play-offs, finals) are not in the test. <b>By month</b> is the month the game was played, from July, when most seasons start, to June. Green is a profit, red a loss. Faded numbers rest on fewer than ${MIN} bets (50 for one season). The <b>EV%</b> filter is the smallest EV a bet must have. <b>From round</b> leaves out the first rounds of each season: 4+ keeps the bets from round 4 on. <b>Odds</b>: one click sets a price band for both sides. <b>Odds range</b>: the lowest and highest price allowed, set for each selection on its own; an empty box means no limit. Click a column heading to sort a table by it; click the first column to go back to the usual order.</p>`;
 }
 
 // ---------- Picks: live bets of the rule ----------
@@ -315,6 +318,7 @@ out.addEventListener('click', e => {
   if (c) {
     const f = state.f, k = c.dataset.f, v = c.dataset.v;
     if (k === 'side') { f.side[+v] = f.side[+v] ? 0 : 1; if (!f.side.some(x => x)) f.side = [1, 1]; }
+    else if (k === 'odp') f.od = f.od.map(() => [ODDS[+v][0], ODDS[+v][1]]);
     else f[k] = k === 'lg' ? v : +v;
     return render();
   }
