@@ -1,4 +1,4 @@
-name: Site · Mid-Europe Gaps
+name: Site · Football Research
 
 # /football/research/: the price gap (best price against the market's margin-free price) in 1X2 and over/under 2.5 in
 # European men's leagues; the list is in BettingSignal mid-europe/leagues.py (women's leagues dropped 10 Nov 2026).
@@ -32,5 +32,5 @@ jobs:
           browser: "true"
           run: python -u update.py
           pages: football/research/data.js
-          label: Mid-Europe Gaps
+          label: Football Research
           token: ${{ secrets.SITES_TOKEN }}
