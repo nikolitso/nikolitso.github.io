@@ -22,7 +22,7 @@ const GROUPS = [['all', 'All', () => true],
 const TIER = ['', 'Top divisions', 'Lower divisions'];
 const MIN = 100;                                               // fewer bets than this: numbers greyed
 
-const state = {view: 'backtest', f: {gap: RG, od: [[null, null], [null, null], [null, null], [null, null]], lg: 'all', side: [1, 1, 1, 1]}};     // the filters start on the betting rule
+const state = {view: 'picks', f: {gap: RG, od: [[null, null], [null, null], [null, null], [null, null]], lg: 'all', side: [1, 1, 1, 1]}};     // the filters start on the betting rule
 try { Object.assign(state, JSON.parse(sessionStorage.getItem('pg-state7') || '{}')); } catch (e) {}
 const save = () => { try { sessionStorage.setItem('pg-state7', JSON.stringify(state)); } catch (e) {} };
 
@@ -164,7 +164,7 @@ function viewHow() {
   </div>`;
 }
 
-const VIEWS = ['backtest', 'picks', 'men', 'how'];
+const VIEWS = ['picks', 'backtest', 'men', 'how'];
 function render() {
   document.querySelectorAll('#tabs a[data-view]').forEach(a => a.classList.toggle('on', a.dataset.view === state.view));
   $('#sub').textContent = `${L.length} leagues · ${num(L.reduce((s, l) => s + l.games, 0))} games tested, 2023-24 to now · updated ${D.updated.replace('T', ' ').replace('Z', ' UTC')}`;
@@ -194,7 +194,7 @@ out.addEventListener('change', e => {                          // odds range box
 });
 function route() {
   const m = location.hash.match(/view=(\w+)/);
-  state.view = m && VIEWS.includes(m[1]) ? m[1] : 'backtest';      // no hash and old links (upcoming, leagues, women) land on the Backtest tab
+  state.view = m && VIEWS.includes(m[1]) ? m[1] : 'picks';         // no hash and old links (upcoming, leagues, women) land on the Picks tab
   render();
 }
 window.addEventListener('hashchange', route);
