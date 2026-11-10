@@ -6,6 +6,8 @@ const spct = (x, d = 1) => x == null ? '–' : (x > 0 ? '+' : '') + (x * 100).to
 const num = n => n.toLocaleString('en-GB');
 const cls = x => x == null ? '' : x > 0 ? 'pos' : 'neg';
 const GAP0 = Math.round((((D.pick || {}).edges || {})['1x2'] || 0.02) * 100);
+// the betting rule: minimum gap and league groups (0 big five top divisions, 1 other top divisions, 2 lower divisions)
+const RULE = D.rule || {gap: 0.05, tiers: [1, 2], since: '2026-11-10'}, RG = Math.round(RULE.gap * 100);
 
 // ---------- the bets: one entry per backtest bet, filtered and grouped here ----------
 const B = D.bets, N = B.l.length;
@@ -20,9 +22,9 @@ const GROUPS = [['all', 'All', () => true], ['nob5', 'Without the big five', t =
 const TIER = ['Big five top divisions', 'Other top divisions', 'Lower divisions'];
 const MIN = 100;                                               // fewer bets than this: numbers greyed
 
-const state = {view: 'backtest', f: {gap: GAP0, q: 0, lg: 'all', side: [1, 1, 1, 1]}};
-try { Object.assign(state, JSON.parse(sessionStorage.getItem('pg-state3') || '{}')); } catch (e) {}
-const save = () => { try { sessionStorage.setItem('pg-state3', JSON.stringify(state)); } catch (e) {} };
+const state = {view: 'backtest', f: {gap: RG, q: 0, lg: 'nob5', side: [1, 1, 1, 1]}};     // the filters start on the betting rule
+try { Object.assign(state, JSON.parse(sessionStorage.getItem('pg-state4') || '{}')); } catch (e) {}
+const save = () => { try { sessionStorage.setItem('pg-state4', JSON.stringify(state)); } catch (e) {} };
 
 function index(noGap) {                                        // bets that pass the filters (noGap: ignore the gap filter)
   const f = state.f, g = GROUPS.find(x => x[0] === f.lg) || GROUPS[0], idx = [];
@@ -65,7 +67,6 @@ function filters() {
   <div class="flt"><span class="fl">Leagues</span><div class="chips">${GROUPS.map(([k, t]) => chip('lg', k, t, f.lg === k)).join('')}</div></div>
   <div class="flt"><span class="fl">Bets on</span><div class="chips">${SIDES.map((t, i) => chip('side', i, t, f.side[i])).join('')}</div></div>`;
 }
-const filtered = () => { const f = state.f; return f.gap !== GAP0 || f.q || f.lg !== 'all' || f.side.some(x => !x); };
 
 // ---------- Backtest ----------
 function viewBacktest() {
@@ -78,7 +79,7 @@ function viewBacktest() {
   const QB = [[0, 15], [15, 25], [25, 35], [35, 45], [45, 55], [55, 65], [65, 101]];
   const ladder = index(true);
   const bySeason = YRS.map(y => { const a = agg(idx, i => B.y[i] === y); return `<tr><td>${season(y)}</td>${a.s.map(s => `<td class="n">${num(s.n)}</td>${roiCell(s)}`).join('')}<td class="n">${num(a.n)}</td><td class="n ${a.n < MIN ? 'mut' : cls(a.pl)}">${units(a.pl)}</td>${roiCell(a)}<td class="n">${a.n ? pct(a.exp / a.n) : '–'}</td><td class="n">${a.n ? pct(a.won / a.n) : '–'}</td></tr>`; }).join('');
-  return `<p class="note">2023-24 to now, opening prices, 1 unit a bet. Every bet with a gap of ${GAP0}% or more between the best price and the market's margin-free price. The draw is never bet. Choose a rule with the filters: every table below is recounted for it.</p>
+  return `<p class="note">2023-24 to now, opening prices, 1 unit a bet. Every bet with a gap of ${GAP0}% or more between the best price and the market's margin-free price. The draw is never bet. The filters start on the betting rule (gap of ${RG}% or more, without the big five); change them to compare other rules: every table below is recounted.</p>
   ${filters()}
   ${pills}
   ${table('By minimum gap', 'Gap of at least', [2, 3, 4, 5, 6, 8, 10, 12, 15].filter(g => g >= GAP0).map(g => [g + '%+', i => B.g[i] >= g * 10]), ladder)}
@@ -88,6 +89,26 @@ function viewBacktest() {
   ${table('By market chance', 'Chance', QB.map(([lo, hi]) => [hi > 100 ? lo + '%+' : lo ? `${lo}–${hi}%` : `Under ${hi}%`, qb(lo, hi)]), idx, 'All')}
   ${table('By gap size', 'Gap', GB.map(([lo, hi]) => [hi > 100 ? lo + '%+' : `${lo}–${hi}%`, band(lo, hi)]), idx, 'All')}
   <p class="note" style="margin-top:26px"><b>How to read.</b> <b>Gap</b>: the average gap of the bets, what they promise. <b>ROI</b>: what they returned at flat stakes. <b>±</b>: one standard error of the ROI in points; a ROI smaller than about twice it cannot be told from zero. <b>Wins exp.</b>: the share of bets the market's margin-free price says should win. <b>Wins actual</b>: the share that did. <b>Kept</b>: the ROI as a share of the gap promised, 100% means the whole gap was earned. The season columns show the ROI of each season: a rule worth using is positive in all of them. Seasons played inside one calendar year count with the season that starts that year. Grey numbers rest on fewer than ${MIN} bets (50 for one season). <b>By minimum gap</b> ignores the gap filter; <b>market chance</b> is the chance of the bet winning by the market price, so under 35% means an outsider.</p>`;
+}
+
+// ---------- Picks: live bets of the rule ----------
+function viewPicks() {
+  const key = {}; L.forEach(l => key[l.key] = l);
+  const ps = (D.picks || []).filter(p => key[p.lg] && RULE.tiers.includes(key[p.lg].tier) && p.edge + 1e-9 >= RULE.gap && p.posted.slice(0, 10) >= RULE.since);
+  const open = ps.filter(p => !p.result), done = ps.filter(p => p.result).reverse();
+  const won = done.filter(p => p.result === 'W').length, pl = done.reduce((s, p) => s + p.profit, 0);
+  const bt = agg((() => { const o = []; for (let i = 0; i < N; i++) if (B.g[i] >= RG * 10 && RULE.tiers.includes(L[B.l[i]].tier)) o.push(i); return o; })());
+  const fact = (b, t) => `<span class="fact"><b>${b}</b>${t}</span>`;
+  const when = s => new Date(s).toLocaleString('en-GB', {weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit'});
+  const bet = p => p.market === '1x2' ? (p.sel === 0 ? p.home : p.away) + ' to win' : (p.sel === 0 ? 'Over' : 'Under') + ' 2.5 goals';
+  const row = (p, d) => `<tr><td>${when(p.dt)}</td><td>${key[p.lg].country} · ${key[p.lg].name}</td><td>${p.home} – ${p.away}</td><td><b>${bet(p)}</b></td><td class="n">${p.odds.toFixed(2)}</td><td class="n">${pct(p.prob, 0)}</td><td class="n">${spct(p.edge)}</td>${d ? `<td class="n">${p.score}</td><td class="n ${cls(p.profit)}">${p.result === 'W' ? 'Won' : 'Lost'}</td><td class="n ${cls(p.profit)}">${(p.profit > 0 ? '+' : '') + p.profit.toFixed(2)}</td>` : ''}</tr>`;
+  const head = d => `<thead><tr><th>Kick-off</th><th>League</th><th>Game</th><th>Bet</th><th class="n">Price</th><th class="n">Chance</th><th class="n">Gap</th>${d ? '<th class="n">Score</th><th class="n">Result</th><th class="n">P/L</th>' : ''}</tr></thead>`;
+  return `<p class="note"><b>The rule.</b> Bet when the best price is ${RG}% or more above the market's margin-free price, on a home win, an away win, over 2.5 or under 2.5 goals. Never in the top divisions of England, Spain, Germany, Italy and France. One unit a bet. Picks are logged from ${new Date(RULE.since).toLocaleDateString('en-GB', {day: 'numeric', month: 'long', year: 'numeric'})}.</p>
+  <div class="facts">${done.length ? fact(`${won}–${done.length - won}`, 'record') + fact(spct(pl / done.length), 'ROI') : fact('0', 'settled picks')}${fact(open.length, open.length === 1 ? 'open pick' : 'open picks')}${fact(spct(bt.roi), `ROI of the rule in the backtest, ${num(bt.n)} bets`)}</div>
+  <h2>Open picks</h2>${open.length ? `<table class="pk">${head(0)}<tbody>${open.map(p => row(p, 0)).join('')}</tbody></table>` : '<p class="note">No open picks now. Prices are checked three times a day, for games up to 8 days ahead.</p>'}
+  ${done.length ? `<h2>Settled picks</h2><table class="pk">${head(1)}<tbody>${done.map(p => row(p, 1)).join('')}</tbody></table>` : ''}
+  <style>table.pk td{white-space:normal}table.pk td.n{white-space:nowrap}</style>
+  <p class="note" style="margin-top:26px">A pick is logged the first time the gap reaches ${RG}% and keeps that price until the game is settled; one pick a game and market. <b>Chance</b>: the chance of the bet winning by the market price. Times are local. The backtest uses opening prices; a live pick is taken at the price found when the page is updated, so its results can differ from the backtest.</p>`;
 }
 
 // ---------- Leagues: the same filtered bets, league by league ----------
@@ -130,7 +151,9 @@ function viewHow() {
   <h2>Why it can work</h2>
   <p>Some prices open before the market settles, or are shaded, and for a while stand above it. They are corrected quickly: at closing prices the gap is much smaller, so it has to be taken early.</p>
   <h2>Betting rules</h2>
-  <p>None yet. These pages are the test results; the rules for picks will be set from them.</p>
+  <p>Set on 10 November 2026 from the backtest. A bet is made when the gap is <b>${RG}% or more</b>, on a home win, an away win, over 2.5 or under 2.5 goals, in every league <b>except the top divisions of the big five</b> (England, Spain, Germany, Italy, France). One unit a bet.</p>
+  <p>Why these two. In the big five top divisions the gaps returned nothing: the bets there lost slightly over the whole test. And the return grows with the gap: bets with a gap of 5% or more returned clearly more than the smaller ones. The rule made a profit in every season of the test, and when it was chosen on the first two seasons alone it returned the same in the two that followed.</p>
+  <p>Picks are logged on the Picks tab from that date: the first time a game within 8 days shows a gap of ${RG}% or more, at the price on offer then. The Backtest tab opens on the rule; the other filters stay so other rules can be compared with it.</p>
   <h2>What was tried and dropped</h2>
   <p>An xG team model and detailed match data (lineups, missing starters, finishing, set pieces, rest, squad value) were tested against the opening price. None of them added anything the price did not already know, so they are not used.</p>
   <p>Women's leagues were tested the same way. The market price there is less accurate: the bets won less often than it said and kept under half of the gap, so the women's leagues were dropped and more men's leagues added.</p>
@@ -139,11 +162,11 @@ function viewHow() {
   </div>`;
 }
 
-const VIEWS = ['backtest', 'men', 'how'];
+const VIEWS = ['backtest', 'picks', 'men', 'how'];
 function render() {
   document.querySelectorAll('#tabs a[data-view]').forEach(a => a.classList.toggle('on', a.dataset.view === state.view));
   $('#sub').textContent = `${L.length} leagues · ${num(L.reduce((s, l) => s + l.games, 0))} games tested, 2023-24 to now · updated ${D.updated.replace('T', ' ').replace('Z', ' UTC')}`;
-  out.innerHTML = state.view === 'how' ? viewHow() : state.view === 'men' ? viewLeagues() : viewBacktest();
+  out.innerHTML = state.view === 'how' ? viewHow() : state.view === 'picks' ? viewPicks() : state.view === 'men' ? viewLeagues() : viewBacktest();
   save();
 }
 out.addEventListener('click', e => {
@@ -162,7 +185,7 @@ out.addEventListener('click', e => {
 });
 function route() {
   const m = location.hash.match(/view=(\w+)/);
-  state.view = m && VIEWS.includes(m[1]) ? m[1] : 'backtest';      // no hash and old links (picks, upcoming, leagues, women) land on the Backtest tab
+  state.view = m && VIEWS.includes(m[1]) ? m[1] : 'backtest';      // no hash and old links (upcoming, leagues, women) land on the Backtest tab
   render();
 }
 window.addEventListener('hashchange', route);

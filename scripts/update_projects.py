@@ -153,10 +153,15 @@ def greek_cup():
 
 
 def mid_europe():
-    # research card: no picks (rules not set yet), so the pills are the size of the backtest
+    # picks of the betting rule (gap 5%+, no big five top divisions, from 10 Nov 2026): the shared record pills
     m = js_object("/football/research/data.js", r"window\.D\s*=")
-    n = len(m.get("bets", {}).get("l", []))
-    return [f"{len(m['leagues'])} leagues"] + ([f"{n:,} bets tested"] if n else [])
+    rule = m.get("rule") or {"gap": 0.05, "tiers": [1, 2], "since": "2026-11-10"}
+    tier = {l["key"]: l.get("tier") for l in m["leagues"]}
+    ps = [p for p in m.get("picks", []) if tier.get(p["lg"]) in rule["tiers"] and p["edge"] + 1e-9 >= rule["gap"]
+          and p["posted"][:10] >= rule["since"]]
+    done = [p for p in ps if p.get("result")]
+    won = sum(p["result"] == "W" for p in done)
+    return record(won, len(done) - won, sum(p["profit"] for p in done), len(ps) - len(done))
 
 
 def basketball_cup(folder):
