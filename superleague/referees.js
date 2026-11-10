@@ -95,7 +95,7 @@ window.SLREF = {
   "report": [
     ["2026-11-08", "Olympiakos - PAOK", "1-1", "Martínez", 8.5, null, "The Spanish referee had a good derby: kept discipline in a tense game, with no disputed incident."],
     ["2026-11-08", "OFI - Atromitos", "0-0", "Polychronis (UEFA B)", 8.5, null, "Very good at Pankritio; an OFI goal was rightly disallowed through VAR."],
-    ["2026-11-08", "Iraklis - Panathinaikos", "1-2", "Evangelou", 7.9, "Panathinaikos", "His one error was not sending a Panathinaikos player off with a second yellow (the referees' committee agreed). The penalty was impossible for him to see; VAR (Tzilos) helped, as it was a clear handball. Correct assistants."],
+    ["2026-11-08", "Iraklis - Panathinaikos", "1-2", "Evangelou", 7.9, "Panathinaikos", "His one error was not sending off Panathinaikos' Antino with a second yellow (the referees' committee agreed). The penalty was impossible for him to see; VAR (Tzilos) helped, as it was a clear handball. Correct assistants."],
     ["2026-11-08", "Asteras - Kalamata", "1-1", "Papapetrou (UEFA A)", 8.8, null, "Flawless in the local derby in Tripoli and unmoved by a player's play-acting."],
     ["2026-11-08", "AEK - Levadiakos", "2-1", "Moschou (UEFA B)", 7.3, "AEK", "Made errors: a foul by Marin on a player on the ground came before AEK's handball penalty (the referees' committee later ruled there was no penalty), and he got a tackle by Kornezos wrong, giving a penalty that was then taken back. VAR (Koumparakis) upgraded Marin's card to a red."],
     ["2026-11-07", "Volos - Kifisia", "1-3", "Fotias (UEFA A)", 8.4, null, "A useful workout before his international games; no problems."],
@@ -166,7 +166,7 @@ window.SLREF = {
   // [date, match, score, referee, ruling, team the error went for or null]
   "committee": [
     ["2026-11-08", "AEK - Levadiakos", "2-1", "Moschou (UEFA B)", "The penalty for AEK, given after a VAR review (Koumparakis), was wrong: no handball offence by the Levadiakos player.", "AEK"],
-    ["2026-11-08", "Iraklis - Panathinaikos", "1-2", "Evangelou", "A Panathinaikos player should have had a second yellow card, and been sent off, in the 73rd minute.", "Panathinaikos"],
+    ["2026-11-08", "Iraklis - Panathinaikos", "1-2", "Evangelou", "Antino (Panathinaikos) should have had a second yellow card, and been sent off, in the 73rd minute.", "Panathinaikos"],
     ["2026-11-01", "PAOK - Asteras", "2-1", "Matsoukas (UEFA B)", "Kenny's first yellow card was wrong, so PAOK should not have gone down to ten men when he got his second.", "Asteras"],
     ["2026-08-30", "Aris - OFI", "2-1", "Papapetrou (UEFA A)", "An Aris player should have been sent off.", "Aris"],
     ["2026-08-22", "Olympiakos - Atromitos", "1-0", "Tsakalidis (UEFA B)", "Besides Rodinei's red card, a second Olympiakos player should have been sent off, for a challenge on an Atromitos player: Olympiakos should have finished with nine.", "Olympiakos"]
