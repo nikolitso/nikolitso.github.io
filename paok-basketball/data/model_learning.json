@@ -1,17 +1,17 @@
 {
- "updated": "2026-11-10T15:29:15Z",
+ "updated": "2026-11-10T19:08:01Z",
  "comps": {
   "EuroCup": {
-   "games": 1093,
-   "lineGames": 1032,
-   "homeEdge": 1.45,
-   "totalBias": 1.2,
-   "spreadSd": 12.4,
-   "lineWeight": 0.79,
-   "lineWeightRaw": 0.79,
-   "marginGames": 1032,
-   "marginWeight": 0.81,
-   "marginWeightRaw": 0.81,
+   "games": 1096,
+   "lineGames": 1033,
+   "homeEdge": 1.44,
+   "totalBias": 1.17,
+   "spreadSd": 12.3,
+   "lineWeight": 0.78,
+   "lineWeightRaw": 0.78,
+   "marginGames": 1033,
+   "marginWeight": 0.83,
+   "marginWeightRaw": 0.83,
    "marginSd": 11.4
   },
   "GBL": {
@@ -112,6 +112,18 @@
    "realMargin": 26,
    "modelMargin": 11.5,
    "hcp": 14.0
+  },
+  {
+   "comp": "EuroCup",
+   "opp": "Balkan",
+   "model": 156.1,
+   "shown": 161.4,
+   "line": 162.5,
+   "real": 135,
+   "margin": 9.0,
+   "realMargin": 23,
+   "modelMargin": -1.3,
+   "hcp": 11.5
   }
  ]
 }
