@@ -7,8 +7,10 @@ const num = n => n.toLocaleString('en-GB');
 const cls = x => x == null ? '' : x > 0 ? 'pos' : 'neg';
 const GAP0 = 6;                                                // the smallest EV the page shows (the data carries every bet from 2%)
 // the betting rule: minimum gap and league groups (1 top divisions, 2 lower divisions)
-const RULE = Object.assign({gap: 0.08, gap_ou: 0.14, odds_above: 1.5, tiers: [1, 2], since: '2026-11-10'}, D.rule || {});
-const RG = Math.round(RULE.gap * 100), RGO = Math.round(RULE.gap_ou * 100);      // minimum EV: home and away wins, overs and unders
+const RULE = Object.assign({gap: 0.08, markets: ['1x2'], odds_above: 1.5, tiers: [1, 2], since: '2026-11-10'}, D.rule || {});
+const RG = Math.round(RULE.gap * 100);                        // minimum EV of the rule
+const OU = RULE.markets.includes('ou2.5');                     // are overs and unders part of the rule (no: home and away wins only)
+const inRule = s => s < 2 || OU;                               // side 0-3
 const RO = RULE.odds_above || 0, ROT = RO.toFixed(2), RMIN = RO ? Math.round(RO * 100 + 1) / 100 : null;     // prices of RO or below are skipped
 
 // ---------- the bets: one entry per backtest bet, filtered and grouped here ----------
@@ -24,9 +26,9 @@ const GROUPS = [['all', 'All', () => true],
 const TIER = ['', 'Top divisions', 'Lower divisions'];
 const MIN = 100;                                               // fewer bets than this: numbers greyed
 
-const state = {view: 'picks', f: {gap: RG, gapou: RGO, od: [[RMIN, null], [RMIN, null], [RMIN, null], [RMIN, null]], lg: 'all', side: [1, 1, 1, 1]}};     // the filters start on the betting rule
-try { Object.assign(state, JSON.parse(sessionStorage.getItem('pg-state10') || '{}')); } catch (e) {}
-const save = () => { try { sessionStorage.setItem('pg-state10', JSON.stringify(state)); } catch (e) {} };
+const state = {view: 'picks', f: {gap: RG, gapou: RG, od: [[RMIN, null], [RMIN, null], [RMIN, null], [RMIN, null]], lg: 'all', side: [1, 1, OU ? 1 : 0, OU ? 1 : 0]}};     // the filters start on the betting rule
+try { Object.assign(state, JSON.parse(sessionStorage.getItem('pg-state11') || '{}')); } catch (e) {}
+const save = () => { try { sessionStorage.setItem('pg-state11', JSON.stringify(state)); } catch (e) {} };
 
 // does a bet pass the filters: side 0-3, EV in 0.1%, odds x100
 const pass = (s, g, o) => { const f = state.f, r = f.od[s]; return f.side[s] && g >= (s < 2 ? f.gap : f.gapou) * 10 && (r[0] == null || o >= r[0] * 100 - 1e-6) && (r[1] == null || o <= r[1] * 100 + 1e-6); };
@@ -76,7 +78,7 @@ function filters(noLg) {
 
 // ---------- Backtest ----------
 const PRIOR = `<b>Only what was known before the game is used.</b> A bet rests on the opening prices alone: the first prices posted for a game, as a rule days before kick-off, so for a match on 8 November the prices were on offer by 7 November or earlier. Nothing later goes into the choice: no closing price, no line-up, no result. Those are shown only to check the bet afterwards.`;
-const RULETXT = `EV of ${RG}% or more on home and away wins, ${RGO}% or more on overs and unders, prices above ${ROT}`;
+const RULETXT = `home and away wins with an EV of ${RG}% or more, prices above ${ROT}`;
 function viewBacktest(lg) {
   const idx = index(lg), all = agg(idx), f = state.f;
   const fact = (b, t) => `<span class="fact"><b>${b}</b>${t}</span>`;
@@ -91,7 +93,7 @@ function viewBacktest(lg) {
   <h2>By season</h2><table><thead><tr><th>Season</th>${on.map(k => `<th class="n">${SIDES[k]}</th><th class="n">ROI</th>`).join('')}<th class="n">All bets</th><th class="n">P/L</th><th class="n">ROI</th></tr></thead><tbody>${bySeason}</tbody></table>
   ${on.length ? table('By side', 'Bets on', SIDES.map((t, s) => [t, i => B.s[i] === s]), idx, 'All') : ''}`;
   if (lg != null) return tables;                               // a league's page: the headline tables only
-  return `<p class="note">2023-24 to now, opening prices, 1 unit a bet. Every bet with an EV of ${GAP0}% or more: the best price against the market's margin-free price. The draw is never bet. The filters start on the betting rule (${RULETXT}); change them to compare other rules: every table below is recounted.</p>
+  return `<p class="note">2023-24 to now, opening prices, 1 unit a bet. Every bet with an EV of ${GAP0}% or more: the best price against the market's margin-free price. The draw is never bet. The filters start on the betting rule (${RULETXT}); change them to compare other rules: every table below is recounted. Overs and unders are not part of the rule; switch them on under Bets on to see them.</p>
   <p class="note">${PRIOR}</p>
   ${filters()}
   ${pills}
@@ -107,16 +109,16 @@ function viewBacktest(lg) {
 const PKCSS = `<style>a.lk{color:inherit;text-decoration:underline;text-decoration-color:var(--muted);text-underline-offset:3px}a.lk:hover{color:var(--gold)}table.pk td{white-space:normal}table.pk td.n{white-space:nowrap}tr.exp{cursor:pointer}tr.exp:hover td{background:color-mix(in srgb,var(--line) 35%,transparent)}tr.detail>td{padding:6px 8px 18px 22px}.an p{margin:8px 0;max-width:820px;color:var(--muted);font-size:15.5px}.an p b{color:var(--text)}table.ant{width:auto;margin:6px 0 10px}table.ant td,table.ant th{white-space:nowrap;padding:5px 14px 5px 0;font-size:15.5px}</style>`;
 function viewPicks() {
   const key = {}; L.forEach(l => key[l.key] = l);
-  const ps = (D.picks || []).filter(p => key[p.lg] && RULE.tiers.includes(key[p.lg].tier) && p.edge + 1e-9 >= (p.market === '1x2' ? RULE.gap : RULE.gap_ou) && p.odds > RO + 1e-9 && p.posted.slice(0, 10) >= RULE.since);
+  const ps = (D.picks || []).filter(p => key[p.lg] && RULE.tiers.includes(key[p.lg].tier) && RULE.markets.includes(p.market) && p.edge + 1e-9 >= RULE.gap && p.odds > RO + 1e-9 && p.posted.slice(0, 10) >= RULE.since);
   const open = ps.filter(p => !p.result), done = ps.filter(p => p.result).reverse();
   const won = done.filter(p => p.result === 'W').length, pl = done.reduce((s, p) => s + p.profit, 0);
-  const bt = agg((() => { const o = []; for (let i = 0; i < N; i++) if (B.g[i] >= (B.s[i] < 2 ? RG : RGO) * 10 && B.o[i] > RO * 100 + 1e-6 && RULE.tiers.includes(L[B.l[i]].tier)) o.push(i); return o; })());
+  const bt = agg((() => { const o = []; for (let i = 0; i < N; i++) if (inRule(B.s[i]) && B.g[i] >= RG * 10 && B.o[i] > RO * 100 + 1e-6 && RULE.tiers.includes(L[B.l[i]].tier)) o.push(i); return o; })());
   const fact = (b, t) => `<span class="fact"><b>${b}</b>${t}</span>`;
   const when = s => new Date(s).toLocaleString('en-GB', {weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit'});
   const bet = p => p.market === '1x2' ? (p.sel === 0 ? p.home : p.away) + ' to win' : (p.sel === 0 ? 'Over' : 'Under') + ' 2.5 goals';
   const row = (p, d) => `<tr${p.fair ? ' class="exp" title="Show how the pick was made"' : ''}><td>${when(p.dt)}</td><td>${key[p.lg].country} · ${key[p.lg].name}</td><td>${p.home} – ${p.away}</td><td><b>${bet(p)}</b></td><td class="n">${p.odds.toFixed(2)}</td><td class="n">${pct(p.prob, 0)}</td><td class="n">${spct(p.edge)}</td>${d ? `<td class="n">${p.score}</td><td class="n ${cls(p.profit)}">${p.result === 'W' ? 'Won' : 'Lost'}</td><td class="n ${cls(p.profit)}">${(p.profit > 0 ? '+' : '') + p.profit.toFixed(2)}</td>` : ''}</tr>${p.fair ? `<tr class="detail" hidden><td colspan="${d ? 10 : 7}">${analysis({mi: p.market === '1x2' ? 0 : 1, s: p.sel, fair: p.fair, best: p.best, nw: p.nw, nb: p.nb, home: p.home, away: p.away, ev: p.edge, live: 1, score: p.score, won: p.result ? p.result === 'W' : null})}</td></tr>` : ''}`;
   const head = d => `<thead><tr><th>Kick-off</th><th>League</th><th>Game</th><th>Bet</th><th class="n">Price</th><th class="n">Chance</th><th class="n">EV%</th>${d ? '<th class="n">Score</th><th class="n">Result</th><th class="n">P/L</th>' : ''}</tr></thead>`;
-  return `${PKCSS}<p class="note"><b>The rule.</b> Bet a home or an away win when the best price is ${RG}% or more above the market's margin-free price (EV ${RG}%+), and over or under 2.5 goals when it is ${RGO}% or more above. Prices of ${ROT} or below are skipped. One unit a bet. Picks are logged from ${new Date(RULE.since).toLocaleDateString('en-GB', {day: 'numeric', month: 'long', year: 'numeric'})}.</p>
+  return `${PKCSS}<p class="note"><b>The rule.</b> Bet a home or an away win when the best price is ${RG}% or more above the market's margin-free price (EV ${RG}%+). The draw, overs and unders are not bet. Prices of ${ROT} or below are skipped. One unit a bet. Picks are logged from ${new Date(RULE.since).toLocaleDateString('en-GB', {day: 'numeric', month: 'long', year: 'numeric'})}.</p>
   <div class="facts">${done.length ? fact(`${won}–${done.length - won}`, 'record') + fact(spct(pl / done.length), 'ROI') : fact('0', 'settled picks')}${fact(open.length, open.length === 1 ? 'open pick' : 'open picks')}${fact(spct(bt.roi), `ROI of the rule in the backtest, ${num(bt.n)} bets`)}</div>
   <h2>Open picks</h2>${open.length ? `<table class="pk">${head(0)}<tbody>${open.map(p => row(p, 0)).join('')}</tbody></table>` : '<p class="note">No open picks now. Prices are checked three times a day, for games up to 8 days ahead.</p>'}
   ${done.length ? `<h2>Settled picks</h2><table class="pk">${head(1)}<tbody>${done.map(p => row(p, 1)).join('')}</tbody></table>` : ''}
@@ -153,9 +155,9 @@ function analysis(o) {
   const names = o.mi === 0 ? [o.home + ' win', 'Draw', o.away + ' win'] : ['Over 2.5 goals', 'Under 2.5 goals'];
   const evs = o.fair.map((p, i) => i === o.s && o.ev != null ? o.ev : p * o.best[i] - 1), draw = i => o.mi === 0 && i === 1;
   const rows = names.map((nm, i) => `<tr${i === o.s ? ' class="tot"' : ''}><td>${i === o.s ? `<b>${nm}</b>` : nm}</td><td class="n">${pct(o.fair[i])}</td><td class="n">${(1 / o.fair[i]).toFixed(2)}</td><td class="n">${o.best[i].toFixed(2)}</td><td class="n ${draw(i) ? 'mut' : cls(evs[i])}">${spct(evs[i])}</td><td>${i === o.s ? 'the bet' : draw(i) ? 'never bet' : ''}</td></tr>`).join('');
-  const sd = o.mi * 2 + (o.mi === 0 ? (o.s === 2 ? 1 : 0) : o.s), need = sd < 2 ? RG : RGO, ev = o.ev == null ? evs[o.s] : o.ev;
-  const ok = ev * 100 + 1e-6 >= need && o.best[o.s] > RO + 1e-9;
-  const why = ok ? `Inside the rule: EV of ${need}% or more and a price above ${ROT}.` : `Outside the rule: ${ev * 100 + 1e-6 < need ? `the EV is under ${need}%` : `the price is ${ROT} or below`}.`;
+  const sd = o.mi * 2 + (o.mi === 0 ? (o.s === 2 ? 1 : 0) : o.s), need = RG, ev = o.ev == null ? evs[o.s] : o.ev;
+  const ok = inRule(sd) && ev * 100 + 1e-6 >= need && o.best[o.s] > RO + 1e-9;
+  const why = ok ? `Inside the rule: EV of ${need}% or more and a price above ${ROT}.` : `Outside the rule: ${!inRule(sd) ? 'overs and unders are not bet' : ev * 100 + 1e-6 < need ? `the EV is under ${need}%` : `the price is ${ROT} or below`}.`;
   let after = '';
   if (!o.live) {
     const mv = o.fc == null ? '' : `The market closed at a chance of ${pct(o.fc)} for the bet (it opened at ${pct(o.fair[o.s])}): ${o.fc > o.fair[o.s] + 0.0005 ? 'it moved towards the bet' : o.fc < o.fair[o.s] - 0.0005 ? 'it moved against the bet' : 'it did not move'}. Against that closing chance the price taken was worth ${spct(o.best[o.s] * o.fc - 1)}.${o.bc ? ` The best price at the close was ${o.bc.toFixed(2)}.` : ''} `;
@@ -196,7 +198,7 @@ function viewLeague() {
   }
   return `${PKCSS}<p class="note"><a class="lk" href="#view=men">← All leagues</a></p>
   <h2 style="margin-top:6px">${l.country} · ${l.name}</h2>
-  <p class="note">${num(l.games)} games tested, 2023-24 to now, opening prices, 1 unit a bet. The filters start on the betting rule (${RULETXT}).</p>
+  <p class="note">${num(l.games)} games tested, 2023-24 to now, opening prices, 1 unit a bet. The filters start on the betting rule (${RULETXT}); overs and unders can be switched on under Bets on.</p>
   <p class="note">${PRIOR}</p>
   ${filters(1)}
   ${viewBacktest(k)}
@@ -222,9 +224,9 @@ function viewHow() {
   <h2>Why it can work</h2>
   <p>Some prices open before the market settles, or are shaded, and for a while stand above it. They are corrected quickly: at closing prices the EV is much smaller, so it has to be taken early.</p>
   <h2>Betting rules</h2>
-  <p>Set on 10 November 2026 from the backtest. A home or an away win is bet when the EV is <b>${RG}% or more</b>; over or under 2.5 goals when the EV is <b>${RGO}% or more</b>. The price must be <b>above ${ROT}</b>. Every league on this page, one unit a bet.</p>
+  <p>Set on 10 November 2026 from the backtest. A home or an away win is bet when the EV is <b>${RG}% or more</b> and the price is <b>above ${ROT}</b>. The draw, overs and unders are not bet. Every league on this page, one unit a bet.</p>
   <p>Why 8%. The return grows with the EV: the bigger the EV, the more the bets returned. Home and away wins with an EV of 8% or more returned 17.0% on 4,119 bets, with a profit in every season of the test.</p>
-  <p>Why ${RGO}% for overs and unders. On goals the market is harder to beat with a small edge: overs and unders with an EV between 8% and 14% returned 2.6% on 622 bets, with one losing season, while those with 14% or more returned 17.4% on 199 bets. That is few bets, so the goals part of the rule is the least proven.</p>
+  <p>Why no overs and unders. On goals a small EV returned almost nothing: overs and unders with an EV between 8% and 14% returned 2.6% on 622 bets, with one losing season. Above 14% they returned 17.4%, but on 199 bets only, and that line was drawn after seeing the results, so it proves little. They add about one bet in twenty to the rule and are left out of it. They stay in the backtest, switched off, and can be switched on under Bets on.</p>
   <p>Why prices of ${ROT} or below are skipped. They were the weakest part of the test: 201 bets with an EV of 8% or more returned 5.1%, against 15.2% for the rest, with one losing season. A short price leaves little room for a wrong price.</p>
   <p>Picks are logged on the Picks tab from that date: the first time a game within 8 days meets the rule, at the price on offer then. The Backtest tab opens on the rule; the other filters stay so other rules can be compared with it.</p>
   <h2>What was tried and dropped</h2>
