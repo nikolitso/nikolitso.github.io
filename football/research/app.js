@@ -79,13 +79,15 @@ function viewBacktest() {
   const band = (lo, hi) => i => B.g[i] >= lo * 10 && B.g[i] < hi * 10, ob = (lo, hi) => i => B.o[i] >= lo * 100 && B.o[i] < hi * 100;
   const GB = [[2, 3], [3, 4], [4, 5], [5, 6], [6, 8], [8, 10], [10, 15], [15, 999]].filter(([lo]) => lo >= GAP0);
   const OB = [[1, 1.5], [1.5, 1.8], [1.8, 2.1], [2.1, 2.5], [2.5, 3], [3, 4], [4, 6], [6, 999]];
-  const bySeason = YRS.map(y => { const a = agg(idx, i => B.y[i] === y); return `<tr><td>${season(y)}</td>${a.s.map(s => `<td class="n">${num(s.n)}</td>${roiCell(s)}`).join('')}<td class="n">${num(a.n)}</td><td class="n ${a.n < MIN ? 'mut' : cls(a.pl)}">${units(a.pl)}</td>${roiCell(a)}</tr>`; }).join('');
+  // side columns only for the sides chosen, and none when one side is chosen (they would repeat the total)
+  const on = f.side.filter(x => x).length > 1 ? SIDES.map((t, k) => k).filter(k => f.side[k]) : [];
+  const bySeason = YRS.map(y => { const a = agg(idx, i => B.y[i] === y); return `<tr><td>${season(y)}</td>${a.s.map((s, k) => on.includes(k) ? `<td class="n">${num(s.n)}</td>${roiCell(s)}` : '').join('')}<td class="n">${num(a.n)}</td><td class="n ${a.n < MIN ? 'mut' : cls(a.pl)}">${units(a.pl)}</td>${roiCell(a)}</tr>`; }).join('');
   return `<p class="note">2023-24 to now, opening prices, 1 unit a bet. Every bet with a gap of ${GAP0}% or more between the best price and the market's margin-free price. The draw is never bet. The filters start on the betting rule (gap of ${RG}% or more); change them to compare other rules: every table below is recounted.</p>
   ${filters()}
   ${pills}
-  <h2>By season</h2><table><thead><tr><th>Season</th>${SIDES.map(t => `<th class="n">${t}</th><th class="n">ROI</th>`).join('')}<th class="n">All bets</th><th class="n">P/L</th><th class="n">ROI</th></tr></thead><tbody>${bySeason}</tbody></table>
-  ${table('By side', 'Bets on', SIDES.map((t, s) => [t, i => B.s[i] === s]), idx, 'All')}
-  ${table('By league group', 'Leagues', TIER.map((t, k) => [t, i => L[B.l[i]].tier === k]), idx, 'All')}
+  <h2>By season</h2><table><thead><tr><th>Season</th>${on.map(k => `<th class="n">${SIDES[k]}</th><th class="n">ROI</th>`).join('')}<th class="n">All bets</th><th class="n">P/L</th><th class="n">ROI</th></tr></thead><tbody>${bySeason}</tbody></table>
+  ${on.length ? table('By side', 'Bets on', SIDES.map((t, s) => [t, i => B.s[i] === s]), idx, 'All') : ''}
+  ${f.lg !== 'all' ? '' : table('By league group', 'Leagues', TIER.map((t, k) => [t, i => L[B.l[i]].tier === k]), idx, 'All')}
   ${table('By odds', 'Odds', OB.map(([lo, hi]) => [hi > 100 ? lo.toFixed(2) + '+' : lo === 1 ? `Under ${hi.toFixed(2)}` : `${lo.toFixed(2)}–${(hi - 0.01).toFixed(2)}`, ob(lo, hi)]), idx, 'All')}
   ${table('By gap size', 'Gap', GB.map(([lo, hi]) => [hi > 100 ? lo + '%+' : `${lo}–${hi}%`, band(lo, hi)]), idx, 'All')}
   <p class="note" style="margin-top:26px"><b>How to read.</b> <b>Gap</b>: the average gap of the bets, what they promise. <b>ROI</b>: what they returned at flat stakes. <b>±</b>: one standard error of the ROI in points; a ROI smaller than about twice it cannot be told from zero. The season columns show the ROI of each season: a rule worth using is positive in all of them. Seasons played inside one calendar year count with the season that starts that year. Grey numbers rest on fewer than ${MIN} bets (50 for one season). <b>EV%</b> is the smallest gap a bet must have. <b>Odds range</b>: the lowest and highest price allowed, set for each selection on its own; an empty box means no limit.</p>`;
@@ -116,8 +118,9 @@ function viewLeagues() {
   const idx = index(), g = GROUPS.find(x => x[0] === state.f.lg) || GROUPS[0];
   const by = L.map(() => []); idx.forEach(i => by[B.l[i]].push(i));
   const list = L.map((l, k) => ({l, a: agg(by[k])})).filter(x => g[2](x.l.tier));
+  const fs = state.f.side, on = fs.filter(x => x).length > 1 ? SIDES.map((t, k) => k).filter(k => fs[k]) : [];   // as in By season
   const COLS = [['country', 'Country', x => x.l.country], ['name', 'League', x => x.l.name], ['games', 'Games', x => x.l.games], ['gap2', 'Gap 2%+', x => x.l.gap2]]
-    .concat(...SIDES.map((t, s) => [['n' + s, t, x => x.a.s[s].n], ['r' + s, 'ROI', x => x.a.s[s].n ? x.a.s[s].pl / x.a.s[s].n : null]]),
+    .concat(...on.map(s => [['n' + s, SIDES[s], x => x.a.s[s].n], ['r' + s, 'ROI', x => x.a.s[s].n ? x.a.s[s].pl / x.a.s[s].n : null]]),
       [['n', 'All bets', x => x.a.n], ['r', 'ROI', x => x.a.roi]]);
   const srt = state.sort || {}, col = COLS.find(x => x[0] === srt.col);
   if (col) list.sort((p, q) => {
@@ -127,12 +130,12 @@ function viewLeagues() {
   });
   const c = (x, b) => { const o = b ? '<b>' : '', e = b ? '</b>' : ''; return x.n ? `<td class="n">${o}${num(x.n)}${e}</td><td class="n ${x.n < MIN && !b ? 'mut' : cls(x.pl)}">${o}${spct(x.pl / x.n)}${e}</td>` : '<td class="n">0</td><td class="n mut">–</td>'; };
   const tot = agg(idx), games = list.reduce((s, x) => s + x.l.games, 0);
-  const rows = list.map(x => `<tr><td>${x.l.country}</td><td>${x.l.name}</td><td class="n">${num(x.l.games)}</td><td class="n">${pct(x.l.gap2, 0)}</td>${x.a.s.map(s => c(s)).join('')}${c(x.a)}</tr>`).join('');
+  const rows = list.map(x => `<tr><td>${x.l.country}</td><td>${x.l.name}</td><td class="n">${num(x.l.games)}</td><td class="n">${pct(x.l.gap2, 0)}</td>${on.map(s => c(x.a.s[s])).join('')}${c(x.a)}</tr>`).join('');
   const head = COLS.map(([k, t], i) => `<th data-sort="${k}" class="sortable${i > 1 ? ' n' : ''}" title="Sort">${t}${srt.col === k ? (srt.dir > 0 ? ' ▲' : ' ▼') : ''}</th>`).join('');
-  return `<p class="note">2023-24 to now, opening prices. <b>Gap 2%+</b>: share of games where the home or away opening price was at least 2% above the market. Then the bets that pass the filters in each league, split into home wins, away wins, overs and unders, each with its ROI at flat stakes. One league's ROI rests on few bets (grey under ${MIN}) and a league's past ROI says little about its next season; the first row is all leagues together. Click a column to sort.</p>
+  return `<p class="note">2023-24 to now, opening prices. <b>Gap 2%+</b>: share of games where the home or away opening price was at least 2% above the market. Then the bets that pass the filters in each league, split by the sides chosen, each with its ROI at flat stakes. One league's ROI rests on few bets (grey under ${MIN}) and a league's past ROI says little about its next season; the first row is all leagues together. Click a column to sort.</p>
   ${filters()}
   <style>table.lgs th,table.lgs td{padding-left:5px;padding-right:5px}th.sortable{cursor:pointer;user-select:none;white-space:nowrap}th.sortable:hover{text-decoration:underline}</style>
-  <table class="lgs"><thead><tr>${head}</tr></thead><tbody><tr class="tot"><td><b>All</b></td><td><b>${list.length} leagues</b></td><td class="n"><b>${num(games)}</b></td><td class="n"></td>${tot.s.map(s => c(s, 1)).join('')}${c(tot, 1)}</tr>${rows}</tbody></table>`;
+  <table class="lgs"><thead><tr>${head}</tr></thead><tbody><tr class="tot"><td><b>All</b></td><td><b>${list.length} leagues</b></td><td class="n"><b>${num(games)}</b></td><td class="n"></td>${on.map(s => c(tot.s[s], 1)).join('')}${c(tot, 1)}</tr>${rows}</tbody></table>`;
 }
 
 // ---------- How it works ----------
