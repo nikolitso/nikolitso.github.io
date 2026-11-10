@@ -2,7 +2,8 @@ name: Site · Football Research
 
 # /football/research/: the price gap (best price against the market's margin-free price) in 1X2 and over/under 2.5 in
 # European men's leagues; the list is in BettingSignal mid-europe/leagues.py (women's leagues dropped 10 Nov 2026).
-# Results, event ids and opening/closing odds, then the backtest bets for the page (data.js) and the picks log.
+# Results, event ids and opening/closing odds, then the backtest bets for the page (data.js), one file of bets per
+# league for the league pages (lg/) and the picks log.
 # Scripts and data in nikolitso/BettingSignal (mid-europe/). Three times a day, so prices are caught near the opening.
 on:
   schedule:
@@ -31,6 +32,6 @@ jobs:
           requirements: -r _bs/mid-europe/requirements.txt
           browser: "true"
           run: python -u update.py
-          pages: football/research/data.js
+          pages: football/research/data.js football/research/lg
           label: Football Research
           token: ${{ secrets.SITES_TOKEN }}

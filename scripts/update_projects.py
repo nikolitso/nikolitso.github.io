@@ -155,9 +155,9 @@ def greek_cup():
 def mid_europe():
     # picks of the betting rule (gap 8%+, from 10 Nov 2026): the shared record pills
     m = js_object("/football/research/data.js", r"window\.D\s*=")
-    rule = m.get("rule") or {"gap": 0.08, "odds_above": 1.5, "tiers": [1, 2], "since": "2026-11-10"}
+    rule = m.get("rule") or {"gap": 0.08, "gap_ou": 0.14, "odds_above": 1.5, "tiers": [1, 2], "since": "2026-11-10"}
     tier = {l["key"]: l.get("tier") for l in m["leagues"]}
-    ps = [p for p in m.get("picks", []) if tier.get(p["lg"]) in rule["tiers"] and p["edge"] + 1e-9 >= rule["gap"] and p["odds"] > rule.get("odds_above", 0) + 1e-9
+    ps = [p for p in m.get("picks", []) if tier.get(p["lg"]) in rule["tiers"] and p["edge"] + 1e-9 >= (rule["gap"] if p["market"] == "1x2" else rule.get("gap_ou", 0.14)) and p["odds"] > rule.get("odds_above", 0) + 1e-9
           and p["posted"][:10] >= rule["since"]]
     done = [p for p in ps if p.get("result")]
     won = sum(p["result"] == "W" for p in done)
