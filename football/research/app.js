@@ -6,7 +6,7 @@ const spct = (x, d = 1) => x == null ? '–' : (x > 0 ? '+' : '') + (x * 100).to
 const num = n => n.toLocaleString('en-GB');
 const cls = x => x == null ? '' : x > 0 ? 'pos' : 'neg';
 const GAP0 = Math.round((((D.pick || {}).edges || {})['1x2'] || 0.02) * 100);
-// the betting rule: minimum gap and league groups (0 big five top divisions, 1 other top divisions, 2 lower divisions)
+// the betting rule: minimum gap and league groups (1 top divisions, 2 lower divisions)
 const RULE = D.rule || {gap: 0.05, tiers: [1, 2], since: '2026-11-10'}, RG = Math.round(RULE.gap * 100);
 
 // ---------- the bets: one entry per backtest bet, filtered and grouped here ----------
@@ -17,14 +17,14 @@ const YRS = [...new Set(B.y)].sort((a, b) => a - b);
 const season = y => `${2023 + y}-${24 + y}`;
 const SIDES = ['Home wins', 'Away wins', 'Overs', 'Unders'];
 const GAPS = [2, 3, 4, 5, 6, 8, 10];
-const GROUPS = [['all', 'All', () => true], ['nob5', 'Without the big five', t => t !== 0], ['b5', 'Big five', t => t === 0],
-  ['top', 'Other top divisions', t => t === 1], ['low', 'Lower divisions', t => t === 2]];
-const TIER = ['Big five top divisions', 'Other top divisions', 'Lower divisions'];
+const GROUPS = [['all', 'All', () => true],
+  ['top', 'Top divisions', t => t === 1], ['low', 'Lower divisions', t => t === 2]];
+const TIER = ['', 'Top divisions', 'Lower divisions'];
 const MIN = 100;                                               // fewer bets than this: numbers greyed
 
-const state = {view: 'backtest', f: {gap: RG, od: [[null, null], [null, null], [null, null], [null, null]], lg: 'nob5', side: [1, 1, 1, 1]}};     // the filters start on the betting rule
-try { Object.assign(state, JSON.parse(sessionStorage.getItem('pg-state5') || '{}')); } catch (e) {}
-const save = () => { try { sessionStorage.setItem('pg-state5', JSON.stringify(state)); } catch (e) {} };
+const state = {view: 'backtest', f: {gap: RG, od: [[null, null], [null, null], [null, null], [null, null]], lg: 'all', side: [1, 1, 1, 1]}};     // the filters start on the betting rule
+try { Object.assign(state, JSON.parse(sessionStorage.getItem('pg-state6') || '{}')); } catch (e) {}
+const save = () => { try { sessionStorage.setItem('pg-state6', JSON.stringify(state)); } catch (e) {} };
 
 function index(noGap) {                                        // bets that pass the filters (noGap: ignore the gap filter)
   const f = state.f, g = GROUPS.find(x => x[0] === f.lg) || GROUPS[0], idx = [];
@@ -82,7 +82,7 @@ function viewBacktest() {
   const OB = [[1, 1.5], [1.5, 1.8], [1.8, 2.1], [2.1, 2.5], [2.5, 3], [3, 4], [4, 6], [6, 999]];
   const ladder = index(true);
   const bySeason = YRS.map(y => { const a = agg(idx, i => B.y[i] === y); return `<tr><td>${season(y)}</td>${a.s.map(s => `<td class="n">${num(s.n)}</td>${roiCell(s)}`).join('')}<td class="n">${num(a.n)}</td><td class="n ${a.n < MIN ? 'mut' : cls(a.pl)}">${units(a.pl)}</td>${roiCell(a)}</tr>`; }).join('');
-  return `<p class="note">2023-24 to now, opening prices, 1 unit a bet. Every bet with a gap of ${GAP0}% or more between the best price and the market's margin-free price. The draw is never bet. The filters start on the betting rule (gap of ${RG}% or more, without the big five); change them to compare other rules: every table below is recounted.</p>
+  return `<p class="note">2023-24 to now, opening prices, 1 unit a bet. Every bet with a gap of ${GAP0}% or more between the best price and the market's margin-free price. The draw is never bet. The filters start on the betting rule (gap of ${RG}% or more); change them to compare other rules: every table below is recounted.</p>
   ${filters()}
   ${pills}
   ${table('By minimum gap', 'EV%', [2, 3, 4, 5, 6, 8, 10, 12, 15].filter(g => g >= GAP0).map(g => [g + '%+', i => B.g[i] >= g * 10]), ladder)}
@@ -106,7 +106,7 @@ function viewPicks() {
   const bet = p => p.market === '1x2' ? (p.sel === 0 ? p.home : p.away) + ' to win' : (p.sel === 0 ? 'Over' : 'Under') + ' 2.5 goals';
   const row = (p, d) => `<tr><td>${when(p.dt)}</td><td>${key[p.lg].country} · ${key[p.lg].name}</td><td>${p.home} – ${p.away}</td><td><b>${bet(p)}</b></td><td class="n">${p.odds.toFixed(2)}</td><td class="n">${pct(p.prob, 0)}</td><td class="n">${spct(p.edge)}</td>${d ? `<td class="n">${p.score}</td><td class="n ${cls(p.profit)}">${p.result === 'W' ? 'Won' : 'Lost'}</td><td class="n ${cls(p.profit)}">${(p.profit > 0 ? '+' : '') + p.profit.toFixed(2)}</td>` : ''}</tr>`;
   const head = d => `<thead><tr><th>Kick-off</th><th>League</th><th>Game</th><th>Bet</th><th class="n">Price</th><th class="n">Chance</th><th class="n">Gap</th>${d ? '<th class="n">Score</th><th class="n">Result</th><th class="n">P/L</th>' : ''}</tr></thead>`;
-  return `<p class="note"><b>The rule.</b> Bet when the best price is ${RG}% or more above the market's margin-free price, on a home win, an away win, over 2.5 or under 2.5 goals. Never in the top divisions of England, Spain, Germany, Italy and France. One unit a bet. Picks are logged from ${new Date(RULE.since).toLocaleDateString('en-GB', {day: 'numeric', month: 'long', year: 'numeric'})}.</p>
+  return `<p class="note"><b>The rule.</b> Bet when the best price is ${RG}% or more above the market's margin-free price, on a home win, an away win, over 2.5 or under 2.5 goals. One unit a bet. Picks are logged from ${new Date(RULE.since).toLocaleDateString('en-GB', {day: 'numeric', month: 'long', year: 'numeric'})}.</p>
   <div class="facts">${done.length ? fact(`${won}–${done.length - won}`, 'record') + fact(spct(pl / done.length), 'ROI') : fact('0', 'settled picks')}${fact(open.length, open.length === 1 ? 'open pick' : 'open picks')}${fact(spct(bt.roi), `ROI of the rule in the backtest, ${num(bt.n)} bets`)}</div>
   <h2>Open picks</h2>${open.length ? `<table class="pk">${head(0)}<tbody>${open.map(p => row(p, 0)).join('')}</tbody></table>` : '<p class="note">No open picks now. Prices are checked three times a day, for games up to 8 days ahead.</p>'}
   ${done.length ? `<h2>Settled picks</h2><table class="pk">${head(1)}<tbody>${done.map(p => row(p, 1)).join('')}</tbody></table>` : ''}
@@ -149,16 +149,17 @@ function viewHow() {
   <p>Take the market's price: the odds of about 20 books with their margin removed (the power method, which puts more of the margin on longshots, as books do). Take the best price on offer at the same moment. The gap is best price × market chance − 1. No model and no team ratings: the market itself is the yardstick.</p>
   <h2>The backtest</h2>
   <p>Every game from 2023-24 to now, at opening prices. Each time the gap on a home win, an away win, over 2.5 or under 2.5 was at least ${GAP0}%, one unit is bet on it at the best price.</p>
-  <p>The Backtest tab is built for choosing a rule. Four filters cut the bets: the minimum gap (EV%), the league group (the big five top divisions of England, Spain, Germany, Italy and France, the other top divisions, the lower divisions), the side, and an odds range set for each side on its own. Every table is recounted for the bets that pass, and a pill shows the ROI of the bets left out, so a filter can be judged by what it removes.</p>
+  <p>The Backtest tab is built for choosing a rule. Four filters cut the bets: the minimum gap (EV%), the league group (top divisions, lower divisions), the side, and an odds range set for each side on its own. Every table is recounted for the bets that pass, and a pill shows the ROI of the bets left out, so a filter can be judged by what it removes.</p>
   <p>Each table row shows the number of bets, the average gap they promised, the ROI, its standard error, the profit or loss, and the ROI of each season. A rule is worth using when the result holds in every season, not only in the total. The Leagues tab shows the same bets league by league; one league's numbers rest on few bets and its past ROI says little about its next season.</p>
   <h2>Why it can work</h2>
   <p>Some prices open before the market settles, or are shaded, and for a while stand above it. They are corrected quickly: at closing prices the gap is much smaller, so it has to be taken early.</p>
   <h2>Betting rules</h2>
-  <p>Set on 10 November 2026 from the backtest. A bet is made when the gap is <b>${RG}% or more</b>, on a home win, an away win, over 2.5 or under 2.5 goals, in every league <b>except the top divisions of the big five</b> (England, Spain, Germany, Italy, France). One unit a bet.</p>
-  <p>Why these two. In the big five top divisions the gaps returned nothing: the bets there lost slightly over the whole test. And the return grows with the gap: bets with a gap of 5% or more returned clearly more than the smaller ones. The rule made a profit in every season of the test, and when it was chosen on the first two seasons alone it returned the same in the two that followed.</p>
+  <p>Set on 10 November 2026 from the backtest. A bet is made when the gap is <b>${RG}% or more</b>, on a home win, an away win, over 2.5 or under 2.5 goals, in every league on this page. One unit a bet.</p>
+  <p>Why 5%. The return grows with the gap: bets with a gap of 5% or more returned clearly more than the smaller ones. The rule made a profit in every season of the test, and when it was chosen on the first two seasons alone it returned the same in the two that followed.</p>
   <p>Picks are logged on the Picks tab from that date: the first time a game within 8 days shows a gap of ${RG}% or more, at the price on offer then. The Backtest tab opens on the rule; the other filters stay so other rules can be compared with it.</p>
   <h2>What was tried and dropped</h2>
   <p>An xG team model and detailed match data (lineups, missing starters, finishing, set pieces, rest, squad value) were tested against the opening price. None of them added anything the price did not already know, so they are not used.</p>
+  <p>The top divisions of England, Spain, Germany, Italy and France were tested the same way. The gaps returned nothing there: 2,857 bets lost 0.7%. Those five leagues were taken out of the page and its data.</p>
   <p>Women's leagues were tested the same way. The market price there is less accurate: the bets won less often than it said and kept under half of the gap, so the women's leagues were dropped and more men's leagues added.</p>
   <h2>Data</h2>
   <p>Opening and closing odds from a public odds feed. Updated three times a day.</p>
