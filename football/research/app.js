@@ -76,7 +76,7 @@ function viewBacktest() {
   const idx = index(), all = agg(idx), f = state.f;
   const rest = (() => { const k = new Set(idx), o = []; for (let i = 0; i < N; i++) if (!k.has(i)) o.push(i); return agg(o); })();
   const fact = (b, t) => `<span class="fact"><b>${b}</b>${t}</span>`;
-  const pills = all.n ? `<div class="facts">${fact(num(all.n), 'bets')}${fact(spct(all.roi), 'ROI')}${fact(units(all.pl), 'units P/L')}${fact(pct(all.exp / all.n), 'wins expected')}${fact(pct(all.won / all.n), 'wins actual')}${fact((all.pl / all.gap * 100).toFixed(0) + '%', 'of the gap kept')}${rest.n ? fact(spct(rest.roi), `ROI of the ${num(rest.n)} bets left out`) : ''}</div>` : '<p class="note">No bets pass these filters.</p>';
+  const pills = all.n ? `<div class="facts">${fact(num(all.n), 'bets')}${fact(spct(all.roi), 'ROI')}${fact(units(all.pl), 'units P/L')}${rest.n ? fact(spct(rest.roi), `ROI of the ${num(rest.n)} bets left out`) : ''}</div>` : '<p class="note">No bets pass these filters.</p>';
   const band = (lo, hi) => i => B.g[i] >= lo * 10 && B.g[i] < hi * 10, ob = (lo, hi) => i => B.o[i] >= lo * 100 && B.o[i] < hi * 100;
   const GB = [[2, 3], [3, 4], [4, 5], [5, 6], [6, 8], [8, 10], [10, 15], [15, 999]].filter(([lo]) => lo >= GAP0);
   const OB = [[1, 1.5], [1.5, 1.8], [1.8, 2.1], [2.1, 2.5], [2.5, 3], [3, 4], [4, 6], [6, 999]];
@@ -91,7 +91,7 @@ function viewBacktest() {
   ${table('By league group', 'Leagues', TIER.map((t, k) => [t, i => L[B.l[i]].tier === k]), idx, 'All')}
   ${table('By odds', 'Odds', OB.map(([lo, hi]) => [hi > 100 ? lo.toFixed(2) + '+' : lo === 1 ? `Under ${hi.toFixed(2)}` : `${lo.toFixed(2)}–${(hi - 0.01).toFixed(2)}`, ob(lo, hi)]), idx, 'All')}
   ${table('By gap size', 'Gap', GB.map(([lo, hi]) => [hi > 100 ? lo + '%+' : `${lo}–${hi}%`, band(lo, hi)]), idx, 'All')}
-  <p class="note" style="margin-top:26px"><b>How to read.</b> <b>Gap</b>: the average gap of the bets, what they promise. <b>ROI</b>: what they returned at flat stakes. <b>±</b>: one standard error of the ROI in points; a ROI smaller than about twice it cannot be told from zero. The season columns show the ROI of each season: a rule worth using is positive in all of them. Seasons played inside one calendar year count with the season that starts that year. Grey numbers rest on fewer than ${MIN} bets (50 for one season). The pills also show the share of bets the market's margin-free price says should win, the share that did, and the ROI as a share of the gap promised (100% means the whole gap was earned). <b>EV%</b> is the smallest gap a bet must have; <b>By minimum gap</b> ignores that filter. <b>Odds range</b>: the lowest and highest price allowed, set for each selection on its own; an empty box means no limit.</p>`;
+  <p class="note" style="margin-top:26px"><b>How to read.</b> <b>Gap</b>: the average gap of the bets, what they promise. <b>ROI</b>: what they returned at flat stakes. <b>±</b>: one standard error of the ROI in points; a ROI smaller than about twice it cannot be told from zero. The season columns show the ROI of each season: a rule worth using is positive in all of them. Seasons played inside one calendar year count with the season that starts that year. Grey numbers rest on fewer than ${MIN} bets (50 for one season). <b>EV%</b> is the smallest gap a bet must have; <b>By minimum gap</b> ignores that filter. <b>Odds range</b>: the lowest and highest price allowed, set for each selection on its own; an empty box means no limit.</p>`;
 }
 
 // ---------- Picks: live bets of the rule ----------
