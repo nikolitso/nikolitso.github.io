@@ -308,17 +308,17 @@ function loadAH() {
   if (window.AH || loadAH.busy) return;
   loadAH.busy = 1;
   const s = document.createElement('script');
-  s.src = 'ah.js?v=1'; s.onload = () => { loadAH.busy = 0; if (state.view === 'ah') render(); };
+  s.src = 'ah.js?v=2'; s.onload = () => { loadAH.busy = 0; if (state.view === 'ah') render(); };
   s.onerror = () => { loadAH.busy = 0; loadAH.failed = 1; if (state.view === 'ah') render(); };
   document.head.appendChild(s);
 }
 function viewAH() {
   const A = window.AH;
   if (!A) { loadAH(); return `<p class="note">${loadAH.failed ? 'The handicap data could not be loaded.' : 'Loading the handicap bets…'}</p>`; }
-  const b = A.bets, f = state.a = Object.assign({gap: RG, lg: 'all', side: [1, 1], hc: [1, 0, 0]}, state.a || {});     // opens on the side giving goals (user, 11 Nov 2026)
+  const b = A.bets, f = state.a = Object.assign({gap: RG, lg: 'all', side: [1, 1], hc: [1, 0, 0], ln: 0}, state.a || {});     // opens on the side giving goals (user, 11 Nov 2026)
   const lgOf = A.lgi = A.lgi || A.lg.map(k => L.find(l => l.key === k));
   const grp = GROUPS.find(x => x[0] === f.lg) || GROUPS[0], idx = [];
-  for (let i = 0; i < b.l.length; i++) if (lgOf[b.l[i]] && f.side[b.s[i]] && f.hc[ahc(b.h[i])] && b.g[i] >= f.gap * 10 && grp[2](lgOf[b.l[i]].tier)) idx.push(i);
+  for (let i = 0; i < b.l.length; i++) if (lgOf[b.l[i]] && (b.n ? b.n[i] & (f.ln ? 2 : 1) : !f.ln) && f.side[b.s[i]] && f.hc[ahc(b.h[i])] && b.g[i] >= f.gap * 10 && grp[2](lgOf[b.l[i]].tier)) idx.push(i);
   const ag = pred => {
     const a = {n: 0, pl: 0, od: 0, gap: 0, sq: 0, y: YRS.map(() => ({n: 0, pl: 0}))};
     for (const i of idx) {
@@ -339,10 +339,11 @@ function viewAH() {
   cl.roi = cl.n ? cl.pl / cl.n : null;
   const pill = (lab, a) => `<span class="fact">${lab}: <b style="margin-left:4px">${a.n ? spct(a.roi) : '–'}</b>ROI · ${num(a.n)} bets · ${a.n ? units(a.pl) : '0'} units · average price <b style="margin:0 0 0 4px">${a.n ? (a.od / a.n).toFixed(2) : '–'}</b></span>`;
   const pills = all.n ? `<div class="facts">${pill('Opening prices', all)}${pill('Closing prices', cl)}${mv.n ? movePill({up: mv.up / mv.n, dn: mv.dn / mv.n}) : ''}</div>` : '<p class="note">No bets pass these filters.</p>';
-  const tb = (title, first, rows, total) => {
+  const H5 = '<th class="n">Bets</th><th class="n">EV%</th><th class="n">ROI</th><th class="n">±</th><th class="n">P/L</th>', c5 = a => cells(Object.assign({}, a, {y: []}));     // By season: no season columns (they would repeat the rows)
+  const tb = (title, first, rows, total, ny) => {
     REG[title] = Object.fromEntries(rows); if (total) REG[title][total] = () => true;
-    const body = rows.map(([lab, pred]) => { const a = ag(pred); return a.n ? `<tr data-row="${lab}" title="Show the games"><td>${lab}</td>${cells(a)}</tr>` : ''; }).join('');
-    return `<h2>${title}</h2><table data-t="${title}"><thead><tr><th>${first}</th>${HEAD()}</tr></thead><tbody>${body}${total ? `<tr class="tot" data-row="${total}" title="Show the games"><td><b>${total}</b></td>${cells(all)}</tr>` : ''}</tbody></table>`;
+    const body = rows.map(([lab, pred]) => { const a = ag(pred); return a.n ? `<tr data-row="${lab}" title="Show the games"><td>${lab}</td>${(ny ? c5 : cells)(a)}</tr>` : ''; }).join('');
+    return `<h2>${title}</h2><table data-t="${title}"><thead><tr><th>${first}</th>${ny ? H5 : HEAD()}</tr></thead><tbody>${body}${total ? `<tr class="tot" data-row="${total}" title="Show the games"><td><b>${total}</b></td>${(ny ? c5 : cells)(all)}</tr>` : ''}</tbody></table>`;
   };
   REG._ah = idx;
   const on = f.side.filter(x => x).length > 1;
@@ -350,21 +351,22 @@ function viewAH() {
   const chip = (k, v, t, o) => `<button class="chip${o ? ' on' : ''}" data-a="${k}" data-v="${v}">${t}</button>`;
   const miss = 4 * L.length - A.seasons;
   return `${PKCSS}<style>th.sortable{cursor:pointer;user-select:none;white-space:nowrap}th.sortable:hover{text-decoration:underline}</style>
-  <p class="note">The same price rule on the Asian handicap, where a bet is close to a 50-50 call. 2023-24 to ${new Date(A.to + 'T12:00:00Z').toLocaleDateString('en-GB', {day: 'numeric', month: 'long', year: 'numeric'})}, regular league games only (no play-offs), 1 unit a bet. One line a game: the handicap where the market's margin-free chance of the home side was nearest 50% at the opening. A side is bet when its best price stands ${AGAPS[0]}% or more above the market's margin-free price (EV = best price × market chance − 1). Quarter lines settle in halves: half won, half lost, or the stake back. The two pills are the same bets settled twice: at the opening price, and at the price the same side and line had at the close (the last before kick-off). <b>Closing line</b>: the share of the bets whose market chance was higher at the close than at the opening, and the share where it was lower. The tables use the opening price. The tab opens on the sides that give goals (a minus handicap): the only group that made a clear profit in every season. The Handicap filter adds the level and the plus handicaps. This is a backtest only: no handicap picks are made.</p>
+  <p class="note">The same price rule on the Asian handicap, where a bet is close to a 50-50 call. 2023-24 to ${new Date(A.to + 'T12:00:00Z').toLocaleDateString('en-GB', {day: 'numeric', month: 'long', year: 'numeric'})}, regular league games only (no play-offs), 1 unit a bet. One line a game: the handicap where the market's margin-free chance of the home side was nearest 50% at the opening. A side is bet when its best price stands ${AGAPS[0]}% or more above the market's margin-free price (EV = best price × market chance − 1). Quarter lines settle in halves: half won, half lost, or the stake back. The two pills are the same bets settled twice: at the opening price, and at the price the same side and line had at the close (the last before kick-off). <b>Closing line</b>: the share of the bets whose market chance was higher at the close than at the opening, and the share where it was lower. The tables use the opening price. The tab opens on the sides that give goals (a minus handicap): the only group that made a clear profit in every season. The Handicap filter adds the level and the plus handicaps. The Line filter changes the line taken in each game: <b>Half lines only</b> takes the half line (0.5, 1.5, 2.5…) nearest 50-50 instead, so every bet is won or lost and no stake comes back. This is a backtest only: no handicap picks are made.</p>
   <p class="note">${PRIOR}</p>
   <div class="flt"><span class="fl">EV%</span><div class="chips">${AGAPS.map(g => chip('gap', g, g + '%+', f.gap === g)).join('')}</div></div>
   <div class="flt"><span class="fl">Leagues</span><div class="chips">${GROUPS.map(([k, x]) => chip('lg', k, x, f.lg === k)).join('')}</div></div>
   <div class="flt"><span class="fl">Bets on</span><div class="chips">${ASIDES.map((x, i) => chip('side', i, x, f.side[i])).join('')}</div></div>
+  <div class="flt"><span class="fl">Line</span><div class="chips">${[['Nearest 50-50', 0], ['Half lines only: won or lost', 1]].map(([x, v]) => chip('ln', v, x, (f.ln || 0) === v)).join('')}</div></div>
   <div class="flt"><span class="fl">Handicap</span><div class="chips">${AHC.map((x, i) => chip('hc', i, x, f.hc[i])).join('')}</div></div>
   ${pills}
-  ${tb('By season', 'Season', YRS.map(y => [season(y), i => b.y[i] === y]), 'All')}
+  ${tb('By season', 'Season', YRS.map(y => [season(y), i => b.y[i] === y]), 'All', 1)}
   ${on ? tb('By side', 'Bets on', ASIDES.map((x, s) => [x, i => b.s[i] === s])) : ''}
   ${f.lg === 'all' ? tb('By league group', 'Leagues', [['Top divisions', i => lgOf[b.l[i]].tier === 1], ['Lower divisions', i => lgOf[b.l[i]].tier === 2]]) : ''}
   ${f.hc.filter(x => x).length > 1 ? tb('By handicap', 'The side bet on', AHC.map((x, k) => [x, i => ahc(b.h[i]) === k])) : ''}
-  ${f.hc[0] ? tb('By goals given', 'Handicap', [['−0.25', -1, -1], ['−0.5', -2, -2], ['−0.75', -3, -3], ['−1', -4, -4], ['−1.25 and more', -99, -5]].map(([x, lo, hi]) => [x, i => b.h[i] >= lo && b.h[i] <= hi])) : ''}
+  ${f.hc[0] ? tb('By goals given', 'Handicap', (f.ln ? [['−0.5', -2, -2], ['−1.5', -6, -6], ['−2.5 and more', -99, -10]] : [['−0.25', -1, -1], ['−0.5', -2, -2], ['−0.75', -3, -3], ['−1', -4, -4], ['−1.25 and more', -99, -5]]).map(([x, lo, hi]) => [x, i => b.h[i] >= lo && b.h[i] <= hi])) : ''}
   ${tb('By odds', 'Best price', [['Under 2.20', ob(1, 2.2)], ['2.20 to 2.29', ob(2.2, 2.3)], ['2.30 to 2.49', ob(2.3, 2.5)], ['2.50 and above', ob(2.5, 999)]])}
   ${tb('By EV%', 'EV', [[8, 10], [10, 12], [12, 14], [14, 16], [16, 999]].filter(([lo, hi]) => hi > f.gap).map(([lo, hi]) => [hi > 100 ? `${lo}% and more` : `${lo}% to ${hi}%`, band(lo, hi)]))}
-  <p class="note" style="margin-top:22px">${num(A.lined)} regular games had a handicap line at the opening; the bets are the ${num(b.l.length)} with an EV of ${AGAPS[0]}% or more. <b>EV%</b>: the average EV the bets promised. <b>±</b>: the standard error of the ROI, in points. Faded numbers rest on fewer than ${MIN} bets. Click a column heading to sort a table; <b>click any row to list the games behind it</b>.${miss > 0 ? ` Handicap prices were collected once; ${miss} of the ${4 * L.length} league seasons, all early ones of small leagues, had none and are left out.` : ''}</p>`;
+  <p class="note" style="margin-top:22px">${num(A.lined)} regular games had a handicap line at the opening; the bets are the ${num(b.n ? b.n.filter(x => x & (f.ln ? 2 : 1)).length : b.l.length)} with an EV of ${AGAPS[0]}% or more. <b>EV%</b>: the average EV the bets promised. <b>±</b>: the standard error of the ROI, in points. Faded numbers rest on fewer than ${MIN} bets. Click a column heading to sort a table; <b>click any row to list the games behind it</b>.${miss > 0 ? ` Handicap prices were collected once; ${miss} of the ${4 * L.length} league seasons, all early ones of small leagues, had none and are left out.` : ''}</p>`;
 }
 // the games behind one row of a handicap table
 function showAH(scroll) {
