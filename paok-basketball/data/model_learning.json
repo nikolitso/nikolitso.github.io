@@ -1,14 +1,14 @@
 {
- "updated": "2026-11-10T19:18:40Z",
+ "updated": "2026-11-11T01:53:39Z",
  "comps": {
   "EuroCup": {
-   "games": 1096,
+   "games": 1101,
    "lineGames": 1033,
-   "homeEdge": 1.44,
-   "totalBias": 1.17,
+   "homeEdge": 1.43,
+   "totalBias": 1.14,
    "spreadSd": 12.3,
-   "lineWeight": 0.78,
-   "lineWeightRaw": 0.78,
+   "lineWeight": 0.79,
+   "lineWeightRaw": 0.79,
    "marginGames": 1033,
    "marginWeight": 0.83,
    "marginWeightRaw": 0.83,
