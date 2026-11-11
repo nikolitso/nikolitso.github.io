@@ -226,7 +226,6 @@ def site_menu(active=""):
 def site_header(active="", home="/"):
     return f"""<header class="site-head">
   <div class="wrap bar">
-    <a class="an-home" href="/" aria-label="Back to the homepage">← Home</a>
     <a class="brand" href="{home}" aria-label="Antonis Nikolitsopoulos, home">
       <span class="mono">A<i>N</i></span>
       <span class="wordmark"><span>Antonis <em>Nikolitsopoulos</em></span><small>Trading · Sports Analytics</small></span>
@@ -255,7 +254,7 @@ def layout(title, body, path, desc, image=None, active="books"):
     full = f"{title} — Antonis Nikolitsopoulos" if title != "Books" else "Books — Book takeaways by Antonis Nikolitsopoulos"
     img = image if (image or "").startswith("http") else SITE + (image or ("/books.jpg" if active else "/og.png"))
     sub = lambda key, href, label: f'<a href="{href}"{" class=on" if active == key else ""}>{label}</a>'
-    subnav = (f'<nav class="subnav" aria-label="Books"><div class="wrap">{sub("books", BASE, "All books")}'
+    subnav = (f'<nav class="subnav" aria-label="Books"><div class="wrap"><a class="an-home" href="/" aria-label="Back to the homepage">← Home</a>{sub("books", BASE, "All books")}'
               f'{sub("authors", BASE + "authors/", "Authors")}<a href="{BASE}feed.xml">RSS</a></div></nav>') if active else ""
     return f"""<!doctype html>
 <html lang="en" data-site="books">

@@ -72,3 +72,7 @@ html[data-site="books"]{--an-accent:#6d8dff}
 /* the same button in the main site's top bar (Books, Thought Bank): left of the name */
 .site-head .bar:has(>.an-home){grid-template-columns:auto 1fr auto auto}
 @media (max-width:1060px){.site-head .bar:has(>.an-home){grid-template-columns:auto 1fr auto}}
+/* Books: the button opens the All books · Authors · RSS row, a size smaller to sit in it */
+.subnav .wrap{align-items:center}
+.subnav a.an-home{font:600 12px/1 var(--an-body);letter-spacing:.03em;color:var(--an-muted);padding:6px 11px;margin-right:.25rem}
+.subnav a.an-home:hover{color:var(--an-ink)}
