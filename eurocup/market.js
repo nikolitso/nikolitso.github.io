@@ -104,6 +104,11 @@ window.MARKET = {"updated": "2026-11-11", "list": [
 {"date": "2026-11-10", "h": "Neptunas", "a": "Slask Wroclaw", "bh": 6.5, "bt": 173.5},
 {"date": "2026-11-10", "h": "Rostock", "a": "Cedevita Olimpija", "bh": 2.5, "bt": 163.5},
 {"date": "2026-11-10", "h": "Trento", "a": "Tofas", "bh": -2.5, "bt": 172.5},
+{"date": "2026-11-11", "h": "Aris", "a": "Rigas Zelli", "bh": 16.5, "bt": 163.5},
+{"date": "2026-11-11", "h": "BC Roma", "a": "Ulm", "bh": 8.5, "bt": 186.5},
 {"date": "2026-11-11", "h": "Bahcesehir Kol.", "a": "Lietkabelis", "bh": 17.5, "bt": 161.5},
-{"date": "2026-11-11", "h": "Siauliai", "a": "Tenerife", "bh": -8.5, "bt": 167.5}
+{"date": "2026-11-11", "h": "Chemnitz", "a": "Basket Napoli", "bh": -2.5, "bt": 174.5},
+{"date": "2026-11-11", "h": "Le Mans", "a": "San Pablo Burgos", "bh": 7.5, "bt": 166.5},
+{"date": "2026-11-11", "h": "Siauliai", "a": "Tenerife", "bh": -8.5, "bt": 167.5},
+{"date": "2026-11-11", "h": "Tortona", "a": "Hapoel Jerusalem", "bh": -6.5, "bt": 165.5}
 ]};
