@@ -52,3 +52,8 @@ jobs:
                       f"Odds {s['odds']} · model {s['ours']}\nhttps://antonisnikolitsopoulos.com/handball/projections/")
               q = urllib.parse.urlencode(dict(phone=os.environ['SIGNAL_PHONE'], apikey=os.environ['SIGNAL_APIKEY'], text=text))
               print(s['home'], urllib.request.urlopen('https://signal.callmebot.com/signal/send.php?' + q, timeout=30).status)
+          # data check (extra.py): one message a day, on the 03:00 run, if any league's source is empty or missing results
+          warn = [l.split('::', 2)[2].strip() for l in open('/tmp/update.log', encoding='utf-8') if l.startswith('::warning title=Handball data check::')]
+          if warn and os.environ['SIGNAL_APIKEY'] and datetime.datetime.utcnow().hour == 1:
+              q = urllib.parse.urlencode(dict(phone=os.environ['SIGNAL_PHONE'], apikey=os.environ['SIGNAL_APIKEY'], text='Handball data check:\n' + '\n'.join(warn)))
+              print('data check', urllib.request.urlopen('https://signal.callmebot.com/signal/send.php?' + q, timeout=30).status)
