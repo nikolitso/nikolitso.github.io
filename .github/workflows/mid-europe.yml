@@ -52,7 +52,7 @@ jobs:
           line = next((l for l in open('/tmp/research.log', encoding='utf-8') if l.startswith('NEWPICKS ')), None)
           new = json.loads(line[9:]) if line and topic else []
           for s in new:
-              body = (f"{s['home']} – {s['away']}\n{s['league']} · {s['when']} (Greek time)\n"
+              body = (f"{s['home']} – {s['away']}\n{s['league']} · {s['when']}\n"
                       f"Price {s['odds']:.2f} · EV {s['ev']*100:+.0f}%"
                       + ("" if s['group'] == 'main' else "\nPrice 3.00+: followed on paper")).encode('utf-8')
               req = urllib.request.Request('https://ntfy.sh/' + topic, data=body, method='POST', headers={

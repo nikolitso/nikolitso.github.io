@@ -61,7 +61,7 @@ jobs:
           line = next((l for l in open('/tmp/wlive.log', encoding='utf-8') if l.startswith('NEWPICKS ')), None)
           new = json.loads(line[9:]) if line and topic else []
           for s in new:
-              body = (f"{s['home']} – {s['away']}\n{s['league']} · {s['when']} (Greek time)\n"
+              body = (f"{s['home']} – {s['away']}\n{s['league']} · {s['when']}\n"
                       f"Price {s['px']:.2f} · edge {s['edge']*100:+.0f}% · model {s['mu']}").encode('utf-8')
               req = urllib.request.Request('https://ntfy.sh/' + topic, data=body, method='POST', headers={
                   'Title': f"Women's basketball pick: {s['side']} {s['line']}", 'Tags': 'basketball',

@@ -58,7 +58,7 @@ jobs:
           for s, kind, link in (picks if topic else []):
               try:
                   day = datetime.date.fromisoformat(s['date']).strftime('%a %d %b')
-                  body = (f"{team(s['home'])} – {team(s['away'])}\n{name(s['leagueName'])} · {day} {s['time'] or ''} (Greek time)\n"
+                  body = (f"{team(s['home'])} – {team(s['away'])}\n{name(s['leagueName'])} · {day} {s['time'] or ''}\n"
                           f"Odds {s['odds']} · model {s['ours']}\n{link}")
                   print(s['home'], push(f"{kind}: {s['side'].title()} {s['line']}", body, link))
               except Exception as e:

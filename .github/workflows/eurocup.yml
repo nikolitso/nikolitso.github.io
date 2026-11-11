@@ -48,7 +48,7 @@ jobs:
           new = json.loads(line[9:]) if line and topic else []
           for k in new:
               price = f"Price {k['pr']:.2f}" if k['logged'] else 'No price read yet'
-              body = (f"{k['h']} – {k['a']}\nTip-off {k['date'][8:10]}/{k['date'][5:7]} {k['time']} (Greek time)\n"
+              body = (f"{k['h']} – {k['a']}\nTip-off {k['date'][8:10]}/{k['date'][5:7]} {k['time']}\n"
                       f"Handicap: {k['bet']}\n{price} · model edge {k['gap']:.1f} pts").encode('utf-8')
               req = urllib.request.Request('https://ntfy.sh/' + topic, data=body, method='POST', headers={
                   'Title': enc(f"EuroCup pick: {k['bet']}"), 'Tags': 'basketball',

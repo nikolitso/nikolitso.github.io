@@ -52,7 +52,7 @@ jobs:
           for b in new:
               bet = '1X2: ' + b['side'] if b['stat'] == 'result' else f"{b['label']} {b['side'].capitalize()} {b['line']:g}"
               when = f"{b['kickoff'][8:10]}/{b['kickoff'][5:7]} {b['kickoff'][11:16]}"
-              body = (f"{b['home']} – {b['away']}\nKick-off {when} (Greek time)\n{bet}\n"
+              body = (f"{b['home']} – {b['away']}\nKick-off {when}\n{bet}\n"
                       f"Price {b['odds']:.2f} · edge {b['ev']*100:+.0f}%").encode('utf-8')
               req = urllib.request.Request('https://ntfy.sh/' + topic, data=body, method='POST', headers={
                   'Title': enc(f"Super League pick: {bet}"), 'Tags': 'soccer',
