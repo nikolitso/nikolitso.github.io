@@ -1,7 +1,7 @@
 {
  "competition": "BKT EuroCup",
  "season": "2026-27",
- "updated": "2026-11-11T14:56:08Z",
+ "updated": "2026-11-11T19:11:26Z",
  "source": "https://www.euroleaguebasketball.net/eurocup/",
  "group": "Group D",
  "staff": [
@@ -2843,11 +2843,11 @@
    "team": "Bahcesehir",
    "crest": "https://media-cdn.incrowdsports.com/1d3274d8-da86-4d21-9e97-6810ab88babe.png",
    "paok": false,
-   "gp": 6,
-   "w": 5,
+   "gp": 7,
+   "w": 6,
    "l": 1,
-   "pf": 548,
-   "pa": 476
+   "pf": 647,
+   "pa": 537
   },
   {
    "pos": 2,
@@ -2887,11 +2887,11 @@
    "team": "Lietkabelis",
    "crest": "https://media-cdn.cortextech.io/ffcb6e37-31f4-48f6-91c2-a8c9a6f791a9.png",
    "paok": false,
-   "gp": 6,
+   "gp": 7,
    "w": 3,
-   "l": 3,
-   "pf": 455,
-   "pa": 473
+   "l": 4,
+   "pf": 516,
+   "pa": 572
   },
   {
    "pos": 6,

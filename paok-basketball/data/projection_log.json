@@ -2281,7 +2281,7 @@
   "date": "2026-11-14T15:30:00Z",
   "opp": "Karditsa",
   "home": false,
-  "saved": "2026-11-11T14:59:49Z",
+  "saved": "2026-11-11T19:15:21Z",
   "paok": 81.5,
   "oppScore": 75.8,
   "winProb": 72,
@@ -2566,36 +2566,36 @@
   "date": "2026-11-18T19:30:00Z",
   "opp": "Manresa",
   "home": false,
-  "saved": "2026-11-11T14:59:49Z",
-  "paok": 82.5,
-  "oppScore": 87.5,
+  "saved": "2026-11-11T19:15:21Z",
+  "paok": 82.6,
+  "oppScore": 87.6,
   "winProb": 34,
   "lineupSource": "manual",
   "teamStats": {
    "pts": {
-    "paok": 82.5,
-    "opp": 87.5,
-    "total": 170.0
+    "paok": 82.6,
+    "opp": 87.6,
+    "total": 170.2
    },
    "fg2m": {
     "paok": 20.9,
     "opp": 22.2,
-    "total": 43.1
+    "total": 43.2
    },
    "fg3m": {
     "paok": 8.5,
-    "opp": 9.0,
+    "opp": 9.1,
     "total": 17.5
    },
    "ftm": {
-    "paok": 15.3,
-    "opp": 15.9,
-    "total": 31.2
+    "paok": 15.4,
+    "opp": 16.0,
+    "total": 31.3
    },
    "ast": {
-    "paok": 16.1,
+    "paok": 16.2,
     "opp": 19.1,
-    "total": 35.2
+    "total": 35.3
    },
    "oreb": {
     "paok": 11.1,
@@ -2618,7 +2618,7 @@
     "total": 67.4
    }
   },
-  "modelTotal": 168.8,
+  "modelTotal": 169.0,
   "line": null,
   "modelMargin": -5.0,
   "hcp": null,
@@ -2628,7 +2628,7 @@
      "name": "Kyle Alexander",
      "no": "8",
      "min": 20,
-     "pts": 8.2,
+     "pts": 8.3,
      "reb": 5.7,
      "ast": 0.9,
      "pir": 13.7
@@ -2673,7 +2673,7 @@
      "name": "Raiquan Gray",
      "no": "0",
      "min": 22,
-     "pts": 4.8,
+     "pts": 4.9,
      "reb": 2.4,
      "ast": 1.9,
      "pir": 6.2
@@ -2718,7 +2718,7 @@
      "name": "Dimitrios Kaklamanakis",
      "no": "14",
      "min": 7,
-     "pts": 2.5,
+     "pts": 2.6,
      "reb": 1.0,
      "ast": 0.5,
      "pir": 2.7
@@ -2774,7 +2774,7 @@
      "name": "Jd Notae",
      "no": "13",
      "min": 21,
-     "pts": 12.2,
+     "pts": 12.3,
      "reb": 2.5,
      "ast": 3.1,
      "pir": 11.1
@@ -2783,7 +2783,7 @@
      "name": "Ferran Bassas",
      "no": "6",
      "min": 16,
-     "pts": 7.2,
+     "pts": 7.3,
      "reb": 1.6,
      "ast": 3.6,
      "pir": 9.3

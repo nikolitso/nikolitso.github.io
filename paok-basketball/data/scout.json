@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-11T14:59:49Z",
+ "updated": "2026-11-11T19:15:21Z",
  "reports": [
   {
    "comp": "EuroCup",
@@ -101,49 +101,49 @@
     "drebPct": 66.2
    },
    "league": {
-    "pts": 83.2,
-    "fg2m": 21.2,
-    "fg2a": 37.8,
+    "pts": 83.1,
+    "fg2m": 21.1,
+    "fg2a": 37.7,
     "fg3m": 8.4,
-    "fg3a": 25.2,
-    "ftm": 15.6,
-    "fta": 20.7,
+    "fg3a": 25.0,
+    "ftm": 15.7,
+    "fta": 20.9,
     "oreb": 11.2,
-    "dreb": 23.5,
-    "reb": 34.7,
+    "dreb": 23.4,
+    "reb": 34.6,
     "ast": 17.2,
-    "stl": 7.7,
-    "tov": 14.9,
-    "blk": 2.7,
-    "pf": 22.6,
-    "pir": 89.0,
-    "gp": 52,
-    "w": 26,
-    "allowed": 83.2,
+    "stl": 7.8,
+    "tov": 15.1,
+    "blk": 2.6,
+    "pf": 22.7,
+    "pir": 88.8,
+    "gp": 54,
+    "w": 27,
+    "allowed": 83.1,
     "fgp": 47.0,
-    "fg2p": 56.2,
-    "fg3p": 33.3,
-    "ftp": 75.5,
+    "fg2p": 56.1,
+    "fg3p": 33.4,
+    "ftp": 75.3,
     "opp_fgp": 47.0,
     "poss": 75.8,
     "pace": 75.5,
-    "ortg": 109.8,
-    "drtg": 109.8,
+    "ortg": 109.6,
+    "drtg": 109.6,
     "efg": 53.7,
-    "ts": 57.7,
-    "tovPct": 19.7,
-    "orebPct": 32.3,
-    "ftr": 24.8,
-    "astPct": 57.9,
-    "par3": 40.0,
-    "fgm": 29.6,
-    "fga": 63.0,
+    "ts": 57.8,
+    "tovPct": 20.0,
+    "orebPct": 32.5,
+    "ftr": 25.1,
+    "astPct": 58.2,
+    "par3": 39.9,
+    "fgm": 29.5,
+    "fga": 62.7,
     "opp_efg": 53.7,
-    "forcedTov": 19.7,
-    "drebPct": 67.7,
-    "opp_ftr": 24.8,
+    "forcedTov": 20.0,
+    "drebPct": 67.5,
+    "opp_ftr": 25.1,
     "rebPct": 50.0,
-    "l": 26,
+    "l": 27,
     "net": 0.0
    },
    "impact": [
@@ -978,13 +978,13 @@
    ],
    "projection": {
     "paok": {
-     "score": 82.5,
+     "score": 82.6,
      "players": [
       {
        "name": "Kyle Alexander",
        "no": "8",
        "min": 20,
-       "pts": 8.2,
+       "pts": 8.3,
        "reb": 5.7,
        "ast": 0.9,
        "pir": 13.7
@@ -1029,7 +1029,7 @@
        "name": "Raiquan Gray",
        "no": "0",
        "min": 22,
-       "pts": 4.8,
+       "pts": 4.9,
        "reb": 2.4,
        "ast": 1.9,
        "pir": 6.2
@@ -1074,7 +1074,7 @@
        "name": "Dimitrios Kaklamanakis",
        "no": "14",
        "min": 7,
-       "pts": 2.5,
+       "pts": 2.6,
        "reb": 1.0,
        "ast": 0.5,
        "pir": 2.7
@@ -1095,7 +1095,7 @@
      "pace": 76.1
     },
     "opp": {
-     "score": 87.5,
+     "score": 87.6,
      "players": [
       {
        "name": "Nick Ongenda",
@@ -1137,7 +1137,7 @@
        "name": "Jd Notae",
        "no": "13",
        "min": 21,
-       "pts": 12.2,
+       "pts": 12.3,
        "reb": 2.5,
        "ast": 3.1,
        "pir": 11.1
@@ -1146,7 +1146,7 @@
        "name": "Ferran Bassas",
        "no": "6",
        "min": 16,
-       "pts": 7.2,
+       "pts": 7.3,
        "reb": 1.6,
        "ast": 3.6,
        "pir": 9.3
@@ -1213,16 +1213,16 @@
     "pace": 76.1,
     "lineupSource": "manual",
     "note": "PAOK without Osman, who is out for one to two months.",
-    "modelTotal": 168.8,
+    "modelTotal": 169.0,
     "line": null,
     "modelMargin": -5.0,
     "hcp": null,
     "learned": {
-     "games": 1101,
+     "games": 1103,
      "lineGames": 1033,
-     "homeEdge": 1.43,
-     "totalBias": 1.14,
-     "spreadSd": 12.3,
+     "homeEdge": 1.44,
+     "totalBias": 1.12,
+     "spreadSd": 12.2,
      "lineWeight": 0.79,
      "lineWeightRaw": 0.79,
      "marginGames": 1033,
@@ -1232,29 +1232,29 @@
     },
     "teamStats": {
      "pts": {
-      "paok": 82.5,
-      "opp": 87.5,
-      "total": 170.0
+      "paok": 82.6,
+      "opp": 87.6,
+      "total": 170.2
      },
      "fg2m": {
       "paok": 20.9,
       "opp": 22.2,
-      "total": 43.1
+      "total": 43.2
      },
      "fg3m": {
       "paok": 8.5,
-      "opp": 9.0,
+      "opp": 9.1,
       "total": 17.5
      },
      "ftm": {
-      "paok": 15.3,
-      "opp": 15.9,
-      "total": 31.2
+      "paok": 15.4,
+      "opp": 16.0,
+      "total": 31.3
      },
      "ast": {
-      "paok": 16.1,
+      "paok": 16.2,
       "opp": 19.1,
-      "total": 35.2
+      "total": 35.3
      },
      "oreb": {
       "paok": 11.1,
