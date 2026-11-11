@@ -49,6 +49,29 @@ jobs:
           git commit -q -m "Women's basketball totals: refresh $(TZ=Europe/Athens date '+%Y-%m-%d %H:%M')"
           for i in 1 2 3 4 5; do git pull -q --rebase && git push -q && exit 0; sleep $((RANDOM % 10 + 5)); done
           exit 1
+      - name: Message new picks
+        # an ntfy push for every new record pick (11 Nov 2026), sent once the page has it; the topic is the NTFY_TOPIC secret
+        if: ${{ success() }}
+        env:
+          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
+        shell: python
+        run: |
+          import json, os, time, urllib.request
+          topic = os.environ.get('NTFY_TOPIC', '').strip()
+          line = next((l for l in open('/tmp/wlive.log', encoding='utf-8') if l.startswith('NEWPICKS ')), None)
+          new = json.loads(line[9:]) if line and topic else []
+          for s in new:
+              body = (f"{s['home']} – {s['away']}\n{s['league']} · {s['when']} (Greek time)\n"
+                      f"Price {s['px']:.2f} · edge {s['edge']*100:+.0f}% · model {s['mu']}").encode('utf-8')
+              req = urllib.request.Request('https://ntfy.sh/' + topic, data=body, method='POST', headers={
+                  'Title': f"Women's basketball pick: {s['side']} {s['line']}", 'Tags': 'basketball',
+                  'Click': 'https://antonisnikolitsopoulos.com/basketball/women/#view=livetest'})
+              try:
+                  print(s['home'], urllib.request.urlopen(req, timeout=30).status)
+              except Exception as e:
+                  print(s['home'], 'not sent', e)
+              time.sleep(2)
+          print(len(new), 'new picks', '' if topic else '(no NTFY_TOPIC secret: nothing sent)')
       - name: Save the data
         working-directory: _bs
         run: |
@@ -64,16 +87,20 @@ jobs:
         # One message a day, on the first run after 05:00 UTC (the 6-hour backup runs at :37 past 0, 6, 12, 18, so it is not in that hour)
         if: ${{ always() }}
         env:
-          SIGNAL_PHONE: ${{ secrets.SIGNAL_PHONE }}
-          SIGNAL_APIKEY: ${{ secrets.SIGNAL_APIKEY }}
+          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
         shell: python
         run: |
-          import os, datetime, urllib.parse, urllib.request
+          import os, datetime, urllib.request
           try:
               warn = [l.split('::', 2)[2].strip() for l in open('/tmp/wlive.log', encoding='utf-8') if l.startswith("::warning title=Women's totals data check::")]
           except FileNotFoundError:
               warn = []
           print('\n'.join(warn) or 'data check: all fine')
-          if warn and os.environ['SIGNAL_APIKEY'] and datetime.datetime.now(datetime.UTC).hour == 5:
-              q = urllib.parse.urlencode(dict(phone=os.environ['SIGNAL_PHONE'], apikey=os.environ['SIGNAL_APIKEY'], text="Women's basketball totals data check:\n" + '\n'.join(warn)))
-              print('sent', urllib.request.urlopen('https://signal.callmebot.com/signal/send.php?' + q, timeout=30).status)
+          topic = os.environ.get('NTFY_TOPIC', '').strip()
+          if warn and topic and datetime.datetime.now(datetime.UTC).hour == 5:
+              req = urllib.request.Request('https://ntfy.sh/' + topic, data='\n'.join(warn).encode('utf-8'), method='POST', headers={
+                  'Title': "Women's basketball totals data check", 'Tags': 'warning'})
+              try:
+                  print('sent', urllib.request.urlopen(req, timeout=30).status)
+              except Exception as e:
+                  print('not sent', e)
