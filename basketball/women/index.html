@@ -197,7 +197,7 @@ a.tile:hover{border-color:var(--gold)}
   <div class="chips" id="chips"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=w57"></script>
+<script src="data.js?v=w58"></script>
 <script src="live.js"></script>
 <script>
 const $ = id => document.getElementById(id);
@@ -366,9 +366,8 @@ function btBody(BT, S, pool, leagues){
   const lk = BT.filter(x => x.luck != null);
   h += `<h2>By 3-point luck</h2>` + btTable('3-point luck', [['Under −1.5', -99, -1.5], ['−1.5 to 0', -1.5, 0], ['0 to +1.5', 0, 1.5], ['+1.5 or more', 1.5, 99]].map(([label, lo, hi]) => [label, lk.filter(x => x.luck >= lo && x.luck < hi)]).concat([['No luck figure', BT.filter(x => x.luck == null)]]),
     '3-point luck: in the two teams\' games so far that season, the threes made minus what the league\'s 3-point rate gives on the same attempts, in points per game, from earlier games only. It is not a rule here: on women\'s games the picks with hot shooting (+1.5 or more) did better than the rest, the opposite of the men\'s leagues, so skipping them, as the overs page does, would have cut the profit. Picks with no luck figure come from games without 3-point data.');
-  const SE = skipped('skipped_edge');
-  h += `<h2>By edge</h2>` + btTable('Edge', [[`0% to ${EP / 2}%${SKIPPED}`, SE.filter(x => x.edge <= EP / 200)], [`${EP / 2}% to ${EP}%${SKIPPED}`, SE.filter(x => x.edge > EP / 200)], ...qbands(BT, 'edge', NB, x => (x * 100).toFixed(1) + '%')],
-    `Edge: the model's chance of the over × the price − 1, at the opening line. The first two rows are the games the rule skips: every other rule met, with an edge above 0 but not above ${EP}%. They are not in any other figure on this page. The picks are in four bands with a quarter of the picks each.`);
+  h += `<h2>By edge</h2>` + btTable('Edge', qbands(BT, 'edge', NB, x => (x * 100).toFixed(1) + '%'),
+    `Edge: the model's chance of the over × the price − 1, at the opening line. The picks, all above the ${EP}% bar, in four bands with a quarter of the picks each.`);
   h += `<h2>By line</h2>` + btTable('Line band', [['Under 130', 0, 130], ['130–139.5', 130, 140], ['140 and over', 140, 999]].map(([label, lo, hi]) => [label, BT.filter(x => x.line >= lo && x.line < hi)]), 'The opening line in three bands.');
   const SG = skipped('skipped_gap');
   h += `<h2>By line difference</h2>` + btTable('Difference', [[`Under 4${SKIPPED}`, SG.filter(x => x.g0 < 4)], ['4–5.9', BT.filter(x => x.g0 < 6)], ['6–7.9', BT.filter(x => x.g0 >= 6 && x.g0 < 8)], ['8–11.9', BT.filter(x => x.g0 >= 8 && x.g0 < 12)], ['12 and over', BT.filter(x => x.g0 >= 12)]],
