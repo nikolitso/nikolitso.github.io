@@ -86,8 +86,9 @@ window.ODDS = {"updated": "2026-11-11", "source": "pre-game lines, earlier ones 
   {"h": "Vienna Basket", "a": "Nancy", "sp": 4.5, "spH": 1.8, "spA": 1.87, "tot": 159.5, "ov": 1.83, "un": 1.83, "mlH": 2.35, "mlA": 1.5},
   {"h": "Wurzburg", "a": "AEK Larnaca", "sp": -12.5, "spH": 1.83, "spA": 1.83, "tot": 162.5, "ov": 1.83, "un": 1.85, "mlH": 1.14, "mlA": 4.75},
   {"h": "Fribourg Olympic", "a": "CSM Oradea", "sp": 6.5, "spH": 1.85, "spA": 1.83, "tot": 165.5, "ov": 1.85, "un": 1.83, "mlH": 2.85, "mlA": 1.35},
-  {"h": "Geneva Lions", "a": "Absheron Lions", "sp": -10.5, "spH": 1.83, "spA": 1.85, "tot": 174.5, "ov": 1.83, "un": 1.83, "mlH": 1.2, "mlA": 3.9},
+  {"h": "Gence", "a": "Esenler Erokspor", "sp": 15.5, "spH": 1.83, "spA": 1.85, "tot": 163.5, "ov": 1.83, "un": 1.83, "mlH": 6.25, "mlA": 1.08},
+  {"h": "Geneva Lions", "a": "Absheron Lions", "sp": -10.5, "spH": 1.85, "spA": 1.87, "tot": 174.5, "ov": 1.83, "un": 1.83, "mlH": 1.2, "mlA": 3.9},
   {"h": "Oostende", "a": "Levice", "sp": -9.5, "spH": 1.78, "spA": 1.9, "tot": 160.5, "ov": 1.83, "un": 1.83, "mlH": 1.2, "mlA": 3.9},
-  {"h": "Benfica", "a": "Bakken Bears", "sp": -6.5, "spH": 1.85, "spA": 1.87, "tot": 170.5, "ov": 1.83, "un": 1.83, "mlH": 1.36, "mlA": 2.85},
-  {"h": "Gence", "a": "Esenler Erokspor", "sp": 15.5, "spH": 1.83, "spA": 1.85, "tot": 163.5, "ov": 1.83, "un": 1.83, "mlH": 6.25, "mlA": 1.08}
+  {"h": "Benfica", "a": "Bakken Bears", "sp": -5.5, "spH": 1.83, "spA": 1.83, "tot": 172.5, "ov": 1.85, "un": 1.83, "mlH": 1.42, "mlA": 2.6},
+  {"h": "Parnu", "a": "Keravnos", "sp": 3.5, "spH": 1.83, "spA": 1.85, "tot": 157.5, "ov": 1.85, "un": 1.83, "mlH": 2.25, "mlA": 1.55}
 ]};
