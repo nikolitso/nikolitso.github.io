@@ -8,6 +8,8 @@ name: Site · Football Research
 on:
   schedule:
     - cron: "23 * * * *"   # every hour (user, 10 Nov 2026); a run takes about 35 minutes
+    # 11 Nov 2026: GitHub drops most of these (one scheduled run in 6 hours). For true hourly runs an outside timer
+    # must start the workflow through the API (workflow_dispatch), as for basketball-overs.yml.
   workflow_dispatch:
   push:
     branches: [main]
