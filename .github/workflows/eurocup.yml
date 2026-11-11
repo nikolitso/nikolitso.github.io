@@ -31,3 +31,9 @@ jobs:
           pages: eurocup
           label: EuroCup
           token: ${{ secrets.SITES_TOKEN }}
+      # after publishing: fail the run (GitHub e-mails it) when a line near tip-off is missing or old, or a result is missing
+      - name: Stale-data check
+        env:
+          TZ: Europe/Athens
+          PYTHONIOENCODING: utf-8
+        run: python -u _bs/eurocup/fresh_check.py eurocup

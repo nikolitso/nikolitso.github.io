@@ -160,6 +160,7 @@ select.peer:focus{outline:2px solid var(--gold)}
 .pjintro ul{margin:8px 0 10px;padding-left:18px}.pjintro li{margin:3px 0}
 .pjintro .warn{font-size:15px;border-top:1px solid var(--line);padding-top:10px;margin-top:6px}
 .pjintro .warn{margin-top:10px}
+.stale{background:var(--panel);border:1px solid var(--gold);border-radius:8px;padding:10px 12px;margin:0 0 14px;font-size:15px}
 .pjintro details{margin-top:8px}.pjintro summary{cursor:pointer;color:var(--gold);font:500 13px var(--mono)}
 .pjgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:14px}
 .pjc{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px 12px;scroll-margin-top:16px}
@@ -669,7 +670,8 @@ function pjCard(g){
   const bh = o ? o.bh : null, pb = o ? phi(o.bh / PROJ.spread) : null;
   const fav = (v, h, a) => v > 0 ? h : a;
   const winner = ph => `<b class="nm" title="${esc(fav(ph - 0.5, g.h, g.a))}">${esc(fav(ph - 0.5, g.h, g.a))}</b>${pct(Math.max(ph, 1 - ph))}`;
-  const bookHcp = o ? lineName(g, bh) : '–';
+  const age = o && o.at ? amin(athens(Date.now())) - amin(o.at) : 0, soon = amin(g.when) - amin(athens(Date.now())) < 24 * 3600e3;
+  const bookHcp = o ? lineName(g, bh) + (soon && age > LINE_OLD ? ` <span class="tag l" title="Last read ${esc(o.at)}: the latest update found no line for this game">read ${agoH(age)} ago</span>` : '') : '–';
   const gapPill = gap => `<span class="gp${Math.abs(gap) >= gapMin ? ' big' : ''}" title="How far the model is from the market's line">${Math.abs(gap).toFixed(1)} pts apart</span>`;
   const leans = [];
   if (o){
@@ -740,7 +742,7 @@ function renderProjections(){
       ${agree(o ? g.mh - bh : null, xh && xa ? xh.vsS - xa.vsS : null, okS, 'home − away vs line', xh && xa ? `${g.h} ${sgn(xh.vsS)} (${xh.n} games), ${g.a} ${sgn(xa.vsS)} (${xa.n} games). ` : '').replace('class="n ', 'class="n gap ')}
       <td class="tag">${out}</td></tr>`;
   };
-  box.innerHTML = pjModeBar() + `<div class="note" style="margin-bottom:14px"><b>The model rates every club from this season's results</b>, with older games counting less, starting from last season's rating scaled by how much of the roster stayed (new clubs start a little below average). Past results are corrected for the players each side was missing, and tonight's absences come off the club (the <b>Out</b> column, from the injury list, impact as on the Rosters tab; a handicap marked * includes them). Home advantage ${sgn(P.hca)}.
+  box.innerHTML = pjModeBar() + staleNote() + `<div class="note" style="margin-bottom:14px"><b>The model rates every club from this season's results</b>, with older games counting less, starting from last season's rating scaled by how much of the roster stayed (new clubs start a little below average). Past results are corrected for the players each side was missing, and tonight's absences come off the club (the <b>Out</b> column, from the injury list, impact as on the Rosters tab; a handicap marked * includes them). Home advantage ${sgn(P.hca)}.
       It never looks at the market: <b>Model − market</b> is where the two disagree. <b>Vs market</b> shows how each club has done against the market's lines this season (as on the Market Analysis tab): it is home vs line − away vs line; green when it points the same way as Model − market (the market record backs the model), red when it points the other way; in colour once both clubs have ${MK_MIN} games. Backtested on 2023-24 to 2025-26 (451 games with a line): the market was more accurate on average (miss 10.4 points against 10.8), and games 5+ points apart went 54–44 for the model's side, too few to prove an edge.</div>
 ` +
     Object.entries(days).map(([d, list]) => `<h2>${dayName(d)} <span class="tag">${esc(list[0].round)}</span></h2>
@@ -755,6 +757,33 @@ function bindPj(box){
   box.querySelectorAll('[data-go]').forEach(a => a.onclick = e => { e.preventDefault(); setView(a.dataset.go); sync(); window.scrollTo({top: 0}); });
 }
 // the game cards: what the model expects, next to the market, in plain words
+// ---------- Stale data: the checks of fresh_check.py, run in the browser too, so a stopped update shows as well
+const amin = s => Date.parse(s.slice(0, 16).replace(' ', 'T') + ':00Z');     // Athens time "YYYY-MM-DD HH:MM" -> comparable ms
+const agoH = ms => { const h = Math.round(ms / 3600e3); return h < 48 ? `${h} h` : `${Math.round(h / 24)} days`; };
+const LINE_OLD = 12 * 3600e3;                                                  // a line read longer ago than this before tip-off is old
+function staleNote(){
+  const now = amin(athens(Date.now())), out = [], P = window.PROJ;
+  if (P){
+    if (now - amin(P.updated) > 30 * 3600e3 && P.list.some(g => amin(g.when) - now < 24 * 3600e3))
+      out.push(`the last update ran ${agoH(now - amin(P.updated))} ago`);
+    for (const g of P.list){
+      const t = amin(g.when), o = BOOK[g.h + '|' + g.a];
+      if (t <= now || t - now > LINE_OLD) continue;
+      if (!o) out.push(`${g.h} – ${g.a} has no line yet`);
+      else if (o.at && now - amin(o.at) > LINE_OLD) out.push(`the ${g.h} – ${g.a} line was read ${agoH(now - amin(o.at))} ago`);
+    }
+  }
+  const miss = ((window.ARCHIVE && ARCHIVE.list) || []).filter(g => now - amin(g.when) > 36 * 3600e3 && !arResult(g.when.slice(0, 10), g.h, g.a)).length;
+  if (miss) out.push(`${miss} game${miss === 1 ? '' : 's'} played over a day and a half ago still ${miss === 1 ? 'has' : 'have'} no result`);
+  return out.length ? `<div class="stale"><b>Data may be out of date:</b> ${esc(out.join('; '))}. Check the current line before betting.</div>` : '';
+}
+// the pick rule on past seasons, walk-forward (rule_backtest.py in the pipeline): each game sees only earlier games of
+// its season, the model at today's settings; settled at the one stored line per game at 1.87 (no prices or times stored)
+const PICK_BT = {games: 451, seasons: ['2023-24', '2024-25', '2025-26'], dd: 3.13, run: 3, parts: [
+  ['Market edge alone', [[5, 10], [44, 42], [26, 36]]],
+  [`Model edge alone (${6}+ points)`, [[3, 2], [8, 13], [24, 18]]],
+  ['Market edge + model edge', [[0, 1], [1, 3], [2, 1]]],
+  ['The full rule (+ club rating)', [[0, 1], [1, 2], [2, 1]]]]};
 // ---------- Picks: every game of the Archive data from PICKS_FROM that met the rule, on what was known before its day.
 // A pick follows the latest line until tip-off, is frozen with the game there, and is settled when the result comes in.
 const PICKS_FROM = '2026-11-04', PICK_PRICE = 1.87;              // PICK_PRICE: counted if no price was logged
@@ -807,13 +836,26 @@ function renderPicks(){
   const vs = p => p.clv === undefined ? '<td class="n tag">–</td>' : `<td class="n ${cls(p.clv)}"><b>${sgn(p.clv)}</b></td>`;
   const firstLine = p => p.line0 === undefined ? '–' : `${esc(p.line0)} <span class="tag" title="First became a pick">${fmtDate(p.firstAt.slice(0, 10)).slice(0, 5)}</span>`;
   const closed = [...all, ...all.dropped].filter(p => p.clv !== undefined && started(p)), clvAvg = closed.length ? closed.reduce((t, p) => t + p.clv, 0) / closed.length : 0;
-  box.innerHTML = `<div class="note" style="margin-bottom:14px"><b>A pick needs everything in place:</b> a market edge and a model edge (${PJ_EDGE}+ points from the line) on the same side, and the club rating must not disagree. Equal stakes at the logged price. ROI = profit ÷ total staked on won and lost picks; pushes are left out. A pick follows the latest line until tip-off, so it can appear or drop out as the line moves; then it is frozen and settled from the result. <b>Vs close</b> = points the line moved towards the pick between the first time the game became a pick and the last line read before tip-off: above 0 beat the close, the earliest sign of a real edge, long before the record means anything. The average counts picks that dropped out too, because a line moving the pick's way can remove the pick. The record starts on ${fmtDate(PICKS_FROM)}, the day the rule was set, and it is too early to read anything into it.</div>
+  const btRoi = (w, l) => (w * (PICK_PRICE - 1) - l) / (w + l), btPct = v => (v > 0 ? '+' : v < 0 ? '−' : '') + Math.abs(v * 100).toFixed(1) + '%';
+  const btSum = r => r.reduce((t, x) => [t[0] + x[0], t[1] + x[1]], [0, 0]), full = btSum(PICK_BT.parts[3][1]), fr = btRoi(...full);
+  const backtest = `<h2>The rule on past seasons</h2>
+    <div class="metrics">
+      ${card('Picks', full[0] + full[1], `in 3 seasons, ${PICK_BT.games} games with a line`)}
+      ${card('Record', `${full[0]}–${full[1]}`, 'won – lost')}
+      ${card('ROI', `<span class="${cls(fr)}">${btPct(fr)}</span>`, `at ${PICK_PRICE.toFixed(2)}`)}
+      ${card('Worst drop', `<span class="l">−${PICK_BT.dd.toFixed(1)}</span>`, `units; longest losing run ${PICK_BT.run}`)}
+    </div>
+    <div class="scroll"><table class="fx pjpk"><tr><th>Part of the rule</th>${PICK_BT.seasons.map(x => `<th class="n">${x}</th>`).join('')}<th class="n">All</th><th class="n">ROI</th></tr>` +
+      PICK_BT.parts.map(([name, r]) => { const t = btSum(r), v = btRoi(...t); return `<tr><td>${name}</td>${r.map(x => `<td class="n">${x[0]}–${x[1]}</td>`).join('')}<td class="n"><b>${t[0]}–${t[1]}</b></td><td class="n ${cls(v)}"><b>${btPct(v)}</b></td></tr>`; }).join('') +
+    `</table></div>
+    <div class="note" style="margin:10px 0 4px"><b>No edge shown.</b> The rule found only ${full[0] + full[1]} picks in three seasons, far too few to judge on their own, and its market-edge part lost when bet alone: a kind of game that had covered 54%+ so far did not keep doing it. The model edge alone was about even. Walk-forward: each game uses only the games before it in its season, with the model at today's settings. Settled at the one line stored for each past game at ${PICK_PRICE.toFixed(2)}: no prices or times were stored then, so this test can't be split into opening and closing lines. The model's absences here come from the box scores (who actually sat out); live picks only know the injury list.</div>`;
+  box.innerHTML = staleNote() + `<div class="note" style="margin-bottom:14px"><b>A pick needs everything in place:</b> a market edge and a model edge (${PJ_EDGE}+ points from the line) on the same side, and the club rating must not disagree. Equal stakes at the logged price. ROI = profit ÷ total staked on won and lost picks; pushes are left out. A pick follows the latest line until tip-off, so it can appear or drop out as the line moves; then it is frozen and settled from the result. <b>Vs close</b> = points the line moved towards the pick between the first time the game became a pick and the last line read before tip-off: above 0 beat the close, the earliest sign of a real edge, long before the record means anything. The average counts picks that dropped out too, because a line moving the pick's way can remove the pick. The record starts on ${fmtDate(PICKS_FROM)}, the day the rule was set, and it is too early to read anything into it.</div>
     <div class="metrics">
       ${card('Settled picks', done.length, `${open.length} still to play`)}
       ${card('Record', done.length ? `${w}–${l}${pu ? `<span class="tag">–${pu}</span>` : ''}` : '–', 'won – lost' + (pu ? ' – push' : ''))}
       ${card('Hit rate', w + l ? Math.round(w / (w + l) * 100) + '%' : '–', 'makes a profit from about 54%')}
       ${card('Vs close', closed.length ? `<span class="${cls(clvAvg)}">${sgn(clvAvg)}</span>` : '–', `points a pick, ${closed.length} pick${closed.length === 1 ? '' : 's'}`)}
-    </div>
+    </div>${backtest}
     <h2>Open picks</h2>` + (open.length ? `<div class="scroll"><table class="fx pjpk"><tr><th class="n">Tip-off</th><th>Pick</th><th>Game</th><th class="n">Price</th><th class="n">First line</th><th>Market edge</th><th class="n">Model edge</th><th>Club rating</th></tr>` +
       open.map(p => `<tr><td class="n">${when(p)}</td><td><b class="hcp">${esc(p.bet)}</b></td><td>${esc(p.h)} – ${esc(p.a)}</td><td class="n">${price(p)}</td><td class="n">${firstLine(p)}</td><td>${esc(p.market)}</td><td class="n">${p.gap.toFixed(1)} pts</td><td>${esc(p.club)}</td></tr>`).join('') + '</table></div>'
       : '<div class="empty">No open picks right now. A pick appears here as soon as a game has everything in place.</div>') +
@@ -850,9 +892,9 @@ function renderPjCards(P){
   const days = {};
   for (const g of P.list) (days[g.when.slice(0, 10)] ||= []).push(g);
   const picks = P.list.map(pjPick).filter(Boolean);
-  box.innerHTML = pjModeBar() + `<div class="pjintro"><h3>What to expect this week</h3>
+  box.innerHTML = pjModeBar() + staleNote() + `<div class="pjintro"><h3>What to expect this week</h3>
       The model's numbers next to the market's for every game. A <b>pick</b> appears only when the market so far and the model point to the same side, and the club rating does not disagree.
-      <div class="warn"><b>Not a sure thing.</b> The model uses past results and the injury list, no other news, and has not proven an edge over the market. This pick rule is new and has no record yet.</div>
+      <div class="warn"><b>Not a sure thing.</b> The model uses past results and the injury list, no other news, and has not proven an edge over the market. On past seasons this pick rule went 3–4 and showed no edge (<a class="back" href="#view=picks" data-go="picks">Picks</a>).</div>
       <details><summary>How to read a card</summary><ul><li><b>Winner</b>: the chance to win (the market's worked out from its handicap).</li>
         <li><b>Handicap</b>: the expected winning margin, written like a market line: Mykonos −8.3 = Mykonos by 8.3.</li>
         <li><b>Market so far</b>: the kind of game the line makes it. A gold <b>market gap</b> appears when one side of that kind of game has won 54%+ of 20 or more this season (<a class="back" href="#view=market" data-go="market">Market Analysis</a>): a possible gap, still not proven.</li>
