@@ -33,7 +33,34 @@ jobs:
           dir: mid-europe
           requirements: -r _bs/mid-europe/requirements.txt
           browser: "true"
-          run: python -u update.py
+          run: |
+            set -o pipefail
+            python -u update.py 2>&1 | tee /tmp/research.log
           pages: football/research/data.js football/research/lg
           label: Football Research
           token: ${{ secrets.SITES_TOKEN }}
+      - name: Message new picks
+        # an ntfy push for every new pick of both groups (11 Nov 2026), sent once the page has it (the pipeline step above
+        # publishes first); build.py prints the run's new picks as one NEWPICKS line. The topic is the NTFY_TOPIC secret.
+        if: ${{ success() }}
+        env:
+          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
+        shell: python
+        run: |
+          import json, os, time, urllib.request
+          topic = os.environ.get('NTFY_TOPIC', '').strip()
+          line = next((l for l in open('/tmp/research.log', encoding='utf-8') if l.startswith('NEWPICKS ')), None)
+          new = json.loads(line[9:]) if line and topic else []
+          for s in new:
+              body = (f"{s['home']} – {s['away']}\n{s['league']} · {s['when']} (Greek time)\n"
+                      f"Price {s['odds']:.2f} · EV {s['ev']*100:+.0f}%"
+                      + ("" if s['group'] == 'main' else "\nPrice 3.00+: followed on paper")).encode('utf-8')
+              req = urllib.request.Request('https://ntfy.sh/' + topic, data=body, method='POST', headers={
+                  'Title': f"Football pick: {s['side']} {s['odds']:.2f}", 'Tags': 'soccer',
+                  'Click': 'https://antonisnikolitsopoulos.com/football/research/#view=picks'})
+              try:
+                  print(s['home'], urllib.request.urlopen(req, timeout=30).status)
+              except Exception as e:
+                  print(s['home'], 'not sent', e)
+              time.sleep(2)
+          print(len(new), 'new picks', '' if topic else '(no NTFY_TOPIC secret: nothing sent)')
