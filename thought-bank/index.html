@@ -240,6 +240,8 @@ h2 { font-family: var(--display); font-weight: 400; font-size: clamp(2.2rem, 4.6
 @media (max-width: 420px) { .site-head .social { display: none; } }
 body { overflow-x: clip; }  /* safety net */
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } html { scroll-behavior: auto; } }
+.subnav { background: #151b2d; border-bottom: 1px solid var(--line-dark); }
+.subnav .wrap { display: flex; flex-wrap: wrap; gap: .25rem 1.5rem; padding-block: .55rem; }
 </style>
 <link rel="stylesheet" href="/assets/an.css?v=1">
 </head>
@@ -254,7 +256,6 @@ body { overflow-x: clip; }  /* safety net */
 
 <header class="site-head">
   <div class="wrap bar">
-    <a class="an-home" href="/" aria-label="Back to the homepage">← Home</a>
     <a class="brand" href="/" aria-label="Antonis Nikolitsopoulos, home">
       <span class="mono">A<i>N</i></span>
       <span class="wordmark"><span>Antonis <em>Nikolitsopoulos</em></span><small>Trading · Sports Analytics</small></span>
@@ -268,6 +269,7 @@ body { overflow-x: clip; }  /* safety net */
     </ul>
   </div>
 </header>
+<nav class="subnav" aria-label="Thought Bank"><div class="wrap"><a class="an-home" href="/" aria-label="Back to the homepage">← Home</a></div></nav>
 
 
 <main id="top">
