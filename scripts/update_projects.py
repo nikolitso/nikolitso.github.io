@@ -177,7 +177,7 @@ def basketball_cup(folder):
 
 
 def handball():
-    d = js_object("/handball/projections/", r"const D\s*=")
+    d = js_object("/handball/live-test/", r"const D\s*=")
     sig = d["sig"]["signals"]
     done = [x for x in sig if x.get("status") in ("won", "lost")]
     return record(sum(x["status"] == "won" for x in done), sum(x["status"] == "lost" for x in done),
@@ -208,7 +208,7 @@ CARDS = {                    # slug -> (card href on the homepage, reader)
     "mid-europe": ("/football/research/", mid_europe),
     "eurocup": ("/eurocup/", lambda: basketball_cup("eurocup")),
     "fibaeuropecup": ("/fibaeuropecup/", lambda: basketball_cup("fibaeuropecup")),
-    "handball": ("/handball/projections/", handball),
+    "handball": ("/handball/live-test/", handball),
     "basketball": ("/basketball/", basketball),
     "basketball-overs": ("/basketball/overs/", lambda: basketball_totals("overs")),
     "basketball-women": ("/basketball/women/", lambda: basketball_totals("women")),

@@ -49,7 +49,7 @@ jobs:
               day = datetime.date.fromisoformat(s['date']).strftime('%a %d %b')
               text = (f"New handball pick: {s['side'].title()} {s['line']}\n{team(s['home'])} – {team(s['away'])}\n"
                       f"{name(s['leagueName'])} · {day} {s['time'] or ''} (Greek time)\n"
-                      f"Odds {s['odds']} · model {s['ours']}\nhttps://antonisnikolitsopoulos.com/handball/projections/")
+                      f"Odds {s['odds']} · model {s['ours']}\nhttps://antonisnikolitsopoulos.com/handball/live-test/")
               q = urllib.parse.urlencode(dict(phone=os.environ['SIGNAL_PHONE'], apikey=os.environ['SIGNAL_APIKEY'], text=text))
               print(s['home'], urllib.request.urlopen('https://signal.callmebot.com/signal/send.php?' + q, timeout=30).status)
           # data check (extra.py): one message a day, on the 03:00 run, if any league's source is empty or missing results

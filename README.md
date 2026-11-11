@@ -17,7 +17,7 @@ schedule, and **Update all sites** runs the whole set at 09:00, 14:00 and 23:59 
 | [FIBA Europe Cup](https://antonisnikolitsopoulos.com/fibaeuropecup/) | `fibaeuropecup/` | Site · FIBA Europe Cup | 07:35, then hourly to 20:05 | BettingSignal `fibaeuropecup` |
 | [Super League](https://antonisnikolitsopoulos.com/superleague/) | `superleague/` | Site · Super League, Feed · Super League closing odds | 09:00, 14:00, 18:00; odds every 30 min 12:00–23:30 | BettingSignal `superleague`; `odds` branch |
 | [Greek Cup](https://antonisnikolitsopoulos.com/football/greek-cup/) | `football/greek-cup/` | Site · Greek Cup | 10:00, 23:45 | BettingSignal `greek-cup` |
-| [Handball](https://antonisnikolitsopoulos.com/handball/projections/) | `handball/` | Site · Handball | 03:00, 09:00, 15:00, 21:00 | BettingSignal `handball/projector` |
+| [Handball](https://antonisnikolitsopoulos.com/handball/live-test/) | `handball/` | Site · Handball | 03:00, 09:00, 15:00, 21:00 | BettingSignal `handball/projector` |
 | [Volleyball](https://antonisnikolitsopoulos.com/volleyball/) | `volleyball/` | Site · Volleyball | 09:00, 13:00 | BettingSignal `volleyball` |
 | [PAOK Hub](https://antonisnikolitsopoulos.com/paok-hub/) | `paok-hub/` | Site · PAOK Hub | 10:00, 23:45 | BettingSignal `paok-hub` |
 | [PAOK Basketball](https://antonisnikolitsopoulos.com/paok-basketball/) | `paok-basketball/` | Site · PAOK Basketball | by Update all sites | BettingSignal `paok-basketball` |
