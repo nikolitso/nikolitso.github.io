@@ -71,3 +71,46 @@ jobs:
           # several pipelines push at once: on a rejected push, rebase and try again
           for i in 1 2 3 4 5; do git pull -q --rebase --autostash && git push -q && exit 0; sleep $((RANDOM % 10 + 5)); done
           exit 1
+      - name: New picks
+        # the open picks on the published Picks tab not announced yet (scripts/page_picks.py runs the page's own rule);
+        # the list of announced picks is saved in BettingSignal before any message goes out, so each is sent once
+        if: ${{ inputs.job != 'probe' }}
+        working-directory: _bs
+        env:
+          PYTHONIOENCODING: utf-8
+        run: |
+          python -u ../scripts/page_picks.py ../fibaeuropecup fibaeuropecup/data/alerted_picks.json | tee /tmp/fiba-picks.log
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add fibaeuropecup/data/alerted_picks.json
+          if git diff --cached --quiet; then echo "no new picks"; exit 0; fi
+          git commit -q -m "FIBA Europe Cup: picks announced $(TZ=Europe/Athens date '+%Y-%m-%d %H:%M')"
+          for i in 1 2 3 4 5; do git pull -q --rebase --autostash && git push -q && exit 0; sleep $((RANDOM % 10 + 5)); done
+          exit 1
+      - name: Message new picks
+        # an ntfy push for every new pick on the Picks tab (scripts/page_picks.py runs the page's own rule),
+        # sent once the page has it; the topic is the NTFY_TOPIC secret
+        if: ${{ success() && inputs.job != 'probe' }}
+        env:
+          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
+          PYTHONIOENCODING: utf-8
+        shell: python
+        run: |
+          import base64, json, os, time, urllib.request
+          enc = lambda t: t if t.isascii() else '=?UTF-8?B?' + base64.b64encode(t.encode('utf-8')).decode() + '?='
+          topic = os.environ.get('NTFY_TOPIC', '').strip()
+          line = next((l for l in open('/tmp/fiba-picks.log', encoding='utf-8') if l.startswith('NEWPICKS ')), None)
+          new = json.loads(line[9:]) if line and topic else []
+          for k in new:
+              price = f"Price {k['pr']:.2f}" if k['logged'] else 'No price read yet'
+              body = (f"{k['h']} – {k['a']}\nTip-off {k['date'][8:10]}/{k['date'][5:7]} {k['time']} (Greek time)\n"
+                      f"Handicap: {k['bet']}\n{price} · model edge {k['gap']:.1f} pts").encode('utf-8')
+              req = urllib.request.Request('https://ntfy.sh/' + topic, data=body, method='POST', headers={
+                  'Title': enc(f"FIBA Europe Cup pick: {k['bet']}"), 'Tags': 'basketball',
+                  'Click': 'https://antonisnikolitsopoulos.com/fibaeuropecup/#view=picks'})
+              try:
+                  print(k['h'], urllib.request.urlopen(req, timeout=30).status)
+              except Exception as e:
+                  print(k['h'], 'not sent', e)
+              time.sleep(2)
+          print(len(new), 'new picks', '' if topic else '(no NTFY_TOPIC secret: nothing sent)')

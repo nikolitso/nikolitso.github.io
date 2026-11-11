@@ -28,9 +28,37 @@ jobs:
           run: |
             python -u update.py --no-push
             python -u games.py
+            python -u "$SITE_REPO/scripts/page_picks.py" "$SITE_REPO/eurocup" data/alerted_picks.json | tee /tmp/eurocup-picks.log
           pages: eurocup
           label: EuroCup
           token: ${{ secrets.SITES_TOKEN }}
+      - name: Message new picks
+        # an ntfy push for every new pick on the Picks tab (scripts/page_picks.py runs the page's own rule),
+        # sent once the page has it; the topic is the NTFY_TOPIC secret
+        if: ${{ success() }}
+        env:
+          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
+          PYTHONIOENCODING: utf-8
+        shell: python
+        run: |
+          import base64, json, os, time, urllib.request
+          enc = lambda t: t if t.isascii() else '=?UTF-8?B?' + base64.b64encode(t.encode('utf-8')).decode() + '?='
+          topic = os.environ.get('NTFY_TOPIC', '').strip()
+          line = next((l for l in open('/tmp/eurocup-picks.log', encoding='utf-8') if l.startswith('NEWPICKS ')), None)
+          new = json.loads(line[9:]) if line and topic else []
+          for k in new:
+              price = f"Price {k['pr']:.2f}" if k['logged'] else 'No price read yet'
+              body = (f"{k['h']} – {k['a']}\nTip-off {k['date'][8:10]}/{k['date'][5:7]} {k['time']} (Greek time)\n"
+                      f"Handicap: {k['bet']}\n{price} · model edge {k['gap']:.1f} pts").encode('utf-8')
+              req = urllib.request.Request('https://ntfy.sh/' + topic, data=body, method='POST', headers={
+                  'Title': enc(f"EuroCup pick: {k['bet']}"), 'Tags': 'basketball',
+                  'Click': 'https://antonisnikolitsopoulos.com/eurocup/#view=picks'})
+              try:
+                  print(k['h'], urllib.request.urlopen(req, timeout=30).status)
+              except Exception as e:
+                  print(k['h'], 'not sent', e)
+              time.sleep(2)
+          print(len(new), 'new picks', '' if topic else '(no NTFY_TOPIC secret: nothing sent)')
       # after publishing: fail the run (GitHub e-mails it) when a line near tip-off is missing or old, or a result is missing
       - name: Stale-data check
         env:
