@@ -163,7 +163,8 @@
       "the-logic-of-sports-betting",
       "soccer-analytics-an-introduction",
       "make-your-mark",
-      "the-numbers-game-why-everything-you"
+      "the-numbers-game-why-everything-you",
+      "net-gains-inside-the-beautiful-games"
     ],
     "log": [
       {
@@ -471,9 +472,15 @@
         "slot": "2026-11-10 14",
         "slug": "the-numbers-game-why-everything-you",
         "id": "2120124374032540081"
+      },
+      {
+        "day": "2026-11-11",
+        "slot": "2026-11-11 14",
+        "slug": "net-gains-inside-the-beautiful-games",
+        "id": "2120486762992767332"
       }
     ],
-    "last_day": "2026-11-10"
+    "last_day": "2026-11-11"
   },
   "film": {
     "seen": [
@@ -1015,7 +1022,7 @@
     ],
     "last_day": "2026-11-10"
   },
-  "last_slot": "2026-11-11 11",
+  "last_slot": "2026-11-11 14",
   "quote": {
     "seen": [
       "1",
