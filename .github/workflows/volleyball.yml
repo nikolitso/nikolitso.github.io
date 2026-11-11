@@ -24,7 +24,30 @@ jobs:
           dir: volleyball
           requirements: -r _bs/volleyball/requirements.txt
           browser: "true"
-          run: python -u update.py --no-push
+          run: python -u update.py --no-push 2>&1 | tee /tmp/vb.log
           pages: volleyball/data.js volleyball/index.html volleyball/games volleyball/sitemap.xml index.html
           label: Volleyball
           token: ${{ secrets.SITES_TOKEN }}
+      - name: Message new picks
+        # an ntfy push for every new pick (11 Nov 2026), sent once the page has it; the topic is the NTFY_TOPIC secret
+        if: ${{ success() }}
+        env:
+          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
+        shell: python
+        run: |
+          import json, os, time, urllib.request
+          topic = os.environ.get('NTFY_TOPIC', '').strip()
+          line = next((l for l in open('/tmp/vb.log', encoding='utf-8') if l.startswith('NEWPICKS ')), None)
+          new = json.loads(line[9:]) if line and topic else []
+          for s in new:
+              body = (f"{s['home']} – {s['away']}\n{s['league']} · {s['when']} (Greek time)\n"
+                      f"Price {s['px']:.2f} · edge {s['edge']*100:+.0f}% · model {s['med']} ({s['p']*100:.0f}% over)").encode('utf-8')
+              req = urllib.request.Request('https://ntfy.sh/' + topic, data=body, method='POST', headers={
+                  'Title': f"Volleyball pick: Over {s['line']}", 'Tags': 'volleyball',
+                  'Click': 'https://antonisnikolitsopoulos.com/volleyball/'})
+              try:
+                  print(s['home'], urllib.request.urlopen(req, timeout=30).status)
+              except Exception as e:
+                  print(s['home'], 'not sent', e)
+              time.sleep(2)
+          print(len(new), 'new picks', '' if topic else '(no NTFY_TOPIC secret: nothing sent)')
