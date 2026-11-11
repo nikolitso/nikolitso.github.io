@@ -174,6 +174,7 @@ a.tile:hover{border-color:var(--gold)}
 .tile .stat{font:500 26px var(--mono);line-height:1.15;font-variant-numeric:tabular-nums;display:flex;flex-wrap:wrap;align-items:center;gap:2px 6px}
 .tile .small{font-size:14.5px;color:var(--muted)}
 .tiles .pos{color:var(--up)} .tiles .neg{color:var(--dn)}
+.stale{color:#ef7a70;font-weight:600}
 .pill{white-space:nowrap;font:500 13.5px var(--mono);padding:2px 9px;border-radius:99px;border:1px solid var(--line);vertical-align:middle}
 .pill.pos{border-color:color-mix(in srgb,var(--up) 40%,transparent);background:color-mix(in srgb,var(--up) 10%,transparent)}
 .pill.neg{border-color:color-mix(in srgb,var(--dn) 40%,transparent);background:color-mix(in srgb,var(--dn) 9%,transparent)}
@@ -232,7 +233,8 @@ LIVE.fixtures = LIVE.fixtures.filter(g => LG[g.lg]);                       // le
 LIVE.picks = (LIVE.picks || []).filter(b => LG[b.lg]);
 if (LIVE.leagues) LIVE.leagues = LIVE.leagues.filter(k => LG[k]);
 
-$('sub').innerHTML = `<b>Updated ${LIVE.updated} (Athens)</b> · ${DATA.leagues.length} leagues · backtest 2022–23 to 2025–26 · ${DATA.season.slice(0, 4)}–${DATA.season.slice(7)} record since 8 Nov 2026`;
+const AGE = LIVE.ts ? (Date.now() / 1000 - LIVE.ts) / 3600 : null;          // hours since the last hourly run
+$('sub').innerHTML = (AGE > 3 ? `<span class="stale">Not updated for ${Math.floor(AGE)} hours: the hourly run has stopped, so open picks and lines may be out of date.</span><br>` : '') + `<b>Updated ${LIVE.updated} (Athens)</b> · ${DATA.leagues.length} leagues · backtest 2022–23 to 2025–26 · ${DATA.season.slice(0, 4)}–${DATA.season.slice(7)} record since 8 Nov 2026`;
 
 // top tiles: the whole 2026-27 record, as on the Live test tab (ROI = return over wins + losses)
 {
@@ -328,7 +330,8 @@ function analysis(k, notes = true){
   const BT = DATA.bets.filter(f), SK = (DATA.skipped || []).filter(f);
   let h = tiles([['Picks', S.rule.n], ['Hit rate', pct(S.rule.w / S.rule.n, 1)], ['ROI at opening', roi(S.rule.roi), cls(S.rule.roi)], ['ROI at closing', S.rule.roic != null ? roi(S.rule.roic) : '–', cls(S.rule.roic)],
               ['Opening line', lineAvg(BT.filter(b => b.close != null), 'line')], ['Closing line', lineAvg(BT.filter(b => b.close != null), 'close')], ['Model line', lineAvg(BT.filter(b => b.close != null), 'mu')], ['Actual total', lineAvg(BT.filter(b => b.close != null), 'total')],
-              ...(() => { const c = BT.filter(b => b.close != null); return c.length ? [['Closing line moved toward the pick', pct(c.filter(b => b.close > b.line).length / c.length)], ['Closing line moved against it', pct(c.filter(b => b.close < b.line).length / c.length)]] : []; })()]);
+              ...(() => { const c = BT.filter(b => b.close != null); return c.length ? [['Closing line moved toward the pick', pct(c.filter(b => b.close > b.line).length / c.length)], ['Closing line moved against it', pct(c.filter(b => b.close < b.line).length / c.length)]] : []; })(), ...riskTiles(BT)]);
+  if (k === 'all') h += calib(BT, `How often the picks won against the chance the model gave them, at the opening line. A well-calibrated model wins about as often as it says in every band. Worst drawdown: the biggest fall from a high point of the running profit, at 1 unit a pick, in date order; expect a run like it again.`);
   const T = (title, first, body, note='') => `<h2>${title}</h2>${nt(note)}<div class="scroll"><table style="max-width:1040px">${GHEAD(first, BHEAD)}<tbody>${body}</tbody></table></div>`;
   const SKL = SK.filter(x => x.luck >= LK());
   h += T('By pace', 'Pace', [['Below 0', -99, 0], ['0 to +1.9', 0, 2], ['+2 or more', 2, 99]].map(([label, lo, hi]) => bandRow(label, BT.filter(x => x.pace >= lo && x.pace < hi))).join(''),
@@ -350,6 +353,25 @@ function analysis(k, notes = true){
   }
   h += T('By month', 'Month', mo);
   return h;
+}
+
+// profit, worst drawdown and longest losing run at 1 unit a pick, in date order
+function riskTiles(list){
+  const L = [...list].filter(b => b.ret != null).sort((a, b) => a.dt < b.dt ? -1 : 1);
+  let run = 0, peak = 0, dd = 0, lose = 0, worst = 0;
+  for (const b of L){ run += b.ret; peak = Math.max(peak, run); dd = Math.max(dd, peak - run); lose = b.ret < 0 ? lose + 1 : 0; worst = Math.max(worst, lose); }
+  return [['Profit', `${sgn(run)} units`, cls(run)], ['Worst drawdown', dd ? `−${dd.toFixed(1)} units` : '0 units', dd ? 'neg' : ''], ['Longest losing run', `${worst} picks`]];
+}
+// calibration: the model's chance against how often the picks won, in bands of the model's chance
+function calib(list, note){
+  const P = b => b.p ?? (1 + b.edge) / b.px, L = list.filter(b => b.ret != null && b.ret !== 0);
+  if (!L.length) return '';
+  const rows = [['Under 60%', 0, .6], ['60% to 65%', .6, .65], ['65% to 70%', .65, .7], ['70% or more', .7, 2]].map(([label, lo, hi]) => {
+    const g = L.filter(b => P(b) >= lo && P(b) < hi); if (!g.length) return '';
+    const m = g.reduce((a, b) => a + P(b), 0) / g.length, w = g.filter(b => b.ret > 0).length / g.length;
+    return `<tr><td>${label}</td><td class="n">${g.length}</td><td class="n">${pct(m, 1)}</td><td class="n">${pct(w, 1)}</td><td class="n ${cls(w - m)}">${sgn((w - m) * 100)} pts</td></tr>`; }).join('');
+  const m = L.reduce((a, b) => a + P(b), 0) / L.length, w = L.filter(b => b.ret > 0).length / L.length;
+  return `<h2>Calibration</h2><p class="note">${note}</p><div class="scroll"><table style="max-width:640px"><thead><tr><th>Model's chance</th><th class="n">Picks</th><th class="n">Model said</th><th class="n">Won</th><th class="n">Difference</th></tr></thead><tbody>${rows}<tr><td><b>All</b></td><td class="n"><b>${L.length}</b></td><td class="n"><b>${pct(m, 1)}</b></td><td class="n"><b>${pct(w, 1)}</b></td><td class="n ${cls(w - m)}"><b>${sgn((w - m) * 100)} pts</b></td></tr></tbody></table></div>`;
 }
 
 function liveTables(L){
@@ -423,6 +445,8 @@ function renderPicks(){
   h += `<h2>The ${sn(DATA.season)} record</h2>`;
   h += `<p class="note">The closing line moved toward the pick when it ended above the line picked. A few hundred picks are needed before the record says much. The record starts on 8 Nov 2026 with the current model: weights learned at opening lines with pace and 3-point luck, an edge above 8%, every top domestic division. Picks made before that, under older rules, are not counted. Click a column heading to sort.</p>`;
   if (!set.length) return h + '<p class="empty">No settled picks yet.</p>';
+  h += tiles(riskTiles(set.filter(b => !b.pre)));
+  h += calib(set.filter(b => !b.pre), `Settled live picks: how often they won against the chance the model gave them when they were logged. With few picks the bands say little; the backtest's are on the Backtest tab. Worst drawdown: the biggest fall from a high point of the running profit, at 1 unit a pick.`);
   h += liveTables(set.filter(b => !b.pre));
   let run = 0;
   const rows = all.filter(b => b.done).map(b => {   // open picks are in the table above
