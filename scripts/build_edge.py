@@ -226,6 +226,7 @@ def site_menu(active=""):
 def site_header(active="", home="/"):
     return f"""<header class="site-head">
   <div class="wrap bar">
+    <a class="an-home" href="/" aria-label="Back to the homepage">← Home</a>
     <a class="brand" href="{home}" aria-label="Antonis Nikolitsopoulos, home">
       <span class="mono">A<i>N</i></span>
       <span class="wordmark"><span>Antonis <em>Nikolitsopoulos</em></span><small>Trading · Sports Analytics</small></span>
