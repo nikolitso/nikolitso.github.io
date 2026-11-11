@@ -298,6 +298,90 @@ function viewLeague() {
   ${list}`;
 }
 
+// ---------- Asian Handicap Backtest: the same price rule on the handicap line nearest 50-50 (ah.js, loaded when the tab opens) ----------
+const AGAPS = [8, 10, 12, 14, 16], ASIDES = ['Home side', 'Away side'];
+const ARES = {2: 'Won', 1: 'Half won', 0: 'Stake back', '-1': 'Half lost', '-2': 'Lost'};
+const apl = (x, o) => x === 2 ? o - 1 : x === 1 ? (o - 1) / 2 : x === 0 ? 0 : x === -1 ? -0.5 : -1;     // result of 1 unit at price o
+const hcap = q => q === 0 ? '0' : (q > 0 ? '+' : '−') + String(Math.abs(q) / 4);                          // handicap of the backed side
+function loadAH() {
+  if (window.AH || loadAH.busy) return;
+  loadAH.busy = 1;
+  const s = document.createElement('script');
+  s.src = 'ah.js?v=1'; s.onload = () => { loadAH.busy = 0; if (state.view === 'ah') render(); };
+  s.onerror = () => { loadAH.busy = 0; loadAH.failed = 1; if (state.view === 'ah') render(); };
+  document.head.appendChild(s);
+}
+function viewAH() {
+  const A = window.AH;
+  if (!A) { loadAH(); return `<p class="note">${loadAH.failed ? 'The handicap data could not be loaded.' : 'Loading the handicap bets…'}</p>`; }
+  const b = A.bets, f = state.a = Object.assign({gap: RG, lg: 'all', side: [1, 1]}, state.a || {});
+  const lgOf = A.lgi = A.lgi || A.lg.map(k => L.find(l => l.key === k));
+  const grp = GROUPS.find(x => x[0] === f.lg) || GROUPS[0], idx = [];
+  for (let i = 0; i < b.l.length; i++) if (lgOf[b.l[i]] && f.side[b.s[i]] && b.g[i] >= f.gap * 10 && grp[2](lgOf[b.l[i]].tier)) idx.push(i);
+  const ag = pred => {
+    const a = {n: 0, pl: 0, od: 0, gap: 0, sq: 0, y: YRS.map(() => ({n: 0, pl: 0}))};
+    for (const i of idx) {
+      if (pred && !pred(i)) continue;
+      const v = apl(b.x[i], b.o[i] / 100);
+      a.n++; a.pl += v; a.sq += v * v; a.od += b.o[i] / 100; a.gap += b.g[i] / 1000;
+      const y = a.y[YRS.indexOf(b.y[i])]; if (y) { y.n++; y.pl += v; }
+    }
+    a.roi = a.n ? a.pl / a.n : null;
+    a.se = a.n > 1 ? Math.sqrt(Math.max(a.sq / a.n - a.roi * a.roi, 0) / a.n) : null;
+    return a;
+  };
+  const all = ag(), cl = {n: 0, pl: 0, od: 0}, mv = {n: 0, up: 0, dn: 0};
+  for (const i of idx) {
+    if (b.c[i]) { cl.n++; cl.od += b.c[i] / 100; cl.pl += apl(b.x[i], b.c[i] / 100); }
+    if (b.v[i] !== -9999) { mv.n++; if (b.v[i] > 0) mv.up++; else if (b.v[i] < 0) mv.dn++; }
+  }
+  cl.roi = cl.n ? cl.pl / cl.n : null;
+  const pill = (lab, a) => `<span class="fact">${lab}: <b style="margin-left:4px">${a.n ? spct(a.roi) : '–'}</b>ROI · ${num(a.n)} bets · ${a.n ? units(a.pl) : '0'} units · average price <b style="margin:0 0 0 4px">${a.n ? (a.od / a.n).toFixed(2) : '–'}</b></span>`;
+  const pills = all.n ? `<div class="facts">${pill('Opening prices', all)}${pill('Closing prices', cl)}${mv.n ? movePill({up: mv.up / mv.n, dn: mv.dn / mv.n}) : ''}</div>` : '<p class="note">No bets pass these filters.</p>';
+  const tb = (title, first, rows, total) => {
+    REG[title] = Object.fromEntries(rows); if (total) REG[title][total] = () => true;
+    const body = rows.map(([lab, pred]) => { const a = ag(pred); return a.n ? `<tr data-row="${lab}" title="Show the games"><td>${lab}</td>${cells(a)}</tr>` : ''; }).join('');
+    return `<h2>${title}</h2><table data-t="${title}"><thead><tr><th>${first}</th>${HEAD()}</tr></thead><tbody>${body}${total ? `<tr class="tot" data-row="${total}" title="Show the games"><td><b>${total}</b></td>${cells(all)}</tr>` : ''}</tbody></table>`;
+  };
+  REG._ah = idx;
+  const on = f.side.filter(x => x).length > 1;
+  const band = (lo, hi) => i => b.g[i] >= lo * 10 && b.g[i] < hi * 10, ob = (lo, hi) => i => b.o[i] >= lo * 100 && b.o[i] < hi * 100;
+  const chip = (k, v, t, o) => `<button class="chip${o ? ' on' : ''}" data-a="${k}" data-v="${v}">${t}</button>`;
+  const miss = 4 * L.length - A.seasons;
+  return `${PKCSS}<style>th.sortable{cursor:pointer;user-select:none;white-space:nowrap}th.sortable:hover{text-decoration:underline}</style>
+  <p class="note">The same price rule on the Asian handicap, where a bet is close to a 50-50 call. 2023-24 to ${new Date(A.to + 'T12:00:00Z').toLocaleDateString('en-GB', {day: 'numeric', month: 'long', year: 'numeric'})}, regular league games only (no play-offs), 1 unit a bet. One line a game: the handicap where the market's margin-free chance of the home side was nearest 50% at the opening. A side is bet when its best price stands ${AGAPS[0]}% or more above the market's margin-free price (EV = best price × market chance − 1). Quarter lines settle in halves: half won, half lost, or the stake back. The two pills are the same bets settled twice: at the opening price, and at the price the same side and line had at the close (the last before kick-off). <b>Closing line</b>: the share of the bets whose market chance was higher at the close than at the opening, and the share where it was lower. The tables use the opening price. This is a backtest only: no handicap picks are made.</p>
+  <p class="note">${PRIOR}</p>
+  <div class="flt"><span class="fl">EV%</span><div class="chips">${AGAPS.map(g => chip('gap', g, g + '%+', f.gap === g)).join('')}</div></div>
+  <div class="flt"><span class="fl">Leagues</span><div class="chips">${GROUPS.map(([k, x]) => chip('lg', k, x, f.lg === k)).join('')}</div></div>
+  <div class="flt"><span class="fl">Bets on</span><div class="chips">${ASIDES.map((x, i) => chip('side', i, x, f.side[i])).join('')}</div></div>
+  ${pills}
+  ${tb('By season', 'Season', YRS.map(y => [season(y), i => b.y[i] === y]), 'All')}
+  ${on ? tb('By side', 'Bets on', ASIDES.map((x, s) => [x, i => b.s[i] === s])) : ''}
+  ${f.lg === 'all' ? tb('By league group', 'Leagues', [['Top divisions', i => lgOf[b.l[i]].tier === 1], ['Lower divisions', i => lgOf[b.l[i]].tier === 2]]) : ''}
+  ${tb('By handicap', 'The side bet on', [['Gives goals (minus handicap)', i => b.h[i] < 0], ['Level (handicap 0)', i => b.h[i] === 0], ['Gets goals (plus handicap)', i => b.h[i] > 0]])}
+  ${tb('By odds', 'Best price', [['Under 2.20', ob(1, 2.2)], ['2.20 to 2.29', ob(2.2, 2.3)], ['2.30 to 2.49', ob(2.3, 2.5)], ['2.50 and above', ob(2.5, 999)]])}
+  ${tb('By EV%', 'EV', [[8, 10], [10, 12], [12, 14], [14, 16], [16, 999]].filter(([lo, hi]) => hi > f.gap).map(([lo, hi]) => [hi > 100 ? `${lo}% and more` : `${lo}% to ${hi}%`, band(lo, hi)]))}
+  <p class="note" style="margin-top:22px">${num(A.lined)} regular games had a handicap line at the opening; the bets are the ${num(b.l.length)} with an EV of ${AGAPS[0]}% or more. <b>EV%</b>: the average EV the bets promised. <b>±</b>: the standard error of the ROI, in points. Faded numbers rest on fewer than ${MIN} bets. Click a column heading to sort a table; <b>click any row to list the games behind it</b>.${miss > 0 ? ` Handicap prices were collected once; ${miss} of the ${4 * L.length} league seasons, all early ones of small leagues, had none and are left out.` : ''}</p>`;
+}
+// the games behind one row of a handicap table
+function showAH(scroll) {
+  const o = state.open, A = window.AH;
+  if (!o || !A || !REG._ah) return;
+  const tb = [...out.querySelectorAll('table[data-t]')].find(x => x.dataset.t === o.t), pred = (REG[o.t] || {})[o.row];
+  if (!tb || !pred) return;
+  [...tb.tBodies[0].rows].forEach(tr => tr.classList.toggle('sel', tr.dataset.row === o.row));
+  const b = A.bets, ix = REG._ah.filter(pred).sort((p, q) => b.d[q] - b.d[p]), box = document.createElement('div');
+  const day = d => new Date(Date.UTC(Math.floor(d / 10000), Math.floor(d / 100) % 100 - 1, d % 100, 12)).toLocaleDateString('en-GB', {day: 'numeric', month: 'short', year: 'numeric'});
+  const rows = ix.slice(0, MAXGAMES).map(i => {
+    const o1 = b.o[i] / 100, v = apl(b.x[i], o1), l = A.lgi[b.l[i]], tm = A.teams[b.s[i] ? b.ta[i] : b.th[i]];
+    return `<tr><td>${day(b.d[i])}</td><td>${l.country} · ${l.name}</td><td>${A.teams[b.th[i]]} – ${A.teams[b.ta[i]]}</td><td class="n">${b.hg[i]}-${b.ag[i]}</td><td><b>${tm} ${hcap(b.h[i])}</b></td><td class="n">${o1.toFixed(2)}</td><td class="n">${b.c[i] ? (b.c[i] / 100).toFixed(2) : '–'}</td><td class="n">${spct(b.g[i] / 1000)}</td><td class="n ${cls(v)}">${ARES[b.x[i]]}</td><td class="n ${cls(v)}">${(v > 0 ? '+' : '') + v.toFixed(2)}</td></tr>`;
+  }).join('');
+  box.className = 'mt'; tb.after(box);
+  box.innerHTML = `<p class="note"><b>${o.t}: ${o.row}.</b> ${num(ix.length)} bets, newest first${ix.length > MAXGAMES ? `; the last ${MAXGAMES} are listed` : ''}. Click the row again to close. <a class="lk" href="#" data-close="1">Close</a></p>
+  <table class="pk"><thead><tr><th>Date</th><th>League</th><th>Game</th><th class="n">Score</th><th>Bet</th><th class="n">Price</th><th class="n">Close</th><th class="n">EV%</th><th class="n">Result</th><th class="n">P/L</th></tr></thead><tbody>${rows}</tbody></table>`;
+  if (scroll) box.scrollIntoView({block: 'nearest', behavior: 'smooth'});
+}
+
 // ---------- How it works ----------
 function viewHow() {
   const names = L.map(l => l.country + ' ' + l.name).join(', ');
@@ -320,6 +404,8 @@ function viewHow() {
   <p>Why prices of ${ROT} or below are skipped. They were the weakest part of the test: 201 bets with an EV of 8% or more returned 5.1%, against 15.2% for the rest, with one losing season. A short price leaves little room for a wrong price.</p>
   <p>The picks are kept in two groups by price: ${RMIN.toFixed(2)} to ${(SPLIT - 0.01).toFixed(2)}, and ${SPLIT.toFixed(2)} and above. Both made a similar profit at the opening price in the backtest, but they are not alike. Under ${SPLIT.toFixed(2)} the market moved towards the pick in 53% to 61% of the bets, more than it does for other selections at the same prices (46% to 52%), and the same bets taken at the closing price still broke even. From ${SPLIT.toFixed(2)} up the market moved towards the pick in 44% to 47%, no more than for any outsider, and at the closing price the bets lost about 6%. So the first group is the main one, and the second is followed on paper until live results show whether its opening prices can be taken.</p>
   <p>Picks are logged on the Picks tab from that date: the first time a game within 8 days meets the rule, at the price on offer then. The Backtest tab opens on the rule; the other filters stay so other rules can be compared with it.</p>
+  <h2>Asian handicap</h2>
+  <p>The same rule was tested on the Asian handicap, where the two sides are close to a 50-50 call. One line a game: the handicap where the market's chance of the home side was nearest 50% at the opening. A side is bet when its best price is at least ${GAP0}% above the market's margin-free price. With an EV of 10% or more, 3,397 bets returned 12.3% at the opening price, with a profit in every season, and lost 3.9% when the same bets were taken at the closing price. The market moved towards the bet in 53% and against it in 46%. It is the same picture as on home and away wins: the profit is in the opening price and is gone by the close. The Asian Handicap Backtest tab has the numbers; no handicap picks are made.</p>
   <h2>What was tried and dropped</h2>
   <p>An xG team model and detailed match data (lineups, missing starters, finishing, set pieces, rest, squad value) were tested against the opening price. None of them added anything the price did not already know, so they are not used.</p>
   <p>Over and under 2.5 goals were tested the same way. A small EV returned almost nothing there: with an EV between 8% and 14% they returned 2.6% on 622 bets, with one losing season. Above 14% they returned 17.4%, but on 199 bets only, and that line was drawn after seeing the results, so it proves little. They were taken out of the rule and of the page.</p>
@@ -344,7 +430,7 @@ function sortTables() {
     ths[s.col].textContent += s.dir > 0 ? ' ▲' : ' ▼';
   });
 }
-const VIEWS = ['picks', 'backtest', 'men', 'lg', 'how'];
+const VIEWS = ['picks', 'backtest', 'ah', 'men', 'lg', 'how'];
 function render() {
   REG = {};
   document.querySelectorAll('#tabs a[data-view]').forEach(a => a.classList.toggle('on', a.dataset.view === (state.view === 'lg' ? 'men' : state.view)));
@@ -352,14 +438,27 @@ function render() {
   const grp = GROUPS.find(x => x[0] === state.f.lg) || GROUPS[0], one = state.view === 'lg' && L.find(l => l.key === state.lgk);
   const shown = one ? [one] : state.view === 'backtest' || state.view === 'men' ? L.filter(l => grp[2](l.tier)) : L;
   $('#sub').textContent = `${shown.length === L.length ? `${L.length} leagues` : one ? `${one.country} · ${one.name}` : `${shown.length} of ${L.length} leagues (${grp[1].toLowerCase()})`} · ${num(shown.reduce((s, l) => s + l.games, 0))} games tested, 2023-24 to now · updated ${D.updated.replace('T', ' ').replace('Z', ' UTC')}`;
-  out.innerHTML = state.view === 'how' ? viewHow() : state.view === 'picks' ? viewPicks() : state.view === 'men' ? viewLeagues() : state.view === 'lg' ? viewLeague() : viewBacktest();
+  out.innerHTML = state.view === 'how' ? viewHow() : state.view === 'ah' ? viewAH() : state.view === 'picks' ? viewPicks() : state.view === 'men' ? viewLeagues() : state.view === 'lg' ? viewLeague() : viewBacktest();
   sortTables();
-  showMatches(showMatches.scroll); showMatches.scroll = 0;
+  if (state.view === 'ah') {
+    const A = window.AH, g = GROUPS.find(x => x[0] === (state.a || {}).lg) || GROUPS[0], sh = L.filter(l => g[2](l.tier));
+    if (A) $('#sub').textContent = `Asian handicap · ${sh.length === L.length ? `${L.length} leagues` : `${sh.length} of ${L.length} leagues (${g[1].toLowerCase()})`} · ${num(A.lined)} games with a handicap line, 2023-24 to now`;
+    showAH(showMatches.scroll);
+  } else showMatches(showMatches.scroll);
+  showMatches.scroll = 0;
   save();
 }
 out.addEventListener('click', e => {
   const x = e.target.closest('tr.exp');                        // a bet: show or hide how it was made
   if (x && x.nextElementSibling && x.nextElementSibling.classList.contains('detail')) { x.nextElementSibling.hidden = !x.nextElementSibling.hidden; return; }
+  const ac = e.target.closest('[data-a]');                     // filters of the handicap tab
+  if (ac) {
+    const f = state.a, k = ac.dataset.a, v = ac.dataset.v;
+    if (k === 'side') { f.side[+v] = f.side[+v] ? 0 : 1; if (!f.side.some(x => x)) f.side = [1, 1]; }
+    else f[k] = k === 'lg' ? v : +v;
+    state.open = null;
+    return render();
+  }
   const c = e.target.closest('[data-f]');
   if (c) {
     const f = state.f, k = c.dataset.f, v = c.dataset.v;
