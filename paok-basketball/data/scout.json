@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-11T01:53:40Z",
+ "updated": "2026-11-11T14:59:49Z",
  "reports": [
   {
    "comp": "EuroCup",
@@ -2042,7 +2042,7 @@
    ],
    "projection": {
     "paok": {
-     "score": 82.1,
+     "score": 81.5,
      "players": [
       {
        "name": "Ben Moore",
@@ -2159,7 +2159,7 @@
      "pace": 70.1
     },
     "opp": {
-     "score": 76.0,
+     "score": 75.8,
      "players": [
       {
        "name": "Ja’Vier Francis",
@@ -2273,14 +2273,14 @@
      "missing": [],
      "pace": 70.1
     },
-    "winProb": 74,
+    "winProb": 72,
     "pace": 70.1,
     "lineupSource": "manual",
     "note": "PAOK without Osman, who is out for one to two months.",
     "modelTotal": 145.4,
-    "line": 159.5,
+    "line": 158.5,
     "modelMargin": -1.0,
-    "hcp": 7.5,
+    "hcp": 7.0,
     "learned": {
      "games": 969,
      "lineGames": 945,
@@ -2296,39 +2296,39 @@
     },
     "teamStats": {
      "pts": {
-      "paok": 82.1,
-      "opp": 76.0,
-      "total": 158.1
+      "paok": 81.5,
+      "opp": 75.8,
+      "total": 157.3
      },
      "fg2m": {
-      "paok": 17.9,
-      "opp": 19.0,
-      "total": 36.9
+      "paok": 17.8,
+      "opp": 18.9,
+      "total": 36.7
      },
      "fg3m": {
-      "paok": 9.5,
+      "paok": 9.4,
       "opp": 7.6,
-      "total": 17.1
+      "total": 17.0
      },
      "ftm": {
-      "paok": 17.7,
+      "paok": 17.6,
       "opp": 15.3,
-      "total": 33.0
+      "total": 32.8
      },
      "ast": {
-      "paok": 17.6,
-      "opp": 14.5,
-      "total": 32.1
+      "paok": 17.5,
+      "opp": 14.4,
+      "total": 31.9
      },
      "oreb": {
       "paok": 10.2,
       "opp": 10.0,
-      "total": 20.1
+      "total": 20.2
      },
      "dreb": {
       "paok": 23.9,
-      "opp": 22.6,
-      "total": 46.5
+      "opp": 22.7,
+      "total": 46.7
      },
      "tov": {
       "paok": 12.8,
@@ -2337,8 +2337,8 @@
      },
      "reb": {
       "paok": 34.1,
-      "opp": 32.6,
-      "total": 66.6
+      "opp": 32.7,
+      "total": 66.9
      }
     }
    }

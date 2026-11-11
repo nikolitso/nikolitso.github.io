@@ -2281,46 +2281,46 @@
   "date": "2026-11-14T15:30:00Z",
   "opp": "Karditsa",
   "home": false,
-  "saved": "2026-11-11T01:53:40Z",
-  "paok": 82.1,
-  "oppScore": 76.0,
-  "winProb": 74,
+  "saved": "2026-11-11T14:59:49Z",
+  "paok": 81.5,
+  "oppScore": 75.8,
+  "winProb": 72,
   "lineupSource": "manual",
   "teamStats": {
    "pts": {
-    "paok": 82.1,
-    "opp": 76.0,
-    "total": 158.1
+    "paok": 81.5,
+    "opp": 75.8,
+    "total": 157.3
    },
    "fg2m": {
-    "paok": 17.9,
-    "opp": 19.0,
-    "total": 36.9
+    "paok": 17.8,
+    "opp": 18.9,
+    "total": 36.7
    },
    "fg3m": {
-    "paok": 9.5,
+    "paok": 9.4,
     "opp": 7.6,
-    "total": 17.1
+    "total": 17.0
    },
    "ftm": {
-    "paok": 17.7,
+    "paok": 17.6,
     "opp": 15.3,
-    "total": 33.0
+    "total": 32.8
    },
    "ast": {
-    "paok": 17.6,
-    "opp": 14.5,
-    "total": 32.1
+    "paok": 17.5,
+    "opp": 14.4,
+    "total": 31.9
    },
    "oreb": {
     "paok": 10.2,
     "opp": 10.0,
-    "total": 20.1
+    "total": 20.2
    },
    "dreb": {
     "paok": 23.9,
-    "opp": 22.6,
-    "total": 46.5
+    "opp": 22.7,
+    "total": 46.7
    },
    "tov": {
     "paok": 12.8,
@@ -2329,14 +2329,14 @@
    },
    "reb": {
     "paok": 34.1,
-    "opp": 32.6,
-    "total": 66.6
+    "opp": 32.7,
+    "total": 66.9
    }
   },
   "modelTotal": 145.4,
-  "line": 159.5,
+  "line": 158.5,
   "modelMargin": -1.0,
-  "hcp": 7.5,
+  "hcp": 7.0,
   "players": {
    "paok": [
     {
@@ -2566,7 +2566,7 @@
   "date": "2026-11-18T19:30:00Z",
   "opp": "Manresa",
   "home": false,
-  "saved": "2026-11-11T01:53:40Z",
+  "saved": "2026-11-11T14:59:49Z",
   "paok": 82.5,
   "oppScore": 87.5,
   "winProb": 34,
