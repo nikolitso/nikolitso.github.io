@@ -738,7 +738,8 @@
       "after-love",
       "the-mafia-kills-only-in-summer",
       "brave-new-love",
-      "walk-on-water"
+      "walk-on-water",
+      "mostly-martha"
     ],
     "log": [
       {
@@ -1018,11 +1019,17 @@
         "slot": "2026-11-10 20",
         "slug": "walk-on-water",
         "id": "2120214973028737346"
+      },
+      {
+        "day": "2026-11-11",
+        "slot": "2026-11-11 20",
+        "slug": "mostly-martha",
+        "id": "2120577361385308653"
       }
     ],
-    "last_day": "2026-11-10"
+    "last_day": "2026-11-11"
   },
-  "last_slot": "2026-11-11 14",
+  "last_slot": "2026-11-11 20",
   "quote": {
     "seen": [
       "1",
