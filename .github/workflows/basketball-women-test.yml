@@ -38,7 +38,8 @@ jobs:
         env:
           PYTHONIOENCODING: utf-8
           SITE_REPO: ${{ github.workspace }}
-        run: python -u wlive.py
+        shell: bash
+        run: python -u wlive.py 2>&1 | tee /tmp/wlive.log
       - name: Publish the page data
         run: |
           git config user.name "github-actions[bot]"
@@ -58,3 +59,21 @@ jobs:
           git commit -q -m "Women's basketball totals: live test $(TZ=Europe/Athens date '+%Y-%m-%d %H:%M')"
           for i in 1 2 3 4 5; do git pull -q --rebase && git push -q && exit 0; sleep $((RANDOM % 10 + 5)); done
           exit 1
+      - name: Data check message
+        # wlive.py check(): a league in season with no new result for 10 days, no odds for any game, or a feed failing both ways.
+        # One message a day, on the first run after 05:00 UTC (the 6-hour backup runs at :37 past 0, 6, 12, 18, so it is not in that hour)
+        if: ${{ always() }}
+        env:
+          SIGNAL_PHONE: ${{ secrets.SIGNAL_PHONE }}
+          SIGNAL_APIKEY: ${{ secrets.SIGNAL_APIKEY }}
+        shell: python
+        run: |
+          import os, datetime, urllib.parse, urllib.request
+          try:
+              warn = [l.split('::', 2)[2].strip() for l in open('/tmp/wlive.log', encoding='utf-8') if l.startswith("::warning title=Women's totals data check::")]
+          except FileNotFoundError:
+              warn = []
+          print('\n'.join(warn) or 'data check: all fine')
+          if warn and os.environ['SIGNAL_APIKEY'] and datetime.datetime.now(datetime.UTC).hour == 5:
+              q = urllib.parse.urlencode(dict(phone=os.environ['SIGNAL_PHONE'], apikey=os.environ['SIGNAL_APIKEY'], text="Women's basketball totals data check:\n" + '\n'.join(warn)))
+              print('sent', urllib.request.urlopen('https://signal.callmebot.com/signal/send.php?' + q, timeout=30).status)
