@@ -68,11 +68,11 @@ def upcoming(items, key):
     return sorted((it for it in items if parse(key(it)) >= NOW - timedelta(hours=2)), key=lambda it: parse(key(it)))
 
 
-def record(won, lost, profit, n_open):
+def record(won, lost, profit, n_open, word="pick"):
     """The three pills every card with picks shares, in this order: past record, its ROI (flat stakes), open picks."""
     n = won + lost
-    pills = [f"Record {won}–{lost}", f"ROI {profit / n * 100:+.1f}%"] if n else ["No settled picks yet"]
-    return pills + [f"{n_open} open pick{'s' if n_open != 1 else ''}" if n_open else "No open picks"]
+    pills = [f"Record {won}–{lost}", f"ROI {profit / n * 100:+.1f}%"] if n else [f"No settled {word}s yet"]
+    return pills + [f"{n_open} open {word}{'s' if n_open != 1 else ''}" if n_open else f"No open {word}s"]
 
 
 def short(team):
@@ -162,7 +162,7 @@ def mid_europe():
           and p["posted"][:10] >= rule["since"]]
     done = [p for p in ps if p.get("result")]
     won = sum(p["result"] == "W" for p in done)
-    return record(won, len(done) - won, sum(p["profit"] for p in done), len(ps) - len(done))
+    return record(won, len(done) - won, sum(p["profit"] for p in done), len(ps) - len(done), "bet")     # this page says bets, not picks (user, 11 Nov 2026)
 
 
 def basketball_cup(folder):
