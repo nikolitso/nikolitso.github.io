@@ -410,7 +410,7 @@ function viewHow() {
   <p>Why 10%. The return grows with the EV: the bigger the EV, the more the bets returned. Home and away wins with an EV of 10% or more returned 19.0% on 2,773 bets, with a profit in every season of the test. Those between 8% and 10% returned 12.5% on 1,249 bets: also a profit, but a smaller one, and they are left out.</p>
   <p>Why prices of ${ROT} or below are skipped. They were the weakest part of the test: 201 bets with an EV of 8% or more returned 5.1%, against 15.2% for the rest, with one losing season. A short price leaves little room for a wrong price.</p>
   <p>The picks are kept in two groups by price: ${RMIN.toFixed(2)} to ${(SPLIT - 0.01).toFixed(2)}, and ${SPLIT.toFixed(2)} and above. Both made a similar profit at the opening price in the backtest, but they are not alike. Under ${SPLIT.toFixed(2)} the market moved towards the pick in 53% to 61% of the bets, more than it does for other selections at the same prices (46% to 52%), and the same bets taken at the closing price still broke even. From ${SPLIT.toFixed(2)} up the market moved towards the pick in 44% to 47%, no more than for any outsider, and at the closing price the bets lost about 6%. So the first group is the main one, and the second is followed on paper until live results show whether its opening prices can be taken.</p>
-  <p>Picks are logged on the Picks tab from that date: the first time a game within 8 days meets the rule, at the price on offer then. The Backtest tab opens on the rule; the other filters stay so other rules can be compared with it.</p>
+  <p>Picks are logged on the Live test tab from that date: the first time a game within 8 days meets the rule, at the price on offer then. The Backtest tab opens on the rule; the other filters stay so other rules can be compared with it.</p>
   <h2>The test</h2>
   <p>The rule was chosen on the whole backtest, so the backtest cannot also prove it: its numbers are the best case. The proof is the picks made after the rule was set. So that the results cannot shape the test, the test is written here before they come in.</p>
   <p><b>Frozen on ${new Date(FROZEN).toLocaleDateString('en-GB', {day: 'numeric', month: 'long', year: 'numeric'})}.</b> Home or away win, EV of ${RG}% or more, price above ${ROT}, every league on this page, regular league games, one unit a bet, two groups split at ${SPLIT.toFixed(2)}. Nothing in the rule changes before the review points below. The Backtest tab stays for study, but no finding from it changes the rule.</p>
@@ -515,7 +515,7 @@ function route() {
   const k = location.hash.match(/[&#]k=(\w+)/);
   state.lgk = k ? k[1] : null;
   if ((m && m[1]) !== state.view) { window.scrollTo(0, 0); state.open = null; }
-  state.view = m && VIEWS.includes(m[1]) ? m[1] : 'picks';         // no hash and old links (upcoming, leagues, women) land on the Picks tab
+  state.view = m && VIEWS.includes(m[1]) ? m[1] : 'picks';         // no hash and old links (upcoming, leagues, women) land on the Live test tab
   render();
 }
 window.addEventListener('hashchange', route);
