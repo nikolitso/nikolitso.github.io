@@ -324,6 +324,9 @@ function renderLeagues(){
   return h;
 }
 
+// pace bands, 1 possession wide
+const PACEB = [['Below −2', -99, -2], ['−2 to −1.1', -2, -1], ['−1 to −0.1', -1, 0], ['0 to +0.9', 0, 1], ['+1 to +1.9', 1, 2], ['+2 to +2.9', 2, 3], ['+3 to +3.9', 3, 4], ['+4 or more', 4, 99]];
+
 function analysis(k, notes = true){
   // the tables that decide the rule, for one league or all: pace, luck, edge, line, stage, then season and month
   const B = DATA.backtest, S = k === 'all' ? B.all : B.leagues[k], f = x => k === 'all' || x.lg === k, nt = s => notes ? `<p class="note">${s}</p>` : '';
@@ -334,7 +337,7 @@ function analysis(k, notes = true){
   if (k === 'all') h += calib(BT, `How often the picks won against the chance the model gave them, at the opening line. A well-calibrated model wins about as often as it says in every band. Worst drawdown: the biggest fall from a high point of the running profit, at 1 unit a pick, in date order; expect a run like it again.`);
   const T = (title, first, body, note='') => `<h2>${title}</h2>${nt(note)}<div class="scroll"><table style="max-width:1040px">${GHEAD(first, BHEAD)}<tbody>${body}</tbody></table></div>`;
   const SKL = SK.filter(x => x.luck >= LK());
-  h += T('By pace', 'Pace', [['Below 0', -99, 0], ['0 to +1.9', 0, 2], ['+2 or more', 2, 99]].map(([label, lo, hi]) => bandRow(label, BT.filter(x => x.pace >= lo && x.pace < hi))).join(''),
+  h += T('By pace', 'Pace', PACEB.map(([label, lo, hi]) => bandRow(label, BT.filter(x => x.pace >= lo && x.pace < hi))).join(''),
     `Pace is the two teams' possessions per game so far that season, each with ${LIVE.min_gp ?? 3}+ games, minus the league average, from earlier games only. Pace is one of the model's signals, so there is no pace rule: faster games get a higher chance.`);
   h += T('By 3-point luck', '3-point luck', [['Under +0.2', -99, 0.2], [`+0.2 to ${LKs()}`, 0.2, LK()]].map(([label, lo, hi]) => bandRow(label, BT.filter(x => x.luck >= lo && x.luck < hi))).join('') + bandRow(`${LKs()} or more <span class="muted">(skipped)</span>`, SKL),
     `3-point luck: in the two teams' games so far that season, the threes made minus what the league's 3-point rate gives on the same attempts, in points per game, from earlier games only. High luck means the shooting has been hot, which rarely lasts, while the model's projection still counts those points. The last row is the games the rule skips: luck of ${LKs()} or more. They are not in any other figure on this page.`);
@@ -378,7 +381,7 @@ function liveTables(L){
   // the Backtest tab's tables for the settled live picks
   const T = (title, first, body, note='') => `<h2>${title}</h2>${note ? `<p class="note">${note}</p>` : ''}<div class="scroll"><table style="max-width:1040px">${GHEAD(first, BHEAD)}<tbody>${body}</tbody></table></div>`;
   const band = (list, bands, key) => bands.map(([label, lo, hi]) => bandRow(label, list.filter(x => x[key] != null && x[key] >= lo && x[key] < hi))).join('');
-  let h = T('By pace', 'Pace', band(L, [['Below 0', -99, 0], ['0 to +1.9', 0, 2], ['+2 or more', 2, 99]], 'pace'),
+  let h = T('By pace', 'Pace', band(L, PACEB, 'pace'),
     `Settled live picks, the same bands as the Backtest tab. With few picks these tables say little; they show whether the live picks behave like the backtest.`);
   h += T('By 3-point luck', '3-point luck', band(L, [['Under +0.2', -99, 0.2], [`+0.2 to ${LKs()}`, 0.2, LK()]], 'luck'));
   h += T('By line', 'Line band', band(L, [['Under 170', 0, 170], ['170 to 179.5', 170, 180], ['180 or more', 180, 999]], 'line'));
