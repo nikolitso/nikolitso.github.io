@@ -302,6 +302,9 @@ function viewLeague() {
 
 // ---------- How it works ----------
 function viewHow() {
+  const cnt = f => { let n = 0, pl = 0; for (let i = 0; i < N; i++) if (f(B.g[i], B.o[i])) { n++; pl += P[i]; } return {n: num(n), roi: n ? (pl / n * 100).toFixed(1) + '%' : '–'}; };
+  const h10 = cnt((g, o) => g >= RG * 10 && o > RO * 100 + 1e-6), h8 = cnt((g, o) => g >= GAP0 * 10 && g < RG * 10 && o > RO * 100 + 1e-6);
+  const lo = cnt((g, o) => g >= GAP0 * 10 && o <= RO * 100 + 1e-6), hi = cnt((g, o) => g >= GAP0 * 10 && o > RO * 100 + 1e-6);
   const names = L.map(l => l.country + ' ' + l.name).join(', ');
   return `<div class="prose">
   <h2>What this is</h2>
@@ -318,8 +321,8 @@ function viewHow() {
   <p>Some prices open before the market settles, or are shaded, and for a while stand above it. They are corrected quickly: the same bets taken at the closing price return far less, so the price has to be taken early.</p>
   <h2>Betting rules</h2>
   <p>Set on 10 November 2026 from the backtest. A home or an away win is bet when the EV is <b>${RG}% or more</b> and the price is <b>above ${ROT}</b>. The draw is not bet. Every league on this page, one unit a bet.</p>
-  <p>Why 10%. The return grows with the EV: the bigger the EV, the more the bets returned. Home and away wins with an EV of 10% or more returned 19.0% on 2,773 bets, with a profit in every season of the test. Those between 8% and 10% returned 12.5% on 1,249 bets: also a profit, but a smaller one, and they are left out.</p>
-  <p>Why prices of ${ROT} or below are skipped. They were the weakest part of the test: 201 bets with an EV of 8% or more returned 5.1%, against 15.2% for the rest, with one losing season. A short price leaves little room for a wrong price.</p>
+  <p>Why ${RG}%. The return grows with the EV: the bigger the EV, the more the bets returned. Home and away wins with an EV of ${RG}% or more returned ${h10.roi} on ${h10.n} bets, with a profit in every season of the test. Those between ${GAP0}% and ${RG}% returned ${h8.roi} on ${h8.n} bets: also a profit, but a smaller one, and they are left out.</p>
+  <p>Why prices of ${ROT} or below are skipped. They were the weakest part of the test: ${lo.n} bets with an EV of ${GAP0}% or more returned ${lo.roi}, against ${hi.roi} for the rest. A short price leaves little room for a wrong price.</p>
   <p>The picks are kept in two groups by price: ${RMIN.toFixed(2)} to ${(SPLIT - 0.01).toFixed(2)}, and ${SPLIT.toFixed(2)} and above. Both made a similar profit at the opening price in the backtest, but they are not alike. Under ${SPLIT.toFixed(2)} the market moved towards the pick in 53% to 61% of the bets, more than it does for other selections at the same prices (46% to 52%), and the same bets taken at the closing price still broke even. From ${SPLIT.toFixed(2)} up the market moved towards the pick in 44% to 47%, no more than for any outsider, and at the closing price the bets lost about 6%. So the first group is the main one, and the second is followed on paper until live results show whether its opening prices can be taken.</p>
   <p>Picks are logged on the Live test tab from that date: the first time a game within 8 days meets the rule, at the price on offer then. The Backtest tab opens on the rule; the other filters stay so other rules can be compared with it.</p>
   <h2>The test</h2>
@@ -329,6 +332,7 @@ function viewHow() {
   <p><b>Review of the main group (${RMIN.toFixed(2)} to ${(SPLIT - 0.01).toFixed(2)}): ${REVIEW} settled picks.</b> A profit: the rule stays as it is. A loss, with more than half of the picks beating the closing price: it stays, and is reviewed again at ${REVIEW * 2}. A loss, with half or fewer beating the closing price: the rule is stopped.</p>
   <p><b>Review of the second group (${SPLIT.toFixed(2)} and above): ${REVIEW} settled picks.</b> A profit at the prices taken and at the closing prices of the same picks: the group joins the main one. A loss at the prices taken: the group is dropped. Anything else: it stays on paper and is reviewed again at ${REVIEW * 2}.</p>
   <p><b>Changes.</b> Any change to the rule is written here with its date and counts only for picks made after it. The record of earlier picks is never recounted, and no pick is removed from it.</p>
+  <p>11 November 2026: Greece Super League 2 added, 65 leagues from 64. The rule is unchanged. Its picks count from this date, and its games since 2023-24 are in the backtest: 110 bets under the rule, too few to say anything about the league on its own.</p>
   <h2>What was tried and dropped</h2>
   <p>An xG team model and detailed match data (lineups, missing starters, finishing, set pieces, rest, squad value) were tested against the opening price. None of them added anything the price did not already know, so they are not used.</p>
   <p>The Asian handicap was tested with the same rule, on the line nearest a 50-50 call in each game. The profit was on the sides giving goals: with an EV of 10% or more, 1,989 bets returned 16.9% at the opening price and lost 1.3% when taken at the closing price. More than half of the home and away picks under 3.00 are the same teams. On the 718 games both rules bet the same team, the home or away win returned 25.0% at the opening price and 1.3% at the close, the handicap 21.1% and a loss of 1.0%. The handicap gave more bets but no better result, so the home and away win was kept and no handicap picks are made.</p>
