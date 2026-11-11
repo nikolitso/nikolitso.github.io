@@ -33,27 +33,42 @@ jobs:
       - name: Signals
         if: ${{ always() }}
         run: grep -h "^SIGNALS\|^SUMMARY" /tmp/update.log 2>/dev/null || true
-      - name: Signal message for new picks
+      - name: Message new picks
+        # an ntfy push for every new pick, main and testing leagues (11 Nov 2026), sent once the page has it;
+        # the topic is the NTFY_TOPIC secret, shared with the other sites
         if: ${{ success() }}
         env:
-          SIGNAL_PHONE: ${{ secrets.SIGNAL_PHONE }}
-          SIGNAL_APIKEY: ${{ secrets.SIGNAL_APIKEY }}
+          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
         shell: python
         run: |
-          import json, os, re, datetime, urllib.parse, urllib.request
-          line = next((l for l in open('/tmp/update.log', encoding='utf-8') if l.startswith('SIGNALS ')), None)
-          new = json.loads(line[8:])['new'] if line and os.environ['SIGNAL_APIKEY'] else []   # no key set yet: nothing to send
+          import json, os, re, time, datetime, urllib.request
+          topic = os.environ.get('NTFY_TOPIC', '').strip()
+          log = open('/tmp/update.log', encoding='utf-8').read().splitlines() if os.path.exists('/tmp/update.log') else []
+          line = next((l for l in log if l.startswith('SIGNALS ')), None)
+          sig = json.loads(line[8:]) if line else {}
+          site = 'https://antonisnikolitsopoulos.com/handball/'
+          picks = [(s, 'Handball pick', site + 'live-test/') for s in sig.get('new', [])] + \
+                  [(s, 'Handball testing pick', site + 'testing/') for s in sig.get('testing', [])]
           name = lambda s: re.sub(r'^(Women|Men) · ([^·]*?)( · .*)?$', lambda m: m.group(2).strip() + (' (W)' if m.group(1) == 'Women' else ' (M)'), s)
           team = lambda t: re.sub(r' W$', '', t)
-          for s in new:
-              day = datetime.date.fromisoformat(s['date']).strftime('%a %d %b')
-              text = (f"New handball pick: {s['side'].title()} {s['line']}\n{team(s['home'])} – {team(s['away'])}\n"
-                      f"{name(s['leagueName'])} · {day} {s['time'] or ''} (Greek time)\n"
-                      f"Odds {s['odds']} · model {s['ours']}\nhttps://antonisnikolitsopoulos.com/handball/live-test/")
-              q = urllib.parse.urlencode(dict(phone=os.environ['SIGNAL_PHONE'], apikey=os.environ['SIGNAL_APIKEY'], text=text))
-              print(s['home'], urllib.request.urlopen('https://signal.callmebot.com/signal/send.php?' + q, timeout=30).status)
+          def push(title, body, click):
+              req = urllib.request.Request('https://ntfy.sh/' + topic, data=body.encode('utf-8'), method='POST',
+                                           headers={'Title': title.encode('utf-8'), 'Tags': 'handball', 'Click': click})
+              return urllib.request.urlopen(req, timeout=30).status
+          for s, kind, link in (picks if topic else []):
+              try:
+                  day = datetime.date.fromisoformat(s['date']).strftime('%a %d %b')
+                  body = (f"{team(s['home'])} – {team(s['away'])}\n{name(s['leagueName'])} · {day} {s['time'] or ''} (Greek time)\n"
+                          f"Odds {s['odds']} · model {s['ours']}\n{link}")
+                  print(s['home'], push(f"{kind}: {s['side'].title()} {s['line']}", body, link))
+              except Exception as e:
+                  print(s.get('home'), 'not sent', e)
+              time.sleep(2)
+          print(len(picks), 'new picks', '' if topic else '(no NTFY_TOPIC secret: nothing sent)')
           # data check (extra.py): one message a day, on the 03:00 run, if any league's source is empty or missing results
-          warn = [l.split('::', 2)[2].strip() for l in open('/tmp/update.log', encoding='utf-8') if l.startswith('::warning title=Handball data check::')]
-          if warn and os.environ['SIGNAL_APIKEY'] and datetime.datetime.utcnow().hour == 1:
-              q = urllib.parse.urlencode(dict(phone=os.environ['SIGNAL_PHONE'], apikey=os.environ['SIGNAL_APIKEY'], text='Handball data check:\n' + '\n'.join(warn)))
-              print('data check', urllib.request.urlopen('https://signal.callmebot.com/signal/send.php?' + q, timeout=30).status)
+          warn = [l.split('::', 2)[2].strip() for l in log if l.startswith('::warning title=Handball data check::')]
+          if warn and topic and datetime.datetime.utcnow().hour == 1:
+              try:
+                  print('data check', push('Handball data check', '\n'.join(warn), site))
+              except Exception as e:
+                  print('data check not sent', e)
