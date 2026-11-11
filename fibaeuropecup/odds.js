@@ -1,7 +1,7 @@
 // Bookmaker lines for upcoming fixtures, keyed by the fixture's home and away club.
 // sp = handicap on the home side (+ means the home side is the underdog), spH / spA = its odds home / away,
 // tot = points total, ov / un = odds over / under, mlH / mlA = money line odds (null when not offered).
-window.ODDS = {"updated": "2026-11-10", "source": "pre-game lines, earlier ones kept", "list": [
+window.ODDS = {"updated": "2026-11-11", "source": "pre-game lines, earlier ones kept", "list": [
   {"h": "AEK Larnaca", "a": "Tartu Ulikool", "sp": -5.5, "spH": 1.83, "spA": 1.83, "tot": 165.5, "ov": 1.83, "un": 1.83, "mlH": 1.19, "mlA": 4.0},
   {"h": "CSM Oradea", "a": "VEF Riga", "sp": -3.5, "spH": 1.83, "spA": 1.83, "tot": 172.5, "ov": 1.83, "un": 1.83, "mlH": 1.62, "mlA": 2.1},
   {"h": "Esenler Erokspor", "a": "SCM Craiova", "sp": -19.5, "spH": 1.83, "spA": 1.83, "tot": 163.5, "ov": 1.83, "un": 1.83, "mlH": 1.01, "mlA": 11.5},
@@ -67,5 +67,27 @@ window.ODDS = {"updated": "2026-11-10", "source": "pre-game lines, earlier ones 
   {"h": "Korfez Basket", "a": "Bashkimi", "sp": -19.5, "spH": 1.86, "spA": 1.86, "tot": 167.5, "ov": 1.86, "un": 1.86, "mlH": 1.06, "mlA": 9.0},
   {"h": "Geneva Lions", "a": "BC Prievidza", "sp": -3.5, "spH": 1.83, "spA": 1.85, "tot": 168.5, "ov": 1.83, "un": 1.83, "mlH": 1.55, "mlA": 2.25},
   {"h": "Oostende", "a": "Szolnoki Olaj", "sp": -4.5, "spH": 1.85, "spA": 1.83, "tot": 162.5, "ov": 1.8, "un": 1.87, "mlH": 1.48, "mlA": 2.4},
-  {"h": "Manchester Basketball", "a": "Chalon/Saone", "sp": 10.5, "spH": 1.86, "spA": 1.86, "tot": 164.5, "ov": 1.89, "un": 1.83, "mlH": 4.6, "mlA": 1.18}
+  {"h": "Manchester Basketball", "a": "Chalon/Saone", "sp": 10.5, "spH": 1.86, "spA": 1.86, "tot": 164.5, "ov": 1.89, "un": 1.83, "mlH": 4.6, "mlA": 1.18},
+  {"h": "Batumi", "a": "Trier", "sp": 25.5, "spH": 1.9, "spA": 1.78, "tot": 171.5, "ov": 1.83, "un": 1.85, "mlH": 16.0, "mlA": 1.01},
+  {"h": "Neftchi IK", "a": "Mykonos", "sp": 10.5, "spH": 1.83, "spA": 1.85, "tot": 162.5, "ov": 1.83, "un": 1.85, "mlH": 4.0, "mlA": 1.19},
+  {"h": "Korfez Basket", "a": "BC Kalev/Cramo", "sp": -15.5, "spH": 1.85, "spA": 1.83, "tot": 163.5, "ov": 1.85, "un": 1.83, "mlH": 1.07, "mlA": 6.5},
+  {"h": "Dinamo Bucharest", "a": "Basquet Girona", "sp": 7.5, "spH": 1.83, "spA": 1.85, "tot": 167.5, "ov": 1.85, "un": 1.83, "mlH": 3.1, "mlA": 1.3},
+  {"h": "Lok. Plovdiv", "a": "VEF Riga", "sp": 2.5, "spH": 1.85, "spA": 1.83, "tot": 172.5, "ov": 1.85, "un": 1.83, "mlH": 2.1, "mlA": 1.62},
+  {"h": "Nitra Blue Wings", "a": "Szczecin", "sp": 9.5, "spH": 1.83, "spA": 1.83, "tot": 166.5, "ov": 1.83, "un": 1.83, "mlH": 3.7, "mlA": 1.22},
+  {"h": "Promitheas", "a": "Trepca", "sp": -16.5, "spH": 1.83, "spA": 1.83, "tot": 170.5, "ov": 1.83, "un": 1.83, "mlH": 1.1, "mlA": 5.5},
+  {"h": "SCM Craiova", "a": "Kolossos Rhodes", "sp": 5.5, "spH": 1.83, "spA": 1.83, "tot": 165.5, "ov": 1.9, "un": 1.78, "mlH": 2.6, "mlA": 1.42},
+  {"h": "Valmiera Glass Via", "a": "Bashkimi", "sp": -6.5, "spH": 1.85, "spA": 1.83, "tot": 163.5, "ov": 1.75, "un": 1.91, "mlH": 1.36, "mlA": 2.8},
+  {"h": "Iraklis", "a": "MZT Skopje", "sp": -19.5, "spH": 1.83, "spA": 1.85, "tot": 160.5, "ov": 1.9, "un": 1.78, "mlH": 1.02, "mlA": 9.0},
+  {"h": "Zielona Gora", "a": "Szolnoki Olaj", "sp": -10.5, "spH": 1.83, "spA": 1.83, "tot": 166.5, "ov": 1.85, "un": 1.85, "mlH": 1.19, "mlA": 4.0},
+  {"h": "BC Prievidza", "a": "Denizli Basket", "sp": 3.5, "spH": 1.87, "spA": 1.8, "tot": 169.5, "ov": 1.85, "un": 1.83, "mlH": 2.3, "mlA": 1.53},
+  {"h": "Dziki Warszawa", "a": "Tartu Ulikool", "sp": -16.5, "spH": 1.85, "spA": 1.83, "tot": 173.5, "ov": 1.83, "un": 1.83, "mlH": 1.06, "mlA": 6.75},
+  {"h": "Rilski Sportist", "a": "Sporting CP", "sp": 4.5, "spH": 1.86, "spA": 1.86, "tot": 156.5, "ov": 1.83, "un": 1.83, "mlH": 2.4, "mlA": 1.48},
+  {"h": "Split", "a": "Opava", "sp": -11.5, "spH": 1.85, "spA": 1.83, "tot": 166.5, "ov": 1.85, "un": 1.83, "mlH": 1.16, "mlA": 4.33},
+  {"h": "Vienna Basket", "a": "Nancy", "sp": 4.5, "spH": 1.8, "spA": 1.87, "tot": 159.5, "ov": 1.83, "un": 1.83, "mlH": 2.35, "mlA": 1.5},
+  {"h": "Wurzburg", "a": "AEK Larnaca", "sp": -12.5, "spH": 1.83, "spA": 1.83, "tot": 162.5, "ov": 1.83, "un": 1.85, "mlH": 1.14, "mlA": 4.75},
+  {"h": "Fribourg Olympic", "a": "CSM Oradea", "sp": 6.5, "spH": 1.85, "spA": 1.83, "tot": 165.5, "ov": 1.85, "un": 1.83, "mlH": 2.85, "mlA": 1.35},
+  {"h": "Geneva Lions", "a": "Absheron Lions", "sp": -10.5, "spH": 1.83, "spA": 1.85, "tot": 174.5, "ov": 1.83, "un": 1.83, "mlH": 1.2, "mlA": 3.9},
+  {"h": "Oostende", "a": "Levice", "sp": -9.5, "spH": 1.78, "spA": 1.9, "tot": 160.5, "ov": 1.83, "un": 1.83, "mlH": 1.2, "mlA": 3.9},
+  {"h": "Benfica", "a": "Bakken Bears", "sp": -6.5, "spH": 1.85, "spA": 1.87, "tot": 170.5, "ov": 1.83, "un": 1.83, "mlH": 1.36, "mlA": 2.85},
+  {"h": "Gence", "a": "Esenler Erokspor", "sp": 15.5, "spH": 1.83, "spA": 1.85, "tot": 163.5, "ov": 1.83, "un": 1.83, "mlH": 6.25, "mlA": 1.08}
 ]};
