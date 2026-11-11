@@ -1,6 +1,6 @@
 // Pre-game bookmaker lines for played EuroCup games (fs_odds.py).
 // bh = handicap home minus away, bt = points total; main line = most even odds.
-window.MARKET = {"updated": "2026-11-10", "list": [
+window.MARKET = {"updated": "2026-11-11", "list": [
 {"date": "2026-09-29", "h": "Hapoel Jerusalem", "a": "Rostock", "bh": 14.5, "bt": 170.5},
 {"date": "2026-09-29", "h": "Le Mans", "a": "Aris", "bh": -8.5, "bt": 167.5},
 {"date": "2026-09-29", "h": "Neptunas", "a": "Trento", "bh": -1.5, "bt": 171.5},
@@ -103,5 +103,7 @@ window.MARKET = {"updated": "2026-11-10", "list": [
 {"date": "2026-11-10", "h": "Manresa", "a": "KK Bosna", "bh": 8.5, "bt": 173.5},
 {"date": "2026-11-10", "h": "Neptunas", "a": "Slask Wroclaw", "bh": 6.5, "bt": 173.5},
 {"date": "2026-11-10", "h": "Rostock", "a": "Cedevita Olimpija", "bh": 2.5, "bt": 163.5},
-{"date": "2026-11-10", "h": "Trento", "a": "Tofas", "bh": -2.5, "bt": 172.5}
+{"date": "2026-11-10", "h": "Trento", "a": "Tofas", "bh": -2.5, "bt": 172.5},
+{"date": "2026-11-11", "h": "Bahcesehir Kol.", "a": "Lietkabelis", "bh": 17.5, "bt": 161.5},
+{"date": "2026-11-11", "h": "Siauliai", "a": "Tenerife", "bh": -8.5, "bt": 167.5}
 ]};
