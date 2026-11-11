@@ -197,7 +197,7 @@ a.tile:hover{border-color:var(--gold)}
   <div class="chips" id="chips"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=w55"></script>
+<script src="data.js?v=w56"></script>
 <script src="live.js"></script>
 <script>
 const $ = id => document.getElementById(id);
@@ -338,19 +338,20 @@ const btCells = list => { const c = list.filter(b => b.close != null);
 const btTable = (first, rows, note='') => `${note ? `<p class="note">${note}</p>` : ''}<div class="scroll"><table style="max-width:1040px">${GHEAD(first, BHEAD)}<tbody>${rows.filter(r => r[1].length).map(([label, r]) => grp(label, stat(r), '', btCells(r))).join('')}</tbody></table></div>`;
 const SKIPPED = ' <span class="muted">(skipped)</span>';
 const skipped = k => (DATA[k] || []).filter(inLg);
-// calibration: the model's chance of the pick against how often it won, in bands of the chance
-function calTable(list, note, skip=[]){
-  const d = list.filter(b => b.p != null && b.ret != null && b.ret !== 0), sk = skip.filter(b => b.ret !== 0);
+// calibration: the model's chance of the pick against how often it won, in three bands with a third of the picks each
+function calTable(list, note){
+  const d = list.filter(b => b.p != null && b.ret != null && b.ret !== 0).sort((a, b) => a.p - b.p);
   if (!d.length) return '';
-  const rows = [['Under 55%', 0, .55], ['55% to 60%', .55, .6], ['60% to 65%', .6, .65], ['65% to 70%', .65, .7], ['70% or more', .7, 2]].map(([label, lo, hi]) => [label, d.filter(b => b.p >= lo && b.p < hi)]).concat([['<b>All</b>', d]]).filter(r => r[1].length);
-  if (sk.length) rows.unshift([`Under 55%${SKIPPED}`, sk]);
+  const cut = [0, Math.round(d.length / 3), Math.round(d.length * 2 / 3), d.length];
+  const rows = d.length >= 3 ? [0, 1, 2].map(k => d.slice(cut[k], cut[k + 1])).map(r => [`${pct(r[0].p, 1)} to ${pct(r[r.length - 1].p, 1)}`, r]) : [];
+  rows.push(['<b>All</b>', d]);
   const tr = ([label, r]) => { const p = r.reduce((a, b) => a + b.p, 0) / r.length, w = r.filter(b => b.ret > 0).length / r.length, df = (w - p) * 100;
     return `<tr><td>${label}</td><td class="n">${r.length}</td><td class="n">${pct(p, 1)}</td><td class="n">${pct(w, 1)}</td><td class="n ${cls(df)}">${sgn(df, 1)} pts</td></tr>`; };
   return `<h2>Calibration</h2><p class="note">${note}</p><div class="scroll"><table style="max-width:640px"><thead><tr><th>Model's chance</th><th class="n">Picks</th><th class="n">Chance given</th><th class="n">Won</th><th class="n">Difference</th></tr></thead><tbody>${rows.map(tr).join('')}</tbody></table></div>`;
 }
 
 function btBody(BT, S, pool, leagues){
-  let h = calTable(BT, "How often the picks won against the chance the model gave them, at the opening line. A well-calibrated model wins about as often as it says. Won above the chance means the model was too cautious on these picks; below it, too confident. Pushes are left out. The first row is the games the 55% rule skips (since 11 Nov 2026): every other rule met, with the model giving the over less than a 55% chance. They are not in any other figure on this page, and All is the picks only.", skipped('skipped_p'));
+  let h = calTable(BT, "How often the picks won against the chance the model gave them, at the opening line. A well-calibrated model wins about as often as it says. Won above the chance means the model was too cautious on these picks; below it, too confident. The picks are split by the model's chance into three bands with a third of the picks each. Pushes are left out.");
   const T = stat(BT), C = BT.filter(b => b.close != null), EP = Math.round(R.edge * 100);
   const known = BT.filter(x => x.pace != null);
   h += `<h2>By pace</h2>` + btTable('Pace', [[`Slower, under −1${SKIPPED}`, skipped('skipped_pace')]].concat([['About average, −1 to +1', -1, 1.01], ['Faster, +1 to +3', 1.01, 3.01], ['Fastest, over +3', 3.01, 99]].map(([label, lo, hi]) => [label, known.filter(x => x.pace >= lo && x.pace < hi)])).concat([['No pace <span class="muted">(no box scores)</span>', BT.filter(x => x.pace == null)]]),
@@ -381,7 +382,7 @@ function bets(list){
 
 
 function renderProjections(){
-  let h = `<p class="note">Games in the next 7 days where both teams have played ${LIVE.min_gp ?? 4}+ games, with the model's projected total (fitted on earlier games only) next to the market's consensus line. Pace is the part of the model total that comes from how much faster or slower these two teams play than the league; it is already in the Model number, and a dash means no box scores. Line diff: the model before pace minus the line, the number the 4-point rule reads. Over edge is shown only for games that meet every other rule: edge above ${(LE()*100).toFixed(0)}%, the model's chance of the over 55% or more, model before pace at least 4 points above the line, both teams ${LIVE.min_gp ?? 4}+ games, pace −1 or more, regular season, a line ending in .5; a game becomes a pick when its edge is also above the bar. Highlighted games are logged in the Live test tab at the line and price shown when they were first seen, and their edge is the one at that moment, while the line and prices keep updating. Click a match for its page, with the projection and how it was produced. Click a column heading to sort.</p>`;
+  let h = `<p class="note">Games in the next 7 days where both teams have played ${LIVE.min_gp ?? 4}+ games, with the model's projected total (fitted on earlier games only) next to the market's consensus line. Pace is the part of the model total that comes from how much faster or slower these two teams play than the league; it is already in the Model number, and a dash means no box scores. Line diff: the model before pace minus the line, the number the 4-point rule reads. Over edge is shown only for games that meet every other rule: edge above ${(LE()*100).toFixed(0)}%, model before pace at least 4 points above the line, both teams ${LIVE.min_gp ?? 4}+ games, pace −1 or more, regular season, a line ending in .5; a game becomes a pick when its edge is also above the bar. Highlighted games are logged in the Live test tab at the line and price shown when they were first seen, and their edge is the one at that moment, while the line and prices keep updating. Click a match for its page, with the projection and how it was produced. Click a column heading to sort.</p>`;
   const fx = LIVE.fixtures.filter(inLg);
   if (!fx.length) return h + '<p class="empty">No games in the next 7 days where both teams have the minimum games.</p>';
   const taken = Object.fromEntries(LIVE.picks.map(b => [b.home + '|' + b.away, b]));   // a pick keeps the edge it was taken at
@@ -404,7 +405,7 @@ function renderProjections(){
 function liveTables(L){
   // the Backtest tab's tables for the settled live picks
   const EP = Math.round(R.edge * 100), band = (list, bands, key) => bands.map(([label, lo, hi]) => [label, list.filter(x => x[key] != null && x[key] >= lo && x[key] < hi)]);
-  let h = calTable(L, 'Settled live picks: the chance the model gave them against how often they won. With few picks this says little yet.');
+  let h = calTable(L, 'Settled live picks: the chance the model gave them against how often they won, in three bands with a third of the picks each. With few picks this says little yet.');
   h += `<h2>By pace</h2>` + btTable('Pace', band(L, [['Slower, under −1', -99, -1], ['About average, −1 to +1', -1, 1.01], ['Faster, +1 to +3', 1.01, 3.01], ['Fastest, over +3', 3.01, 99]], 'pace'),
     'Settled live picks, the same bands as the Backtest tab. With few picks these tables say little; they show whether the live picks behave like the backtest.');
   h += `<h2>By line</h2>` + btTable('Line band', band(L, [['Under 130', 0, 130], ['130–139.5', 130, 140], ['140 and over', 140, 999]], 'line'));
@@ -419,7 +420,7 @@ function renderPicks(){
   // open picks first, then this season's record: October bets (same rules, worked out from results) + bets logged live
     const open = LIVE.picks.filter(b => !b.done).sort((a, b) => a.dt < b.dt ? -1 : 1);
   const fx = Object.fromEntries(LIVE.fixtures.map(g => [g.home + '|' + g.away, g]));
-  let h = `<p class="note"><b>The pick.</b> The over, when the model's edge is above ${Math.round(LE()*100)}% and its chance of the over is 55% or more: regular season, both teams ${LIVE.min_gp ?? 4}+ games in, the model before pace at least 4 points above the line, pace not taking more than 1 point off the model total, and a line ending in .5.<br><b>When.</b> Every hour the model checks the next 7 days. A pick is logged the first time its edge clears the bar, at that line and the average price, and never changed. Women's lines rarely move, so there is no rush to take it.<br><b>Scoring.</b> Equal stakes. ROI is profit ÷ amount staked; pushes don't count. Updated ${LIVE.updated} (Athens).</p>`;
+  let h = `<p class="note"><b>The pick.</b> The over, when the model's edge is above ${Math.round(LE()*100)}%: regular season, both teams ${LIVE.min_gp ?? 4}+ games in, the model before pace at least 4 points above the line, pace not taking more than 1 point off the model total, and a line ending in .5.<br><b>When.</b> Every hour the model checks the next 7 days. A pick is logged the first time its edge clears the bar, at that line and the average price, and never changed. Women's lines rarely move, so there is no rush to take it.<br><b>Scoring.</b> Equal stakes. ROI is profit ÷ amount staked; pushes don't count. Updated ${LIVE.updated} (Athens).</p>`;
   if (!open.length) h += '<p class="empty">No open picks right now. New ones appear here as lines open.</p>';
   else {
     h += `<h2>Open picks</h2><div class="scroll"><table class="proj"><thead><tr><th>Tip-off</th><th>League</th><th>Match</th><th class="n">Pick</th><th class="n">Price</th><th class="n">Model total</th><th class="n">Edge</th><th class="n">Line now</th><th class="n">Pace</th><th class="n">Line diff</th></tr></thead><tbody>` +
