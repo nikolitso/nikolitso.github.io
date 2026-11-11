@@ -197,7 +197,7 @@ a.tile:hover{border-color:var(--gold)}
   <div class="chips" id="chips"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=w56"></script>
+<script src="data.js?v=w57"></script>
 <script src="live.js"></script>
 <script>
 const $ = id => document.getElementById(id);
@@ -338,12 +338,19 @@ const btCells = list => { const c = list.filter(b => b.close != null);
 const btTable = (first, rows, note='') => `${note ? `<p class="note">${note}</p>` : ''}<div class="scroll"><table style="max-width:1040px">${GHEAD(first, BHEAD)}<tbody>${rows.filter(r => r[1].length).map(([label, r]) => grp(label, stat(r), '', btCells(r))).join('')}</tbody></table></div>`;
 const SKIPPED = ' <span class="muted">(skipped)</span>';
 const skipped = k => (DATA[k] || []).filter(inLg);
-// calibration: the model's chance of the pick against how often it won, in three bands with a third of the picks each
+// k bands with the same number of picks each (the last ones one fewer), sorted by key; label is the band's lowest to highest value
+function qbands(list, key, k, fmt){
+  const d = list.filter(b => b[key] != null).sort((a, b) => a[key] - b[key]);
+  if (d.length < k) return [];
+  return [...Array(k).keys()].map(i => d.slice(Math.round(d.length * i / k), Math.round(d.length * (i + 1) / k))).map(r => [`${fmt(r[0][key])} to ${fmt(r[r.length - 1][key])}`, r]);
+}
+const NB = 4;   // four bands: of 2 to 8, the one whose band results repeated best between 2021–23 and 2024–26 (11 Nov 2026)
+
+// calibration: the model's chance of the pick against how often it won, in four bands with a quarter of the picks each
 function calTable(list, note){
   const d = list.filter(b => b.p != null && b.ret != null && b.ret !== 0).sort((a, b) => a.p - b.p);
   if (!d.length) return '';
-  const cut = [0, Math.round(d.length / 3), Math.round(d.length * 2 / 3), d.length];
-  const rows = d.length >= 3 ? [0, 1, 2].map(k => d.slice(cut[k], cut[k + 1])).map(r => [`${pct(r[0].p, 1)} to ${pct(r[r.length - 1].p, 1)}`, r]) : [];
+  const rows = qbands(d, 'p', NB, x => pct(x, 1));
   rows.push(['<b>All</b>', d]);
   const tr = ([label, r]) => { const p = r.reduce((a, b) => a + b.p, 0) / r.length, w = r.filter(b => b.ret > 0).length / r.length, df = (w - p) * 100;
     return `<tr><td>${label}</td><td class="n">${r.length}</td><td class="n">${pct(p, 1)}</td><td class="n">${pct(w, 1)}</td><td class="n ${cls(df)}">${sgn(df, 1)} pts</td></tr>`; };
@@ -351,7 +358,7 @@ function calTable(list, note){
 }
 
 function btBody(BT, S, pool, leagues){
-  let h = calTable(BT, "How often the picks won against the chance the model gave them, at the opening line. A well-calibrated model wins about as often as it says. Won above the chance means the model was too cautious on these picks; below it, too confident. The picks are split by the model's chance into three bands with a third of the picks each. Pushes are left out.");
+  let h = calTable(BT, "How often the picks won against the chance the model gave them, at the opening line. A well-calibrated model wins about as often as it says. Won above the chance means the model was too cautious on these picks; below it, too confident. The picks are split by the model's chance into four bands with a quarter of the picks each. Pushes are left out.");
   const T = stat(BT), C = BT.filter(b => b.close != null), EP = Math.round(R.edge * 100);
   const known = BT.filter(x => x.pace != null);
   h += `<h2>By pace</h2>` + btTable('Pace', [[`Slower, under −1${SKIPPED}`, skipped('skipped_pace')]].concat([['About average, −1 to +1', -1, 1.01], ['Faster, +1 to +3', 1.01, 3.01], ['Fastest, over +3', 3.01, 99]].map(([label, lo, hi]) => [label, known.filter(x => x.pace >= lo && x.pace < hi)])).concat([['No pace <span class="muted">(no box scores)</span>', BT.filter(x => x.pace == null)]]),
@@ -360,8 +367,8 @@ function btBody(BT, S, pool, leagues){
   h += `<h2>By 3-point luck</h2>` + btTable('3-point luck', [['Under −1.5', -99, -1.5], ['−1.5 to 0', -1.5, 0], ['0 to +1.5', 0, 1.5], ['+1.5 or more', 1.5, 99]].map(([label, lo, hi]) => [label, lk.filter(x => x.luck >= lo && x.luck < hi)]).concat([['No luck figure', BT.filter(x => x.luck == null)]]),
     '3-point luck: in the two teams\' games so far that season, the threes made minus what the league\'s 3-point rate gives on the same attempts, in points per game, from earlier games only. It is not a rule here: on women\'s games the picks with hot shooting (+1.5 or more) did better than the rest, the opposite of the men\'s leagues, so skipping them, as the overs page does, would have cut the profit. Picks with no luck figure come from games without 3-point data.');
   const SE = skipped('skipped_edge');
-  h += `<h2>By edge</h2>` + btTable('Edge', [[`0% to ${EP / 2}%${SKIPPED}`, SE.filter(x => x.edge <= EP / 200)], [`${EP / 2}% to ${EP}%${SKIPPED}`, SE.filter(x => x.edge > EP / 200)], [`${EP}% to ${EP + 4}%`, BT.filter(x => x.edge < (EP + 4) / 100)], [`${EP + 4}% or more`, BT.filter(x => x.edge >= (EP + 4) / 100)]],
-    `Edge: the model's chance of the over × the price − 1, at the opening line. The first two rows are the games the rule skips: every other rule met, with an edge above 0 but not above ${EP}%. They are not in any other figure on this page.`);
+  h += `<h2>By edge</h2>` + btTable('Edge', [[`0% to ${EP / 2}%${SKIPPED}`, SE.filter(x => x.edge <= EP / 200)], [`${EP / 2}% to ${EP}%${SKIPPED}`, SE.filter(x => x.edge > EP / 200)], ...qbands(BT, 'edge', NB, x => (x * 100).toFixed(1) + '%')],
+    `Edge: the model's chance of the over × the price − 1, at the opening line. The first two rows are the games the rule skips: every other rule met, with an edge above 0 but not above ${EP}%. They are not in any other figure on this page. The picks are in four bands with a quarter of the picks each.`);
   h += `<h2>By line</h2>` + btTable('Line band', [['Under 130', 0, 130], ['130–139.5', 130, 140], ['140 and over', 140, 999]].map(([label, lo, hi]) => [label, BT.filter(x => x.line >= lo && x.line < hi)]), 'The opening line in three bands.');
   const SG = skipped('skipped_gap');
   h += `<h2>By line difference</h2>` + btTable('Difference', [[`Under 4${SKIPPED}`, SG.filter(x => x.g0 < 4)], ['4–5.9', BT.filter(x => x.g0 < 6)], ['6–7.9', BT.filter(x => x.g0 >= 6 && x.g0 < 8)], ['8–11.9', BT.filter(x => x.g0 >= 8 && x.g0 < 12)], ['12 and over', BT.filter(x => x.g0 >= 12)]],
@@ -405,11 +412,11 @@ function renderProjections(){
 function liveTables(L){
   // the Backtest tab's tables for the settled live picks
   const EP = Math.round(R.edge * 100), band = (list, bands, key) => bands.map(([label, lo, hi]) => [label, list.filter(x => x[key] != null && x[key] >= lo && x[key] < hi)]);
-  let h = calTable(L, 'Settled live picks: the chance the model gave them against how often they won, in three bands with a third of the picks each. With few picks this says little yet.');
+  let h = calTable(L, 'Settled live picks: the chance the model gave them against how often they won, in four bands with a quarter of the picks each once there are four. With few picks this says little yet.');
   h += `<h2>By pace</h2>` + btTable('Pace', band(L, [['Slower, under −1', -99, -1], ['About average, −1 to +1', -1, 1.01], ['Faster, +1 to +3', 1.01, 3.01], ['Fastest, over +3', 3.01, 99]], 'pace'),
     'Settled live picks, the same bands as the Backtest tab. With few picks these tables say little; they show whether the live picks behave like the backtest.');
   h += `<h2>By line</h2>` + btTable('Line band', band(L, [['Under 130', 0, 130], ['130–139.5', 130, 140], ['140 and over', 140, 999]], 'line'));
-  h += `<h2>By edge</h2>` + btTable("Model's edge", band(L, [[`${EP}% to ${EP + 4}%`, EP / 100, (EP + 4) / 100], [`${EP + 4}% to ${EP + 8}%`, (EP + 4) / 100, (EP + 8) / 100], [`${EP + 8}% or more`, (EP + 8) / 100, 99]], 'edge'));
+  h += `<h2>By edge</h2>` + btTable("Model's edge", L.length >= NB ? qbands(L, 'edge', NB, x => (x * 100).toFixed(1) + '%') : [['All', L]]);
   const lgs = [...new Set(L.map(b => b.lg))].sort((a, b) => lgShort(a) < lgShort(b) ? -1 : 1);
   h += `<h2>By league</h2>` + btTable('League', lgs.map(k => [lgShort(k), L.filter(b => b.lg === k)]));
   h += `<h2>By month</h2>` + btTable('Month', [9, 10, 11, 12, 1, 2, 3, 4, 5, 6].map(mm => [MON[mm - 1], L.filter(b => +b.dt.slice(5, 7) === mm)]));
