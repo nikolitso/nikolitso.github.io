@@ -101,17 +101,19 @@ function filters(noLg) {
 }
 
 // ---------- where the profit comes from: a few teams? ----------
-const TOPTEAMS = 30;
-function concentration(idx) {
-  if (!B.t || !idx.length) return '';
+const TOPTEAMS = 10, MINTEAM = 3;                              // By team: the 10 most profitable teams with at least 3 bets, main price group only (user, 11 Nov 2026)
+function concentration(idx0) {
+  if (!B.t) return '';
+  const inb = i => B.o[i] > RO * 100 + 1e-6 && B.o[i] < SPLIT * 100 - 1e-6, idx = idx0.filter(inb);
+  if (!idx.length) return '';
   const all = agg(idx), tm = new Map();
   for (const i of idx) { const a = tm.get(B.t[i]) || {n: 0, pl: 0, l: B.l[i]}; a.n++; a.pl += P[i]; tm.set(B.t[i], a); }
-  const list = [...tm.entries()].sort((a, b) => b[1].pl - a[1].pl), top = list.slice(0, TOPTEAMS), set = new Set(top.map(x => x[0]));
-  const rest = agg(idx, i => !set.has(B.t[i])), topPl = top.reduce((s, x) => s + x[1].pl, 0), winners = list.filter(x => x[1].pl > 0).length;
-  REG['By team'] = Object.fromEntries(top.map(([k]) => [D.teams[k], i => B.t[i] === k]));
+  const list = [...tm.entries()].filter(x => x[1].n >= MINTEAM).sort((a, b) => b[1].pl - a[1].pl), top = list.slice(0, TOPTEAMS), set = new Set(top.map(x => x[0]));
+  const rest = agg(idx, i => !set.has(B.t[i])), topPl = top.reduce((s, x) => s + x[1].pl, 0);
+  REG['By team'] = Object.fromEntries(top.map(([k]) => [D.teams[k], i => B.t[i] === k && inb(i)]));
   const rows = top.map(([k, a]) => `<tr data-row="${D.teams[k]}" title="Show the games"><td>${D.teams[k]}</td><td>${L[a.l].country} · ${L[a.l].name}</td><td class="n">${num(a.n)}</td><td class="n ${cls(a.pl)}">${units(a.pl)}</td><td class="n ${cls(a.pl)} few">${spct(a.pl / a.n)}</td></tr>`).join('');
-  return `<h2>By team</h2>
-  <p class="note">${num(list.length)} teams were bet on; ${num(winners)} of them made a profit. The ${TOPTEAMS} most profitable are listed: they made ${units(topPl)} of the ${units(all.pl)} units. Without them the other bets returned <b class="${cls(rest.pl)}">${spct(rest.roi)}</b> on ${num(rest.n)} bets.</p>
+  return `<h2>By team: prices ${RMIN.toFixed(2)} to ${(SPLIT - 0.01).toFixed(2)}</h2>
+  <p class="note">Only the bets at prices from ${RMIN.toFixed(2)} to ${(SPLIT - 0.01).toFixed(2)}, whatever the odds filter. ${num(tm.size)} teams were bet on, ${num(list.length)} of them at least ${MINTEAM} times. The ${top.length} most profitable of those are listed: they made ${units(topPl)} of the ${units(all.pl)} units. Without them the other bets returned <b class="${cls(rest.pl)}">${spct(rest.roi)}</b> on ${num(rest.n)} bets. A team's own record rests on a few bets and says little about its next ones.</p>
   <table data-t="By team"><thead><tr><th>Team bet on</th><th>League</th><th class="n">Bets</th><th class="n">P/L</th><th class="n">ROI</th></tr></thead><tbody>${rows}</tbody></table>`;
 }
 
@@ -316,7 +318,7 @@ function viewHow() {
   <p>Every regular league game from 2023-24 to now (play-offs and finals are left out), at opening prices. Each time the EV on a home win or an away win was at least ${GAP0}%, one unit is bet on it at the best price.</p>
   <p>${PRIOR}</p>
   <p>The Backtest tab is built for choosing a rule. Filters cut the bets: the minimum EV, the league group (top divisions, lower divisions), the first round of the season to bet from, the side, and an odds range set for each side on its own. Every table is recounted for the bets that pass. Every rule is read twice: the bets at their opening price, and the same bets at the price the selection had at the close, the last before kick-off. The two pills above the tables show both; the tables use the opening price. A third pill shows how often the market's own chance for the bet rose by the close and how often it fell.</p>
-  <p>Each table row shows the number of bets, the average EV they promised, the ROI, its standard error, the profit or loss, and the ROI of each season. Every table row can be clicked to list the games behind it, and each game opens to show how the bet was made. The tables split the bets by season, side, league group, round of the season, month of the game, odds and EV. A last table, By team, lists the 30 most profitable teams and shows how much of the profit comes from them. A rule is worth using when the result holds in every season, not only in the total. The Leagues tab shows the same bets league by league; one league's numbers rest on few bets and its past ROI says little about its next season. Each league opens on a page of its own with every bet listed: a click on a bet shows the market chance and the best price of every outcome when the prices opened, the EV of each side, why that side was bet, and then how the market closed and how the game ended.</p>
+  <p>Each table row shows the number of bets, the average EV they promised, the ROI, its standard error, the profit or loss, and the ROI of each season. Every table row can be clicked to list the games behind it, and each game opens to show how the bet was made. The tables split the bets by season, side, league group, round of the season, month of the game, odds and EV. A last table, By team, takes the bets at prices from ${RMIN.toFixed(2)} to ${(SPLIT - 0.01).toFixed(2)} and lists the 10 most profitable teams with at least 3 bets, and how much of the profit comes from them. A rule is worth using when the result holds in every season, not only in the total. The Leagues tab shows the same bets league by league; one league's numbers rest on few bets and its past ROI says little about its next season. Each league opens on a page of its own with every bet listed: a click on a bet shows the market chance and the best price of every outcome when the prices opened, the EV of each side, why that side was bet, and then how the market closed and how the game ended.</p>
   <h2>Why it can work</h2>
   <p>Some prices open before the market settles, or are shaded, and for a while stand above it. They are corrected quickly: the same bets taken at the closing price return far less, so the price has to be taken early.</p>
   <h2>Betting rules</h2>
