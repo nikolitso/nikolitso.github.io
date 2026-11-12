@@ -1,7 +1,7 @@
 name: Site · Handball
 
 # /handball/: refresh from Flashscore, rebuild the pages, publish them, save the ledgers to nikolitso/BettingSignal
-# (scripts in handball/projector there). 03:00, then hourly 07:00-21:00 Athens; the "Update all sites" button runs it too.
+# (scripts in handball/projector there). 03:00, then hourly 07:00-21:00 Athens.
 on:
   schedule:
     - cron: "0 1,5-19 * * *"   # 03:00, then hourly 07:00-21:00 Athens in winter (an hour later in summer), for match-day lines

@@ -1,7 +1,7 @@
 name: Site · EuroCup
 
 # /eurocup/: results, groups, lines and rosters from Flashscore and the Euroleague API, projections, publish.
-# Scripts and data in nikolitso/BettingSignal (eurocup/). Mon-Thu mornings; "Update all sites" runs it too.
+# Scripts and data in nikolitso/BettingSignal (eurocup/). Mon-Thu mornings, on its own schedule.
 on:
   schedule:
     - cron: "30 7 * * 1-4"   # 09:30 Athens in winter (10:30 in summer), Monday to Thursday

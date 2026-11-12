@@ -2,7 +2,7 @@
 
 The personal site of Antonis Nikolitsopoulos, served by GitHub Pages from this repository. Every
 section is a static folder; the data-driven ones are rebuilt by a GitHub Actions workflow on a
-schedule, and **Update all sites** runs the whole set at 09:00, 14:00 and 23:59 Athens.
+schedule of its own. There is no combined update: each site runs alone.
 
 ## Sites
 
@@ -20,7 +20,7 @@ schedule, and **Update all sites** runs the whole set at 09:00, 14:00 and 23:59 
 | [Handball](https://antonisnikolitsopoulos.com/handball/live-test/) | `handball/` | Site · Handball | 03:00, 09:00, 15:00, 21:00 | BettingSignal `handball/projector` |
 | [Volleyball](https://antonisnikolitsopoulos.com/volleyball/) | `volleyball/` | Site · Volleyball | 09:00, 13:00 | BettingSignal `volleyball` |
 | [PAOK Hub](https://antonisnikolitsopoulos.com/paok-hub/) | `paok-hub/` | Site · PAOK Hub | 10:00, 23:45 | BettingSignal `paok-hub` |
-| [PAOK Basketball](https://antonisnikolitsopoulos.com/paok-basketball/) | `paok-basketball/` | Site · PAOK Basketball | by Update all sites | BettingSignal `paok-basketball` |
+| [PAOK Basketball](https://antonisnikolitsopoulos.com/paok-basketball/) | `paok-basketball/` | Site · PAOK Basketball | 09:00, 14:00, 23:00 Athens | BettingSignal `paok-basketball` |
 | [Wine](https://antonisnikolitsopoulos.com/wine/) | `wine/` | Site · Wine | 06:41 | `scripts/` |
 | [About](https://antonisnikolitsopoulos.com/about/) | `about/` | — | — | static |
 

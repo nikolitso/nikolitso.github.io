@@ -3,8 +3,10 @@ name: Site · PAOK Basketball
 # /paok-basketball/: PAOK's season game by game (EuroCup and the Greek Basket League), league-wide stats, power
 # ratings and the next game's scouting. scripts/plan.py reads the schedules and decides what tonight needs; each
 # part keeps its last good data if its source is down. Scripts in nikolitso/BettingSignal (paok-basketball/), the
-# pages and data in paok-basketball/ here. Run by "Update all sites" (09:00, 14:00, 23:59 Athens) and the button.
+# pages and data in paok-basketball/ here. Runs at 09:00, 14:00 and 23:00 Athens in winter (an hour later in summer), and from the button.
 on:
+  schedule:
+    - cron: "0 7,12,21 * * *"
   workflow_dispatch:
 
 permissions:

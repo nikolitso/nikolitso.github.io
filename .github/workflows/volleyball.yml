@@ -1,7 +1,7 @@
 name: Site · Volleyball
 
 # /volleyball/: results, fixtures, odds, ratings, projections and picks, the page and the
-# homepage card. Scripts and data in nikolitso/BettingSignal (volleyball/). Every 2 hours; "Update all sites" too.
+# homepage card. Scripts and data in nikolitso/BettingSignal (volleyball/). Every 6 hours, on its own schedule.
 on:
   schedule:
     - cron: "17 */6 * * *"   # backup only: the 2-hourly runs come from cron-job.org (job 'Volleyball', workflow_dispatch)
