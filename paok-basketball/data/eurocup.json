@@ -1,7 +1,7 @@
 {
  "competition": "BKT EuroCup",
  "season": "2026-27",
- "updated": "2026-11-11T19:11:26Z",
+ "updated": "2026-11-12T02:42:57Z",
  "source": "https://www.euroleaguebasketball.net/eurocup/",
  "group": "Group D",
  "staff": [
@@ -2876,14 +2876,25 @@
    "team": "Ulm",
    "crest": "https://media-cdn.cortextech.io/5750bc8b-dd63-48e4-8586-10d4e5e2b4e2.png",
    "paok": false,
-   "gp": 6,
+   "gp": 7,
    "w": 3,
-   "l": 3,
-   "pf": 535,
-   "pa": 529
+   "l": 4,
+   "pf": 613,
+   "pa": 612
   },
   {
    "pos": 5,
+   "team": "Roma",
+   "crest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCjnOS1/1e9e0379-db30-4234-89b0-19576709c285.png",
+   "paok": false,
+   "gp": 7,
+   "w": 3,
+   "l": 4,
+   "pf": 601,
+   "pa": 631
+  },
+  {
+   "pos": 6,
    "team": "Lietkabelis",
    "crest": "https://media-cdn.cortextech.io/ffcb6e37-31f4-48f6-91c2-a8c9a6f791a9.png",
    "paok": false,
@@ -2892,17 +2903,6 @@
    "l": 4,
    "pf": 516,
    "pa": 572
-  },
-  {
-   "pos": 6,
-   "team": "Roma",
-   "crest": "https://media-cdn.cortextech.io/1dU3kpCqReRp93/1BSdBWIjCjnOS1/1e9e0379-db30-4234-89b0-19576709c285.png",
-   "paok": false,
-   "gp": 6,
-   "w": 2,
-   "l": 4,
-   "pf": 518,
-   "pa": 553
   },
   {
    "pos": 7,

@@ -2281,7 +2281,7 @@
   "date": "2026-11-14T15:30:00Z",
   "opp": "Karditsa",
   "home": false,
-  "saved": "2026-11-11T19:15:21Z",
+  "saved": "2026-11-12T02:46:07Z",
   "paok": 81.5,
   "oppScore": 75.8,
   "winProb": 72,
@@ -2566,21 +2566,21 @@
   "date": "2026-11-18T19:30:00Z",
   "opp": "Manresa",
   "home": false,
-  "saved": "2026-11-11T19:15:21Z",
-  "paok": 82.6,
-  "oppScore": 87.6,
+  "saved": "2026-11-12T02:46:07Z",
+  "paok": 82.8,
+  "oppScore": 87.8,
   "winProb": 34,
   "lineupSource": "manual",
   "teamStats": {
    "pts": {
-    "paok": 82.6,
-    "opp": 87.6,
-    "total": 170.2
+    "paok": 82.8,
+    "opp": 87.8,
+    "total": 170.6
    },
    "fg2m": {
-    "paok": 20.9,
-    "opp": 22.2,
-    "total": 43.2
+    "paok": 21.0,
+    "opp": 22.3,
+    "total": 43.3
    },
    "fg3m": {
     "paok": 8.5,
@@ -2590,35 +2590,35 @@
    "ftm": {
     "paok": 15.4,
     "opp": 16.0,
-    "total": 31.3
+    "total": 31.4
    },
    "ast": {
     "paok": 16.2,
-    "opp": 19.1,
-    "total": 35.3
+    "opp": 19.2,
+    "total": 35.4
    },
    "oreb": {
     "paok": 11.1,
-    "opp": 10.9,
+    "opp": 10.8,
     "total": 21.9
    },
    "dreb": {
-    "paok": 22.6,
-    "opp": 22.9,
-    "total": 45.5
+    "paok": 22.5,
+    "opp": 22.8,
+    "total": 45.4
    },
    "tov": {
     "paok": 15.5,
     "opp": 14.8,
-    "total": 30.3
+    "total": 30.4
    },
    "reb": {
-    "paok": 33.7,
-    "opp": 33.8,
-    "total": 67.4
+    "paok": 33.6,
+    "opp": 33.6,
+    "total": 67.3
    }
   },
-  "modelTotal": 169.0,
+  "modelTotal": 169.4,
   "line": null,
   "modelMargin": -5.0,
   "hcp": null,
@@ -2637,7 +2637,7 @@
      "name": "Marcus Foster",
      "no": "17",
      "min": 25,
-     "pts": 15.0,
+     "pts": 15.1,
      "reb": 3.7,
      "ast": 2.0,
      "pir": 13.6
@@ -2664,7 +2664,7 @@
      "name": "Trevor Hudgins",
      "no": "12",
      "min": 17,
-     "pts": 6.7,
+     "pts": 6.8,
      "reb": 2.1,
      "ast": 1.8,
      "pir": 6.3
@@ -2691,7 +2691,7 @@
      "name": "Ben Moore",
      "no": "26",
      "min": 18,
-     "pts": 4.8,
+     "pts": 4.9,
      "reb": 3.3,
      "ast": 0.4,
      "pir": 5.1
@@ -2700,7 +2700,7 @@
      "name": "Nikos Chougkaz",
      "no": "9",
      "min": 14,
-     "pts": 4.1,
+     "pts": 4.2,
      "reb": 2.0,
      "ast": 0.5,
      "pir": 3.4
@@ -2738,7 +2738,7 @@
      "name": "Nick Ongenda",
      "no": "14",
      "min": 22,
-     "pts": 10.6,
+     "pts": 10.7,
      "reb": 4.8,
      "ast": 1.3,
      "pir": 15.6
@@ -2765,7 +2765,7 @@
      "name": "Pierre Oriola",
      "no": "29",
      "min": 15,
-     "pts": 8.0,
+     "pts": 8.1,
      "reb": 3.5,
      "ast": 2.1,
      "pir": 11.9
