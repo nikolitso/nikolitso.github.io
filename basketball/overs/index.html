@@ -265,7 +265,7 @@ function tiles(list){
 // one table row from a {n, w, roi} group
 const grp = (label, g, extra='', more='') => g && g.n ? `<tr${extra}><td>${label}</td><td class="n">${g.n}</td><td class="n">${pct(g.w / g.n, 1)}</td><td class="n">${g.px ? g.px.toFixed(2) : '–'}</td><td class="n ${cls(g.roi)}">${roi(g.roi)}</td>${more}</tr>` : '';
 const LHEAD = '<th class="n">Opening line</th><th class="n">Closing line</th>';
-const BHEAD = LHEAD + '<th class="n">Model line</th><th class="n">Actual total</th><th class="n">Pace</th><th class="n">3-pt luck</th>';
+const BHEAD = LHEAD + '<th class="n">Model line</th><th class="n">Actual total</th>';   // pace and 3-pt luck only on the match pages (12 Nov 2026)
 const GHEAD = (first, more='') => `<thead><tr><th>${first}</th><th class="n">Picks</th><th class="n">Hit</th><th class="n">Avg price</th><th class="n">ROI</th>${more}</tr></thead>`;
 // average opening and closing line of a list of bets, as two table cells
 const seasonOf = b => { const y = +b.dt.slice(0, 4); return +b.dt.slice(5, 7) >= 7 ? `${y}-${y + 1}` : `${y - 1}-${y}`; };
@@ -281,12 +281,12 @@ function renderFindings(){
   return h;
 }
 
-const btCells = (list, pl = true) => { const c = list.filter(b => b.close != null), q = list.filter(b => b.pace != null), u = list.filter(b => b.luck != null);
+const btCells = (list, pl = false) => { const c = list.filter(b => b.close != null), q = list.filter(b => b.pace != null), u = list.filter(b => b.luck != null);
   return lineCells(list) + (c.length ? `<td class="n">${lineAvg(c, 'mu')}</td><td class="n">${lineAvg(c, 'total')}</td>` : '<td class="n muted">–</td><td class="n muted">–</td>')
     + (!pl ? '' : (q.length ? `<td class="n">${sgn(q.reduce((a, b) => a + b.pace, 0) / q.length)}</td>` : '<td class="n muted">–</td>')
     + (u.length ? `<td class="n">${sgn(u.reduce((a, b) => a + b.luck, 0) / u.length)}</td>` : '<td class="n muted">–</td>')); };
 
-const bandRow = (label, g, pl = true) => { const n = g.length, sum = f => g.reduce((a, x) => a + f(x), 0);
+const bandRow = (label, g, pl = false) => { const n = g.length, sum = f => g.reduce((a, x) => a + f(x), 0);
   return grp(label, {n, w: g.filter(x => x.ret > 0).length, px: n ? sum(x => x.px) / n : 0, roi: n ? sum(x => x.ret) / n : 0}, '', btCells(g, pl)); };
 
 function renderLeagues(){
@@ -331,7 +331,7 @@ function renderLeagues(){
 const PACEB = [['Below −2', -99, -2], ['−2 to −1.1', -2, -1], ['−1 to −0.1', -1, 0], ['0 to +0.9', 0, 1], ['+1 to +1.9', 1, 2], ['+2 to +2.9', 2, 3], ['+3 to +3.9', 3, 4], ['+4 or more', 4, 99]];
 
 function analysis(k, notes = true){
-  // the tables that decide the rule, for one league or all: pace, luck, edge, line, stage, then season and month
+  // the tables that decide the rule, for one league or all: edge, line, stage, then season and month
   const B = DATA.backtest, S = k === 'all' ? B.all : B.leagues[k], f = x => k === 'all' || x.lg === k, nt = s => notes ? `<p class="note">${s}</p>` : '';
   const BT = DATA.bets.filter(f), SK = (DATA.skipped || []).filter(f);
   let h = tiles([['Picks', S.rule.n], ['Hit rate', pct(S.rule.w / S.rule.n, 1)], ['ROI at opening', roi(S.rule.roi), cls(S.rule.roi)], ['ROI at closing', S.rule.roic != null ? roi(S.rule.roic) : '–', cls(S.rule.roic)],
@@ -339,18 +339,13 @@ function analysis(k, notes = true){
               ...(() => { const c = BT.filter(b => b.close != null); return c.length ? [['Closing line moved toward the pick', pct(c.filter(b => b.close > b.line).length / c.length)], ['Closing line moved against it', pct(c.filter(b => b.close < b.line).length / c.length)]] : []; })(), ...riskTiles(BT)]);
   if (k === 'all') h += calib(BT, `How often the picks won against the chance the model gave them, at the opening line. A well-calibrated model wins about as often as it says in every band. Worst drawdown: the biggest fall from a high point of the running profit, at 1 unit a pick, in date order; expect a run like it again.`);
   const T = (title, first, body, note='') => `<h2>${title}</h2>${nt(note)}<div class="scroll"><table style="max-width:1040px">${GHEAD(first, BHEAD)}<tbody>${body}</tbody></table></div>`;
-  const SKL = SK.filter(x => x.luck >= LK());
-  h += T('By pace', 'Pace', PACEB.map(([label, lo, hi]) => bandRow(label, BT.filter(x => x.pace >= lo && x.pace < hi))).join(''),
-    `Pace is the two teams' possessions per game so far that season, each with ${LIVE.min_gp ?? 3}+ games, minus the league average, from earlier games only. Pace is one of the model's signals, so there is no pace rule: faster games get a higher chance.`);
-  h += T('By 3-point luck', '3-point luck', [['Under +0.2', -99, 0.2], [`+0.2 to ${LKs()}`, 0.2, LK()]].map(([label, lo, hi]) => bandRow(label, BT.filter(x => x.luck >= lo && x.luck < hi))).join('') + bandRow(`${LKs()} or more <span class="muted">(skipped)</span>`, SKL),
-    `3-point luck: in the two teams' games so far that season, the threes made minus what the league's 3-point rate gives on the same attempts, in points per game, from earlier games only. High luck means the shooting has been hot, which rarely lasts, while the model's projection still counts those points. The last row is the games the rule skips: luck of ${LKs()} or more. They are not in any other figure on this page.`);
   const EP = Math.round(DATA.rule.edge * 100);
   h += T('By edge', 'Edge', [[0, EP / 2], [EP / 2, EP]].map(([lo, hi]) => bandRow(`${lo}% to ${hi}% <span class="muted">(skipped)</span>`, (DATA.skipped_edge || []).filter(f).filter(x => (lo === 0 || x.edge > lo / 100) && (hi === EP || x.edge <= hi / 100)))).join('') + bandRow(`${EP}% to ${EP + 4}%`, BT.filter(x => x.edge < (EP + 4) / 100)) + bandRow(`${EP + 4}% or more`, BT.filter(x => x.edge >= (EP + 4) / 100)),   // every pick is above the bar; stored edges are rounded
     `Edge: the model's chance of the over × the price − 1, at the opening line. The first two rows are the games the rule skips: every other rule met, with an edge above 0 but not above ${EP}%. They are not in any other figure on this page.`);
   h += T('By line', 'Line band', [['Under 170', 0, 170], ['170 to 179.5', 170, 180], ['180 or more', 180, 999]].map(([label, lo, hi]) => bandRow(label, BT.filter(x => x.line >= lo && x.line < hi))).join(''),
     `The opening line. There is no line cap since 9 Nov 2026: games at 180 or more were skipped before, but they made a profit in every season and at the closing line.`);
   h += T('By stage', 'Stage', bandRow('Regular season', BT) + bandRow('Play-offs <span class="muted">(skipped)</span>', (DATA.skipped_po || []).filter(f)),
-    `The second row is the play-off games the rule skips: every other rule met, with the model's chance worked out as for a regular-season game. The model has a play-off signal of its own that on its own keeps it off play-off overs, so this row shows what would happen without it. Pace and 3-point luck there use the whole season so far. They are not in any other figure on this page.`);
+    `The second row is the play-off games the rule skips: every other rule met, with the model's chance worked out as for a regular-season game. The model has a play-off signal of its own that on its own keeps it off play-off overs, so this row shows what would happen without it. They are not in any other figure on this page.`);
   h += T('By season', 'Season', S.seasons.map(s => grp(sn(s.season) + (s.season === DATA.tuned ? ' <span class="muted">(tuned on)</span>' : '') + (s.season === DATA.season ? ' <span class="muted">(so far)</span>' : ''), s, '', btCells(BT.filter(b => seasonOf(b) === s.season)))).join(''));
   let mo = '';
   for (const mm of [9, 10, 11, 12, 1, 2, 3, 4, 5, 6]) {
@@ -405,8 +400,8 @@ function bets(){
   if (!list.length) return '';
   let run = 0;
   const rows = list.map(b => { run += b.ret;
-    return `<tr><td data-s="${b.dt}">${short(b.dt)} ${b.dt.slice(0,4)}</td>${lg === 'all' ? `<td>${lgShort(b.lg)}</td>` : ''}<td class="wr">${b.home} – ${b.away}</td><td class="n ${wl(b)}">${b.side === 'o' ? 'Over' : 'Under'} ${b.line}</td><td class="n">${b.px.toFixed(2)}</td><td class="n">${b.mu.toFixed(1)}</td><td class="n">${pct(b.p)}</td><td class="n">${sgn(b.edge*100, 0)}%</td><td class="n">${b.close ?? '–'}</td><td class="n ${wl(b)}">${b.total}</td><td class="n">${b.pace != null ? sgn(b.pace) : '–'}</td>${luckCell(b.luck)}</tr>`; });
-  return `<details class="picks"><summary>Every pick, latest first <span class="muted">(${list.length.toLocaleString('en')} picks, click to show)</span></summary><p class="note">${list.length > 400 ? 'The latest 400 shown. ' : ''}Pace: the two teams' possessions per game so far that season against the league average. Luck: points per game from threes above the league's 3-point rate.</p><div class="scroll"><table><thead><tr><th>Date</th>${lg === 'all' ? '<th>League</th>' : ''}<th>Match</th><th class="n">Pick</th><th class="n">Price</th><th class="n">Model</th><th class="n">Chance</th><th class="n">Edge</th><th class="n">Closing line</th><th class="n">Total</th><th class="n">Pace</th><th class="n">Luck</th></tr></thead><tbody>${rows.reverse().slice(0, 400).join('')}</tbody></table></div></details>`;
+    return `<tr><td data-s="${b.dt}">${short(b.dt)} ${b.dt.slice(0,4)}</td>${lg === 'all' ? `<td>${lgShort(b.lg)}</td>` : ''}<td class="wr">${b.home} – ${b.away}</td><td class="n ${wl(b)}">${b.side === 'o' ? 'Over' : 'Under'} ${b.line}</td><td class="n">${b.px.toFixed(2)}</td><td class="n">${b.mu.toFixed(1)}</td><td class="n">${pct(b.p)}</td><td class="n">${sgn(b.edge*100, 0)}%</td><td class="n">${b.close ?? '–'}</td><td class="n ${wl(b)}">${b.total}</td></tr>`; });
+  return `<details class="picks"><summary>Every pick, latest first <span class="muted">(${list.length.toLocaleString('en')} picks, click to show)</span></summary><p class="note">${list.length > 400 ? 'The latest 400 shown. ' : ''}Model: the projected total, before the other signals.</p><div class="scroll"><table><thead><tr><th>Date</th>${lg === 'all' ? '<th>League</th>' : ''}<th>Match</th><th class="n">Pick</th><th class="n">Price</th><th class="n">Model</th><th class="n">Chance</th><th class="n">Edge</th><th class="n">Closing line</th><th class="n">Total</th></tr></thead><tbody>${rows.reverse().slice(0, 400).join('')}</tbody></table></div></details>`;
 }
 
 function renderProjections(){
