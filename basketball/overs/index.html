@@ -175,6 +175,9 @@ a.tile:hover{border-color:var(--gold)}
 .tile .small{font-size:14.5px;color:var(--muted)}
 .tiles .pos{color:var(--up)} .tiles .neg{color:var(--dn)}
 .stale{color:#ef7a70;font-weight:600}
+details.picks{margin-top:28px}
+details.picks>summary{cursor:pointer;font:600 22px var(--serif);padding:6px 0}
+details.picks>summary .muted{font-size:14px;font-weight:400}
 .pill{white-space:nowrap;font:500 13.5px var(--mono);padding:2px 9px;border-radius:99px;border:1px solid var(--line);vertical-align:middle}
 .pill.pos{border-color:color-mix(in srgb,var(--up) 40%,transparent);background:color-mix(in srgb,var(--up) 10%,transparent)}
 .pill.neg{border-color:color-mix(in srgb,var(--dn) 40%,transparent);background:color-mix(in srgb,var(--dn) 9%,transparent)}
@@ -198,7 +201,7 @@ a.tile:hover{border-color:var(--gold)}
   <div class="chips" id="chips"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=55f21135"></script>
+<script src="data.js?v=233c993f"></script>
 <script src="live.js"></script>
 <script>
 const $ = id => document.getElementById(id);
@@ -404,7 +407,7 @@ function bets(){
   let run = 0;
   const rows = list.map(b => { run += b.ret;
     return `<tr><td data-s="${b.dt}">${short(b.dt)} ${b.dt.slice(0,4)}</td>${lg === 'all' ? `<td>${lgShort(b.lg)}</td>` : ''}<td class="wr">${b.home} – ${b.away}</td><td class="n ${wl(b)}">${b.side === 'o' ? 'Over' : 'Under'} ${b.line}</td><td class="n">${b.px.toFixed(2)}</td><td class="n">${b.mu.toFixed(1)}</td><td class="n">${pct(b.p)}</td><td class="n">${sgn(b.edge*100, 0)}%</td><td class="n">${b.close ?? '–'}</td><td class="n ${wl(b)}">${b.total}</td><td class="n">${b.pace != null ? sgn(b.pace) : '–'}</td>${luckCell(b.luck)}</tr>`; });
-  return `<h2>Every pick, latest first</h2><p class="note">${list.length} backtest picks${list.length > 400 ? ', the latest 400 shown' : ''}. Pace: the two teams' possessions per game so far that season against the league average. Luck: points per game from threes above the league's 3-point rate.</p><div class="scroll"><table><thead><tr><th>Date</th>${lg === 'all' ? '<th>League</th>' : ''}<th>Match</th><th class="n">Pick</th><th class="n">Price</th><th class="n">Model</th><th class="n">Chance</th><th class="n">Edge</th><th class="n">Closing line</th><th class="n">Total</th><th class="n">Pace</th><th class="n">Luck</th></tr></thead><tbody>${rows.reverse().slice(0, 400).join('')}</tbody></table></div>`;
+  return `<details class="picks"><summary>Every pick, latest first <span class="muted">(${list.length.toLocaleString('en')} picks, click to show)</span></summary><p class="note">${list.length > 400 ? 'The latest 400 shown. ' : ''}Pace: the two teams' possessions per game so far that season against the league average. Luck: points per game from threes above the league's 3-point rate.</p><div class="scroll"><table><thead><tr><th>Date</th>${lg === 'all' ? '<th>League</th>' : ''}<th>Match</th><th class="n">Pick</th><th class="n">Price</th><th class="n">Model</th><th class="n">Chance</th><th class="n">Edge</th><th class="n">Closing line</th><th class="n">Total</th><th class="n">Pace</th><th class="n">Luck</th></tr></thead><tbody>${rows.reverse().slice(0, 400).join('')}</tbody></table></div></details>`;
 }
 
 function renderProjections(){
