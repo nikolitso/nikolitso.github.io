@@ -746,7 +746,8 @@
       "the-mafia-kills-only-in-summer",
       "brave-new-love",
       "walk-on-water",
-      "mostly-martha"
+      "mostly-martha",
+      "working-woman"
     ],
     "log": [
       {
@@ -1032,11 +1033,17 @@
         "slot": "2026-11-11 20",
         "slug": "mostly-martha",
         "id": "2120577361385308653"
+      },
+      {
+        "day": "2026-11-12",
+        "slot": "2026-11-12 20",
+        "slug": "working-woman",
+        "id": "2120939747765866894"
       }
     ],
-    "last_day": "2026-11-11"
+    "last_day": "2026-11-12"
   },
-  "last_slot": "2026-11-12 14",
+  "last_slot": "2026-11-12 20",
   "quote": {
     "seen": [
       "1",
