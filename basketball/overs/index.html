@@ -317,12 +317,12 @@ function renderLeagues(){
   h += '</tbody></table></div>';
   const L_ = open && LG[open], A = open && (DATA.lgan || {})[open];
   if (!L_) return h + '<p class="note">Click a league for its analysis: every game in that league, by the same bands as the Backtest tab.</p>';
-  h += `<h2 id="lgan" style="margin-top:32px">${lgFull(L_)}: analysis of every game</h2><p class="note">Every game with odds, 2022–23 to 2025–26, not only the picks. <b>Over %</b>: how often the total went over the closing line. <b>Total − line</b>: the average final score minus the average closing line. <b>Blind over</b>: backing the over in every game, at the closing line and price, and at the opening line and price. Pace, 3-point luck and edge are as on the Backtest tab and need ${LIVE.min_gp ?? 3}+ games per team, so the first games of each season are not in those tables. All tables but By stage are regular season.</p>`;
+  h += `<h2 id="lgan" style="margin-top:32px">${lgFull(L_)}: analysis of every game</h2><p class="note">Every game with odds, 2022–23 to 2025–26, not only the picks. <b>Over %</b>: how often the total went over the closing line. <b>Total − line</b>: the average final score minus the average closing line. <b>Blind over</b>: backing the over in every game, at the closing line and price, and at the opening line and price. The edge is as on the Backtest tab and needs ${LIVE.min_gp ?? 3}+ games per team, so the first games of each season are not in that table. All tables but By stage are regular season.</p>`;
   if (!A) return h + '<p class="empty">No games with odds in this league.</p>';
   const AH = `<th class="n">Games</th><th class="n">Over %</th><th class="n">Total</th><th class="n">Closing line</th><th class="n">Total − line</th><th class="n">Opening line</th><th class="n">Blind over, close</th><th class="n">Blind over, open</th>`;
   const ar = x => `<tr><td>${x.label}</td><td class="n">${x.n}</td><td class="n">${pct(x.over, 1)}</td><td class="n">${x.total.toFixed(1)}</td><td class="n">${x.line.toFixed(1)}</td><td class="n">${sgn(x.total - x.line)}</td><td class="n">${x.open != null ? x.open.toFixed(1) : '–'}</td><td class="n ${cls(x.bo)}">${roi(x.bo)}</td><td class="n ${cls(x.boo)}">${x.boo != null ? roi(x.boo) : '–'}</td></tr>`;
   const T = (title, first, rows) => rows && rows.length ? `<h2>${title}</h2><div class="scroll"><table style="max-width:1040px"><thead><tr><th>${first}</th>${AH}</tr></thead><tbody>${rows.map(ar).join('')}</tbody></table></div>` : '';
-  h += T('All games', '', [A.all]) + T('By pace', 'Pace', A.pace) + T('By 3-point luck', '3-point luck', A.luck) + T('By edge', "Model's edge", A.edge) + T('By line', 'Opening line', A.line)
+  h += T('All games', '', [A.all]) + T('By edge', "Model's edge", A.edge) + T('By line', 'Opening line', A.line)
      + T('By stage', 'Stage', A.stage) + T('By season', 'Season', A.season.map(x => ({...x, label: sn(x.label)}))) + T('By month', 'Month', A.month);
   return h;
 }
