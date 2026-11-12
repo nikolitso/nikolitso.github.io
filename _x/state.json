@@ -164,7 +164,8 @@
       "soccer-analytics-an-introduction",
       "make-your-mark",
       "the-numbers-game-why-everything-you",
-      "net-gains-inside-the-beautiful-games"
+      "net-gains-inside-the-beautiful-games",
+      "how-to-win-the-premier-league"
     ],
     "log": [
       {
@@ -478,9 +479,15 @@
         "slot": "2026-11-11 14",
         "slug": "net-gains-inside-the-beautiful-games",
         "id": "2120486762992767332"
+      },
+      {
+        "day": "2026-11-12",
+        "slot": "2026-11-12 14",
+        "slug": "how-to-win-the-premier-league",
+        "id": "2120849137121788323"
       }
     ],
-    "last_day": "2026-11-11"
+    "last_day": "2026-11-12"
   },
   "film": {
     "seen": [
@@ -1029,7 +1036,7 @@
     ],
     "last_day": "2026-11-11"
   },
-  "last_slot": "2026-11-12 11",
+  "last_slot": "2026-11-12 14",
   "quote": {
     "seen": [
       "1",
