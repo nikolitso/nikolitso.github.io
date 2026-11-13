@@ -1,0 +1,53 @@
+name: Feed · Basketball handicap projections
+
+# The basketball handicap page (basketball/handicap/): the margin model's projections for the next 7 days next to the
+# books' handicap, and the walk-forward backtest. Projections only, no picks. Scripts in nikolitso/BettingSignal
+# (basketball-handicap/); results and odds come from the totals data (basketball-overs/data), so this runs after each
+# totals run and inherits its hourly outside timer. The schedule is only a backup.
+on:
+  workflow_run:
+    workflows: ["Feed · Basketball totals live test"]
+    types: [completed]
+  schedule:
+    - cron: "41 */6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: basketball-handicap
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/checkout@v5
+        with:
+          repository: nikolitso/BettingSignal
+          token: ${{ secrets.SITES_TOKEN }}
+          path: _bs
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.14"
+      - name: Install
+        run: pip install --quiet -r _bs/basketball-overs/requirements.txt
+      - name: Build
+        working-directory: _bs/basketball-handicap
+        env:
+          TZ: Europe/Athens
+          PYTHONIOENCODING: utf-8
+          SITE_REPO: ${{ github.workspace }}
+        run: python -u build.py
+      - name: Publish
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add basketball/handicap
+          if git diff --cached --quiet; then echo "page unchanged"; exit 0; fi
+          git commit -q -m "Basketball handicap: refresh $(TZ=Europe/Athens date '+%Y-%m-%d %H:%M')"
+          for i in 1 2 3 4 5; do git pull -q --rebase && git push -q && exit 0; sleep $((RANDOM % 10 + 5)); done
+          exit 1
