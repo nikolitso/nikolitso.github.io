@@ -201,9 +201,11 @@ def basketball_totals(folder):
     done = season + [p for p in picks if p.get("done") and p.get("ret") is not None]
     pills = record(sum(p["ret"] > 0 for p in done), sum(p["ret"] < 0 for p in done),
                    sum(p["ret"] for p in done), sum(not p.get("done") for p in picks))
-    h1 = (d.get("h1") or {}).get("rows") or []                  # the 1H projections tab (14 Nov 2026), totals page only
-    if h1:
-        pills.append(f"{len(h1)} first halves projected")
+    h1 = d.get("h1") or {}                                      # the 1H test (14 Nov 2026), totals page only
+    if h1.get("rows") is not None:
+        n1 = sum(not p.get("done") for p in h1.get("picks") or [])
+        pills.append(f"{n1} open 1H pick{'s' if n1 != 1 else ''}" if n1 else "No open 1H picks")
+        pills.append(f"{len(h1['rows'])} first halves projected")
     return pills
 
 CARDS = {                    # slug -> (card href on the homepage, reader)
@@ -225,7 +227,7 @@ def render(slug, pills):
     def span(p):                                        # the ROI pill stands out, in the accent (red when negative)
         cls = ' class="roi neg"' if p.startswith("ROI -") else ' class="roi"' if p.startswith("ROI ") else ""
         return f"<span{cls}>{html.escape(p)}</span>"
-    spans = "".join(span(p) for p in pills[:4])
+    spans = "".join(span(p) for p in pills[:5])
     return (f"<!-- live:{slug}:start --><div class=\"meta\">{spans}</div><!-- live:{slug}:end -->\n")
 
 

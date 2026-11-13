@@ -63,11 +63,12 @@ jobs:
           line = next((l for l in open('/tmp/live.log', encoding='utf-8') if l.startswith('NEWPICKS ')), None)
           new = json.loads(line[9:]) if line and topic else []
           for s in new:
+              h1 = s.get('h1')                                  # 1H test picks too (14 Nov 2026)
               body = (f"{s['home']} – {s['away']}\n{s['league']} · {s['when']}\n"
-                      f"Price {s['px']:.2f} · edge {s['edge']*100:+.0f}% · model {s['mu']}").encode('utf-8')
+                      f"Price {s['px']:.2f} · edge {s['edge']*100:+.0f}% · model {'1H ' if h1 else ''}{s['mu']}").encode('utf-8')
               req = urllib.request.Request('https://ntfy.sh/' + topic, data=body, method='POST', headers={
-                  'Title': f"Basketball pick: Over {s['line']}", 'Tags': 'basketball',
-                  'Click': 'https://antonisnikolitsopoulos.com/basketball/overs/#view=livetest'})
+                  'Title': f"Basketball {'1H ' if h1 else ''}pick: Over {s['line']}" + (' (first half)' if h1 else ''), 'Tags': 'basketball',
+                  'Click': 'https://antonisnikolitsopoulos.com/basketball/overs/#view=' + ('h1' if h1 else 'livetest')})
               try:
                   print(s['home'], urllib.request.urlopen(req, timeout=30).status)
               except Exception as e:
