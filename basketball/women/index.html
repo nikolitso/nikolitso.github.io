@@ -143,7 +143,7 @@ th.rs{cursor:pointer;user-select:none} th.rs:hover,th.rs.on{color:var(--gold)}
 <nav class="an-sitebar" aria-label="Main site"><div><a href="/books/">Books</a><a href="/#projects">Projects</a><a href="/about/">About</a><a href="/" title="Main site: antonisnikolitsopoulos.com" aria-label="Main site"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 2 11.5h3V21h5.5v-6h3v6H19v-9.5h3z"/></svg></a></div></nav>
 <!-- sitebar:end -->
 <style>
-.pos{color:var(--win)} .neg{color:var(--loss)}
+.pos{color:var(--win)} .neg{color:var(--loss)} .elow{color:#e8c547} .eneg{color:#eb7a6c} table.lgt td,table.lgt th{padding-left:6px;padding-right:6px}
 tr.srow{cursor:pointer} tr.srow:hover td,tr.srow.on td{background:color-mix(in srgb,var(--gold) 10%,transparent)}
 tr.sub td{background:color-mix(in srgb,var(--panel) 70%,transparent);font-size:15px}
 tr.sub td:first-child{padding-left:28px;color:var(--muted)}
@@ -197,7 +197,7 @@ a.tile:hover{border-color:var(--gold)}
   <div class="chips" id="chips"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=w60"></script>
+<script src="data.js?v=w61"></script>
 <script src="live.js"></script>
 <script>
 const $ = id => document.getElementById(id);
@@ -285,23 +285,24 @@ function renderFindings(){
 }
 
 function renderLeagues(){
-  let h = `<p class="note">Regular-season games from ${sn(DATA.first)} on (2020–21 only warms the ratings up; play-offs are left out, as in the rule). <b>Model total</b>: the average of the model's total with pace in it, over the games it priced at the opening line (2021–22 on, both teams 4+ games). <b>Line</b>: the average closing line. <b>Over %</b>: how often the final score (overtime included) went over the closing line. Blind over: backing the over in every game at the average price. <b>Picks</b>: the model's picks under the current rule, 2021–22 to 2025–26: how often they went over (hit), their profit in units (1 unit a pick), and their ROI at the opening line and price (open, where picks are taken) and at the closing line and price (close, the same picks). ROI at closing is the harder test: the market has had its say. Click a league for its seasons and an analysis of all its games below the table.</p>`;
-  h += `<div class="scroll"><table><thead><tr><th>League</th><th class="n">Games</th><th class="n">Model total</th><th class="n">Line</th><th class="n">Over %</th><th class="n">Blind over</th><th class="n">Picks</th><th class="n">Picks hit</th><th class="n">P/L</th><th class="n">ROI open</th><th class="n">ROI close</th></tr></thead><tbody>`;
-  const row = (label, s, attrs='', list=[]) => `<tr${attrs}><td>${label}</td><td class="n">${s.games}</td><td class="n">${s.avg_ma != null ? s.avg_ma.toFixed(1) : '–'}</td><td class="n">${s.avg_line.toFixed(1)}</td><td class="n">${pct(s.over, 1)}</td>
+  let h = `<p class="note">Regular-season games from ${sn(DATA.first)} on (2020–21 only warms the ratings up; play-offs are left out, as in the rule). <b>All games</b> describes the league and its market. <b>Over %</b>: how often the final score (overtime included) went over the closing line. Blind over: backing the over in every game at the average price. <b>Model's picks</b>: the picks under the current rule, 2021–22 to 2025–26. <b>Model total</b>: the average of the model's total with pace in it, <b>Line</b>: the average opening line taken, and <b>Result</b>: the average final score (overtime included), all over the picks only. Then how often the picks went over (hit), their profit in units (1 unit a pick), and their ROI at the opening line and price (open, where picks are taken) and at the closing line and price (close, the same picks). ROI at closing is the harder test: the market has had its say. Click a league for its seasons and an analysis of all its games below the table.</p>`;
+  h += `<div class="scroll"><table class="lgt"><thead><tr><th style="border-bottom:0"></th><th colspan="3" style="text-align:center;color:var(--gold)">All games</th><th colspan="8" style="text-align:center;color:var(--gold);border-left:1px solid var(--line)">Model's picks</th></tr><tr><th>League</th><th class="n">Games</th><th class="n">Over %</th><th class="n">Blind over</th><th class="n" style="border-left:1px solid var(--line)">Picks</th><th class="n">Model total</th><th class="n">Line</th><th class="n">Result</th><th class="n">Hit</th><th class="n">P/L</th><th class="n">ROI open</th><th class="n">ROI close</th></tr></thead><tbody>`;
+  const row = (label, s, attrs='', list=[]) => `<tr${attrs}><td>${label}</td><td class="n">${s.games}</td><td class="n">${pct(s.over, 1)}</td>
     <td class="n ${cls(s.blind_over)}">${roi(s.blind_over)}</td>${pk(list)}
     </tr>`;
   function pk(list){
     const d = list.filter(b => b.done !== false && b.ret !== 0);
-    if (!d.length) return '<td class="n muted">–</td>'.repeat(5);
+    if (!d.length) return '<td class="n muted" style="border-left:1px solid var(--line)">–</td>' + '<td class="n muted">–</td>'.repeat(7);
+    const av = (L, f) => L.length ? (L.reduce((a, b) => a + f(b), 0) / L.length).toFixed(1) : '–', m = d.filter(b => b.mu != null);
     const u = d.reduce((a, b) => a + b.ret, 0), w = d.filter(b => b.ret > 0).length;
     const c = list.filter(b => b.cpx != null && b.close != null && b.total !== b.close), uc = c.reduce((a, b) => a + (b.total > b.close ? b.cpx - 1 : -1), 0);
-    return `<td class="n">${d.length}</td><td class="n">${pct(w / d.length, 1)}</td><td class="n ${cls(u)}">${u >= 0 ? '+' : '−'}${Math.abs(u).toFixed(1)}</td>` +
+    return `<td class="n" style="border-left:1px solid var(--line)">${d.length}</td><td class="n">${av(m, b => b.mu)}</td><td class="n">${av(m, b => b.line)}</td><td class="n">${av(d.filter(b => b.total != null), b => b.total)}</td><td class="n">${pct(w / d.length, 1)}</td><td class="n ${cls(u)}">${u >= 0 ? '+' : '−'}${Math.abs(u).toFixed(1)}</td>` +
       `<td class="n ${cls(u)}">${roi(u / d.length)}</td><td class="n ${c.length ? cls(uc) : 'muted'}">${c.length ? roi(uc / c.length) : '–'}</td>`;
   }
   const tierName = {europe: 'European competitions', top: 'Top divisions', second: 'Second divisions'};
   for (const tier of ['europe', 'top', 'second']){
     if (!DATA.leagues.some(l => l.tier === tier)) continue;
-    h += `<tr><td colspan="11" class="tier" style="padding-top:18px">${tierName[tier]}</td></tr>`;
+    h += `<tr><td colspan="12" class="tier" style="padding-top:18px">${tierName[tier]}</td></tr>`;
     for (const l of DATA.leagues.filter(l => l.tier === tier)){
       const on = open === l.key;
       h += row(`<span class="caret">${on ? '▾' : '▸'}</span> ${lgFull(l)}`, l.all, ` class="srow${on ? ' on' : ''}" data-open="${l.key}"`, DATA.bets.filter(b => b.lg === l.key));
@@ -329,12 +330,15 @@ function renderBacktest(){
   return h + btBody(BT, S, DATA.bets, ALLG);
 }
 
+// Edge now for a pick: orange above the bar, yellow at the bar or under, red below 0
+const edgeNow = v => v == null ? '<td class="n muted">–</td>' : `<td class="n ${v > LE() ? 'pos' : v > 0 ? 'elow' : 'eneg'}">${sgn(v*100, 0)}%</td>`;
+
 // the backtest layout, the same as the overs page: tiles, then pace, 3-point luck, edge, league, line, line difference, stage, season, month, every pick
 // rows marked (skipped) are games every other rule let through that one rule kept out; they are in no other figure
-const BHEAD = '<th class="n">Opening line</th><th class="n">Closing line</th><th class="n">Model line</th><th class="n">Actual total</th><th class="n">Pace</th><th class="n">3-pt luck</th>';
+const BHEAD = '<th class="n">Opening line</th><th class="n">Closing line</th><th class="n">Model line</th><th class="n">Actual total</th>';   // pace and 3-pt luck only on the match pages (13 Nov 2026, as the men's page)
 const avgOf = (list, k) => { const q = list.filter(b => b[k] != null); return q.length ? `<td class="n">${sgn(q.reduce((a, b) => a + b[k], 0) / q.length, 1)}</td>` : '<td class="n muted">–</td>'; };
 const btCells = list => { const c = list.filter(b => b.close != null);
-  return (c.length ? ['line', 'close', 'mu', 'total'].map(k => `<td class="n">${lineAvg(c, k)}</td>`).join('') : '<td class="n muted">–</td>'.repeat(4)) + avgOf(list, 'pace') + avgOf(list, 'luck'); };
+  return (c.length ? ['line', 'close', 'mu', 'total'].map(k => `<td class="n">${lineAvg(c, k)}</td>`).join('') : '<td class="n muted">–</td>'.repeat(4)); };
 const btTable = (first, rows, note='') => `${note ? `<p class="note">${note}</p>` : ''}<div class="scroll"><table style="max-width:1040px">${GHEAD(first, BHEAD)}<tbody>${rows.filter(r => r[1].length).map(([label, r]) => grp(label, stat(r), '', btCells(r))).join('')}</tbody></table></div>`;
 const SKIPPED = ' <span class="muted">(skipped)</span>';
 const skipped = k => (DATA[k] || []).filter(inLg);
@@ -354,7 +358,7 @@ function calTable(list, note){
   rows.push(['<b>All</b>', d]);
   const tr = ([label, r]) => { const p = r.reduce((a, b) => a + b.p, 0) / r.length, w = r.filter(b => b.ret > 0).length / r.length, df = (w - p) * 100;
     return `<tr><td>${label}</td><td class="n">${r.length}</td><td class="n">${pct(p, 1)}</td><td class="n">${pct(w, 1)}</td><td class="n ${cls(df)}">${sgn(df, 1)} pts</td></tr>`; };
-  return `<h2>Calibration</h2><p class="note">${note}</p><div class="scroll"><table style="max-width:640px"><thead><tr><th>Model's chance</th><th class="n">Picks</th><th class="n">Chance given</th><th class="n">Won</th><th class="n">Difference</th></tr></thead><tbody>${rows.map(tr).join('')}</tbody></table></div>`;
+  return `<h2>Calibration</h2><p class="note">${note}</p><div class="scroll"><table style="max-width:640px"><thead><tr><th>Model's chance</th><th class="n">Picks</th><th class="n">Model said</th><th class="n">Won</th><th class="n">Difference</th></tr></thead><tbody>${rows.map(tr).join('')}</tbody></table></div>`;
 }
 
 function btBody(BT, S, pool, leagues){
@@ -381,27 +385,27 @@ function btBody(BT, S, pool, leagues){
 
 function bets(list){
   if (!list.length) return '';
-  const rows = list.map(b => `<tr><td data-s="${b.dt}">${short(b.dt)} ${b.dt.slice(0,4)}</td>${lg === 'all' ? `<td>${lgShort(b.lg)}</td>` : ''}<td class="wr">${b.home} – ${b.away}</td><td class="n ${wl(b)}">${b.side === 'o' ? 'Over' : 'Under'} ${b.line}</td><td class="n">${b.px.toFixed(2)}</td><td class="n">${b.mu.toFixed(1)}</td><td class="n">${pct(b.p)}</td><td class="n">${sgn(b.edge*100, 0)}%</td><td class="n">${b.close ?? '–'}</td><td class="n ${wl(b)}">${b.total}</td><td class="n">${b.pace == null ? '–' : sgn(b.pace, 1)}</td><td class="n">${b.luck == null ? '–' : sgn(b.luck, 1)}</td></tr>`);
-  return `<h2>Every pick, latest first</h2><p class="note">${list.length} backtest picks${list.length > 400 ? ', the latest 400 shown' : ''}. Pace: the points the two teams' pace added to or took from the model total. Luck: 3-point luck, as above.</p><div class="scroll"><table><thead><tr><th>Date</th>${lg === 'all' ? '<th>League</th>' : ''}<th>Match</th><th class="n">Pick</th><th class="n">Price</th><th class="n">Model</th><th class="n">Chance</th><th class="n">Edge</th><th class="n">Closing line</th><th class="n">Total</th><th class="n">Pace</th><th class="n">Luck</th></tr></thead><tbody>${rows.reverse().slice(0, 400).join('')}</tbody></table></div>`;
+  const rows = list.map(b => `<tr><td data-s="${b.dt}">${short(b.dt)} ${b.dt.slice(0,4)}</td>${lg === 'all' ? `<td>${lgShort(b.lg)}</td>` : ''}<td class="wr">${b.home} – ${b.away}</td><td class="n ${wl(b)}">${b.side === 'o' ? 'Over' : 'Under'} ${b.line}</td><td class="n">${b.px.toFixed(2)}</td><td class="n">${b.mu.toFixed(1)}</td><td class="n">${pct(b.p)}</td><td class="n">${sgn(b.edge*100, 0)}%</td><td class="n">${b.close ?? '–'}</td><td class="n ${wl(b)}">${b.total}</td><td class="n">${b.ret > 0 ? '<span class="pill pos">Won</span>' : b.ret < 0 ? '<span class="pill neg">Lost</span>' : '<span class="pill">Push</span>'}</td></tr>`);
+  return `<h2>Every pick, latest first</h2><p class="note">${list.length} backtest picks${list.length > 400 ? ', the latest 400 shown' : ''}. Model total: the model's total with pace in it, as on the match pages.</p><div class="scroll"><table><thead><tr><th>Date</th>${lg === 'all' ? '<th>League</th>' : ''}<th>Match</th><th class="n">Pick</th><th class="n">Price</th><th class="n">Model total</th><th class="n">Chance</th><th class="n">Edge</th><th class="n">Closing line</th><th class="n">Total</th><th class="n">Result</th></tr></thead><tbody>${rows.reverse().slice(0, 400).join('')}</tbody></table></div>`;
 }
 
 
 
 function renderProjections(){
-  let h = `<p class="note">Games in the next 7 days where both teams have played ${LIVE.min_gp ?? 4}+ games, with the model's projected total (fitted on earlier games only) next to the market's consensus line. Pace is the part of the model total that comes from how much faster or slower these two teams play than the league; it is already in the Model number, and a dash means no box scores. Line diff: the model before pace minus the line, the number the 4-point rule reads. Over edge is shown only for games that meet every other rule: edge above ${(LE()*100).toFixed(0)}%, model before pace at least 4 points above the line, both teams ${LIVE.min_gp ?? 4}+ games, pace −1 or more, regular season, a line ending in .5; a game becomes a pick when its edge is also above the bar. Highlighted games are logged in the Live test tab at the line and price shown when they were first seen, and their edge is the one at that moment, while the line and prices keep updating. Click a match for its page, with the projection and how it was produced. Click a column heading to sort.</p>`;
+  let h = `<p class="note">Games in the next 7 days where both teams have played ${LIVE.min_gp ?? 4}+ games, with the model's projected total (fitted on earlier games only) next to the market's consensus line. Model: the model's total with pace in it; each match page shows the projection before pace and the pace. Line diff: the model before pace minus the line, the number the 4-point rule reads. Over edge is shown only for games that meet every other rule: edge above ${(LE()*100).toFixed(0)}%, model before pace at least 4 points above the line, both teams ${LIVE.min_gp ?? 4}+ games, pace −1 or more, regular season, a line ending in .5; a game becomes a pick when its edge is also above the bar. Highlighted games are logged in the Live test tab at the line and price shown when they were first seen, and their edge is the one at that moment, while the line and prices keep updating. <b>Edge now</b>, for those picks: the edge at the line and price on offer now, yellow when it has fallen to the bar or below, red when it is gone. Click a match for its page, with the projection and how it was produced. Click a column heading to sort.</p>`;
   const fx = LIVE.fixtures.filter(inLg);
   if (!fx.length) return h + '<p class="empty">No games in the next 7 days where both teams have the minimum games.</p>';
   const taken = Object.fromEntries(LIVE.picks.map(b => [b.home + '|' + b.away, b]));   // a pick keeps the edge it was taken at
   const byDay = {};
   fx.forEach(g => (byDay[g.dt.slice(0,10)] ||= []).push(g));
-  const head = `<thead><tr><th>Time</th>${lg === 'all' ? '<th>League</th>' : ''}<th>Match</th><th class="n">Model</th><th class="n">Line</th><th class="n">Over</th><th class="n">Over chance</th><th class="n">Over edge</th><th class="n">Pace</th><th class="n">Line diff</th></tr></thead>`;
+  const head = `<thead><tr><th>Time</th>${lg === 'all' ? '<th>League</th>' : ''}<th>Match</th><th class="n">Model</th><th class="n">Line</th><th class="n">Over</th><th class="n">Over chance</th><th class="n">Over edge</th><th class="n">Line diff</th><th class="n">Edge now</th></tr></thead>`;
   for (const [d, gs] of Object.entries(byDay)){
     h += `<h2 class="day">${dayName(d)}</h2><div class="scroll"><table class="proj">${head}<tbody>`;
     for (const g of gs){
       const t = g.pick && taken[g.home + '|' + g.away], e = t ? t.edge : g.line == null || !g.ok ? null : g.eo;
       h += `<tr${g.pick ? ' class="pk"' : ''}><td>${g.dt.slice(11)}</td>${lg === 'all' ? `<td>${lgShort(g.lg)}</td>` : ''}
         <td class="wr">${g.slug ? `<a class="gm" href="games/${g.slug}/">${g.home} – ${g.away}</a>` : `${g.home} – ${g.away}`}${g.pick ? `<span class="badge">${g.pick}</span>` : ''}</td><td class="n"><b>${g.mu.toFixed(1)}</b></td>
-        ${g.line == null ? '<td class="n muted" colspan="6">no line yet</td>' : `<td class="n">${g.line}</td><td class="n">${g.op.toFixed(2)}</td><td class="n">${pct(g.p)}</td><td class="n ${t || (g.ok && e > LE()) ? 'pos' : 'muted'}">${e == null ? '–' : sgn(Math.round(e*100), 0) + '%'}</td><td class="n">${g.pace == null ? '–' : sgn(g.pace, 1)}</td><td class="n">${sgn(Math.round((g.mu - (g.pace ?? 0) - g.line) * 10) / 10, 1)}</td>`}</tr>`;
+        ${g.line == null ? '<td class="n muted" colspan="6">no line yet</td>' : `<td class="n">${g.line}</td><td class="n">${g.op.toFixed(2)}</td><td class="n">${pct(g.p)}</td><td class="n ${t || (g.ok && e > LE()) ? 'pos' : 'muted'}">${e == null ? '–' : sgn(Math.round(e*100), 0) + '%'}</td><td class="n">${sgn(Math.round((g.mu - (g.pace ?? 0) - g.line) * 10) / 10, 1)}</td>${edgeNow(t ? g.eo : null)}`}</tr>`;
     }
     h += '</tbody></table></div>';
   }
@@ -426,13 +430,13 @@ function renderPicks(){
   // open picks first, then this season's record: October bets (same rules, worked out from results) + bets logged live
     const open = LIVE.picks.filter(b => !b.done).sort((a, b) => a.dt < b.dt ? -1 : 1);
   const fx = Object.fromEntries(LIVE.fixtures.map(g => [g.home + '|' + g.away, g]));
-  const howNote = `<p class="note"><b>The pick.</b> The over, when the model's edge is above ${Math.round(LE()*100)}%: regular season, both teams ${LIVE.min_gp ?? 4}+ games in, the model before pace at least 4 points above the line, pace not taking more than 1 point off the model total, and a line ending in .5.<br><b>When.</b> Every hour the model checks the next 7 days. A pick is logged the first time its edge clears the bar, at that line and the average price, and never changed. Women's lines rarely move, so there is no rush to take it.<br><b>Scoring.</b> Equal stakes. ROI is profit ÷ amount staked; pushes don't count. Updated ${LIVE.updated} (Athens).</p>`;
+  const howNote = `<p class="note"><b>The pick.</b> The over, when the model's edge is above ${Math.round(LE()*100)}%: regular season, both teams ${LIVE.min_gp ?? 4}+ games in, the model before pace at least 4 points above the line, pace not taking more than 1 point off the model total, and a line ending in .5.<br><b>When.</b> Every hour the model checks the next 7 days. A pick is logged the first time its edge clears the bar, at that line and the average price, and never changed. Women's lines rarely move, so there is no rush to take it. <b>Edge now</b> is the edge at the line and price on offer now: yellow when it has fallen to the bar or below, red when it is gone.<br><b>Scoring.</b> Equal stakes. ROI is profit ÷ amount staked; pushes don't count. Updated ${LIVE.updated} (Athens).</p>`;
   let h = '';
   if (!open.length) h += '<p class="empty">No open picks right now. New ones appear here as lines open.</p>';
   else {
-    h += `<h2>Open picks</h2><div class="scroll"><table class="proj"><thead><tr><th>Tip-off</th><th>League</th><th>Match</th><th class="n">Pick</th><th class="n">Price</th><th class="n">Model total</th><th class="n">Edge</th><th class="n">Line now</th><th class="n">Pace</th><th class="n">Line diff</th></tr></thead><tbody>` +
+    h += `<h2>Open picks</h2><div class="scroll"><table class="proj"><thead><tr><th>Tip-off</th><th>League</th><th>Match</th><th class="n">Pick</th><th class="n">Price</th><th class="n">Model total</th><th class="n">Edge</th><th class="n">Line now</th><th class="n">Line diff</th><th class="n">Edge now</th></tr></thead><tbody>` +
       open.map(b => { const g = fx[b.home + '|' + b.away] || {};
-        return `<tr class="pk"><td data-s="${b.dt}">${dayName(b.dt)} ${b.dt.slice(11)}</td><td>${lgShort(b.lg)}</td><td class="wr">${g.slug ? `<a class="gm" href="games/${g.slug}/">${b.home} – ${b.away}</a>` : `${b.home} – ${b.away}`}</td><td class="n"><b>${sd(b)} ${b.line}</b></td><td class="n">${b.px.toFixed(2)}</td><td class="n">${(g.mu ?? b.mu).toFixed(1)}</td><td class="n pos">${sgn(b.edge*100, 0)}%</td><td class="n">${g.line ?? b.now ?? '–'}</td><td class="n">${b.pace == null ? '–' : sgn(b.pace, 1)}</td><td class="n">${sgn(Math.round((b.mu - (b.pace ?? 0) - b.line) * 10) / 10, 1)}</td></tr>`; }).join('') +
+        return `<tr class="pk"><td data-s="${b.dt}">${dayName(b.dt)} ${b.dt.slice(11)}</td><td>${lgShort(b.lg)}</td><td class="wr">${g.slug ? `<a class="gm" href="games/${g.slug}/">${b.home} – ${b.away}</a>` : `${b.home} – ${b.away}`}</td><td class="n"><b>${sd(b)} ${b.line}</b></td><td class="n">${b.px.toFixed(2)}</td><td class="n">${(g.mu ?? b.mu).toFixed(1)}</td><td class="n pos">${sgn(b.edge*100, 0)}%</td><td class="n">${g.line ?? b.now ?? '–'}</td><td class="n">${sgn(Math.round((b.mu - (b.pace ?? 0) - b.line) * 10) / 10, 1)}</td>${edgeNow(g.line != null ? g.eo : null)}</tr>`; }).join('') +
       '</tbody></table></div>';
   }
   const pre = ((DATA.cur || {}).bets || []).map(b => ({...b, pre: true, done: true, close: b.close ?? null}));
@@ -447,12 +451,13 @@ function renderPicks(){
   let run = 0;
   const rows = all.filter(b => b.done).map(b => {   // open picks are in the table above
     if (b.ret != null) run += b.ret;
-    const res = !b.done ? '<td class="n muted">to play</td>' : b.ret == null ? '<td class="n muted">void</td>' :
-      `<td class="n ${wl(b)}">${b.total}</td>`;
+    const res = b.ret == null ? '<span class="pill">Void</span>' : b.ret > 0 ? '<span class="pill pos">Won</span>' : b.ret < 0 ? '<span class="pill neg">Lost</span>' : '<span class="pill">Push</span>';
+    const mvc = b.close == null ? '<td class="n muted">–</td>' : `<td class="n">${b.close}${b.close > b.line ? ' <span class="pos">▲</span>' : b.close < b.line ? ' <span class="neg">▼</span>' : ''}</td>`;
     return `<tr><td data-s="${b.dt}">${short(b.dt)}${b.dt.length > 10 ? ' ' + b.dt.slice(11) : ''}${b.pre ? ' <span class="muted">backtest</span>' : ''}</td><td>${lgShort(b.lg)}</td><td class="wr">${b.home} – ${b.away}</td><td class="n ${b.done ? wl(b) : ''}"><b>${sd(b)} ${b.line}</b></td>
-      <td class="n">${b.px.toFixed(2)}</td><td class="n pos">${sgn(b.edge*100, 0)}%</td><td class="n">${b.close ?? '–'}</td>${res}</tr>`;
+      <td class="n">${b.px.toFixed(2)}</td><td class="n">${b.mu != null ? b.mu.toFixed(1) : '–'}</td><td class="n pos">${sgn(b.edge*100, 0)}%</td>${mvc}<td class="n ${wl(b)}"><b>${b.total ?? '–'}</b></td><td class="n">${res}</td>
+      <td class="n ${cls(b.ret)}">${b.ret == null ? '–' : sgn(b.ret, 2)}</td><td class="n ${cls(run)}">${sgn(run, 2)}</td></tr>`;
   });
-  return h + howNote + `<h2>Settled picks, latest first</h2><div class="scroll"><table><thead><tr><th>Tip-off</th><th>League</th><th>Match</th><th class="n">Pick</th><th class="n">Price</th><th class="n">Edge</th><th class="n">Closing line</th><th class="n">Total</th></tr></thead><tbody>${rows.reverse().join('')}</tbody></table></div>`;
+  return h + howNote + `<h2>Settled picks, latest first</h2><p class="note">Closing line: ▲ moved toward the pick, ▼ against it. Profit at 1 unit a pick; Running is the total so far.</p><div class="scroll"><table class="proj settled"><thead><tr><th>Tip-off</th><th>League</th><th>Match</th><th class="n">Pick</th><th class="n">Price</th><th class="n">Model total</th><th class="n">Edge</th><th class="n">Closing line</th><th class="n">Total</th><th class="n">Result</th><th class="n">Profit</th><th class="n">Running</th></tr></thead><tbody>${rows.reverse().join('')}</tbody></table></div>`;
 }
 
 // click a column heading to sort its table (again to reverse); league groups keep their season rows
