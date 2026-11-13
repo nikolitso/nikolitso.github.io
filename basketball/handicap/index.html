@@ -199,7 +199,7 @@ details.picks>summary .muted{font-size:14px;font-weight:400}
   <div id="out"></div>
 </div>
 
-<script src="live.js?v=202611140130"></script>
+<script src="live.js?v=202611140141"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
@@ -296,6 +296,13 @@ function renderGame(){
   const side = line != null && g.mu !== line ? (g.mu > line ? 'home' : 'away') : null, sideT = side ? g[side] : null;
   let h = `<p><a class="gm" href="#view=matches&lg=${g.lg}">← All matches</a></p>`;
   h += `<h2 style="margin-top:6px">${esc(g.home)} – ${esc(g.away)}</h2><p class="muted">${esc(lgName(g.lg))} · ${dayName(g.when || g.date)}${g.when ? ' ' + g.when.slice(11) : ''}${done ? ` · final <b>${g.hp}–${g.ap}</b>` : ''} · games played ${g.gh}·${g.ga}${g.ok === false ? ` · <b>no estimate yet</b>: a team has fewer than ${GP} games` : ''}</p>`;
+  // the final projection first: points for each side, the handicap and the total
+  const row = (lab, hm, tot, cls = '') => tot == null || hm == null ? `<tr class="${cls}"><td>${lab}</td><td class="n">–</td><td class="n">–</td><td class="n">${hc(hm)}</td><td class="n">–</td></tr>`
+    : `<tr class="${cls}"><td>${lab}</td><td class="n">${f1((tot + hm) / 2)}</td><td class="n">${f1((tot - hm) / 2)}</td><td class="n">${hc(hm)}</td><td class="n">${f1(tot)}</td></tr>`;
+  h += `<h2 class="day">Final projection</h2><div class="scroll"><table class="mk" style="max-width:760px"><tr><th></th><th class="n">${esc(g.home)} pts</th><th class="n">${esc(g.away)} pts</th><th class="n">Handicap</th><th class="n">Total</th></tr>`
+    + row('<b>Model</b>', g.ok === false ? null : g.mu, g.tot, '') + row('Books', line, g.tline, 'avg')
+    + (done ? `<tr class="sum"><td>Final score</td><td class="n">${g.hp}</td><td class="n">${g.ap}</td><td class="n">${sgn(g.hp - g.ap, 0)}</td><td class="n">${g.hp + g.ap}</td></tr>` : '')
+    + `</table></div><p class="muted">Handicap: home favourite +. Model points split the projected total by the projected margin: home = (total + margin) ÷ 2. The total is the <a class="gm" href="/basketball/overs/#view=method">totals page</a>'s projected total (league average plus both teams' numbers, before its other signals). Books: the ${done ? 'closing' : 'latest'} handicap and total line.</p>`;
   h += `<div class="doc">`;
   h += `<h3><span class="num">1</span>Home edge</h3><p>The league's average home margin: <b>${sgn(W.hca)}</b> points, from this season's games and earlier seasons (recent games count more, half-life ${W.half_life} days).</p>`;
   h += `<h3><span class="num">2</span>${esc(g.home)}: strength ${sgn(W.rh)}</h3><p>Points better or worse than the league's average team. Each game's margin is adjusted for where it was played and for the opponent: <i>adjusted = margin − home edge (+ when away) + opponent's strength</i>. The strength used is close to the average adjusted margin, but recent games count more, all teams are solved together, and it is pulled toward 0 while there are few games.</p>${gamesTable(g.home, W.th, W.rh)}`;
