@@ -199,7 +199,7 @@ details.picks>summary .muted{font-size:14px;font-weight:400}
   <div id="out"></div>
 </div>
 
-<script src="live.js?v=202611140014"></script>
+<script src="live.js?v=202611140022"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
@@ -240,11 +240,11 @@ function renderMatches(){
   const byDay = {};
   F.forEach(g => (byDay[g.when.slice(0, 10)] ||= []).push(g));
   for (const [d, list] of Object.entries(byDay)) {
-    h += `<h2 class="day">${dayName(d)}</h2><div class="scroll"><table class="mk proj"><tr><th>Time</th>${lg === 'all' ? '<th>League</th>' : ''}<th>Game</th><th class="n">Played</th><th class="n">Model</th><th class="n">Line</th><th class="n">Opening</th><th class="n">Diff</th><th>Model's side</th><th class="n">Chance</th><th></th></tr>`;
+    h += `<h2 class="day">${dayName(d)}</h2><div class="scroll"><table class="mk proj"><tr><th>Time</th>${lg === 'all' ? '<th>League</th>' : ''}<th>Game</th><th class="n">Model</th><th class="n">Line</th><th class="n">Opening</th><th class="n">Diff</th><th>Model's side</th><th class="n">Chance</th><th></th></tr>`;
     h += list.map(g => {
       const side = g.line != null && g.ok && g.mu !== g.line ? (g.mu > g.line ? g.home : g.away) : null;
       const p = side ? (g.mu > g.line ? g.p : 1 - g.p) : null;
-      return `<tr class="${g.ok ? '' : 'few'}"><td class="n">${g.when.slice(11)}</td>${lg === 'all' ? `<td>${esc(lgShort(g.lg))}</td>` : ''}<td class="wr">${esc(g.home)} – ${esc(g.away)}</td><td class="n">${g.gh}·${g.ga}</td><td class="n tot">${g.ok ? hc(g.mu) : '–'}</td><td class="n">${hc(g.line)}</td><td class="n">${hc(g.open)}</td><td class="n">${side ? f1(Math.abs(g.mu - g.line)) : '–'}</td><td>${side ? esc(side) : g.ok && g.line == null ? '<span class="muted">no line yet</span>' : '<span class="muted">–</span>'}</td><td class="n">${p != null ? pct(p) : '–'}</td><td>${wkLink(g)}</td></tr>`;
+      return `<tr class="${g.ok ? '' : 'few'}"><td class="n">${g.when.slice(11)}</td>${lg === 'all' ? `<td>${esc(lgShort(g.lg))}</td>` : ''}<td class="wr">${esc(g.home)} – ${esc(g.away)}</td><td class="n tot">${g.ok ? hc(g.mu) : '–'}</td><td class="n">${hc(g.line)}</td><td class="n">${hc(g.open)}</td><td class="n">${side ? f1(Math.abs(g.mu - g.line)) : '–'}</td><td>${side ? esc(side) : g.ok && g.line == null ? '<span class="muted">no line yet</span>' : '<span class="muted">–</span>'}</td><td class="n">${p != null ? pct(p) : '–'}</td><td>${wkLink(g)}</td></tr>`;
     }).join('') + '</table></div>';
   }
   h += `<h2>Played this season</h2><p class="muted">Each game's estimate from the games before that day, as the page showed it before tip-off, against the opening and closing handicap. ✓ the model's side covered, ✗ it did not.</p>`;
