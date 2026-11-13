@@ -199,7 +199,7 @@ details.picks>summary .muted{font-size:14px;font-weight:400}
   <div id="out"></div>
 </div>
 
-<script src="live.js?v=202611140104"></script>
+<script src="live.js?v=202611140105"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
@@ -207,7 +207,7 @@ const dayName = s => { const d = new Date(s.slice(0,10)+'T12:00'); return `${DAY
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const pct = (x, d=0) => x == null ? '–' : (x*100).toFixed(d) + '%';
 const sgn = (x, d=1) => x == null ? '–' : (x > 0 ? '+' : x < 0 ? '−' : '') + Math.abs(x).toFixed(d);
-const hc = x => x == null ? '–' : x === 0 ? '0' : sgn(-x);   // a home margin as the home side's handicap: home by 5.5 = −5.5
+const hc = x => x == null ? '–' : x === 0 ? '0' : sgn(x);    // the home margin: home favourite by 5.5 = +5.5 (user's choice, 14 Nov 2026)
 const f1 = x => x == null ? '–' : x.toFixed(1);
 const LG = Object.fromEntries(LIVE.leagues.map(l => [l.key, l]));
 const lgName = k => LG[k] ? `${LG[k].country} · ${LG[k].name}` : k;
@@ -234,7 +234,7 @@ function topTiles(){
 const mark = v => v == null ? '<span class="muted">–</span>' : v ? '<b class="w">✓</b>' : '<b class="l">✗</b>';
 function renderMatches(){
   const F = LIVE.fixtures.filter(inLg), P = LIVE.played.filter(inLg);
-  let h = `<p class="note">The model's margin for every game, next to the books' handicap. Both are shown as the <b>home side's handicap</b>: −5.5 means the home side is expected to win by 5.5. <b>Diff</b> is how many points the model is on one side of the line, and <b>Chance</b> the model's chance that side covers. A game gets an estimate once both teams have played ${GP} games this season; earlier games and play-offs are shown in grey. No picks: estimates only.</p>`;
+  let h = `<p class="note">The model's margin for every game, next to the books' handicap. Both are shown as the <b>home side's handicap</b>: +5.5 means the home side is the favourite by 5.5, −5.5 that the away side is. <b>Diff</b> is how many points the model is on one side of the line, and <b>Chance</b> the model's chance that side covers. A game gets an estimate once both teams have played ${GP} games this season; earlier games and play-offs are shown in grey. No picks: estimates only.</p>`;
   h += `<h2>Next games</h2>`;
   if (!F.length) h += '<p class="empty">No games in the next 7 days.</p>';
   const byDay = {};
@@ -300,12 +300,12 @@ function renderGame(){
   h += `<h3><span class="num">1</span>Home edge</h3><p>The league's average home margin: <b>${sgn(W.hca)}</b> points, from this season's games and earlier seasons (recent games count more, half-life ${W.half_life} days).</p>`;
   h += `<h3><span class="num">2</span>${esc(g.home)}: strength ${sgn(W.rh)}</h3><p>Points better or worse than the league's average team. Each game's margin is adjusted for where it was played and for the opponent: <i>adjusted = margin − home edge (+ when away) + opponent's strength</i>. The strength used is close to the average adjusted margin, but recent games count more, all teams are solved together, and it is pulled toward 0 while there are few games.</p>${gamesTable(g.home, W.th, W.rh)}`;
   h += `<h3><span class="num">3</span>${esc(g.away)}: strength ${sgn(W.ra)}</h3>${gamesTable(g.away, W.ta, W.ra)}`;
-  h += `<h3><span class="num">4</span>Projected margin</h3><div class="calc">home edge + home strength − away strength<br>${sgn(W.hca)} ${W.rh < 0 ? '−' : '+'} ${Math.abs(W.rh).toFixed(1)} ${W.ra < 0 ? '+' : '−'} ${Math.abs(W.ra).toFixed(1)} = <b>${sgn(mu)}</b> for ${esc(g.home)}<br><i>as the home side's handicap: ${hc(g.mu)}</i></div>`;
+  h += `<h3><span class="num">4</span>Projected margin</h3><div class="calc">home edge + home strength − away strength<br>${sgn(W.hca)} ${W.rh < 0 ? '−' : '+'} ${Math.abs(W.rh).toFixed(1)} ${W.ra < 0 ? '+' : '−'} ${Math.abs(W.ra).toFixed(1)} = <b>${sgn(mu)}</b> for ${esc(g.home)}<br><i>as the handicap: ${hc(g.mu)} (home favourite = +)</i></div>`;
   if (line == null) h += `<h3><span class="num">5</span>Against the handicap</h3><p>No handicap from the books yet.</p>`;
   else {
     const z = (line - g.mu) / sd, ph = 1 - phi(z);
     h += `<h3><span class="num">5</span>Against the handicap</h3><p>The books' ${done ? 'closing' : 'latest'} handicap: <b>${hc(line)}</b> for ${esc(g.home)} (median of ${g.books} books${g.hpx ? `, average prices ${g.hpx.toFixed(2)} home / ${g.apx.toFixed(2)} away` : ''}); opening ${hc(g.open)}.</p>`;
-    h += `<div class="calc">${esc(g.home)} by: model ${sgn(g.mu)}, line ${sgn(line)} (handicap ${hc(line)}) → gap ${sgn(g.mu - line)} → <b>${sideT ? esc(sideT) : 'no side'}</b>, diff ${f1(Math.abs(g.mu - line))} points</div>`;
+    h += `<div class="calc">${esc(g.home)} by: model ${sgn(g.mu)}, line ${sgn(line)} → gap ${sgn(g.mu - line)} → <b>${sideT ? esc(sideT) : 'no side'}</b>, diff ${f1(Math.abs(g.mu - line))} points</div>`;
     h += `<h3><span class="num">6</span>Chance to cover</h3><p>The final margin is taken to fall around the projection with the league's usual miss, <b>${f1(sd)}</b> points (a normal curve).</p>`;
     h += `<div class="calc">z = (line − projection) ÷ miss, both as the home margin = (${sgn(line)} − ${sgn(g.mu)}) ÷ ${f1(sd)} = ${sgn(z, 2)}<br>chance ${esc(g.home)} covers = 1 − Φ(z) = ${pct(ph, 1)} · ${esc(g.away)} ${pct(1 - ph, 1)}<br><i>the model's side, ${sideT ? esc(sideT) : '–'}: <b>${side ? pct(side === 'home' ? ph : 1 - ph, 1) : '–'}</b></i>${g.open != null && g.open !== line ? `<br><i>at the opening line ${hc(g.open)}: ${esc(g.home)} ${pct(g.po_, 1)}</i>` : ''}</div>`;
   }
