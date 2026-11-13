@@ -28,6 +28,7 @@
       "good-to-great",
       "hbr-guide-to-generative-ai-for-managers",
       "how-to-be-a-leader",
+      "how-to-be-good-at-life",
       "how-to-find-fulfilling-work",
       "how-to-find-the-right-words",
       "how-to-get-on-with-your-colleagues",
@@ -165,7 +166,8 @@
       "make-your-mark",
       "the-numbers-game-why-everything-you",
       "net-gains-inside-the-beautiful-games",
-      "how-to-win-the-premier-league"
+      "how-to-win-the-premier-league",
+      "how-to-be-good-at-life"
     ],
     "log": [
       {
@@ -485,9 +487,15 @@
         "slot": "2026-11-12 14",
         "slug": "how-to-win-the-premier-league",
         "id": "2120849137121788323"
+      },
+      {
+        "day": "2026-11-13",
+        "slot": "2026-11-13 14",
+        "slug": "how-to-be-good-at-life",
+        "id": "2121211535221833869"
       }
     ],
-    "last_day": "2026-11-12"
+    "last_day": "2026-11-13"
   },
   "film": {
     "seen": [
@@ -1043,7 +1051,7 @@
     ],
     "last_day": "2026-11-12"
   },
-  "last_slot": "2026-11-13 11",
+  "last_slot": "2026-11-13 14",
   "quote": {
     "seen": [
       "1",
