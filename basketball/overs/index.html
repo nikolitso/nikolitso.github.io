@@ -143,7 +143,7 @@ th.rs{cursor:pointer;user-select:none} th.rs:hover,th.rs.on{color:var(--gold)}
 <nav class="an-sitebar" aria-label="Main site"><div><a href="/books/">Books</a><a href="/#projects">Projects</a><a href="/about/">About</a><a href="/" title="Main site: antonisnikolitsopoulos.com" aria-label="Main site"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 2 11.5h3V21h5.5v-6h3v6H19v-9.5h3z"/></svg></a></div></nav>
 <!-- sitebar:end -->
 <style>
-.pos{color:var(--win)} .neg{color:var(--loss)} .elow{color:#e8c547} .eneg{color:#eb7a6c}
+.pos{color:var(--win)} .neg{color:var(--loss)} .elow{color:#e8c547} .eneg{color:#eb7a6c} .wrap.wide{max-width:1340px} table.lgt td,table.lgt th{padding-left:6px;padding-right:6px}
 tr.srow{cursor:pointer} tr.srow:hover td,tr.srow.on td{background:color-mix(in srgb,var(--gold) 10%,transparent)}
 tr.sub td{background:color-mix(in srgb,var(--panel) 70%,transparent);font-size:15px}
 tr.sub td:first-child{padding-left:28px;color:var(--muted)}
@@ -291,7 +291,7 @@ const bandRow = (label, g, pl = false) => { const n = g.length, sum = f => g.red
 
 function renderLeagues(){
   let h = `<p class="note">Regular-season games from ${sn(DATA.first)} on (2020–21 only warms the ratings up; play-offs are left out, as in the rule). <b>All games</b> describes the league and its market. <b>Over %</b>: how often the final score (overtime included) went over the closing line. Blind over: backing the over in every game at the average price. <b>Model's picks</b>: the picks under the current rule, 2022–23 to 2025–26. <b>Model total</b>: the average of the model's total with every signal in it, and <b>Line</b>: the average opening line taken, both over the picks only. Then how often the picks went over (hit), their profit in units (1 unit a pick), and their ROI at the opening line and price (open, where picks are taken) and at the closing line and price (close, the same picks). ROI at closing is the harder test: the market has had its say. Click a league for its seasons and an analysis of all its games below the table.</p>`;
-  h += `<div class="scroll"><table><thead><tr><th style="border-bottom:0"></th><th colspan="3" style="text-align:center;color:var(--gold)">All games</th><th colspan="7" style="text-align:center;color:var(--gold);border-left:1px solid var(--line)">Model's picks</th></tr><tr><th>League</th><th class="n">Games</th><th class="n">Over %</th><th class="n">Blind over</th><th class="n" style="border-left:1px solid var(--line)">Picks</th><th class="n">Model total</th><th class="n">Line</th><th class="n">Picks hit</th><th class="n">P/L</th><th class="n">ROI open</th><th class="n">ROI close</th></tr></thead><tbody>`;
+  h += `<div class="scroll"><table class="lgt"><thead><tr><th style="border-bottom:0"></th><th colspan="3" style="text-align:center;color:var(--gold)">All games</th><th colspan="7" style="text-align:center;color:var(--gold);border-left:1px solid var(--line)">Model's picks</th></tr><tr><th>League</th><th class="n">Games</th><th class="n">Over %</th><th class="n">Blind over</th><th class="n" style="border-left:1px solid var(--line)">Picks</th><th class="n">Model total</th><th class="n">Line</th><th class="n">Picks hit</th><th class="n">P/L</th><th class="n">ROI open</th><th class="n">ROI close</th></tr></thead><tbody>`;
   const mod = g => g.n ? `${g.n} <span class="${cls(g.roi)}">${roi(g.roi)}</span>` : '<span class="muted">–</span>';
   const row = (label, s, attrs='', list=[]) => `<tr${attrs}><td>${label}</td><td class="n">${s.games}</td><td class="n">${pct(s.over, 1)}</td>
     <td class="n ${cls(s.blind_over)}">${roi(s.blind_over)}</td>${pk(list)}
@@ -406,20 +406,20 @@ function bets(){
 }
 
 function renderProjections(){
-  let h = `<p class="note">Games in the next 7 days with the model's total (every signal in it, fitted on earlier games only) next to the market's consensus line. Each match page shows the plain projection, pace, 3-point luck and the other signals. Only overs that meet the rule (regular season, half-point lines, both teams ${LIVE.min_gp ?? 3}+ games${GPL()}, 3-point luck under ${LKs()}) get an edge here; highlighted games are logged in the Live test tab at the line and price shown when they were first seen, and their edge is the one at that moment, while the line and prices keep updating. Click a match for its page, with the projection and how it was produced. Click a column heading to sort.</p>`;
+  let h = `<p class="note">Games in the next 7 days with the model's total (every signal in it, fitted on earlier games only) next to the market's consensus line. Each match page shows the plain projection, pace, 3-point luck and the other signals. Only overs that meet the rule (regular season, half-point lines, both teams ${LIVE.min_gp ?? 3}+ games${GPL()}, 3-point luck under ${LKs()}) get an edge here; highlighted games are logged in the Live test tab at the line and price shown when they were first seen, and their edge is the one at that moment, while the line and prices keep updating. <b>Edge now</b>, for those picks: the edge at the line and price on offer now, yellow when it has fallen to the bar or below, red when it is gone. Click a match for its page, with the projection and how it was produced. Click a column heading to sort.</p>`;
   const fx = LIVE.fixtures.filter(inLg);
   if (!fx.length) return h + '<p class="empty">No games in the next 7 days.</p>';
   const taken = Object.fromEntries(LIVE.picks.map(b => [b.home + '|' + b.away, b]));   // a pick keeps the edge it was taken at
   const byDay = {};
   fx.forEach(g => (byDay[g.dt.slice(0,10)] ||= []).push(g));
-  const head = `<thead><tr><th>Time</th>${lg === 'all' ? '<th>League</th>' : ''}<th>Match</th><th class="n">Model</th><th class="n">Line</th><th class="n">Over</th><th class="n">Over chance</th><th class="n">Over edge</th></tr></thead>`;
+  const head = `<thead><tr><th>Time</th>${lg === 'all' ? '<th>League</th>' : ''}<th>Match</th><th class="n">Model</th><th class="n">Line</th><th class="n">Over</th><th class="n">Over chance</th><th class="n">Over edge</th><th class="n">Edge now</th></tr></thead>`;
   for (const [d, gs] of Object.entries(byDay)){
     h += `<h2 class="day">${dayName(d)}</h2><div class="scroll"><table class="proj">${head}<tbody>`;
     for (const g of gs){
       const t = g.pick && taken[g.home + '|' + g.away], e = t ? t.edge : g.line == null || !(g.ok ?? RL(g.lg)) ? null : g.eo, pc = t ? t.pace : g.pace;
       h += `<tr${g.pick ? ' class="pk"' : ''}><td>${g.dt.slice(11)}</td>${lg === 'all' ? `<td>${lgShort(g.lg)}</td>` : ''}
         <td class="wr">${g.slug ? `<a class="gm" href="games/${g.slug}/">${g.home} – ${g.away}</a>` : `${g.home} – ${g.away}`}${g.pick ? `<span class="badge">${g.pick}</span>` : ''}</td><td class="n"><b>${(g.ma ?? g.mu).toFixed(1)}</b></td>
-        ${g.line == null ? '<td class="n muted" colspan="4">no line yet</td>' : `<td class="n">${g.line}</td><td class="n">${g.op.toFixed(2)}</td><td class="n">${pct(g.p)}</td><td class="n ${t || e > LE() ? 'pos' : 'muted'}">${e == null ? '–' : sgn(e*100, 0) + '%'}</td>`}</tr>`;
+        ${g.line == null ? '<td class="n muted" colspan="4">no line yet</td>' : `<td class="n">${g.line}</td><td class="n">${g.op.toFixed(2)}</td><td class="n">${pct(g.p)}</td><td class="n ${t || e > LE() ? 'pos' : 'muted'}">${e == null ? '–' : sgn(e*100, 0) + '%'}</td>`}${edgeNow(t && g.line != null ? g.eo : null)}</tr>`;
     }
     h += '</tbody></table></div>';
   }
@@ -500,9 +500,12 @@ document.addEventListener('click', e => {
   if (open && view === 'leagues') { const a = document.getElementById('lgan'); if (a) a.scrollIntoView({behavior: 'smooth', block: 'start'}); }
 });
 
+// Edge now for a pick: orange above the bar, yellow at the bar or under, red below 0
+const edgeNow = v => v == null ? '<td class="n muted">–</td>' : `<td class="n ${v > LE() ? 'pos' : v > 0 ? 'elow' : 'eneg'}">${sgn(v*100, 0)}%</td>`;
 const RENDER = {home: renderFindings, livetest: renderPicks, leagues: renderLeagues, backtest: renderBacktest, projections: renderProjections, method: renderMethod};
 const CHIPS = {projections: 1};
 function render(){
+  document.querySelector('.wrap').classList.toggle('wide', view === 'leagues');   // the Leagues table needs the room
   document.querySelectorAll('#tabs a').forEach(a => { a.classList.toggle('on', a.dataset.view === view); a.href = `#view=${a.dataset.view}${lg === 'all' || !CHIPS[a.dataset.view] ? '' : '&lg=' + lg}`; });
   let keys = DATA.leagues.map(l => l.key);
   if (view === 'backtest') keys = keys.filter(k => DATA.backtest.leagues[k] && DATA.backtest.leagues[k].rule.n);
