@@ -205,20 +205,20 @@ function viewProj() {
   const body = items.map(x => {
     const r = x.r, m = r[11];
     return `<tr class="exp${x.rule ? ' hit' : ''}" title="Show the numbers"><td>${when(r[0])}</td><td>${r[2]} – ${r[3]}<div class="lgn">${x.l.country} · ${x.l.name}</div></td>
-    <td class="n"><b>${r[5][0].toFixed(2)}</b></td><td class="n mut">${fo(r[4][0])}</td><td class="n">${m ? fo(m[0]) : '–'}</td>
-    <td class="n"><b>${r[5][2].toFixed(2)}</b></td><td class="n mut">${fo(r[4][2])}</td><td class="n">${m ? fo(m[2]) : '–'}</td>
+    <td class="n">${fo(r[4][0])}</td><td class="n">${m ? fo(m[0]) : '–'}</td>
+    <td class="n">${fo(r[4][2])}</td><td class="n">${m ? fo(m[2]) : '–'}</td>
     ${ev(x.mk)}${ev(x.md)}<td>${x.rule ? `<b>${x.mk.s === 0 ? r[2] : r[3]} to win</b>` : '<span class="mut">–</span>'}</td></tr>
-    <tr class="detail" hidden><td colspan="11">${analysis({mi: 0, s: x.mk.s, fair: r[4], best: r[5], nw: r[6], nb: r[7], wavg: r[8], margin: r[9], home: r[2], away: r[3], proj: 1, live: 1})}${m ? modelNote(r, x.md) : ''}</td></tr>`;
+    <tr class="detail" hidden><td colspan="9">${analysis({mi: 0, s: x.mk.s, fair: r[4], best: r[5], nw: r[6], nb: r[7], wavg: r[8], margin: r[9], home: r[2], away: r[3], proj: 1, live: 1})}${m ? modelNote(r, x.md) : ''}</td></tr>`;
   }).join('');
   const upd = D.updated.replace('T', ' ').replace('Z', ' UTC');
   return `${PKCSS}<style>tr.hit td{background:color-mix(in srgb,var(--gold) 10%,transparent)}.lgn{font-size:12.5px;color:var(--muted);margin-top:2px}table.pj th.g{text-align:center;border-bottom:1px solid var(--line)}</style>
-  <p class="note">Every regular league game of the next 8 days that has prices, as they stood at the last update (${upd}). For the home and the away win: the <b>best price</b> on offer, the <b>market</b> odds (the market's margin-free price) and the <b>model</b> odds (the team model's chance, as odds). <b>EV</b> = best price × chance − 1, worked out once with the market's chance and once with the model's, for the side where it is higher (H home, A away). The rule uses the market: a game whose home or away win has a market EV of ${RG}% or more at a price above ${ROT} is marked and logged on the Live test tab. The model is shown for comparison only; in the backtest it did not beat the opening prices, so it is not bet. Click a game to see how its numbers are worked out.</p>
+  <p class="note">Every regular league game of the next 8 days that has prices, as they stood at the last update (${upd}). For the home and the away win: the <b>market</b> odds (the market's margin-free price) and the <b>model</b> odds (the team model's chance, as odds). <b>EV</b> = best price on offer × chance − 1 (the best price is shown when a game is opened), worked out once with the market's chance and once with the model's, for the side where it is higher (H home, A away). The rule uses the market: a game whose home or away win has a market EV of ${RG}% or more at a price above ${ROT} is marked and logged on the Live test tab. The model is shown for comparison only; in the backtest it did not beat the opening prices, so it is not bet. Click a game to see how its numbers are worked out.</p>
   <div class="facts"><span class="fact"><b>${num(items.length)}</b>games shown</span><span class="fact"><b>${num(nRule)}</b>${nRule === 1 ? 'meets' : 'meet'} the rule now</span><span class="fact"><b>${num(nMod)}</b>with a model EV of ${RG}% or more</span></div>
   <div class="flt"><span class="fl">EV from</span><div class="chips">${chip('by', 'mk', 'Market', f.by === 'mk')}${chip('by', 'md', 'Model', f.by === 'md')}</div></div>
   <div class="flt"><span class="fl">EV%</span><div class="chips">${PGAPS.map(([v, tx]) => chip('ev', v, tx, f.ev === v)).join('')}</div></div>
   <div class="flt"><span class="fl">Leagues</span><div class="chips">${GROUPS.map(([k, tx]) => chip('lg', k, tx, f.lg === k)).join('')}</div></div>
-  ${items.length ? `<table class="pk pj"><thead><tr><th rowspan="2">Kick-off</th><th rowspan="2">Game</th><th class="g" colspan="3">Home win</th><th class="g" colspan="3">Away win</th><th class="g" colspan="2">EV</th><th rowspan="2">Rule</th></tr>
-  <tr><th class="n">Best</th><th class="n">Market</th><th class="n">Model</th><th class="n">Best</th><th class="n">Market</th><th class="n">Model</th><th class="n">Market</th><th class="n">Model</th></tr></thead><tbody>${body}</tbody></table>` : `<p class="note">${rows.length ? 'No game passes these filters.' : 'No games with prices in the next 8 days.'}</p>`}
+  ${items.length ? `<table class="pk pj"><thead><tr><th rowspan="2">Kick-off</th><th rowspan="2">Game</th><th class="g" colspan="2">Home win</th><th class="g" colspan="2">Away win</th><th class="g" colspan="2">EV</th><th rowspan="2">Rule</th></tr>
+  <tr><th class="n">Market</th><th class="n">Model</th><th class="n">Market</th><th class="n">Model</th><th class="n">Market</th><th class="n">Model</th></tr></thead><tbody>${body}</tbody></table>` : `<p class="note">${rows.length ? 'No game passes these filters.' : 'No games with prices in the next 8 days.'}</p>`}
   <p class="note" style="margin-top:20px">Times are local. ${PRIOR}</p>`;
 }
 // the model's numbers for one game, under the market's worked example
