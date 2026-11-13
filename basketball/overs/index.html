@@ -201,7 +201,7 @@ details.picks>summary .muted{font-size:14px;font-weight:400}
   <div class="chips" id="chips"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=4de71012"></script>
+<script src="data.js?v=bb7a42f1"></script>
 <script src="live.js"></script>
 <script>
 const $ = id => document.getElementById(id);
@@ -391,7 +391,7 @@ function firstHalf(){
   if (!H) return '';
   const e8 = Math.round(LE() * 100), side = b => (b.side === 'over' ? 'Over ' : 'Under ') + b.line;
   const mlink = b => b.slug ? `<a class="gm" href="games/${b.slug}/">${b.home} – ${b.away}</a>` : `${b.home} – ${b.away}`;
-  let h = `<h2 id="h1">First half: line v model <span class="pill">Test</span></h2><p class="note">A separate live test, started ${H.start}, not part of the record above. <b>Model 1H</b>: the league's share of the points scored in the first half (${pct(H.share, 1)} on average) times the model total. Its chance of the over comes from how widely first halves spread around that share of the full-game line in each league since 2022–23. <b>The pick</b>: the first time either side's edge is above ${e8}%, on a .5 line, regular season, both teams ${LIVE.min_gp ?? 3}+ games in (5+ in Latin America), in the same ${LIVE.leagues.length} leagues. Settled on first-half points (no overtime). There is no backtest: first-half prices were not saved before ${H.start}.</p>`;
+  let h = `<h2 id="h1">First half: line v model <span class="pill">Test</span></h2><p class="note">A separate live test, started ${H.start}, not part of the record above. <b>Model 1H</b>: built only from earlier first halves, the way the full-game projection is built from earlier totals: the league's first-half average and each team's first halves this season, plus ${sgn(H.bias, 1)} (first halves came in that much above this projection in every season from 2022–23 to 2025–26). Its chance of the over comes from how widely first halves spread around the projection in each league (${H.sd} points on average). It never sees the full-game line or the full-game model. <b>The pick</b>: the first time either side's edge is above ${e8}%, on a .5 line, regular season, both teams ${LIVE.min_gp ?? 3}+ games in (5+ in Latin America), in the same ${LIVE.leagues.length} leagues. Settled on first-half points (no overtime). There is no backtest: first-half prices were not saved before ${H.start}.</p>`;
   const S = H.stats || {}, A = H.acc;
   const T = [['1H picks', (S.n || 0).toLocaleString('en')], ['Won–Lost', S.settled ? `${S.w}–${S.settled - S.w}` : '–'], ['ROI', roi(S.roi), cls(S.roi)],
              ['Over picks', H.over && H.over.settled ? `${H.over.w}–${H.over.settled - H.over.w} · ${roi(H.over.roi)}` : (H.over ? H.over.n : 0)],
