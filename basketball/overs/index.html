@@ -202,7 +202,7 @@ details.picks>summary .muted{font-size:14px;font-weight:400}
   <div class="chips" id="chips"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=bb7a42f1"></script>
+<script src="data.js?v=0220e1ce"></script>
 <script src="live.js"></script>
 <script>
 const $ = id => document.getElementById(id);
@@ -392,11 +392,10 @@ function firstHalf(){
   if (!H) return '';
   const e8 = Math.round(LE() * 100), side = b => (b.side === 'over' ? 'Over ' : 'Under ') + b.line;
   const mlink = b => b.slug ? `<a class="gm" href="games/${b.slug}/">${b.home} – ${b.away}</a>` : `${b.home} – ${b.away}`;
-  let h = `<h2 id="h1">First half: line v model <span class="pill">Test</span></h2><p class="note">A separate live test, started ${H.start}, not part of the record above. <b>Model 1H</b>: built only from earlier first halves, the way the full-game projection is built from earlier totals: the league's first-half average and each team's first halves this season, plus ${sgn(H.bias, 1)} (first halves came in that much above this projection in every season from 2022–23 to 2025–26). Its chance of the over comes from how widely first halves spread around the projection in each league (${H.sd} points on average). It never sees the full-game line or the full-game model. <b>The pick</b>: the first time either side's edge is above ${e8}%, on a .5 line, regular season, both teams ${LIVE.min_gp ?? 3}+ games in (5+ in Latin America), in the same ${LIVE.leagues.length} leagues. Settled on first-half points (no overtime). There is no backtest: first-half prices were not saved before ${H.start}.</p>`;
+  let h = `<h2 id="h1">First half: line v model <span class="pill">Test</span></h2><p class="note">A separate live test, started ${H.start}, not part of the record above. <b>Model 1H</b>: built only from earlier first halves, the way the full-game projection is built from earlier totals: the league's first-half average and each team's first halves this season, plus ${sgn(H.bias, 1)} (first halves came in that much above this projection in every season from 2022–23 to 2025–26). Its chance of the over comes from how widely first halves spread around the projection in each league (${H.sd} points on average). It never sees the full-game line or the full-game model. <b>The pick</b>: the over, the first time its edge is above ${e8}% (overs only, like the main picks), on a .5 line, regular season, both teams ${LIVE.min_gp ?? 3}+ games in (5+ in Latin America), in the same ${LIVE.leagues.length} leagues. Settled on first-half points (no overtime). There is no backtest: first-half prices were not saved before ${H.start}.</p>`;
   const S = H.stats || {}, A = H.acc;
   const T = [['1H picks', (S.n || 0).toLocaleString('en')], ['Won–Lost', S.settled ? `${S.w}–${S.settled - S.w}` : '–'], ['ROI', roi(S.roi), cls(S.roi)],
-             ['Over picks', H.over && H.over.settled ? `${H.over.w}–${H.over.settled - H.over.w} · ${roi(H.over.roi)}` : (H.over ? H.over.n : 0)],
-             ['Under picks', H.under && H.under.settled ? `${H.under.w}–${H.under.settled - H.under.w} · ${roi(H.under.roi)}` : (H.under ? H.under.n : 0)]];
+             ['Open', H.picks.filter(b => !b.done).length]];
   if (A) T.push(['Games settled', A.n.toLocaleString('en')], ['Line off by', A.mae_line.toFixed(1) + ' pts'], ['Model off by', A.mae_model.toFixed(1) + ' pts', A.mae_model < A.mae_line ? 'pos' : A.mae_model > A.mae_line ? 'neg' : ''],
                 ['Model on the right side', A.model_right != null ? pct(A.model_right, 1) : '–']);
   h += tiles(T);
@@ -494,7 +493,7 @@ function renderProjections(){
 function renderH1(){
   const H = LIVE.h1;
   if (!H) return '<p class="empty">No first-half projections yet.</p>';
-  let h = `<p class="note">Games in the next 7 days with <b>Model 1H</b>, the first-half projection built only from earlier first halves (the league's first-half average and each team's first halves this season, plus ${sgn(H.bias, 1)}), next to the first-half line across the books. It never sees the full-game line or the model total. Over chance from how widely first halves spread around the projection in each league; edge = chance × average price − 1. Highlighted games have a 1H test pick, logged in the Live test tab (First half) at the line and price shown when it was taken: either side with an edge above ${Math.round(LE() * 100)}% on a .5 line. Greyed: no pick possible (whole-number line, too few games or play-offs). Each match page shows the projection part by part.</p>`;
+  let h = `<p class="note">Games in the next 7 days with <b>Model 1H</b>, the first-half projection built only from earlier first halves (the league's first-half average and each team's first halves this season, plus ${sgn(H.bias, 1)}), next to the first-half line across the books. It never sees the full-game line or the model total. Over chance from how widely first halves spread around the projection in each league; edge = chance × average price − 1. Highlighted games have a 1H test pick, logged in the Live test tab (First half) at the line and price shown when it was taken: the over, with an edge above ${Math.round(LE() * 100)}% on a .5 line. Greyed: no pick possible (whole-number line, too few games or play-offs). Each match page shows the projection part by part.</p>`;
   const fx = H.rows.filter(inLg);
   if (!fx.length) return h + '<p class="empty">No games in the next 7 days.</p>';
   const byDay = {};

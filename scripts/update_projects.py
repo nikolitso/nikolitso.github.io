@@ -199,8 +199,12 @@ def basketball_totals(folder):
     picks = d.get("picks", [])
     season = js_object(f"/basketball/{folder}/data.js", r"(?:const|window\.)\s*DATA\s*=").get("cur", {}).get("bets", [])    # the page's 2026-27 record
     done = season + [p for p in picks if p.get("done") and p.get("ret") is not None]
-    return record(sum(p["ret"] > 0 for p in done), sum(p["ret"] < 0 for p in done),
-                  sum(p["ret"] for p in done), sum(not p.get("done") for p in picks))
+    pills = record(sum(p["ret"] > 0 for p in done), sum(p["ret"] < 0 for p in done),
+                   sum(p["ret"] for p in done), sum(not p.get("done") for p in picks))
+    h1 = (d.get("h1") or {}).get("rows") or []                  # the 1H projections tab (14 Nov 2026), totals page only
+    if h1:
+        pills.append(f"{len(h1)} first halves projected")
+    return pills
 
 CARDS = {                    # slug -> (card href on the homepage, reader)
     "superleague": ("/superleague/", superleague),
