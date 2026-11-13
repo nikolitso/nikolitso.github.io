@@ -199,7 +199,7 @@ details.picks>summary .muted{font-size:14px;font-weight:400}
   <div id="out"></div>
 </div>
 
-<script src="live.js?v=202611140003"></script>
+<script src="live.js?v=202611140014"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
@@ -240,17 +240,17 @@ function renderMatches(){
   const byDay = {};
   F.forEach(g => (byDay[g.when.slice(0, 10)] ||= []).push(g));
   for (const [d, list] of Object.entries(byDay)) {
-    h += `<h2 class="day">${dayName(d)}</h2><div class="scroll"><table class="mk proj"><tr><th>Time</th>${lg === 'all' ? '<th>League</th>' : ''}<th>Game</th><th class="n">Played</th><th class="n">Model</th><th class="n">Line</th><th class="n">Opening</th><th class="n">Diff</th><th>Model's side</th><th class="n">Chance</th></tr>`;
+    h += `<h2 class="day">${dayName(d)}</h2><div class="scroll"><table class="mk proj"><tr><th>Time</th>${lg === 'all' ? '<th>League</th>' : ''}<th>Game</th><th class="n">Played</th><th class="n">Model</th><th class="n">Line</th><th class="n">Opening</th><th class="n">Diff</th><th>Model's side</th><th class="n">Chance</th><th></th></tr>`;
     h += list.map(g => {
       const side = g.line != null && g.ok && g.mu !== g.line ? (g.mu > g.line ? g.home : g.away) : null;
       const p = side ? (g.mu > g.line ? g.p : 1 - g.p) : null;
-      return `<tr class="${g.ok ? '' : 'few'}"><td class="n">${g.when.slice(11)}</td>${lg === 'all' ? `<td>${esc(lgShort(g.lg))}</td>` : ''}<td class="wr">${esc(g.home)} – ${esc(g.away)}</td><td class="n">${g.gh}·${g.ga}</td><td class="n tot">${g.ok ? hc(g.mu) : '–'}</td><td class="n">${hc(g.line)}</td><td class="n">${hc(g.open)}</td><td class="n">${side ? f1(Math.abs(g.mu - g.line)) : '–'}</td><td>${side ? esc(side) : g.ok && g.line == null ? '<span class="muted">no line yet</span>' : '<span class="muted">–</span>'}</td><td class="n">${p != null ? pct(p) : '–'}</td></tr>`;
+      return `<tr class="${g.ok ? '' : 'few'}"><td class="n">${g.when.slice(11)}</td>${lg === 'all' ? `<td>${esc(lgShort(g.lg))}</td>` : ''}<td class="wr">${esc(g.home)} – ${esc(g.away)}</td><td class="n">${g.gh}·${g.ga}</td><td class="n tot">${g.ok ? hc(g.mu) : '–'}</td><td class="n">${hc(g.line)}</td><td class="n">${hc(g.open)}</td><td class="n">${side ? f1(Math.abs(g.mu - g.line)) : '–'}</td><td>${side ? esc(side) : g.ok && g.line == null ? '<span class="muted">no line yet</span>' : '<span class="muted">–</span>'}</td><td class="n">${p != null ? pct(p) : '–'}</td><td>${wkLink(g)}</td></tr>`;
     }).join('') + '</table></div>';
   }
   h += `<h2>Played this season</h2><p class="muted">Each game's estimate from the games before that day, as the page showed it before tip-off, against the opening and closing handicap. ✓ the model's side covered, ✗ it did not.</p>`;
   if (!P.length) return h + '<p class="empty">No games yet with both teams past ' + GP + ' games.</p>';
-  h += `<div class="scroll"><table class="mk"><tr><th>Date</th>${lg === 'all' ? '<th>League</th>' : ''}<th>Game</th><th class="n">Score</th><th class="n">Model</th><th class="n">Opening</th><th>Side</th><th class="n">Cov.</th><th class="n">Closing</th><th>Side</th><th class="n">Cov.</th></tr>`;
-  h += P.map(g => `<tr><td class="n">${dayName(g.date)}</td>${lg === 'all' ? `<td>${esc(lgShort(g.lg))}</td>` : ''}<td class="wr">${esc(g.home)} – ${esc(g.away)}</td><td class="n">${g.hp}–${g.ap}</td><td class="n tot">${hc(g.mu)}</td><td class="n">${hc(g.open)}</td><td>${g.so ? esc(g[g.so]) : '–'}</td><td class="n">${mark(g.co)}</td><td class="n">${hc(g.line)}</td><td>${g.sc ? esc(g[g.sc]) : '–'}</td><td class="n">${mark(g.cc)}</td></tr>`).join('');
+  h += `<div class="scroll"><table class="mk"><tr><th>Date</th>${lg === 'all' ? '<th>League</th>' : ''}<th>Game</th><th class="n">Score</th><th class="n">Model</th><th class="n">Opening</th><th>Side</th><th class="n">Cov.</th><th class="n">Closing</th><th>Side</th><th class="n">Cov.</th><th></th></tr>`;
+  h += P.map(g => `<tr><td class="n">${dayName(g.date)}</td>${lg === 'all' ? `<td>${esc(lgShort(g.lg))}</td>` : ''}<td class="wr">${esc(g.home)} – ${esc(g.away)}</td><td class="n">${g.hp}–${g.ap}</td><td class="n tot">${hc(g.mu)}</td><td class="n">${hc(g.open)}</td><td>${g.so ? esc(g[g.so]) : '–'}</td><td class="n">${mark(g.co)}</td><td class="n">${hc(g.line)}</td><td>${g.sc ? esc(g[g.sc]) : '–'}</td><td class="n">${mark(g.cc)}</td><td>${wkLink(g)}</td></tr>`).join('');
   return h + '</table></div>';
 }
 
@@ -279,10 +279,46 @@ ${E ? `<p>Example: ${esc(E.home)} v ${esc(E.away)} (${dayName(E.date)}): the mod
 </div>`;
 }
 
-const RENDER = {matches: renderMatches, teams: renderTeams, method: renderMethod};
+
+// one match, step by step: how its estimate is built (#view=game&id=...)
+const wkLink = g => `<a class="gm" href="#view=game&id=${encodeURIComponent(g.id)}">Workings</a>`;
+const phi = z => { const t = 1 / (1 + 0.2316419 * Math.abs(z)), d = 0.3989423 * Math.exp(-z * z / 2), p = d * t * (0.3193815 + t * (-0.3565638 + t * (1.781478 + t * (-1.821256 + t * 1.330274)))); return z > 0 ? 1 - p : p; };
+function gamesTable(team, list, r){
+  if (!list.length) return `<p class="muted">No games this season yet.</p>`;
+  const avg = list.reduce((a, x) => a + x[7], 0) / list.length;
+  return `<div class="scroll"><table class="mk mini"><tr><th>Date</th><th>Opponent</th><th class="n">Venue</th><th class="n">Score</th><th class="n">Margin</th><th class="n">Opp. strength</th><th class="n">Adjusted</th></tr>${list.map(x => `<tr><td class="n">${dayName(x[0])}</td><td>${esc(x[1])}</td><td class="n">${x[2] === 'H' ? 'Home' : 'Away'}</td><td class="n">${x[3]}–${x[4]}</td><td class="n">${sgn(x[5], 0)}</td><td class="n">${sgn(x[6])}</td><td class="n">${sgn(x[7])}</td></tr>`).join('')}<tr class="sum"><td colspan="6">Average adjusted margin, ${list.length} games</td><td class="n">${sgn(avg)}</td></tr><tr><td colspan="6"><b>Strength used</b> (recent games count more, pulled toward 0)</td><td class="n tot">${sgn(r)}</td></tr></table></div>`;
+}
+function renderGame(){
+  const id = (location.hash.match(/id=([^&]+)/) || [])[1], gid = id && decodeURIComponent(id);
+  const g = LIVE.fixtures.find(x => x.id === gid) || LIVE.played.find(x => x.id === gid);
+  if (!g || !g.wk) return '<p class="empty">This game is no longer on the page: estimates cover the next 7 days and this season\'s played games.</p>';
+  const W = g.wk, done = g.hp != null, mu = W.hca + W.rh - W.ra, line = g.line, sd = g.sd;
+  const side = line != null && g.mu !== line ? (g.mu > line ? 'home' : 'away') : null, sideT = side ? g[side] : null;
+  let h = `<p><a class="gm" href="#view=matches${lg === 'all' ? '' : '&lg=' + g.lg}">← All matches</a></p>`;
+  h += `<h2 style="margin-top:6px">${esc(g.home)} – ${esc(g.away)}</h2><p class="muted">${esc(lgName(g.lg))} · ${dayName(g.when || g.date)}${g.when ? ' ' + g.when.slice(11) : ''}${done ? ` · final <b>${g.hp}–${g.ap}</b>` : ''} · games played ${g.gh}·${g.ga}${g.ok === false ? ` · <b>no estimate yet</b>: a team has fewer than ${GP} games` : ''}</p>`;
+  h += `<div class="doc">`;
+  h += `<h3><span class="num">1</span>Home edge</h3><p>The league's average home margin: <b>${sgn(W.hca)}</b> points, from this season's games and earlier seasons (recent games count more, half-life ${W.half_life} days).</p>`;
+  h += `<h3><span class="num">2</span>${esc(g.home)}: strength ${sgn(W.rh)}</h3><p>Points better or worse than the league's average team. Each game's margin is adjusted for where it was played and for the opponent: <i>adjusted = margin − home edge (+ when away) + opponent's strength</i>. The strength used is close to the average adjusted margin, but recent games count more, all teams are solved together, and it is pulled toward 0 while there are few games.</p>${gamesTable(g.home, W.th, W.rh)}`;
+  h += `<h3><span class="num">3</span>${esc(g.away)}: strength ${sgn(W.ra)}</h3>${gamesTable(g.away, W.ta, W.ra)}`;
+  h += `<h3><span class="num">4</span>Projected margin</h3><div class="calc">home edge + home strength − away strength<br>${sgn(W.hca)} ${W.rh < 0 ? '−' : '+'} ${Math.abs(W.rh).toFixed(1)} ${W.ra < 0 ? '+' : '−'} ${Math.abs(W.ra).toFixed(1)} = <b>${sgn(mu)}</b> for ${esc(g.home)}<br><i>as the home side's handicap: ${hc(g.mu)}</i></div>`;
+  if (line == null) h += `<h3><span class="num">5</span>Against the handicap</h3><p>No handicap from the books yet.</p>`;
+  else {
+    const z = (line - g.mu) / sd, ph = 1 - phi(z);
+    h += `<h3><span class="num">5</span>Against the handicap</h3><p>The books' ${done ? 'closing' : 'latest'} handicap: <b>${hc(line)}</b> for ${esc(g.home)} (median of ${g.books} books${g.hpx ? `, average prices ${g.hpx.toFixed(2)} home / ${g.apx.toFixed(2)} away` : ''}); opening ${hc(g.open)}.</p>`;
+    h += `<div class="calc">${esc(g.home)} by: model ${sgn(g.mu)}, line ${sgn(line)} (handicap ${hc(line)}) → gap ${sgn(g.mu - line)} → <b>${sideT ? esc(sideT) : 'no side'}</b>, diff ${f1(Math.abs(g.mu - line))} points</div>`;
+    h += `<h3><span class="num">6</span>Chance to cover</h3><p>The final margin is taken to fall around the projection with the league's usual miss, <b>${f1(sd)}</b> points (a normal curve).</p>`;
+    h += `<div class="calc">z = (line − projection) ÷ miss, both as the home margin = (${sgn(line)} − ${sgn(g.mu)}) ÷ ${f1(sd)} = ${sgn(z, 2)}<br>chance ${esc(g.home)} covers = 1 − Φ(z) = ${pct(ph, 1)} · ${esc(g.away)} ${pct(1 - ph, 1)}<br><i>the model's side, ${sideT ? esc(sideT) : '–'}: <b>${side ? pct(side === 'home' ? ph : 1 - ph, 1) : '–'}</b></i>${g.open != null && g.open !== line ? `<br><i>at the opening line ${hc(g.open)}: ${esc(g.home)} ${pct(g.po_, 1)}</i>` : ''}</div>`;
+  }
+  if (done) {
+    const mg = g.hp - g.ap, res = (ln, s, c) => ln == null ? '–' : `${hc(ln)}: ${s ? esc(g[s]) : 'no side'} ${c == null ? '(push)' : c ? '<b class="w">covered ✓</b>' : '<b class="l">did not cover ✗</b>'}`;
+    h += `<h3><span class="num">7</span>Result</h3><div class="calc">final margin ${sgn(mg, 0)} for ${esc(g.home)} · model missed by ${f1(Math.abs(mg - g.mu))}, the closing line by ${line != null ? f1(Math.abs(mg - line)) : '–'}<br>at the opening ${res(g.open, g.so, g.co)}<br>at the close ${res(line, g.sc, g.cc)}</div>`;
+  }
+  return h + '</div>';
+}
+const RENDER = {matches: renderMatches, teams: renderTeams, method: renderMethod, game: renderGame};
 function render(){
-  document.querySelectorAll('#tabs a').forEach(a => { a.classList.toggle('on', a.dataset.view === view); a.href = `#view=${a.dataset.view}${lg === 'all' || a.dataset.view === 'method' ? '' : '&lg=' + lg}`; });
-  const keys = LIVE.leagues.map(l => l.key), chips = view === 'method' ? [] : [...(view === 'teams' ? [] : [['all', 'Both leagues']]), ...keys.map(k => [k, lgShort(k)])];
+  document.querySelectorAll('#tabs a').forEach(a => { a.classList.toggle('on', a.dataset.view === (view === 'game' ? 'matches' : view)); a.href = `#view=${a.dataset.view}${lg === 'all' || a.dataset.view === 'method' ? '' : '&lg=' + lg}`; });
+  const keys = LIVE.leagues.map(l => l.key), chips = view === 'method' || view === 'game' ? [] : [...(view === 'teams' ? [] : [['all', 'Both leagues']]), ...keys.map(k => [k, lgShort(k)])];
   $('chips').innerHTML = chips.map(([k, t]) => `<a href="#view=${view}${k === 'all' ? '' : '&lg=' + k}" class="${k === lg ? 'on' : ''}">${esc(t)}</a>`).join('');
   $('top').innerHTML = view === 'matches' ? topTiles() : '';
   $('out').innerHTML = RENDER[view]();
