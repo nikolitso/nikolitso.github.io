@@ -755,7 +755,8 @@
       "brave-new-love",
       "walk-on-water",
       "mostly-martha",
-      "working-woman"
+      "working-woman",
+      "cinema-paradiso"
     ],
     "log": [
       {
@@ -1047,11 +1048,17 @@
         "slot": "2026-11-12 20",
         "slug": "working-woman",
         "id": "2120939747765866894"
+      },
+      {
+        "day": "2026-11-13",
+        "slot": "2026-11-13 20",
+        "slug": "cinema-paradiso",
+        "id": "2121302132254978173"
       }
     ],
-    "last_day": "2026-11-12"
+    "last_day": "2026-11-13"
   },
-  "last_slot": "2026-11-13 14",
+  "last_slot": "2026-11-13 20",
   "quote": {
     "seen": [
       "1",
