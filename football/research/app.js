@@ -184,6 +184,36 @@ function viewPicks() {
   <p class="note" style="margin-top:26px">A bet is logged the first time the EV reaches the rule's level and keeps that price until the game is settled; one bet a game and market. <b>Chance</b>: the chance of the bet winning by the market price. <b>Close</b>: the best price of the same bet at the close, the last before kick-off; a bet beat the closing price when its own price was higher. Times are local. The backtest pills of each group are the same bets twice: taken at the opening price, and taken at the price the same selection had at the close (the last before kick-off). The gap between them is what waiting costs. <b>Closing line</b>: the share of the bets whose market chance rose between the opening and the close, and the share where it fell. A live bet is taken at the price found when the page is updated, between the two, so its results can differ from both. Click a bet to see the prices it was made from.</p>`;
 }
 
+// ---------- Projections: every regular game of the next 8 days, at the prices of the last update (D.proj) ----------
+// row: [kick-off, league, home, away, market chance x3, best price x3, books in the market, books in the best-price set, market average x3, margin, round]
+const PGAPS = [[-99, 'All'], [0, '0%+'], [5, '5%+'], [RG, RG + '%+ (the rule)']];
+function viewProj() {
+  const rows = D.proj || [], key = {}; L.forEach((l, i) => key[l.key] = l);
+  const f = state.p = Object.assign({ev: -99, lg: 'all'}, state.p || {}), grp = GROUPS.find(x => x[0] === f.lg) || GROUPS[0];
+  const when = s => new Date(s).toLocaleString('en-GB', {weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit'});
+  const items = rows.map(r => {
+    const ev = [r[4][0] * r[5][0] - 1, r[4][2] * r[5][2] - 1], s = ev[1] > ev[0] ? 2 : 0, e = Math.max(...ev);
+    return {r, l: key[r[1]], ev, s, e, rule: e * 100 + 1e-6 >= RG && r[5][s] > RO + 1e-9};
+  }).filter(x => x.l && grp[2](x.l.tier) && x.e * 100 + 1e-6 >= f.ev);
+  const nRule = items.filter(x => x.rule).length;
+  const chip = (k, v, tx, on) => `<button class="chip${on ? ' on' : ''}" data-p="${k}" data-v="${v}">${tx}</button>`;
+  const odds = (a, b) => `<td class="n">${a.toFixed(2)}</td><td class="n mut">${(1 / b).toFixed(2)}</td>`;
+  const evc = (x, i) => `<td class="n ${cls(x)}${i ? '' : ''}">${spct(x)}</td>`;
+  const body = items.map(x => {
+    const r = x.r, side = x.s === 0 ? r[2] : r[3];
+    return `<tr class="exp${x.rule ? ' hit' : ''}" title="Show the prices"><td>${when(r[0])}</td><td>${x.l.country} · ${x.l.name}</td><td>${r[2]} – ${r[3]}</td>${odds(r[5][0], r[4][0])}${odds(r[5][2], r[4][2])}${evc(x.ev[0])}${evc(x.ev[1])}<td>${x.rule ? `<b>${side} to win</b>` : '<span class="mut">–</span>'}</td></tr>
+    <tr class="detail" hidden><td colspan="10">${analysis({mi: 0, s: x.s, fair: r[4], best: r[5], nw: r[6], nb: r[7], wavg: r[8], margin: r[9], home: r[2], away: r[3], proj: 1, live: 1})}</td></tr>`;
+  }).join('');
+  const upd = D.updated.replace('T', ' ').replace('Z', ' UTC');
+  return `${PKCSS}<style>tr.hit td{background:color-mix(in srgb,var(--gold) 10%,transparent)}</style>
+  <p class="note">Every regular league game of the next 8 days that has prices, as they stood at the last update (${upd}). For each side: the <b>best price</b> on offer and, in grey, the <b>fair odds</b> of the market (its margin-free price). <b>EV</b> = best price × market chance − 1. A game whose home or away win has an EV of ${RG}% or more at a price above ${ROT} meets the rule: it is marked and logged on the Live test tab. Prices move all the time, so a game can cross the line, or drop back under it, between updates. The draw is never bet. Click a game to see how its numbers are worked out.</p>
+  <div class="facts"><span class="fact"><b>${num(items.length)}</b>games shown</span><span class="fact"><b>${num(nRule)}</b>${nRule === 1 ? 'meets' : 'meet'} the rule now</span></div>
+  <div class="flt"><span class="fl">EV%</span><div class="chips">${PGAPS.map(([v, tx]) => chip('ev', v, tx, f.ev === v)).join('')}</div></div>
+  <div class="flt"><span class="fl">Leagues</span><div class="chips">${GROUPS.map(([k, tx]) => chip('lg', k, tx, f.lg === k)).join('')}</div></div>
+  ${items.length ? `<table class="pk"><thead><tr><th>Kick-off</th><th>League</th><th>Game</th><th class="n">Home best</th><th class="n">fair</th><th class="n">Away best</th><th class="n">fair</th><th class="n">EV home</th><th class="n">EV away</th><th>Rule</th></tr></thead><tbody>${body}</tbody></table>` : `<p class="note">${rows.length ? 'No game passes these filters.' : 'No games with prices in the next 8 days.'}</p>`}
+  <p class="note" style="margin-top:20px">Times are local. ${PRIOR}</p>`;
+}
+
 // ---------- Leagues: the same filtered bets, league by league ----------
 function viewLeagues() {
   const idx = index(), g = GROUPS.find(x => x[0] === state.f.lg) || GROUPS[0];
@@ -217,16 +247,16 @@ function analysis(o) {
   const rows = names.map((nm, i) => `<tr${i === o.s ? ' class="tot"' : ''}><td>${i === o.s ? `<b>${nm}</b>` : nm}</td>${W ? `<td class="n">${W[i].toFixed(2)}</td><td class="n">${pct(1 / W[i])}</td>` : ''}<td class="n">${pct(o.fair[i])}</td><td class="n">${(1 / o.fair[i]).toFixed(2)}</td><td class="n">${o.best[i].toFixed(2)}</td><td class="n ${draw(i) ? 'mut' : cls(evs[i])}">${spct(evs[i])}</td><td>${i === o.s ? 'the bet' : draw(i) ? 'never bet' : ''}</td></tr>`).join('');
   const sd = o.mi * 2 + (o.mi === 0 ? (o.s === 2 ? 1 : 0) : o.s), need = RG, ev = o.ev == null ? evs[o.s] : o.ev;
   const ok = ev * 100 + 1e-6 >= need && o.best[o.s] > RO + 1e-9;
-  const why = ok ? `Inside the rule: EV of ${need}% or more and a price above ${ROT}.` : `Outside the rule: ${ev * 100 + 1e-6 < need ? `the EV is under ${need}%` : `the price is ${ROT} or below`}.`;
+  const why = o.proj && ok ? `It meets the rule (EV of ${need}% or more, price above ${ROT}), so it is a live bet.` : ok ? `Inside the rule: EV of ${need}% or more and a price above ${ROT}.` : `Outside the rule: ${ev * 100 + 1e-6 < need ? `the EV is under ${need}%` : `the price is ${ROT} or below`}.`;
   let after = '';
   if (!o.live) {
     const mv = o.fc == null ? '' : `The market closed at a chance of ${pct(o.fc)} for the bet (it opened at ${pct(o.fair[o.s])}): ${o.fc > o.fair[o.s] + 0.0005 ? 'it moved towards the bet' : o.fc < o.fair[o.s] - 0.0005 ? 'it moved against the bet' : 'it did not move'}. Against that closing chance the price taken was worth ${spct(o.best[o.s] * o.fc - 1)}.${o.bc ? ` The best price at the close was ${o.bc.toFixed(2)}.` : ''} `;
     after = `<p><b>After.</b> ${mv}Score ${o.score}: the bet ${o.won ? 'won' : 'lost'}, ${o.won ? '+' + (o.best[o.s] - 1).toFixed(2) : '−1.00'} units.</p>`;
   } else if (o.won != null) after = `<p><b>After.</b> Score ${o.score}: the bet ${o.won ? 'won' : 'lost'}.</p>`;
-  return `<div class="an"><p><b>${o.live ? 'When the bet was logged' : 'Before the game: opening prices'}.</b> Market chance: the prices of ${o.nw} book${o.nw === 1 ? '' : 's'} with the margin removed. Best price: the highest of ${o.nb} other book${o.nb === 1 ? '' : 's'} at the same moment.</p>
+  return `<div class="an"><p><b>${o.proj ? 'Now: the prices at the last update' : o.live ? 'When the bet was logged' : 'Before the game: opening prices'}.</b> Market chance: the prices of ${o.nw} book${o.nw === 1 ? '' : 's'} with the margin removed. Best price: the highest of ${o.nb} other book${o.nb === 1 ? '' : 's'} at the same moment.</p>
   <table class="ant"><thead><tr><th>Outcome</th>${W ? '<th class="n">Market price</th><th class="n">As a chance</th>' : ''}<th class="n">Market chance</th><th class="n">Fair odds</th><th class="n">Best price</th><th class="n">EV</th><th></th></tr></thead><tbody>${rows}</tbody></table>
   ${W ? `<p><b>How the market chance is worked out.</b> <b>Market price</b> is the average price of the ${o.nw} books. One divided by a price is the chance it stands for (1 ÷ ${W[o.s].toFixed(2)} = ${pct(1 / W[o.s])}). Added up, the chances come to ${pct(raw)}, not 100%: the ${pct(raw - 1)} on top is the books' margin. The margin is taken out book by book with the power method, which raises every chance to the same power until they add up to 100% and so takes more off outsiders than off favourites, as books load them; the books are then averaged. That gives the <b>market chance</b>, and <b>fair odds</b> are one divided by it (1 ÷ ${pct(o.fair[o.s])} = ${(1 / o.fair[o.s]).toFixed(2)}). The <b>EV</b> is the best price times the market chance, minus one.</p>` : ''}
-  <p><b>The bet.</b> ${names[o.s]} at ${o.best[o.s].toFixed(2)}, the side with the highest EV: ${o.best[o.s].toFixed(2)} × ${pct(o.fair[o.s])} − 1 = ${spct(ev)}. ${why}</p>${after}</div>`;
+  <p><b>${o.proj ? 'The best side' : 'The bet'}.</b> ${names[o.s]} at ${o.best[o.s].toFixed(2)}, the side with the highest EV: ${o.best[o.s].toFixed(2)} × ${pct(o.fair[o.s])} − 1 = ${spct(ev)}. ${why}</p>${after}</div>`;
 }
 
 // a list of bets, newest first as given; each row opens how the bet was made. showLg: a League column (bets of many leagues)
@@ -319,6 +349,7 @@ function viewHow() {
   <p>${PRIOR}</p>
   <p>The Backtest tab is built for choosing a rule. Filters cut the bets: the minimum EV, the league group (top divisions, lower divisions), the first round of the season to bet from, the side, and an odds range set for each side on its own. Every table is recounted for the bets that pass. Every rule is read twice: the bets at their opening price, and the same bets at the price the selection had at the close, the last before kick-off. The two pills above the tables show both; the tables use the opening price. A third pill shows how often the market's own chance for the bet rose by the close and how often it fell.</p>
   <p>Each table row shows the number of bets, the average EV they promised, the ROI, its standard error, the profit or loss, and the ROI of each season. Every table row can be clicked to list the games behind it, and each game opens to show how the bet was made. The tables split the bets by season, side, league group, round of the season, month of the game, odds and EV. A last table, By team, takes the bets at prices from ${RMIN.toFixed(2)} to ${(SPLIT - 0.01).toFixed(2)} and lists the 10 most profitable teams with at least 3 bets, and how much of the profit comes from them. A rule is worth using when the result holds in every season, not only in the total. The Leagues tab shows the same bets league by league; one league's numbers rest on few bets and its past ROI says little about its next season. Each league opens on a page of its own with every bet listed: a click on a bet shows the market chance and the best price of every outcome when the prices opened, the EV of each side, why that side was bet, and then how the market closed and how the game ended.</p>
+  <p>The Projections tab lists every regular game of the next 8 days at the prices of the last update, with the EV of the home and the away win, and marks the games that meet the rule.</p>
   <h2>Why it can work</h2>
   <p>Some prices open before the market settles, or are shaded, and for a while stand above it. They are corrected quickly: the same bets taken at the closing price return far less, so the price has to be taken early.</p>
   <h2>Betting rules</h2>
@@ -360,7 +391,7 @@ function sortTables() {
     ths[s.col].textContent += s.dir > 0 ? ' ▲' : ' ▼';
   });
 }
-const VIEWS = ['picks', 'backtest', 'men', 'lg', 'how'];
+const VIEWS = ['picks', 'proj', 'backtest', 'men', 'lg', 'how'];
 function render() {
   REG = {};
   document.querySelectorAll('#tabs a[data-view]').forEach(a => a.classList.toggle('on', a.dataset.view === (state.view === 'lg' ? 'men' : state.view)));
@@ -368,7 +399,7 @@ function render() {
   const grp = GROUPS.find(x => x[0] === state.f.lg) || GROUPS[0], one = state.view === 'lg' && L.find(l => l.key === state.lgk);
   const shown = one ? [one] : state.view === 'backtest' || state.view === 'men' ? L.filter(l => grp[2](l.tier)) : L;
   $('#sub').textContent = `${shown.length === L.length ? `${L.length} leagues` : one ? `${one.country} · ${one.name}` : `${shown.length} of ${L.length} leagues (${grp[1].toLowerCase()})`} · ${num(shown.reduce((s, l) => s + l.games, 0))} games tested, 2023-24 to now · updated ${D.updated.replace('T', ' ').replace('Z', ' UTC')}`;
-  out.innerHTML = state.view === 'how' ? viewHow() : state.view === 'picks' ? viewPicks() : state.view === 'men' ? viewLeagues() : state.view === 'lg' ? viewLeague() : viewBacktest();
+  out.innerHTML = state.view === 'how' ? viewHow() : state.view === 'proj' ? viewProj() : state.view === 'picks' ? viewPicks() : state.view === 'men' ? viewLeagues() : state.view === 'lg' ? viewLeague() : viewBacktest();
   sortTables();
   showMatches(showMatches.scroll); showMatches.scroll = 0;
   save();
@@ -376,6 +407,8 @@ function render() {
 out.addEventListener('click', e => {
   const x = e.target.closest('tr.exp');                        // a bet: show or hide how it was made
   if (x && x.nextElementSibling && x.nextElementSibling.classList.contains('detail')) { x.nextElementSibling.hidden = !x.nextElementSibling.hidden; return; }
+  const pc = e.target.closest('[data-p]');                     // filters of the Projections tab
+  if (pc) { state.p[pc.dataset.p] = pc.dataset.p === 'lg' ? pc.dataset.v : +pc.dataset.v; return render(); }
   const c = e.target.closest('[data-f]');
   if (c) {
     const f = state.f, k = c.dataset.f, v = c.dataset.v;
