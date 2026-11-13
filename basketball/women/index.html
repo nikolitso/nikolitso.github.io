@@ -197,7 +197,7 @@ a.tile:hover{border-color:var(--gold)}
   <div class="chips" id="chips"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=w63"></script>
+<script src="data.js?v=w64"></script>
 <script src="live.js"></script>
 <script>
 const $ = id => document.getElementById(id);
@@ -396,7 +396,7 @@ function renderProjections(){
       const t = g.pick && taken[g.home + '|' + g.away], e = t ? t.edge : g.line == null || !g.ok ? null : g.eo;
       h += `<tr${g.pick ? ' class="pk"' : ''}><td>${g.dt.slice(11)}</td>${lg === 'all' ? `<td>${lgShort(g.lg)}</td>` : ''}
         <td class="wr">${g.slug ? `<a class="gm" href="games/${g.slug}/">${g.home} – ${g.away}</a>` : `${g.home} – ${g.away}`}${g.pick ? `<span class="badge">${g.pick}</span>` : ''}</td><td class="n"><b>${g.mu.toFixed(1)}</b></td>
-        ${g.line == null ? '<td class="n muted" colspan="6">no line yet</td>' : `<td class="n">${g.line}</td><td class="n">${g.op.toFixed(2)}</td><td class="n">${pct(g.p)}</td><td class="n ${t || (g.ok && e > LE()) ? 'pos' : 'muted'}">${e == null ? '–' : sgn(Math.round(e*100), 0) + '%'}</td><td class="n">${sgn(Math.round((g.mu - (g.pace ?? 0) - g.line) * 10) / 10, 1)}</td>${edgeNow(t ? g.eo : null)}`}</tr>`;
+        ${g.line == null ? '<td class="n muted" colspan="6">no line yet</td>' : `<td class="n">${g.line}</td><td class="n">${g.op.toFixed(2)}</td><td class="n">${pct(g.p)}</td><td class="n ${t || (g.ok && e > LE()) ? 'pos' : 'muted'}">${e == null ? '–' : sgn(Math.round(e*100), 0) + '%'}</td><td class="n">${sgn(Math.round((g.mu - (g.pace ?? 0) - (LIVE.start_pts ?? 0) - g.line) * 10) / 10, 1)}</td>${edgeNow(t ? g.eo : null)}`}</tr>`;
     }
     h += '</tbody></table></div>';
   }
@@ -426,7 +426,7 @@ function renderPicks(){
   else {
     h += `<h2>Open picks</h2><div class="scroll"><table class="proj"><thead><tr><th>Tip-off</th><th>League</th><th>Match</th><th class="n">Pick</th><th class="n">Price</th><th class="n">Model total</th><th class="n">Edge</th><th class="n">Line now</th><th class="n">Line diff</th><th class="n">Edge now</th></tr></thead><tbody>` +
       open.map(b => { const g = fx[b.home + '|' + b.away] || {};
-        return `<tr class="pk"><td data-s="${b.dt}">${dayName(b.dt)} ${b.dt.slice(11)}</td><td>${lgShort(b.lg)}</td><td class="wr">${g.slug ? `<a class="gm" href="games/${g.slug}/">${b.home} – ${b.away}</a>` : `${b.home} – ${b.away}`}</td><td class="n"><b>${sd(b)} ${b.line}</b></td><td class="n">${b.px.toFixed(2)}</td><td class="n">${(g.mu ?? b.mu).toFixed(1)}</td><td class="n pos">${sgn(b.edge*100, 0)}%</td><td class="n">${g.line ?? b.now ?? '–'}</td><td class="n">${sgn(Math.round((b.mu - (b.pace ?? 0) - b.line) * 10) / 10, 1)}</td>${edgeNow(g.line != null ? g.eo : null)}</tr>`; }).join('') +
+        return `<tr class="pk"><td data-s="${b.dt}">${dayName(b.dt)} ${b.dt.slice(11)}</td><td>${lgShort(b.lg)}</td><td class="wr">${g.slug ? `<a class="gm" href="games/${g.slug}/">${b.home} – ${b.away}</a>` : `${b.home} – ${b.away}`}</td><td class="n"><b>${sd(b)} ${b.line}</b></td><td class="n">${b.px.toFixed(2)}</td><td class="n">${(g.mu ?? b.mu).toFixed(1)}</td><td class="n pos">${sgn(b.edge*100, 0)}%</td><td class="n">${g.line ?? b.now ?? '–'}</td><td class="n">${sgn(Math.round((b.mu - (b.pace ?? 0) - (LIVE.start_pts ?? 0) - b.line) * 10) / 10, 1)}</td>${edgeNow(g.line != null ? g.eo : null)}</tr>`; }).join('') +
       '</tbody></table></div>';
   }
   const pre = ((DATA.cur || {}).bets || []).map(b => ({...b, pre: true, done: true, close: b.close ?? null}));
