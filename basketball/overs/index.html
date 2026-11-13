@@ -255,8 +255,16 @@ $('sub').innerHTML = (AGE > 3 ? `<span class="stale">Not updated for ${Math.floo
     ['Opening line', avg(cl, b => b.line), `avg of ${cl.length} settled picks`], ['Closing line', avg(cl, b => b.close), `avg of ${cl.length} settled picks`],
     ['Model line', avg(mu, b => b.mu), `avg of ${mu.length} settled picks`], ['Actual total', avg(cl, b => b.total), `avg of ${cl.length} settled picks`],
     ['Closing line moved toward the pick', cl.length ? pct(cl.filter(b => b.close > b.line).length / cl.length) : '–', `of ${cl.length} settled picks`],
-    ['Closing line moved against it', cl.length ? pct(cl.filter(b => b.close < b.line).length / cl.length) : '–', `of ${cl.length} settled picks`]]
+    ['Closing line moved against it', cl.length ? pct(cl.filter(b => b.close < b.line).length / cl.length) : '–', `of ${cl.length} settled picks`],
+    ...mvTiles(cl).map(([k, v, n]) => [k, v, n])]
     .map(([k, v, n]) => `<a class="tile" href="#view=livetest"><span class="klabel">${k}</span><span class="stat">${v}</span><span class="small">${n}</span></a>`).join('');
+}
+
+// how far the closing line moved, on average, for the picks it moved toward and for those it moved against (14 Nov 2026)
+function mvTiles(list){
+  const up = list.filter(b => b.close > b.line), dn = list.filter(b => b.close < b.line);
+  const a = L => L.length ? L.reduce((x, b) => x + b.close - b.line, 0) / L.length : null;
+  return [['Avg move toward the pick', up.length ? sgn(a(up), 1) + ' pts' : '–', `avg of ${up.length} picks`], ['Avg move against it', dn.length ? sgn(a(dn), 1) + ' pts' : '–', `avg of ${dn.length} picks`]];
 }
 
 function tiles(list){
@@ -338,7 +346,7 @@ function analysis(k, notes = true){
   const BT = DATA.bets.filter(f), SK = (DATA.skipped || []).filter(f);
   let h = tiles([['Picks', S.rule.n], ['Hit rate', pct(S.rule.w / S.rule.n, 1)], ['ROI at opening', roi(S.rule.roi), cls(S.rule.roi)], ['ROI at closing', S.rule.roic != null ? roi(S.rule.roic) : '–', cls(S.rule.roic)],
               ['Opening line', lineAvg(BT.filter(b => b.close != null), 'line')], ['Closing line', lineAvg(BT.filter(b => b.close != null), 'close')], ['Model line', lineAvg(BT.filter(b => b.close != null), 'mu')], ['Actual total', lineAvg(BT.filter(b => b.close != null), 'total')],
-              ...(() => { const c = BT.filter(b => b.close != null); return c.length ? [['Closing line moved toward the pick', pct(c.filter(b => b.close > b.line).length / c.length)], ['Closing line moved against it', pct(c.filter(b => b.close < b.line).length / c.length)]] : []; })(), ...riskTiles(BT)]);
+              ...(() => { const c = BT.filter(b => b.close != null); return c.length ? [['Closing line moved toward the pick', pct(c.filter(b => b.close > b.line).length / c.length)], ['Closing line moved against it', pct(c.filter(b => b.close < b.line).length / c.length)], ...mvTiles(c).map(([k, v]) => [k, v])] : []; })(), ...riskTiles(BT)]);
   if (k === 'all') h += calib(BT, `How often the picks won against the chance the model gave them, at the opening line. A well-calibrated model wins about as often as it says in every band. Worst drawdown: the biggest fall from a high point of the running profit, at 1 unit a pick, in date order; expect a run like it again.`);
   const T = (title, first, body, note='') => `<h2>${title}</h2>${nt(note)}<div class="scroll"><table style="max-width:1040px">${GHEAD(first, BHEAD)}<tbody>${body}</tbody></table></div>`;
   const EP = Math.round(DATA.rule.edge * 100);
