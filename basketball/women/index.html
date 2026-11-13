@@ -197,7 +197,7 @@ a.tile:hover{border-color:var(--gold)}
   <div class="chips" id="chips"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=w59"></script>
+<script src="data.js?v=w60"></script>
 <script src="live.js"></script>
 <script>
 const $ = id => document.getElementById(id);
@@ -285,9 +285,9 @@ function renderFindings(){
 }
 
 function renderLeagues(){
-  let h = `<p class="note">Regular-season games from ${sn(DATA.first)} on (2020–21 only warms the ratings up; play-offs are left out, as in the rule). <b>Over %</b>: how often the final score (overtime included) went over the closing line. Blind over: backing the over in every game at the average price. <b>Picks</b>: the model's picks under the current rule, 2021–22 to 2025–26: how often they went over (hit), their profit in units (1 unit a pick), and their ROI at the opening line and price (open, where picks are taken) and at the closing line and price (close, the same picks). ROI at closing is the harder test: the market has had its say. Click a league for its seasons and an analysis of all its games below the table.</p>`;
-  h += `<div class="scroll"><table><thead><tr><th>League</th><th class="n">Games</th><th class="n">Total / line</th><th class="n">Over %</th><th class="n">Blind over</th><th class="n">Picks</th><th class="n">Picks hit</th><th class="n">P/L</th><th class="n">ROI open</th><th class="n">ROI close</th></tr></thead><tbody>`;
-  const row = (label, s, attrs='', list=[]) => `<tr${attrs}><td>${label}</td><td class="n">${s.games}</td><td class="n">${s.avg_total.toFixed(1)} / ${s.avg_line.toFixed(1)}</td><td class="n">${pct(s.over, 1)}</td>
+  let h = `<p class="note">Regular-season games from ${sn(DATA.first)} on (2020–21 only warms the ratings up; play-offs are left out, as in the rule). <b>Model total</b>: the average of the model's total with pace in it, over the games it priced at the opening line (2021–22 on, both teams 4+ games). <b>Line</b>: the average closing line. <b>Over %</b>: how often the final score (overtime included) went over the closing line. Blind over: backing the over in every game at the average price. <b>Picks</b>: the model's picks under the current rule, 2021–22 to 2025–26: how often they went over (hit), their profit in units (1 unit a pick), and their ROI at the opening line and price (open, where picks are taken) and at the closing line and price (close, the same picks). ROI at closing is the harder test: the market has had its say. Click a league for its seasons and an analysis of all its games below the table.</p>`;
+  h += `<div class="scroll"><table><thead><tr><th>League</th><th class="n">Games</th><th class="n">Model total</th><th class="n">Line</th><th class="n">Over %</th><th class="n">Blind over</th><th class="n">Picks</th><th class="n">Picks hit</th><th class="n">P/L</th><th class="n">ROI open</th><th class="n">ROI close</th></tr></thead><tbody>`;
+  const row = (label, s, attrs='', list=[]) => `<tr${attrs}><td>${label}</td><td class="n">${s.games}</td><td class="n">${s.avg_ma != null ? s.avg_ma.toFixed(1) : '–'}</td><td class="n">${s.avg_line.toFixed(1)}</td><td class="n">${pct(s.over, 1)}</td>
     <td class="n ${cls(s.blind_over)}">${roi(s.blind_over)}</td>${pk(list)}
     </tr>`;
   function pk(list){
@@ -301,7 +301,7 @@ function renderLeagues(){
   const tierName = {europe: 'European competitions', top: 'Top divisions', second: 'Second divisions'};
   for (const tier of ['europe', 'top', 'second']){
     if (!DATA.leagues.some(l => l.tier === tier)) continue;
-    h += `<tr><td colspan="10" class="tier" style="padding-top:18px">${tierName[tier]}</td></tr>`;
+    h += `<tr><td colspan="11" class="tier" style="padding-top:18px">${tierName[tier]}</td></tr>`;
     for (const l of DATA.leagues.filter(l => l.tier === tier)){
       const on = open === l.key;
       h += row(`<span class="caret">${on ? '▾' : '▸'}</span> ${lgFull(l)}`, l.all, ` class="srow${on ? ' on' : ''}" data-open="${l.key}"`, DATA.bets.filter(b => b.lg === l.key));
