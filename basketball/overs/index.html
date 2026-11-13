@@ -409,6 +409,9 @@ function firstHalf(){
              ['Open', H.picks.filter(b => !b.done).length]];
   if (A) T.push(['Games settled', A.n.toLocaleString('en')], ['Line off by', A.mae_line.toFixed(1) + ' pts'], ['Model off by', A.mae_model.toFixed(1) + ' pts', A.mae_model < A.mae_line ? 'pos' : A.mae_model > A.mae_line ? 'neg' : ''],
                 ['Model on the right side', A.model_right != null ? pct(A.model_right, 1) : '–']);
+  const cl1 = H.picks.filter(b => b.done && b.close != null && b.ret != null);   // overs: the close moved toward the pick when it ended above the line taken
+  if (cl1.length) T.push(['Closing 1H line moved toward the pick', pct(cl1.filter(b => b.close > b.line).length / cl1.length)], ['Closing 1H line moved against it', pct(cl1.filter(b => b.close < b.line).length / cl1.length)],
+                       ...mvTiles(cl1).map(([k, v]) => [k, v]));
   h += tiles(T);
   if (A) h += `<p class="note">Over ${A.n.toLocaleString('en')} settled first halves: first 1H line ${A.line}, model ${A.model}, first-half points ${A.res}; the over won ${A.over != null ? pct(A.over) : '–'} at the first line. Off by: the average gap to the first-half points, so the lower one came closer. Right side: how often the first half finished on the side of the line the model was on.</p>`;
   const open = H.picks.filter(b => !b.done);
