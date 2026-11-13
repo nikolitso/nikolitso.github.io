@@ -197,7 +197,7 @@ a.tile:hover{border-color:var(--gold)}
   <div class="chips" id="chips"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=w62"></script>
+<script src="data.js?v=w63"></script>
 <script src="live.js"></script>
 <script>
 const $ = id => document.getElementById(id);
@@ -333,7 +333,7 @@ function renderBacktest(){
 // Edge now for a pick: orange above the bar, yellow at the bar or under, red below 0
 const edgeNow = v => v == null ? '<td class="n muted">–</td>' : `<td class="n ${v > LE() ? 'pos' : v > 0 ? 'elow' : 'eneg'}">${sgn(v*100, 0)}%</td>`;
 
-// the backtest layout, the same as the overs page: tiles, then edge, league, line, line difference, stage, season, month, every pick
+// the backtest layout, the same as the overs page: tiles, then edge, league, line, stage, season, month, every pick
 // rows marked (skipped) are games every other rule let through that one rule kept out; they are in no other figure
 const BHEAD = '<th class="n">Opening line</th><th class="n">Closing line</th><th class="n">Model line</th><th class="n">Actual total</th>';   // pace and 3-pt luck only on the match pages (13 Nov 2026, as the men's page)
 const avgOf = (list, k) => { const q = list.filter(b => b[k] != null); return q.length ? `<td class="n">${sgn(q.reduce((a, b) => a + b[k], 0) / q.length, 1)}</td>` : '<td class="n muted">–</td>'; };
@@ -367,9 +367,6 @@ function btBody(BT, S, pool, leagues){
   h += `<h2>By edge</h2>` + btTable('Edge', qbands(BT, 'edge', NB, x => (x * 100).toFixed(1) + '%'),
     `Edge: the model's chance of the over × the price − 1, at the opening line. The picks, all above the ${EP}% bar, in four bands with a quarter of the picks each.`);
   h += `<h2>By line</h2>` + btTable('Line band', [['Under 130', 0, 130], ['130–139.5', 130, 140], ['140 and over', 140, 999]].map(([label, lo, hi]) => [label, BT.filter(x => x.line >= lo && x.line < hi)]), 'The opening line in three bands.');
-  const SG = skipped('skipped_gap');
-  h += `<h2>By line difference</h2>` + btTable('Difference', [[`Under 4${SKIPPED}`, SG.filter(x => x.g0 < 4)], ['4–5.9', BT.filter(x => x.g0 < 6)], ['6–7.9', BT.filter(x => x.g0 >= 6 && x.g0 < 8)], ['8–11.9', BT.filter(x => x.g0 >= 8 && x.g0 < 12)], ['12 and over', BT.filter(x => x.g0 >= 12)]],
-    'How many points the model total before pace was above the opening line, the number the 4-point rule reads. The first row is the games the rule skips: every other rule met, with the model under 4 points above the line. There is no upper limit since 8 Nov 2026.');
   h += `<h2>By stage</h2>` + btTable('Stage', [['Regular season', BT], [`Play-offs${SKIPPED}`, skipped('skipped_po')]],
     'The second row is the play-off games the rule skips: every other rule met, with the chance worked out as for a regular-season game.');
   h += `<h2>By season</h2>` + btTable('Season', S.seasons.map(s => [sn(s.season), BT.filter(x => seasonOf(x) === s.season)]));
