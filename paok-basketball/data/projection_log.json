@@ -2281,7 +2281,7 @@
   "date": "2026-11-14T15:30:00Z",
   "opp": "Karditsa",
   "home": false,
-  "saved": "2026-11-12T15:51:25Z",
+  "saved": "2026-11-13T01:40:44Z",
   "paok": 81.5,
   "oppScore": 75.8,
   "winProb": 72,
@@ -2566,16 +2566,16 @@
   "date": "2026-11-18T19:30:00Z",
   "opp": "Manresa",
   "home": false,
-  "saved": "2026-11-12T15:51:25Z",
-  "paok": 82.8,
-  "oppScore": 87.8,
+  "saved": "2026-11-13T01:40:44Z",
+  "paok": 82.9,
+  "oppScore": 87.9,
   "winProb": 34,
   "lineupSource": "manual",
   "teamStats": {
    "pts": {
-    "paok": 82.8,
-    "opp": 87.8,
-    "total": 170.6
+    "paok": 82.9,
+    "opp": 87.9,
+    "total": 170.8
    },
    "fg2m": {
     "paok": 21.0,
@@ -2590,7 +2590,7 @@
    "ftm": {
     "paok": 15.4,
     "opp": 16.0,
-    "total": 31.4
+    "total": 31.5
    },
    "ast": {
     "paok": 16.2,
@@ -2605,7 +2605,7 @@
    "dreb": {
     "paok": 22.5,
     "opp": 22.8,
-    "total": 45.4
+    "total": 45.3
    },
    "tov": {
     "paok": 15.5,
@@ -2615,10 +2615,10 @@
    "reb": {
     "paok": 33.6,
     "opp": 33.6,
-    "total": 67.3
+    "total": 67.2
    }
   },
-  "modelTotal": 169.4,
+  "modelTotal": 169.6,
   "line": null,
   "modelMargin": -5.0,
   "hcp": null,
