@@ -4,10 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Basketball handicap: Greece and Cyprus against the line</title>
-<meta name="description" content="Greek Basket League and Cyprus Division A handicaps: the model's margin for every game once both teams have played 6 games, next to the books' handicap, with four seasons of backtests at the opening and closing line.">
+<meta name="description" content="Greek Basket League and Cyprus Division A handicaps, match by match: the model's margin for every game once both teams have played 6 games, next to the books' handicap, and how each estimate ended.">
 <link rel="canonical" href="https://antonisnikolitsopoulos.com/basketball/handicap/">
 <meta property="og:title" content="Basketball handicap: Greece and Cyprus against the line">
-<meta property="og:description" content="Greek Basket League and Cyprus Division A handicaps: the model's margin for every game once both teams have played 6 games, next to the books' handicap, with four seasons of backtests at the opening and closing line.">
+<meta property="og:description" content="Greek Basket League and Cyprus Division A handicaps, match by match: the model's margin for every game once both teams have played 6 games, next to the books' handicap, and how each estimate ended.">
 <meta property="og:url" content="https://antonisnikolitsopoulos.com/basketball/handicap/">
 <meta property="og:image" content="https://antonisnikolitsopoulos.com/basketball-overs.jpg">
 <meta name="twitter:card" content="summary_large_image">
@@ -187,9 +187,7 @@ details.picks>summary .muted{font-size:14px;font-weight:400}
 <header class="an-head"><div><a class="an-home" href="/" aria-label="Back to the homepage">← Home</a>
   <a class="an-brand" href="/basketball/handicap/"><svg class="an-mark" aria-hidden="true"><use href="/assets/marks.svg#basketball"/></svg><span><small class="an-kicker">Basketball · Greece and Cyprus</small><h1>Basketball handicap</h1></span></a>
   <nav class="tabs an-tabs" id="tabs" aria-label="Sections">
-    <a href="#view=projections" data-view="projections" class="on">Projections</a>
-    <a href="#view=backtest" data-view="backtest">Backtest</a>
-    <a href="#view=leagues" data-view="leagues">Leagues</a>
+    <a href="#view=matches" data-view="matches" class="on">Matches</a>
     <a href="#view=teams" data-view="teams">Teams</a>
     <a href="#view=method" data-view="method">How it works</a>
   </nav>
@@ -201,144 +199,102 @@ details.picks>summary .muted{font-size:14px;font-weight:400}
   <div id="out"></div>
 </div>
 
-<script src="data.js?v=202611132337"></script>
-<script src="live.js?v=202611132337"></script>
+<script src="live.js?v=202611132346"></script>
 <script>
 const $ = id => document.getElementById(id);
-const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-const dayName = s => { const d = new Date(s.slice(0,10)+'T12:00'); return `${DAYS[d.getDay()]} ${d.getDate()} ${MON[d.getMonth()]}`; };
+const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const dayName = s => { const d = new Date(s.slice(0,10)+'T12:00'); return `${DAYS[d.getDay()]} ${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${String(d.getFullYear()).slice(2)}`; };
 const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const pct = (x, d=0) => x == null ? '–' : (x*100).toFixed(d) + '%';
 const sgn = (x, d=1) => x == null ? '–' : (x > 0 ? '+' : x < 0 ? '−' : '') + Math.abs(x).toFixed(d);
-const roi = x => x == null ? '–' : `<span class="${x > 0 ? 'pos' : x < 0 ? 'neg' : ''}">${sgn(x*100, 1)}%</span>`;
 const hc = x => x == null ? '–' : x === 0 ? '0' : sgn(-x);   // a home margin as the home side's handicap: home by 5.5 = −5.5
 const f1 = x => x == null ? '–' : x.toFixed(1);
-const LG = Object.fromEntries(DATA.leagues.map(l => [l.key, l]));
-const lgName = k => LG[k] ? (LG[k].country === 'Europe' ? LG[k].name : `${LG[k].country} · ${LG[k].name}`) : k;
-const lgShort = k => LG[k].country === 'Europe' ? LG[k].name : LG[k].country;
-const BT = DATA.backtest, A = BT.all, GP = DATA.min_gp;
-const sn = s => `${s.slice(0, 4)}–${s.slice(7)}`;
-let view = 'projections', lg = 'all', at = 'open';
+const LG = Object.fromEntries(LIVE.leagues.map(l => [l.key, l]));
+const lgName = k => LG[k] ? `${LG[k].country} · ${LG[k].name}` : k;
+const lgShort = k => LG[k] ? LG[k].country : k;
+const GP = LIVE.min_gp;
+let view = 'matches', lg = 'all';
 const AGE = LIVE.ts ? (Date.now() / 1000 - LIVE.ts) / 3600 : null;
+const inLg = g => lg === 'all' || g.lg === lg;
 
 function tiles(list){ return list.map(([l, v, c]) => `<div class="tile"><span class="klabel">${l}</span><span class="stat">${v}</span><span class="small">${c}</span></div>`).join(''); }
-
-// top tiles: how the projections did against the handicap, 2022–23 to 2025–26, games with both teams GP+ games in
 function topTiles(){
-  const o = A.all.open, c = A.all.close, ac = A.acc, cu = BT.current;
+  const t = LIVE.tally[lg] || LIVE.tally.all, F = LIVE.fixtures.filter(inLg);
+  const o = t.ow + t.ol, c = t.cw + t.cl;
   return tiles([
-    ['Games', ac.lined.toLocaleString('en'), `with a handicap, ${sn(DATA.seasons[0])} to ${sn(DATA.seasons.at(-1))}`],
-    ['Side covered at opening', pct(o.hit, 1), `${o.w.toLocaleString('en')}–${o.l.toLocaleString('en')} cover · fail`],
-    ['ROI at opening', roi(o.roi), `every game, the model's side, flat stakes`],
-    ['Side covered at closing', pct(c.hit, 1), `${c.w.toLocaleString('en')}–${c.l.toLocaleString('en')} cover · fail`],
-    ['ROI at closing', roi(c.roi), `every game, the model's side`],
-    ['Miss: model', f1(ac.mae_model), 'points from the final margin, on average'],
-    ['Miss: closing line', f1(ac.mae_line), 'points from the final margin, on average'],
-    ['Line moved toward the model', pct(A.move.toward), `open to close, ${A.move.n.toLocaleString('en')} games; against it ${pct(A.move.against)}`],
-    ...(cu ? [['This season', pct(cu.all.open.hit, 1), `side covered at opening, ${cu.all.open.w}–${cu.all.open.l}`]] : [])
+    ['Next 7 days', F.filter(g => g.ok).length, `games with an estimate, of ${F.length}`],
+    ['Played', t.n, `games estimated this season`],
+    ['Side covered at opening', o ? pct(t.ow / o, 1) : '–', `${t.ow}–${t.ol} cover · fail`],
+    ['Side covered at closing', c ? pct(t.cw / c, 1) : '–', `${t.cw}–${t.cl} cover · fail`],
+    ['Miss: model', f1(t.mm), 'points from the final margin'],
+    ['Miss: closing line', f1(t.ml), 'points from the final margin'],
   ]);
 }
 
-const HEAD = (first) => `<tr><th>${first}</th><th class="n">Games</th><th class="n">Covered</th><th class="n">Cover %</th><th class="n">Avg price</th><th class="n">ROI</th><th class="n">Chance</th><th class="n">Edge</th></tr>`;
-const row = (label, g) => !g || !g.n ? '' : `<tr><td>${label}</td><td class="n">${g.n.toLocaleString('en')}</td><td class="n">${g.w}–${g.l}${g.push ? ` <span class="muted">(${g.push})</span>` : ''}</td><td class="n">${pct(g.hit, 1)}</td><td class="n">${g.px ? g.px.toFixed(2) : '–'}</td><td class="n">${roi(g.roi)}</td><td class="n">${pct(g.p, 1)}</td><td class="n">${f1(g.edge)}</td></tr>`;
-const tbl = (first, rows, key) => `<div class="scroll"><table class="mk">${HEAD(first)}${rows.map(x => row(x.band, x[key])).join('')}</table></div>`;
-const atSeg = () => `<div class="seg" id="atseg"><button data-at="open" class="${at === 'open' ? 'on' : ''}">At opening</button><button data-at="close" class="${at === 'close' ? 'on' : ''}">At closing</button></div>`;
-
-function renderBacktest(){
-  const S = DATA.seasons, sec = lg === 'all' ? A : BT.leagues[lg];
-  if (!sec) return '<p class="empty">No games with a handicap in this league.</p>';
-  let h = `<p class="note">Every regular-season game in ${sn(S[0])} to ${sn(S.at(-1))} where both teams had played at least <b>${GP} games</b> that season, the model fitted on earlier games only. The model's side is the home team when its margin is above the books' handicap, the away team when below. ROI is what backing that side in every game at the average price would have returned; the page makes no picks. Cover % leaves pushes out (in brackets).</p>`;
-  h += `<div class="bar">${atSeg()}</div>`;
-  h += `<div><div><h2>By edge</h2><p class="muted">Edge: points between the model's margin and the handicap.</p>${tbl('Edge (pts)', sec.edges, at)}</div>`;
-  h += `<div><h2>Calibration</h2><p class="muted">The model's cover chance for its side against how often it covered.</p>${tbl('Chance', sec.cal, at)}</div></div>`;
-  h += `<div><div><h2>By games played</h2><p class="muted">The fewer games of the two teams, this season.</p>${tbl('Games played', sec.gp, at)}</div>`;
-  h += `<div><h2>By side</h2><p class="muted">Which side the model was on.</p>${tbl('Side', sec.side, at)}</div></div>`;
-  if (lg === 'all') {
-    h += `<h2>By season</h2>${tbl('Season', S.map(s => ({band: sn(s), ...BT.seasons[s].all})), at)}`;
-    h += `<p class="muted">Miss per season (points from the final margin): ${S.map(s => `${sn(s)} model ${f1(BT.seasons[s].acc.mae_model)} · line ${f1(BT.seasons[s].acc.mae_line)}`).join(' &nbsp;|&nbsp; ')}</p>`;
-    if (BT.current) h += `<h2>This season so far</h2><p class="muted">Not part of the backtest: ${BT.current.acc.lined} games with a handicap since teams reached ${GP} games.</p>${tbl('Edge (pts)', [{band: 'All games', ...BT.current.all}, ...BT.current.edges], at)}`;
-  }
-  return h;
-}
-
-function renderLeagues(){
-  const keys = Object.keys(BT.leagues).sort((a, b) => (BT.leagues[b].all[at].roi ?? -9) - (BT.leagues[a].all[at].roi ?? -9));
-  let h = `<p class="note">Each league's backtest, ${sn(DATA.seasons[0])} to ${sn(DATA.seasons.at(-1))}, both teams ${GP}+ games. <b>Miss</b>: average points between the final margin and the model or the closing line; lower is better. Leagues with few past handicaps have small samples. Click a league for its tables.</p><div class="bar">${atSeg()}</div>`;
-  h += `<div class="scroll"><table class="mk lgt"><tr><th>League</th><th class="n">Games</th><th class="n">Covered</th><th class="n">Cover %</th><th class="n">ROI</th><th class="n">Miss model</th><th class="n">Miss line</th><th class="n">Toward model</th></tr>`;
-  h += keys.map(k => { const s = BT.leagues[k], g = s.all[at];
-    return `<tr><td><a class="gm" href="#view=backtest&lg=${k}">${esc(lgName(k))}</a></td><td class="n">${g.n}</td><td class="n">${g.w}–${g.l}</td><td class="n">${pct(g.hit, 1)}</td><td class="n">${roi(g.roi)}</td><td class="n">${f1(s.acc.mae_model)}</td><td class="n">${f1(s.acc.mae_line)}</td><td class="n">${pct(s.move.toward)}</td></tr>`; }).join('');
-  return h + '</table></div>';
-}
-
-function renderProjections(){
-  const F = LIVE.fixtures.filter(g => lg === 'all' || g.lg === lg);
-  if (!F.length) return '<p class="empty">No games in the next 7 days.</p>';
-  let h = `<p class="note">The model's margin for every game in the next 7 days, next to the books' handicap. Both shown as the <b>home side's handicap</b>: −5.5 means the home side is expected to win by 5.5. <b>Diff</b> is how many points the model is on one side of the line; <b>Chance</b> is the model's chance that side covers. Games where a team has played fewer than ${GP} games this season, and play-off games, are shown in grey without a side. Projections only: no picks.</p>`;
+const mark = v => v == null ? '<span class="muted">–</span>' : v ? '<b class="w">✓</b>' : '<b class="l">✗</b>';
+function renderMatches(){
+  const F = LIVE.fixtures.filter(inLg), P = LIVE.played.filter(inLg);
+  let h = `<p class="note">The model's margin for every game, next to the books' handicap. Both are shown as the <b>home side's handicap</b>: −5.5 means the home side is expected to win by 5.5. <b>Diff</b> is how many points the model is on one side of the line, and <b>Chance</b> the model's chance that side covers. A game gets an estimate once both teams have played ${GP} games this season; earlier games and play-offs are shown in grey. No picks: estimates only.</p>`;
+  h += `<h2>Next games</h2>`;
+  if (!F.length) h += '<p class="empty">No games in the next 7 days.</p>';
   const byDay = {};
   F.forEach(g => (byDay[g.when.slice(0, 10)] ||= []).push(g));
   for (const [d, list] of Object.entries(byDay)) {
-    h += `<h2 class="day">${dayName(d)}</h2><div class="scroll"><table class="mk proj"><tr><th>Time</th><th>League</th><th>Game</th><th class="n">Played</th><th class="n">Model</th><th class="n">Line</th><th class="n">Opening</th><th class="n">Diff</th><th>Model's side</th><th class="n">Chance</th></tr>`;
+    h += `<h2 class="day">${dayName(d)}</h2><div class="scroll"><table class="mk proj"><tr><th>Time</th>${lg === 'all' ? '<th>League</th>' : ''}<th>Game</th><th class="n">Played</th><th class="n">Model</th><th class="n">Line</th><th class="n">Opening</th><th class="n">Diff</th><th>Model's side</th><th class="n">Chance</th></tr>`;
     h += list.map(g => {
-      const has = g.line != null, side = has && g.ok && g.mu !== g.line ? (g.mu > g.line ? g.home : g.away) : null;
+      const side = g.line != null && g.ok && g.mu !== g.line ? (g.mu > g.line ? g.home : g.away) : null;
       const p = side ? (g.mu > g.line ? g.p : 1 - g.p) : null;
-      return `<tr class="${g.ok ? '' : 'few'}"><td class="n">${g.when.slice(11)}</td><td>${esc(lgShort(g.lg))}</td><td class="wr">${esc(g.home)} – ${esc(g.away)}</td><td class="n">${g.gh}·${g.ga}</td><td class="n tot">${g.ok ? hc(g.mu) : '–'}</td><td class="n">${hc(g.line)}</td><td class="n">${hc(g.open)}</td><td class="n">${side ? f1(Math.abs(g.mu - g.line)) : '–'}</td><td>${side ? esc(side) : '<span class="muted">–</span>'}</td><td class="n">${p != null ? pct(p) : '–'}</td></tr>`;
+      return `<tr class="${g.ok ? '' : 'few'}"><td class="n">${g.when.slice(11)}</td>${lg === 'all' ? `<td>${esc(lgShort(g.lg))}</td>` : ''}<td class="wr">${esc(g.home)} – ${esc(g.away)}</td><td class="n">${g.gh}·${g.ga}</td><td class="n tot">${g.ok ? hc(g.mu) : '–'}</td><td class="n">${hc(g.line)}</td><td class="n">${hc(g.open)}</td><td class="n">${side ? f1(Math.abs(g.mu - g.line)) : '–'}</td><td>${side ? esc(side) : g.ok && g.line == null ? '<span class="muted">no line yet</span>' : '<span class="muted">–</span>'}</td><td class="n">${p != null ? pct(p) : '–'}</td></tr>`;
     }).join('') + '</table></div>';
   }
-  return h;
+  h += `<h2>Played this season</h2><p class="muted">Each game's estimate from the games before that day, as the page showed it before tip-off, against the opening and closing handicap. ✓ the model's side covered, ✗ it did not.</p>`;
+  if (!P.length) return h + '<p class="empty">No games yet with both teams past ' + GP + ' games.</p>';
+  h += `<div class="scroll"><table class="mk"><tr><th>Date</th>${lg === 'all' ? '<th>League</th>' : ''}<th>Game</th><th class="n">Score</th><th class="n">Model</th><th class="n">Opening</th><th>Side</th><th class="n">Cov.</th><th class="n">Closing</th><th>Side</th><th class="n">Cov.</th></tr>`;
+  h += P.map(g => `<tr><td class="n">${dayName(g.date)}</td>${lg === 'all' ? `<td>${esc(lgShort(g.lg))}</td>` : ''}<td class="wr">${esc(g.home)} – ${esc(g.away)}</td><td class="n">${g.hp}–${g.ap}</td><td class="n tot">${hc(g.mu)}</td><td class="n">${hc(g.open)}</td><td>${g.so ? esc(g[g.so]) : '–'}</td><td class="n">${mark(g.co)}</td><td class="n">${hc(g.line)}</td><td>${g.sc ? esc(g[g.sc]) : '–'}</td><td class="n">${mark(g.cc)}</td></tr>`).join('');
+  return h + '</table></div>';
 }
 
 function renderTeams(){
-  const T = LIVE.tables || {}, keys = Object.keys(T).filter(k => lg === 'all' ? true : k === lg);
-  const show = lg === 'all' ? keys.slice(0, 0) : keys;
-  if (!show.length) return `<p class="note">Pick a league above for its team strengths this season: points better or worse than the league average, from this season's games only, with the home edge the league gives.</p>`;
-  return show.map(k => { const t = T[k];
-    return `<h2>${esc(lgName(k))}</h2><p class="muted">Home edge ${sgn(t.hca)} points. A game's margin = home edge + home strength − away strength.</p><table class="mk mini" style="max-width:520px"><tr><th>#</th><th>Team</th><th class="n">Games</th><th class="n">Strength</th></tr>${t.teams.map((x, i) => `<tr class="${x[1] < GP ? 'few' : ''}"><td class="n">${i + 1}</td><td>${esc(x[0])}</td><td class="n">${x[1]}</td><td class="n">${sgn(x[2])}</td></tr>`).join('')}</table>`; }).join('');
+  const t = (LIVE.tables || {})[lg];
+  if (!t) return '';
+  return `<h2>${esc(lgName(lg))}</h2><p class="muted">Points better or worse than the league's average team, from this season's games only. Home edge ${sgn(t.hca)} points. A game's margin = home edge + home strength − away strength.</p><table class="mk mini" style="max-width:520px"><tr><th>#</th><th>Team</th><th class="n">Games</th><th class="n">Strength</th></tr>${t.teams.map((x, i) => `<tr class="${x[1] < GP ? 'few' : ''}"><td class="n">${i + 1}</td><td>${esc(x[0])}</td><td class="n">${x[1]}</td><td class="n">${sgn(x[2])}</td></tr>`).join('')}</table>`;
 }
 
 function renderMethod(){
-  const E = BT.examples, P = DATA.params, o = A.all.open, c = A.all.close, ac = A.acc;
-  const best = A.edges.filter(x => x.open.n >= 200).sort((a, b) => b.open.hit - a.open.hit)[0];
+  const E = LIVE.example, P = LIVE.params, sdG = LIVE.sd['greece-basket-league'], sdC = LIVE.sd['cyprus-division-a'];
   return `<div class="doc">
 <h3><span class="num">1</span>A projected margin for every game</h3>
-<p>Each team gets one number, its <b>strength</b>: how many points better or worse than its league's average team it is. It comes from this season's games only, because rosters change from year to year, with recent games counting more (half-life ${P.half_life} days) and pulled toward 0 while a team has few games. Each league also has a <b>home edge</b>: the average home margin, from this season and, at ${P.season_carry} weight, earlier ones. Overtime counts, as the books settle the handicap.</p>
+<p>Each team gets one number, its <b>strength</b>: how many points better or worse than its league's average team it is. It comes from this season's games only, because rosters change from year to year, with recent games counting more (half-life ${P.half_life} days) and pulled toward 0 while a team has few games. Each league also has a <b>home edge</b>: the average home margin, this season and earlier ones. Overtime counts, as the books settle the handicap. The Teams tab lists every team's strength.</p>
 <div class="calc">projected home margin = home edge + home strength − away strength</div>
-<p>Example: ${esc(E.home)} v ${esc(E.away)} (${dayName(E.date)}): home edge ${sgn(E.hca)}, ${esc(E.home)} ${sgn(E.rh)}, ${esc(E.away)} ${sgn(E.ra)}, so <b>${sgn(E.mu)}</b> for the home side, a handicap of ${hc(E.mu)}. The books' closing handicap was ${hc(E.line)}. Final margin: ${sgn(E.margin, 0)}.</p>
+${E ? `<p>Example: ${esc(E.home)} v ${esc(E.away)} (${dayName(E.date)}): the model had the home side by ${sgn(E.mu)}, a handicap of ${hc(E.mu)}; the books opened at ${hc(E.open)} and closed at ${hc(E.line)}. Final score ${E.hp}–${E.ap}.</p>` : ''}
 <h3><span class="num">2</span>Only after ${GP} games</h3>
-<p>A projection is shown once both teams have played at least <b>${GP} games</b> of the regular season, the point from which a team's strength rests on enough of its own games; earlier, the number is mostly the league average. Play-off games are left out. The Backtest tab has the cover rate by games played.</p>
+<p>An estimate is shown once both teams have played at least <b>${GP} games</b> of the regular season, so that a team's strength rests on enough of its own games; before that the number is mostly the league average. Play-off games are left out.</p>
 <h3><span class="num">3</span>Against the handicap</h3>
-<p>The line is the books' handicap for the home side, the median of each book's main handicap (the one it prices closest to evens), at the opening and at the closing line. The <b>model's side</b> is the home team when the projected margin is above the line, the away team when below; <b>edge</b> is the gap in points. The <b>chance</b> that side covers assumes the final margin falls around the projection with the league's usual miss (a normal curve with the league's spread of margins around the model, about ${f1(E.sd)} points in Greece).</p>
-<div class="calc">chance home covers = P(margin > line) with margin ~ Normal(projection, league spread)<br><i>e.g. projection ${sgn(E.mu)}, line ${sgn(E.line)}, spread ${f1(E.sd)} → ${pct(E.p, 1)} for the home side</i></div>
-<h3><span class="num">4</span>What the backtest shows</h3>
-<p>${ac.lined.toLocaleString('en')} games with a handicap in Greece and Cyprus, ${sn(DATA.seasons[0])} to ${sn(DATA.seasons.at(-1))}. The model's side covered <b>${pct(o.hit, 1)}</b> at the opening line (ROI ${roi(o.roi)} at the average price) and <b>${pct(c.hit, 1)}</b> at the closing line (${roi(c.roi)}). At the average price of about ${o.px ? o.px.toFixed(2) : '1.90'} a side has to cover ${o.px ? pct(1 / o.px, 1) : '52.6%'} to break even.</p>
-<p>The model misses the final margin by ${f1(ac.mae_model)} points on average, the closing line by ${f1(ac.mae_line)}: the market knows injuries, rest and roster news the model cannot see. Between the open and the close the line moved toward the model's side in ${pct(A.move.toward)} of games and against it in ${pct(A.move.against)}.${best ? ` The best edge band at the opening line was ${best.band} points (${pct(best.open.hit, 1)} over ${best.open.n} games).` : ''}</p>
-<h3><span class="num">5</span>Projections only</h3>
-<p>The page makes no picks and keeps no record. It shows the model's number beside the market's so the gap can be read game by game; whether a gap is worth acting on is what the Backtest and Leagues tabs measure.</p>
-<h3><span class="num">6</span>Data</h3>
-<p>Results and handicaps for the two leagues of the <a class="gm" href="/basketball/">basketball projections</a>, the Greek Basket League and Cyprus Division A, ${DATA.games.toLocaleString('en')} games from 2020–21 (warm-up) on. Each backtest projection uses only games played before that day. The model's settings were fitted on 2021–22 results of the 43 leagues of the <a class="gm" href="/basketball/overs/#view=method">totals page</a>, before any season shown here: two leagues alone give too few games to set them. Projections refresh every few hours.</p>
+<p>The line is the books' handicap for the home side: the median of each book's main handicap (the one it prices closest to evens), at the opening and at the latest or closing line. The <b>model's side</b> is the home team when the projected margin is above the line, the away team when below; <b>Diff</b> is the gap in points. The <b>chance</b> that side covers assumes the final margin falls around the projection with the league's usual miss: about ${f1(sdG)} points in Greece and ${f1(sdC)} in Cyprus.</p>
+<div class="calc">chance the home side covers = P(margin &gt; line), margin ~ Normal(projection, league miss)</div>
+<h3><span class="num">4</span>Match by match</h3>
+<p>The page shows estimates only: no picks and no betting record. <b>Played this season</b> keeps every game's estimate as it stood before tip-off, worked out from the games before that day, with the result and whether the model's side covered at the opening and the closing handicap. The model cannot see news: injuries, rest and roster moves count only once they show up in results, while the line knows them.</p>
+<h3><span class="num">5</span>Data</h3>
+<p>Results and handicaps for the two leagues of the <a class="gm" href="/basketball/">basketball projections</a>, the Greek Basket League and Cyprus Division A. The model's settings were fitted once on 2021–22 results of 43 leagues, since two leagues alone give too few games to set them. The page refreshes every hour or so.</p>
 </div>`;
 }
 
-const RENDER = {projections: renderProjections, backtest: renderBacktest, leagues: renderLeagues, teams: renderTeams, method: renderMethod};
-const CHIPS = {projections: 1, backtest: 1, teams: 1};
+const RENDER = {matches: renderMatches, teams: renderTeams, method: renderMethod};
 function render(){
-  document.querySelectorAll('#tabs a').forEach(a => { a.classList.toggle('on', a.dataset.view === view); a.href = `#view=${a.dataset.view}${lg === 'all' || !CHIPS[a.dataset.view] ? '' : '&lg=' + lg}`; });
-  let keys = DATA.leagues.map(l => l.key);
-  if (view === 'projections') keys = keys.filter(k => LIVE.fixtures.some(g => g.lg === k));
-  if (view === 'backtest') keys = keys.filter(k => BT.leagues[k]);
-  if (view === 'teams') keys = keys.filter(k => (LIVE.tables || {})[k]);
-  const chips = CHIPS[view] ? [...(view === 'teams' ? [] : [['all', 'All leagues']]), ...keys.map(k => [k, lgShort(k)])] : [];
+  document.querySelectorAll('#tabs a').forEach(a => { a.classList.toggle('on', a.dataset.view === view); a.href = `#view=${a.dataset.view}${lg === 'all' || a.dataset.view === 'method' ? '' : '&lg=' + lg}`; });
+  const keys = LIVE.leagues.map(l => l.key), chips = view === 'method' ? [] : [...(view === 'teams' ? [] : [['all', 'Both leagues']]), ...keys.map(k => [k, lgShort(k)])];
   $('chips').innerHTML = chips.map(([k, t]) => `<a href="#view=${view}${k === 'all' ? '' : '&lg=' + k}" class="${k === lg ? 'on' : ''}">${esc(t)}</a>`).join('');
-  $('top').innerHTML = view === 'teams' ? '' : topTiles();
+  $('top').innerHTML = view === 'matches' ? topTiles() : '';
   $('out').innerHTML = RENDER[view]();
 }
-document.addEventListener('click', e => { const b = e.target.closest('#atseg button'); if (b) { at = b.dataset.at; render(); } });
 function fromHash(){
   const m = location.hash.match(/view=(\w+)/), l = location.hash.match(/lg=([\w-]+)/);
-  view = m && RENDER[m[1]] ? m[1] : 'projections';
-  lg = l && LG[l[1]] ? l[1] : (view === 'teams' ? 'greece-basket-league' : 'all');
+  const old = {projections: 'matches', backtest: 'matches', leagues: 'matches'};   // links from the first version
+  view = m ? (RENDER[m[1]] ? m[1] : old[m[1]] || 'matches') : 'matches';
+  lg = l && LG[l[1]] ? l[1] : (view === 'teams' ? LIVE.leagues[0].key : 'all');
   render();
 }
-$('sub').innerHTML = (AGE > 8 ? `<span class="stale">Not updated for ${Math.floor(AGE)} hours: projections and lines may be out of date.</span> · ` : '') + `Updated ${LIVE.updated} (Athens) · Greece and Cyprus · backtest ${sn(DATA.seasons[0])} to ${sn(DATA.seasons.at(-1))} · projections from ${GP} games`;
+$('sub').innerHTML = (AGE > 8 ? `<span class="stale">Not updated for ${Math.floor(AGE)} hours: estimates and lines may be out of date.</span> · ` : '') + `Updated ${LIVE.updated} (Athens) · Greece and Cyprus · estimates from ${GP} games`;
 window.addEventListener('hashchange', fromHash);
 fromHash();
 </script>
