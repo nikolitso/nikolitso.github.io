@@ -3,11 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Basketball handicap: projections against the line</title>
-<meta name="description" content="Basketball handicaps in the top domestic divisions of Europe and Latin America: the model's margin for every game once both teams have played 6 games, next to the books' handicap, with four seasons of backtests at the opening and closing line.">
+<title>Basketball handicap: Greece and Cyprus against the line</title>
+<meta name="description" content="Greek Basket League and Cyprus Division A handicaps: the model's margin for every game once both teams have played 6 games, next to the books' handicap, with four seasons of backtests at the opening and closing line.">
 <link rel="canonical" href="https://antonisnikolitsopoulos.com/basketball/handicap/">
-<meta property="og:title" content="Basketball handicap: projections against the line">
-<meta property="og:description" content="Basketball handicaps in the top domestic divisions of Europe and Latin America: the model's margin for every game once both teams have played 6 games, next to the books' handicap, with four seasons of backtests at the opening and closing line.">
+<meta property="og:title" content="Basketball handicap: Greece and Cyprus against the line">
+<meta property="og:description" content="Greek Basket League and Cyprus Division A handicaps: the model's margin for every game once both teams have played 6 games, next to the books' handicap, with four seasons of backtests at the opening and closing line.">
 <meta property="og:url" content="https://antonisnikolitsopoulos.com/basketball/handicap/">
 <meta property="og:image" content="https://antonisnikolitsopoulos.com/basketball-overs.jpg">
 <meta name="twitter:card" content="summary_large_image">
@@ -185,7 +185,7 @@ details.picks>summary .muted{font-size:14px;font-weight:400}
 @media(max-width:900px){.cols2{grid-template-columns:minmax(0,1fr)}}
 </style>
 <header class="an-head"><div><a class="an-home" href="/" aria-label="Back to the homepage">← Home</a>
-  <a class="an-brand" href="/basketball/handicap/"><svg class="an-mark" aria-hidden="true"><use href="/assets/marks.svg#basketball"/></svg><span><small class="an-kicker">Basketball · Handicap</small><h1>Basketball handicap</h1></span></a>
+  <a class="an-brand" href="/basketball/handicap/"><svg class="an-mark" aria-hidden="true"><use href="/assets/marks.svg#basketball"/></svg><span><small class="an-kicker">Basketball · Greece and Cyprus</small><h1>Basketball handicap</h1></span></a>
   <nav class="tabs an-tabs" id="tabs" aria-label="Sections">
     <a href="#view=projections" data-view="projections" class="on">Projections</a>
     <a href="#view=backtest" data-view="backtest">Backtest</a>
@@ -201,8 +201,8 @@ details.picks>summary .muted{font-size:14px;font-weight:400}
   <div id="out"></div>
 </div>
 
-<script src="data.js?v=202611132329"></script>
-<script src="live.js?v=202611132329"></script>
+<script src="data.js?v=202611132337"></script>
+<script src="live.js?v=202611132337"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -309,12 +309,12 @@ function renderMethod(){
 <p>The line is the books' handicap for the home side, the median of each book's main handicap (the one it prices closest to evens), at the opening and at the closing line. The <b>model's side</b> is the home team when the projected margin is above the line, the away team when below; <b>edge</b> is the gap in points. The <b>chance</b> that side covers assumes the final margin falls around the projection with the league's usual miss (a normal curve with the league's spread of margins around the model, about ${f1(E.sd)} points in Greece).</p>
 <div class="calc">chance home covers = P(margin > line) with margin ~ Normal(projection, league spread)<br><i>e.g. projection ${sgn(E.mu)}, line ${sgn(E.line)}, spread ${f1(E.sd)} → ${pct(E.p, 1)} for the home side</i></div>
 <h3><span class="num">4</span>What the backtest shows</h3>
-<p>${ac.lined.toLocaleString('en')} games with a handicap in ${DATA.backtest ? Object.keys(BT.leagues).length : ''} leagues, ${sn(DATA.seasons[0])} to ${sn(DATA.seasons.at(-1))}. The model's side covered <b>${pct(o.hit, 1)}</b> at the opening line (ROI ${roi(o.roi)} at the average price) and <b>${pct(c.hit, 1)}</b> at the closing line (${roi(c.roi)}). At the average price of about ${o.px ? o.px.toFixed(2) : '1.90'} a side has to cover ${o.px ? pct(1 / o.px, 1) : '52.6%'} to break even.</p>
+<p>${ac.lined.toLocaleString('en')} games with a handicap in Greece and Cyprus, ${sn(DATA.seasons[0])} to ${sn(DATA.seasons.at(-1))}. The model's side covered <b>${pct(o.hit, 1)}</b> at the opening line (ROI ${roi(o.roi)} at the average price) and <b>${pct(c.hit, 1)}</b> at the closing line (${roi(c.roi)}). At the average price of about ${o.px ? o.px.toFixed(2) : '1.90'} a side has to cover ${o.px ? pct(1 / o.px, 1) : '52.6%'} to break even.</p>
 <p>The model misses the final margin by ${f1(ac.mae_model)} points on average, the closing line by ${f1(ac.mae_line)}: the market knows injuries, rest and roster news the model cannot see. Between the open and the close the line moved toward the model's side in ${pct(A.move.toward)} of games and against it in ${pct(A.move.against)}.${best ? ` The best edge band at the opening line was ${best.band} points (${pct(best.open.hit, 1)} over ${best.open.n} games).` : ''}</p>
 <h3><span class="num">5</span>Projections only</h3>
 <p>The page makes no picks and keeps no record. It shows the model's number beside the market's so the gap can be read game by game; whether a gap is worth acting on is what the Backtest and Leagues tabs measure.</p>
 <h3><span class="num">6</span>Data</h3>
-<p>Results and handicaps for ${DATA.leagues.length} top domestic divisions in Europe and Latin America, the same leagues as the <a class="gm" href="/basketball/overs/#view=method">totals page</a>, ${DATA.games.toLocaleString('en')} games from 2020–21 (warm-up) on. Each backtest projection uses only games played before that day. The model's settings were fitted on 2021–22 results, before any season shown here. Projections refresh every few hours.</p>
+<p>Results and handicaps for the two leagues of the <a class="gm" href="/basketball/">basketball projections</a>, the Greek Basket League and Cyprus Division A, ${DATA.games.toLocaleString('en')} games from 2020–21 (warm-up) on. Each backtest projection uses only games played before that day. The model's settings were fitted on 2021–22 results of the 43 leagues of the <a class="gm" href="/basketball/overs/#view=method">totals page</a>, before any season shown here: two leagues alone give too few games to set them. Projections refresh every few hours.</p>
 </div>`;
 }
 
@@ -338,7 +338,7 @@ function fromHash(){
   lg = l && LG[l[1]] ? l[1] : (view === 'teams' ? 'greece-basket-league' : 'all');
   render();
 }
-$('sub').innerHTML = (AGE > 8 ? `<span class="stale">Not updated for ${Math.floor(AGE)} hours: projections and lines may be out of date.</span> · ` : '') + `Updated ${LIVE.updated} (Athens) · ${DATA.leagues.length} leagues · backtest ${sn(DATA.seasons[0])} to ${sn(DATA.seasons.at(-1))} · projections from ${GP} games`;
+$('sub').innerHTML = (AGE > 8 ? `<span class="stale">Not updated for ${Math.floor(AGE)} hours: projections and lines may be out of date.</span> · ` : '') + `Updated ${LIVE.updated} (Athens) · Greece and Cyprus · backtest ${sn(DATA.seasons[0])} to ${sn(DATA.seasons.at(-1))} · projections from ${GP} games`;
 window.addEventListener('hashchange', fromHash);
 fromHash();
 </script>
