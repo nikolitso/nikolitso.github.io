@@ -185,33 +185,46 @@ function viewPicks() {
 }
 
 // ---------- Projections: every regular game of the next 8 days, at the prices of the last update (D.proj) ----------
-// row: [kick-off, league, home, away, market chance x3, best price x3, books in the market, books in the best-price set, market average x3, margin, round]
-const PGAPS = [[-99, 'All'], [0, '0%+'], [5, '5%+'], [RG, RG + '%+ (the rule)']];
+// row: [kick-off, league, home, away, market chance x3, best price x3, books in the market, books in the best-price set,
+//       market average x3, margin, round, model chance x3 (null: no model), model expected goals home, away]
+// The model is shown next to the market for information only: the rule and the live test use the market (user, 13 Nov 2026)
+const PGAPS = [[-99, 'All'], [0, '0%+'], [5, '5%+'], [RG, RG + '%+']];
 function viewProj() {
-  const rows = D.proj || [], key = {}; L.forEach((l, i) => key[l.key] = l);
-  const f = state.p = Object.assign({ev: -99, lg: 'all'}, state.p || {}), grp = GROUPS.find(x => x[0] === f.lg) || GROUPS[0];
+  const rows = D.proj || [], key = {}; L.forEach(l => key[l.key] = l);
+  const f = state.p = Object.assign({ev: -99, lg: 'all', by: 'mk'}, state.p || {}), grp = GROUPS.find(x => x[0] === f.lg) || GROUPS[0];
   const when = s => new Date(s).toLocaleString('en-GB', {weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit'});
+  const side = (ch, bp) => { const e = [ch[0] * bp[0] - 1, ch[2] * bp[2] - 1], s = e[1] > e[0] ? 2 : 0; return {s, e: Math.max(...e)}; };
   const items = rows.map(r => {
-    const ev = [r[4][0] * r[5][0] - 1, r[4][2] * r[5][2] - 1], s = ev[1] > ev[0] ? 2 : 0, e = Math.max(...ev);
-    return {r, l: key[r[1]], ev, s, e, rule: e * 100 + 1e-6 >= RG && r[5][s] > RO + 1e-9};
-  }).filter(x => x.l && grp[2](x.l.tier) && x.e * 100 + 1e-6 >= f.ev);
-  const nRule = items.filter(x => x.rule).length;
+    const mk = side(r[4], r[5]), md = r[11] ? side(r[11], r[5]) : null;
+    return {r, l: key[r[1]], mk, md, rule: mk.e * 100 + 1e-6 >= RG && r[5][mk.s] > RO + 1e-9};
+  }).filter(x => x.l && grp[2](x.l.tier) && (f.ev === -99 || ((f.by === 'md' ? x.md : x.mk) || {e: -9}).e * 100 + 1e-6 >= f.ev));
+  const nRule = items.filter(x => x.rule).length, nMod = items.filter(x => x.md && x.md.e * 100 + 1e-6 >= RG).length;
   const chip = (k, v, tx, on) => `<button class="chip${on ? ' on' : ''}" data-p="${k}" data-v="${v}">${tx}</button>`;
-  const odds = (a, b) => `<td class="n">${a.toFixed(2)}</td><td class="n mut">${(1 / b).toFixed(2)}</td>`;
-  const evc = (x, i) => `<td class="n ${cls(x)}${i ? '' : ''}">${spct(x)}</td>`;
+  const fo = ch => ch ? (1 / ch).toFixed(2) : '–';
+  const ev = o => o ? `<td class="n ${cls(o.e)}">${spct(o.e)} <span class="mut">${o.s === 0 ? 'H' : 'A'}</span></td>` : '<td class="n mut">–</td>';
   const body = items.map(x => {
-    const r = x.r, side = x.s === 0 ? r[2] : r[3];
-    return `<tr class="exp${x.rule ? ' hit' : ''}" title="Show the prices"><td>${when(r[0])}</td><td>${x.l.country} · ${x.l.name}</td><td>${r[2]} – ${r[3]}</td>${odds(r[5][0], r[4][0])}${odds(r[5][2], r[4][2])}${evc(x.ev[0])}${evc(x.ev[1])}<td>${x.rule ? `<b>${side} to win</b>` : '<span class="mut">–</span>'}</td></tr>
-    <tr class="detail" hidden><td colspan="10">${analysis({mi: 0, s: x.s, fair: r[4], best: r[5], nw: r[6], nb: r[7], wavg: r[8], margin: r[9], home: r[2], away: r[3], proj: 1, live: 1})}</td></tr>`;
+    const r = x.r, m = r[11];
+    return `<tr class="exp${x.rule ? ' hit' : ''}" title="Show the numbers"><td>${when(r[0])}</td><td>${r[2]} – ${r[3]}<div class="lgn">${x.l.country} · ${x.l.name}</div></td>
+    <td class="n"><b>${r[5][0].toFixed(2)}</b></td><td class="n mut">${fo(r[4][0])}</td><td class="n">${m ? fo(m[0]) : '–'}</td>
+    <td class="n"><b>${r[5][2].toFixed(2)}</b></td><td class="n mut">${fo(r[4][2])}</td><td class="n">${m ? fo(m[2]) : '–'}</td>
+    ${ev(x.mk)}${ev(x.md)}<td>${x.rule ? `<b>${x.mk.s === 0 ? r[2] : r[3]} to win</b>` : '<span class="mut">–</span>'}</td></tr>
+    <tr class="detail" hidden><td colspan="11">${analysis({mi: 0, s: x.mk.s, fair: r[4], best: r[5], nw: r[6], nb: r[7], wavg: r[8], margin: r[9], home: r[2], away: r[3], proj: 1, live: 1})}${m ? modelNote(r, x.md) : ''}</td></tr>`;
   }).join('');
   const upd = D.updated.replace('T', ' ').replace('Z', ' UTC');
-  return `${PKCSS}<style>tr.hit td{background:color-mix(in srgb,var(--gold) 10%,transparent)}</style>
-  <p class="note">Every regular league game of the next 8 days that has prices, as they stood at the last update (${upd}). For each side: the <b>best price</b> on offer and, in grey, the <b>fair odds</b> of the market (its margin-free price). <b>EV</b> = best price × market chance − 1. A game whose home or away win has an EV of ${RG}% or more at a price above ${ROT} meets the rule: it is marked and logged on the Live test tab. Prices move all the time, so a game can cross the line, or drop back under it, between updates. The draw is never bet. Click a game to see how its numbers are worked out.</p>
-  <div class="facts"><span class="fact"><b>${num(items.length)}</b>games shown</span><span class="fact"><b>${num(nRule)}</b>${nRule === 1 ? 'meets' : 'meet'} the rule now</span></div>
+  return `${PKCSS}<style>tr.hit td{background:color-mix(in srgb,var(--gold) 10%,transparent)}.lgn{font-size:12.5px;color:var(--muted);margin-top:2px}table.pj th.g{text-align:center;border-bottom:1px solid var(--line)}</style>
+  <p class="note">Every regular league game of the next 8 days that has prices, as they stood at the last update (${upd}). For the home and the away win: the <b>best price</b> on offer, the <b>market</b> odds (the market's margin-free price) and the <b>model</b> odds (the team model's chance, as odds). <b>EV</b> = best price × chance − 1, worked out once with the market's chance and once with the model's, for the side where it is higher (H home, A away). The rule uses the market: a game whose home or away win has a market EV of ${RG}% or more at a price above ${ROT} is marked and logged on the Live test tab. The model is shown for comparison only; in the backtest it did not beat the opening prices, so it is not bet. Click a game to see how its numbers are worked out.</p>
+  <div class="facts"><span class="fact"><b>${num(items.length)}</b>games shown</span><span class="fact"><b>${num(nRule)}</b>${nRule === 1 ? 'meets' : 'meet'} the rule now</span><span class="fact"><b>${num(nMod)}</b>with a model EV of ${RG}% or more</span></div>
+  <div class="flt"><span class="fl">EV from</span><div class="chips">${chip('by', 'mk', 'Market', f.by === 'mk')}${chip('by', 'md', 'Model', f.by === 'md')}</div></div>
   <div class="flt"><span class="fl">EV%</span><div class="chips">${PGAPS.map(([v, tx]) => chip('ev', v, tx, f.ev === v)).join('')}</div></div>
   <div class="flt"><span class="fl">Leagues</span><div class="chips">${GROUPS.map(([k, tx]) => chip('lg', k, tx, f.lg === k)).join('')}</div></div>
-  ${items.length ? `<table class="pk"><thead><tr><th>Kick-off</th><th>League</th><th>Game</th><th class="n">Home best</th><th class="n">fair</th><th class="n">Away best</th><th class="n">fair</th><th class="n">EV home</th><th class="n">EV away</th><th>Rule</th></tr></thead><tbody>${body}</tbody></table>` : `<p class="note">${rows.length ? 'No game passes these filters.' : 'No games with prices in the next 8 days.'}</p>`}
+  ${items.length ? `<table class="pk pj"><thead><tr><th rowspan="2">Kick-off</th><th rowspan="2">Game</th><th class="g" colspan="3">Home win</th><th class="g" colspan="3">Away win</th><th class="g" colspan="2">EV</th><th rowspan="2">Rule</th></tr>
+  <tr><th class="n">Best</th><th class="n">Market</th><th class="n">Model</th><th class="n">Best</th><th class="n">Market</th><th class="n">Model</th><th class="n">Market</th><th class="n">Model</th></tr></thead><tbody>${body}</tbody></table>` : `<p class="note">${rows.length ? 'No game passes these filters.' : 'No games with prices in the next 8 days.'}</p>`}
   <p class="note" style="margin-top:20px">Times are local. ${PRIOR}</p>`;
+}
+// the model's numbers for one game, under the market's worked example
+function modelNote(r, md) {
+  const m = r[11], nm = [r[2] + ' win', 'Draw', r[3] + ' win'];
+  return `<div class="an"><p><b>The team model.</b> Each team has an attack and a defence rating, fitted on its past games (40% xG, 60% goals; goals alone where a game has no xG; older games count less). They give ${r[2]} <b>${r[12].toFixed(2)}</b> expected goals and ${r[3]} <b>${r[13].toFixed(2)}</b>, and from those the chance of each score. Added up: ${nm.map((x, i) => `${x} ${pct(m[i])} (odds ${(1 / m[i]).toFixed(2)})`).join(', ')}. Against the market: home ${spct(m[0] - r[4][0])}, draw ${spct(m[1] - r[4][1])}, away ${spct(m[2] - r[4][2])} in chance. Against the best price the model's EV is highest on the ${md.s === 0 ? 'home' : 'away'} win: ${r[5][md.s].toFixed(2)} × ${pct(m[md.s])} − 1 = ${spct(md.e)}. The model is not used for bets.</p></div>`;
 }
 
 // ---------- Leagues: the same filtered bets, league by league ----------
@@ -349,7 +362,7 @@ function viewHow() {
   <p>${PRIOR}</p>
   <p>The Backtest tab is built for choosing a rule. Filters cut the bets: the minimum EV, the league group (top divisions, lower divisions), the first round of the season to bet from, the side, and an odds range set for each side on its own. Every table is recounted for the bets that pass. Every rule is read twice: the bets at their opening price, and the same bets at the price the selection had at the close, the last before kick-off. The two pills above the tables show both; the tables use the opening price. A third pill shows how often the market's own chance for the bet rose by the close and how often it fell.</p>
   <p>Each table row shows the number of bets, the average EV they promised, the ROI, its standard error, the profit or loss, and the ROI of each season. Every table row can be clicked to list the games behind it, and each game opens to show how the bet was made. The tables split the bets by season, side, league group, round of the season, month of the game, odds and EV. A last table, By team, takes the bets at prices from ${RMIN.toFixed(2)} to ${(SPLIT - 0.01).toFixed(2)} and lists the 10 most profitable teams with at least 3 bets, and how much of the profit comes from them. A rule is worth using when the result holds in every season, not only in the total. The Leagues tab shows the same bets league by league; one league's numbers rest on few bets and its past ROI says little about its next season. Each league opens on a page of its own with every bet listed: a click on a bet shows the market chance and the best price of every outcome when the prices opened, the EV of each side, why that side was bet, and then how the market closed and how the game ended.</p>
-  <p>The Projections tab lists every regular game of the next 8 days at the prices of the last update, with the EV of the home and the away win, and marks the games that meet the rule.</p>
+  <p>The Projections tab lists every regular game of the next 8 days at the prices of the last update, with the EV of the home and the away win, and marks the games that meet the rule. Next to the market it shows the team model described under What was tried and dropped, for comparison only.</p>
   <h2>Why it can work</h2>
   <p>Some prices open before the market settles, or are shaded, and for a while stand above it. They are corrected quickly: the same bets taken at the closing price return far less, so the price has to be taken early.</p>
   <h2>Betting rules</h2>
@@ -408,7 +421,7 @@ out.addEventListener('click', e => {
   const x = e.target.closest('tr.exp');                        // a bet: show or hide how it was made
   if (x && x.nextElementSibling && x.nextElementSibling.classList.contains('detail')) { x.nextElementSibling.hidden = !x.nextElementSibling.hidden; return; }
   const pc = e.target.closest('[data-p]');                     // filters of the Projections tab
-  if (pc) { state.p[pc.dataset.p] = pc.dataset.p === 'lg' ? pc.dataset.v : +pc.dataset.v; return render(); }
+  if (pc) { state.p[pc.dataset.p] = pc.dataset.p === 'ev' ? +pc.dataset.v : pc.dataset.v; return render(); }
   const c = e.target.closest('[data-f]');
   if (c) {
     const f = state.f, k = c.dataset.f, v = c.dataset.v;
