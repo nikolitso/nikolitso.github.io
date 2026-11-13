@@ -197,7 +197,7 @@ a.tile:hover{border-color:var(--gold)}
   <div class="chips" id="chips"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=w65"></script>
+<script src="data.js?v=w66"></script>
 <script src="live.js"></script>
 <script>
 const $ = id => document.getElementById(id);
@@ -443,11 +443,11 @@ function renderPicks(){
     if (b.ret != null) run += b.ret;
     const res = b.ret == null ? '<span class="pill">Void</span>' : b.ret > 0 ? '<span class="pill pos">Won</span>' : b.ret < 0 ? '<span class="pill neg">Lost</span>' : '<span class="pill">Push</span>';
     const mvc = b.close == null ? '<td class="n muted">–</td>' : `<td class="n">${b.close}${b.close > b.line ? ' <span class="pos">▲</span>' : b.close < b.line ? ' <span class="neg">▼</span>' : ''}</td>`;
-    return `<tr><td data-s="${b.dt}">${short(b.dt)}${b.dt.length > 10 ? ' ' + b.dt.slice(11) : ''}${b.pre ? ' <span class="muted">backtest</span>' : ''}</td><td>${lgShort(b.lg)}</td><td class="wr">${b.home} – ${b.away}</td><td class="n ${b.done ? wl(b) : ''}"><b>${sd(b)} ${b.line}</b></td>
+    return `<tr><td data-s="${b.dt}">${short(b.dt)}${b.dt.length > 10 ? ' ' + b.dt.slice(11) : ''}${b.pre ? ' <span class="muted">backtest</span>' : ''}</td><td>${lgShort(b.lg)}</td><td class="wr">${b.slug ? `<a class="gm" href="games/${b.slug}/">${b.home} – ${b.away}</a>` : `${b.home} – ${b.away}`}</td><td class="n ${b.done ? wl(b) : ''}"><b>${sd(b)} ${b.line}</b></td>
       <td class="n">${b.px.toFixed(2)}</td><td class="n">${b.mu != null ? b.mu.toFixed(1) : '–'}</td><td class="n pos">${sgn(b.edge*100, 0)}%</td>${mvc}<td class="n ${wl(b)}"><b>${b.total ?? '–'}</b></td><td class="n">${res}</td>
       <td class="n ${cls(b.ret)}">${b.ret == null ? '–' : sgn(b.ret, 2)}</td><td class="n ${cls(run)}">${sgn(run, 2)}</td></tr>`;
   });
-  return h + howNote + `<h2>Settled picks, latest first</h2><p class="note">Closing line: ▲ moved toward the pick, ▼ against it. Profit at 1 unit a pick; Running is the total so far.</p><div class="scroll"><table class="proj settled"><thead><tr><th>Tip-off</th><th>League</th><th>Match</th><th class="n">Pick</th><th class="n">Price</th><th class="n">Model total</th><th class="n">Edge</th><th class="n">Closing line</th><th class="n">Total</th><th class="n">Result</th><th class="n">Profit</th><th class="n">Running</th></tr></thead><tbody>${rows.reverse().join('')}</tbody></table></div>`;
+  return h + howNote + `<h2>Settled picks, latest first</h2><p class="note">Closing line: ▲ moved toward the pick, ▼ against it. Profit at 1 unit a pick; Running is the total so far. Click a match for its page, with the model total as it stood before tip-off and how it was built.</p><div class="scroll"><table class="proj settled"><thead><tr><th>Tip-off</th><th>League</th><th>Match</th><th class="n">Pick</th><th class="n">Price</th><th class="n">Model total</th><th class="n">Edge</th><th class="n">Closing line</th><th class="n">Total</th><th class="n">Result</th><th class="n">Profit</th><th class="n">Running</th></tr></thead><tbody>${rows.reverse().join('')}</tbody></table></div>`;
 }
 
 // click a column heading to sort its table (again to reverse); league groups keep their season rows
