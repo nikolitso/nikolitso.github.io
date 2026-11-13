@@ -1,0 +1,43 @@
+name: Feed · Basketball handicap backfill
+
+# One-off (13 Nov 2026): past handicap lines for the basketball handicap page, saved in nikolitso/BettingSignal
+# basketball-handicap/data/ah/. Safe to run again: games already saved are skipped.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: basketball-handicap-backfill
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 330
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          repository: nikolitso/BettingSignal
+          token: ${{ secrets.SITES_TOKEN }}
+          path: _bs
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.14"
+      - name: Install
+        run: pip install --quiet -r _bs/basketball-overs/requirements.txt
+      - name: Backfill and save
+        working-directory: _bs
+        env:
+          PYTHONIOENCODING: utf-8
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          for k in $(python -c "import json;print(' '.join(json.load(open('basketball-overs/data/live_leagues.json'))['leagues']))"); do
+            python -u basketball-handicap/backfill.py $k || true
+            git add basketball-handicap/data/ah
+            git diff --cached --quiet && continue
+            git commit -q -m "Basketball handicap: backfill $k"
+            for i in 1 2 3 4 5; do git pull -q --rebase && git push -q && break; sleep $((RANDOM % 10 + 5)); done
+          done
