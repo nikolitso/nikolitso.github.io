@@ -1,0 +1,346 @@
+<!doctype html>
+<html lang="en" data-site="basketball">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Basketball handicap: projections against the line</title>
+<meta name="description" content="Basketball handicaps in the top domestic divisions of Europe and Latin America: the model's margin for every game once both teams have played 6 games, next to the books' handicap, with four seasons of backtests at the opening and closing line.">
+<link rel="canonical" href="https://antonisnikolitsopoulos.com/basketball/handicap/">
+<meta property="og:title" content="Basketball handicap: projections against the line">
+<meta property="og:description" content="Basketball handicaps in the top domestic divisions of Europe and Latin America: the model's margin for every game once both teams have played 6 games, next to the books' handicap, with four seasons of backtests at the opening and closing line.">
+<meta property="og:url" content="https://antonisnikolitsopoulos.com/basketball/handicap/">
+<meta property="og:image" content="https://antonisnikolitsopoulos.com/basketball-overs.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.png" type="image/png" sizes="64x64">
+<!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "b67bbb76d0e24af196b24ded3ab71ad0"}'></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Hanken+Grotesk:ital,wght@0,300..700;1,400&display=swap">
+<style>
+:root{
+  --bg:#0c1424; --panel:#131d33; --line:#26334f; --text:#f1ead9; --muted:#9aa4ba;
+  --gold:#d4af37; --win:#6fcf97; --loss:#eb7a6c;
+  --serif:'Playfair Display',Georgia,serif; --body:'Source Serif 4',Georgia,serif; --mono:'IBM Plex Mono',ui-monospace,monospace;
+  /* shared base (assets/an.css): the page's own names mapped onto the tokens */
+  --bg:var(--an-paper); --panel:var(--an-soft); --line:var(--an-rule); --text:var(--an-ink); --muted:var(--an-muted);
+  --gold:var(--an-accent); --win:var(--an-accent); --loss:var(--an-muted);
+  --serif:var(--an-display); --body:var(--an-body); --mono:var(--an-mono); --an-wrap:1180px;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:17px/1.5 var(--body)}
+.wrap{max-width:1180px;margin:0 auto;padding:18px 16px 80px}
+.sub{font:400 14.5px var(--mono);color:var(--muted);letter-spacing:.04em;margin-bottom:22px}
+.bar{display:flex;flex-wrap:wrap;align-items:center;gap:10px 18px;margin:0 0 18px}
+.seg{display:flex;border:1px solid var(--line);border-radius:6px;overflow:hidden;width:max-content}
+.seg button{background:none;border:0;color:var(--muted);font:500 14.5px var(--mono);padding:8px 16px;cursor:pointer;letter-spacing:.06em;text-transform:uppercase}
+.seg button.on{background:var(--gold);color:var(--an-on-accent)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{background:none;border:1px solid var(--line);border-radius:999px;color:var(--muted);font:500 13.5px var(--mono);padding:5px 12px;cursor:pointer}
+.chip:hover{color:var(--text)}
+.chip.on{background:var(--gold);border-color:var(--gold);color:var(--an-on-accent)}
+h2{font:600 22px var(--serif);margin:30px 0 12px}
+h2.day{font-size:20px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(520px,100%),1fr));gap:18px}
+.grid>.card{min-width:0}
+.grid>.mcard{display:grid;grid-row:span 3;grid-template-rows:subgrid;row-gap:0;align-content:start}
+.mcard .top{padding-bottom:4px}
+.card td:first-child{white-space:normal}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px 18px 10px}
+.card h3{font:600 24px var(--serif);margin:0}
+.live{font:500 12.5px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--bg);background:var(--gold);border-radius:4px;padding:1px 6px;margin-left:8px;vertical-align:1px}
+.card .ko{font:500 15.5px var(--mono);color:var(--text);letter-spacing:.06em}
+.wdl{display:flex;height:8px;border-radius:4px;overflow:hidden;margin:12px 0 6px;background:var(--line)}
+.wdl i{display:block} .wdl i:nth-child(1){background:var(--gold)} .wdl i:nth-child(2){background:var(--an-muted)} .wdl i:nth-child(3){background:var(--an-bar)}
+.wdlt{display:flex;justify-content:space-between;font:400 15.5px var(--mono);color:var(--muted)}
+.wdlt b{color:var(--text);font-weight:500}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+th{font:400 12.5px var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.08em;text-align:left;padding:8px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:7px 8px;border-bottom:1px solid color-mix(in srgb,var(--line) 60%,transparent);font-size:16.5px;white-space:nowrap}
+td.n,th.n{text-align:right;font-family:var(--mono);font-size:15px}
+td.tot{color:var(--gold);font-weight:500}
+.card table{margin-top:6px}
+table.mk{margin-bottom:6px}table.mk td,table.mk th{padding:6px 7px}
+.stack{display:grid;gap:18px}
+.mkcols{display:grid;grid-template-columns:minmax(0,300px) minmax(0,1fr);gap:24px;align-items:start;margin-top:8px}
+@media(max-width:900px){.mkcols{grid-template-columns:1fr}.mkcols table{display:block;overflow-x:auto}}
+.stack>.card{min-width:0}
+.wdlt i{font-style:normal;color:var(--gold)}
+.wdlt span:nth-child(2){text-align:center}.wdlt span:last-child{text-align:right}
+.coach .who{display:inline-block;min-width:118px;color:var(--muted)}
+.tenure{font:400 13.5px/1.4 var(--mono);color:var(--muted);margin-top:2px}
+.coach{font:400 15px/1.55 var(--mono);color:var(--muted);margin-top:2px}
+.coach b{color:var(--text);font-weight:500}
+.coach .wc{display:inline-block;width:7ch;text-align:right}
+table.tm{max-width:1000px}table.tm .gl{border-left:1px solid var(--line);padding-left:12px}
+table.tm tr.grp th{color:var(--gold);border-bottom:0;padding-bottom:0}
+.head{display:flex;justify-content:space-between;align-items:flex-start;gap:6px 14px;flex-wrap:wrap}
+.ref{font:400 15px/1.55 var(--mono);color:var(--muted);margin-top:6px}
+.ref b{color:var(--text);font-weight:500}
+.card tr:last-child td{border-bottom:0}
+.ln{font:400 13.5px var(--mono);color:var(--muted);text-align:right}
+.ln span{display:inline-block;min-width:92px}
+.ln b{color:var(--text);font-weight:500}
+.ln .hi{color:var(--win)} .ln .lo{color:var(--loss)}
+th.sort{cursor:pointer;user-select:none} th.sort:hover,th.sort.on{color:var(--gold)}
+.w{color:var(--win)} .l{color:var(--loss)} td.w,td.w b{color:#4cc47a} td.l,td.l b{color:#ef7a70}
+.muted{color:var(--muted)}
+.empty{color:var(--muted);padding:30px 0;text-align:center}
+.note{font:400 16.5px/1.55 var(--body);color:var(--muted);border-left:2px solid var(--gold);padding:2px 0 2px 14px;margin:0 0 14px;max-width:820px}
+.note b{color:var(--text);font-weight:600}
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin:0 0 18px}
+.refsub{font:600 18px var(--serif);margin:8px 0 8px}
+.metric{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.metric .lbl{font:400 12.5px var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}
+.metric .big{font:500 24px var(--mono);color:var(--gold)}
+.scroll{overflow-x:auto}
+.doc{max-width:860px}
+.doc p,.doc li{font-size:16.5px;line-height:1.65;margin:0 0 14px}
+.doc ul{padding-left:20px;margin:0 0 14px}
+.doc h3{font:600 18px var(--serif);margin:28px 0 8px;display:flex;align-items:center;gap:10px}
+.doc .num{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--gold);color:var(--an-on-accent);font:600 14.5px var(--mono);flex:none}
+.calc{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:8px;padding:12px 16px;margin:0 0 14px;font:400 15.5px/2 var(--mono);overflow-x:auto}
+.calc i{font-style:normal;color:var(--muted);font-size:13.5px}
+.calc b{color:var(--gold);font-weight:500}
+table.mini{margin:0 0 16px}
+.abbr{display:none}
+.charts{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(440px,100%),1fr));gap:18px;margin:6px 0 10px}
+.chart{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px 12px;min-width:0}
+.chart h3{font:600 17px var(--serif);margin:0 0 4px;display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+.chart svg{display:block;width:100%;height:auto}
+.chart .cap{font:400 15.5px/1.5 var(--body);color:var(--muted);margin:6px 0 0}
+.key{font:400 13.5px var(--mono);color:var(--muted);display:flex;gap:14px}
+.key i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+.chart .hit{fill:transparent;cursor:default}
+.chart .bar.hl{opacity:.75}
+.tip{position:fixed;pointer-events:none;background:var(--an-paper);border:1px solid var(--line);box-shadow:0 10px 30px rgba(0,0,0,.45);border-radius:6px;padding:6px 10px;font:400 14px/1.5 var(--mono);color:var(--text);z-index:10;display:none;white-space:nowrap}
+.tip b{color:var(--gold);font-weight:500}
+tr.avg td,tr.few td{color:var(--muted)} tr.avg td:first-child{font-style:italic}
+tr.sum td{border-top:1px solid var(--line);font-weight:600}
+table.rp td.cm{white-space:normal;min-width:320px;font-size:16px;line-height:1.45;color:var(--muted)}
+table.rp td{vertical-align:top}
+.rate{display:inline-block;min-width:40px;text-align:center;border-radius:999px;padding:1px 8px;font:500 14px var(--mono)}
+.r-good{background:var(--an-accent-soft);color:var(--win)} .r-mid{background:var(--an-soft);color:var(--text)}
+.r-warn{background:var(--an-accent-soft);color:var(--gold)} .r-bad{background:var(--an-bad-soft);color:var(--loss)}
+button.reflink{background:none;border:0;padding:0;margin:0;color:inherit;font:inherit;text-align:left;cursor:pointer;text-decoration:underline dotted color-mix(in srgb,var(--muted) 70%,transparent);text-underline-offset:3px}
+button.reflink:hover{color:var(--gold);text-decoration-color:var(--gold)}
+dialog#refdlg{background:var(--bg);color:var(--text);border:1px solid var(--line);border-radius:12px;padding:0;width:min(1100px,96vw);max-height:90vh}
+dialog#refdlg::backdrop{background:var(--an-backdrop)}
+#refdlg .dh{position:sticky;top:0;background:var(--bg);display:flex;justify-content:space-between;align-items:center;gap:12px;padding:16px 20px 12px;border-bottom:1px solid var(--line);z-index:1}
+#refdlg .dh h2{margin:0}
+#refdlg .db{padding:16px 20px 20px}
+#refdlg .x{background:none;border:1px solid var(--line);border-radius:6px;color:var(--muted);font:500 14.5px var(--mono);padding:6px 12px;cursor:pointer}
+#refdlg .x:hover{color:var(--text)}
+#refdlg .metrics{grid-template-columns:repeat(auto-fit,minmax(min(140px,40vw),1fr))}
+th.rs{cursor:pointer;user-select:none} th.rs:hover,th.rs.on{color:var(--gold)}
+.jump{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 8px}
+@media(max-width:600px){.grid{grid-template-columns:1fr}.ln span{min-width:0;margin-left:8px}.card{padding:14px 10px 8px}td,th{padding:6px 4px}
+  .card td{font-size:15.5px}.card td.n{font-size:14px}.full{display:none}.abbr{display:inline}.wdlt{flex-wrap:wrap;gap:2px 12px}}
+</style>
+<link rel="stylesheet" href="/assets/an.css?v=1">
+</head>
+<body>
+<!-- sitebar:start (link back to antonisnikolitsopoulos.com; keep on every page) -->
+<nav class="an-sitebar" aria-label="Main site"><div><a href="/books/">Books</a><a href="/#projects">Projects</a><a href="/about/">About</a><a href="/" title="Main site: antonisnikolitsopoulos.com" aria-label="Main site"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 2 11.5h3V21h5.5v-6h3v6H19v-9.5h3z"/></svg></a></div></nav>
+<!-- sitebar:end -->
+<style>
+.pos{color:var(--win)} .neg{color:var(--loss)} .elow{color:#e8c547} .eneg{color:#eb7a6c} .wrap.wide{max-width:1340px} table.lgt td,table.lgt th{padding-left:6px;padding-right:6px}
+tr.srow{cursor:pointer} tr.srow:hover td,tr.srow.on td{background:color-mix(in srgb,var(--gold) 10%,transparent)}
+tr.sub td{background:color-mix(in srgb,var(--panel) 70%,transparent);font-size:15px}
+tr.sub td:first-child{padding-left:28px;color:var(--muted)}
+.caret{color:var(--gold);display:inline-block;width:1em}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:14px 0 4px}
+.chips a{font:400 14.5px var(--mono);color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:4px 11px;text-decoration:none}
+.chips a.on{color:var(--an-on-accent);background:var(--gold);border-color:var(--gold)}
+td.wr{white-space:normal}.lglist{list-style:none;margin:8px 0 0;padding:0;columns:3 220px;column-gap:28px}.lglist li{padding:4px 0;font-size:14.5px;break-inside:avoid}a.gm{color:inherit;text-decoration:underline;text-decoration-color:var(--an-rule);text-underline-offset:3px}a.gm:hover{color:var(--gold);text-decoration-color:currentColor}
+table.proj tr.pk td{background:var(--an-accent-soft)}table.proj tr.pk td:first-child{box-shadow:inset 3px 0 var(--gold)}
+/* seven tiles in one row at desktop width */
+.metrics{grid-template-columns:repeat(auto-fit,minmax(min(140px,40vw),1fr))}
+.badge{display:inline-block;font:500 12.5px var(--mono);letter-spacing:.06em;text-transform:uppercase;background:var(--gold);color:var(--an-on-accent);border-radius:4px;padding:2px 7px;margin-left:8px;vertical-align:2px}
+.badge.fast{background:transparent;color:var(--gold);box-shadow:inset 0 0 0 1px var(--gold)}
+.find{border-left:3px solid var(--gold);padding:2px 0 2px 16px;margin:0 0 22px;max-width:860px}
+.find h3{font:600 20px var(--serif);margin:0 0 4px}
+.find p{margin:0;color:var(--text)}
+.find .num{font:500 13.5px var(--mono);color:var(--gold);letter-spacing:.06em;margin-right:8px}
+.verdict{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px 20px;margin:0 0 30px;max-width:860px}
+.verdict h2{margin:0 0 8px}
+.tier{font:400 12.5px var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.scroll{overflow-x:auto}
+#out th{cursor:pointer;user-select:none}#out th:hover{color:var(--gold)}#out th.sa::after{content:" ▲";font-size:.8em}#out th.sd::after{content:" ▼";font-size:.8em}
+/* top row, same tiles as the handball projections page: open picks · record · return */
+.tiles{--up:#4cc47a;--dn:#ef7a70;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(140px,40vw),1fr));gap:10px;margin:16px 0 4px}
+.tile{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px;display:flex;flex-direction:column;gap:3px;min-width:0;color:inherit;text-decoration:none}
+a.tile:hover{border-color:var(--gold)}
+.tile .klabel{font:400 12.5px var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+.tile .stat{font:500 26px var(--mono);line-height:1.15;font-variant-numeric:tabular-nums;display:flex;flex-wrap:wrap;align-items:center;gap:2px 6px}
+.tile .small{font-size:14.5px;color:var(--muted)}
+.tiles .pos{color:var(--up)} .tiles .neg{color:var(--dn)}
+.stale{color:#ef7a70;font-weight:600}
+details.picks{margin-top:28px}
+details.picks>summary{cursor:pointer;font:600 22px var(--serif);padding:6px 0}
+details.picks>summary .muted{font-size:14px;font-weight:400}
+.pill{white-space:nowrap;font:500 13.5px var(--mono);padding:2px 9px;border-radius:99px;border:1px solid var(--line);vertical-align:middle}
+.pill.pos{border-color:color-mix(in srgb,var(--up) 40%,transparent);background:color-mix(in srgb,var(--up) 10%,transparent)}
+.pill.neg{border-color:color-mix(in srgb,var(--dn) 40%,transparent);background:color-mix(in srgb,var(--dn) 9%,transparent)}
+.cols2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:28px;align-items:start}
+@media(max-width:900px){.cols2{grid-template-columns:minmax(0,1fr)}}
+</style>
+<header class="an-head"><div><a class="an-home" href="/" aria-label="Back to the homepage">← Home</a>
+  <a class="an-brand" href="/basketball/handicap/"><svg class="an-mark" aria-hidden="true"><use href="/assets/marks.svg#basketball"/></svg><span><small class="an-kicker">Basketball · Handicap</small><h1>Basketball handicap</h1></span></a>
+  <nav class="tabs an-tabs" id="tabs" aria-label="Sections">
+    <a href="#view=projections" data-view="projections" class="on">Projections</a>
+    <a href="#view=backtest" data-view="backtest">Backtest</a>
+    <a href="#view=leagues" data-view="leagues">Leagues</a>
+    <a href="#view=teams" data-view="teams">Teams</a>
+    <a href="#view=method" data-view="method">How it works</a>
+  </nav>
+</div></header>
+<div class="wrap">
+  <div class="sub" id="sub" style="margin:0 0 12px"></div>
+  <div class="tiles" id="top"></div>
+  <div class="chips" id="chips"></div>
+  <div id="out"></div>
+</div>
+
+<script src="data.js?v=202611132329"></script>
+<script src="live.js?v=202611132329"></script>
+<script>
+const $ = id => document.getElementById(id);
+const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const dayName = s => { const d = new Date(s.slice(0,10)+'T12:00'); return `${DAYS[d.getDay()]} ${d.getDate()} ${MON[d.getMonth()]}`; };
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const pct = (x, d=0) => x == null ? '–' : (x*100).toFixed(d) + '%';
+const sgn = (x, d=1) => x == null ? '–' : (x > 0 ? '+' : x < 0 ? '−' : '') + Math.abs(x).toFixed(d);
+const roi = x => x == null ? '–' : `<span class="${x > 0 ? 'pos' : x < 0 ? 'neg' : ''}">${sgn(x*100, 1)}%</span>`;
+const hc = x => x == null ? '–' : x === 0 ? '0' : sgn(-x);   // a home margin as the home side's handicap: home by 5.5 = −5.5
+const f1 = x => x == null ? '–' : x.toFixed(1);
+const LG = Object.fromEntries(DATA.leagues.map(l => [l.key, l]));
+const lgName = k => LG[k] ? (LG[k].country === 'Europe' ? LG[k].name : `${LG[k].country} · ${LG[k].name}`) : k;
+const lgShort = k => LG[k].country === 'Europe' ? LG[k].name : LG[k].country;
+const BT = DATA.backtest, A = BT.all, GP = DATA.min_gp;
+const sn = s => `${s.slice(0, 4)}–${s.slice(7)}`;
+let view = 'projections', lg = 'all', at = 'open';
+const AGE = LIVE.ts ? (Date.now() / 1000 - LIVE.ts) / 3600 : null;
+
+function tiles(list){ return list.map(([l, v, c]) => `<div class="tile"><span class="klabel">${l}</span><span class="stat">${v}</span><span class="small">${c}</span></div>`).join(''); }
+
+// top tiles: how the projections did against the handicap, 2022–23 to 2025–26, games with both teams GP+ games in
+function topTiles(){
+  const o = A.all.open, c = A.all.close, ac = A.acc, cu = BT.current;
+  return tiles([
+    ['Games', ac.lined.toLocaleString('en'), `with a handicap, ${sn(DATA.seasons[0])} to ${sn(DATA.seasons.at(-1))}`],
+    ['Side covered at opening', pct(o.hit, 1), `${o.w.toLocaleString('en')}–${o.l.toLocaleString('en')} cover · fail`],
+    ['ROI at opening', roi(o.roi), `every game, the model's side, flat stakes`],
+    ['Side covered at closing', pct(c.hit, 1), `${c.w.toLocaleString('en')}–${c.l.toLocaleString('en')} cover · fail`],
+    ['ROI at closing', roi(c.roi), `every game, the model's side`],
+    ['Miss: model', f1(ac.mae_model), 'points from the final margin, on average'],
+    ['Miss: closing line', f1(ac.mae_line), 'points from the final margin, on average'],
+    ['Line moved toward the model', pct(A.move.toward), `open to close, ${A.move.n.toLocaleString('en')} games; against it ${pct(A.move.against)}`],
+    ...(cu ? [['This season', pct(cu.all.open.hit, 1), `side covered at opening, ${cu.all.open.w}–${cu.all.open.l}`]] : [])
+  ]);
+}
+
+const HEAD = (first) => `<tr><th>${first}</th><th class="n">Games</th><th class="n">Covered</th><th class="n">Cover %</th><th class="n">Avg price</th><th class="n">ROI</th><th class="n">Chance</th><th class="n">Edge</th></tr>`;
+const row = (label, g) => !g || !g.n ? '' : `<tr><td>${label}</td><td class="n">${g.n.toLocaleString('en')}</td><td class="n">${g.w}–${g.l}${g.push ? ` <span class="muted">(${g.push})</span>` : ''}</td><td class="n">${pct(g.hit, 1)}</td><td class="n">${g.px ? g.px.toFixed(2) : '–'}</td><td class="n">${roi(g.roi)}</td><td class="n">${pct(g.p, 1)}</td><td class="n">${f1(g.edge)}</td></tr>`;
+const tbl = (first, rows, key) => `<div class="scroll"><table class="mk">${HEAD(first)}${rows.map(x => row(x.band, x[key])).join('')}</table></div>`;
+const atSeg = () => `<div class="seg" id="atseg"><button data-at="open" class="${at === 'open' ? 'on' : ''}">At opening</button><button data-at="close" class="${at === 'close' ? 'on' : ''}">At closing</button></div>`;
+
+function renderBacktest(){
+  const S = DATA.seasons, sec = lg === 'all' ? A : BT.leagues[lg];
+  if (!sec) return '<p class="empty">No games with a handicap in this league.</p>';
+  let h = `<p class="note">Every regular-season game in ${sn(S[0])} to ${sn(S.at(-1))} where both teams had played at least <b>${GP} games</b> that season, the model fitted on earlier games only. The model's side is the home team when its margin is above the books' handicap, the away team when below. ROI is what backing that side in every game at the average price would have returned; the page makes no picks. Cover % leaves pushes out (in brackets).</p>`;
+  h += `<div class="bar">${atSeg()}</div>`;
+  h += `<div><div><h2>By edge</h2><p class="muted">Edge: points between the model's margin and the handicap.</p>${tbl('Edge (pts)', sec.edges, at)}</div>`;
+  h += `<div><h2>Calibration</h2><p class="muted">The model's cover chance for its side against how often it covered.</p>${tbl('Chance', sec.cal, at)}</div></div>`;
+  h += `<div><div><h2>By games played</h2><p class="muted">The fewer games of the two teams, this season.</p>${tbl('Games played', sec.gp, at)}</div>`;
+  h += `<div><h2>By side</h2><p class="muted">Which side the model was on.</p>${tbl('Side', sec.side, at)}</div></div>`;
+  if (lg === 'all') {
+    h += `<h2>By season</h2>${tbl('Season', S.map(s => ({band: sn(s), ...BT.seasons[s].all})), at)}`;
+    h += `<p class="muted">Miss per season (points from the final margin): ${S.map(s => `${sn(s)} model ${f1(BT.seasons[s].acc.mae_model)} · line ${f1(BT.seasons[s].acc.mae_line)}`).join(' &nbsp;|&nbsp; ')}</p>`;
+    if (BT.current) h += `<h2>This season so far</h2><p class="muted">Not part of the backtest: ${BT.current.acc.lined} games with a handicap since teams reached ${GP} games.</p>${tbl('Edge (pts)', [{band: 'All games', ...BT.current.all}, ...BT.current.edges], at)}`;
+  }
+  return h;
+}
+
+function renderLeagues(){
+  const keys = Object.keys(BT.leagues).sort((a, b) => (BT.leagues[b].all[at].roi ?? -9) - (BT.leagues[a].all[at].roi ?? -9));
+  let h = `<p class="note">Each league's backtest, ${sn(DATA.seasons[0])} to ${sn(DATA.seasons.at(-1))}, both teams ${GP}+ games. <b>Miss</b>: average points between the final margin and the model or the closing line; lower is better. Leagues with few past handicaps have small samples. Click a league for its tables.</p><div class="bar">${atSeg()}</div>`;
+  h += `<div class="scroll"><table class="mk lgt"><tr><th>League</th><th class="n">Games</th><th class="n">Covered</th><th class="n">Cover %</th><th class="n">ROI</th><th class="n">Miss model</th><th class="n">Miss line</th><th class="n">Toward model</th></tr>`;
+  h += keys.map(k => { const s = BT.leagues[k], g = s.all[at];
+    return `<tr><td><a class="gm" href="#view=backtest&lg=${k}">${esc(lgName(k))}</a></td><td class="n">${g.n}</td><td class="n">${g.w}–${g.l}</td><td class="n">${pct(g.hit, 1)}</td><td class="n">${roi(g.roi)}</td><td class="n">${f1(s.acc.mae_model)}</td><td class="n">${f1(s.acc.mae_line)}</td><td class="n">${pct(s.move.toward)}</td></tr>`; }).join('');
+  return h + '</table></div>';
+}
+
+function renderProjections(){
+  const F = LIVE.fixtures.filter(g => lg === 'all' || g.lg === lg);
+  if (!F.length) return '<p class="empty">No games in the next 7 days.</p>';
+  let h = `<p class="note">The model's margin for every game in the next 7 days, next to the books' handicap. Both shown as the <b>home side's handicap</b>: −5.5 means the home side is expected to win by 5.5. <b>Diff</b> is how many points the model is on one side of the line; <b>Chance</b> is the model's chance that side covers. Games where a team has played fewer than ${GP} games this season, and play-off games, are shown in grey without a side. Projections only: no picks.</p>`;
+  const byDay = {};
+  F.forEach(g => (byDay[g.when.slice(0, 10)] ||= []).push(g));
+  for (const [d, list] of Object.entries(byDay)) {
+    h += `<h2 class="day">${dayName(d)}</h2><div class="scroll"><table class="mk proj"><tr><th>Time</th><th>League</th><th>Game</th><th class="n">Played</th><th class="n">Model</th><th class="n">Line</th><th class="n">Opening</th><th class="n">Diff</th><th>Model's side</th><th class="n">Chance</th></tr>`;
+    h += list.map(g => {
+      const has = g.line != null, side = has && g.ok && g.mu !== g.line ? (g.mu > g.line ? g.home : g.away) : null;
+      const p = side ? (g.mu > g.line ? g.p : 1 - g.p) : null;
+      return `<tr class="${g.ok ? '' : 'few'}"><td class="n">${g.when.slice(11)}</td><td>${esc(lgShort(g.lg))}</td><td class="wr">${esc(g.home)} – ${esc(g.away)}</td><td class="n">${g.gh}·${g.ga}</td><td class="n tot">${g.ok ? hc(g.mu) : '–'}</td><td class="n">${hc(g.line)}</td><td class="n">${hc(g.open)}</td><td class="n">${side ? f1(Math.abs(g.mu - g.line)) : '–'}</td><td>${side ? esc(side) : '<span class="muted">–</span>'}</td><td class="n">${p != null ? pct(p) : '–'}</td></tr>`;
+    }).join('') + '</table></div>';
+  }
+  return h;
+}
+
+function renderTeams(){
+  const T = LIVE.tables || {}, keys = Object.keys(T).filter(k => lg === 'all' ? true : k === lg);
+  const show = lg === 'all' ? keys.slice(0, 0) : keys;
+  if (!show.length) return `<p class="note">Pick a league above for its team strengths this season: points better or worse than the league average, from this season's games only, with the home edge the league gives.</p>`;
+  return show.map(k => { const t = T[k];
+    return `<h2>${esc(lgName(k))}</h2><p class="muted">Home edge ${sgn(t.hca)} points. A game's margin = home edge + home strength − away strength.</p><table class="mk mini" style="max-width:520px"><tr><th>#</th><th>Team</th><th class="n">Games</th><th class="n">Strength</th></tr>${t.teams.map((x, i) => `<tr class="${x[1] < GP ? 'few' : ''}"><td class="n">${i + 1}</td><td>${esc(x[0])}</td><td class="n">${x[1]}</td><td class="n">${sgn(x[2])}</td></tr>`).join('')}</table>`; }).join('');
+}
+
+function renderMethod(){
+  const E = BT.examples, P = DATA.params, o = A.all.open, c = A.all.close, ac = A.acc;
+  const best = A.edges.filter(x => x.open.n >= 200).sort((a, b) => b.open.hit - a.open.hit)[0];
+  return `<div class="doc">
+<h3><span class="num">1</span>A projected margin for every game</h3>
+<p>Each team gets one number, its <b>strength</b>: how many points better or worse than its league's average team it is. It comes from this season's games only, because rosters change from year to year, with recent games counting more (half-life ${P.half_life} days) and pulled toward 0 while a team has few games. Each league also has a <b>home edge</b>: the average home margin, from this season and, at ${P.season_carry} weight, earlier ones. Overtime counts, as the books settle the handicap.</p>
+<div class="calc">projected home margin = home edge + home strength − away strength</div>
+<p>Example: ${esc(E.home)} v ${esc(E.away)} (${dayName(E.date)}): home edge ${sgn(E.hca)}, ${esc(E.home)} ${sgn(E.rh)}, ${esc(E.away)} ${sgn(E.ra)}, so <b>${sgn(E.mu)}</b> for the home side, a handicap of ${hc(E.mu)}. The books' closing handicap was ${hc(E.line)}. Final margin: ${sgn(E.margin, 0)}.</p>
+<h3><span class="num">2</span>Only after ${GP} games</h3>
+<p>A projection is shown once both teams have played at least <b>${GP} games</b> of the regular season, the point from which a team's strength rests on enough of its own games; earlier, the number is mostly the league average. Play-off games are left out. The Backtest tab has the cover rate by games played.</p>
+<h3><span class="num">3</span>Against the handicap</h3>
+<p>The line is the books' handicap for the home side, the median of each book's main handicap (the one it prices closest to evens), at the opening and at the closing line. The <b>model's side</b> is the home team when the projected margin is above the line, the away team when below; <b>edge</b> is the gap in points. The <b>chance</b> that side covers assumes the final margin falls around the projection with the league's usual miss (a normal curve with the league's spread of margins around the model, about ${f1(E.sd)} points in Greece).</p>
+<div class="calc">chance home covers = P(margin > line) with margin ~ Normal(projection, league spread)<br><i>e.g. projection ${sgn(E.mu)}, line ${sgn(E.line)}, spread ${f1(E.sd)} → ${pct(E.p, 1)} for the home side</i></div>
+<h3><span class="num">4</span>What the backtest shows</h3>
+<p>${ac.lined.toLocaleString('en')} games with a handicap in ${DATA.backtest ? Object.keys(BT.leagues).length : ''} leagues, ${sn(DATA.seasons[0])} to ${sn(DATA.seasons.at(-1))}. The model's side covered <b>${pct(o.hit, 1)}</b> at the opening line (ROI ${roi(o.roi)} at the average price) and <b>${pct(c.hit, 1)}</b> at the closing line (${roi(c.roi)}). At the average price of about ${o.px ? o.px.toFixed(2) : '1.90'} a side has to cover ${o.px ? pct(1 / o.px, 1) : '52.6%'} to break even.</p>
+<p>The model misses the final margin by ${f1(ac.mae_model)} points on average, the closing line by ${f1(ac.mae_line)}: the market knows injuries, rest and roster news the model cannot see. Between the open and the close the line moved toward the model's side in ${pct(A.move.toward)} of games and against it in ${pct(A.move.against)}.${best ? ` The best edge band at the opening line was ${best.band} points (${pct(best.open.hit, 1)} over ${best.open.n} games).` : ''}</p>
+<h3><span class="num">5</span>Projections only</h3>
+<p>The page makes no picks and keeps no record. It shows the model's number beside the market's so the gap can be read game by game; whether a gap is worth acting on is what the Backtest and Leagues tabs measure.</p>
+<h3><span class="num">6</span>Data</h3>
+<p>Results and handicaps for ${DATA.leagues.length} top domestic divisions in Europe and Latin America, the same leagues as the <a class="gm" href="/basketball/overs/#view=method">totals page</a>, ${DATA.games.toLocaleString('en')} games from 2020–21 (warm-up) on. Each backtest projection uses only games played before that day. The model's settings were fitted on 2021–22 results, before any season shown here. Projections refresh every few hours.</p>
+</div>`;
+}
+
+const RENDER = {projections: renderProjections, backtest: renderBacktest, leagues: renderLeagues, teams: renderTeams, method: renderMethod};
+const CHIPS = {projections: 1, backtest: 1, teams: 1};
+function render(){
+  document.querySelectorAll('#tabs a').forEach(a => { a.classList.toggle('on', a.dataset.view === view); a.href = `#view=${a.dataset.view}${lg === 'all' || !CHIPS[a.dataset.view] ? '' : '&lg=' + lg}`; });
+  let keys = DATA.leagues.map(l => l.key);
+  if (view === 'projections') keys = keys.filter(k => LIVE.fixtures.some(g => g.lg === k));
+  if (view === 'backtest') keys = keys.filter(k => BT.leagues[k]);
+  if (view === 'teams') keys = keys.filter(k => (LIVE.tables || {})[k]);
+  const chips = CHIPS[view] ? [...(view === 'teams' ? [] : [['all', 'All leagues']]), ...keys.map(k => [k, lgShort(k)])] : [];
+  $('chips').innerHTML = chips.map(([k, t]) => `<a href="#view=${view}${k === 'all' ? '' : '&lg=' + k}" class="${k === lg ? 'on' : ''}">${esc(t)}</a>`).join('');
+  $('top').innerHTML = view === 'teams' ? '' : topTiles();
+  $('out').innerHTML = RENDER[view]();
+}
+document.addEventListener('click', e => { const b = e.target.closest('#atseg button'); if (b) { at = b.dataset.at; render(); } });
+function fromHash(){
+  const m = location.hash.match(/view=(\w+)/), l = location.hash.match(/lg=([\w-]+)/);
+  view = m && RENDER[m[1]] ? m[1] : 'projections';
+  lg = l && LG[l[1]] ? l[1] : (view === 'teams' ? 'greece-basket-league' : 'all');
+  render();
+}
+$('sub').innerHTML = (AGE > 8 ? `<span class="stale">Not updated for ${Math.floor(AGE)} hours: projections and lines may be out of date.</span> · ` : '') + `Updated ${LIVE.updated} (Athens) · ${DATA.leagues.length} leagues · backtest ${sn(DATA.seasons[0])} to ${sn(DATA.seasons.at(-1))} · projections from ${GP} games`;
+window.addEventListener('hashchange', fromHash);
+fromHash();
+</script>
+</body>
+</html>
