@@ -264,7 +264,10 @@ $('sub').innerHTML = (AGE > 3 ? `<span class="stale">Not updated for ${Math.floo
 function mvTiles(list){
   const up = list.filter(b => b.close > b.line), dn = list.filter(b => b.close < b.line);
   const a = L => L.length ? L.reduce((x, b) => x + b.close - b.line, 0) / L.length : null;
-  return [['Avg move toward the pick', up.length ? sgn(a(up), 1) + ' pts' : '–', `avg of ${up.length} picks`], ['Avg move against it', dn.length ? sgn(a(dn), 1) + ' pts' : '–', `avg of ${dn.length} picks`]];
+  const hit = L => { const d = L.filter(b => b.ret != null && b.ret !== 0); return d.length ? pct(d.filter(b => b.ret > 0).length / d.length, 1) : '–'; };
+  const wl_ = L => { const d = L.filter(b => b.ret != null && b.ret !== 0), w = d.filter(b => b.ret > 0).length; return `${w}–${d.length - w} win – loss`; };
+  return [['Avg move toward the pick', up.length ? sgn(a(up), 1) + ' pts' : '–', `avg of ${up.length} picks`], ['Avg move against it', dn.length ? sgn(a(dn), 1) + ' pts' : '–', `avg of ${dn.length} picks`],
+          ['Won when the line moved toward the pick', hit(up), wl_(up)], ['Won when it moved against', hit(dn), wl_(dn)]];
 }
 
 function tiles(list){
