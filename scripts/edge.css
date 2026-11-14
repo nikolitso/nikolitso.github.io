@@ -196,3 +196,33 @@ body { overflow-x: clip; }  /* safety net */
 .nf-search button { font: inherit; font-size: .85rem; font-weight: 600; color: #fff; background: var(--accent); border: 0; border-radius: 999px; padding: .55rem 1.2rem; cursor: pointer; }
 .nf-search button:hover { background: #2f58e0; }
 .hero .lede a { color: var(--on-dark); }
+
+
+/* 2026 redesign: clearer book-card metadata and consistent browse controls */
+.book-byline{
+  display:flex;align-items:flex-start;justify-content:space-between;
+  gap:.55rem;margin-top:.22rem;min-width:0;
+}
+.book-byline p{min-width:0;overflow-wrap:anywhere}
+.book-year{
+  flex:none;font:500 .68rem/1.5 var(--mono,ui-monospace,monospace);
+  color:var(--muted);font-variant-numeric:tabular-nums;
+  padding-top:.08rem;white-space:nowrap;
+}
+.book h3{min-height:2.3em;text-wrap:balance}
+.book:focus-visible .book-cover{outline:2px solid var(--accent);outline-offset:4px}
+.book-cover img{transition:transform .35s ease}
+.book:hover .book-cover img{transform:scale(1.025)}
+.controls .tools input:focus-visible,.controls .tools select:focus-visible{
+  border-color:var(--accent);outline:2px solid color-mix(in srgb,var(--accent) 35%,transparent);outline-offset:1px;
+}
+@media(max-width:640px){
+  .books{grid-template-columns:repeat(2,minmax(0,1fr));gap:1.6rem .9rem}
+  .book h3{font-size:1.15rem}
+  .book-byline{gap:.3rem}
+  .book-year{font-size:.62rem}
+}
+@media(prefers-reduced-motion:reduce){
+  .book-cover,.book-cover img{transition:none!important}
+  .book:hover .book-cover,.book:hover .book-cover img{transform:none!important}
+}
