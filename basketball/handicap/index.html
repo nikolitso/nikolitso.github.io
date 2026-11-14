@@ -173,9 +173,13 @@ a.tile:hover{border-color:var(--gold)}
 .tile .klabel{font:400 12.5px var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
 .tile .stat{font:500 26px var(--mono);line-height:1.15;font-variant-numeric:tabular-nums;display:flex;flex-wrap:wrap;align-items:center;gap:2px 6px}
 .tile .small{font-size:14.5px;color:var(--muted)}
+
+.tile .two{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%;font-size:24px}
+
+.tile .two i{display:block;font:400 11px var(--mono);font-style:normal;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px;white-space:nowrap}
 /* two rows of five: the record, then the closing line (14 Nov 2026) */
 #top,.metrics.m5,.tiles.t5{grid-template-columns:repeat(5,minmax(0,1fr))}   /* 1H Live test tiles: two rows of five too */
-@media(max-width:760px){#top,.metrics.m5,.tiles.t5{grid-template-columns:repeat(2,minmax(0,1fr))}#top .stat b,.metrics.m5 .big b,.tiles.t5 .stat b{white-space:normal!important}}
+@media(max-width:760px){.tile .two{font-size:19px;gap:6px}.tile .two i{white-space:normal}#top,.metrics.m5,.tiles.t5{grid-template-columns:repeat(2,minmax(0,1fr))}#top .stat b,.metrics.m5 .big b,.tiles.t5 .stat b{white-space:normal!important}}
 .tiles .pos{color:var(--up)} .tiles .neg{color:var(--dn)}
 .stale{color:#ef7a70;font-weight:600}
 details.picks{margin-top:28px}
@@ -203,7 +207,7 @@ details.picks>summary .muted{font-size:14px;font-weight:400}
   <div id="out"></div>
 </div>
 
-<script src="live.js?v=202611141033"></script>
+<script src="live.js?v=202611141103"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
