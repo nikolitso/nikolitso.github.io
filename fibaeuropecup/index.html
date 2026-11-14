@@ -202,7 +202,7 @@ select.peer:focus{outline:2px solid var(--gold)}
   .controls>div:nth-of-type(1){grid-column:1/-1;grid-row:2}
 }
 </style>
-<link rel="stylesheet" href="/assets/an.css?v=1">
+<link rel="stylesheet" href="/assets/an.css?v=2">
 </head>
 <body>
 <!-- sitebar:start (link back to antonisnikolitsopoulos.com; keep on every page) -->
@@ -223,7 +223,15 @@ select.peer:focus{outline:2px solid var(--gold)}
   </nav>
 </div></header>
 <div class="wrap">
-  <div class="sub" id="sub"></div>
+  <div class="sub an-meta-strip" id="sub"></div>
+
+  <div class="an-project-context"><span class="an-project-context__label">Scope</span><span>Club ratings, player and roster context, game projections and bookmaker lines are presented as distinct evidence. Historical head-to-heads and Elo rankings provide context; they are not substitutes for a current-match forecast.</span></div>
+  <div class="an-data-key" role="group" aria-label="How to read the numbers">
+    <span class="an-data-key__title">Reading the numbers</span>
+    <span class="an-data-key__item"><i class="an-data-key__dot an-data-key__dot--expected" aria-hidden="true"></i><b>Model</b> projected spread / total and club rating</span>
+    <span class="an-data-key__item"><i class="an-data-key__dot an-data-key__dot--market" aria-hidden="true"></i><b>Market</b> bookmaker handicap / total</span>
+    <span class="an-data-key__item"><i class="an-data-key__dot an-data-key__dot--actual" aria-hidden="true"></i><b>Actual</b> final score and settled game result</span>
+  </div>
   <p class="games-link"><a href="/fibaeuropecup/games/">Game by game: the projection, the line and the result →</a></p>
 
   <div id="hmView" hidden></div>
