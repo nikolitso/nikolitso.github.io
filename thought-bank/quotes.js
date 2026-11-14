@@ -60,10 +60,13 @@
     if (short) art.classList.add("short");
     var top = el("div", "q-top");
     top.appendChild(el("span", "tag", q.category || ""));
-    var a = el("a", "q-link", "#" + q.id);
-    a.href = "#q-" + q.id;
-    a.setAttribute("aria-label", "Link to quote " + q.id);
-    top.appendChild(a);
+    // The #N link shows only on attributed quotes; every card keeps its #q-N anchor either way.
+    if (q.author) {
+      var a = el("a", "q-link", "#" + q.id);
+      a.href = "#q-" + q.id;
+      a.setAttribute("aria-label", "Link to quote " + q.id);
+      top.appendChild(a);
+    }
     art.appendChild(top);
     if (q.title) art.appendChild(el("h3", null, q.title));
     art.appendChild(body(q.text));
