@@ -190,7 +190,7 @@ def load():
             authors=authors, year=str(meta.get("year") or date[:4]), date=date,
             topic=tname, tslug=tslug, tcol=tcol,
             cover=cover_for(slug, str(meta.get("cover") or "")),
-            body=body_html, excerpt=plain(body_html, 220), url=f"{BASE}{slug}/",
+            body=body_html, excerpt=plain(body_html, 220), url=f"{BASE}{slug}/", logline=str(meta.get("logline") or ""),
             added=ADDED.get(slug) or NOW,
         ))
     books.sort(key=lambda b: (b["date"], b["title"]), reverse=True)
@@ -250,8 +250,8 @@ def site_footer():
 </footer>"""
 
 
-def layout(title, body, path, desc, image=None, active="books"):
-    full = f"{title} — Antonis Nikolitsopoulos" if title != "Books" else "Books — Book takeaways by Antonis Nikolitsopoulos"
+def layout(title, body, path, desc, image=None, active="books", full=None, ld=None, og_type="website"):
+    full = full or (f"{title} — Antonis Nikolitsopoulos" if title != "Books" else "Books — Book takeaways by Antonis Nikolitsopoulos")
     img = image if (image or "").startswith("http") else SITE + (image or ("/books.jpg" if active else "/og.png"))
     sub = lambda key, href, label: f'<a href="{href}"{" class=on" if active == key else ""}>{label}</a>'
     subnav = (f'<nav class="subnav" aria-label="Books"><div class="wrap"><a class="an-home" href="/" aria-label="Back to the homepage">← Home</a>{sub("books", BASE, "All books")}'
@@ -268,7 +268,7 @@ def layout(title, body, path, desc, image=None, active="books"):
 <meta property="og:title" content="{esc(full)}">
 <meta property="og:description" content="{esc(desc)}">
 <meta property="og:url" content="{SITE}{path}">
-<meta property="og:type" content="website">
+<meta property="og:type" content="{og_type}">
 <meta property="og:image" content="{esc(img)}">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:creator" content="@nikolitso">
@@ -281,7 +281,7 @@ def layout(title, body, path, desc, image=None, active="books"):
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Hanken+Grotesk:ital,wght@0,300..700;1,400&display=swap">
 <link rel="stylesheet" href="{BASE}edge.css?v={CSS_V}">
 <link rel="stylesheet" href="/assets/an.css?v=5">
-</head>
+{ld or ""}</head>
 <body>
 {ICONS}
 {site_header("books" if active else "")}
@@ -416,7 +416,39 @@ def page_book(b, books, by_date):
   </section>
 </article>
 {rel}"""
-    write(b["url"], layout(b["title"], body, b["url"], b["subtitle"] or b["excerpt"], b["cover"]))
+    write(b["url"], layout(b["title"], body, b["url"], book_desc(b), b["cover"], full=book_title(b), ld=book_ld(b), og_type="article"))
+
+
+# search (15 Nov 2026): the title names the author, the description is the logline, and schema.org Book data says what the page is about
+def by_line(authors):
+    if not authors:
+        return ""
+    return authors[0] if len(authors) == 1 else f"{authors[0]} and {authors[1]}" if len(authors) == 2 else f"{authors[0]} and others"
+
+
+def book_title(b):
+    core = f"{b['title']} by {by_line(b['authors'])}: key ideas" if b["authors"] else f"{b['title']}: key ideas"
+    return core if len(core) > 44 else f"{core} — Antonis Nikolitsopoulos"
+
+
+def book_desc(b):
+    d = (b.get("logline") or b["subtitle"] or b["excerpt"]).strip()
+    if len(d) > 158:
+        d = d[:158].rsplit(" ", 1)[0].rstrip(",;:—– ") + "…"
+    return d if d.endswith((".", "…", "?", "!")) else d + "."
+
+
+def book_ld(b):
+    data = {"@context": "https://schema.org", "@type": "Book", "name": b["title"], "url": SITE + b["url"],
+            "author": [{"@type": "Person", "name": a} for a in b["authors"]], "genre": b["topic"],
+            "description": b.get("logline") or b["subtitle"], "inLanguage": "en"}
+    if b["year"].isdigit():
+        data["datePublished"] = b["year"]
+    if b["cover"]:
+        data["image"] = b["cover"] if b["cover"].startswith("http") else SITE + b["cover"]
+    page = {"@context": "https://schema.org", "@type": "WebPage", "name": book_title(b), "url": SITE + b["url"],
+            "author": {"@type": "Person", "name": "Antonis Nikolitsopoulos", "url": SITE + "/about/"}, "about": data}
+    return '<script type="application/ld+json">' + json.dumps(page, ensure_ascii=False).replace("</", "<\\/") + "</script>\n"
 
 
 def share_x(b):

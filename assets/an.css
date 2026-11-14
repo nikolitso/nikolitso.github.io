@@ -226,3 +226,7 @@ html:not([data-site="books"]) .an-kicker,html:not([data-site="books"]) .an-home,
 @media(min-width:761px) and (max-width:1180px){html:not([data-site="books"]) .an-project-nav a{font-size:14px}}
 @media(max-width:760px){html:not([data-site="books"]) .an-project-nav a,html:not([data-site="books"]) .an-project-context,html:not([data-site="books"]) .an-data-key,html:not([data-site="books"]) .an-data-key__item,html:not([data-site="books"]) .an-data-key__title,html:not([data-site="books"]) .an-meta-strip,html:not([data-site="books"]) table th,html:not([data-site="books"]) .small,html:not([data-site="books"]) .muted.small,html:not([data-site="books"]) .sub,html:not([data-site="books"]) .hint,html:not([data-site="books"]) .caption,html:not([data-site="books"]) .footnote,html:not([data-site="books"]) .an-home,html:not([data-site="books"]) .an-project-context__label{font-size:14px}}
 @media(max-width:480px){html:not([data-site="books"]) table,html:not([data-site="books"]) table td{font-size:14px}}
+/* Books (15 Nov 2026): the same 14px floor for the ← Home button in the All books · Authors row */
+html[data-site="books"] .subnav a.an-home{font-size:14px}
+/* Books: the italic subtitle under a book title keeps its own size; the sports rule for .sub (14px, 13px on phones) shrank it */
+html[data-site="books"] .book-hero-text .sub{font-size:clamp(1.2rem,2.2vw,1.55rem);line-height:1.3}
