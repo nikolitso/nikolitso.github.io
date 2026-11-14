@@ -4,10 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Basketball totals: overs at the opening line</title>
-<meta name="description" content="Basketball totals in 44 domestic top divisions in Europe and Latin America: four seasons of backtests at the opening line, a live record and projections.">
+<meta name="description" content="Basketball totals in 40 domestic top divisions in Europe and Latin America: four seasons of backtests at the opening line, a live record and projections.">
 <link rel="canonical" href="https://antonisnikolitsopoulos.com/basketball/overs/">
 <meta property="og:title" content="Basketball totals: overs at the opening line">
-<meta property="og:description" content="Basketball totals in 44 domestic top divisions in Europe and Latin America: four seasons of backtests at the opening line, a live record and projections.">
+<meta property="og:description" content="Basketball totals in 40 domestic top divisions in Europe and Latin America: four seasons of backtests at the opening line, a live record and projections.">
 <meta property="og:url" content="https://antonisnikolitsopoulos.com/basketball/overs/">
 <meta property="og:image" content="https://antonisnikolitsopoulos.com/basketball-overs.jpg">
 <meta name="twitter:card" content="summary_large_image">
@@ -172,9 +172,9 @@ table.proj tr.pk td{background:var(--an-accent-soft)}table.proj tr.pk td:first-c
 a.tile:hover{border-color:var(--gold)}
 .tile .klabel{font:400 12.5px var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
 .tile .stat{font:500 26px var(--mono);line-height:1.15;font-variant-numeric:tabular-nums;display:flex;flex-wrap:wrap;align-items:center;gap:2px 6px}
-.tile .small{font-size:14.5px;color:var(--muted)}
+.tile .small{font-size:14.5px;color:var(--muted)}
 .tile .two{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%;font-size:24px}
-#top .tile:nth-child(-n+3) .stat{font-size:36px}#top .tile:nth-child(-n+3) .two{font-size:28px;gap:4px}.tiles.t5 .tile:nth-child(-n+2) .stat{font-size:34px}.tiles.t5 .tile:nth-child(2) .two{font-size:26px;gap:4px}   /* open picks, settled picks, ROI stand out (14 Nov 2026) */
+#top .tile:nth-child(-n+3) .stat{font-size:36px}#top .tile:nth-child(-n+3) .two{font-size:28px;gap:4px}.tiles.t5 .tile:nth-child(-n+2) .stat{font-size:34px}.tiles.t5 .tile:nth-child(2) .two{font-size:26px;gap:4px}   /* open picks, settled picks, ROI stand out (14 Nov 2026) */
 .tile .two .h-a{color:var(--gold)}.tile .two .h-b{color:#7fb2ff}.tile .two .h-up{color:var(--up,#4cc47a)}.tile .two .h-dn{color:var(--dn,#ef7a70)}.tile .two span>i{color:inherit!important;opacity:.85}.tile .two span>b{color:inherit!important}   /* each value in its half's colour, ROI too */
 .tile .two i{display:block;font:400 11px var(--mono);font-style:normal;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px;white-space:nowrap}
 /* two rows of five: the record, then the closing line (14 Nov 2026) */
@@ -229,7 +229,7 @@ details.picks>summary .muted{font-size:14px;font-weight:400}
   <div class="chips" id="chips"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=902aff8a"></script>
+<script src="data.js?v=6f00b2be"></script>
 <script src="live.js"></script>
 <script>
 const $ = id => document.getElementById(id);
@@ -317,8 +317,8 @@ function mvTiles(list){
 }
 
 // two numbers in one tile, a little smaller so they stay on one line (14 Nov 2026)
-// two numbers in one tile, each with its own label above it (14 Nov 2026)
-function TWO(l1, v1, l2, v2, c1 = 'h-a', c2 = 'h-b'){ return `<span class="two"><span class="${c1}"><i>${l1}</i>${v1}</span><span class="${c2}"><i>${l2}</i>${v2}</span></span>`; }   // each half its own colour
+// two numbers in one tile, each with its own label above it (14 Nov 2026)
+function TWO(l1, v1, l2, v2, c1 = 'h-a', c2 = 'h-b'){ return `<span class="two"><span class="${c1}"><i>${l1}</i>${v1}</span><span class="${c2}"><i>${l2}</i>${v2}</span></span>`; }   // each half its own colour
 function PAIR(v){ return `<b style="font-size:.86em;font-weight:inherit;white-space:nowrap">${v}</b>`; }
 
 // tiles in the Live test style, five to a row (14 Nov 2026)
