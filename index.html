@@ -182,6 +182,22 @@ h2 { font-family: var(--display); font-weight: 400; font-size: clamp(2.2rem, 4.6
 
 /* Cards */
 .cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1.25rem; margin-top: 2.5rem; }
+
+.cards.project-groups { row-gap: 1.25rem; }
+.cards.project-groups > .project-group {
+  grid-column: 1 / -1;
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: .65rem 1rem;
+  margin: 1.1rem 0 .1rem; padding: 0 0 .65rem;
+  border-bottom: 1px solid var(--rule);
+  color: var(--accent); font-family: var(--body); font-size: .76rem;
+  font-weight: 700; letter-spacing: .15em; text-transform: uppercase;
+}
+.cards.project-groups > .project-group:first-child { margin-top: 0; }
+.cards.project-groups > .project-group span {
+  color: var(--muted); font-size: .72rem; font-weight: 500;
+  letter-spacing: .035em; text-transform: none;
+}
+
 .card {
   display: flex; flex-direction: column; text-decoration: none; background: var(--paper);
   border: 1px solid var(--rule); border-radius: 18px; padding: clamp(1.5rem, 3vw, 2.25rem);
