@@ -242,8 +242,34 @@ body { overflow-x: clip; }  /* safety net */
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } html { scroll-behavior: auto; } }
 .subnav { background: #151b2d; border-bottom: 1px solid var(--line-dark); }
 .subnav .wrap { display: flex; flex-wrap: wrap; gap: .25rem 1.5rem; padding-block: .55rem; }
+
+/* Quote search and per-quote source actions */
+.q-tools{display:grid;grid-template-columns:minmax(0,1fr);gap:7px;margin:1.4rem 0 1.1rem;max-width:42rem}
+.q-tools label{font-size:.7rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.q-tools input{
+  width:100%;min-height:46px;padding:.7rem .9rem;border:1px solid var(--rule);
+  border-radius:10px;background:var(--card);color:var(--ink);font:inherit;font-size:.95rem;
+}
+.q-tools input::placeholder{color:var(--muted)}
+.q-tools input:focus{border-color:var(--accent);outline:2px solid color-mix(in srgb,var(--accent) 28%,transparent);outline-offset:1px}
+.q-count{min-height:1.2em;margin:0;color:var(--muted);font-size:.72rem;font-variant-numeric:tabular-nums}
+.q-actions{display:flex;align-items:center;flex-wrap:wrap;justify-content:flex-end;gap:8px}
+.q-date{font-size:.68rem;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+.q-copy{
+  border:1px solid var(--rule);border-radius:999px;background:transparent;color:var(--muted);
+  padding:3px 9px;font:600 .67rem/1.4 var(--body);cursor:pointer;transition:border-color .15s,color .15s,background .15s;
+}
+.q-copy:hover,.q-copy:focus-visible{border-color:var(--accent);color:var(--accent)}
+.q-copy.is-copied{border-color:var(--accent);color:var(--accent);background:var(--c-soft)}
+@media(max-width:640px){
+  .q-actions{gap:6px}
+  .q-date{font-size:.62rem}
+  .q-copy{font-size:.62rem;padding:3px 7px}
+  .q-tools{margin-top:1.1rem}
+}
+
 </style>
-<link rel="stylesheet" href="/assets/an.css?v=1">
+<link rel="stylesheet" href="/assets/an.css?v=3">
 </head>
 <body>
 
@@ -278,6 +304,11 @@ body { overflow-x: clip; }  /* safety net */
       <p class="kicker">Collection</p>
       <h1>Thought <em>Bank</em></h1>
       <p class="q-lede">Lines worth keeping, collected one at a time from books, articles and people worth listening to. Filed in seven folders so they stay usable and compound over time.</p>
+      <div class="q-tools">
+        <label for="q-search">Search the collection</label>
+        <input id="q-search" type="search" placeholder="Search a quote, idea, author or source…" autocomplete="off">
+        <p id="q-count" class="q-count" aria-live="polite"></p>
+      </div>
       <p class="q-label" id="q-filter-label">Folder</p>
       <ul class="q-filter" id="q-filter" aria-labelledby="q-filter-label"></ul>
       <p class="q-label" id="q-by-label">Who said it</p>
@@ -306,7 +337,7 @@ body { overflow-x: clip; }  /* safety net */
     </div>
   </div>
 </footer>
-<script src="/thought-bank/quotes.js?v=8" defer></script>
+<script src="/thought-bank/quotes.js?v=9" defer></script>
 <!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "b67bbb76d0e24af196b24ded3ab71ad0"}'></script><!-- End Cloudflare Web Analytics -->
 </body>
 </html>
