@@ -206,7 +206,7 @@ details.picks>summary .muted{font-size:14px;font-weight:400}
   <div class="chips" id="chips"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=7dd25380"></script>
+<script src="data.js?v=d20408e5"></script>
 <script src="live.js"></script>
 <script>
 const $ = id => document.getElementById(id);
@@ -255,7 +255,7 @@ $('sub').innerHTML = (AGE > 3 ? `<span class="stale">Not updated for ${Math.floo
   const mu = set.filter(b => b.mu != null), nS = `${set.length} settled picks`;
   $('top').innerHTML = [['Open picks', nOpen, nOpen ? 'to play' : 'none right now'], ['Settled picks', won + lost ? `${won}–${lost}` : '–', won + lost ? `${pct(won / (won + lost), 1)} hit rate · ${set.length} settled` : `${set.length} settled`],
     ['ROI at opening · closing', PAIR(`${won + lost ? `<b class="${cls(units)}" style="font-weight:inherit">${roi(units / (won + lost))}</b>` : '–'} · ${cc.length ? `<b class="${cls(uc)}" style="font-weight:inherit">${roi(uc / cc.length)}</b>` : '–'}`),
-     'opening price · closing price'],
+     'opening line · closing line'],
     ['Opening line · closing line', PAIR(`${avg(cl, b => b.line)} · ${avg(cl, b => b.close)}`), ''],
     ['Model line · actual total', PAIR(`${avg(mu, b => b.mu)} · ${avg(cl, b => b.total)}`), ''],
     ...mvTiles(cl)]
