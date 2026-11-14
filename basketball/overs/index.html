@@ -290,10 +290,11 @@ function mvTiles(list){
   const a = L => L.length ? sgn(L.reduce((x, b) => x + b.close - b.line, 0) / L.length, 1) : '–';
   const dec = L => L.filter(b => b.ret != null && b.ret !== 0);
   const hit = L => { const d = dec(L); return d.length ? pct(d.filter(b => b.ret > 0).length / d.length, 1) : '–'; };
+  const ROIs = L => { const d = dec(L); if (!d.length) return ''; const r = d.reduce((x, b) => x + b.ret, 0) / d.length; return ` · ROI <b class="${cls(r)}" style="font-weight:inherit">${roi(r)}</b>`; };   // as on Won when no move
   const wl_ = L => { const d = dec(L), w = d.filter(b => b.ret > 0).length; return `${w}–${d.length - w}`; };
   return [['Closing line moved', n ? TWO('Toward pick', pct(up.length / n), 'Against', pct(dn.length / n), 'h-up', 'h-dn') : '–', ''],
           ['Avg move toward pick', up.length ? a(up) + ' pts' : '–', `avg of ${up.length} picks`], ['Avg move against pick', dn.length ? a(dn) + ' pts' : '–', `avg of ${dn.length} picks`],
-          ['Won when moved toward', hit(up), `${wl_(up)} win – loss`], ['Won when moved against', hit(dn), `${wl_(dn)} win – loss`]];
+          ['Won when moved toward', hit(up), `${wl_(up)} win – loss${ROIs(up)}`], ['Won when moved against', hit(dn), `${wl_(dn)} win – loss${ROIs(dn)}`]];
 }
 
 // two numbers in one tile, a little smaller so they stay on one line (14 Nov 2026)
