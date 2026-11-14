@@ -5,12 +5,11 @@ name: Feed · Basketball totals live test
 # nikolitso/BettingSignal (basketball-overs/); the record is basketball-overs/data/live/report.md there.
 # Publishes basketball/overs/live.js (projections + live record; the backtest part of the page is fixed) and a page per game.
 # Hourly: GitHub drops most scheduled runs, so a cron-job.org job starts this through the API (workflow_dispatch).
+# Weekends: a second cron-job.org job (Basketball totals (weekend :30)) adds a run at :30 on Sat and Sun, so picks settle sooner.
 # Its token expires 30 Oct 2027. The schedule below is only a backup.
 on:
   schedule:
     - cron: "7 */3 * * *"
-    # weekends (14 Nov 2026): an extra run at :30, so picks settle within about half an hour of the final whistle
-    - cron: "30 * * * 6,0"
   workflow_dispatch:
 
 permissions:
