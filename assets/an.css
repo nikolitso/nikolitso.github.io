@@ -101,3 +101,5 @@ html[data-site="books"]{--an-accent:#6d8dff}
 .an-meta-strip{display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;padding:9px 12px;margin:0 0 16px;border:1px solid var(--an-rule);border-radius:9px;background:var(--an-soft);color:var(--an-muted);font:400 12px/1.45 var(--an-mono);font-variant-numeric:tabular-nums}
 .an-meta-strip b{color:var(--an-ink);font-weight:600}
 @media(max-width:640px){.an-project-context{font-size:12px}.an-project-context__label{font-size:9px}.an-data-key{gap:8px 12px}.an-data-key__item{font-size:11px}}
+
+.an-data-key__dot--difference{background:var(--an-muted)}
