@@ -1,5 +1,9 @@
 {
  "fZrepb5C": {
+  "fh": 0.0,
+  "fa": 0.0,
+  "eh": null,
+  "ea": null,
   "h": 0.1,
   "a": 0.1,
   "oh": [
@@ -8,12 +12,25 @@
   "oa": []
  },
  "QRp0kj6S": {
+  "fh": 0.0,
+  "fa": 0.0,
+  "eh": null,
+  "ea": null,
   "h": 0.0,
   "a": 0.0,
   "oh": [],
   "oa": []
  },
  "b5ASRkko": {
+  "fh": 0.0,
+  "fa": 0.0,
+  "eh": null,
+  "ea": {
+   "comp": "EuroCup",
+   "opp": "Balkan",
+   "away": true,
+   "days": 4
+  },
   "h": 0.0,
   "a": -0.8,
   "oh": [],
@@ -22,12 +39,40 @@
   ]
  },
  "jacEkgsh": {
+  "fh": -0.9,
+  "fa": -0.9,
+  "eh": {
+   "comp": "FIBA Europe Cup",
+   "opp": "Trepca",
+   "away": false,
+   "days": 3
+  },
+  "ea": {
+   "comp": "FIBA Europe Cup",
+   "opp": "MZT Skopje",
+   "away": false,
+   "days": 3
+  },
   "h": 0.2,
   "a": 0.0,
   "oh": [],
   "oa": []
  },
  "6LnPPFGa": {
+  "fh": -1.9,
+  "fa": 0.0,
+  "eh": {
+   "comp": "EuroLeague",
+   "opp": "Barcelona",
+   "away": false,
+   "days": 2
+  },
+  "ea": {
+   "comp": "FIBA Europe Cup",
+   "opp": "SCM Craiova",
+   "away": true,
+   "days": 4
+  },
   "h": -0.7,
   "a": 0.0,
   "oh": [
@@ -38,6 +83,20 @@
   "oa": []
  },
  "bP0MmXB4": {
+  "fh": 0.0,
+  "fa": 0.0,
+  "eh": {
+   "comp": "Champions League",
+   "opp": "Varese",
+   "away": false,
+   "days": 4
+  },
+  "ea": {
+   "comp": "FIBA Europe Cup",
+   "opp": "Neftchi IK",
+   "away": true,
+   "days": 4
+  },
   "h": 0.1,
   "a": 0.0,
   "oh": [
@@ -46,6 +105,10 @@
   "oa": []
  },
  "6k4UoBtH": {
+  "fh": 0.0,
+  "fa": 0.0,
+  "eh": null,
+  "ea": null,
   "h": -0.0,
   "a": -0.0,
   "oh": [
@@ -56,6 +119,10 @@
   ]
  },
  "6clpgY63": {
+  "fh": 0.0,
+  "fa": 0.0,
+  "eh": null,
+  "ea": null,
   "h": 0.0,
   "a": -0.5,
   "oh": [],
@@ -64,12 +131,35 @@
   ]
  },
  "vBnhiCyG": {
+  "fh": 0.0,
+  "fa": 0.0,
+  "eh": {
+   "comp": "FIBA Europe Cup",
+   "opp": "Wurzburg",
+   "away": true,
+   "days": 4
+  },
+  "ea": null,
   "h": 0.0,
   "a": 0.2,
   "oh": [],
   "oa": []
  },
  "EojXNgoC": {
+  "fh": 0.0,
+  "fa": -0.9,
+  "eh": {
+   "comp": "EuroCup",
+   "opp": "Rigas Zelli",
+   "away": false,
+   "days": 4
+  },
+  "ea": {
+   "comp": "EuroLeague",
+   "opp": "Dubai",
+   "away": false,
+   "days": 3
+  },
   "h": -0.9,
   "a": -0.2,
   "oh": [
@@ -80,6 +170,20 @@
   ]
  },
  "dAyWqUTk": {
+  "fh": 0.0,
+  "fa": 0.0,
+  "eh": {
+   "comp": "FIBA Europe Cup",
+   "opp": "Parnu",
+   "away": true,
+   "days": 4
+  },
+  "ea": {
+   "comp": "ENBL",
+   "opp": "Donar Groningen",
+   "away": true,
+   "days": 5
+  },
   "h": -0.2,
   "a": 0.3,
   "oh": [
@@ -88,24 +192,45 @@
   "oa": []
  },
  "GSuq48rL": {
+  "fh": 0.0,
+  "fa": -1.9,
+  "eh": null,
+  "ea": {
+   "comp": "FIBA Europe Cup",
+   "opp": "Dziki Warszawa",
+   "away": false,
+   "days": 2
+  },
   "h": 0.3,
   "a": 0.0,
   "oh": [],
   "oa": []
  },
  "CbREbn6r": {
+  "fh": 0.0,
+  "fa": 0.0,
+  "eh": null,
+  "ea": null,
   "h": 0.2,
   "a": 0.0,
   "oh": [],
   "oa": []
  },
  "UNZwr8b2": {
+  "fh": 0.0,
+  "fa": 0.0,
+  "eh": null,
+  "ea": null,
   "h": 0.0,
   "a": 0.0,
   "oh": [],
   "oa": []
  },
  "AVxy6UD8": {
+  "fh": 0.0,
+  "fa": 0.0,
+  "eh": null,
+  "ea": null,
   "h": -0.5,
   "a": 0.0,
   "oh": [
@@ -114,6 +239,15 @@
   "oa": []
  },
  "6XMWBBbk": {
+  "fh": 0.0,
+  "fa": -1.9,
+  "eh": null,
+  "ea": {
+   "comp": "FIBA Europe Cup",
+   "opp": "Nitra Blue Wings",
+   "away": false,
+   "days": 2
+  },
   "h": 0.0,
   "a": -0.2,
   "oh": [],
