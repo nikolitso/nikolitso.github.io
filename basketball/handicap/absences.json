@@ -281,5 +281,25 @@
    "Brown Iii",
    "Williams"
   ]
+ },
+ "zm37vTYj": {
+  "fh": -0.9,
+  "fa": -0.9,
+  "eh": {
+   "comp": "FIBA Europe Cup",
+   "opp": "Gence",
+   "away": false,
+   "days": 3
+  },
+  "ea": {
+   "comp": "FIBA Europe Cup",
+   "opp": "Trier",
+   "away": true,
+   "days": 3
+  },
+  "h": 0.0,
+  "a": 0.2,
+  "oh": [],
+  "oa": []
  }
 }
