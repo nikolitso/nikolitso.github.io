@@ -207,7 +207,7 @@ details.picks>summary .muted{font-size:14px;font-weight:400}
   <div id="out"></div>
 </div>
 
-<script src="live.js?v=202611141127"></script>
+<script src="live.js?v=202611141132"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
@@ -280,7 +280,7 @@ ${E ? `<p>Example: ${esc(E.home)} v ${esc(E.away)} (${dayName(E.date)}): the mod
 <p>The line is the books' handicap for the home side: the median of each book's main handicap (the one it prices closest to evens), at the opening and at the latest or closing line. The <b>model's side</b> is the home team when the projected margin is above the line, the away team when below; <b>Diff</b> is the gap in points. The <b>chance</b> that side covers assumes the final margin falls around the projection with the league's usual miss: about ${f1(sdG)} points in Greece and ${f1(sdC)} in Cyprus.</p>
 <div class="calc">chance the home side covers = P(margin &gt; line), margin ~ Normal(projection, league miss)</div>
 <h3><span class="num">4</span>Projected total and points</h3>
-<p>Each match page also projects the total: the <a class="gm" href="/basketball/overs/#view=method">totals page</a>'s model (league average plus both teams' scoring numbers), plus 0.67 points per possession of pace above the league average and minus 0.83 per point of 3-point luck (hot shooting tends to cool). Those two numbers were fitted on 2022–26 games of the 43 totals leagues; fitted on 2022–25 alone, they cut the miss on unseen 2025–27 games from 17.86 to 17.81 points (Greece and Cyprus: 17.69 to 17.55). Each side's points = (total ± margin) ÷ 2.</p>
+<p>Each match page also projects the total: the <a class="gm" href="/basketball/overs/#view=method">totals page</a>'s model (league average plus both teams' scoring numbers), plus pace and 3-point luck, with each league's own weights fitted on its 2022–26 games: Greece +0.45 points per possession of pace above the league average and −0.51 per point of 3-point luck; Cyprus +1.63 and −0.13 (hot shooting tends to cool). Fitted on 2022–25 alone, they cut the miss on unseen 2025–27 games from 18.38 to 18.30 points in Greece and from 16.56 to 16.30 in Cyprus. Each side's points = (total ± margin) ÷ 2.</p>
 <h3><span class="num">5</span>Match by match</h3>
 <p>Click any match for its full calculation: the home edge, each team's games behind its strength, the projected margin, the line and the chance. The page shows estimates only: no picks and no betting record. <b>Played this season</b> keeps every game's estimate as it stood before tip-off, worked out from the games before that day, with the result and whether the model's side covered at the opening and the closing handicap. The model cannot see news: injuries, rest and roster moves count only once they show up in results, while the line knows them.</p>
 <h3><span class="num">6</span>Data</h3>
@@ -314,7 +314,7 @@ function renderGame(){
   h += step(4, 'Projected margin') + calc(`home edge + home strength − away strength<br>${sgn(W.hca)} ${W.rh < 0 ? '−' : '+'} ${Math.abs(W.rh).toFixed(1)} ${W.ra < 0 ? '+' : '−'} ${Math.abs(W.ra).toFixed(1)} = <b>${sgn(mu)}</b> for ${esc(g.home)} (the model's handicap; home favourite = +)`);
   const PL = g.pl || {}, tb = g.tb != null ? g.tb : g.tot;
   const tr = (n, x) => `<tr><td>${esc(n)}</td><td class="n">${x ? sgn(x[0]) : '–'}</td><td class="n">${x && x[2] != null ? sgn(x[2]) : '–'}</td></tr>`;
-  h += step(5, 'Projected total') + `<p>The <a class="gm" href="/basketball/overs/#view=method">totals page</a>'s model (the league's average total plus both teams' scoring numbers), then pace and 3-point luck: each possession of pace above the league average${PL.avg ? ` (${f1(PL.avg)})` : ''} adds 0.67 points, and each point of 3-point luck takes off 0.83, as hot shooting tends to cool (fitted on 31,600 games of 43 leagues).</p>`
+  h += step(5, 'Projected total') + `<p>The <a class="gm" href="/basketball/overs/#view=method">totals page</a>'s model (the league's average total plus both teams' scoring numbers), then pace and 3-point luck: each possession of pace above the league average${PL.avg ? ` (${f1(PL.avg)})` : ''} is worth ${g.tk ? sgn(g.tk[0], 2) : '–'} points and each point of 3-point luck ${g.tk ? sgn(g.tk[1], 2) : '–'} (luck counts against: hot shooting tends to cool), both fitted on ${g.tk ? g.tk[2] : '–'} games of this league, 2022–26.</p>`
     + (PL.home ? tbl(['Team', 'Pace', '3-pt luck'], [tr(g.home, PL.home), tr(g.away, PL.away), `<tr class="sum"><td>This game</td><td class="n">${PL.pace != null ? sgn(PL.pace) : '–'}</td><td class="n">${PL.luck != null ? sgn(PL.luck) : '–'}</td></tr>`], 520) : '')
     + calc(`totals model ${tb == null ? '–' : f1(tb)} + pace ${g.tpace == null ? '0 (not enough games)' : sgn(g.tpace)} + luck ${g.tluck == null ? '0 (not enough games)' : sgn(g.tluck)} = <b>${T}</b> points`);
   const [mh, ma] = pts(est ? g.mu : null, g.tot);
