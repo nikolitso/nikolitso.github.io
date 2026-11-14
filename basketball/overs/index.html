@@ -260,8 +260,8 @@ $('sub').innerHTML = (AGE > 3 ? `<span class="stale">Not updated for ${Math.floo
   $('top').innerHTML = [['Open picks', nOpen, nOpen ? 'to play' : 'none right now'], ['Settled picks', won + lost ? `${won}–${lost}` : '–', won + lost ? `${pct(won / (won + lost), 1)} hit rate · ${set.length} settled` : `${set.length} settled`],
     ['ROI', TWO('Opening line', won + lost ? `<b class="${cls(units)}" style="font-weight:inherit">${roi(units / (won + lost))}</b>` : '–', 'Closing line', cc.length ? `<b class="${cls(uc)}" style="font-weight:inherit">${roi(uc / cc.length)}</b>` : '–'),
      ''],
-    ['Average line', TWO('Opening line', avg(cl, b => b.line), 'Closing line', avg(cl, b => b.close)), ''],
-    ['Average total', TWO('Model line', avg(mu, b => b.mu), 'Actual total', avg(cl, b => b.total)), ''],
+    ['Average line', TWO('Opening', avg(cl, b => b.line), 'Closing', avg(cl, b => b.close)), ''],
+    ['Average total', TWO('Model', avg(mu, b => b.mu), 'Actual', avg(cl, b => b.total)), ''],
     ...mvTiles(cl)]
     .map(([k, v, n]) => `<a class="tile" href="#view=livetest"><span class="klabel">${k}</span><span class="stat">${v}</span><span class="small">${n}</span></a>`).join('');
 }
@@ -385,8 +385,8 @@ function analysis(k, notes = true){
   const C = (v, k) => k ? `<b class="${k}" style="font-weight:inherit">${v}</b>` : v;
   let h = TL([['Picks', `${W.toLocaleString('en')}–${Lo.toLocaleString('en')}`, `${pct(W / (W + Lo), 1)} hit rate · ${BT.length.toLocaleString('en')} picks`],
               ['ROI', TWO('Opening line', C(roi(S.rule.roi), cls(S.rule.roi)), 'Closing line', S.rule.roic != null ? C(roi(S.rule.roic), cls(S.rule.roic)) : '–'), ''],
-              ['Average line', TWO('Opening line', lineAvg(c, 'line'), 'Closing line', lineAvg(c, 'close')), ''],
-              ['Average total', TWO('Model line', lineAvg(c, 'mu'), 'Actual total', lineAvg(c, 'total')), ''],
+              ['Average line', TWO('Opening', lineAvg(c, 'line'), 'Closing', lineAvg(c, 'close')), ''],
+              ['Average total', TWO('Model', lineAvg(c, 'mu'), 'Actual', lineAvg(c, 'total')), ''],
               [RK[0][0], C(RK[0][1], RK[0][2]), 'at 1 unit a pick'],
               ...(c.length ? mvTiles(c) : []),
               ...(() => { const z = c.filter(b => b.close === b.line), d = z.filter(b => b.ret !== 0), w = d.filter(b => b.ret > 0).length, r = d.length ? d.reduce((x, b) => x + b.ret, 0) / d.length : null;   // the line did not move (14 Nov 2026)
