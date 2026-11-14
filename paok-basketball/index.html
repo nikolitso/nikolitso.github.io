@@ -16,7 +16,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Hanken+Grotesk:ital,wght@0,300..700;1,400&display=swap">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22%3E%3Ccircle cx=%2232%22 cy=%2232%22 r=%2229%22 fill=%22%23e8742a%22 stroke=%22%23111%22 stroke-width=%223%22/%3E%3Cg fill=%22none%22 stroke=%22%23111%22 stroke-width=%223%22%3E%3Cpath d=%22M3 32h58M32 3v58M12 11c8 7 12 13 12 21s-4 14-12 21M52 11c-8 7-12 13-12 21s4 14 12 21%22/%3E%3C/g%3E%3C/svg%3E">
 <link rel="stylesheet" href="styles.css?v=71">
-<link rel="stylesheet" href="/assets/an.css?v=1">
+<link rel="stylesheet" href="/assets/an.css?v=3">
 </head>
 <body>
 <!-- sitebar:start (link back to antonisnikolitsopoulos.com; keep on every page) -->
@@ -36,9 +36,14 @@
       <a href="#roster" data-tab="roster">Roster</a>
     </nav>
 </div></header>
+<nav class="an-project-nav" aria-label="Sports analytics projects"><div><a href="/superleague/">Super League</a><a href="/football/greek-cup/">Greek Cup</a><a href="/basketball/">Basketball</a><a href="/eurocup/">EuroCup</a><a href="/fibaeuropecup/">FIBA Europe Cup</a><a href="/paok-hub/">PAOK FC</a><a href="/paok-basketball/" aria-current="page">PAOK Basketball</a><a href="/volleyball/">Volleyball</a><a href="/handball/">Handball</a></div></nav>
 
-<main class="wrap" id="app">
+
+<main class="wrap">
+<div class="an-project-context"><span class="an-project-context__label">Season hub</span><span>Schedule, team and player statistics, player profiles, coaching, standings and roster. Use minutes played and role when comparing player totals.</span></div>
+<div id="app">
   <p class="loading">Loading…</p>
+</div>
 </main>
 
 <dialog id="box-dialog">
