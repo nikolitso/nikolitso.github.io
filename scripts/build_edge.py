@@ -280,7 +280,7 @@ def layout(title, body, path, desc, image=None, active="books"):
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Hanken+Grotesk:ital,wght@0,300..700;1,400&display=swap">
 <link rel="stylesheet" href="{BASE}edge.css?v={CSS_V}">
-<link rel="stylesheet" href="/assets/an.css?v=1">
+<link rel="stylesheet" href="/assets/an.css?v=3">
 </head>
 <body>
 {ICONS}
@@ -304,13 +304,13 @@ def cover_img(b, cls="", eager=False):
 
 def card(b):
     authors = ", ".join(b["authors"])
-    key = f'{b["title"]} {b.get("subtitle","")} {authors}'.lower()
+    key = f'{b["title"]} {b.get("subtitle","")} {authors} {b["topic"]} {b["year"]}'.lower()
     return f"""<a class="book" href="{b['url']}" data-topic="{b['tslug']}" data-key="{esc(key)}" data-date="{b['date']}" data-title="{esc(b['title'].lower())}">
   <div class="book-cover">{cover_img(b)}</div>
   <div class="book-meta">
     <span class="book-topic" style="--t:{b['tcol']}">{esc(b['topic'])}</span>
     <h3>{esc(b['title'])}</h3>
-    <p>{esc(authors)}</p>
+    <div class="book-byline"><p>{esc(authors)}</p><span class="book-year">{esc(b["year"])}</span></div>
   </div>
 </a>"""
 
@@ -336,11 +336,11 @@ def page_index(books, n_authors):
     <div class="controls">
       <div class="chips" role="tablist">{chips}</div>
       <div class="tools">
-        <input id="q" type="search" placeholder="Search title or author…" aria-label="Search books">
+        <input id="q" type="search" placeholder="Search title, author, topic or year…" aria-label="Search books">
         <select id="sort" aria-label="Sort"><option value="new">Newest first</option><option value="old">Oldest first</option><option value="az">A–Z</option></select>
       </div>
     </div>
-    <p class="count" id="count"></p>
+    <p class="count" id="count" aria-live="polite"></p>
     <div class="books" id="books">
 {chr(10).join(card(b) for b in books)}
     </div>
