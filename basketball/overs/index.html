@@ -173,8 +173,9 @@ a.tile:hover{border-color:var(--gold)}
 .tile .klabel{font:400 12.5px var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
 .tile .stat{font:500 26px var(--mono);line-height:1.15;font-variant-numeric:tabular-nums;display:flex;flex-wrap:wrap;align-items:center;gap:2px 6px}
 .tile .small{font-size:14.5px;color:var(--muted)}
-#top{grid-template-columns:repeat(5,minmax(0,1fr))}   /* two rows of five: the record, then the closing line (14 Nov 2026) */
-@media(max-width:760px){#top{grid-template-columns:repeat(2,minmax(0,1fr))}#top .stat b{white-space:normal!important}}
+/* two rows of five: the record, then the closing line (14 Nov 2026) */
+#top,.metrics.m5{grid-template-columns:repeat(5,minmax(0,1fr))}   /* 1H Live test tiles: two rows of five too */
+@media(max-width:760px){#top,.metrics.m5{grid-template-columns:repeat(2,minmax(0,1fr))}#top .stat b,.metrics.m5 .big b{white-space:normal!important}}
 .tiles .pos{color:var(--up)} .tiles .neg{color:var(--dn)}
 .stale{color:#ef7a70;font-weight:600}
 details.picks{margin-top:28px}
@@ -422,7 +423,7 @@ function firstHalf(part = ''){                               // part: 'open' or 
                 ['Model on the right side', A.model_right != null ? pct(A.model_right, 1) : '–']);
   const cl1 = H.picks.filter(b => b.done && b.close != null && b.ret != null);   // overs: the close moved toward the pick when it ended above the line taken
   if (cl1.length) T.push(...mvTiles(cl1).map(([k, v]) => [k.replace('Closing line', 'Closing 1H line'), v]));
-  h += tiles(T);
+  h += tiles(T).replace('class="metrics"', 'class="metrics m5"');      // two rows of five, like the Live test tab
   if (A) h += `<p class="note">Over all ${A.n.toLocaleString('en')} settled first halves the test tracked, picks or not: first 1H line ${A.line}, model ${A.model}, first-half points ${A.res}; the over won ${A.over != null ? pct(A.over) : '–'} at the first line. Off by: the average gap to the first-half points, so the lower one came closer. Right side: how often the first half finished on the side of the line the model was on.</p>`;
   const open = H.picks.filter(b => !b.done);
   let oH = '', dH = '';
