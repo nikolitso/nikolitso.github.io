@@ -4,6 +4,8 @@
   var list = document.getElementById("q-list");
   var filter = document.getElementById("q-filter");
   var byFilter = document.getElementById("q-by");
+  var searchInput = document.getElementById("q-search");
+  var resultCount = document.getElementById("q-count");
   var onAuthor = function () {};
   var wide = window.matchMedia("(min-width: 861px)");
   // The seven Thought Bank folders in order, each with its one-line summary. Unknown categories go last.
@@ -60,10 +62,43 @@
     if (short) art.classList.add("short");
     var top = el("div", "q-top");
     top.appendChild(el("span", "tag", q.category || ""));
+    var actions = el("div", "q-actions");
     var a = el("a", "q-link", "#" + q.id);
     a.href = "#q-" + q.id;
     a.setAttribute("aria-label", "Link to quote " + q.id);
-    top.appendChild(a);
+    actions.appendChild(a);
+    if (q.date) {
+      var date = el("time", "q-date", q.date);
+      date.dateTime = q.date;
+      actions.appendChild(date);
+    }
+    var copy = el("button", "q-copy", "Copy link");
+    copy.type = "button";
+    copy.setAttribute("aria-label", "Copy link to quote " + q.id);
+    copy.addEventListener("click", function () {
+      var url = location.origin + location.pathname + "#q-" + q.id;
+      function copied(ok) {
+        copy.textContent = ok ? "Copied" : "Copy failed";
+        copy.classList.toggle("is-copied", !!ok);
+      }
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(url).then(function () { copied(true); }, function () { copied(false); });
+      } else {
+        var field = document.createElement("textarea");
+        field.value = url;
+        field.setAttribute("readonly", "");
+        field.style.position = "absolute";
+        field.style.left = "-9999px";
+        document.body.appendChild(field);
+        field.select();
+        var ok = false;
+        try { ok = document.execCommand("copy"); } catch (e) { ok = false; }
+        document.body.removeChild(field);
+        copied(ok);
+      }
+    });
+    actions.appendChild(copy);
+    top.appendChild(actions);
     art.appendChild(top);
     if (q.title) art.appendChild(el("h3", null, q.title));
     art.appendChild(body(q.text));
@@ -93,16 +128,22 @@
     });
   }
 
-  function render(quotes, active, by) {
+  function searchable(q) {
+    return [q.title, q.text, q.author, q.context, q.note, q.category, q.date]
+      .filter(Boolean).join(" ").toLowerCase();
+  }
+
+  function render(quotes, active, by, search) {
     list.textContent = "";
     var groups = {};
     quotes.forEach(function (q) {
       if (active && slug(q.category || "") !== active) return;
       if (by && slug(who(q)) !== by) return;
+      if (search && searchable(q).indexOf(search) === -1) return;
       (groups[q.category] = groups[q.category] || []).push(q);
     });
     var cats = Object.keys(groups).sort(function (a, b) { return rank(a) - rank(b) || a.localeCompare(b); });
-    if (!cats.length) { list.appendChild(el("p", "q-empty", "No quotes match this folder and author yet.")); return; }
+    if (!cats.length) { list.appendChild(el("p", "q-empty", "No quotes match this search and filter combination.")); return; }
     cats.forEach(function (c) {
       var sec = list.appendChild(el("section", "q-chapter"));
       sec.id = slug(c);
@@ -133,13 +174,14 @@
     });
   }
 
-  function buttons(quotes, active, by, onChapter, onBy) {
+  function buttons(quotes, active, by, search, onChapter, onBy) {
     var cats = {}, names = {}, catTotal = 0, byTotal = 0;
     quotes.forEach(function (q) { cats[q.category] = 0; if (who(q)) names[who(q)] = 0; });
     quotes.forEach(function (q) {
       var inCat = !active || slug(q.category || "") === active, inBy = !by || slug(who(q)) === by;
-      if (inBy) { cats[q.category]++; catTotal++; }
-      if (inCat) { if (who(q)) names[who(q)]++; byTotal++; }
+      var inSearch = !search || searchable(q).indexOf(search) !== -1;
+      if (inSearch && inBy) { cats[q.category]++; catTotal++; }
+      if (inSearch && inCat) { if (who(q)) names[who(q)]++; byTotal++; }
     });
     pills(filter, Object.keys(cats).sort(function (a, b) { return rank(a) - rank(b) || a.localeCompare(b); })
       .map(function (c) { return [slug(c), c, cats[c], tone(c)]; }), catTotal, active, onChapter);
@@ -159,12 +201,15 @@
         .sort(function (a, b) { return a.id - b.id; });
       var params = new URLSearchParams(location.search);
       var active = params.get("topic") || "", by = params.get("by") || "";
+      var search = (params.get("q") || "").trim().toLowerCase();
+      if (searchInput) searchInput.value = params.get("q") || "";
       if (active && !quotes.some(function (q) { return slug(q.category || "") === active; })) active = "";
       if (by && !quotes.some(function (q) { return who(q) && slug(who(q)) === by; })) by = "";
       function update() {
         var u = new URL(location.href);
         if (active) u.searchParams.set("topic", active); else u.searchParams.delete("topic");
         if (by) u.searchParams.set("by", by); else u.searchParams.delete("by");
+        if (search) u.searchParams.set("q", search); else u.searchParams.delete("q");
         u.hash = "";
         history.replaceState(null, "", u);
         draw();
@@ -173,9 +218,26 @@
       function pickBy(s) { by = s; update(); }
       // An author pill on a card shows everything by that person, across all chapters.
       onAuthor = function (s) { by = s; active = ""; update(); filter.scrollIntoView({ behavior: "smooth", block: "start" }); };
-      function draw() { buttons(quotes, active, by, pickChapter, pickBy); render(quotes, active, by); }
+      function draw() {
+        buttons(quotes, active, by, search, pickChapter, pickBy);
+        render(quotes, active, by, search);
+        if (resultCount) {
+          var n = quotes.filter(function (q) {
+            return (!active || slug(q.category || "") === active) &&
+              (!by || slug(who(q)) === by) &&
+              (!search || searchable(q).indexOf(search) !== -1);
+          }).length;
+          resultCount.textContent = n + (n === 1 ? " quote" : " quotes");
+        }
+      }
+      if (searchInput) {
+        searchInput.addEventListener("input", function () {
+          search = searchInput.value.trim().toLowerCase();
+          update();
+        });
+      }
       draw();
-      wide.addEventListener("change", function () { render(quotes, active, by); });
+      wide.addEventListener("change", function () { render(quotes, active, by, search); });
       if (location.hash) { var t = document.getElementById(location.hash.slice(1)); if (t) t.scrollIntoView(); }
     })
     .catch(function () {
