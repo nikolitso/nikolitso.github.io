@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en" data-site="football">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Greek Super League — Design Preview</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Hanken+Grotesk:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="/assets/an.css">
+<style>
+:root{--an-wrap:1180px}
+*{box-sizing:border-box}
+body{margin:0;background:var(--an-paper);color:var(--an-ink);font:16px/1.5 var(--an-body)}
+a{color:inherit}
+.wrap{max-width:1180px;margin:auto;padding:26px 20px 80px}
+.eyebrow,.label{font:600 11px/1.4 var(--an-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--an-muted)}
+.topline{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:24px;flex-wrap:wrap}
+.status{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--an-rule);border-radius:99px;padding:5px 10px;color:var(--an-muted);font:12px var(--an-mono)}
+.status:before{content:"";width:7px;height:7px;border-radius:50%;background:var(--an-accent)}
+.intro{display:flex;justify-content:space-between;align-items:end;gap:20px;margin:0 0 22px}
+h2{font:400 30px/1.1 var(--an-display);margin:0 0 6px}
+.lede{color:var(--an-muted);max-width:68ch;margin:0}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+.pill{border:1px solid var(--an-rule);border-radius:99px;padding:7px 12px;color:var(--an-muted);font-size:13px;text-decoration:none}
+.pill.active{color:var(--an-accent);border-color:var(--an-accent-line);background:var(--an-accent-soft)}
+.section{margin-top:34px}
+.section-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:13px}
+.section-head h2{font-size:25px}
+.section-head a{font-size:13px;color:var(--an-accent);text-decoration:none}
+.fixture-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.fixture{border:1px solid var(--an-rule);background:var(--an-soft);border-radius:10px;padding:16px;min-width:0}
+.fixture.featured{grid-column:span 2;border-color:var(--an-accent-line)}
+.fixture-top{display:flex;justify-content:space-between;gap:12px;color:var(--an-muted);font:11px var(--an-mono);text-transform:uppercase;letter-spacing:.06em}
+.teams{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:center;margin:16px 0}
+.team{font:400 24px/1.1 var(--an-display)}
+.team:last-child{text-align:right}
+.vs{font:11px var(--an-mono);color:var(--an-muted)}
+.fixture-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.fm{border-top:1px solid var(--an-rule);padding-top:9px}
+.fm b{display:block;font:500 19px var(--an-mono);color:var(--an-ink)}
+.fm span{font-size:11px;color:var(--an-muted)}
+.probbar{height:5px;background:var(--an-rule);border-radius:8px;overflow:hidden;margin:12px 0 6px}
+.probbar i{display:block;height:100%;background:var(--an-accent)}
+.probline{display:flex;justify-content:space-between;color:var(--an-muted);font:11px var(--an-mono)}
+.columns{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(280px,.7fr);gap:14px}
+.panel{border:1px solid var(--an-rule);background:var(--an-soft);border-radius:10px;padding:18px;min-width:0}
+.panel h3{font:400 21px var(--an-display);margin:0 0 4px}
+.panel .desc{color:var(--an-muted);font-size:13px;margin:0 0 14px}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+th{text-align:left;color:var(--an-muted);font:10px var(--an-mono);letter-spacing:.1em;text-transform:uppercase;padding:9px 7px;border-bottom:1px solid var(--an-rule)}
+td{padding:11px 7px;border-bottom:1px solid var(--an-rule);font-size:13px}
+td.num,th.num{text-align:right;font-family:var(--an-mono);white-space:nowrap}
+tr:last-child td{border-bottom:0}
+.edge{color:var(--an-accent);font-weight:700}
+.signal{display:inline-block;border:1px solid var(--an-accent-line);background:var(--an-accent-soft);color:var(--an-accent);border-radius:99px;padding:3px 8px;font:10px var(--an-mono);white-space:nowrap}
+.muted{color:var(--an-muted)}
+.metric-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.metric{background:var(--an-soft);border:1px solid var(--an-rule);border-radius:9px;padding:13px}
+.metric strong{display:block;font:400 26px var(--an-display);margin:3px 0}
+.metric small{color:var(--an-muted);font-size:11px}
+.empty-state{border:1px dashed var(--an-rule);border-radius:9px;padding:18px;color:var(--an-muted);font-size:13px;line-height:1.6}
+details{border-top:1px solid var(--an-rule);padding:13px 0}
+details:last-child{border-bottom:1px solid var(--an-rule)}
+summary{cursor:pointer;list-style:none;display:flex;justify-content:space-between;gap:14px;font-size:14px}
+summary::-webkit-details-marker{display:none}
+summary:after{content:"+";color:var(--an-accent);font:18px var(--an-mono)}
+details[open] summary:after{content:"−"}
+.detail-copy{color:var(--an-muted);font-size:13px;max-width:75ch;padding:12px 0 2px}
+.note{font-size:11px;color:var(--an-muted);margin-top:12px;line-height:1.5}
+@media(max-width:760px){.intro{display:block}.actions{margin-top:14px}.columns{grid-template-columns:1fr}.metric-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:560px){.wrap{padding:20px 14px 60px}.fixture-grid{grid-template-columns:1fr}.fixture.featured{grid-column:auto}.fixture-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.team{font-size:21px}.section-head h2{font-size:23px}td,th{padding:9px 5px}.metric strong{font-size:23px}}
+</style>
+</head>
+<body>
+<nav class="an-sitebar" aria-label="Main site"><div><a href="/books/">Books</a><a href="/#projects">Projects</a><a href="/about/">About</a><a href="/" aria-label="Main site">⌂</a></div></nav>
+<header class="an-head"><div>
+<a class="an-home" href="/">← Home</a>
+<a class="an-brand" href="/superleague/"><svg class="an-mark" aria-hidden="true"><use href="/assets/marks.svg#football"/></svg><span><small class="an-kicker">Football · Projections</small><h1>Greek Super League</h1></span></a>
+<nav class="an-tabs" aria-label="Football projects">
+<a class="on" href="/superleague/">Super League</a><a href="/football/greek-cup/">Greek Cup</a>
+</nav>
+</div></header>
+<main class="wrap">
+<div class="topline"><span class="eyebrow">2026–27 season · Match intelligence</span><span class="status">Data snapshot · 13 Nov 2026, 23:52 Athens</span></div>
+<div class="intro"><div><h2>Start with the next matchday.</h2><p class="lede">A match-by-match view of what the model expects, where the market differs, and how those estimates have performed over time.</p></div><div class="actions"><a class="pill active" href="#fixtures">Projections</a><a class="pill" href="#opportunities">Market edge</a><a class="pill" href="#performance">Performance</a></div></div>
+<div class="metric-grid">
+<div class="metric"><span class="label">Upcoming fixtures</span><strong>7</strong><small>Next scheduled round</small></div>
+<div class="metric"><span class="label">Markets modelled</span><strong>7</strong><small>Goals to goalkeeper saves</small></div>
+<div class="metric"><span class="label">Last data update</span><strong>13 Nov</strong><small>23:52 · Athens</small></div>
+<div class="metric"><span class="label">Season sample</span><strong>10</strong><small>Current-season matches per team, where available</small></div>
+</div>
+<section class="section" id="fixtures">
+<div class="section-head"><h2>Upcoming projections</h2><span class="eyebrow">Model outputs · per match</span></div>
+<div class="fixture-grid">
+<article class="fixture featured">
+<div class="fixture-top"><span>Sun 22 Nov · 19:30</span><span class="signal">Model leans home</span></div>
+<div class="teams"><div class="team">PAOK</div><div class="vs">VS</div><div class="team">Kifisia</div></div>
+<div class="fixture-metrics"><div class="fm"><b>3.68</b><span>Expected goals</span></div><div class="fm"><b>26.63</b><span>Expected shots</span></div><div class="fm"><b>9.71</b><span>Shots on target</span></div><div class="fm"><b>9.86</b><span>Corners</span></div></div>
+<div class="probbar"><i style="width:80.4%"></i></div><div class="probline"><span>PAOK 80.4%</span><span>Draw 12.4%</span><span>Kifisia 7.2%</span></div>
+</article>
+<article class="fixture">
+<div class="fixture-top"><span>Sat 21 Nov · 19:30</span><span>1X2 · model</span></div><div class="teams"><div class="team">Kalamata</div><div class="vs">VS</div><div class="team">AEK</div></div>
+<div class="fixture-metrics"><div class="fm"><b>2.98</b><span>Expected goals</span></div><div class="fm"><b>28.51</b><span>Shots</span></div><div class="fm"><b>8.72</b><span>SoT</span></div><div class="fm"><b>9.28</b><span>Corners</span></div></div><div class="probbar"><i style="width:18.7%"></i></div><div class="probline"><span>Home 18.7%</span><span>Draw 21.4%</span><span>Away 60.0%</span></div>
+</article>
+<article class="fixture">
+<div class="fixture-top"><span>Sun 22 Nov · 16:00</span><span>1X2 · model</span></div><div class="teams"><div class="team">Levadiakos</div><div class="vs">VS</div><div class="team">Atromitos</div></div>
+<div class="fixture-metrics"><div class="fm"><b>1.93</b><span>Expected goals</span></div><div class="fm"><b>19.15</b><span>Shots</span></div><div class="fm"><b>5.89</b><span>SoT</span></div><div class="fm"><b>9.33</b><span>Corners</span></div></div><div class="probbar"><i style="width:37.4%"></i></div><div class="probline"><span>Home 37.4%</span><span>Draw 31.4%</span><span>Away 31.2%</span></div>
+</article>
+<article class="fixture">
+<div class="fixture-top"><span>Sun 22 Nov · 17:00</span><span>1X2 · model</span></div><div class="teams"><div class="team">Panetolikos</div><div class="vs">VS</div><div class="team">Volos</div></div>
+<div class="fixture-metrics"><div class="fm"><b>2.41</b><span>Expected goals</span></div><div class="fm"><b>23.66</b><span>Shots</span></div><div class="fm"><b>7.04</b><span>SoT</span></div><div class="fm"><b>8.18</b><span>Corners</span></div></div><div class="probbar"><i style="width:47.3%"></i></div><div class="probline"><span>Home 47.3%</span><span>Draw 26.8%</span><span>Away 26.0%</span></div>
+</article>
+<article class="fixture">
+<div class="fixture-top"><span>Sun 22 Nov · 17:30</span><span>1X2 · model</span></div><div class="teams"><div class="team">Panathinaikos</div><div class="vs">VS</div><div class="team">OFI</div></div>
+<div class="fixture-metrics"><div class="fm"><b>2.98</b><span>Expected goals</span></div><div class="fm"><b>29.58</b><span>Shots</span></div><div class="fm"><b>10.06</b><span>SoT</span></div><div class="fm"><b>9.96</b><span>Corners</span></div></div><div class="probbar"><i style="width:76.8%"></i></div><div class="probline"><span>Home 76.8%</span><span>Draw 15.5%</span><span>Away 7.7%</span></div>
+</article>
+</div>
+<p class="note">Figures above are taken from the existing Super League data snapshot. This is a presentation prototype; it does not replace the live data feed or the current model.</p>
+</section>
+<section class="section" id="opportunities">
+<div class="section-head"><h2>Where model and market differ</h2><span class="eyebrow">Illustrative edge screen</span></div>
+<div class="columns">
+<div class="panel"><h3>Potential market opportunities</h3><p class="desc">A transparent comparison of model probability with the probability implied by the available price.</p>
+<table><thead><tr><th>Selection</th><th class="num">Model</th><th class="num">Odds</th><th class="num">Implied</th><th class="num">Edge</th></tr></thead><tbody>
+<tr><td><strong>PAOK to win</strong><br><span class="muted">vs Kifisia · 1X2</span></td><td class="num">80.4%</td><td class="num">1.43</td><td class="num">69.9%</td><td class="num edge">+10.5 pp</td></tr>
+<tr><td>Panathinaikos to win<br><span class="muted">vs OFI · 1X2</span></td><td class="num">76.8%</td><td class="num">1.22</td><td class="num">82.0%</td><td class="num muted">−5.2 pp</td></tr>
+<tr><td>Kalamata to win<br><span class="muted">vs AEK · 1X2</span></td><td class="num">18.7%</td><td class="num">7.20</td><td class="num">13.9%</td><td class="num edge">+4.8 pp</td></tr>
+</tbody></table>
+<p class="note">Raw implied probability = 1 ÷ decimal odds. Edge shown as model probability minus raw implied probability; no margin removal, stake sizing or qualification threshold applied here. Prices and probabilities are from the same 13 Nov data snapshot.</p></div>
+<div class="panel"><h3>How to read the signal</h3><p class="desc">A positive difference is a screening flag, not a recommendation.</p>
+<details open><summary>Probability edge</summary><div class="detail-copy">Compare the model's estimated probability with the market's raw implied probability. A positive difference identifies a price worth further inspection.</div></details>
+<details><summary>Market margin</summary><div class="detail-copy">A production view should also calculate no-vig market probabilities across all outcomes before classifying value.</div></details>
+<details><summary>Qualification rules</summary><div class="detail-copy">Minimum edge, price freshness, market liquidity, sample reliability and model calibration should be explicit before a signal becomes a published pick.</div></details>
+</div>
+</div>
+</section>
+<section class="section" id="performance">
+<div class="section-head"><h2>Model performance</h2><span class="eyebrow">Evidence before claims</span></div>
+<div class="metric-grid">
+<div class="metric"><span class="label">Historical ROI</span><strong>—</strong><small>Verified series to be connected</small></div>
+<div class="metric"><span class="label">Tracked bets</span><strong>—</strong><small>Sample size required</small></div>
+<div class="metric"><span class="label">Closing line value</span><strong>—</strong><small>Market snapshots required</small></div>
+<div class="metric"><span class="label">Calibration</span><strong>—</strong><small>Probability-level validation</small></div>
+</div>
+<div class="empty-state">Performance figures are intentionally not fabricated in this prototype. The integrated page should show the verified historical period, number of settled selections, ROI methodology, market-level breakdown and calibration alongside every headline figure.</div>
+</section>
+<section class="section" id="research">
+<div class="section-head"><h2>Research & context</h2><span class="eyebrow">Supporting analysis</span></div>
+<div class="panel">
+<details><summary>Team profiles and statistical trends</summary><div class="detail-copy">Team-level averages, recent form, opponent-adjusted rates and the sample used for each projection. Existing team analysis remains available within this section.</div></details>
+<details><summary>Referee analysis</summary><div class="detail-copy">Cards and fouls tendencies, recent match sample, league baseline and referee-specific context. Existing referee data and calculations remain unchanged.</div></details>
+<details><summary>Model methodology and data sources</summary><div class="detail-copy">Explain model inputs, weighting, recency, rebuilt-team treatment, market comparison and update cadence. Link to the detailed methodology rather than burying it in the match view.</div></details>
+</div>
+</section>
+<footer class="note" style="margin-top:30px">Design preview only · Uses existing project data snapshot · No production model, data pipeline or live page has been changed.</footer>
+</main>
+</body>
+</html>
