@@ -197,3 +197,13 @@ details>summary:focus-visible{outline:2px solid var(--an-accent);outline-offset:
   .an-head .an-brand h1{font-size:22px}
   .an-home{padding:7px 9px}
 }
+
+
+/* Cross-project navigation: a consistent way to move between the sports research hubs. */
+.an-project-nav{background:color-mix(in srgb,var(--an-soft) 86%,var(--an-paper));border-bottom:1px solid var(--an-rule)}
+.an-project-nav>div{max-width:var(--an-content,1200px);margin:0 auto;padding:0 20px;display:flex;gap:clamp(16px,2.2vw,28px);align-items:center;overflow-x:auto;overscroll-behavior-inline:contain;scrollbar-width:none}
+.an-project-nav>div::-webkit-scrollbar{display:none}
+.an-project-nav a{display:inline-flex;align-items:center;min-height:40px;flex:none;padding:2px 0 0;border-bottom:2px solid transparent;color:var(--an-muted);font:600 12px/1.3 var(--an-body);letter-spacing:.035em;text-decoration:none;white-space:nowrap}
+.an-project-nav a:hover{color:var(--an-ink)}
+.an-project-nav a[aria-current="page"]{color:var(--an-ink);border-color:var(--an-accent)}
+@media(max-width:640px){.an-project-nav>div{padding-inline:16px;gap:18px}.an-project-nav a{min-height:38px;font-size:11.5px}}
