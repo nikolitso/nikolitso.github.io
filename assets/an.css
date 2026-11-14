@@ -197,3 +197,40 @@ details>summary:focus-visible{outline:2px solid var(--an-accent);outline-offset:
   .an-head .an-brand h1{font-size:22px}
   .an-home{padding:7px 9px}
 }
+
+
+/* Knowledge pages: book discovery and reading hierarchy */
+.shelf .controls-hint{
+  margin:.8rem 0 0;
+  color:var(--an-muted);
+  font-size:.82rem;
+  line-height:1.5;
+}
+.shelf .controls-hint a{
+  color:var(--an-accent);
+  font-weight:600;
+  text-underline-offset:.18em;
+}
+.shelf .count{
+  font-variant-numeric:tabular-nums;
+  letter-spacing:.08em;
+}
+.shelf .book{min-width:0}
+.shelf .book-cover{
+  border:1px solid color-mix(in srgb,var(--an-rule) 75%,transparent);
+  border-radius:8px;
+  background:var(--an-soft);
+}
+.shelf .book h3{
+  text-wrap:balance;
+  line-height:1.18;
+}
+.shelf .book p{line-height:1.45}
+.shelf .chip[aria-selected="true"]{outline:1px solid color-mix(in srgb,var(--an-accent) 55%,transparent);outline-offset:2px}
+.shelf .tools input,.shelf .tools select{min-height:42px}
+@media(max-width:680px){
+  .shelf .tools{width:100%}
+  .shelf .tools input{width:100%;flex:1 1 100%}
+  .shelf .tools select{flex:1 1 100%}
+  .shelf .books{grid-template-columns:repeat(2,minmax(0,1fr));gap:1.5rem 1rem}
+}
