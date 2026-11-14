@@ -251,25 +251,28 @@ $('sub').innerHTML = (AGE > 3 ? `<span class="stale">Not updated for ${Math.floo
   const cc = cl.filter(b => b.cpx != null && b.total !== b.close), uc = cc.reduce((a, b) => a + (b.total > b.close ? b.cpx - 1 : -1), 0);
   const mu = set.filter(b => b.mu != null), nS = `${set.length} settled picks`;
   $('top').innerHTML = [['Open picks', nOpen, nOpen ? 'to play' : 'none right now'], ['Settled picks', won + lost ? `${won}–${lost}` : '–', won + lost ? `${pct(won / (won + lost), 1)} hit rate · ${set.length} settled` : `${set.length} settled`],
-    ['ROI at opening', won + lost ? `<span class="${cls(units)}">${roi(units / (won + lost))}</span>` : '–', nS],
-    ['ROI at closing', cc.length ? `<span class="${cls(uc)}">${roi(uc / cc.length)}</span>` : '–', `${cc.length} settled picks`],
-    ['Opening line', avg(cl, b => b.line), `avg of ${cl.length} settled picks`], ['Closing line', avg(cl, b => b.close), `avg of ${cl.length} settled picks`],
-    ['Model line', avg(mu, b => b.mu), `avg of ${mu.length} settled picks`], ['Actual total', avg(cl, b => b.total), `avg of ${cl.length} settled picks`],
-    ['Closing line moved toward the pick', cl.length ? pct(cl.filter(b => b.close > b.line).length / cl.length) : '–', `of ${cl.length} settled picks`],
-    ['Closing line moved against it', cl.length ? pct(cl.filter(b => b.close < b.line).length / cl.length) : '–', `of ${cl.length} settled picks`],
-    ...mvTiles(cl).map(([k, v, n]) => [k, v, n])]
+    ['ROI at opening · closing', PAIR(`${won + lost ? `<b class="${cls(units)}" style="font-weight:inherit">${roi(units / (won + lost))}</b>` : '–'} · ${cc.length ? `<b class="${cls(uc)}" style="font-weight:inherit">${roi(uc / cc.length)}</b>` : '–'}`),
+     `opening price · closing price, ${set.length} settled picks`],
+    ['Opening line · closing line', PAIR(`${avg(cl, b => b.line)} · ${avg(cl, b => b.close)}`), `avg of ${cl.length} settled picks`],
+    ['Model line · actual total', PAIR(`${avg(mu, b => b.mu)} · ${avg(cl, b => b.total)}`), `avg of ${cl.length} settled picks`],
+    ...mvTiles(cl)]
     .map(([k, v, n]) => `<a class="tile" href="#view=livetest"><span class="klabel">${k}</span><span class="stat">${v}</span><span class="small">${n}</span></a>`).join('');
 }
 
 // how far the closing line moved, on average, for the picks it moved toward and for those it moved against (14 Nov 2026)
 function mvTiles(list){
-  const up = list.filter(b => b.close > b.line), dn = list.filter(b => b.close < b.line);
-  const a = L => L.length ? L.reduce((x, b) => x + b.close - b.line, 0) / L.length : null;
-  const hit = L => { const d = L.filter(b => b.ret != null && b.ret !== 0); return d.length ? pct(d.filter(b => b.ret > 0).length / d.length, 1) : '–'; };
-  const wl_ = L => { const d = L.filter(b => b.ret != null && b.ret !== 0), w = d.filter(b => b.ret > 0).length; return `${w}–${d.length - w} win – loss`; };
-  return [['Avg move toward the pick', up.length ? sgn(a(up), 1) + ' pts' : '–', `avg of ${up.length} picks`], ['Avg move against it', dn.length ? sgn(a(dn), 1) + ' pts' : '–', `avg of ${dn.length} picks`],
-          ['Won when the line moved toward the pick', hit(up), wl_(up)], ['Won when it moved against', hit(dn), wl_(dn)]];
+  const up = list.filter(b => b.close > b.line), dn = list.filter(b => b.close < b.line), n = list.length;
+  const a = L => L.length ? sgn(L.reduce((x, b) => x + b.close - b.line, 0) / L.length, 1) : '–';
+  const dec = L => L.filter(b => b.ret != null && b.ret !== 0);
+  const hit = L => { const d = dec(L); return d.length ? pct(d.filter(b => b.ret > 0).length / d.length, 1) : '–'; };
+  const wl_ = L => { const d = dec(L), w = d.filter(b => b.ret > 0).length; return `${w}–${d.length - w}`; };
+  return [['Closing line moved toward · against the pick', n ? PAIR(`${pct(up.length / n)} · ${pct(dn.length / n)}`) : '–', `of ${n} settled picks`],
+          ['Avg move toward the pick', up.length ? a(up) + ' pts' : '–', `avg of ${up.length} picks`], ['Avg move against it', dn.length ? a(dn) + ' pts' : '–', `avg of ${dn.length} picks`],
+          ['Won when the line moved toward the pick', hit(up), `${wl_(up)} win – loss`], ['Won when it moved against', hit(dn), `${wl_(dn)} win – loss`]];
 }
+
+// two numbers in one tile, a little smaller so they stay on one line (14 Nov 2026)
+function PAIR(v){ return `<b style="font-size:.74em;font-weight:inherit;white-space:nowrap">${v}</b>`; }
 
 function tiles(list){
   return `<div class="metrics">${list.map(([l, v, c]) => `<div class="metric"><div class="lbl">${l}</div><div class="big ${c||''}">${v}</div></div>`).join('')}</div>`;
@@ -350,7 +353,7 @@ function analysis(k, notes = true){
   const BT = DATA.bets.filter(f), SK = (DATA.skipped || []).filter(f);
   let h = tiles([['Picks', S.rule.n], ['Hit rate', pct(S.rule.w / S.rule.n, 1)], ['ROI at opening', roi(S.rule.roi), cls(S.rule.roi)], ['ROI at closing', S.rule.roic != null ? roi(S.rule.roic) : '–', cls(S.rule.roic)],
               ['Opening line', lineAvg(BT.filter(b => b.close != null), 'line')], ['Closing line', lineAvg(BT.filter(b => b.close != null), 'close')], ['Model line', lineAvg(BT.filter(b => b.close != null), 'mu')], ['Actual total', lineAvg(BT.filter(b => b.close != null), 'total')],
-              ...(() => { const c = BT.filter(b => b.close != null); return c.length ? [['Closing line moved toward the pick', pct(c.filter(b => b.close > b.line).length / c.length)], ['Closing line moved against it', pct(c.filter(b => b.close < b.line).length / c.length)], ...mvTiles(c).map(([k, v]) => [k, v])] : []; })(), ...riskTiles(BT)]);
+              ...(() => { const c = BT.filter(b => b.close != null); return c.length ? mvTiles(c).map(([k, v]) => [k, v]) : []; })(), ...riskTiles(BT)]);
   if (k === 'all') h += calib(BT, `How often the picks won against the chance the model gave them, at the opening line. A well-calibrated model wins about as often as it says in every band. Worst drawdown: the biggest fall from a high point of the running profit, at 1 unit a pick, in date order; expect a run like it again.`);
   const T = (title, first, body, note='') => `<h2>${title}</h2>${nt(note)}<div class="scroll"><table style="max-width:1040px">${GHEAD(first, BHEAD)}<tbody>${body}</tbody></table></div>`;
   const EP = Math.round(DATA.rule.edge * 100);
@@ -412,13 +415,11 @@ function firstHalf(part = ''){                               // part: 'open' or 
   const mlink = b => b.slug ? `<a class="gm" href="games/${b.slug}/">${b.home} – ${b.away}</a>` : `${b.home} – ${b.away}`;
   let h = `<h2 id="h1">First half: line v model <span class="pill">Test</span></h2><p class="note">A separate live test, started ${H.start}, not part of the main record on the Live test tab. <b>Model 1H</b>: built only from earlier first halves, the way the full-game projection is built from earlier totals: the league's first-half average and each team's first halves this season, plus ${sgn(H.bias, 1)} (first halves came in that much above this projection in every season from 2022–23 to 2025–26). Its chance of the over comes from how widely first halves spread around the projection in each league (${H.sd} points on average). It never sees the full-game line or the full-game model. <b>The pick</b>: the over, the first time its edge is above ${e8}% (overs only, like the main picks), on a .5 line, regular season, both teams ${LIVE.min_gp ?? 3}+ games in (5+ in Latin America), in the same ${LIVE.leagues.length} leagues. Settled on first-half points (no overtime). There is no backtest: first-half prices were not saved before ${H.start}.</p>`;
   const S = H.stats || {}, A = H.acc;
-  const T = [['1H picks', (S.n || 0).toLocaleString('en')], ['1H picks settled', S.settled ? `${S.w}–${S.settled - S.w} · ${pct(S.w / S.settled, 1)}` : '–'], ['ROI', roi(S.roi), cls(S.roi)],
-             ['Open', H.picks.filter(b => !b.done).length]];
-  if (A) T.push(['All games settled, picks or not', A.n.toLocaleString('en')], ['Line off by', A.mae_line.toFixed(1) + ' pts'], ['Model off by', A.mae_model.toFixed(1) + ' pts', A.mae_model < A.mae_line ? 'pos' : A.mae_model > A.mae_line ? 'neg' : ''],
+  const T = [['1H picks · open', PAIR(`${(S.n || 0).toLocaleString('en')} · ${H.picks.filter(b => !b.done).length}`)], ['1H picks settled', S.settled ? PAIR(`${S.w}–${S.settled - S.w} · ${pct(S.w / S.settled, 1)}`) : '–'], ['ROI', roi(S.roi), cls(S.roi)]];
+  if (A) T.push(['All games settled, picks or not', A.n.toLocaleString('en')], ['Line · model off by', PAIR(`${A.mae_line.toFixed(1)} · <b class="${A.mae_model < A.mae_line ? 'pos' : A.mae_model > A.mae_line ? 'neg' : ''}" style="font-weight:inherit">${A.mae_model.toFixed(1)}</b> pts`)],
                 ['Model on the right side', A.model_right != null ? pct(A.model_right, 1) : '–']);
   const cl1 = H.picks.filter(b => b.done && b.close != null && b.ret != null);   // overs: the close moved toward the pick when it ended above the line taken
-  if (cl1.length) T.push(['Closing 1H line moved toward the pick', pct(cl1.filter(b => b.close > b.line).length / cl1.length)], ['Closing 1H line moved against it', pct(cl1.filter(b => b.close < b.line).length / cl1.length)],
-                       ...mvTiles(cl1).map(([k, v]) => [k, v]));
+  if (cl1.length) T.push(...mvTiles(cl1).map(([k, v]) => [k.replace('Closing line', 'Closing 1H line'), v]));
   h += tiles(T);
   if (A) h += `<p class="note">Over all ${A.n.toLocaleString('en')} settled first halves the test tracked, picks or not: first 1H line ${A.line}, model ${A.model}, first-half points ${A.res}; the over won ${A.over != null ? pct(A.over) : '–'} at the first line. Off by: the average gap to the first-half points, so the lower one came closer. Right side: how often the first half finished on the side of the line the model was on.</p>`;
   const open = H.picks.filter(b => !b.done);
