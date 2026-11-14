@@ -244,8 +244,19 @@ $('sub').textContent = `${DATA.leagues.length} Leagues · backtest 2021–22 to 
     ['Opening line', avg(cl, b => b.line), `avg of ${cl.length} settled picks`], ['Closing line', avg(cl, b => b.close), `avg of ${cl.length} settled picks`],
     ['Model line', avg(mu, b => b.mu), `avg of ${mu.length} settled picks`], ['Actual total', avg(cl, b => b.total), `avg of ${cl.length} settled picks`],
     ['Closing line moved toward the pick', cl.length ? pct(cl.filter(b => b.close > b.line).length / cl.length) : '–', `of ${cl.length} settled picks`],
-    ['Closing line moved against it', cl.length ? pct(cl.filter(b => b.close < b.line).length / cl.length) : '–', `of ${cl.length} settled picks`]]
+    ['Closing line moved against it', cl.length ? pct(cl.filter(b => b.close < b.line).length / cl.length) : '–', `of ${cl.length} settled picks`],
+    ...mvTiles(cl).map(([k, v, n]) => [k, v, n])]
     .map(([k, v, n]) => `<a class="tile" href="#view=livetest"><span class="klabel">${k}</span><span class="stat">${v}</span><span class="small">${n}</span></a>`).join('');
+}
+
+// how far the closing line moved, on average, for the picks it moved toward and for those it moved against (14 Nov 2026)
+function mvTiles(list){
+  const up = list.filter(b => b.close > b.line), dn = list.filter(b => b.close < b.line);
+  const a = L => L.length ? L.reduce((x, b) => x + b.close - b.line, 0) / L.length : null;
+  const hit = L => { const d = L.filter(b => b.ret != null && b.ret !== 0); return d.length ? pct(d.filter(b => b.ret > 0).length / d.length, 1) : '–'; };
+  const wl_ = L => { const d = L.filter(b => b.ret != null && b.ret !== 0), w = d.filter(b => b.ret > 0).length; return `${w}–${d.length - w} win – loss`; };
+  return [['Avg move toward the pick', up.length ? sgn(a(up), 1) + ' pts' : '–', `avg of ${up.length} picks`], ['Avg move against it', dn.length ? sgn(a(dn), 1) + ' pts' : '–', `avg of ${dn.length} picks`],
+          ['Won when the line moved toward the pick', hit(up), wl_(up)], ['Won when it moved against', hit(dn), wl_(dn)]];
 }
 
 // profit in units, the deepest fall from a high point (units) and the longest run of losses, in date order; pushes change nothing
@@ -493,7 +504,7 @@ function render(){
   $('chips').innerHTML = chips.map(([k, t]) => `<a href="#view=${view}${k === 'all' ? '' : '&lg=' + k}" class="${k === lg ? 'on' : ''}">${t}</a>`).join('');
   $('top').style.display = $('sub').style.display = view === 'backtest' ? 'none' : '';   // the live record tiles are not shown on the backtest
   const BTb = view === 'backtest' ? DATA.bets.filter(inLg) : [];   // the backtest tiles sit on top of the Backtest tab, where the record tiles are on the other tabs
-  $('btop').innerHTML = BTb.length ? (() => { const T = stat(BTb), C = BTb.filter(b => b.close != null); const cc = C.filter(b => b.cpx != null && b.total !== b.close), rc = cc.length ? cc.reduce((a, b) => a + (b.total > b.close ? b.cpx - 1 : -1), 0) / cc.length : null; const K = runs(BTb); return tiles([['Picks', T.n], ['Hit rate', pct(T.w / T.n, 1)], ['ROI at opening', roi(T.roi), cls(T.roi)], ['ROI at closing', rc != null ? roi(rc) : '–', cls(rc)], ['Profit, units', uFmt(K.u), cls(K.u)], ['Max drawdown, units', K.dd ? '−' + K.dd.toFixed(1) : '0'], ['Longest losing run', K.worst], ['Opening line', lineAvg(C, 'line')], ['Closing line', lineAvg(C, 'close')], ['Model line', lineAvg(C, 'mu')], ['Actual total', lineAvg(C, 'total')], ['Closing line moved toward the pick', pct(C.filter(b => b.close > b.line).length / C.length)], ['Closing line moved against it', pct(C.filter(b => b.close < b.line).length / C.length)]]); })() : '';
+  $('btop').innerHTML = BTb.length ? (() => { const T = stat(BTb), C = BTb.filter(b => b.close != null); const cc = C.filter(b => b.cpx != null && b.total !== b.close), rc = cc.length ? cc.reduce((a, b) => a + (b.total > b.close ? b.cpx - 1 : -1), 0) / cc.length : null; const K = runs(BTb); return tiles([['Picks', T.n], ['Hit rate', pct(T.w / T.n, 1)], ['ROI at opening', roi(T.roi), cls(T.roi)], ['ROI at closing', rc != null ? roi(rc) : '–', cls(rc)], ['Profit, units', uFmt(K.u), cls(K.u)], ['Max drawdown, units', K.dd ? '−' + K.dd.toFixed(1) : '0'], ['Longest losing run', K.worst], ['Opening line', lineAvg(C, 'line')], ['Closing line', lineAvg(C, 'close')], ['Model line', lineAvg(C, 'mu')], ['Actual total', lineAvg(C, 'total')], ['Closing line moved toward the pick', pct(C.filter(b => b.close > b.line).length / C.length)], ['Closing line moved against it', pct(C.filter(b => b.close < b.line).length / C.length)], ...mvTiles(C).map(([k, v]) => [k, v])]); })() : '';
   $('out').innerHTML = RENDER[view]();
 }
 function fromHash(){
