@@ -173,6 +173,9 @@ a.tile:hover{border-color:var(--gold)}
 .tile .klabel{font:400 12.5px var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
 .tile .stat{font:500 26px var(--mono);line-height:1.15;font-variant-numeric:tabular-nums;display:flex;flex-wrap:wrap;align-items:center;gap:2px 6px}
 .tile .small{font-size:14.5px;color:var(--muted)}
+/* two rows of five: the record, then the closing line (14 Nov 2026) */
+#top,.metrics.m5{grid-template-columns:repeat(5,minmax(0,1fr))}   /* 1H Live test tiles: two rows of five too */
+@media(max-width:760px){#top,.metrics.m5{grid-template-columns:repeat(2,minmax(0,1fr))}#top .stat b,.metrics.m5 .big b{white-space:normal!important}}
 .tiles .pos{color:var(--up)} .tiles .neg{color:var(--dn)}
 .stale{color:#ef7a70;font-weight:600}
 details.picks{margin-top:28px}
@@ -200,7 +203,7 @@ details.picks>summary .muted{font-size:14px;font-weight:400}
   <div id="out"></div>
 </div>
 
-<script src="live.js?v=202611141017"></script>
+<script src="live.js?v=202611141023"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
@@ -223,7 +226,6 @@ function topTiles(){
   const t = LIVE.tally[lg] || LIVE.tally.all, F = LIVE.fixtures.filter(inLg);
   const o = t.ow + t.ol, c = t.cw + t.cl;
   return tiles([
-    ['Next 7 days', F.filter(g => g.ok).length, `games with an estimate, of ${F.length}`],
     ['Played', t.n, `games estimated this season`],
     ['Side covered at opening', o ? pct(t.ow / o, 1) : '–', `${t.ow}–${t.ol} cover · fail`],
     ['Side covered at closing', c ? pct(t.cw / c, 1) : '–', `${t.cw}–${t.cl} cover · fail`],
@@ -235,7 +237,7 @@ function topTiles(){
 const mark = v => v == null ? '<span class="muted">–</span>' : v ? '<b class="w">✓</b>' : '<b class="l">✗</b>';
 function renderMatches(){
   const F = LIVE.fixtures.filter(inLg), P = LIVE.played.filter(inLg);
-  let h = `<p class="note">The model's margin for every game, next to the books' handicap. Both are shown as the <b>home side's handicap</b>: +5.5 means the home side is the favourite by 5.5, −5.5 that the away side is. <b>Diff</b> is how many points the model is on one side of the line, and <b>Chance</b> the model's chance that side covers. A game gets an estimate once both teams have played ${GP} games this season; earlier games and play-offs are shown in grey. No picks: estimates only.</p>`;
+  let h = '';
   h += `<h2>Next games</h2>`;
   if (!F.length) h += '<p class="empty">No games in the next 7 days.</p>';
   const byDay = {};
@@ -349,7 +351,7 @@ function fromHash(){
   lg = l && LG[l[1]] ? l[1] : (view === 'method' ? 'all' : LIVE.leagues[0].key);
   render();
 }
-$('sub').innerHTML = (AGE > 8 ? `<span class="stale">Not updated for ${Math.floor(AGE)} hours: estimates and lines may be out of date.</span> · ` : '') + `Updated ${LIVE.updated} (Athens) · Greece and Cyprus · estimates from ${GP} games`;
+$('sub').innerHTML = (AGE > 8 ? `<span class="stale">Not updated for ${Math.floor(AGE)} hours: estimates and lines may be out of date.</span> · ` : '') + `Updated ${LIVE.updated} (Athens)`;
 window.addEventListener('hashchange', fromHash);
 fromHash();
 </script>
