@@ -128,7 +128,7 @@ tr.sel td{background:color-mix(in srgb,var(--gold) 10%,transparent)}
 .odds .od.hit{border-color:var(--gold);color:var(--gold)}
 .odds .sep{flex:0 0 6px}
 </style>
-<link rel="stylesheet" href="/assets/an.css?v=1">
+<link rel="stylesheet" href="/assets/an.css?v=2">
 </head>
 <body>
 <!-- sitebar:start (link back to antonisnikolitsopoulos.com; keep on every page) -->
@@ -147,7 +147,15 @@ tr.sel td{background:color-mix(in srgb,var(--gold) 10%,transparent)}
   </nav>
 </div></header>
 <div class="wrap">
-  <div class="sub" id="sub"></div>
+  <div class="sub an-meta-strip" id="sub"></div>
+
+  <div class="an-project-context"><span class="an-project-context__label">Scope</span><span>A match-statistics archive with full-match and first-half cuts, team averages, match totals, competition-tier comparisons and bookmaker-odds views.</span></div>
+  <div class="an-data-key" role="group" aria-label="How to read the statistics">
+    <span class="an-data-key__title">Reading the numbers</span>
+    <span class="an-data-key__item"><i class="an-data-key__dot an-data-key__dot--actual" aria-hidden="true"></i><b>Full match</b> recorded 90-minute and stoppage-time statistics</span>
+    <span class="an-data-key__item"><i class="an-data-key__dot an-data-key__dot--expected" aria-hidden="true"></i><b>First half</b> recorded first-half statistics</span>
+    <span class="an-data-key__item"><i class="an-data-key__dot an-data-key__dot--market" aria-hidden="true"></i><b>Odds view</b> separate market context, not a model forecast</span>
+  </div>
   <div id="out"></div>
 </div>
 <script src="data.js?v=10"></script>

@@ -136,7 +136,7 @@ th.rs{cursor:pointer;user-select:none} th.rs:hover,th.rs.on{color:var(--gold)}
 @media(max-width:600px){.grid{grid-template-columns:1fr}.ln span{min-width:0;margin-left:8px}.card{padding:14px 10px 8px}td,th{padding:6px 4px}
   .card td{font-size:15.5px}.card td.n{font-size:14px}.full{display:none}.abbr{display:inline}.wdlt{flex-wrap:wrap;gap:2px 12px}}
 </style>
-<link rel="stylesheet" href="/assets/an.css?v=1">
+<link rel="stylesheet" href="/assets/an.css?v=2">
 </head>
 <body>
 <!-- sitebar:start (link back to antonisnikolitsopoulos.com; keep on every page) -->
@@ -205,7 +205,15 @@ details.picks>summary .muted{font-size:14px;font-weight:400}
   </nav>
 </div></header>
 <div class="wrap">
-  <div class="sub" id="sub" style="margin:0 0 12px"></div>
+  <div class="sub an-meta-strip" id="sub" style="margin:0 0 12px"></div>
+
+  <div class="an-project-context"><span class="an-project-context__label">Scope</span><span>Basketball totals are tested against the opening line and tracked separately from the closing-line comparison. The page distinguishes the historical backtest, prospective live record and upcoming projections.</span></div>
+  <div class="an-data-key" role="group" aria-label="How to read the numbers">
+    <span class="an-data-key__title">Reading the numbers</span>
+    <span class="an-data-key__item"><i class="an-data-key__dot an-data-key__dot--expected" aria-hidden="true"></i><b>Model</b> expected total points</span>
+    <span class="an-data-key__item"><i class="an-data-key__dot an-data-key__dot--market" aria-hidden="true"></i><b>Market</b> opening / closing total and price</span>
+    <span class="an-data-key__item"><i class="an-data-key__dot an-data-key__dot--actual" aria-hidden="true"></i><b>Actual</b> settled game total</span>
+  </div>
   <div class="tiles" id="top"></div>
   <div class="chips" id="chips"></div>
   <div id="out"></div>

@@ -69,9 +69,9 @@ def upcoming(items, key):
 
 
 def record(won, lost, profit, n_open, word="pick"):
-    """The three pills every card with picks shares, in this order: past record, its ROI (flat stakes), open picks."""
+    """Past record, ROI and open count. n is settled wins + losses; pushes are excluded."""
     n = won + lost
-    pills = [f"Record {won}–{lost}", f"ROI {profit / n * 100:+.1f}%"] if n else [f"No settled {word}s yet"]
+    pills = [f"Record {won}–{lost} · n={n}", f"ROI {profit / n * 100:+.1f}%"] if n else [f"No settled {word}s yet"]
     return pills + [f"{n_open} open {word}{'s' if n_open != 1 else ''}" if n_open else f"No open {word}s"]
 
 
