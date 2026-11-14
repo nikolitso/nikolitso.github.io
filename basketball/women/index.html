@@ -172,6 +172,12 @@ a.tile:hover{border-color:var(--gold)}
 .tile .klabel{font:400 12.5px var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
 .tile .stat{font:500 26px var(--mono);line-height:1.15;font-variant-numeric:tabular-nums;display:flex;flex-wrap:wrap;align-items:center;gap:2px 6px}
 .tile .small{font-size:14.5px;color:var(--muted)}
+.tile .two{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%;font-size:24px}
+#top .tile:nth-child(-n+3) .stat{font-size:36px}#top .tile:nth-child(-n+3) .two{font-size:28px;gap:4px}.tiles.t5 .tile:nth-child(-n+2) .stat{font-size:34px}.tiles.t5 .tile:nth-child(2) .two{font-size:26px;gap:4px}
+.tile .two .h-a{color:var(--gold)}.tile .two .h-b{color:#7fb2ff}.tile .two .h-up{color:var(--up,#4cc47a)}.tile .two .h-dn{color:var(--dn,#ef7a70)}.tile .two span>i{color:inherit!important;opacity:.85}.tile .two span>b{color:inherit!important}
+.tile .two i{display:block;font:400 11px var(--mono);font-style:normal;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px;white-space:nowrap}
+#top,.tiles.t5{grid-template-columns:repeat(5,minmax(0,1fr))}   /* two rows of five: the record, then the closing line (14 Nov 2026, as the men's page) */
+@media(max-width:760px){.tile .two,#top .tile:nth-child(-n+3) .two{font-size:19px;gap:6px}#top .tile:nth-child(-n+3) .stat,.tiles.t5 .tile:nth-child(-n+2) .stat{font-size:28px}.tiles.t5 .tile:nth-child(2) .two{font-size:19px}.tile .two i{white-space:normal}#top,.tiles.t5{grid-template-columns:repeat(2,minmax(0,1fr))}}
 .tiles .pos{color:var(--up)} .tiles .neg{color:var(--dn)}
 .pill{white-space:nowrap;font:500 13.5px var(--mono);padding:2px 9px;border-radius:99px;border:1px solid var(--line);vertical-align:middle}
 .pill.pos{border-color:color-mix(in srgb,var(--up) 40%,transparent);background:color-mix(in srgb,var(--up) 10%,transparent)}
@@ -191,13 +197,13 @@ a.tile:hover{border-color:var(--gold)}
   </nav>
 </div></header>
 <div class="wrap">
+  <div class="sub" id="sub" style="margin:0 0 12px"></div>
   <div class="tiles" id="top"></div>
   <div id="btop"></div>
-  <div class="sub" id="sub"></div>
   <div class="chips" id="chips"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=w66"></script>
+<script src="data.js?v=w67"></script>
 <script src="live.js"></script>
 <script>
 const $ = id => document.getElementById(id);
@@ -237,26 +243,38 @@ $('sub').textContent = `${DATA.leagues.length} Leagues · backtest 2021–22 to 
   // the same picks at the closing line and price (overs); pushes left out, as for the ROI at opening
   const cc = cl.filter(b => b.cpx != null && b.total !== b.close), uc = cc.reduce((a, b) => a + (b.total > b.close ? b.cpx - 1 : -1), 0);
   const mu = set.filter(b => b.mu != null), nS = `${set.length} settled picks`;
-  $('top').innerHTML = [['Open picks', nOpen, nOpen ? 'to play' : 'none right now'], ['Picks', set.length, 'settled'], ['Hit rate', won + lost ? pct(won / (won + lost), 1) : '–', `${won}–${lost} win – loss`],
-    ['ROI at opening', won + lost ? `<span class="${cls(units)}">${roi(units / (won + lost))}</span>` : '–', nS],
-    ['ROI at closing', cc.length ? `<span class="${cls(uc)}">${roi(uc / cc.length)}</span>` : '–', `${cc.length} settled picks`],
-    ...(K => [['Profit', set.length ? `<span class="${cls(K.u)}">${uFmt(K.u)}</span>` : '–', 'units, 1 unit a pick'], ['Max drawdown', set.length ? (K.dd ? '−' + K.dd.toFixed(1) : '0') : '–', 'units, deepest fall from a high'], ['Longest losing run', set.length ? K.worst : '–', 'losses in a row']])(runs(set)),
-    ['Opening line', avg(cl, b => b.line), `avg of ${cl.length} settled picks`], ['Closing line', avg(cl, b => b.close), `avg of ${cl.length} settled picks`],
-    ['Model line', avg(mu, b => b.mu), `avg of ${mu.length} settled picks`], ['Actual total', avg(cl, b => b.total), `avg of ${cl.length} settled picks`],
-    ['Closing line moved toward the pick', cl.length ? pct(cl.filter(b => b.close > b.line).length / cl.length) : '–', `of ${cl.length} settled picks`],
-    ['Closing line moved against it', cl.length ? pct(cl.filter(b => b.close < b.line).length / cl.length) : '–', `of ${cl.length} settled picks`],
-    ...mvTiles(cl).map(([k, v, n]) => [k, v, n])]
+  $('top').innerHTML = [['Open picks', nOpen, nOpen ? 'to play' : 'none right now'], ['Settled picks', won + lost ? `${won}–${lost}` : '–', won + lost ? `${pct(won / (won + lost), 1)} hit rate · ${set.length} settled` : `${set.length} settled`],
+    ['ROI', TWO('Opening line', won + lost ? `<b class="${cls(units)}" style="font-weight:inherit">${roi(units / (won + lost))}</b>` : '–', 'Closing line', cc.length ? `<b class="${cls(uc)}" style="font-weight:inherit">${roi(uc / cc.length)}</b>` : '–'), ''],
+    ['Average line', TWO('Opening', avg(cl, b => b.line), 'Closing', avg(cl, b => b.close)), ''],
+    ['Average total', TWO('Model', avg(mu, b => b.mu), 'Actual', avg(cl, b => b.total)), ''],
+    ...mvTiles(cl)]
     .map(([k, v, n]) => `<a class="tile" href="#view=livetest"><span class="klabel">${k}</span><span class="stat">${v}</span><span class="small">${n}</span></a>`).join('');
 }
 
-// how far the closing line moved, on average, for the picks it moved toward and for those it moved against (14 Nov 2026)
+// how far the closing line moved, on average, for the picks it moved toward and for those it moved against (14 Nov 2026, as the men's page)
 function mvTiles(list){
-  const up = list.filter(b => b.close > b.line), dn = list.filter(b => b.close < b.line);
-  const a = L => L.length ? L.reduce((x, b) => x + b.close - b.line, 0) / L.length : null;
-  const hit = L => { const d = L.filter(b => b.ret != null && b.ret !== 0); return d.length ? pct(d.filter(b => b.ret > 0).length / d.length, 1) : '–'; };
-  const wl_ = L => { const d = L.filter(b => b.ret != null && b.ret !== 0), w = d.filter(b => b.ret > 0).length; return `${w}–${d.length - w} win – loss`; };
-  return [['Avg move toward the pick', up.length ? sgn(a(up), 1) + ' pts' : '–', `avg of ${up.length} picks`], ['Avg move against it', dn.length ? sgn(a(dn), 1) + ' pts' : '–', `avg of ${dn.length} picks`],
-          ['Won when the line moved toward the pick', hit(up), wl_(up)], ['Won when it moved against', hit(dn), wl_(dn)]];
+  const up = list.filter(b => b.close > b.line), dn = list.filter(b => b.close < b.line), n = list.length;
+  const a = L => L.length ? sgn(L.reduce((x, b) => x + b.close - b.line, 0) / L.length, 1) : '–';
+  const dec = L => L.filter(b => b.ret != null && b.ret !== 0);
+  const hit = L => { const d = dec(L); return d.length ? pct(d.filter(b => b.ret > 0).length / d.length, 1) : '–'; };
+  const wl_ = L => { const d = dec(L), w = d.filter(b => b.ret > 0).length; return `${w}–${d.length - w}`; };
+  return [['Closing line moved', n ? TWO('Toward pick', pct(up.length / n), 'Against', pct(dn.length / n), 'h-up', 'h-dn') : '–', ''],
+          ['Avg move toward pick', up.length ? a(up) + ' pts' : '–', `avg of ${up.length} picks`], ['Avg move against pick', dn.length ? a(dn) + ' pts' : '–', `avg of ${dn.length} picks`],
+          ['Won when moved toward', hit(up), `${wl_(up)} win – loss`], ['Won when moved against', hit(dn), `${wl_(dn)} win – loss`]];
+}
+
+// two numbers in one tile, each with its own label above it and in its own colour
+function TWO(l1, v1, l2, v2, c1 = 'h-a', c2 = 'h-b'){ return `<span class="two"><span class="${c1}"><i>${l1}</i>${v1}</span><span class="${c2}"><i>${l2}</i>${v2}</span></span>`; }
+
+// tiles in the Live test style, five to a row
+function TL(list){
+  return `<div class="tiles t5">${list.map(([k, v, n]) => `<div class="tile"><span class="klabel">${k}</span><span class="stat">${v}</span><span class="small">${n ?? ''}</span></div>`).join('')}</div>`;
+}
+
+// profit, worst drawdown and longest losing run at 1 unit a pick, in date order
+function riskTiles(list){
+  const K = runs(list.filter(b => b.ret != null));
+  return [['Profit', `${uFmt(K.u)} units`, cls(K.u)], ['Worst drawdown', K.dd ? `−${K.dd.toFixed(1)} units` : '0 units', K.dd ? 'neg' : ''], ['Longest losing run', `${K.worst} picks`]];
 }
 
 // profit in units, the deepest fall from a high point (units) and the longest run of losses, in date order; pushes change nothing
@@ -437,7 +455,7 @@ function renderPicks(){
   else {
     h += `<h2>Open picks</h2><div class="scroll"><table class="proj"><thead><tr><th>Tip-off</th><th>League</th><th>Match</th><th class="n">Pick</th><th class="n">Price</th><th class="n">Model total</th><th class="n">Edge</th><th class="n">Line now</th><th class="n">Line diff</th><th class="n">Edge now</th></tr></thead><tbody>` +
       open.map(b => { const g = fx[b.home + '|' + b.away] || {};
-        return `<tr class="pk"><td data-s="${b.dt}">${dayName(b.dt)} ${b.dt.slice(11)}</td><td>${lgShort(b.lg)}</td><td class="wr">${g.slug ? `<a class="gm" href="games/${g.slug}/">${b.home} – ${b.away}</a>` : `${b.home} – ${b.away}`}</td><td class="n"><b>${sd(b)} ${b.line}</b></td><td class="n">${b.px.toFixed(2)}</td><td class="n">${(g.mu ?? b.mu).toFixed(1)}</td><td class="n pos">${sgn(b.edge*100, 0)}%</td><td class="n">${g.line ?? b.now ?? '–'}</td><td class="n">${sgn(Math.round((b.mu - (b.pace ?? 0) - (LIVE.start_pts ?? 0) - b.line) * 10) / 10, 1)}</td>${edgeNow(g.line != null ? g.eo : null)}</tr>`; }).join('') +
+        return `<tr class="pk"><td data-s="${b.dt}">${dayName(b.dt)} ${b.dt.slice(11)}</td><td>${lgShort(b.lg)}</td><td class="wr">${(g.slug || b.slug) ? `<a class="gm" href="games/${g.slug || b.slug}/">${b.home} – ${b.away}</a>` : `${b.home} – ${b.away}`}</td><td class="n"><b>${sd(b)} ${b.line}</b></td><td class="n">${b.px.toFixed(2)}</td><td class="n">${(g.mu ?? b.mu).toFixed(1)}</td><td class="n pos">${sgn(b.edge*100, 0)}%</td><td class="n">${g.line ?? b.now ?? '–'}</td><td class="n">${sgn(Math.round((b.mu - (b.pace ?? 0) - (LIVE.start_pts ?? 0) - b.line) * 10) / 10, 1)}</td>${edgeNow(g.line != null ? g.eo : null)}</tr>`; }).join('') +
       '</tbody></table></div>';
   }
   const pre = ((DATA.cur || {}).bets || []).map(b => ({...b, pre: true, done: true, close: b.close ?? null}));
@@ -445,10 +463,6 @@ function renderPicks(){
   const set = all.filter(b => b.done && b.ret != null), won = set.filter(b => b.ret > 0).length;
   const units = set.reduce((a, b) => a + b.ret, 0), nDec = set.filter(b => b.ret !== 0).length, R_ = nDec ? units / nDec : null;
   const mv = b => (b.close - b.line) * (b.side === 'u' ? -1 : 1), cl = all.filter(b => !b.pre && b.close != null), up = cl.filter(b => mv(b) > 0).length, dn = cl.filter(b => mv(b) < 0).length;
-  h += `<h2>The ${sn(DATA.season)} record</h2>`;
-  h += `<p class="note">The closing line moved toward the pick when it ended above the line picked. A few hundred picks are needed before the record says much. Picks stay as they were logged, under the rules of their day. The record starts on ${LIVE.start}, under the rules in How it works. Click a column heading to sort.</p>`;
-  if (!set.length) return h + howNote + '<p class="empty">No settled picks yet.</p>';
-  h += liveTables(set.filter(b => !b.pre));
   let run = 0;
   const rows = all.filter(b => b.done).map(b => {   // open picks are in the table above
     if (b.ret != null) run += b.ret;
@@ -458,7 +472,14 @@ function renderPicks(){
       <td class="n">${b.px.toFixed(2)}</td><td class="n">${b.mu != null ? b.mu.toFixed(1) : '–'}</td><td class="n pos">${sgn(b.edge*100, 0)}%</td>${mvc}<td class="n ${wl(b)}"><b>${b.total ?? '–'}</b></td><td class="n">${res}</td>
       <td class="n ${cls(b.ret)}">${b.ret == null ? '–' : sgn(b.ret, 2)}</td><td class="n ${cls(run)}">${sgn(run, 2)}</td></tr>`;
   });
-  return h + howNote + `<h2>Settled picks, latest first</h2><p class="note">Closing line: ▲ moved toward the pick, ▼ against it. Profit at 1 unit a pick; Running is the total so far. Click a match for its page, with the model total as it stood before tip-off and how it was built.</p><div class="scroll"><table class="proj settled"><thead><tr><th>Tip-off</th><th>League</th><th>Match</th><th class="n">Pick</th><th class="n">Price</th><th class="n">Model total</th><th class="n">Edge</th><th class="n">Closing line</th><th class="n">Total</th><th class="n">Result</th><th class="n">Profit</th><th class="n">Running</th></tr></thead><tbody>${rows.reverse().join('')}</tbody></table></div>`;
+  h += howNote;                                                // how picks are made: under the open picks, above the settled ones
+  if (rows.length) h += `<h2>Settled picks</h2><p class="note">Latest first. Closing line: ▲ moved toward the pick, ▼ against it. Profit at 1 unit a pick; Running is the total so far. Click a match for its page, with the model total as it stood before tip-off and how it was built.</p><div class="scroll"><table class="proj settled"><thead><tr><th>Tip-off</th><th>League</th><th>Match</th><th class="n">Pick</th><th class="n">Price</th><th class="n">Model total</th><th class="n">Edge</th><th class="n">Closing line</th><th class="n">Total</th><th class="n">Result</th><th class="n">Profit</th><th class="n">Running</th></tr></thead><tbody>${rows.reverse().join('')}</tbody></table></div>`;
+  h += `<h2>The ${sn(DATA.season)} record</h2>`;
+  h += `<p class="note">The closing line moved toward the pick when it ended above the line picked. A few hundred picks are needed before the record says much. Picks stay as they were logged, under the rules of their day. The record starts on ${LIVE.start}, under the rules in How it works. Click a column heading to sort.</p>`;
+  if (!set.length) return h + '<p class="empty">No settled picks yet.</p>';
+  h += TL(riskTiles(set.filter(b => !b.pre)).map(([k, v, c]) => [k, c ? `<b class="${c}" style="font-weight:inherit">${v}</b>` : v, '']));
+  h += liveTables(set.filter(b => !b.pre));
+  return h;
 }
 
 // click a column heading to sort its table (again to reverse); league groups keep their season rows
@@ -504,7 +525,20 @@ function render(){
   $('chips').innerHTML = chips.map(([k, t]) => `<a href="#view=${view}${k === 'all' ? '' : '&lg=' + k}" class="${k === lg ? 'on' : ''}">${t}</a>`).join('');
   $('top').style.display = $('sub').style.display = view === 'backtest' ? 'none' : '';   // the live record tiles are not shown on the backtest
   const BTb = view === 'backtest' ? DATA.bets.filter(inLg) : [];   // the backtest tiles sit on top of the Backtest tab, where the record tiles are on the other tabs
-  $('btop').innerHTML = BTb.length ? (() => { const T = stat(BTb), C = BTb.filter(b => b.close != null); const cc = C.filter(b => b.cpx != null && b.total !== b.close), rc = cc.length ? cc.reduce((a, b) => a + (b.total > b.close ? b.cpx - 1 : -1), 0) / cc.length : null; const K = runs(BTb); return tiles([['Picks', T.n], ['Hit rate', pct(T.w / T.n, 1)], ['ROI at opening', roi(T.roi), cls(T.roi)], ['ROI at closing', rc != null ? roi(rc) : '–', cls(rc)], ['Profit, units', uFmt(K.u), cls(K.u)], ['Max drawdown, units', K.dd ? '−' + K.dd.toFixed(1) : '0'], ['Longest losing run', K.worst], ['Opening line', lineAvg(C, 'line')], ['Closing line', lineAvg(C, 'close')], ['Model line', lineAvg(C, 'mu')], ['Actual total', lineAvg(C, 'total')], ['Closing line moved toward the pick', pct(C.filter(b => b.close > b.line).length / C.length)], ['Closing line moved against it', pct(C.filter(b => b.close < b.line).length / C.length)], ...mvTiles(C).map(([k, v]) => [k, v])]); })() : '';
+  $('btop').innerHTML = BTb.length ? (() => {   // the same tiles as the Live test tab (14 Nov 2026, as the men's page)
+    const T = stat(BTb), c = BTb.filter(b => b.close != null), W = BTb.filter(b => b.ret > 0).length, Lo = BTb.filter(b => b.ret < 0).length, RK = riskTiles(BTb);
+    const cc = c.filter(b => b.cpx != null && b.total !== b.close), rc = cc.length ? cc.reduce((a, b) => a + (b.total > b.close ? b.cpx - 1 : -1), 0) / cc.length : null;
+    const C = (v, k) => k ? `<b class="${k}" style="font-weight:inherit">${v}</b>` : v;
+    const z = c.filter(b => b.close === b.line), zd = z.filter(b => b.ret !== 0), zw = zd.filter(b => b.ret > 0).length, zr = zd.length ? zd.reduce((x, b) => x + b.ret, 0) / zd.length : null;
+    return TL([['Settled picks', `${W}–${Lo}`, `${pct(W / (W + Lo), 1)} hit rate · ${BTb.length.toLocaleString('en')} settled`],
+               ['ROI', TWO('Opening line', C(roi(T.roi), cls(T.roi)), 'Closing line', rc != null ? C(roi(rc), cls(rc)) : '–'), ''],
+               ['Average line', TWO('Opening', lineAvg(c, 'line'), 'Closing', lineAvg(c, 'close')), ''],
+               ['Average total', TWO('Model', lineAvg(c, 'mu'), 'Actual', lineAvg(c, 'total')), ''],
+               [RK[0][0], C(RK[0][1], RK[0][2]), 'at 1 unit a pick'],
+               ...(c.length ? mvTiles(c) : []),
+               ...(z.length ? [['Won when no move', zd.length ? pct(zw / zd.length, 1) : '–', `${pct(z.length / c.length)} of picks · ROI ${C(roi(zr), cls(zr))}`]] : []),
+               ...RK.slice(1).map(([k, v, cl]) => [k, C(v, cl), ''])]);
+  })() : '';
   $('out').innerHTML = RENDER[view]();
 }
 function fromHash(){
