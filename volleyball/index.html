@@ -220,9 +220,10 @@ const gameLink = g => `<a class="gm" href="/volleyball/games/${g.dt.slice(0,10)}
 const pct = x => Math.round(x*100) + '%';
 const sgn = (x, d=1) => (x > 0 ? '+' : x < 0 ? '−' : '') + Math.abs(x).toFixed(d);
 const cls = x => x > 0 ? 'pos' : x < 0 ? 'neg' : '';
-// the model runs too confident (Calibration in Backtest): shown chances keep 60% of its advantage over the price, so shown
-// edge = 60% of the model's. Picks are still chosen on the model's own figures (user, 7 Nov 2026)
-const REAL = 0.6, realP = (p, px) => 1 / px + REAL * (p - 1 / px);
+// the model runs too confident (Calibration in Backtest): shown chances keep 80% of its advantage over the price, so shown
+// edge = 80% of the model's. Picks are still chosen on the model's own figures (user, 7 Nov 2026). 60% until 14 Nov 2026:
+// refit on the 688 backtest bets, actual - price = 0.82 x (model - price), 90% range 0.57-1.10, close and open alike
+const REAL = 0.8, realP = (p, px) => 1 / px + REAL * (p - 1 / px);
 let view = 'home', lg = 'all';
 const LG = Object.fromEntries(DATA.leagues.map(l => [l.key, l]));
 const sexOf = l => l.women ? 'women' : 'men';
