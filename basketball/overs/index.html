@@ -174,6 +174,7 @@ a.tile:hover{border-color:var(--gold)}
 .tile .stat{font:500 26px var(--mono);line-height:1.15;font-variant-numeric:tabular-nums;display:flex;flex-wrap:wrap;align-items:center;gap:2px 6px}
 .tile .small{font-size:14.5px;color:var(--muted)}
 .tile .two{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%;font-size:24px}
+.tile .two .h-a{color:var(--gold)}.tile .two .h-b{color:#7fb2ff}.tile .two .h-up{color:var(--up,#4cc47a)}.tile .two .h-dn{color:var(--dn,#ef7a70)}.tile .two span>i{color:inherit!important;opacity:.85}
 .tile .two i{display:block;font:400 11px var(--mono);font-style:normal;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px;white-space:nowrap}
 /* two rows of five: the record, then the closing line (14 Nov 2026) */
 #top,.metrics.m5,.tiles.t5{grid-template-columns:repeat(5,minmax(0,1fr))}   /* 1H Live test tiles: two rows of five too */
@@ -286,14 +287,14 @@ function mvTiles(list){
   const dec = L => L.filter(b => b.ret != null && b.ret !== 0);
   const hit = L => { const d = dec(L); return d.length ? pct(d.filter(b => b.ret > 0).length / d.length, 1) : '–'; };
   const wl_ = L => { const d = dec(L), w = d.filter(b => b.ret > 0).length; return `${w}–${d.length - w}`; };
-  return [['Closing line moved', n ? TWO('Toward pick', pct(up.length / n), 'Against', pct(dn.length / n)) : '–', ''],
+  return [['Closing line moved', n ? TWO('Toward pick', pct(up.length / n), 'Against', pct(dn.length / n), 'h-up', 'h-dn') : '–', ''],
           ['Avg move toward pick', up.length ? a(up) + ' pts' : '–', `avg of ${up.length} picks`], ['Avg move against pick', dn.length ? a(dn) + ' pts' : '–', `avg of ${dn.length} picks`],
           ['Won when moved toward', hit(up), `${wl_(up)} win – loss`], ['Won when moved against', hit(dn), `${wl_(dn)} win – loss`]];
 }
 
 // two numbers in one tile, a little smaller so they stay on one line (14 Nov 2026)
 // two numbers in one tile, each with its own label above it (14 Nov 2026)
-function TWO(l1, v1, l2, v2){ return `<span class="two"><span><i>${l1}</i>${v1}</span><span><i>${l2}</i>${v2}</span></span>`; }
+function TWO(l1, v1, l2, v2, c1 = 'h-a', c2 = 'h-b'){ return `<span class="two"><span class="${c1}"><i>${l1}</i>${v1}</span><span class="${c2}"><i>${l2}</i>${v2}</span></span>`; }   // each half its own colour
 function PAIR(v){ return `<b style="font-size:.86em;font-weight:inherit;white-space:nowrap">${v}</b>`; }
 
 // tiles in the Live test style, five to a row (14 Nov 2026)
