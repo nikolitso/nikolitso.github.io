@@ -19,6 +19,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Hanken+Grotesk:ital,wght@0,300..700;1,400&display=swap">
 <style>
+
 :root{
   --bg:#dce8f4; --surface:#ffffff; --ink:#121826; --ink2:#46505f; --muted:#68758a; --line:#c9d6e4; --grid:#e3ebf4;
   --accent:#c8203a; --accent-soft:#fbe9ec; --md:#1b7f4b; --md-soft:#e5f3eb;
@@ -151,6 +152,37 @@ th[aria-sort=ascending]::after{content:" \25B2";font-size:.7em}th[aria-sort=desc
 
 html{scroll-behavior:smooth;font-size:17.5px}   /* one step larger: the page sizes its text in rem */section{scroll-margin-top:60px}
 @media (max-width:700px){.rule{grid-template-columns:1fr}}
+
+/* Prototype presentation refinement — no model or data changes */
+:root{--an-wrap:1120px}
+body{font-size:17px;line-height:1.55}
+.wrap{max-width:1180px;padding:30px 22px 64px;gap:46px}
+.wrap header{gap:14px}
+h1{font-size:clamp(2.7rem,5vw,4.5rem);line-height:.98;letter-spacing:-.025em}
+h2{font-size:clamp(1.75rem,3vw,2.25rem);line-height:1.08}
+h3{font-size:1.25rem}
+p{line-height:1.6}
+section{gap:18px}
+.tabs{gap:7px;flex-wrap:wrap}
+.tabs a{padding:8px 13px;font-size:.86rem}
+.tbl{border-radius:12px}
+table{font-size:.91rem}
+th,td{padding:10px 11px}
+th{font-size:.74rem}
+.stat{font-size:2.25rem}
+.rule>div{padding:19px 21px}
+.tile,.card,.panel{border-radius:12px}
+@media(max-width:700px){
+ .wrap{padding:20px 14px 42px;gap:34px}
+ body{font-size:16px}
+ h1{font-size:2.8rem}
+ h2{font-size:1.7rem}
+ .tabs{overflow-x:auto;flex-wrap:nowrap;padding-bottom:5px}
+ .tabs a{flex:none}
+ table{font-size:.84rem}
+ th,td{padding:8px}
+}
+
 </style>
 <link rel="stylesheet" href="/assets/an.css?v=1">
 <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "b67bbb76d0e24af196b24ded3ab71ad0"}'></script>
