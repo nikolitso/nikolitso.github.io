@@ -4,10 +4,9 @@
   "fa": 0.0,
   "eh": null,
   "ea": null,
-  "h": -0.5,
+  "h": 0.0,
   "a": 0.1,
   "oh": [
-   "Heurtel",
    "Brown Iii",
    "Williams"
   ],
@@ -162,7 +161,7 @@
    "away": false,
    "days": 3
   },
-  "h": -0.9,
+  "h": -1.0,
   "a": -1.2,
   "oh": [
    "Morgan"
@@ -274,10 +273,9 @@
    "days": 3
   },
   "h": 0.0,
-  "a": -0.5,
+  "a": 0.0,
   "oh": [],
   "oa": [
-   "Heurtel",
    "Brown Iii",
    "Williams"
   ]
