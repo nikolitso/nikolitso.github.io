@@ -142,7 +142,7 @@ table th,table td{line-height:1.4}
   background:var(--an-soft);
   box-shadow:0 5px 18px rgba(0,0,0,.09);
 }
-table{border-collapse:separate;border-spacing:0}
+table{border-collapse:collapse;border-spacing:0}
 table th{
   background:color-mix(in srgb,var(--an-ink) 4%,var(--an-soft));
   color:var(--an-muted);
