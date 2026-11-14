@@ -208,7 +208,7 @@ a.gm{color:inherit;text-decoration:none} a.gm:hover{color:var(--gold);text-decor
   <div class="chips" id="chips"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=28ebeb6a"></script>
+<script src="data.js?v=001d5765"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -307,13 +307,14 @@ const fairCell = p => p.fair == null ? '<td class="n muted">–</td>' : `<td cla
 
 function renderPicks(){
   const open = DATA.picks.filter(inLg).filter(p => !('won' in p)).sort((a, b) => a.dt.localeCompare(b.dt));
-  let h = pickTiles() + `<p class="note">Picks logged before the first serve: an over on a line from ${DATA.min_line}.5 to ${DATA.low - 0.5}, when the model's chance × the average price is more than ${DATA.edge*100}% above 1. Leagues: ${liveNames()}. Regular-season games only: no playoffs, play-outs or placement games. Equal stakes. Until the start a pick follows the latest line. Once played it moves to Settled picks below, at the price logged before the first serve. ROI = profit ÷ total staked (lines end in .5, so there are no pushes). The page judges itself at <b>100 settled picks</b>; before that, the record is mostly noise. Over chance and Edge are corrected: they keep ${REAL * 100}% of the model's advantage over the price, as the model runs too confident, so a pick can show an edge under ${DATA.edge*100}%.</p>`;
-  if (!open.length) return h + '<h2>Open picks</h2><p class="empty">No open picks. New ones appear once the market posts lines for a match that qualifies.</p>' + settled();
+  const note = `<p class="note">Picks logged before the first serve: an over on a line from ${DATA.min_line}.5 to ${DATA.low - 0.5}, when the model's chance × the average price is more than ${DATA.edge*100}% above 1. Leagues: ${liveNames()}. Regular-season games only: no playoffs, play-outs or placement games. Equal stakes. Until the start a pick follows the latest line. Once played it moves to Settled picks, at the price logged before the first serve. ROI = profit ÷ total staked (lines end in .5, so there are no pushes). The page judges itself at <b>100 settled picks</b>; before that, the record is mostly noise. Over chance and Edge are corrected: they keep ${REAL * 100}% of the model's advantage over the price, as the model runs too confident, so a pick can show an edge under ${DATA.edge*100}%.</p>`;
+  let h = pickTiles();                            // the note goes below the picks (user, 14 Nov 2026)
+  if (!open.length) return h + '<h2>Open picks</h2><p class="empty">No open picks. New ones appear once the market posts lines for a match that qualifies.</p>' + settled() + note;
   h += `<h2>Open picks</h2><div class="scroll"><table><thead><tr><th>Date</th>${lg === 'all' ? '<th>League</th>' : ''}<th>Match</th><th class="n">Market line</th><th class="n">Price</th><th class="n">Model line</th><th class="n">Over chance</th><th class="n">Edge</th></tr></thead><tbody>`;
   for (const p of open)
     h += `<tr><td>${short(p.dt)} ${p.dt.slice(11)}</td>${lg === 'all' ? `<td>${LG[p.lg].country} ${sexAb(LG[p.lg])}</td>` : ''}<td class="wr">${p.home} – ${p.away}</td><td class="n">Over ${p.line}</td><td class="n">${p.px.toFixed(2)}</td>
       ${fairCell(p)}<td class="n">${pct(realP(p.p, p.px))}</td><td class="n ${cls(p.edge)}">${sgn(p.edge*REAL*100, 0)}%</td></tr>`;
-  return h + '</tbody></table></div>' + settled();
+  return h + '</tbody></table></div>' + settled() + note;
 }
 
 const avgLine = (g, k) => { const v = g.map(p => p[k]).filter(x => x != null); return v.length ? (v.reduce((s, x) => s + x, 0) / v.length).toFixed(1) : '–'; };
