@@ -219,7 +219,6 @@ a.tile:hover{border-color:var(--gold)}
 <div class="an-project-context"><span class="an-project-context__label">Scope</span><span>Women's domestic-league totals projections are presented separately from the historical backtest and prospective live record. Full-game and first-half projections are distinct samples; market lines and settled totals are separate references.</span></div><div class="an-data-key" role="group" aria-label="How to read basketball projections"><span class="an-data-key__title">Reading the numbers</span><span class="an-data-key__item"><i class="an-data-key__dot an-data-key__dot--expected" aria-hidden="true"></i><b>Model</b> projected margin / total and team power</span>
 <span class="an-data-key__item"><i class="an-data-key__dot an-data-key__dot--market" aria-hidden="true"></i><b>Market</b> spread / total</span>
 <span class="an-data-key__item"><i class="an-data-key__dot an-data-key__dot--actual" aria-hidden="true"></i><b>Actual</b> final score and box score</span></div>
-<p class="games-link"><a href="/basketball/women/games/">Game by game: the projection, the line and the result →</a></p>
 
   <div class="sub an-meta-strip" id="sub" style="margin:0 0 12px"></div>
   <div class="tiles" id="top"></div>
@@ -554,6 +553,7 @@ function bets(list){
 
 function renderProjections(){
   let h = `<p class="note">Games in the next 7 days where both teams have played ${LIVE.min_gp ?? 4}+ games, with the model's projected total (fitted on earlier games only) next to the market's consensus line. Model: the model total, every signal in; each match page builds it up from the projected total. Line diff: the projected total minus the line, the number the 4-point rule reads. Over edge is shown only for games that meet every other rule: edge above ${(LE()*100).toFixed(0)}%, projected total at least 4 points above the line, both teams ${LIVE.min_gp ?? 4}+ games, pace −1 or more, regular season, a line ending in .5; a game becomes a pick when its edge is also above the bar. Highlighted games are logged in the Live test tab at the line and price shown when they were first seen, and their edge is the one at that moment, while the line and prices keep updating. <b>Edge now</b>, for those picks: the edge at the line and price on offer now, yellow when it has fallen to the bar or below, red when it is gone. Click a match for its page, with the projection and how it was produced. Click a column heading to sort.</p>`;
+  h += '<p class="games-link"><a href="/basketball/women/games/">Game by game: the projection, the line and the result →</a></p>';
   const fx = LIVE.fixtures.filter(inLg);
   if (!fx.length) return h + '<p class="empty">No games in the next 7 days where both teams have the minimum games.</p>';
   const taken = Object.fromEntries(LIVE.picks.map(b => [b.home + '|' + b.away, b]));   // a pick keeps the edge it was taken at
