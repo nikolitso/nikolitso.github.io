@@ -270,14 +270,17 @@ const TOP_MAIN = $('top').innerHTML;
 const TOP_H1 = (() => {
   const H = LIVE.h1;
   if (!H) return '';
-  const S = H.stats || {}, A = H.acc, nOpen = H.picks.filter(b => !b.done).length, dec = (S.settled || 0);
-  const cl1 = H.picks.filter(b => b.done && b.close != null && b.ret != null);
+  // the same tiles as the Live test tab, from the 1H picks: record, ROI at the opening and closing 1H line, lines, totals, closing-line moves
+  const set = H.picks.filter(b => b.done && b.ret != null), won = set.filter(b => b.ret > 0).length, lost = set.filter(b => b.ret < 0).length;
+  const units = set.reduce((a, b) => a + b.ret, 0), nOpen = H.picks.filter(b => !b.done).length;
+  const cl = set.filter(b => b.close != null), avg = (L, f) => L.length ? (L.reduce((a, b) => a + f(b), 0) / L.length).toFixed(1) : '–';
+  const cc = cl.filter(b => b.cpx != null && b.res !== b.close), uc = cc.reduce((a, b) => a + (b.res > b.close ? b.cpx - 1 : -1), 0);
   return [['Open 1H picks', nOpen, nOpen ? 'to play' : 'none right now'],
-    ['Settled 1H picks', dec ? `${S.w}–${dec - S.w}` : '–', dec ? `${pct(S.w / dec, 1)} hit rate · ${dec} settled` : 'none yet'],
-    ['ROI', S.roi != null ? `<b class="${cls(S.roi)}" style="font-weight:inherit">${roi(S.roi)}</b>` : '–', 'at the 1H line taken'],
-    ['Off by, points', A ? TWO('First line', A.mae_line.toFixed(1), 'Model 1H', `<b class="${A.mae_model < A.mae_line ? 'pos' : A.mae_model > A.mae_line ? 'neg' : ''}" style="font-weight:inherit">${A.mae_model.toFixed(1)}</b>`) : '–', 'from the first-half score'],
-    ['Model on right side', A && A.model_right != null ? pct(A.model_right, 1) : '–', A ? `of ${A.n} first halves` : ''],
-    ...mvTiles(cl1).map(([k, v, n]) => [k.replace('Closing line', 'Closing 1H line'), v, n])]
+    ['Settled 1H picks', won + lost ? `${won}–${lost}` : '–', won + lost ? `${pct(won / (won + lost), 1)} hit rate · ${set.length} settled` : `${set.length} settled`],
+    ['ROI', TWO('Opening line', won + lost ? roi(units / (won + lost)) : '–', 'Closing line', cc.length ? roi(uc / cc.length) : '–'), ''],
+    ['Average line', TWO('Opening', avg(cl, b => b.line), 'Closing', avg(cl, b => b.close)), ''],
+    ['Average total', TWO('Model', avg(set.filter(b => b.m1 != null), b => b.m1), 'Actual', avg(set.filter(b => b.res != null), b => b.res)), ''],
+    ...mvTiles(cl).map(([k, v, n]) => [k.replace('Closing line', 'Closing 1H line'), v, n])]
     .map(([k, v, n]) => `<a class="tile" href="#view=h1live"><span class="klabel">${k}</span><span class="stat">${v}</span><span class="small">${n}</span></a>`).join('');
 })();
 
