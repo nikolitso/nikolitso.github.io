@@ -218,3 +218,11 @@ html[data-site] .metric .big2{line-height:1.15}
   html[data-site] .an-project-nav a{font-size:13.5px}
   .an-project-nav>div{column-gap:10px}
 }
+
+/* sports type floor (roadmap item 7, 14 Nov 2026): no text on the sports pages under 14px, lifting only what is smaller at each width.
+   Same weight as the rules it lifts (html + one attribute), so a page's own larger size still wins. Books and the homepage keep their sizes.
+   Each project's own CSS got the same floor. */
+html:not([data-site="books"]) .an-kicker,html:not([data-site="books"]) .an-home,html:not([data-site="books"]) .subnav a.an-home,html:not([data-site="books"]) .an-project-context__label,html:not([data-site="books"]) .an-data-key__title,html:not([data-site="books"]) .klabel,html:not([data-site="books"]) .metric .lbl,html:not([data-site="books"]) .tile .klabel{font-size:14px}
+@media(min-width:761px) and (max-width:1180px){html:not([data-site="books"]) .an-project-nav a{font-size:14px}}
+@media(max-width:760px){html:not([data-site="books"]) .an-project-nav a,html:not([data-site="books"]) .an-project-context,html:not([data-site="books"]) .an-data-key,html:not([data-site="books"]) .an-data-key__item,html:not([data-site="books"]) .an-data-key__title,html:not([data-site="books"]) .an-meta-strip,html:not([data-site="books"]) table th,html:not([data-site="books"]) .small,html:not([data-site="books"]) .muted.small,html:not([data-site="books"]) .sub,html:not([data-site="books"]) .hint,html:not([data-site="books"]) .caption,html:not([data-site="books"]) .footnote,html:not([data-site="books"]) .an-home,html:not([data-site="books"]) .an-project-context__label{font-size:14px}}
+@media(max-width:480px){html:not([data-site="books"]) table,html:not([data-site="books"]) table td{font-size:14px}}

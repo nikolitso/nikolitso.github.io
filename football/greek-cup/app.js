@@ -121,7 +121,7 @@
     var h = '<p class="note">Games split into three groups as equal as possible, by the favourite\u2019s 1X2 price or by the over 2.5 goals price. Odds are the middle market price before kick-off. <b>Odds %</b> is the chance the odds give once the margin is removed; results and over/under always use the full match.</p>';
     h += '<div class="bar">' + periodSeg() + '</div>';
     function pills(lbl, set, pre) {
-      var r = '<div class="bar"><span class="muted" style="font:500 12px var(--mono);text-transform:uppercase;letter-spacing:.06em;min-width:150px">' + lbl + '</span><div class="chips">';
+      var r = '<div class="bar"><span class="muted" style="font:500 14px var(--mono);text-transform:uppercase;letter-spacing:.06em;min-width:150px">' + lbl + '</span><div class="chips">';
       set.forEach(function (t, i) {
         r += '<button class="chip' + (st.ob === pre + i ? " on" : "") + '" data-ob="' + pre + i + '">' + t.lo.toFixed(2) + ' – ' + t.hi.toFixed(2) + ' <span style="opacity:.7">' + t.gs.length + '</span></button>';
       });

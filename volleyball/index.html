@@ -36,7 +36,7 @@ body{margin:0;background:var(--bg);color:var(--text);font:17px/1.5 var(--body)}
 .seg button{background:none;border:0;color:var(--muted);font:500 14.5px var(--mono);padding:8px 16px;cursor:pointer;letter-spacing:.06em;text-transform:uppercase}
 .seg button.on{background:var(--gold);color:var(--an-on-accent)}
 .chips{display:flex;flex-wrap:wrap;gap:8px}
-.chip{background:none;border:1px solid var(--line);border-radius:999px;color:var(--muted);font:500 13.5px var(--mono);padding:5px 12px;cursor:pointer}
+.chip{background:none;border:1px solid var(--line);border-radius:999px;color:var(--muted);font:500 14px var(--mono);padding:5px 12px;cursor:pointer}
 .chip:hover{color:var(--text)}
 .chip.on{background:var(--gold);border-color:var(--gold);color:var(--an-on-accent)}
 h2{font:600 22px var(--serif);margin:30px 0 12px}
@@ -49,14 +49,14 @@ h2.day{font-size:20px;padding-bottom:8px;border-bottom:1px solid var(--line)}
 .card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px 18px 10px}
 .card h3{font:600 24px var(--serif);margin:0}
 .card h3 a{color:inherit;text-decoration:none}.card h3 a:hover{color:var(--gold)}
-.live{font:500 12.5px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--bg);background:var(--gold);border-radius:4px;padding:1px 6px;margin-left:8px;vertical-align:1px}
+.live{font:500 14px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--bg);background:var(--gold);border-radius:4px;padding:1px 6px;margin-left:8px;vertical-align:1px}
 .card .ko{font:500 15.5px var(--mono);color:var(--text);letter-spacing:.06em}
 .wdl{display:flex;height:8px;border-radius:4px;overflow:hidden;margin:12px 0 6px;background:var(--line)}
 .wdl i{display:block} .wdl i:nth-child(1){background:var(--gold)} .wdl i:nth-child(2){background:var(--an-muted)} .wdl i:nth-child(3){background:var(--an-bar)}
 .wdlt{display:flex;justify-content:space-between;font:400 15.5px var(--mono);color:var(--muted)}
 .wdlt b{color:var(--text);font-weight:500}
 table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
-th{font:400 12.5px var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.08em;text-align:left;padding:8px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
+th{font:400 14px var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.08em;text-align:left;padding:8px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
 td{padding:7px 8px;border-bottom:1px solid color-mix(in srgb,var(--line) 60%,transparent);font-size:16.5px;white-space:nowrap}
 td.n,th.n{text-align:right;font-family:var(--mono);font-size:15px}
 td.tot{color:var(--gold);font-weight:500}
@@ -69,12 +69,12 @@ table.mk{margin-bottom:6px}table.mk td,table.mk th{padding:6px 7px}
 .wdlt i{font-style:normal;color:var(--gold)}
 .wdlt span:nth-child(2){text-align:center}.wdlt span:last-child{text-align:right}
 .coach .who{display:inline-block;min-width:118px;color:var(--muted)}
-.tenure{font:400 13.5px/1.4 var(--mono);color:var(--muted);margin-top:2px}
+.tenure{font:400 14px/1.4 var(--mono);color:var(--muted);margin-top:2px}
 .coach{font:400 15px/1.55 var(--mono);color:var(--muted);margin-top:2px}
 .coach b{color:var(--text);font-weight:500}
 .coach .wc{display:inline-block;width:7ch;text-align:right}
 .ctx{margin-top:12px;padding-bottom:8px}
-.ctx h4{font:400 12.5px var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin:0 0 4px;padding-bottom:6px;border-bottom:1px solid var(--line)}
+.ctx h4{font:400 14px var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin:0 0 4px;padding-bottom:6px;border-bottom:1px solid var(--line)}
 .ctx .coach{display:grid;grid-template-columns:118px minmax(0,1fr);column-gap:8px;font-size:14.5px;margin-top:4px}
 .ctx .coach .who{min-width:0}
 table.tm{max-width:1000px}table.tm .gl{border-left:1px solid var(--line);padding-left:12px}
@@ -83,7 +83,7 @@ table.tm tr.grp th{color:var(--gold);border-bottom:0;padding-bottom:0}
 .ref{font:400 15px/1.55 var(--mono);color:var(--muted);margin-top:6px}
 .ref b{color:var(--text);font-weight:500}
 .card tr:last-child td{border-bottom:0}
-.ln{font:400 13.5px var(--mono);color:var(--muted);text-align:right}
+.ln{font:400 14px var(--mono);color:var(--muted);text-align:right}
 .ln span{display:inline-block;min-width:92px}
 .ln b{color:var(--text);font-weight:500}
 .ln .hi{color:var(--win)} .ln .lo{color:var(--loss)}
@@ -96,7 +96,7 @@ th.sort{cursor:pointer;user-select:none} th.sort:hover,th.sort.on{color:var(--go
 .metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin:0 0 18px}
 .refsub{font:600 18px var(--serif);margin:8px 0 8px}
 .metric{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
-.metric .lbl{font:400 12.5px var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}
+.metric .lbl{font:400 14px var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}
 .metric .big{font:500 24px var(--mono);color:var(--gold)}
 .scroll{overflow-x:auto}
 .doc{max-width:860px}
@@ -105,7 +105,7 @@ th.sort{cursor:pointer;user-select:none} th.sort:hover,th.sort.on{color:var(--go
 .doc h3{font:600 18px var(--serif);margin:28px 0 8px;display:flex;align-items:center;gap:10px}
 .doc .num{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--gold);color:var(--an-on-accent);font:600 14.5px var(--mono);flex:none}
 .calc{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:8px;padding:12px 16px;margin:0 0 14px;font:400 15.5px/2 var(--mono);overflow-x:auto}
-.calc i{font-style:normal;color:var(--muted);font-size:13.5px}
+.calc i{font-style:normal;color:var(--muted);font-size:14px}
 .calc b{color:var(--gold);font-weight:500}
 table.mini{margin:0 0 16px}
 .rs-lede{font-size:16px;margin:4px 0 16px;max-width:68ch}
@@ -114,7 +114,7 @@ a.rs-card:hover{border-color:var(--an-accent)}
 .rs-card h2{margin:4px 0 6px}
 .rs-card p{margin:0 0 14px;max-width:68ch}
 .rs-facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px;margin:0 0 12px}
-.rs-fact{border:1px solid var(--line);border-radius:8px;padding:10px 12px;font-size:13.5px;line-height:1.45}
+.rs-fact{border:1px solid var(--line);border-radius:8px;padding:10px 12px;font-size:14px;line-height:1.45}
 .rs-fact b{display:block;font:400 26px/1.1 var(--an-display);margin-bottom:3px}
 .rs-go{color:var(--an-accent);font-size:14px}
 table.xv td{vertical-align:top}table.xv td.xvc{white-space:normal;font-size:15px;line-height:1.5;max-width:720px}
@@ -125,7 +125,7 @@ table.xv td{vertical-align:top}table.xv td.xvc{white-space:normal;font-size:15px
 .chart h3{font:600 17px var(--serif);margin:0 0 4px;display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
 .chart svg{display:block;width:100%;height:auto}
 .chart .cap{font:400 15.5px/1.5 var(--body);color:var(--muted);margin:6px 0 0}
-.key{font:400 13.5px var(--mono);color:var(--muted);display:flex;gap:14px}
+.key{font:400 14px var(--mono);color:var(--muted);display:flex;gap:14px}
 .key i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:-1px}
 .chart .hit{fill:transparent;cursor:default}
 .chart .bar.hl{opacity:.75}
@@ -159,14 +159,14 @@ body{font-size:18px;line-height:1.58}
 h2{font-size:30px}
 .card h3{font-size:27px}
 td{font-size:17px;padding:9px 9px}
-th{font-size:13px}
+th{font-size:14px}
 .sub{font-size:14px}
 .games-link{font-size:16px}
 #tabs a{font-size:16px}
 @media(max-width:700px){body{font-size:16.5px}.wrap{padding-left:14px;padding-right:14px}h2{font-size:26px}td{font-size:15px}}
 
 </style>
-<link rel="stylesheet" href="/assets/an.css?v=4">
+<link rel="stylesheet" href="/assets/an.css?v=5">
 </head>
 <body>
 <!-- sitebar:start (link back to antonisnikolitsopoulos.com; keep on every page) -->
@@ -183,7 +183,7 @@ th{font-size:13px}
 .proj b{color:var(--text);font-weight:500}
 .mk{display:flex;flex-wrap:wrap;justify-content:space-between;gap:4px 14px;font:400 15px/1.6 var(--mono);color:var(--muted);margin-top:8px;padding-top:8px;border-top:1px solid var(--line)}
 .mk b{color:var(--text);font-weight:500}
-.badge{display:inline-block;font:500 12.5px var(--mono);letter-spacing:.06em;text-transform:uppercase;background:var(--gold);color:var(--an-on-accent);border-radius:4px;padding:2px 7px;margin-left:8px;vertical-align:3px}
+.badge{display:inline-block;font:500 14px var(--mono);letter-spacing:.06em;text-transform:uppercase;background:var(--gold);color:var(--an-on-accent);border-radius:4px;padding:2px 7px;margin-left:8px;vertical-align:3px}
 .flag{font:400 14.5px var(--mono);color:var(--loss);margin-top:6px}
 .card.simple{padding:16px 18px 14px}
 .card.simple h3{font-size:21px}
@@ -191,7 +191,7 @@ th{font-size:13px}
 .cols{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:28px;align-items:start}
 @media(max-width:900px){.cols{grid-template-columns:minmax(0,1fr)}}
 td.wr{white-space:normal}
-table.proj tr.pk td{background:var(--an-accent-soft)}table.proj tr.pk td:first-child{box-shadow:inset 3px 0 var(--gold)}table.proj .flag{margin-top:4px;font-size:13.5px}
+table.proj tr.pk td{background:var(--an-accent-soft)}table.proj tr.pk td:first-child{box-shadow:inset 3px 0 var(--gold)}table.proj .flag{margin-top:4px;font-size:14px}
 .pos{color:var(--win)} .neg{color:var(--loss)}
 tr.srow{cursor:pointer} tr.srow:hover td,tr.srow.on td{background:color-mix(in srgb,var(--gold) 10%,transparent)}
 .caret{color:var(--gold);display:inline-block;width:1em}
@@ -201,10 +201,10 @@ th.tsort{cursor:pointer;user-select:none} th.tsort:hover{color:var(--gold)}
 .chips a.on{color:var(--an-on-accent);background:var(--gold);border-color:var(--gold)}
 .metric .sm{font:400 14px var(--mono);color:var(--muted);margin-top:4px}
 a.metric{display:block;color:inherit;text-decoration:none} a.metric:hover{border-color:var(--gold)}
-.pill{display:inline-block;font:500 13.5px var(--mono);padding:2px 9px;border-radius:99px;border:1px solid var(--line);vertical-align:4px;margin-left:6px}
+.pill{display:inline-block;font:500 14px var(--mono);padding:2px 9px;border-radius:99px;border:1px solid var(--line);vertical-align:4px;margin-left:6px}
 .pill.pos{border-color:color-mix(in srgb,var(--win) 40%,transparent);background:color-mix(in srgb,var(--win) 10%,transparent)}
 .pill.neg{border-color:color-mix(in srgb,var(--loss) 40%,transparent);background:color-mix(in srgb,var(--loss) 9%,transparent)}
-.lgt{font:500 12.5px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--gold)}
+.lgt{font:500 14px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--gold)}
 a.gm{color:inherit;text-decoration:none} a.gm:hover{color:var(--gold);text-decoration:underline}
 </style>
 <nav class="an-project-nav" aria-label="Sports analytics projects"><div>
@@ -239,6 +239,7 @@ a.gm{color:inherit;text-decoration:none} a.gm:hover{color:var(--gold);text-decor
 <span class="an-data-key__item"><i class="an-data-key__dot an-data-key__dot--market" aria-hidden="true"></i><b>Market</b> totals line</span>
 <span class="an-data-key__item"><i class="an-data-key__dot an-data-key__dot--actual" aria-hidden="true"></i><b>Actual</b> final match sets / points</span>
 </div>
+<p class="games-link"><a href="/volleyball/games/">Game by game: the projection, the line and the result →</a></p>
   <div class="sub an-meta-strip" id="sub"></div>
   <div class="chips" id="chips"></div>
   <div id="out"></div>
