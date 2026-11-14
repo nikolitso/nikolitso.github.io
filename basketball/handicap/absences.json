@@ -254,5 +254,27 @@
   "oa": [
    "Grimes"
   ]
+ },
+ "v32xpkBT": {
+  "fh": 0.0,
+  "fa": -0.9,
+  "eh": {
+   "comp": "FIBA Europe Cup",
+   "opp": "Wurzburg",
+   "away": true,
+   "days": 4
+  },
+  "ea": {
+   "comp": "Champions League",
+   "opp": "Szombathely",
+   "away": false,
+   "days": 3
+  },
+  "h": 0.0,
+  "a": 0.1,
+  "oh": [],
+  "oa": [
+   "Heurtel"
+  ]
  }
 }
