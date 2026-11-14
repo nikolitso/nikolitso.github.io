@@ -177,7 +177,7 @@ a.tile:hover{border-color:var(--gold)}
 .tile .two .h-a{color:var(--gold)}.tile .two .h-b{color:#7fb2ff}.tile .two .h-up{color:var(--up,#4cc47a)}.tile .two .h-dn{color:var(--dn,#ef7a70)}.tile .two span>i{color:inherit!important;opacity:.85}.tile .two span>b{color:inherit!important}
 .tile .two i{display:block;font:400 11px var(--mono);font-style:normal;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px;white-space:nowrap}
 #top,.tiles.t5{grid-template-columns:repeat(5,minmax(0,1fr))}   /* two rows of five: the record, then the closing line (14 Nov 2026, as the men's page) */
-@media(max-width:760px){.tile .two,#top .tile:nth-child(-n+3) .two{font-size:19px;gap:6px}#top .tile:nth-child(-n+3) .stat,.tiles.t5 .tile:nth-child(-n+2) .stat{font-size:28px}.tiles.t5 .tile:nth-child(2) .two{font-size:19px}.tile .two i{white-space:normal}#top,.tiles.t5{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:760px){.tile .two,#top .tile:nth-child(-n+3) .two{font-size:19px;gap:6px}#top .tile:nth-child(-n+3) .stat,.tiles.t5 .tile:nth-child(-n+2) .stat{font-size:28px}.tiles.t5 .tile:nth-child(2) .two{font-size:19px}.tile .two i{white-space:normal}#top,.tiles.t5{grid-template-columns:repeat(2,minmax(0,1fr))}#top .stat b,.tiles.t5 .stat b{white-space:normal!important}}
 .tiles .pos{color:var(--up)} .tiles .neg{color:var(--dn)}
 .pill{white-space:nowrap;font:500 13.5px var(--mono);padding:2px 9px;border-radius:99px;border:1px solid var(--line);vertical-align:middle}
 .pill.pos{border-color:color-mix(in srgb,var(--up) 40%,transparent);background:color-mix(in srgb,var(--up) 10%,transparent)}
@@ -257,10 +257,11 @@ function mvTiles(list){
   const a = L => L.length ? sgn(L.reduce((x, b) => x + b.close - b.line, 0) / L.length, 1) : '–';
   const dec = L => L.filter(b => b.ret != null && b.ret !== 0);
   const hit = L => { const d = dec(L); return d.length ? pct(d.filter(b => b.ret > 0).length / d.length, 1) : '–'; };
+  const ROIs = L => { const d = dec(L); if (!d.length) return ''; const r = d.reduce((x, b) => x + b.ret, 0) / d.length; return ` · ROI <b class="${cls(r)}" style="font-weight:inherit">${roi(r)}</b>`; };   // as on Won when no move
   const wl_ = L => { const d = dec(L), w = d.filter(b => b.ret > 0).length; return `${w}–${d.length - w}`; };
   return [['Closing line moved', n ? TWO('Toward pick', pct(up.length / n), 'Against', pct(dn.length / n), 'h-up', 'h-dn') : '–', ''],
           ['Avg move toward pick', up.length ? a(up) + ' pts' : '–', `avg of ${up.length} picks`], ['Avg move against pick', dn.length ? a(dn) + ' pts' : '–', `avg of ${dn.length} picks`],
-          ['Won when moved toward', hit(up), `${wl_(up)} win – loss`], ['Won when moved against', hit(dn), `${wl_(dn)} win – loss`]];
+          ['Won when moved toward', hit(up), `${wl_(up)} win – loss${ROIs(up)}`], ['Won when moved against', hit(dn), `${wl_(dn)} win – loss${ROIs(dn)}`]];
 }
 
 // two numbers in one tile, each with its own label above it and in its own colour
