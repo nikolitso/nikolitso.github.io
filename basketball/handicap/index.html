@@ -200,7 +200,7 @@ details.picks>summary .muted{font-size:14px;font-weight:400}
   <div id="out"></div>
 </div>
 
-<script src="live.js?v=202611141012"></script>
+<script src="live.js?v=202611141017"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
@@ -286,49 +286,49 @@ const wkLink = g => `<a class="gm" href="#view=game&id=${encodeURIComponent(g.id
 const phi = z => { const t = 1 / (1 + 0.2316419 * Math.abs(z)), d = 0.3989423 * Math.exp(-z * z / 2), p = d * t * (0.3193815 + t * (-0.3565638 + t * (1.781478 + t * (-1.821256 + t * 1.330274)))); return z > 0 ? 1 - p : p; };
 function gamesTable(team, list, r){
   if (!list.length) return `<p class="muted">No games this season yet.</p>`;
-  const avg = list.reduce((a, x) => a + x[7], 0) / list.length;
-  return `<div class="scroll"><table class="mk mini"><tr><th>Date</th><th>Opponent</th><th class="n">Venue</th><th class="n">Score</th><th class="n">Margin</th><th class="n">Opp. strength</th><th class="n">Adjusted</th></tr>${list.map(x => `<tr><td class="n">${dayName(x[0])}</td><td>${esc(x[1])}</td><td class="n">${x[2] === 'H' ? 'Home' : 'Away'}</td><td class="n">${x[3]}–${x[4]}</td><td class="n">${sgn(x[5], 0)}</td><td class="n">${sgn(x[6])}</td><td class="n">${sgn(x[7])}</td></tr>`).join('')}<tr class="sum"><td colspan="6">Average adjusted margin, ${list.length} games</td><td class="n">${sgn(avg)}</td></tr><tr><td colspan="6"><b>Strength used</b> (recent games count more, pulled toward 0)</td><td class="n tot">${sgn(r)}</td></tr></table></div>`;
+  return `<details style="margin:6px 0"><summary style="cursor:pointer">${esc(team)}: ${list.length} games behind the strength ${sgn(r)}</summary><div class="scroll"><table class="mk mini"><tr><th>Date</th><th>Opponent</th><th class="n">Score</th><th class="n">Margin</th><th class="n">Opp. strength</th><th class="n">Adjusted</th></tr>${list.map(x => `<tr><td class="n">${dayName(x[0])}</td><td>${x[2] === 'H' ? '' : '@ '}${esc(x[1])}</td><td class="n">${x[3]}–${x[4]}</td><td class="n">${sgn(x[5], 0)}</td><td class="n">${sgn(x[6])}</td><td class="n">${sgn(x[7])}</td></tr>`).join('')}</table></div></details>`;
 }
 function renderGame(){
   const id = (location.hash.match(/id=([^&]+)/) || [])[1], gid = id && decodeURIComponent(id);
   const g = LIVE.fixtures.find(x => x.id === gid) || LIVE.played.find(x => x.id === gid);
   if (!g || !g.wk) return '<p class="empty">This game is no longer on the page: estimates cover the next 7 days and this season\'s played games.</p>';
-  const W = g.wk, done = g.hp != null, mu = W.hca + W.rh - W.ra, line = g.line, sd = g.sd;
-  const side = line != null && g.mu !== line ? (g.mu > line ? 'home' : 'away') : null, sideT = side ? g[side] : null;
+  const W = g.wk, done = g.hp != null, line = g.line, sd = g.sd, est = g.ok !== false;
   let h = `<p><a class="gm" href="#view=matches&lg=${g.lg}">← All matches</a></p>`;
-  h += `<h2 style="margin-top:6px">${esc(g.home)} – ${esc(g.away)}</h2><p class="muted">${esc(lgName(g.lg))} · ${dayName(g.when || g.date)}${g.when ? ' ' + g.when.slice(11) : ''}${done ? ` · final <b>${g.hp}–${g.ap}</b>` : ''} · games played ${g.gh}·${g.ga}${g.ok === false ? ` · <b>no estimate yet</b>: a team has fewer than ${GP} games` : ''}</p>`;
-  // the final projection first: points for each side, the handicap and the total
-  const row = (lab, hm, tot, cls = '') => tot == null || hm == null ? `<tr class="${cls}"><td>${lab}</td><td class="n">–</td><td class="n">–</td><td class="n">${hc(hm)}</td><td class="n">–</td></tr>`
+  h += `<h2 style="margin-top:6px">${esc(g.home)} – ${esc(g.away)}</h2><p class="muted">${esc(lgName(g.lg))} · ${dayName(g.when || g.date)}${g.when ? ' ' + g.when.slice(11) : ''}${done ? ` · final <b>${g.hp}–${g.ap}</b>` : ''}${est ? '' : ` · <b>no estimate yet</b>: a team has fewer than ${GP} games`}</p>`;
+  // 1. the projection: points, handicap, total
+  const row = (lab, hm, tot, cls = '') => tot == null || hm == null ? `<tr class="${cls}"><td>${lab}</td><td class="n">–</td><td class="n">–</td><td class="n">${hc(hm)}</td><td class="n">${tot == null ? '–' : f1(tot)}</td></tr>`
     : `<tr class="${cls}"><td>${lab}</td><td class="n">${f1((tot + hm) / 2)}</td><td class="n">${f1((tot - hm) / 2)}</td><td class="n">${hc(hm)}</td><td class="n">${f1(tot)}</td></tr>`;
-  h += `<h2 class="day">Final projection</h2><div class="scroll"><table class="mk" style="max-width:760px"><tr><th></th><th class="n">${esc(g.home)} pts</th><th class="n">${esc(g.away)} pts</th><th class="n">Handicap</th><th class="n">Total</th></tr>`
-    + row('<b>Model</b>', g.ok === false ? null : g.mu, g.tot, '') + row('Books', line, g.tline, 'avg')
-    + (done ? `<tr class="sum"><td>Final score</td><td class="n">${g.hp}</td><td class="n">${g.ap}</td><td class="n">${sgn(g.hp - g.ap, 0)}</td><td class="n">${g.hp + g.ap}</td></tr>` : '')
-    + `</table></div><p class="muted">Handicap: home favourite +. Model points split the projected total by the projected margin: home = (total + margin) ÷ 2. The total is the <a class="gm" href="/basketball/overs/#view=method">totals page</a>'s projected total (league average plus both teams' numbers, before its other signals). Books: the ${done ? 'closing' : 'latest'} handicap and total line.</p>`;
-  h += `<div class="doc">`;
-  h += `<h3><span class="num">1</span>Home edge</h3><p>The league's average home margin: <b>${sgn(W.hca)}</b> points, from this season's games and earlier seasons (recent games count more, half-life ${W.half_life} days).</p>`;
-  h += `<h3><span class="num">2</span>${esc(g.home)}: strength ${sgn(W.rh)}</h3><p>Points better or worse than the league's average team. Each game's margin is adjusted for where it was played and for the opponent: <i>adjusted = margin − home edge (+ when away) + opponent's strength</i>. The strength used is close to the average adjusted margin, but recent games count more, all teams are solved together, and it is pulled toward 0 while there are few games.</p>${gamesTable(g.home, W.th, W.rh)}`;
-  h += `<h3><span class="num">3</span>${esc(g.away)}: strength ${sgn(W.ra)}</h3>${gamesTable(g.away, W.ta, W.ra)}`;
-  h += `<h3><span class="num">4</span>Projected margin</h3><div class="calc">home edge + home strength − away strength<br>${sgn(W.hca)} ${W.rh < 0 ? '−' : '+'} ${Math.abs(W.rh).toFixed(1)} ${W.ra < 0 ? '+' : '−'} ${Math.abs(W.ra).toFixed(1)} = <b>${sgn(mu)}</b> for ${esc(g.home)}<br><i>as the handicap: ${hc(g.mu)} (home favourite = +)</i></div>`;
-  if (line == null) h += `<h3><span class="num">5</span>Against the handicap</h3><p>No handicap from the books yet.</p>`;
-  else {
-    const z = (line - g.mu) / sd, ph = 1 - phi(z);
-    h += `<h3><span class="num">5</span>Against the handicap</h3><p>The books' ${done ? 'closing' : 'latest'} handicap: <b>${hc(line)}</b> for ${esc(g.home)} (median of ${g.books} books${g.hpx ? `, average prices ${g.hpx.toFixed(2)} home / ${g.apx.toFixed(2)} away` : ''}); opening ${hc(g.open)}.</p>`;
-    h += `<div class="calc">${esc(g.home)} by: model ${sgn(g.mu)}, line ${sgn(line)} → gap ${sgn(g.mu - line)} → <b>${sideT ? esc(sideT) : 'no side'}</b>, diff ${f1(Math.abs(g.mu - line))} points</div>`;
-    h += `<h3><span class="num">6</span>Chance to cover</h3><p>The final margin is taken to fall around the projection with the league's usual miss, <b>${f1(sd)}</b> points (a normal curve).</p>`;
-    h += `<div class="calc">z = (line − projection) ÷ miss, both as the home margin = (${sgn(line)} − ${sgn(g.mu)}) ÷ ${f1(sd)} = ${sgn(z, 2)}<br>chance ${esc(g.home)} covers = 1 − Φ(z) = ${pct(ph, 1)} · ${esc(g.away)} ${pct(1 - ph, 1)}<br><i>the model's side, ${sideT ? esc(sideT) : '–'}: <b>${side ? pct(side === 'home' ? ph : 1 - ph, 1) : '–'}</b></i>${g.open != null && g.open !== line ? `<br><i>at the opening line ${hc(g.open)}: ${esc(g.home)} ${pct(g.po_, 1)}</i>` : ''}</div>`;
+  h += `<h2 class="day">Projection</h2><div class="scroll"><table class="mk" style="max-width:760px"><tr><th></th><th class="n">${esc(g.home)}</th><th class="n">${esc(g.away)}</th><th class="n">Handicap</th><th class="n">Total</th></tr>`
+    + row('<b>Model</b>', est ? g.mu : null, g.tot) + row('Books', line, g.tline, 'avg')
+    + (done ? `<tr class="sum"><td>Final</td><td class="n">${g.hp}</td><td class="n">${g.ap}</td><td class="n">${sgn(g.hp - g.ap, 0)}</td><td class="n">${g.hp + g.ap}</td></tr>` : '')
+    + `</table></div><p class="muted">Handicap: home favourite +. Points = (total ± handicap) ÷ 2.</p>`;
+  // 2. the margin in three numbers
+  const mu = W.hca + W.rh - W.ra;
+  h += `<h2 class="day">The margin</h2><div class="scroll"><table class="mk mini" style="max-width:520px">
+    <tr><td>Home edge</td><td class="n">${sgn(W.hca)}</td></tr>
+    <tr><td>${esc(g.home)} strength</td><td class="n">${sgn(W.rh)}</td></tr>
+    <tr><td>${esc(g.away)} strength (taken off)</td><td class="n">${sgn(-W.ra)}</td></tr>
+    <tr class="sum"><td><b>Model handicap</b></td><td class="n tot">${sgn(mu)}</td></tr></table></div>
+    <p class="muted">Strength: points better than the league's average team, from this season's results adjusted for opponent and venue.</p>${gamesTable(g.home, W.th, W.rh)}${gamesTable(g.away, W.ta, W.ra)}`;
+  // 3. against the line, latest and opening
+  if (line != null && est) {
+    const pH = ln => 1 - phi((ln - g.mu) / sd);
+    const lr = (lab, ln) => { if (ln == null) return ''; const d = g.mu - ln, s = d === 0 ? null : d > 0 ? 'home' : 'away', p = pH(ln);
+      return `<tr><td>${lab}</td><td class="n">${hc(ln)}</td><td class="n">${f1(Math.abs(d))}</td><td>${s ? esc(g[s]) : '–'}</td><td class="n">${s ? pct(s === 'home' ? p : 1 - p, 0) : '–'}</td></tr>`; };
+    h += `<h2 class="day">Against the line</h2><div class="scroll"><table class="mk mini" style="max-width:620px"><tr><th></th><th class="n">Line</th><th class="n">Diff</th><th>Model's side</th><th class="n">Chance</th></tr>${lr(done ? 'Closing' : 'Latest', line)}${g.open != null && g.open !== line ? lr('Opening', g.open) : ''}</table></div>`;
+    if (done) {
+      const res = (s, c) => s ? `${esc(g[s])} ${c == null ? 'push' : c ? '<b class="w">✓</b>' : '<b class="l">✗</b>'}` : '–';
+      h += `<p>Result: opening ${res(g.so, g.co)} · closing ${res(g.sc, g.cc)} · model missed the margin by ${f1(Math.abs(g.hp - g.ap - g.mu))}, the line by ${f1(Math.abs(g.hp - g.ap - line))}.</p>`;
+    }
   }
+  // 4. pace and 3-point luck, for context
   const PL = g.pl;
   if (PL) {
-    const tr = (n, x) => `<tr><td>${esc(n)}</td><td class="n">${x ? sgn(x[0]) : '–'}</td><td class="n">${x ? x[1] : '–'}</td><td class="n">${x && x[2] != null ? sgn(x[2]) : '–'}</td></tr>`;
-    h += `<h3><span class="num">7</span>Pace and 3-point luck</h3><p>The same two numbers as on the <a class="gm" href="/basketball/overs/#view=method">totals page</a>, from this season's games${done ? ' before this one' : ''}. <b>Pace</b>: possessions per game against the league average of ${f1(PL.avg)} (possessions = shots from the field + 0.44 × free throws − offensive rebounds + turnovers). <b>3-point luck</b>: threes made in the team's games minus what the league's 3-point rate${PL.p3 ? ` (${pct(PL.p3, 1)})` : ''} gives on the same attempts, in points per game; a high number means the shooting has run hot. They are shown for context: the projected margin uses results only.</p>`;
-    h += `<div class="scroll"><table class="mk mini" style="max-width:620px"><tr><th>Team</th><th class="n">Pace</th><th class="n">Games</th><th class="n">3-pt luck</th></tr>${tr(g.home, PL.home)}${tr(g.away, PL.away)}<tr class="sum"><td>This game (the two teams' average)</td><td class="n">${PL.pace != null ? sgn(PL.pace) : '–'}</td><td></td><td class="n">${PL.luck != null ? sgn(PL.luck) : '–'}</td></tr></table></div>`;
-    if (PL.pace == null || PL.luck == null) h += `<p class="muted">A game's pace and luck need ${PL.min} games with stats for each team.</p>`;
+    const tr = (n, x) => `<tr><td>${esc(n)}</td><td class="n">${x ? sgn(x[0]) : '–'}</td><td class="n">${x && x[2] != null ? sgn(x[2]) : '–'}</td></tr>`;
+    h += `<h2 class="day">Pace and 3-point luck</h2><div class="scroll"><table class="mk mini" style="max-width:520px"><tr><th>Team</th><th class="n">Pace</th><th class="n">3-pt luck</th></tr>${tr(g.home, PL.home)}${tr(g.away, PL.away)}<tr class="sum"><td>This game</td><td class="n">${PL.pace != null ? sgn(PL.pace) : '–'}</td><td class="n">${PL.luck != null ? sgn(PL.luck) : '–'}</td></tr></table></div>
+    <p class="muted">As on the <a class="gm" href="/basketball/overs/#view=method">totals page</a>: possessions v the league average (${f1(PL.avg)}), and points a game from threes above the league rate. Context only.</p>`;
   }
-  if (done) {
-    const mg = g.hp - g.ap, res = (ln, s, c) => ln == null ? '–' : `${hc(ln)}: ${s ? esc(g[s]) : 'no side'} ${c == null ? '(push)' : c ? '<b class="w">covered ✓</b>' : '<b class="l">did not cover ✗</b>'}`;
-    h += `<h3><span class="num">8</span>Result</h3><div class="calc">final margin ${sgn(mg, 0)} for ${esc(g.home)} · model missed by ${f1(Math.abs(mg - g.mu))}, the closing line by ${line != null ? f1(Math.abs(mg - line)) : '–'}<br>at the opening ${res(g.open, g.so, g.co)}<br>at the close ${res(line, g.sc, g.cc)}</div>`;
-  }
-  return h + '</div>';
+  return h;
 }
 const SECTIONS = [['str', 'Team strength'], ['mk', 'Vs Market'], ['std', 'Standings'], ['rat', 'Team ratings'], ['rd', 'Box scores and reports'], ['lg', 'League stats'], ['fat', 'Fatigue factor'], ['off', 'Official table'], ['ros', 'Rosters and imports']];
 const RENDER = {matches: renderMatches, teams: renderTeams, method: renderMethod, game: renderGame};
@@ -338,7 +338,7 @@ function render(){
   $('chips').innerHTML = chips.map(([k, t]) => `<a href="#view=${view}${k === 'all' ? '' : '&lg=' + k}" class="${k === lg ? 'on' : ''}">${esc(t)}</a>`).join('');
   /* the league page's sections, each opening on its own pane there */
   const page = {'greece-basket-league': 'greece', 'cyprus-division-a': 'cyprus'}[lg];
-  $('secs').innerHTML = page && view !== 'method' ? SECTIONS.map(([k, t]) => `<a href="/basketball/${page}/#${k}">${t}</a>`).join('') : '';
+  $('secs').innerHTML = page && view !== 'method' && view !== 'game' ? SECTIONS.map(([k, t]) => `<a href="/basketball/${page}/#${k}">${t}</a>`).join('') : '';
   $('top').innerHTML = view === 'matches' ? topTiles() : '';
   $('out').innerHTML = RENDER[view]();
 }
