@@ -183,7 +183,7 @@
       function pickChapter(s) { active = s; update(); }
       function pickBy(s) { by = s; update(); }
       // An author pill on a card shows everything by that person, across all chapters.
-      onAuthor = function (s) { by = s; active = ""; update(); filter.scrollIntoView({ behavior: "smooth", block: "start" }); };
+      onAuthor = function (s) { by = s; active = ""; query = ""; if (search) search.value = ""; update(); filter.scrollIntoView({ behavior: "smooth", block: "start" }); };
       function draw() { buttons(quotes, active, by, query, pickChapter, pickBy); render(quotes, active, by, query); }
       draw();
       if (search) search.addEventListener("input", function () { query = String(search.value || "").trim().toLowerCase(); update(); });
