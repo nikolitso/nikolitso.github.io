@@ -153,7 +153,7 @@ th.rs{cursor:pointer;user-select:none} th.rs:hover,th.rs.on{color:var(--gold)}
 @media(max-width:600px){.grid{grid-template-columns:1fr}.ln span{min-width:0;margin-left:8px}.card{padding:14px 10px 8px}td,th{padding:6px 4px}
   .card td{font-size:15.5px}.card td.n{font-size:14px}.full{display:none}.abbr{display:inline}.wdlt{flex-wrap:wrap;gap:2px 12px}}
 </style>
-<link rel="stylesheet" href="/assets/an.css?v=1">
+<link rel="stylesheet" href="/assets/an.css?v=3">
 </head>
 <body>
 <!-- sitebar:start (link back to antonisnikolitsopoulos.com; keep on every page) -->
@@ -171,8 +171,11 @@ th.rs{cursor:pointer;user-select:none} th.rs:hover,th.rs.on{color:var(--gold)}
     <a href="#view=method" data-view="method">How it works</a>
   </nav>
 </div></header>
+<nav class="an-project-nav" aria-label="Sports analytics projects"><div><a href="/superleague/" aria-current="page">Super League</a><a href="/football/greek-cup/">Greek Cup</a><a href="/basketball/">Basketball</a><a href="/eurocup/">EuroCup</a><a href="/fibaeuropecup/">FIBA Europe Cup</a><a href="/paok-hub/">PAOK FC</a><a href="/paok-basketball/">PAOK Basketball</a><a href="/volleyball/">Volleyball</a><a href="/handball/">Handball</a></div></nav>
+
 <div class="wrap">
-  <div class="sub" id="sub"></div>
+  <div class="sub an-meta-strip" id="sub"></div>
+<div class="an-data-key" role="group" aria-label="How to read the projections"><span class="an-data-key__title">Reading the numbers</span><span class="an-data-key__item"><i class="an-data-key__dot" aria-hidden="true"></i><b>Model</b> expected value</span><span class="an-data-key__item"><i class="an-data-key__dot an-data-key__dot--market" aria-hidden="true"></i><b>Market</b> bookmaker line</span><span class="an-data-key__item"><i class="an-data-key__dot an-data-key__dot--actual" aria-hidden="true"></i><b>Actual</b> match statistic</span></div>
   <p class="games-link"><a href="/superleague/games/">Every game of the season, one page each: projections before, what happened after →</a></p>
   <div id="out"></div>
 </div>
