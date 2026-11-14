@@ -22,7 +22,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Hanken+Grotesk:ital,wght@0,300..700;1,400&display=swap">
 <link rel="stylesheet" href="/books/edge.css?v=b4236090">
-<link rel="stylesheet" href="/assets/an.css?v=1">
+<link rel="stylesheet" href="/assets/an.css?v=3">
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -52,22 +52,23 @@
   <div class="wrap">
     <p class="kicker">Book takeaways</p>
     <h1>Books</h1>
-    <p class="lede">Every good book leaves a few ideas worth keeping. These are the ones worth keeping from books on sports analytics, betting, decision-making and personal development: what each book argues, the key ideas, and who it is for.</p>
+    <p class="lede">A working library of books on football, sports analytics, betting, decision-making and personal development. Search by title, author, topic or idea; filter by subject, then open each book for its key arguments and practical takeaways.</p>
     <div class="stats"><span><b>109</b> books</span><span><b>93</b> authors</span><span><b>6</b> topics</span></div>
   </div>
 </section>
 <section class="shelf">
   <div class="wrap">
     <div class="controls">
-      <div class="chips" role="tablist"><button class="chip on" data-t="">All <b>109</b></button><button class="chip" data-t="football" style="--t:#2f7d4f">Football <b>23</b></button><button class="chip" data-t="betting-markets" style="--t:#b5562a">Betting &amp; markets <b>22</b></button><button class="chip" data-t="sports-analytics" style="--t:#2b6cb0">Sports analytics <b>8</b></button><button class="chip" data-t="thinking-decisions" style="--t:#6b4fbb">Thinking &amp; decisions <b>16</b></button><button class="chip" data-t="personal-development" style="--t:#b0476b">Personal development <b>23</b></button><button class="chip" data-t="work-leadership" style="--t:#3d6bff">Work &amp; leadership <b>17</b></button></div>
+      <div class="chips" role="tablist" aria-label="Filter books by topic"><button class="chip on" role="tab" aria-selected="true" data-t="">All <b>109</b></button><button class="chip" role="tab" aria-selected="false" data-t="football" style="--t:#2f7d4f">Football <b>23</b></button><button class="chip" role="tab" aria-selected="false" data-t="betting-markets" style="--t:#b5562a">Betting &amp; markets <b>22</b></button><button class="chip" role="tab" aria-selected="false" data-t="sports-analytics" style="--t:#2b6cb0">Sports analytics <b>8</b></button><button class="chip" role="tab" aria-selected="false" data-t="thinking-decisions" style="--t:#6b4fbb">Thinking &amp; decisions <b>16</b></button><button class="chip" role="tab" aria-selected="false" data-t="personal-development" style="--t:#b0476b">Personal development <b>23</b></button><button class="chip" role="tab" aria-selected="false" data-t="work-leadership" style="--t:#3d6bff">Work &amp; leadership <b>17</b></button></div>
       <div class="tools">
-        <input id="q" type="search" placeholder="Search title or author…" aria-label="Search books">
+        <input id="q" type="search" placeholder="Search title, author, topic or idea…" aria-label="Search books by title, author, topic or idea">
         <select id="sort" aria-label="Sort"><option value="new">Newest first</option><option value="old">Oldest first</option><option value="az">A–Z</option></select>
       </div>
     </div>
-    <p class="count" id="count"></p>
+    <p class="controls-hint">Search titles, authors, topics and book summaries. For an author-by-author index, use <a href="/books/authors/">Authors</a>.</p>
+    <p class="count" id="count" aria-live="polite"></p>
     <div class="books" id="books">
-<a class="book" href="/books/how-to-be-good-at-life/" data-topic="personal-development" data-key="how to be good at life simple systems to achieve more and stress less. ben meer" data-date="2026-10-08" data-title="how to be good at life">
+<a class="book" href="/books/how-to-be-good-at-life/" data-topic="personal-development" data-key="how to be good at life simple systems to achieve more and stress less. ben meer personal-development" data-date="2026-10-08" data-title="how to be good at life">
   <div class="book-cover"><img class="" src="/books/covers/how-to-be-good-at-life.jpeg" alt="How to Be Good at Life cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#b0476b">Personal development</span>
@@ -75,7 +76,7 @@
     <p>Ben Meer</p>
   </div>
 </a>
-<a class="book" href="/books/fine-margins/" data-topic="betting-markets" data-key="fine margins how economics explains sports betting karl whelan" data-date="2026-10-06" data-title="fine margins">
+<a class="book" href="/books/fine-margins/" data-topic="betting-markets" data-key="fine margins how economics explains sports betting karl whelan betting-markets" data-date="2026-10-06" data-title="fine margins">
   <div class="book-cover"><img class="" src="/books/covers/fine-margins.jpg" alt="Fine Margins cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#b5562a">Betting &amp; markets</span>
@@ -83,7 +84,7 @@
     <p>Karl Whelan</p>
   </div>
 </a>
-<a class="book" href="/books/game-theory/" data-topic="football" data-key="game theory why chance, not just talent or tactics, decides more football matches than anyone wants to admit. christoph biermann" data-date="2026-08-13" data-title="game theory">
+<a class="book" href="/books/game-theory/" data-topic="football" data-key="game theory why chance, not just talent or tactics, decides more football matches than anyone wants to admit. christoph biermann football" data-date="2026-08-13" data-title="game theory">
   <div class="book-cover"><img class="" src="/books/covers/game-theory.jpg" alt="Game Theory cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#2f7d4f">Football</span>
@@ -91,7 +92,7 @@
     <p>Christoph Biermann</p>
   </div>
 </a>
-<a class="book" href="/books/inside-the-box-how-constraints-make/" data-topic="personal-development" data-key="inside the box why limits sharpen thinking better than unlimited options do. david epstein" data-date="2026-06-01" data-title="inside the box">
+<a class="book" href="/books/inside-the-box-how-constraints-make/" data-topic="personal-development" data-key="inside the box why limits sharpen thinking better than unlimited options do. david epstein personal-development" data-date="2026-06-01" data-title="inside the box">
   <div class="book-cover"><img class="" src="/books/covers/inside-the-box-how-constraints-make.jpeg" alt="Inside the Box cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#b0476b">Personal development</span>
@@ -99,7 +100,7 @@
     <p>David Epstein</p>
   </div>
 </a>
-<a class="book" href="/books/how-to-win-the-world-cup/" data-topic="football" data-key="how to win the world cup what winning world cup managers actually do differently under pressure. chris evans" data-date="2026-05-12" data-title="how to win the world cup">
+<a class="book" href="/books/how-to-win-the-world-cup/" data-topic="football" data-key="how to win the world cup what winning world cup managers actually do differently under pressure. chris evans football" data-date="2026-05-12" data-title="how to win the world cup">
   <div class="book-cover"><img class="" src="/books/covers/how-to-win-the-world-cup.jpeg" alt="How to Win the World Cup cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#2f7d4f">Football</span>
@@ -107,7 +108,7 @@
     <p>Chris Evans</p>
   </div>
 </a>
-<a class="book" href="/books/the-bookie/" data-topic="betting-markets" data-key="the bookie decades running a vegas sportsbook, told from the side of the house. art manteris" data-date="2026-02-15" data-title="the bookie">
+<a class="book" href="/books/the-bookie/" data-topic="betting-markets" data-key="the bookie decades running a vegas sportsbook, told from the side of the house. art manteris betting-markets" data-date="2026-02-15" data-title="the bookie">
   <div class="book-cover"><img class="" src="/books/covers/the-bookie.jpeg" alt="The Bookie cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#b5562a">Betting &amp; markets</span>
@@ -115,7 +116,7 @@
     <p>Art Manteris</p>
   </div>
 </a>
-<a class="book" href="/books/basketball-beyond-paper-insights/" data-topic="sports-analytics" data-key="basketball beyond paper extending box-score analytics into a fuller picture of basketball value. dean oliver" data-date="2025-12-01" data-title="basketball beyond paper">
+<a class="book" href="/books/basketball-beyond-paper-insights/" data-topic="sports-analytics" data-key="basketball beyond paper extending box-score analytics into a fuller picture of basketball value. dean oliver sports-analytics" data-date="2025-12-01" data-title="basketball beyond paper">
   <div class="book-cover"><img class="" src="/books/covers/basketball-beyond-paper-insights.jpeg" alt="Basketball beyond Paper cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#2b6cb0">Sports analytics</span>
@@ -123,7 +124,7 @@
     <p>Dean Oliver</p>
   </div>
 </a>
-<a class="book" href="/books/the-art-of-spending-money/" data-topic="personal-development" data-key="the art of spending money simple choices for a richer life morgan housel" data-date="2025-11-07" data-title="the art of spending money">
+<a class="book" href="/books/the-art-of-spending-money/" data-topic="personal-development" data-key="the art of spending money simple choices for a richer life morgan housel personal-development" data-date="2025-11-07" data-title="the art of spending money">
   <div class="book-cover"><img class="" src="/books/covers/the-art-of-spending-money.jpg" alt="The Art of Spending Money cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#b0476b">Personal development</span>
@@ -131,7 +132,7 @@
     <p>Morgan Housel</p>
   </div>
 </a>
-<a class="book" href="/books/games-people-play/" data-topic="personal-development" data-key="games people play the 1964 classic that turned hidden patterns in everyday conversation into a namable, escapable script. eric berne" data-date="2025-07-25" data-title="games people play">
+<a class="book" href="/books/games-people-play/" data-topic="personal-development" data-key="games people play the 1964 classic that turned hidden patterns in everyday conversation into a namable, escapable script. eric berne personal-development" data-date="2025-07-25" data-title="games people play">
   <div class="book-cover"><img class="" src="/books/covers/games-people-play.jpg" alt="Games People Play cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#b0476b">Personal development</span>
@@ -139,7 +140,7 @@
     <p>Eric Berne</p>
   </div>
 </a>
-<a class="book" href="/books/everything-is-predictable/" data-topic="thinking-decisions" data-key="everything is predictable how bayes&#x27; remarkable theorem explains the world tom chivers" data-date="2025-05-24" data-title="everything is predictable">
+<a class="book" href="/books/everything-is-predictable/" data-topic="thinking-decisions" data-key="everything is predictable how bayes&#x27; remarkable theorem explains the world tom chivers thinking-decisions" data-date="2025-05-24" data-title="everything is predictable">
   <div class="book-cover"><img class="" src="/books/covers/everything-is-predictable.jpeg" alt="Everything Is Predictable cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#6b4fbb">Thinking &amp; decisions</span>
@@ -147,7 +148,7 @@
     <p>Tom Chivers</p>
   </div>
 </a>
-<a class="book" href="/books/tiny-experiments-how-to-live-freely/" data-topic="personal-development" data-key="tiny experiments treating your life and career as small experiments instead of fixed plans. anne-laure le cunff" data-date="2025-04-04" data-title="tiny experiments">
+<a class="book" href="/books/tiny-experiments-how-to-live-freely/" data-topic="personal-development" data-key="tiny experiments treating your life and career as small experiments instead of fixed plans. anne-laure le cunff personal-development" data-date="2025-04-04" data-title="tiny experiments">
   <div class="book-cover"><img class="" src="/books/covers/tiny-experiments-how-to-live-freely.jpeg" alt="Tiny Experiments cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#b0476b">Personal development</span>
@@ -155,7 +156,7 @@
     <p>Anne-Laure Le Cunff</p>
   </div>
 </a>
-<a class="book" href="/books/hbr-guide-to-generative-ai-for-managers/" data-topic="work-leadership" data-key="hbr guide to generative ai for managers a grounded guide to what generative ai actually changes about managing people. elisa farri, gabriele rosani" data-date="2025-04-01" data-title="hbr guide to generative ai for managers">
+<a class="book" href="/books/hbr-guide-to-generative-ai-for-managers/" data-topic="work-leadership" data-key="hbr guide to generative ai for managers a grounded guide to what generative ai actually changes about managing people. elisa farri, gabriele rosani work-leadership" data-date="2025-04-01" data-title="hbr guide to generative ai for managers">
   <div class="book-cover"><img class="" src="/books/covers/hbr-guide-to-generative-ai-for-managers.jpeg" alt="HBR Guide to Generative AI for Managers cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#3d6bff">Work &amp; leadership</span>
@@ -163,7 +164,7 @@
     <p>Elisa Farri, Gabriele Rosani</p>
   </div>
 </a>
-<a class="book" href="/books/the-not-to-do-list/" data-topic="personal-development" data-key="the not-to-do list the surprisingly simple art of success rolf dobelli" data-date="2025-03-27" data-title="the not-to-do list">
+<a class="book" href="/books/the-not-to-do-list/" data-topic="personal-development" data-key="the not-to-do list the surprisingly simple art of success rolf dobelli personal-development" data-date="2025-03-27" data-title="the not-to-do list">
   <div class="book-cover"><img class="" src="/books/covers/the-not-to-do-list.jpg" alt="The Not-to-Do List cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#b0476b">Personal development</span>
@@ -171,7 +172,7 @@
     <p>Rolf Dobelli</p>
   </div>
 </a>
-<a class="book" href="/books/the-5-types-of-wealth/" data-topic="personal-development" data-key="the 5 types of wealth a framework for building a life rich in time, people, mind, body, and money — not just money. sahil bloom" data-date="2025-03-04" data-title="the 5 types of wealth">
+<a class="book" href="/books/the-5-types-of-wealth/" data-topic="personal-development" data-key="the 5 types of wealth a framework for building a life rich in time, people, mind, body, and money — not just money. sahil bloom personal-development" data-date="2025-03-04" data-title="the 5 types of wealth">
   <div class="book-cover"><img class="" src="/books/covers/the-5-types-of-wealth.jpeg" alt="The 5 Types of Wealth cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#b0476b">Personal development</span>
@@ -179,7 +180,7 @@
     <p>Sahil Bloom</p>
   </div>
 </a>
-<a class="book" href="/books/why-are-we-here/" data-topic="work-leadership" data-key="why are we here? why most workplace &quot;purpose&quot; initiatives fail — and what would work instead. jennifer moss" data-date="2025-02-21" data-title="why are we here?">
+<a class="book" href="/books/why-are-we-here/" data-topic="work-leadership" data-key="why are we here? why most workplace &quot;purpose&quot; initiatives fail — and what would work instead. jennifer moss work-leadership" data-date="2025-02-21" data-title="why are we here?">
   <div class="book-cover"><img class="" src="/books/covers/why-are-we-here.jpeg" alt="Why Are We Here? cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#3d6bff">Work &amp; leadership</span>
@@ -187,7 +188,7 @@
     <p>Jennifer Moss</p>
   </div>
 </a>
-<a class="book" href="/books/kind/" data-topic="work-leadership" data-key="kind graham allcott&#x27;s case for kindness as a management discipline, not a personality trait graham allcott" data-date="2024-11-10" data-title="kind">
+<a class="book" href="/books/kind/" data-topic="work-leadership" data-key="kind graham allcott&#x27;s case for kindness as a management discipline, not a personality trait graham allcott work-leadership" data-date="2024-11-10" data-title="kind">
   <div class="book-cover"><img class="" src="/books/covers/kind.jpeg" alt="KIND cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#3d6bff">Work &amp; leadership</span>
@@ -195,7 +196,7 @@
     <p>Graham Allcott</p>
   </div>
 </a>
-<a class="book" href="/books/how-to-win-the-premier-league/" data-topic="football" data-key="how to win the premier league liverpool&#x27;s data chief on building a title-winning team with numbers. ian graham" data-date="2024-10-01" data-title="how to win the premier league">
+<a class="book" href="/books/how-to-win-the-premier-league/" data-topic="football" data-key="how to win the premier league liverpool&#x27;s data chief on building a title-winning team with numbers. ian graham football" data-date="2024-10-01" data-title="how to win the premier league">
   <div class="book-cover"><img class="" src="/books/covers/how-to-win-the-premier-league.jpeg" alt="How to Win the Premier League cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#2f7d4f">Football</span>
@@ -203,7 +204,7 @@
     <p>Ian Graham</p>
   </div>
 </a>
-<a class="book" href="/books/on-the-edge-the-art-of-risking-everything/" data-topic="betting-markets" data-key="on the edge what separates calculated risk-taking from recklessness. nate silver" data-date="2024-09-01" data-title="on the edge">
+<a class="book" href="/books/on-the-edge-the-art-of-risking-everything/" data-topic="betting-markets" data-key="on the edge what separates calculated risk-taking from recklessness. nate silver betting-markets" data-date="2024-09-01" data-title="on the edge">
   <div class="book-cover"><img class="" src="/books/covers/on-the-edge-the-art-of-risking-everything.jpeg" alt="On the Edge cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#b5562a">Betting &amp; markets</span>
@@ -211,7 +212,7 @@
     <p>Nate Silver</p>
   </div>
 </a>
-<a class="book" href="/books/beyond-the-odds/" data-topic="betting-markets" data-key="beyond the odds a professional handicapper&#x27;s statistical process for finding real edges. elihu d. feustel" data-date="2024-08-04" data-title="beyond the odds">
+<a class="book" href="/books/beyond-the-odds/" data-topic="betting-markets" data-key="beyond the odds a professional handicapper&#x27;s statistical process for finding real edges. elihu d. feustel betting-markets" data-date="2024-08-04" data-title="beyond the odds">
   <div class="book-cover"><img class="" src="/books/covers/beyond-the-odds.jpeg" alt="Beyond the Odds cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#b5562a">Betting &amp; markets</span>
@@ -219,7 +220,7 @@
     <p>Elihu D. Feustel</p>
   </div>
 </a>
-<a class="book" href="/books/xgenius-expected-goals-and-the-science/" data-topic="football" data-key="xgenius expected goals, explained from the ground up for football fans. james tippett" data-date="2024-07-01" data-title="xgenius">
+<a class="book" href="/books/xgenius-expected-goals-and-the-science/" data-topic="football" data-key="xgenius expected goals, explained from the ground up for football fans. james tippett football" data-date="2024-07-01" data-title="xgenius">
   <div class="book-cover"><img class="" src="/books/covers/xgenius-expected-goals-and-the-science.jpeg" alt="xGenius cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#2f7d4f">Football</span>
@@ -227,7 +228,7 @@
     <p>James Tippett</p>
   </div>
 </a>
-<a class="book" href="/books/soccer-analytics-an-introduction/" data-topic="football" data-key="soccer analytics a hands-on, code-first introduction to football analytics in r. clive beggs" data-date="2024-07-01" data-title="soccer analytics">
+<a class="book" href="/books/soccer-analytics-an-introduction/" data-topic="football" data-key="soccer analytics a hands-on, code-first introduction to football analytics in r. clive beggs football" data-date="2024-07-01" data-title="soccer analytics">
   <div class="book-cover"><img class="" src="/books/covers/soccer-analytics-an-introduction.jpeg" alt="Soccer Analytics cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#2f7d4f">Football</span>
@@ -235,7 +236,7 @@
     <p>Clive Beggs</p>
   </div>
 </a>
-<a class="book" href="/books/smart-money-the-fall-and-rise-of/" data-topic="football" data-key="smart money how a small, unglamorous club out-thought richer rivals in the transfer market. alex duff" data-date="2024-07-01" data-title="smart money">
+<a class="book" href="/books/smart-money-the-fall-and-rise-of/" data-topic="football" data-key="smart money how a small, unglamorous club out-thought richer rivals in the transfer market. alex duff football" data-date="2024-07-01" data-title="smart money">
   <div class="book-cover"><img class="" src="/books/covers/smart-money-the-fall-and-rise-of.jpeg" alt="Smart Money cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#2f7d4f">Football</span>
@@ -243,7 +244,7 @@
     <p>Alex Duff</p>
   </div>
 </a>
-<a class="book" href="/books/the-anthology-of-balaji/" data-topic="thinking-decisions" data-key="the anthology of balaji a career&#x27;s worth of essays, tweets, and interviews on technology, truth, and building things — curated by eric jorgenson. eric jorgenson, balaji srinivasan" data-date="2023-11-24" data-title="the anthology of balaji">
+<a class="book" href="/books/the-anthology-of-balaji/" data-topic="thinking-decisions" data-key="the anthology of balaji a career&#x27;s worth of essays, tweets, and interviews on technology, truth, and building things — curated by eric jorgenson. eric jorgenson, balaji srinivasan thinking-decisions" data-date="2023-11-24" data-title="the anthology of balaji">
   <div class="book-cover"><img class="" src="/books/covers/the-anthology-of-balaji.jpg" alt="The Anthology of Balaji cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#6b4fbb">Thinking &amp; decisions</span>
@@ -251,7 +252,7 @@
     <p>Eric Jorgenson, Balaji Srinivasan</p>
   </div>
 </a>
-<a class="book" href="/books/interception-the-secrets-of-modern/" data-topic="betting-markets" data-key="interception how syndicates and algorithms quietly run the modern sports betting market. ed miller, matthew davidow" data-date="2023-11-17" data-title="interception">
+<a class="book" href="/books/interception-the-secrets-of-modern/" data-topic="betting-markets" data-key="interception how syndicates and algorithms quietly run the modern sports betting market. ed miller, matthew davidow betting-markets" data-date="2023-11-17" data-title="interception">
   <div class="book-cover"><img class="" src="/books/covers/interception-the-secrets-of-modern.jpeg" alt="Interception cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#b5562a">Betting &amp; markets</span>
@@ -259,7 +260,7 @@
     <p>Ed Miller, Matthew Davidow</p>
   </div>
 </a>
-<a class="book" href="/books/the-coming-wave/" data-topic="thinking-decisions" data-key="the coming wave technology, power, and the twenty-first century&#x27;s greatest dilemma mustafa suleyman, michael bhaskar" data-date="2023-10-05" data-title="the coming wave">
+<a class="book" href="/books/the-coming-wave/" data-topic="thinking-decisions" data-key="the coming wave technology, power, and the twenty-first century&#x27;s greatest dilemma mustafa suleyman, michael bhaskar thinking-decisions" data-date="2023-10-05" data-title="the coming wave">
   <div class="book-cover"><img class="" src="/books/covers/the-coming-wave.jpg" alt="The Coming Wave cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#6b4fbb">Thinking &amp; decisions</span>
@@ -267,7 +268,7 @@
     <p>Mustafa Suleyman, Michael Bhaskar</p>
   </div>
 </a>
-<a class="book" href="/books/expected-goals-the-story-of-how-data/" data-topic="football" data-key="expected goals the origin story of xg and how it changed the way football is watched. rory smith" data-date="2022-11-01" data-title="expected goals">
+<a class="book" href="/books/expected-goals-the-story-of-how-data/" data-topic="football" data-key="expected goals the origin story of xg and how it changed the way football is watched. rory smith football" data-date="2022-11-01" data-title="expected goals">
   <div class="book-cover"><img class="" src="/books/covers/expected-goals-the-story-of-how-data.jpeg" alt="Expected Goals cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#2f7d4f">Football</span>
@@ -275,7 +276,7 @@
     <p>Rory Smith</p>
   </div>
 </a>
-<a class="book" href="/books/hypnotised-by-numbers/" data-topic="football" data-key="hypnotised by numbers a skeptic&#x27;s look at how football analytics can mislead as much as inform. bryan nicholson" data-date="2022-07-01" data-title="hypnotised by numbers">
+<a class="book" href="/books/hypnotised-by-numbers/" data-topic="football" data-key="hypnotised by numbers a skeptic&#x27;s look at how football analytics can mislead as much as inform. bryan nicholson football" data-date="2022-07-01" data-title="hypnotised by numbers">
   <div class="book-cover"><img class="" src="/books/covers/hypnotised-by-numbers.jpeg" alt="Hypnotised by Numbers cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#2f7d4f">Football</span>
@@ -283,7 +284,7 @@
     <p>Bryan Nicholson</p>
   </div>
 </a>
-<a class="book" href="/books/how-to-watch-football-52-rules-for/" data-topic="football" data-key="how to watch football 52 small rules for noticing more of what&#x27;s actually happening in a match. tifo" data-date="2022-07-01" data-title="how to watch football">
+<a class="book" href="/books/how-to-watch-football-52-rules-for/" data-topic="football" data-key="how to watch football 52 small rules for noticing more of what&#x27;s actually happening in a match. tifo football" data-date="2022-07-01" data-title="how to watch football">
   <div class="book-cover"><img class="" src="/books/covers/how-to-watch-football-52-rules-for.jpeg" alt="How To Watch Football cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#2f7d4f">Football</span>
@@ -291,7 +292,7 @@
     <p>Tifo</p>
   </div>
 </a>
-<a class="book" href="/books/net-gains-inside-the-beautiful-games/" data-topic="football" data-key="net gains the people and ideas that pulled football&#x27;s data revolution into the mainstream. ryan o&#x27;hanlon" data-date="2022-02-01" data-title="net gains">
+<a class="book" href="/books/net-gains-inside-the-beautiful-games/" data-topic="football" data-key="net gains the people and ideas that pulled football&#x27;s data revolution into the mainstream. ryan o&#x27;hanlon football" data-date="2022-02-01" data-title="net gains">
   <div class="book-cover"><img class="" src="/books/covers/net-gains-inside-the-beautiful-games.jpg" alt="Net Gains cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#2f7d4f">Football</span>
@@ -299,7 +300,7 @@
     <p>Ryan O&#x27;Hanlon</p>
   </div>
 </a>
-<a class="book" href="/books/monte-carlo-or-bust-simple-simulations/" data-topic="betting-markets" data-key="monte carlo or bust simple simulations for thinking probabilistically about sports bets. joseph buchdahl" data-date="2021-07-01" data-title="monte carlo or bust">
+<a class="book" href="/books/monte-carlo-or-bust-simple-simulations/" data-topic="betting-markets" data-key="monte carlo or bust simple simulations for thinking probabilistically about sports bets. joseph buchdahl betting-markets" data-date="2021-07-01" data-title="monte carlo or bust">
   <div class="book-cover"><img class="" src="/books/covers/monte-carlo-or-bust-simple-simulations.jpeg" alt="Monte Carlo Or Bust cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#b5562a">Betting &amp; markets</span>
@@ -307,7 +308,7 @@
     <p>Joseph Buchdahl</p>
   </div>
 </a>
-<a class="book" href="/books/noise/" data-topic="thinking-decisions" data-key="noise the overlooked, unwanted variation quietly distorting human judgment. daniel kahneman, olivier sibony, cass r. sunstein" data-date="2021-06-01" data-title="noise">
+<a class="book" href="/books/noise/" data-topic="thinking-decisions" data-key="noise the overlooked, unwanted variation quietly distorting human judgment. daniel kahneman, olivier sibony, cass r. sunstein thinking-decisions" data-date="2021-06-01" data-title="noise">
   <div class="book-cover"><img class="" src="/books/covers/noise.jpeg" alt="Noise cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#6b4fbb">Thinking &amp; decisions</span>
@@ -315,7 +316,7 @@
     <p>Daniel Kahneman, Olivier Sibony, Cass R. Sunstein</p>
   </div>
 </a>
-<a class="book" href="/books/the-scout-mindset/" data-topic="thinking-decisions" data-key="the scout mindset why some people see things clearly and others don&#x27;t julia galef" data-date="2021-05-13" data-title="the scout mindset">
+<a class="book" href="/books/the-scout-mindset/" data-topic="thinking-decisions" data-key="the scout mindset why some people see things clearly and others don&#x27;t julia galef thinking-decisions" data-date="2021-05-13" data-title="the scout mindset">
   <div class="book-cover"><img class="" src="/books/covers/the-scout-mindset.jpeg" alt="The Scout Mindset cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#6b4fbb">Thinking &amp; decisions</span>
@@ -323,7 +324,7 @@
     <p>Julia Galef</p>
   </div>
 </a>
-<a class="book" href="/books/how-to-find-the-right-words/" data-topic="personal-development" data-key="how to find the right words a guide to delivering life&#x27;s most awkward messages, kindly and clearly. the school of life" data-date="2021-04-09" data-title="how to find the right words">
+<a class="book" href="/books/how-to-find-the-right-words/" data-topic="personal-development" data-key="how to find the right words a guide to delivering life&#x27;s most awkward messages, kindly and clearly. the school of life personal-development" data-date="2021-04-09" data-title="how to find the right words">
   <div class="book-cover"><img class="" src="/books/covers/how-to-find-the-right-words.jpg" alt="How to Find the Right Words cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#b0476b">Personal development</span>
@@ -331,7 +332,7 @@
     <p>The School of Life</p>
   </div>
 </a>
-<a class="book" href="/books/the-almanack-of-naval-ravikant/" data-topic="personal-development" data-key="the almanack of naval ravikant naval ravikant&#x27;s ideas on wealth, happiness, and clear thinking, compiled in one book. eric jorgenson" data-date="2020-09-01" data-title="the almanack of naval ravikant">
+<a class="book" href="/books/the-almanack-of-naval-ravikant/" data-topic="personal-development" data-key="the almanack of naval ravikant naval ravikant&#x27;s ideas on wealth, happiness, and clear thinking, compiled in one book. eric jorgenson personal-development" data-date="2020-09-01" data-title="the almanack of naval ravikant">
   <div class="book-cover"><img class="" src="/books/covers/the-almanack-of-naval-ravikant.jpeg" alt="The Almanack of Naval Ravikant cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#b0476b">Personal development</span>
@@ -339,7 +340,7 @@
     <p>Eric Jorgenson</p>
   </div>
 </a>
-<a class="book" href="/books/how-to-get-on-with-your-colleagues/" data-topic="work-leadership" data-key="how to get on with your colleagues practical fixes for the everyday friction of working with other people. the school of life" data-date="2020-07-01" data-title="how to get on with your colleagues">
+<a class="book" href="/books/how-to-get-on-with-your-colleagues/" data-topic="work-leadership" data-key="how to get on with your colleagues practical fixes for the everyday friction of working with other people. the school of life work-leadership" data-date="2020-07-01" data-title="how to get on with your colleagues">
   <div class="book-cover"><img class="" src="/books/covers/how-to-get-on-with-your-colleagues.jpeg" alt="How to Get on With Your Colleagues cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#3d6bff">Work &amp; leadership</span>
@@ -347,7 +348,7 @@
     <p>The School of Life</p>
   </div>
 </a>
-<a class="book" href="/books/against-the-elements-the-eruption/" data-topic="football" data-key="against the elements how iceland built a footballing culture from almost nothing. matt mcginn" data-date="2020-07-01" data-title="against the elements">
+<a class="book" href="/books/against-the-elements-the-eruption/" data-topic="football" data-key="against the elements how iceland built a footballing culture from almost nothing. matt mcginn football" data-date="2020-07-01" data-title="against the elements">
   <div class="book-cover"><img class="" src="/books/covers/against-the-elements-the-eruption.jpeg" alt="Against the Elements cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#2f7d4f">Football</span>
@@ -355,7 +356,7 @@
     <p>Matt McGinn</p>
   </div>
 </a>
-<a class="book" href="/books/statistical-sports-models-in-excel/" data-topic="betting-markets" data-key="statistical sports models in excel volume 2 more excel-built models for pricing and predicting sports outcomes. andrew mack" data-date="2020-03-29" data-title="statistical sports models in excel volume 2">
+<a class="book" href="/books/statistical-sports-models-in-excel/" data-topic="betting-markets" data-key="statistical sports models in excel volume 2 more excel-built models for pricing and predicting sports outcomes. andrew mack betting-markets" data-date="2020-03-29" data-title="statistical sports models in excel volume 2">
   <div class="book-cover"><img class="" src="/books/covers/statistical-sports-models-in-excel.jpeg" alt="Statistical Sports Models in Excel Volume 2 cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#b5562a">Betting &amp; markets</span>
@@ -363,7 +364,7 @@
     <p>Andrew Mack</p>
   </div>
 </a>
-<a class="book" href="/books/the-expected-goals-philosophy/" data-topic="football" data-key="the expected goals philosophy a deep, practical dive into building and using an xg model. james tippett" data-date="2019-12-01" data-title="the expected goals philosophy">
+<a class="book" href="/books/the-expected-goals-philosophy/" data-topic="football" data-key="the expected goals philosophy a deep, practical dive into building and using an xg model. james tippett football" data-date="2019-12-01" data-title="the expected goals philosophy">
   <div class="book-cover"><img class="" src="/books/covers/the-expected-goals-philosophy.jpeg" alt="The Expected Goals Philosophy cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#2f7d4f">Football</span>
@@ -371,7 +372,7 @@
     <p>James Tippett</p>
   </div>
 </a>
-<a class="book" href="/books/statistical-sports-models-in-excel-d49/" data-topic="betting-markets" data-key="statistical sports models in excel building your own sports prediction models with nothing but excel. andrew mack" data-date="2019-08-01" data-title="statistical sports models in excel">
+<a class="book" href="/books/statistical-sports-models-in-excel-d49/" data-topic="betting-markets" data-key="statistical sports models in excel building your own sports prediction models with nothing but excel. andrew mack betting-markets" data-date="2019-08-01" data-title="statistical sports models in excel">
   <div class="book-cover"><img class="" src="/books/covers/statistical-sports-models-in-excel-d49.jpeg" alt="Statistical Sports Models in Excel cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#b5562a">Betting &amp; markets</span>
@@ -379,7 +380,7 @@
     <p>Andrew Mack</p>
   </div>
 </a>
-<a class="book" href="/books/the-logic-of-sports-betting/" data-topic="betting-markets" data-key="the logic of sports betting a first-principles case for treating betting as pricing, not picking. ed miller, matthew davidow" data-date="2019-06-01" data-title="the logic of sports betting">
+<a class="book" href="/books/the-logic-of-sports-betting/" data-topic="betting-markets" data-key="the logic of sports betting a first-principles case for treating betting as pricing, not picking. ed miller, matthew davidow betting-markets" data-date="2019-06-01" data-title="the logic of sports betting">
   <div class="book-cover"><img class="" src="/books/covers/the-logic-of-sports-betting.jpeg" alt="The Logic Of Sports Betting cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#b5562a">Betting &amp; markets</span>
@@ -387,7 +388,7 @@
     <p>Ed Miller, Matthew Davidow</p>
   </div>
 </a>
-<a class="book" href="/books/range-how-generalists-triumph-in/" data-topic="personal-development" data-key="range why generalists end up outperforming specialists in complex fields. david epstein" data-date="2019-06-01" data-title="range">
+<a class="book" href="/books/range-how-generalists-triumph-in/" data-topic="personal-development" data-key="range why generalists end up outperforming specialists in complex fields. david epstein personal-development" data-date="2019-06-01" data-title="range">
   <div class="book-cover"><img class="" src="/books/covers/range-how-generalists-triumph-in.jpeg" alt="Range cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#b0476b">Personal development</span>
@@ -395,7 +396,7 @@
     <p>David Epstein</p>
   </div>
 </a>
-<a class="book" href="/books/football-hackers-the-science-and/" data-topic="football" data-key="football hackers meet the outsiders who dragged data analytics into football&#x27;s inner circle. christoph biermann" data-date="2019-06-01" data-title="football hackers">
+<a class="book" href="/books/football-hackers-the-science-and/" data-topic="football" data-key="football hackers meet the outsiders who dragged data analytics into football&#x27;s inner circle. christoph biermann football" data-date="2019-06-01" data-title="football hackers">
   <div class="book-cover"><img class="" src="/books/covers/football-hackers-the-science-and.jpeg" alt="Football Hackers cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#2f7d4f">Football</span>
@@ -403,7 +404,7 @@
     <p>Christoph Biermann</p>
   </div>
 </a>
-<a class="book" href="/books/the-making-of-a-manager-what-to-do/" data-topic="work-leadership" data-key="the making of a manager a first-time manager&#x27;s real, practical playbook for leading a team. julie zhuo" data-date="2019-04-01" data-title="the making of a manager">
+<a class="book" href="/books/the-making-of-a-manager-what-to-do/" data-topic="work-leadership" data-key="the making of a manager a first-time manager&#x27;s real, practical playbook for leading a team. julie zhuo work-leadership" data-date="2019-04-01" data-title="the making of a manager">
   <div class="book-cover"><img class="" src="/books/covers/the-making-of-a-manager-what-to-do.jpeg" alt="The Making of a Manager cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#3d6bff">Work &amp; leadership</span>
@@ -411,7 +412,7 @@
     <p>Julie Zhuo</p>
   </div>
 </a>
-<a class="book" href="/books/football-the-philosophy-behind-the/" data-topic="football" data-key="football a philosopher&#x27;s look at what football reveals about meaning and aesthetics. stephen mumford" data-date="2019-04-01" data-title="football">
+<a class="book" href="/books/football-the-philosophy-behind-the/" data-topic="football" data-key="football a philosopher&#x27;s look at what football reveals about meaning and aesthetics. stephen mumford football" data-date="2019-04-01" data-title="football">
   <div class="book-cover"><img class="" src="/books/covers/football-the-philosophy-behind-the.jpeg" alt="Football cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#2f7d4f">Football</span>
@@ -419,7 +420,7 @@
     <p>Stephen Mumford</p>
   </div>
 </a>
-<a class="book" href="/books/the-emotionally-intelligent-office/" data-topic="work-leadership" data-key="the emotionally intelligent office making emotional intelligence practical for actual office dynamics. the school of life" data-date="2019-01-03" data-title="the emotionally intelligent office">
+<a class="book" href="/books/the-emotionally-intelligent-office/" data-topic="work-leadership" data-key="the emotionally intelligent office making emotional intelligence practical for actual office dynamics. the school of life work-leadership" data-date="2019-01-03" data-title="the emotionally intelligent office">
   <div class="book-cover"><img class="" src="/books/covers/the-emotionally-intelligent-office.jpeg" alt="The Emotionally Intelligent Office cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#3d6bff">Work &amp; leadership</span>
@@ -427,7 +428,7 @@
     <p>The School of Life</p>
   </div>
 </a>
-<a class="book" href="/books/it-doesnt-have-to-be-crazy-at-work/" data-topic="work-leadership" data-key="it doesn&#x27;t have to be crazy at work the case against grind culture, from founders who built a calmer company. dhh, jason fried" data-date="2018-11-01" data-title="it doesn&#x27;t have to be crazy at work">
+<a class="book" href="/books/it-doesnt-have-to-be-crazy-at-work/" data-topic="work-leadership" data-key="it doesn&#x27;t have to be crazy at work the case against grind culture, from founders who built a calmer company. dhh, jason fried work-leadership" data-date="2018-11-01" data-title="it doesn&#x27;t have to be crazy at work">
   <div class="book-cover"><img class="" src="/books/covers/it-doesnt-have-to-be-crazy-at-work.jpeg" alt="It Doesn&#x27;t Have to Be Crazy at Work cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#3d6bff">Work &amp; leadership</span>
@@ -435,7 +436,7 @@
     <p>DHH, Jason Fried</p>
   </div>
 </a>
-<a class="book" href="/books/outnumbered/" data-topic="thinking-decisions" data-key="outnumbered how algorithms are reshaping decisions once left to human judgment. david sumpter" data-date="2018-09-01" data-title="outnumbered">
+<a class="book" href="/books/outnumbered/" data-topic="thinking-decisions" data-key="outnumbered how algorithms are reshaping decisions once left to human judgment. david sumpter thinking-decisions" data-date="2018-09-01" data-title="outnumbered">
   <div class="book-cover"><img class="" src="/books/covers/outnumbered.jpeg" alt="Outnumbered cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#6b4fbb">Thinking &amp; decisions</span>
@@ -443,7 +444,7 @@
     <p>David Sumpter</p>
   </div>
 </a>
-<a class="book" href="/books/measure-what-matters/" data-topic="work-leadership" data-key="measure what matters the goal-setting system behind google&#x27;s growth, from the source. john doerr" data-date="2018-07-01" data-title="measure what matters">
+<a class="book" href="/books/measure-what-matters/" data-topic="work-leadership" data-key="measure what matters the goal-setting system behind google&#x27;s growth, from the source. john doerr work-leadership" data-date="2018-07-01" data-title="measure what matters">
   <div class="book-cover"><img class="" src="/books/covers/measure-what-matters.jpeg" alt="Measure What Matters cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#3d6bff">Work &amp; leadership</span>
@@ -451,7 +452,7 @@
     <p>John Doerr</p>
   </div>
 </a>
-<a class="book" href="/books/nine-things-successful-people-do/" data-topic="personal-development" data-key="nine things successful people do differently the specific habits that separate people who actually reach their goals. heidi grant halvorson" data-date="2017-12-01" data-title="nine things successful people do differently">
+<a class="book" href="/books/nine-things-successful-people-do/" data-topic="personal-development" data-key="nine things successful people do differently the specific habits that separate people who actually reach their goals. heidi grant halvorson personal-development" data-date="2017-12-01" data-title="nine things successful people do differently">
   <div class="book-cover"><img class="" src="/books/covers/nine-things-successful-people-do.jpeg" alt="Nine Things Successful People Do Differently cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#b0476b">Personal development</span>
@@ -459,7 +460,7 @@
     <p>Heidi Grant Halvorson</p>
   </div>
 </a>
-<a class="book" href="/books/the-greatest-the-quest-for-sporting/" data-topic="sports-analytics" data-key="the greatest what separates the greatest sporting performances from merely great ones. matthew syed" data-date="2017-10-01" data-title="the greatest">
+<a class="book" href="/books/the-greatest-the-quest-for-sporting/" data-topic="sports-analytics" data-key="the greatest what separates the greatest sporting performances from merely great ones. matthew syed sports-analytics" data-date="2017-10-01" data-title="the greatest">
   <div class="book-cover"><img class="" src="/books/covers/the-greatest-the-quest-for-sporting.jpg" alt="The Greatest cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#2b6cb0">Sports analytics</span>
@@ -467,7 +468,7 @@
     <p>Matthew Syed</p>
   </div>
 </a>
-<a class="book" href="/books/the-football-code-the-science-of/" data-topic="football" data-key="the football code inside the mathematical models used to actually predict match results. james tippett" data-date="2017-10-01" data-title="the football code">
+<a class="book" href="/books/the-football-code-the-science-of/" data-topic="football" data-key="the football code inside the mathematical models used to actually predict match results. james tippett football" data-date="2017-10-01" data-title="the football code">
   <div class="book-cover"><img class="" src="/books/covers/the-football-code-the-science-of.jpeg" alt="The Football Code cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#2f7d4f">Football</span>
@@ -475,7 +476,7 @@
     <p>James Tippett</p>
   </div>
 </a>
-<a class="book" href="/books/edge-what-business-can-learn-from/" data-topic="football" data-key="edge football&#x27;s lessons on pressure, teams, and performance, applied to work. ben lyttleton" data-date="2017-09-01" data-title="edge">
+<a class="book" href="/books/edge-what-business-can-learn-from/" data-topic="football" data-key="edge football&#x27;s lessons on pressure, teams, and performance, applied to work. ben lyttleton football" data-date="2017-09-01" data-title="edge">
   <div class="book-cover"><img class="" src="/books/covers/edge-what-business-can-learn-from.jpeg" alt="Edge cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#2f7d4f">Football</span>
@@ -483,7 +484,7 @@
     <p>Ben Lyttleton</p>
   </div>
 </a>
-<a class="book" href="/books/man-vs-big-data/" data-topic="football" data-key="man vs big data where human football judgment still beats the algorithm — and where it doesn&#x27;t. stewart cowley" data-date="2017-07-01" data-title="man vs big data">
+<a class="book" href="/books/man-vs-big-data/" data-topic="football" data-key="man vs big data where human football judgment still beats the algorithm — and where it doesn&#x27;t. stewart cowley football" data-date="2017-07-01" data-title="man vs big data">
   <div class="book-cover"><img class="" src="/books/covers/man-vs-big-data.jpeg" alt="Man vs Big Data cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#2f7d4f">Football</span>
@@ -491,7 +492,7 @@
     <p>Stewart Cowley</p>
   </div>
 </a>
-<a class="book" href="/books/the-art-of-the-good-life-52-surprising/" data-topic="personal-development" data-key="the art of the good life 52 shortcuts to a better life, built on avoiding bad decisions. rolf dobelli" data-date="2017-05-01" data-title="the art of the good life">
+<a class="book" href="/books/the-art-of-the-good-life-52-surprising/" data-topic="personal-development" data-key="the art of the good life 52 shortcuts to a better life, built on avoiding bad decisions. rolf dobelli personal-development" data-date="2017-05-01" data-title="the art of the good life">
   <div class="book-cover"><img class="" src="/books/covers/the-art-of-the-good-life-52-surprising.jpeg" alt="The Art of the Good Life cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#b0476b">Personal development</span>
@@ -499,7 +500,7 @@
     <p>Rolf Dobelli</p>
   </div>
 </a>
-<a class="book" href="/books/a-job-to-love/" data-topic="work-leadership" data-key="a job to love a framework for finding meaning in work rather than just a paycheck. the school of life" data-date="2017-03-01" data-title="a job to love">
+<a class="book" href="/books/a-job-to-love/" data-topic="work-leadership" data-key="a job to love a framework for finding meaning in work rather than just a paycheck. the school of life work-leadership" data-date="2017-03-01" data-title="a job to love">
   <div class="book-cover"><img class="" src="/books/covers/a-job-to-love.jpeg" alt="A Job to Love cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#3d6bff">Work &amp; leadership</span>
@@ -507,7 +508,7 @@
     <p>The School of Life</p>
   </div>
 </a>
-<a class="book" href="/books/the-subtle-art-of-not-giving-a-fck/" data-topic="personal-development" data-key="the subtle art of not giving a f*ck choosing your struggles deliberately instead of chasing endless positivity. mark manson" data-date="2016-10-01" data-title="the subtle art of not giving a f*ck">
+<a class="book" href="/books/the-subtle-art-of-not-giving-a-fck/" data-topic="personal-development" data-key="the subtle art of not giving a f*ck choosing your struggles deliberately instead of chasing endless positivity. mark manson personal-development" data-date="2016-10-01" data-title="the subtle art of not giving a f*ck">
   <div class="book-cover"><img class="" src="/books/covers/the-subtle-art-of-not-giving-a-fck.jpeg" alt="The Subtle Art of Not Giving a F*ck cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#b0476b">Personal development</span>
@@ -515,7 +516,7 @@
     <p>Mark Manson</p>
   </div>
 </a>
-<a class="book" href="/books/hunger-in-paradise/" data-topic="football" data-key="hunger in paradise why scarcity, not comfort, tends to produce elite footballing talent. rasmus ankersen" data-date="2016-07-01" data-title="hunger in paradise">
+<a class="book" href="/books/hunger-in-paradise/" data-topic="football" data-key="hunger in paradise why scarcity, not comfort, tends to produce elite footballing talent. rasmus ankersen football" data-date="2016-07-01" data-title="hunger in paradise">
   <div class="book-cover"><img class="" src="/books/covers/hunger-in-paradise.jpeg" alt="Hunger in Paradise cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#2f7d4f">Football</span>
@@ -523,7 +524,7 @@
     <p>Rasmus Ankersen</p>
   </div>
 </a>
-<a class="book" href="/books/squares-and-sharps-suckers-and-sharks/" data-topic="betting-markets" data-key="squares &amp; sharps, suckers &amp; sharks inside the culture war between casual bettors and professional sharps. joseph buchdahl" data-date="2016-06-26" data-title="squares &amp; sharps, suckers &amp; sharks">
+<a class="book" href="/books/squares-and-sharps-suckers-and-sharks/" data-topic="betting-markets" data-key="squares &amp; sharps, suckers &amp; sharks inside the culture war between casual bettors and professional sharps. joseph buchdahl betting-markets" data-date="2016-06-26" data-title="squares &amp; sharps, suckers &amp; sharks">
   <div class="book-cover"><img class="" src="/books/covers/squares-and-sharps-suckers-and-sharks.jpeg" alt="Squares &amp; Sharps, Suckers &amp; Sharks cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#b5562a">Betting &amp; markets</span>
@@ -531,7 +532,7 @@
     <p>Joseph Buchdahl</p>
   </div>
 </a>
-<a class="book" href="/books/soccermatics/" data-topic="football" data-key="soccermatics why football&#x27;s chaos is exactly what makes it mathematically interesting. david sumpter" data-date="2016-06-01" data-title="soccermatics">
+<a class="book" href="/books/soccermatics/" data-topic="football" data-key="soccermatics why football&#x27;s chaos is exactly what makes it mathematically interesting. david sumpter football" data-date="2016-06-01" data-title="soccermatics">
   <div class="book-cover"><img class="" src="/books/covers/soccermatics.jpeg" alt="Soccermatics cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#2f7d4f">Football</span>
@@ -539,7 +540,7 @@
     <p>David Sumpter</p>
   </div>
 </a>
-<a class="book" href="/books/unsubscribe-how-to-kill-email-anxiety/" data-topic="work-leadership" data-key="unsubscribe escaping the always-on email anxiety that eats real focused work. jocelyn k. glei" data-date="2016-05-01" data-title="unsubscribe">
+<a class="book" href="/books/unsubscribe-how-to-kill-email-anxiety/" data-topic="work-leadership" data-key="unsubscribe escaping the always-on email anxiety that eats real focused work. jocelyn k. glei work-leadership" data-date="2016-05-01" data-title="unsubscribe">
   <div class="book-cover"><img class="" src="/books/covers/unsubscribe-how-to-kill-email-anxiety.jpeg" alt="Unsubscribe cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#3d6bff">Work &amp; leadership</span>
@@ -547,7 +548,7 @@
     <p>Jocelyn K. Glei</p>
   </div>
 </a>
-<a class="book" href="/books/how-to-be-a-leader/" data-topic="work-leadership" data-key="how to be a leader timeless leadership lessons pulled from classical philosophy. the school of life" data-date="2016-04-10" data-title="how to be a leader">
+<a class="book" href="/books/how-to-be-a-leader/" data-topic="work-leadership" data-key="how to be a leader timeless leadership lessons pulled from classical philosophy. the school of life work-leadership" data-date="2016-04-10" data-title="how to be a leader">
   <div class="book-cover"><img class="" src="/books/covers/how-to-be-a-leader.jpeg" alt="How to be a Leader cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#3d6bff">Work &amp; leadership</span>
@@ -555,7 +556,7 @@
     <p>The School of Life</p>
   </div>
 </a>
-<a class="book" href="/books/storytelling-with-data-a-data-visualization/" data-topic="thinking-decisions" data-key="storytelling with data how to turn a chart into something people actually understand and act on. cole nussbaumer knaflic" data-date="2015-11-01" data-title="storytelling with data">
+<a class="book" href="/books/storytelling-with-data-a-data-visualization/" data-topic="thinking-decisions" data-key="storytelling with data how to turn a chart into something people actually understand and act on. cole nussbaumer knaflic thinking-decisions" data-date="2015-11-01" data-title="storytelling with data">
   <div class="book-cover"><img class="" src="/books/covers/storytelling-with-data-a-data-visualization.jpeg" alt="Storytelling with Data cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#6b4fbb">Thinking &amp; decisions</span>
@@ -563,7 +564,7 @@
     <p>Cole Nussbaumer Knaflic</p>
   </div>
 </a>
-<a class="book" href="/books/superforecasting-the-art-and-science/" data-topic="thinking-decisions" data-key="superforecasting what actually makes some people&#x27;s predictions reliably better than others&#x27;. philip tetlock, dan gardner" data-date="2015-09-01" data-title="superforecasting">
+<a class="book" href="/books/superforecasting-the-art-and-science/" data-topic="thinking-decisions" data-key="superforecasting what actually makes some people&#x27;s predictions reliably better than others&#x27;. philip tetlock, dan gardner thinking-decisions" data-date="2015-09-01" data-title="superforecasting">
   <div class="book-cover"><img class="" src="/books/covers/superforecasting-the-art-and-science.jpeg" alt="Superforecasting cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#6b4fbb">Thinking &amp; decisions</span>
@@ -571,7 +572,7 @@
     <p>Philip Tetlock, Dan Gardner</p>
   </div>
 </a>
-<a class="book" href="/books/money-and-soccer-a-soccernomics-guide/" data-topic="football" data-key="money and football the economics behind why football clubs lose money by design. stefan szymanski" data-date="2015-07-02" data-title="money and football">
+<a class="book" href="/books/money-and-soccer-a-soccernomics-guide/" data-topic="football" data-key="money and football the economics behind why football clubs lose money by design. stefan szymanski football" data-date="2015-07-02" data-title="money and football">
   <div class="book-cover"><img class="" src="/books/covers/money-and-soccer-a-soccernomics-guide.jpeg" alt="Money and Football cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#2f7d4f">Football</span>
@@ -579,7 +580,7 @@
     <p>Stefan Szymanski</p>
   </div>
 </a>
-<a class="book" href="/books/empathy-a-handbook-for-revolution/" data-topic="personal-development" data-key="empathy making the case for empathy as a practiced skill, not just a feeling. roman krznaric" data-date="2014-12-01" data-title="empathy">
+<a class="book" href="/books/empathy-a-handbook-for-revolution/" data-topic="personal-development" data-key="empathy making the case for empathy as a practiced skill, not just a feeling. roman krznaric personal-development" data-date="2014-12-01" data-title="empathy">
   <div class="book-cover"><img class="" src="/books/covers/empathy-a-handbook-for-revolution.jpeg" alt="Empathy cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#b0476b">Personal development</span>
@@ -587,7 +588,7 @@
     <p>Roman Krznaric</p>
   </div>
 </a>
-<a class="book" href="/books/smart-sports-betting-advanced-stats/" data-topic="betting-markets" data-key="smart sports betting practical stats and the psychology needed to bet with discipline. matt rudnitsky" data-date="2014-11-01" data-title="smart sports betting">
+<a class="book" href="/books/smart-sports-betting-advanced-stats/" data-topic="betting-markets" data-key="smart sports betting practical stats and the psychology needed to bet with discipline. matt rudnitsky betting-markets" data-date="2014-11-01" data-title="smart sports betting">
   <div class="book-cover"><img class="" src="/books/covers/smart-sports-betting-advanced-stats.jpeg" alt="Smart Sports Betting cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#b5562a">Betting &amp; markets</span>
@@ -595,7 +596,7 @@
     <p>Matt Rudnitsky</p>
   </div>
 </a>
-<a class="book" href="/books/the-culture-map/" data-topic="work-leadership" data-key="the culture map decoding how people think, lead, and get things done across cultures erin meyer" data-date="2014-06-27" data-title="the culture map">
+<a class="book" href="/books/the-culture-map/" data-topic="work-leadership" data-key="the culture map decoding how people think, lead, and get things done across cultures erin meyer work-leadership" data-date="2014-06-27" data-title="the culture map">
   <div class="book-cover"><img class="" src="/books/covers/the-culture-map.jpeg" alt="The Culture Map cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#3d6bff">Work &amp; leadership</span>
@@ -603,7 +604,7 @@
     <p>Erin Meyer</p>
   </div>
 </a>
-<a class="book" href="/books/make-your-mark/" data-topic="work-leadership" data-key="make your mark the creative&#x27;s guide to building a business with impact jocelyn k. glei" data-date="2014-04-01" data-title="make your mark">
+<a class="book" href="/books/make-your-mark/" data-topic="work-leadership" data-key="make your mark the creative&#x27;s guide to building a business with impact jocelyn k. glei work-leadership" data-date="2014-04-01" data-title="make your mark">
   <div class="book-cover"><img class="" src="/books/covers/make-your-mark.jpg" alt="Make Your Mark cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#3d6bff">Work &amp; leadership</span>
@@ -611,7 +612,7 @@
     <p>Jocelyn K. Glei</p>
   </div>
 </a>
-<a class="book" href="/books/maximize-your-potential/" data-topic="personal-development" data-key="maximize your potential grow your expertise, take bold risks &amp; build an incredible career jocelyn k. glei" data-date="2013-12-01" data-title="maximize your potential">
+<a class="book" href="/books/maximize-your-potential/" data-topic="personal-development" data-key="maximize your potential grow your expertise, take bold risks &amp; build an incredible career jocelyn k. glei personal-development" data-date="2013-12-01" data-title="maximize your potential">
   <div class="book-cover"><img class="" src="/books/covers/maximize-your-potential.jpg" alt="Maximize Your Potential cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#b0476b">Personal development</span>
@@ -619,7 +620,7 @@
     <p>Jocelyn K. Glei</p>
   </div>
 </a>
-<a class="book" href="/books/manage-your-day-to-day/" data-topic="personal-development" data-key="manage your day-to-day build your routine, find your focus, and sharpen your creative mind jocelyn k. glei" data-date="2013-11-01" data-title="manage your day-to-day">
+<a class="book" href="/books/manage-your-day-to-day/" data-topic="personal-development" data-key="manage your day-to-day build your routine, find your focus, and sharpen your creative mind jocelyn k. glei personal-development" data-date="2013-11-01" data-title="manage your day-to-day">
   <div class="book-cover"><img class="" src="/books/covers/manage-your-day-to-day.jpg" alt="Manage Your Day-to-Day cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#b0476b">Personal development</span>
@@ -627,7 +628,7 @@
     <p>Jocelyn K. Glei</p>
   </div>
 </a>
-<a class="book" href="/books/sports-betting-basics/" data-topic="betting-markets" data-key="sports betting basics a plain-language starting point for how sports betting actually works. allen moody" data-date="2013-07-01" data-title="sports betting basics">
+<a class="book" href="/books/sports-betting-basics/" data-topic="betting-markets" data-key="sports betting basics a plain-language starting point for how sports betting actually works. allen moody betting-markets" data-date="2013-07-01" data-title="sports betting basics">
   <div class="book-cover"><img class="" src="/books/covers/sports-betting-basics.jpeg" alt="Sports Betting Basics cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#b5562a">Betting &amp; markets</span>
@@ -635,7 +636,7 @@
     <p>Allen Moody</p>
   </div>
 </a>
-<a class="book" href="/books/becoming-a-winning-gambler/" data-topic="betting-markets" data-key="becoming a winning gambler what separates bettors who survive long-term from those who don&#x27;t. allen moody" data-date="2013-07-01" data-title="becoming a winning gambler">
+<a class="book" href="/books/becoming-a-winning-gambler/" data-topic="betting-markets" data-key="becoming a winning gambler what separates bettors who survive long-term from those who don&#x27;t. allen moody betting-markets" data-date="2013-07-01" data-title="becoming a winning gambler">
   <div class="book-cover"><img class="" src="/books/covers/becoming-a-winning-gambler.jpeg" alt="Becoming a Winning Gambler cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#b5562a">Betting &amp; markets</span>
@@ -643,7 +644,7 @@
     <p>Allen Moody</p>
   </div>
 </a>
-<a class="book" href="/books/the-art-of-thinking-clearly/" data-topic="thinking-decisions" data-key="the art of thinking clearly 99 thinking errors, cataloged so you can catch yourself making them. rolf dobelli" data-date="2013-06-01" data-title="the art of thinking clearly">
+<a class="book" href="/books/the-art-of-thinking-clearly/" data-topic="thinking-decisions" data-key="the art of thinking clearly 99 thinking errors, cataloged so you can catch yourself making them. rolf dobelli thinking-decisions" data-date="2013-06-01" data-title="the art of thinking clearly">
   <div class="book-cover"><img class="" src="/books/covers/the-art-of-thinking-clearly.jpeg" alt="The Art of Thinking Clearly cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#6b4fbb">Thinking &amp; decisions</span>
@@ -651,7 +652,7 @@
     <p>Rolf Dobelli</p>
   </div>
 </a>
-<a class="book" href="/books/remote-office-not-required/" data-topic="work-leadership" data-key="remote the case for remote work, years before it became the norm. jason fried, dhh" data-date="2013-06-01" data-title="remote">
+<a class="book" href="/books/remote-office-not-required/" data-topic="work-leadership" data-key="remote the case for remote work, years before it became the norm. jason fried, dhh work-leadership" data-date="2013-06-01" data-title="remote">
   <div class="book-cover"><img class="" src="/books/covers/remote-office-not-required.jpeg" alt="Remote cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#3d6bff">Work &amp; leadership</span>
@@ -659,7 +660,7 @@
     <p>Jason Fried, DHH</p>
   </div>
 </a>
-<a class="book" href="/books/how-to-find-fulfilling-work/" data-topic="work-leadership" data-key="how to find fulfilling work a practical guide to matching work with what actually gives you meaning. the school of life" data-date="2013-05-01" data-title="how to find fulfilling work">
+<a class="book" href="/books/how-to-find-fulfilling-work/" data-topic="work-leadership" data-key="how to find fulfilling work a practical guide to matching work with what actually gives you meaning. the school of life work-leadership" data-date="2013-05-01" data-title="how to find fulfilling work">
   <div class="book-cover"><img class="" src="/books/covers/how-to-find-fulfilling-work.jpeg" alt="How to Find Fulfilling Work cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#3d6bff">Work &amp; leadership</span>
@@ -667,7 +668,7 @@
     <p>The School of Life</p>
   </div>
 </a>
-<a class="book" href="/books/focus-use-different-ways-of-seeing/" data-topic="personal-development" data-key="focus two different mindsets for pursuing success, and when each one wins. heidi grant halvorson, e. tory higgins" data-date="2013-05-01" data-title="focus">
+<a class="book" href="/books/focus-use-different-ways-of-seeing/" data-topic="personal-development" data-key="focus two different mindsets for pursuing success, and when each one wins. heidi grant halvorson, e. tory higgins personal-development" data-date="2013-05-01" data-title="focus">
   <div class="book-cover"><img class="" src="/books/covers/focus-use-different-ways-of-seeing.jpeg" alt="Focus cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#b0476b">Personal development</span>
@@ -675,7 +676,7 @@
     <p>Heidi Grant Halvorson, E. Tory Higgins</p>
   </div>
 </a>
-<a class="book" href="/books/the-numbers-game-why-everything-you/" data-topic="football" data-key="the numbers game debunking football&#x27;s most repeated but least evidence-backed myths. chris anderson, david sally" data-date="2013-03-01" data-title="the numbers game">
+<a class="book" href="/books/the-numbers-game-why-everything-you/" data-topic="football" data-key="the numbers game debunking football&#x27;s most repeated but least evidence-backed myths. chris anderson, david sally football" data-date="2013-03-01" data-title="the numbers game">
   <div class="book-cover"><img class="" src="/books/covers/the-numbers-game-why-everything-you.jpeg" alt="The Numbers Game cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#2f7d4f">Football</span>
@@ -683,7 +684,7 @@
     <p>Chris Anderson, David Sally</p>
   </div>
 </a>
-<a class="book" href="/books/the-success-equation-untangling-skill/" data-topic="thinking-decisions" data-key="the success equation untangling how much of any result is skill versus luck. michael j. mauboussin" data-date="2013-01-01" data-title="the success equation">
+<a class="book" href="/books/the-success-equation-untangling-skill/" data-topic="thinking-decisions" data-key="the success equation untangling how much of any result is skill versus luck. michael j. mauboussin thinking-decisions" data-date="2013-01-01" data-title="the success equation">
   <div class="book-cover"><img class="" src="/books/covers/the-success-equation-untangling-skill.jpeg" alt="The Success Equation cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#6b4fbb">Thinking &amp; decisions</span>
@@ -691,7 +692,7 @@
     <p>Michael J. Mauboussin</p>
   </div>
 </a>
-<a class="book" href="/books/the-signal-and-the-noise-the-art/" data-topic="thinking-decisions" data-key="the signal and the noise why most predictions fail, and what separates good forecasters. nate silver" data-date="2012-07-01" data-title="the signal and the noise">
+<a class="book" href="/books/the-signal-and-the-noise-the-art/" data-topic="thinking-decisions" data-key="the signal and the noise why most predictions fail, and what separates good forecasters. nate silver thinking-decisions" data-date="2012-07-01" data-title="the signal and the noise">
   <div class="book-cover"><img class="" src="/books/covers/the-signal-and-the-noise-the-art.jpeg" alt="The Signal and the Noise cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#6b4fbb">Thinking &amp; decisions</span>
@@ -699,7 +700,7 @@
     <p>Nate Silver</p>
   </div>
 </a>
-<a class="book" href="/books/the-real-story-of-risk-adventures/" data-topic="thinking-decisions" data-key="the real story of risk a tour of how badly humans misjudge real-world danger and probability. glenn croston" data-date="2012-07-01" data-title="the real story of risk">
+<a class="book" href="/books/the-real-story-of-risk-adventures/" data-topic="thinking-decisions" data-key="the real story of risk a tour of how badly humans misjudge real-world danger and probability. glenn croston thinking-decisions" data-date="2012-07-01" data-title="the real story of risk">
   <div class="book-cover"><img class="" src="/books/covers/the-real-story-of-risk-adventures.jpeg" alt="The Real Story of Risk cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#6b4fbb">Thinking &amp; decisions</span>
@@ -707,7 +708,7 @@
     <p>Glenn Croston</p>
   </div>
 </a>
-<a class="book" href="/books/all-the-money-in-the-world-what-the/" data-topic="personal-development" data-key="all the money in the world what genuinely happy people do differently with their money. laura vanderkam" data-date="2012-07-01" data-title="all the money in the world">
+<a class="book" href="/books/all-the-money-in-the-world-what-the/" data-topic="personal-development" data-key="all the money in the world what genuinely happy people do differently with their money. laura vanderkam personal-development" data-date="2012-07-01" data-title="all the money in the world">
   <div class="book-cover"><img class="" src="/books/covers/all-the-money-in-the-world-what-the.jpeg" alt="All the Money in the World cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#b0476b">Personal development</span>
@@ -715,7 +716,7 @@
     <p>Laura Vanderkam</p>
   </div>
 </a>
-<a class="book" href="/books/changing-the-game-how-to-profit-from/" data-topic="betting-markets" data-key="changing the game turning a passion for sports into an actual profitable business. william o. hall iii" data-date="2012-05-02" data-title="changing the game">
+<a class="book" href="/books/changing-the-game-how-to-profit-from/" data-topic="betting-markets" data-key="changing the game turning a passion for sports into an actual profitable business. william o. hall iii betting-markets" data-date="2012-05-02" data-title="changing the game">
   <div class="book-cover"><img class="" src="/books/covers/changing-the-game-how-to-profit-from.jpeg" alt="Changing the Game cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#b5562a">Betting &amp; markets</span>
@@ -723,7 +724,7 @@
     <p>William O. Hall III</p>
   </div>
 </a>
-<a class="book" href="/books/the-gold-mine-effect-crack-the-secrets/" data-topic="sports-analytics" data-key="the gold mine effect what the world&#x27;s best talent hotbeds actually have in common. rasmus ankersen" data-date="2012-04-01" data-title="the gold mine effect">
+<a class="book" href="/books/the-gold-mine-effect-crack-the-secrets/" data-topic="sports-analytics" data-key="the gold mine effect what the world&#x27;s best talent hotbeds actually have in common. rasmus ankersen sports-analytics" data-date="2012-04-01" data-title="the gold mine effect">
   <div class="book-cover"><img class="" src="/books/covers/the-gold-mine-effect-crack-the-secrets.jpeg" alt="The Gold Mine Effect cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#2b6cb0">Sports analytics</span>
@@ -731,7 +732,7 @@
     <p>Rasmus Ankersen</p>
   </div>
 </a>
-<a class="book" href="/books/how-to-watch-the-olympics-2016/" data-topic="sports-analytics" data-key="how to watch the olympics the rules and context that make olympic sports worth watching closely. david goldblatt, johnny acton" data-date="2012-01-01" data-title="how to watch the olympics">
+<a class="book" href="/books/how-to-watch-the-olympics-2016/" data-topic="sports-analytics" data-key="how to watch the olympics the rules and context that make olympic sports worth watching closely. david goldblatt, johnny acton sports-analytics" data-date="2012-01-01" data-title="how to watch the olympics">
   <div class="book-cover"><img class="" src="/books/covers/how-to-watch-the-olympics-2016.jpeg" alt="How to Watch the Olympics cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#2b6cb0">Sports analytics</span>
@@ -739,7 +740,7 @@
     <p>David Goldblatt, Johnny Acton</p>
   </div>
 </a>
-<a class="book" href="/books/thinking-fast-and-slow/" data-topic="thinking-decisions" data-key="thinking, fast and slow the two-system mind, and the biases that creep in when instinct drives. daniel kahneman" data-date="2011-11-01" data-title="thinking, fast and slow">
+<a class="book" href="/books/thinking-fast-and-slow/" data-topic="thinking-decisions" data-key="thinking, fast and slow the two-system mind, and the biases that creep in when instinct drives. daniel kahneman thinking-decisions" data-date="2011-11-01" data-title="thinking, fast and slow">
   <div class="book-cover"><img class="" src="/books/covers/thinking-fast-and-slow.jpg" alt="Thinking, Fast and Slow cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#6b4fbb">Thinking &amp; decisions</span>
@@ -747,7 +748,7 @@
     <p>Daniel Kahneman</p>
   </div>
 </a>
-<a class="book" href="/books/the-hidden-mathematics-of-sport/" data-topic="sports-analytics" data-key="the hidden mathematics of sport the math quietly running underneath everyday sporting outcomes. rob eastaway, john haigh" data-date="2011-07-01" data-title="the hidden mathematics of sport">
+<a class="book" href="/books/the-hidden-mathematics-of-sport/" data-topic="sports-analytics" data-key="the hidden mathematics of sport the math quietly running underneath everyday sporting outcomes. rob eastaway, john haigh sports-analytics" data-date="2011-07-01" data-title="the hidden mathematics of sport">
   <div class="book-cover"><img class="" src="/books/covers/the-hidden-mathematics-of-sport.jpeg" alt="The Hidden Mathematics of Sport cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#2b6cb0">Sports analytics</span>
@@ -755,7 +756,7 @@
     <p>Rob Eastaway, John Haigh</p>
   </div>
 </a>
-<a class="book" href="/books/be-excellent-at-anything-four-changes/" data-topic="personal-development" data-key="be excellent at anything four shifts that make work sustainable instead of draining. tony schwartz" data-date="2011-06-01" data-title="be excellent at anything">
+<a class="book" href="/books/be-excellent-at-anything-four-changes/" data-topic="personal-development" data-key="be excellent at anything four shifts that make work sustainable instead of draining. tony schwartz personal-development" data-date="2011-06-01" data-title="be excellent at anything">
   <div class="book-cover"><img class="" src="/books/covers/be-excellent-at-anything-four-changes.jpeg" alt="Be Excellent at Anything cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#b0476b">Personal development</span>
@@ -763,7 +764,7 @@
     <p>Tony Schwartz</p>
   </div>
 </a>
-<a class="book" href="/books/succeed-how-we-can-reach-our-goals/" data-topic="personal-development" data-key="succeed the psychology of goal-setting that actually holds up under pressure. heidi grant halvorson" data-date="2011-02-01" data-title="succeed">
+<a class="book" href="/books/succeed-how-we-can-reach-our-goals/" data-topic="personal-development" data-key="succeed the psychology of goal-setting that actually holds up under pressure. heidi grant halvorson personal-development" data-date="2011-02-01" data-title="succeed">
   <div class="book-cover"><img class="" src="/books/covers/succeed-how-we-can-reach-our-goals.jpeg" alt="Succeed cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#b0476b">Personal development</span>
@@ -771,7 +772,7 @@
     <p>Heidi Grant Halvorson</p>
   </div>
 </a>
-<a class="book" href="/books/scorecasting/" data-topic="sports-analytics" data-key="scorecasting hidden incentives and biases quietly shaping outcomes across sports. tobias moskowitz, l. jon wertheim" data-date="2011-02-01" data-title="scorecasting">
+<a class="book" href="/books/scorecasting/" data-topic="sports-analytics" data-key="scorecasting hidden incentives and biases quietly shaping outcomes across sports. tobias moskowitz, l. jon wertheim sports-analytics" data-date="2011-02-01" data-title="scorecasting">
   <div class="book-cover"><img class="" src="/books/covers/scorecasting.jpeg" alt="Scorecasting cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#2b6cb0">Sports analytics</span>
@@ -779,7 +780,7 @@
     <p>Tobias Moskowitz, L. Jon Wertheim</p>
   </div>
 </a>
-<a class="book" href="/books/168-hours-you-have-more-time-than/" data-topic="personal-development" data-key="168 hours you have more time than you think — the case, with the math to prove it. laura vanderkam" data-date="2010-06-01" data-title="168 hours">
+<a class="book" href="/books/168-hours-you-have-more-time-than/" data-topic="personal-development" data-key="168 hours you have more time than you think — the case, with the math to prove it. laura vanderkam personal-development" data-date="2010-06-01" data-title="168 hours">
   <div class="book-cover"><img class="" src="/books/covers/168-hours-you-have-more-time-than.jpeg" alt="168 Hours cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#b0476b">Personal development</span>
@@ -787,7 +788,7 @@
     <p>Laura Vanderkam</p>
   </div>
 </a>
-<a class="book" href="/books/sports-investing-profiting-from-point/" data-topic="betting-markets" data-key="sports investing treating point spreads like a market to be modeled, not guessed. daniel fabrizio, joseph hunter" data-date="2010-05-02" data-title="sports investing">
+<a class="book" href="/books/sports-investing-profiting-from-point/" data-topic="betting-markets" data-key="sports investing treating point spreads like a market to be modeled, not guessed. daniel fabrizio, joseph hunter betting-markets" data-date="2010-05-02" data-title="sports investing">
   <div class="book-cover"><img class="" src="/books/covers/sports-investing-profiting-from-point.jpeg" alt="Sports Investing cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#b5562a">Betting &amp; markets</span>
@@ -795,7 +796,7 @@
     <p>Daniel Fabrizio, Joseph Hunter</p>
   </div>
 </a>
-<a class="book" href="/books/alexs-adventures-in-numberland/" data-topic="thinking-decisions" data-key="alex’s adventures in numberland a joyful tour of the math hiding in ordinary things. alex bellos" data-date="2010-05-01" data-title="alex’s adventures in numberland">
+<a class="book" href="/books/alexs-adventures-in-numberland/" data-topic="thinking-decisions" data-key="alex’s adventures in numberland a joyful tour of the math hiding in ordinary things. alex bellos thinking-decisions" data-date="2010-05-01" data-title="alex’s adventures in numberland">
   <div class="book-cover"><img class="" src="/books/covers/alexs-adventures-in-numberland.jpeg" alt="Alex’s Adventures in Numberland cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#6b4fbb">Thinking &amp; decisions</span>
@@ -803,7 +804,7 @@
     <p>Alex Bellos</p>
   </div>
 </a>
-<a class="book" href="/books/making-ideas-happen-overcoming-the/" data-topic="work-leadership" data-key="making ideas happen why execution, not inspiration, is what kills most good ideas. scott belsky" data-date="2010-04-01" data-title="making ideas happen">
+<a class="book" href="/books/making-ideas-happen-overcoming-the/" data-topic="work-leadership" data-key="making ideas happen why execution, not inspiration, is what kills most good ideas. scott belsky work-leadership" data-date="2010-04-01" data-title="making ideas happen">
   <div class="book-cover"><img class="" src="/books/covers/making-ideas-happen-overcoming-the.jpeg" alt="Making Ideas Happen cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#3d6bff">Work &amp; leadership</span>
@@ -811,7 +812,7 @@
     <p>Scott Belsky</p>
   </div>
 </a>
-<a class="book" href="/books/think-twice-harnessing-the-power/" data-topic="thinking-decisions" data-key="think twice a field guide to the decision traps that catch smart, experienced people. michael j. mauboussin" data-date="2009-11-01" data-title="think twice">
+<a class="book" href="/books/think-twice-harnessing-the-power/" data-topic="thinking-decisions" data-key="think twice a field guide to the decision traps that catch smart, experienced people. michael j. mauboussin thinking-decisions" data-date="2009-11-01" data-title="think twice">
   <div class="book-cover"><img class="" src="/books/covers/think-twice-harnessing-the-power.jpg" alt="Think Twice cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#6b4fbb">Thinking &amp; decisions</span>
@@ -819,7 +820,7 @@
     <p>Michael J. Mauboussin</p>
   </div>
 </a>
-<a class="book" href="/books/soccernomics/" data-topic="football" data-key="soccernomics the economics behind why nations and clubs actually win or lose. simon kuper, stefan szymanski" data-date="2009-09-01" data-title="soccernomics">
+<a class="book" href="/books/soccernomics/" data-topic="football" data-key="soccernomics the economics behind why nations and clubs actually win or lose. simon kuper, stefan szymanski football" data-date="2009-09-01" data-title="soccernomics">
   <div class="book-cover"><img class="" src="/books/covers/soccernomics.webp" alt="Soccernomics cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#2f7d4f">Football</span>
@@ -827,7 +828,7 @@
     <p>Simon Kuper, Stefan Szymanski</p>
   </div>
 </a>
-<a class="book" href="/books/mastering-betfair/" data-topic="betting-markets" data-key="mastering betfair the mechanics of trading odds on an exchange rather than just betting them. pete nordsted" data-date="2009-07-01" data-title="mastering betfair">
+<a class="book" href="/books/mastering-betfair/" data-topic="betting-markets" data-key="mastering betfair the mechanics of trading odds on an exchange rather than just betting them. pete nordsted betting-markets" data-date="2009-07-01" data-title="mastering betfair">
   <div class="book-cover"><img class="" src="/books/covers/mastering-betfair.jpg" alt="Mastering Betfair cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#b5562a">Betting &amp; markets</span>
@@ -835,7 +836,7 @@
     <p>Pete Nordsted</p>
   </div>
 </a>
-<a class="book" href="/books/what-i-wish-i-knew-when-i-was-20/" data-topic="personal-development" data-key="what i wish i knew when i was 20 practical, unconventional advice for figuring out what to do with your life. tina seelig" data-date="2009-05-01" data-title="what i wish i knew when i was 20">
+<a class="book" href="/books/what-i-wish-i-knew-when-i-was-20/" data-topic="personal-development" data-key="what i wish i knew when i was 20 practical, unconventional advice for figuring out what to do with your life. tina seelig personal-development" data-date="2009-05-01" data-title="what i wish i knew when i was 20">
   <div class="book-cover"><img class="" src="/books/covers/what-i-wish-i-knew-when-i-was-20.jpeg" alt="What I Wish I Knew When I Was 20 cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#b0476b">Personal development</span>
@@ -843,7 +844,7 @@
     <p>Tina Seelig</p>
   </div>
 </a>
-<a class="book" href="/books/betting-on-football/" data-topic="betting-markets" data-key="betting on football kevin pullein&#x27;s data-driven guide to finding value in football betting markets kevin pullein" data-date="2009-04-01" data-title="betting on football">
+<a class="book" href="/books/betting-on-football/" data-topic="betting-markets" data-key="betting on football kevin pullein&#x27;s data-driven guide to finding value in football betting markets kevin pullein betting-markets" data-date="2009-04-01" data-title="betting on football">
   <div class="book-cover"><img class="" src="/books/covers/betting-on-football.jpeg" alt="Betting on Football cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#b5562a">Betting &amp; markets</span>
@@ -851,7 +852,7 @@
     <p>Kevin Pullein</p>
   </div>
 </a>
-<a class="book" href="/books/mathletics-how-gamblers-managers/" data-topic="sports-analytics" data-key="mathletics the math behind smarter decisions in football, betting, and fantasy sports. wayne l. winston" data-date="2009-03-01" data-title="mathletics">
+<a class="book" href="/books/mathletics-how-gamblers-managers/" data-topic="sports-analytics" data-key="mathletics the math behind smarter decisions in football, betting, and fantasy sports. wayne l. winston sports-analytics" data-date="2009-03-01" data-title="mathletics">
   <div class="book-cover"><img class="" src="/books/covers/mathletics-how-gamblers-managers.jpeg" alt="Mathletics cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#2b6cb0">Sports analytics</span>
@@ -859,7 +860,7 @@
     <p>Wayne L. Winston</p>
   </div>
 </a>
-<a class="book" href="/books/the-definitive-guide-a-z-of-betting/" data-topic="betting-markets" data-key="the definitive guide a-z of betting a glossary for making sense of bookmaker language and bet types. john quinn, jim cremin" data-date="2008-12-30" data-title="the definitive guide a-z of betting">
+<a class="book" href="/books/the-definitive-guide-a-z-of-betting/" data-topic="betting-markets" data-key="the definitive guide a-z of betting a glossary for making sense of bookmaker language and bet types. john quinn, jim cremin betting-markets" data-date="2008-12-30" data-title="the definitive guide a-z of betting">
   <div class="book-cover"><img class="" src="/books/covers/the-definitive-guide-a-z-of-betting.jpeg" alt="The Definitive Guide A-Z of Betting cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#b5562a">Betting &amp; markets</span>
@@ -867,7 +868,7 @@
     <p>John Quinn, Jim Cremin</p>
   </div>
 </a>
-<a class="book" href="/books/the-drunkards-walk-how-randomness/" data-topic="thinking-decisions" data-key="the drunkard’s walk how much of what we call skill or failure is actually just randomness. leonard mlodinow" data-date="2008-06-01" data-title="the drunkard’s walk">
+<a class="book" href="/books/the-drunkards-walk-how-randomness/" data-topic="thinking-decisions" data-key="the drunkard’s walk how much of what we call skill or failure is actually just randomness. leonard mlodinow thinking-decisions" data-date="2008-06-01" data-title="the drunkard’s walk">
   <div class="book-cover"><img class="" src="/books/covers/the-drunkards-walk-how-randomness.jpeg" alt="The Drunkard’s Walk cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#6b4fbb">Thinking &amp; decisions</span>
@@ -875,7 +876,7 @@
     <p>Leonard Mlodinow</p>
   </div>
 </a>
-<a class="book" href="/books/weighing-the-odds-in-sports-betting/" data-topic="betting-markets" data-key="weighing the odds in sports betting a statistics-first approach to pricing your own betting lines. king yao" data-date="2007-08-01" data-title="weighing the odds in sports betting">
+<a class="book" href="/books/weighing-the-odds-in-sports-betting/" data-topic="betting-markets" data-key="weighing the odds in sports betting a statistics-first approach to pricing your own betting lines. king yao betting-markets" data-date="2007-08-01" data-title="weighing the odds in sports betting">
   <div class="book-cover"><img class="" src="/books/covers/weighing-the-odds-in-sports-betting.jpeg" alt="Weighing the Odds in Sports Betting cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#b5562a">Betting &amp; markets</span>
@@ -883,7 +884,7 @@
     <p>King Yao</p>
   </div>
 </a>
-<a class="book" href="/books/mindset/" data-topic="personal-development" data-key="mindset changing the way you think to fulfil your potential carol dweck" data-date="2006-03-28" data-title="mindset">
+<a class="book" href="/books/mindset/" data-topic="personal-development" data-key="mindset changing the way you think to fulfil your potential carol dweck personal-development" data-date="2006-03-28" data-title="mindset">
   <div class="book-cover"><img class="" src="/books/covers/mindset.jpg" alt="Mindset cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#b0476b">Personal development</span>
@@ -891,7 +892,7 @@
     <p>Carol Dweck</p>
   </div>
 </a>
-<a class="book" href="/books/the-definitive-guide-to-betting-exchanges/" data-topic="betting-markets" data-key="the definitive guide to betting exchanges how betfair-style exchange trading actually works, mechanics first. paul kealy" data-date="2005-11-01" data-title="the definitive guide to betting exchanges">
+<a class="book" href="/books/the-definitive-guide-to-betting-exchanges/" data-topic="betting-markets" data-key="the definitive guide to betting exchanges how betfair-style exchange trading actually works, mechanics first. paul kealy betting-markets" data-date="2005-11-01" data-title="the definitive guide to betting exchanges">
   <div class="book-cover"><img class="" src="/books/covers/the-definitive-guide-to-betting-exchanges.jpeg" alt="The Definitive Guide to Betting Exchanges cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#b5562a">Betting &amp; markets</span>
@@ -899,7 +900,7 @@
     <p>Paul Kealy</p>
   </div>
 </a>
-<a class="book" href="/books/the-definitive-guide-to-betting-on/" data-topic="betting-markets" data-key="the definitive guide to betting on sport a broad primer on reading odds and markets across major sports. bruce millington" data-date="2004-11-01" data-title="the definitive guide to betting on sport">
+<a class="book" href="/books/the-definitive-guide-to-betting-on/" data-topic="betting-markets" data-key="the definitive guide to betting on sport a broad primer on reading odds and markets across major sports. bruce millington betting-markets" data-date="2004-11-01" data-title="the definitive guide to betting on sport">
   <div class="book-cover"><img class="" src="/books/covers/the-definitive-guide-to-betting-on.jpeg" alt="The Definitive Guide to Betting on Sport cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#b5562a">Betting &amp; markets</span>
@@ -907,7 +908,7 @@
     <p>Bruce Millington</p>
   </div>
 </a>
-<a class="book" href="/books/fixed-odds-sports-betting-statistical/" data-topic="betting-markets" data-key="fixed odds sports betting a statistical, risk-management approach to pricing fixed-odds markets. joseph buchdahl" data-date="2004-04-01" data-title="fixed odds sports betting">
+<a class="book" href="/books/fixed-odds-sports-betting-statistical/" data-topic="betting-markets" data-key="fixed odds sports betting a statistical, risk-management approach to pricing fixed-odds markets. joseph buchdahl betting-markets" data-date="2004-04-01" data-title="fixed odds sports betting">
   <div class="book-cover"><img class="" src="/books/covers/fixed-odds-sports-betting-statistical.jpeg" alt="Fixed Odds Sports Betting cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#b5562a">Betting &amp; markets</span>
@@ -915,7 +916,7 @@
     <p>Joseph Buchdahl</p>
   </div>
 </a>
-<a class="book" href="/books/basketball-on-paper-rules-and-tools/" data-topic="sports-analytics" data-key="basketball on paper the foundational stats framework for evaluating basketball performance. dean oliver" data-date="2004-02-01" data-title="basketball on paper">
+<a class="book" href="/books/basketball-on-paper-rules-and-tools/" data-topic="sports-analytics" data-key="basketball on paper the foundational stats framework for evaluating basketball performance. dean oliver sports-analytics" data-date="2004-02-01" data-title="basketball on paper">
   <div class="book-cover"><img class="" src="/books/covers/basketball-on-paper-rules-and-tools.jpeg" alt="Basketball on Paper cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#2b6cb0">Sports analytics</span>
@@ -923,7 +924,7 @@
     <p>Dean Oliver</p>
   </div>
 </a>
-<a class="book" href="/books/good-to-great/" data-topic="work-leadership" data-key="good to great what actually separated good companies from ones that became great. jim collins" data-date="2001-11-01" data-title="good to great">
+<a class="book" href="/books/good-to-great/" data-topic="work-leadership" data-key="good to great what actually separated good companies from ones that became great. jim collins work-leadership" data-date="2001-11-01" data-title="good to great">
   <div class="book-cover"><img class="" src="/books/covers/good-to-great.jpeg" alt="Good to Great cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#3d6bff">Work &amp; leadership</span>
@@ -931,7 +932,7 @@
     <p>Jim Collins</p>
   </div>
 </a>
-<a class="book" href="/books/football-against-the-enemy/" data-topic="football" data-key="football against the enemy a journey through football as a mirror of national politics and identity. simon kuper" data-date="1995-01-01" data-title="football against the enemy">
+<a class="book" href="/books/football-against-the-enemy/" data-topic="football" data-key="football against the enemy a journey through football as a mirror of national politics and identity. simon kuper football" data-date="1995-01-01" data-title="football against the enemy">
   <div class="book-cover"><img class="" src="/books/covers/football-against-the-enemy.jpeg" alt="Football Against the Enemy cover" loading=lazy decoding="async" width="326" height="500"></div>
   <div class="book-meta">
     <span class="book-topic" style="--t:#2f7d4f">Football</span>
@@ -951,8 +952,8 @@
   function apply(){
     var s=q.value.trim().toLowerCase(),n=0;
     cards.forEach(function(c){var ok=(!topic||c.dataset.topic===topic)&&(!s||c.dataset.key.indexOf(s)>-1);c.hidden=!ok;if(ok)n++;});
-    count.textContent=n+(n===1?' book':' books');empty.hidden=n>0;
-    chips.forEach(function(c){c.classList.toggle('on',c.dataset.t===topic);});
+    count.textContent='Showing '+n+' of '+cards.length+(n===1?' book':' books');empty.hidden=n>0;
+    chips.forEach(function(c){var on=c.dataset.t===topic;c.classList.toggle('on',on);c.setAttribute('aria-selected',String(on));});
   }
   function order(){
     var v=sort.value;cards.sort(function(a,b){

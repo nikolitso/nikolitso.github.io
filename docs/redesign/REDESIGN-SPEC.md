@@ -88,3 +88,32 @@ Keep its independent editorial palette and typography. Do not import sports dash
 - Do not replace existing data with illustrative metrics.
 - Do not remove historical records or alter URLs without redirects.
 - Do not publish to production until the owner reviews and approves the pull request.
+
+
+## Knowledge and wine — implementation follow-up
+
+### Books (/books/)
+- The generated search index should cover title, author, topic, subtitle and summary/key ideas, not only title and author.
+- Topic filters behave as accessible tabs with `aria-selected`; the live count explains how many results remain.
+- Keep the existing author index as a separate browse route rather than duplicating it in the filter bar.
+- Book detail pages retain the existing structure: summary, key ideas, worth-it verdict, author links and related titles.
+- Build source: `scripts/build_edge.py`. The builder and current generated index must be kept in sync.
+
+### Thought Bank (/thought-bank/)
+- Search across quote title, body, context, note, author and folder.
+- Keep the two independent filters (folder and author); make their counts respond to the active search and other filter.
+- Preserve shareable `topic`, `by` and `q` URL parameters.
+- Selecting an author from a quote card clears the text query and folder filter, showing all entries attributed to that person.
+- Preserve original quote text and attribution; do not paraphrase or infer missing sources.
+
+### Wine & Food Pairing (/wine/)
+Recommended page hierarchy:
+1. Task-led entry: **Dish**, **Ingredient**, **Grape**, **Region**.
+2. Search and filters remain available without hiding the main task choices.
+3. Result summary: matching wines, active filters and a clear reset.
+4. Wine result card: producer, wine name, appellation/region, grape(s), style, body/acidity, vintage where known, and one sentence explaining the pairing.
+5. Wine detail: the food match, why it works (acidity, body, tannin, sweetness, texture), serving suggestions and related dishes/wines.
+6. English/Greek switch must preserve the current search and filters; missing translations should be visibly flagged rather than silently omitted.
+7. Incomplete records should say which attributes are unavailable; do not infer grape, vintage, price or producer data.
+
+**Implementation status:** Books and Thought Bank improvements are implemented in this branch. Wine is specified but not edited. The repository stores the entire finder/catalogue in one 1.5 MB `wine/index.html` blob and has no separate Wine builder or source modules. The connected GitHub file reader returned no contents for that oversized blob, so patching it without the complete source would risk replacing or damaging its wine catalogue and existing interactions. To implement the Wine redesign safely, the original `wine/index.html` source needs to be provided in a readable split/export (or reorganised into smaller HTML/CSS/JS/data files first).

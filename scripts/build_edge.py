@@ -280,7 +280,7 @@ def layout(title, body, path, desc, image=None, active="books"):
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Hanken+Grotesk:ital,wght@0,300..700;1,400&display=swap">
 <link rel="stylesheet" href="{BASE}edge.css?v={CSS_V}">
-<link rel="stylesheet" href="/assets/an.css?v=1">
+<link rel="stylesheet" href="/assets/an.css?v=2">
 </head>
 <body>
 {ICONS}
@@ -304,7 +304,7 @@ def cover_img(b, cls="", eager=False):
 
 def card(b):
     authors = ", ".join(b["authors"])
-    key = f'{b["title"]} {b.get("subtitle","")} {authors}'.lower()
+    key = f'{b["title"]} {b.get("subtitle","")} {authors} {b["topic"]} {b.get("excerpt","")}'.lower()
     return f"""<a class="book" href="{b['url']}" data-topic="{b['tslug']}" data-key="{esc(key)}" data-date="{b['date']}" data-title="{esc(b['title'].lower())}">
   <div class="book-cover">{cover_img(b)}</div>
   <div class="book-meta">
@@ -320,27 +320,28 @@ def page_index(books, n_authors):
     counts = defaultdict(int)
     for b in books:
         counts[b["tslug"]] += 1
-    chips = f'<button class="chip on" data-t="">All <b>{len(books)}</b></button>' + "".join(
-        f'<button class="chip" data-t="{s}" style="--t:{c}">{esc(n)} <b>{counts[s]}</b></button>'
+    chips = f'<button class="chip on" role="tab" aria-selected="true" data-t="">All <b>{len(books)}</b></button>' + "".join(
+        f'<button class="chip" role="tab" aria-selected="false" data-t="{s}" style="--t:{c}">{esc(n)} <b>{counts[s]}</b></button>'
         for s, n, c in TOPICS if counts[s])
     body = f"""<section class="hero">
   <div class="wrap">
     <p class="kicker">Book takeaways</p>
     <h1>Books</h1>
-    <p class="lede">Every good book leaves a few ideas worth keeping. These are the ones worth keeping from books on sports analytics, betting, decision-making and personal development: what each book argues, the key ideas, and who it is for.</p>
+    <p class="lede">A working library of books on football, sports analytics, betting, decision-making and personal development. Search by title, author, topic or idea; filter by subject, then open each book for its key arguments and practical takeaways.</p>
     <div class="stats"><span><b>{len(books)}</b> books</span><span><b>{n_authors}</b> authors</span><span><b>{len([1 for s,_,_ in TOPICS if counts[s]])}</b> topics</span></div>
   </div>
 </section>
 <section class="shelf">
   <div class="wrap">
     <div class="controls">
-      <div class="chips" role="tablist">{chips}</div>
+      <div class="chips" role="tablist" aria-label="Filter books by topic">{chips}</div>
       <div class="tools">
-        <input id="q" type="search" placeholder="Search title or author…" aria-label="Search books">
+        <input id="q" type="search" placeholder="Search title, author, topic or idea…" aria-label="Search books by title, author, topic or idea">
         <select id="sort" aria-label="Sort"><option value="new">Newest first</option><option value="old">Oldest first</option><option value="az">A–Z</option></select>
       </div>
     </div>
-    <p class="count" id="count"></p>
+    <p class="controls-hint">Search titles, authors, topics and book summaries. For an author-by-author index, use <a href="/books/authors/">Authors</a>.</p>
+    <p class="count" id="count" aria-live="polite"></p>
     <div class="books" id="books">
 {chr(10).join(card(b) for b in books)}
     </div>
@@ -355,8 +356,8 @@ def page_index(books, n_authors):
   function apply(){{
     var s=q.value.trim().toLowerCase(),n=0;
     cards.forEach(function(c){{var ok=(!topic||c.dataset.topic===topic)&&(!s||c.dataset.key.indexOf(s)>-1);c.hidden=!ok;if(ok)n++;}});
-    count.textContent=n+(n===1?' book':' books');empty.hidden=n>0;
-    chips.forEach(function(c){{c.classList.toggle('on',c.dataset.t===topic);}});
+    count.textContent='Showing '+n+' of '+cards.length+(n===1?' book':' books');empty.hidden=n>0;
+    chips.forEach(function(c){{var on=c.dataset.t===topic;c.classList.toggle('on',on);c.setAttribute('aria-selected',String(on));}});
   }}
   function order(){{
     var v=sort.value;cards.sort(function(a,b){{

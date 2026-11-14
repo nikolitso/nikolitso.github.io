@@ -242,8 +242,15 @@ body { overflow-x: clip; }  /* safety net */
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } html { scroll-behavior: auto; } }
 .subnav { background: #151b2d; border-bottom: 1px solid var(--line-dark); }
 .subnav .wrap { display: flex; flex-wrap: wrap; gap: .25rem 1.5rem; padding-block: .55rem; }
+
+.q-search-row{display:flex;flex-wrap:wrap;align-items:center;gap:.7rem 1.2rem;margin:1.5rem 0 1.1rem;max-width:48rem}
+.q-search-row input{flex:1 1 18rem;min-width:0;min-height:46px;padding:.7rem 1rem;border:1px solid var(--rule);border-radius:999px;background:var(--card);color:var(--ink);font:inherit;font-size:.92rem}
+.q-search-row input:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.q-count{margin:0;color:var(--muted);font-size:.75rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;font-variant-numeric:tabular-nums}
+@media(max-width:520px){.q-search-row{display:block}.q-search-row input{width:100%}.q-count{margin-top:.6rem}}
+
 </style>
-<link rel="stylesheet" href="/assets/an.css?v=1">
+<link rel="stylesheet" href="/assets/an.css?v=3">
 </head>
 <body>
 
@@ -277,7 +284,11 @@ body { overflow-x: clip; }  /* safety net */
     <div class="wrap">
       <p class="kicker">Collection</p>
       <h1>Thought <em>Bank</em></h1>
-      <p class="q-lede">Lines worth keeping, collected one at a time from books, articles and people worth listening to. Filed in seven folders so they stay usable and compound over time.</p>
+      <p class="q-lede">Lines worth keeping, collected one at a time from books, articles and people worth listening to. Search the collection, narrow it by folder or author, and follow a quote back to its source context.</p>
+      <div class="q-search-row">
+        <input id="q-search" type="search" placeholder="Search a quote, idea or author…" aria-label="Search quotes, ideas or authors" autocomplete="off">
+        <p class="q-count" id="q-count" aria-live="polite">Loading quotes…</p>
+      </div>
       <p class="q-label" id="q-filter-label">Folder</p>
       <ul class="q-filter" id="q-filter" aria-labelledby="q-filter-label"></ul>
       <p class="q-label" id="q-by-label">Who said it</p>
@@ -306,7 +317,7 @@ body { overflow-x: clip; }  /* safety net */
     </div>
   </div>
 </footer>
-<script src="/thought-bank/quotes.js?v=8" defer></script>
+<script src="/thought-bank/quotes.js?v=9" defer></script>
 <!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "b67bbb76d0e24af196b24ded3ab71ad0"}'></script><!-- End Cloudflare Web Analytics -->
 </body>
 </html>
