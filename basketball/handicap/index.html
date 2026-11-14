@@ -35,7 +35,7 @@ body{margin:0;background:var(--bg);color:var(--text);font:17px/1.5 var(--body)}
 .seg button{background:none;border:0;color:var(--muted);font:500 14.5px var(--mono);padding:8px 16px;cursor:pointer;letter-spacing:.06em;text-transform:uppercase}
 .seg button.on{background:var(--gold);color:var(--an-on-accent)}
 .chips{display:flex;flex-wrap:wrap;gap:8px}
-.chip{background:none;border:1px solid var(--line);border-radius:999px;color:var(--muted);font:500 13.5px var(--mono);padding:5px 12px;cursor:pointer}
+.chip{background:none;border:1px solid var(--line);border-radius:999px;color:var(--muted);font:500 14px var(--mono);padding:5px 12px;cursor:pointer}
 .chip:hover{color:var(--text)}
 .chip.on{background:var(--gold);border-color:var(--gold);color:var(--an-on-accent)}
 h2{font:600 22px var(--serif);margin:30px 0 12px}
@@ -47,14 +47,14 @@ h2.day{font-size:20px;padding-bottom:8px;border-bottom:1px solid var(--line)}
 .card td:first-child{white-space:normal}
 .card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px 18px 10px}
 .card h3{font:600 24px var(--serif);margin:0}
-.live{font:500 12.5px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--bg);background:var(--gold);border-radius:4px;padding:1px 6px;margin-left:8px;vertical-align:1px}
+.live{font:500 14px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--bg);background:var(--gold);border-radius:4px;padding:1px 6px;margin-left:8px;vertical-align:1px}
 .card .ko{font:500 15.5px var(--mono);color:var(--text);letter-spacing:.06em}
 .wdl{display:flex;height:8px;border-radius:4px;overflow:hidden;margin:12px 0 6px;background:var(--line)}
 .wdl i{display:block} .wdl i:nth-child(1){background:var(--gold)} .wdl i:nth-child(2){background:var(--an-muted)} .wdl i:nth-child(3){background:var(--an-bar)}
 .wdlt{display:flex;justify-content:space-between;font:400 15.5px var(--mono);color:var(--muted)}
 .wdlt b{color:var(--text);font-weight:500}
 table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
-th{font:400 12.5px var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.08em;text-align:left;padding:8px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
+th{font:400 14px var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.08em;text-align:left;padding:8px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
 td{padding:7px 8px;border-bottom:1px solid color-mix(in srgb,var(--line) 60%,transparent);font-size:16.5px;white-space:nowrap}
 td.n,th.n{text-align:right;font-family:var(--mono);font-size:15px}
 td.tot{color:var(--gold);font-weight:500}
@@ -67,7 +67,7 @@ table.mk{margin-bottom:6px}table.mk td,table.mk th{padding:6px 7px}
 .wdlt i{font-style:normal;color:var(--gold)}
 .wdlt span:nth-child(2){text-align:center}.wdlt span:last-child{text-align:right}
 .coach .who{display:inline-block;min-width:118px;color:var(--muted)}
-.tenure{font:400 13.5px/1.4 var(--mono);color:var(--muted);margin-top:2px}
+.tenure{font:400 14px/1.4 var(--mono);color:var(--muted);margin-top:2px}
 .coach{font:400 15px/1.55 var(--mono);color:var(--muted);margin-top:2px}
 .coach b{color:var(--text);font-weight:500}
 .coach .wc{display:inline-block;width:7ch;text-align:right}
@@ -77,7 +77,7 @@ table.tm tr.grp th{color:var(--gold);border-bottom:0;padding-bottom:0}
 .ref{font:400 15px/1.55 var(--mono);color:var(--muted);margin-top:6px}
 .ref b{color:var(--text);font-weight:500}
 .card tr:last-child td{border-bottom:0}
-.ln{font:400 13.5px var(--mono);color:var(--muted);text-align:right}
+.ln{font:400 14px var(--mono);color:var(--muted);text-align:right}
 .ln span{display:inline-block;min-width:92px}
 .ln b{color:var(--text);font-weight:500}
 .ln .hi{color:var(--win)} .ln .lo{color:var(--loss)}
@@ -90,7 +90,7 @@ th.sort{cursor:pointer;user-select:none} th.sort:hover,th.sort.on{color:var(--go
 .metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin:0 0 18px}
 .refsub{font:600 18px var(--serif);margin:8px 0 8px}
 .metric{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
-.metric .lbl{font:400 12.5px var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}
+.metric .lbl{font:400 14px var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}
 .metric .big{font:500 24px var(--mono);color:var(--gold)}
 .scroll{overflow-x:auto}
 .doc{max-width:860px}
@@ -99,7 +99,7 @@ th.sort{cursor:pointer;user-select:none} th.sort:hover,th.sort.on{color:var(--go
 .doc h3{font:600 18px var(--serif);margin:28px 0 8px;display:flex;align-items:center;gap:10px}
 .doc .num{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--gold);color:var(--an-on-accent);font:600 14.5px var(--mono);flex:none}
 .calc{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:8px;padding:12px 16px;margin:0 0 14px;font:400 15.5px/2 var(--mono);overflow-x:auto}
-.calc i{font-style:normal;color:var(--muted);font-size:13.5px}
+.calc i{font-style:normal;color:var(--muted);font-size:14px}
 .calc b{color:var(--gold);font-weight:500}
 table.mini{margin:0 0 16px}
 .abbr{display:none}
@@ -108,7 +108,7 @@ table.mini{margin:0 0 16px}
 .chart h3{font:600 17px var(--serif);margin:0 0 4px;display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
 .chart svg{display:block;width:100%;height:auto}
 .chart .cap{font:400 15.5px/1.5 var(--body);color:var(--muted);margin:6px 0 0}
-.key{font:400 13.5px var(--mono);color:var(--muted);display:flex;gap:14px}
+.key{font:400 14px var(--mono);color:var(--muted);display:flex;gap:14px}
 .key i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:-1px}
 .chart .hit{fill:transparent;cursor:default}
 .chart .bar.hl{opacity:.75}
@@ -136,7 +136,7 @@ th.rs{cursor:pointer;user-select:none} th.rs:hover,th.rs.on{color:var(--gold)}
 @media(max-width:600px){.grid{grid-template-columns:1fr}.ln span{min-width:0;margin-left:8px}.card{padding:14px 10px 8px}td,th{padding:6px 4px}
   .card td{font-size:15.5px}.card td.n{font-size:14px}.full{display:none}.abbr{display:inline}.wdlt{flex-wrap:wrap;gap:2px 12px}}
 </style>
-<link rel="stylesheet" href="/assets/an.css?v=4">
+<link rel="stylesheet" href="/assets/an.css?v=5">
 </head>
 <body>
 <!-- sitebar:start (link back to antonisnikolitsopoulos.com; keep on every page) -->
@@ -155,30 +155,28 @@ td.wr{white-space:normal}.lglist{list-style:none;margin:8px 0 0;padding:0;column
 table.proj tr.pk td{background:var(--an-accent-soft)}table.proj tr.pk td:first-child{box-shadow:inset 3px 0 var(--gold)}
 /* seven tiles in one row at desktop width */
 .metrics{grid-template-columns:repeat(auto-fit,minmax(min(140px,40vw),1fr))}
-.badge{display:inline-block;font:500 12.5px var(--mono);letter-spacing:.06em;text-transform:uppercase;background:var(--gold);color:var(--an-on-accent);border-radius:4px;padding:2px 7px;margin-left:8px;vertical-align:2px}
+.badge{display:inline-block;font:500 14px var(--mono);letter-spacing:.06em;text-transform:uppercase;background:var(--gold);color:var(--an-on-accent);border-radius:4px;padding:2px 7px;margin-left:8px;vertical-align:2px}
 .badge.fast{background:transparent;color:var(--gold);box-shadow:inset 0 0 0 1px var(--gold)}
 .find{border-left:3px solid var(--gold);padding:2px 0 2px 16px;margin:0 0 22px;max-width:860px}
 .find h3{font:600 20px var(--serif);margin:0 0 4px}
 .find p{margin:0;color:var(--text)}
-.find .num{font:500 13.5px var(--mono);color:var(--gold);letter-spacing:.06em;margin-right:8px}
+.find .num{font:500 14px var(--mono);color:var(--gold);letter-spacing:.06em;margin-right:8px}
 .verdict{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px 20px;margin:0 0 30px;max-width:860px}
 .verdict h2{margin:0 0 8px}
-.tier{font:400 12.5px var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.tier{font:400 14px var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
 .scroll{overflow-x:auto}
-#out th{cursor:pointer;user-select:none}#out th:hover{color:var(--gold)}#out th.sa::after{content:" ▲";font-size:.8em}#out th.sd::after{content:" ▼";font-size:.8em}
+#out th{cursor:pointer;user-select:none}#out th:hover{color:var(--gold)}#out th.sa::after{content:" ▲";font-size:max(14px,.8em)}#out th.sd::after{content:" ▼";font-size:max(14px,.8em)}
 /* top row, same tiles as the handball projections page: open picks · record · return */
 .tiles{--up:#4cc47a;--dn:#ef7a70;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(140px,40vw),1fr));gap:10px;margin:16px 0 4px}
 .tile{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px;display:flex;flex-direction:column;gap:3px;min-width:0;color:inherit;text-decoration:none}
 a.tile:hover{border-color:var(--gold)}
-.tile .klabel{font:400 12.5px var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+.tile .klabel{font:400 14px var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
 .tile .stat{font:500 26px var(--mono);line-height:1.15;font-variant-numeric:tabular-nums;display:flex;flex-wrap:wrap;align-items:center;gap:2px 6px}
 .tile .small{font-size:14.5px;color:var(--muted)}
-
 .tile .two{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%;font-size:24px}
 #top .tile:nth-child(-n+3) .stat{font-size:36px}#top .tile:nth-child(-n+3) .two{font-size:28px;gap:4px}.tiles.t5 .tile:nth-child(-n+2) .stat{font-size:34px}.tiles.t5 .tile:nth-child(2) .two{font-size:26px;gap:4px}   /* open picks, settled picks, ROI stand out (14 Nov 2026) */
-
 .tile .two .h-a{color:var(--gold)}.tile .two .h-b{color:#7fb2ff}.tile .two .h-up{color:var(--up,#4cc47a)}.tile .two .h-dn{color:var(--dn,#ef7a70)}.tile .two span>i{color:inherit!important;opacity:.85}.tile .two span>b{color:inherit!important}   /* each value in its half's colour, ROI too */
-.tile .two i{display:block;font:400 11px var(--mono);font-style:normal;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px;white-space:nowrap}
+.tile .two i{display:block;font:400 14px var(--mono);font-style:normal;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px;white-space:nowrap}
 /* two rows of five: the record, then the closing line (14 Nov 2026) */
 #top,.metrics.m5,.tiles.t5{grid-template-columns:repeat(5,minmax(0,1fr))}   /* 1H Live test tiles: two rows of five too */
 @media(max-width:760px){.tile .two,#top .tile:nth-child(-n+3) .two{font-size:19px;gap:6px}#top .tile:nth-child(-n+3) .stat,.tiles.t5 .tile:nth-child(-n+2) .stat{font-size:28px}.tiles.t5 .tile:nth-child(2) .two{font-size:19px}.tile .two i{white-space:normal}#top,.metrics.m5,.tiles.t5{grid-template-columns:repeat(2,minmax(0,1fr))}#top .stat b,.metrics.m5 .big b,.tiles.t5 .stat b{white-space:normal!important}}
@@ -187,7 +185,7 @@ a.tile:hover{border-color:var(--gold)}
 details.picks{margin-top:28px}
 details.picks>summary{cursor:pointer;font:600 22px var(--serif);padding:6px 0}
 details.picks>summary .muted{font-size:14px;font-weight:400}
-.pill{white-space:nowrap;font:500 13.5px var(--mono);padding:2px 9px;border-radius:99px;border:1px solid var(--line);vertical-align:middle}
+.pill{white-space:nowrap;font:500 14px var(--mono);padding:2px 9px;border-radius:99px;border:1px solid var(--line);vertical-align:middle}
 .pill.pos{border-color:color-mix(in srgb,var(--up) 40%,transparent);background:color-mix(in srgb,var(--up) 10%,transparent)}
 .pill.neg{border-color:color-mix(in srgb,var(--dn) 40%,transparent);background:color-mix(in srgb,var(--dn) 9%,transparent)}
 .cols2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:28px;align-items:start}
@@ -232,7 +230,7 @@ details.picks>summary .muted{font-size:14px;font-weight:400}
   <div id="out"></div>
 </div>
 
-<script src="live.js?v=202611142335"></script>
+<script src="live.js?v=202611150004"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
