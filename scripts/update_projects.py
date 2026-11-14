@@ -152,19 +152,6 @@ def greek_cup():
             f"{len(d['games'])} games"]
 
 
-def mid_europe():
-    # picks of the betting rule (EV 10%+, home and away wins, from 10 Nov 2026): the shared record pills, for the main
-    # group only, prices under 3.00 (rule.split); the picks at 3.00 and above are followed on paper on the page
-    m = js_object("/football/research/data.js", r"window\.D\s*=")
-    rule = m.get("rule") or {"gap": 0.10, "markets": ["1x2"], "odds_above": 1.5, "tiers": [1, 2], "since": "2026-11-10"}
-    tier = {l["key"]: l.get("tier") for l in m["leagues"]}
-    ps = [p for p in m.get("picks", []) if tier.get(p["lg"]) in rule["tiers"] and p["market"] in rule.get("markets", ["1x2"]) and p["edge"] + 1e-9 >= rule["gap"] and rule.get("split", 3.0) > p["odds"] > rule.get("odds_above", 0) + 1e-9
-          and p["posted"][:10] >= rule["since"]]
-    done = [p for p in ps if p.get("result")]
-    won = sum(p["result"] == "W" for p in done)
-    return record(won, len(done) - won, sum(p["profit"] for p in done), len(ps) - len(done), "bet")     # this page says bets, not picks (user, 11 Nov 2026)
-
-
 def basketball_cup(folder):
     d = js_object(f"/{folder}/projections.js", r"window\.PROJ\s*=")
     games = upcoming(d.get("list", []), lambda g: g["when"])
@@ -211,7 +198,6 @@ def basketball_totals(folder):
 CARDS = {                    # slug -> (card href on the homepage, reader)
     "superleague": ("/superleague/", superleague),
     "greek-cup": ("/football/greek-cup/", greek_cup),
-    "mid-europe": ("/football/research/", mid_europe),
     "eurocup": ("/eurocup/", lambda: basketball_cup("eurocup")),
     "fibaeuropecup": ("/fibaeuropecup/", lambda: basketball_cup("fibaeuropecup")),
     "handball": ("/handball/live-test/", handball),

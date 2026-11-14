@@ -31,7 +31,6 @@ SHOTS = [
     ("/wine/", "wine"),
     ("/superleague/", "superleague"),
     ("/football/greek-cup/", "greek-cup"),
-    ("/football/research/", "mid-europe"),
     ("/eurocup/", "eurocup"),
     ("/fibaeuropecup/", "fibaeuropecup"),
     ("/volleyball/", "volleyball"),
