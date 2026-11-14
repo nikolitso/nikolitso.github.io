@@ -249,7 +249,7 @@ a.gm{color:inherit;text-decoration:none} a.gm:hover{color:var(--gold);text-decor
 <div class="an-data-key" role="group" aria-label="How to read volleyball projections">
 <span class="an-data-key__title">Reading the numbers</span>
 <span class="an-data-key__item"><i class="an-data-key__dot an-data-key__dot--expected" aria-hidden="true"></i><b>Model</b> expected sets / total points</span>
-<span class="an-data-key__item"><i class="an-data-key__dot an-data-key__dot--market" aria-hidden="true"></i><b>Market</b> bookmaker totals line</span>
+<span class="an-data-key__item"><i class="an-data-key__dot an-data-key__dot--market" aria-hidden="true"></i><b>Market</b> totals line</span>
 <span class="an-data-key__item"><i class="an-data-key__dot an-data-key__dot--actual" aria-hidden="true"></i><b>Actual</b> final match sets / points</span>
 </div>
   <div class="sub an-meta-strip" id="sub"></div>
@@ -340,7 +340,7 @@ function renderHome(){
   <h3><span class="num">1</span>The bet</h3>
   <p>One bet only: the <b>over on a low total-points line</b>, from ${DATA.min_line}.5 to ${DATA.low - 1}.5, when the model's chance × the average price is more than ${DATA.edge * 100}% above 1. A low line means the market expects a 3-0, so the bet is that the match goes to a fourth set. Every bet is the same stake, logged before the first serve. Team ratings use the current season only, as rosters change from year to year, so there are no picks until both teams have played ${DATA.min_games} matches this season.</p>
   <h3><span class="num">2</span>The leagues</h3>
-  <p>${B.tested.length} leagues were tested, women's and men's. A league is here if, on past seasons, <b>backing every low-line over without the model lost 3% or less</b>: a fair market to start from, where a real edge has a chance. Past profit is not used. Chosen in advance, leagues with the best past ROI did no better the next season than the rest; this test did, because it rests on hundreds of matches rather than a few dozen bets. Leagues with thin data or lines from only one bookmaker are left out. ${DATA.leagues.length} leagues qualify: ${liveNames()}.</p>
+  <p>${B.tested.length} leagues were tested, women's and men's. A league is here if, on past seasons, <b>backing every low-line over without the model lost 3% or less</b>: a fair market to start from, where a real edge has a chance. Past profit is not used. Chosen in advance, leagues with the best past ROI did no better the next season than the rest; this test did, because it rests on hundreds of matches rather than a few dozen bets. Leagues with thin data or lines from only one market are left out. ${DATA.leagues.length} leagues qualify: ${liveNames()}.</p>
   <h3><span class="num">3</span>What the backtest found</h3>
   <p>${up} of ${seasons.length} seasons made a profit${lost.length ? `; ${andList(lost)} did not` : ''}. By league: ${best}.${over}</p>
   <h3><span class="num">4</span>What a bad run looks like</h3>
@@ -474,7 +474,7 @@ function testedTable(){
   const f = tKey[tSort.k];
   const T = DATA.backtest.tested.filter(t => t.live).sort((a, b) => { const x = f(a), y = f(b); return (x < y ? -1 : x > y ? 1 : 0) * tSort.d || b.roi - a.roi; });
   const th = (k, lab, n = true) => `<th class="${n ? 'n ' : ''}tsort" data-tsort="${k}">${lab}${tSort.k === k ? (tSort.d > 0 ? ' ▴' : ' ▾') : ''}</th>`;
-  let h = `<h2>All tested leagues</h2><p class="note">Every league the backtest was run on, with the same rule (lines ${DATA.min_line}.5 to ${DATA.low - 1}.5, edge above ${DATA.edge * 100}%) and only the seasons the settings never saw. Only the leagues with live picks are shown: backing every over without the model (No model) did −3.0% or better, with 100+ low-line matches and lines from two or more bookmakers. ${DATA.backtest.tested.length - T.length} of the ${DATA.backtest.tested.length} tested leagues are left out. Click a column to sort by it.</p>`;
+  let h = `<h2>All tested leagues</h2><p class="note">Every league the backtest was run on, with the same rule (lines ${DATA.min_line}.5 to ${DATA.low - 1}.5, edge above ${DATA.edge * 100}%) and only the seasons the settings never saw. Only the leagues with live picks are shown: backing every over without the model (No model) did −3.0% or better, with 100+ low-line matches and a market line from two or more sources. ${DATA.backtest.tested.length - T.length} of the ${DATA.backtest.tested.length} tested leagues are left out. Click a column to sort by it.</p>`;
   h += `<div class="scroll"><table style="max-width:900px"><thead><tr>${th('league', 'League', false)}${th('seasons', 'Seasons')}${th('n', 'Bets')}${th('hit', 'Hit')}${th('roi', 'ROI')}${th('blind', 'No model')}</tr></thead><tbody>`;
   for (const t of T)
     h += `<tr><td>${t.country} <span class="muted">${t.name}</span> <b>${sexAb(t)}</b>${t.live ? ' <span class="muted">· live</span>' : ''}</td><td class="n">${t.seasons}</td><td class="n">${t.n}</td><td class="n">${t.n ? pct(t.w / t.n) : '–'}</td><td class="n ${t.n ? cls(t.roi) : ''}">${t.n ? sgn(t.roi * 100, 1) + '%' : '–'}</td><td class="n ${cls(t.blind_roi)}">${t.blind_n ? sgn(t.blind_roi * 100, 1) + '%' : '–'}</td></tr>`;
