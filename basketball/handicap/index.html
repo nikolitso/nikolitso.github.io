@@ -175,12 +175,13 @@ a.tile:hover{border-color:var(--gold)}
 .tile .small{font-size:14.5px;color:var(--muted)}
 
 .tile .two{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%;font-size:24px}
+#top .tile:nth-child(-n+3) .stat{font-size:36px}#top .tile:nth-child(-n+3) .two{font-size:28px;gap:4px}   /* open picks, settled picks, ROI stand out (14 Nov 2026) */
 
-.tile .two .h-a{color:var(--gold)}.tile .two .h-b{color:#7fb2ff}.tile .two .h-up{color:var(--up,#4cc47a)}.tile .two .h-dn{color:var(--dn,#ef7a70)}.tile .two span>i{color:inherit!important;opacity:.85}
+.tile .two .h-a{color:var(--gold)}.tile .two .h-b{color:#7fb2ff}.tile .two .h-up{color:var(--up,#4cc47a)}.tile .two .h-dn{color:var(--dn,#ef7a70)}.tile .two span>i{color:inherit!important;opacity:.85}.tile .two span>b{color:inherit!important}   /* each value in its half's colour, ROI too */
 .tile .two i{display:block;font:400 11px var(--mono);font-style:normal;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px;white-space:nowrap}
 /* two rows of five: the record, then the closing line (14 Nov 2026) */
 #top,.metrics.m5,.tiles.t5{grid-template-columns:repeat(5,minmax(0,1fr))}   /* 1H Live test tiles: two rows of five too */
-@media(max-width:760px){.tile .two{font-size:19px;gap:6px}.tile .two i{white-space:normal}#top,.metrics.m5,.tiles.t5{grid-template-columns:repeat(2,minmax(0,1fr))}#top .stat b,.metrics.m5 .big b,.tiles.t5 .stat b{white-space:normal!important}}
+@media(max-width:760px){.tile .two,#top .tile:nth-child(-n+3) .two{font-size:19px;gap:6px}#top .tile:nth-child(-n+3) .stat{font-size:30px}.tile .two i{white-space:normal}#top,.metrics.m5,.tiles.t5{grid-template-columns:repeat(2,minmax(0,1fr))}#top .stat b,.metrics.m5 .big b,.tiles.t5 .stat b{white-space:normal!important}}
 .tiles .pos{color:var(--up)} .tiles .neg{color:var(--dn)}
 .stale{color:#ef7a70;font-weight:600}
 details.picks{margin-top:28px}
@@ -208,7 +209,7 @@ details.picks>summary .muted{font-size:14px;font-weight:400}
   <div id="out"></div>
 </div>
 
-<script src="live.js?v=202611141152"></script>
+<script src="live.js?v=202611141204"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
