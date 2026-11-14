@@ -207,3 +207,10 @@ html[data-site] .metric .big2{line-height:1.15}
   html[data-site] table{font-size:13.5px}
   html[data-site] table td{font-size:13.5px}
 }
+
+/* the projects menu: every project in view on a laptop, spread across the width, a little larger and in the body
+   font so all of them fit; on phones it stays one swipeable row */
+@media(min-width:761px){
+  .an-project-nav>div{flex-wrap:wrap;justify-content:space-between;column-gap:14px;row-gap:0;overflow-x:visible}
+  html[data-site] .an-project-nav a{font:600 15px/1.3 var(--an-body);letter-spacing:0;min-height:48px}
+}
