@@ -207,3 +207,77 @@ details>summary:focus-visible{outline:2px solid var(--an-accent);outline-offset:
 .an-project-nav a:hover{color:var(--an-ink)}
 .an-project-nav a[aria-current="page"]{color:var(--an-ink);border-color:var(--an-accent)}
 @media(max-width:640px){.an-project-nav>div{padding-inline:16px;gap:18px}.an-project-nav a{min-height:38px;font-size:11.5px}}
+
+
+/* ---- sports dashboard language: metadata, estimate/market/result key and dense data UI ---- */
+.an-head{
+  position:sticky;top:0;z-index:30;
+  background:color-mix(in srgb,var(--an-paper) 94%,transparent);
+  -webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);
+}
+.an-meta-strip{
+  display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;
+  padding:9px 12px;margin:0 0 16px;
+  border:1px solid var(--an-rule);border-radius:9px;
+  background:var(--an-soft);color:var(--an-muted);
+  font:400 12px/1.45 var(--an-mono);
+  font-variant-numeric:tabular-nums;
+}
+.an-meta-strip b{color:var(--an-ink);font-weight:600}
+.an-project-context{
+  display:flex;align-items:flex-start;gap:10px;
+  margin:0 0 18px;padding:11px 14px;
+  border:1px solid var(--an-rule);border-left:3px solid var(--an-accent);
+  border-radius:9px;background:var(--an-soft);
+  color:var(--an-muted);font:400 13px/1.55 var(--an-body);
+}
+.an-project-context strong{color:var(--an-ink);font-weight:600}
+.an-project-context__label{
+  flex:none;color:var(--an-accent);font:500 10px/1.5 var(--an-mono);
+  letter-spacing:.1em;text-transform:uppercase;white-space:nowrap;
+}
+.an-data-key{
+  display:flex;flex-wrap:wrap;align-items:center;gap:8px 18px;
+  padding:10px 12px;margin:0 0 18px;
+  border:1px solid var(--an-rule);border-radius:9px;
+  background:var(--an-soft);color:var(--an-muted);
+  font:400 12px/1.45 var(--an-body);
+}
+.an-data-key__title{
+  color:var(--an-muted);font:500 10px/1.5 var(--an-mono);
+  letter-spacing:.1em;text-transform:uppercase;
+}
+.an-data-key__item{display:inline-flex;align-items:center;gap:7px;white-space:nowrap}
+.an-data-key__item b{color:var(--an-ink);font-weight:600}
+.an-data-key__dot{width:7px;height:7px;border-radius:50%;display:inline-block;flex:none;background:var(--an-accent)}
+.an-data-key__dot--market{background:var(--an-warning,#d6a64d)}
+.an-data-key__dot--actual{background:var(--an-muted)}
+.an-data-key__note{flex-basis:100%;font-size:11px;color:var(--an-muted)}
+/* Consistent dashboard density without overriding sport-specific semantic colours. */
+html[data-site] .tbl,html[data-site] .tbl-wrap,html[data-site] .scroll{
+  max-width:100%;overscroll-behavior-inline:contain;-webkit-overflow-scrolling:touch;
+}
+html[data-site] table{font-variant-numeric:tabular-nums lining-nums}
+html[data-site] .tile,html[data-site] .metric{
+  background:var(--an-soft);border:1px solid var(--an-rule);border-radius:10px;
+}
+html[data-site] .klabel,html[data-site] .metric .lbl{
+  font-family:var(--an-mono);font-size:10px;letter-spacing:.09em;font-weight:500;
+}
+html[data-site] .stat,html[data-site] .metric .big2{
+  font-variant-numeric:tabular-nums lining-nums;
+}
+html[data-site] .note,html[data-site] .dwarn{
+  border-radius:0 8px 8px 0;padding:9px 12px;line-height:1.55;
+}
+html[data-site] button,html[data-site] select,html[data-site] input{font:inherit}
+html[data-site] button:focus-visible,html[data-site] select:focus-visible,
+html[data-site] input:focus-visible{outline:2px solid var(--an-accent);outline-offset:2px}
+@media(max-width:640px){
+  .an-meta-strip{font-size:11px;gap:5px 10px;padding:8px 10px}
+  .an-project-context{font-size:12px}
+  .an-data-key{gap:8px 12px}
+  .an-data-key__title{flex-basis:100%}
+  .an-data-key__item{font-size:11px}
+  .an-head{top:0}
+}
