@@ -174,8 +174,8 @@ a.tile:hover{border-color:var(--gold)}
 .tile .stat{font:500 26px var(--mono);line-height:1.15;font-variant-numeric:tabular-nums;display:flex;flex-wrap:wrap;align-items:center;gap:2px 6px}
 .tile .small{font-size:14.5px;color:var(--muted)}
 /* two rows of five: the record, then the closing line (14 Nov 2026) */
-#top,.metrics.m5{grid-template-columns:repeat(5,minmax(0,1fr))}   /* 1H Live test tiles: two rows of five too */
-@media(max-width:760px){#top,.metrics.m5{grid-template-columns:repeat(2,minmax(0,1fr))}#top .stat b,.metrics.m5 .big b{white-space:normal!important}}
+#top,.metrics.m5,.tiles.t5{grid-template-columns:repeat(5,minmax(0,1fr))}   /* 1H Live test tiles: two rows of five too */
+@media(max-width:760px){#top,.metrics.m5,.tiles.t5{grid-template-columns:repeat(2,minmax(0,1fr))}#top .stat b,.metrics.m5 .big b,.tiles.t5 .stat b{white-space:normal!important}}
 .tiles .pos{color:var(--up)} .tiles .neg{color:var(--dn)}
 .stale{color:#ef7a70;font-weight:600}
 details.picks{margin-top:28px}
@@ -261,6 +261,21 @@ $('sub').innerHTML = (AGE > 3 ? `<span class="stale">Not updated for ${Math.floo
     ...mvTiles(cl)]
     .map(([k, v, n]) => `<a class="tile" href="#view=livetest"><span class="klabel">${k}</span><span class="stat">${v}</span><span class="small">${n}</span></a>`).join('');
 }
+const TOP_MAIN = $('top').innerHTML;
+// the 1H Live test tab's top tiles, same layout as the Live test tab (14 Nov 2026)
+const TOP_H1 = (() => {
+  const H = LIVE.h1;
+  if (!H) return '';
+  const S = H.stats || {}, A = H.acc, nOpen = H.picks.filter(b => !b.done).length, dec = (S.settled || 0);
+  const cl1 = H.picks.filter(b => b.done && b.close != null && b.ret != null);
+  return [['Open 1H picks', nOpen, nOpen ? 'to play' : 'none right now'],
+    ['Settled 1H picks', dec ? `${S.w}–${dec - S.w}` : '–', dec ? `${pct(S.w / dec, 1)} hit rate · ${dec} settled` : 'none yet'],
+    ['ROI', S.roi != null ? `<b class="${cls(S.roi)}" style="font-weight:inherit">${roi(S.roi)}</b>` : '–', 'at the 1H line taken'],
+    ['Line · model off by', A ? PAIR(`${A.mae_line.toFixed(1)} · <b class="${A.mae_model < A.mae_line ? 'pos' : A.mae_model > A.mae_line ? 'neg' : ''}" style="font-weight:inherit">${A.mae_model.toFixed(1)}</b>`) : '–', 'points from the first-half score'],
+    ['Model on the right side', A && A.model_right != null ? pct(A.model_right, 1) : '–', A ? `of ${A.n} first halves` : ''],
+    ...mvTiles(cl1).map(([k, v, n]) => [k.replace('Closing line', 'Closing 1H line'), v, n])]
+    .map(([k, v, n]) => `<a class="tile" href="#view=h1live"><span class="klabel">${k}</span><span class="stat">${v}</span><span class="small">${n}</span></a>`).join('');
+})();
 
 // how far the closing line moved, on average, for the picks it moved toward and for those it moved against (14 Nov 2026)
 function mvTiles(list){
@@ -276,6 +291,11 @@ function mvTiles(list){
 
 // two numbers in one tile, a little smaller so they stay on one line (14 Nov 2026)
 function PAIR(v){ return `<b style="font-size:.86em;font-weight:inherit;white-space:nowrap">${v}</b>`; }
+
+// tiles in the Live test style, five to a row (14 Nov 2026)
+function TL(list){
+  return `<div class="tiles t5">${list.map(([k, v, n]) => `<div class="tile"><span class="klabel">${k}</span><span class="stat">${v}</span><span class="small">${n ?? ''}</span></div>`).join('')}</div>`;
+}
 
 function tiles(list){
   return `<div class="metrics">${list.map(([l, v, c]) => `<div class="metric"><div class="lbl">${l}</div><div class="big ${c||''}">${v}</div></div>`).join('')}</div>`;
@@ -354,9 +374,16 @@ function analysis(k, notes = true){
   // the tables that decide the rule, for one league or all: edge, line, stage, then season and month
   const B = DATA.backtest, S = k === 'all' ? B.all : B.leagues[k], f = x => k === 'all' || x.lg === k, nt = s => notes ? `<p class="note">${s}</p>` : '';
   const BT = DATA.bets.filter(f), SK = (DATA.skipped || []).filter(f);
-  let h = tiles([['Picks', S.rule.n], ['Hit rate', pct(S.rule.w / S.rule.n, 1)], ['ROI at opening', roi(S.rule.roi), cls(S.rule.roi)], ['ROI at closing', S.rule.roic != null ? roi(S.rule.roic) : '–', cls(S.rule.roic)],
-              ['Opening line', lineAvg(BT.filter(b => b.close != null), 'line')], ['Closing line', lineAvg(BT.filter(b => b.close != null), 'close')], ['Model line', lineAvg(BT.filter(b => b.close != null), 'mu')], ['Actual total', lineAvg(BT.filter(b => b.close != null), 'total')],
-              ...(() => { const c = BT.filter(b => b.close != null); return c.length ? mvTiles(c).map(([k, v]) => [k, v]) : []; })(), ...riskTiles(BT)]);
+  // the same tiles as the Live test tab (14 Nov 2026): the record, then the closing line, then the risk
+  const c = BT.filter(b => b.close != null), W = BT.filter(b => b.ret > 0).length, Lo = BT.filter(b => b.ret < 0).length, RK = riskTiles(BT);
+  const C = (v, k) => k ? `<b class="${k}" style="font-weight:inherit">${v}</b>` : v;
+  let h = TL([['Picks', `${W.toLocaleString('en')}–${Lo.toLocaleString('en')}`, `${pct(W / (W + Lo), 1)} hit rate · ${BT.length.toLocaleString('en')} picks`],
+              ['ROI at opening · closing', PAIR(`${C(roi(S.rule.roi), cls(S.rule.roi))} · ${S.rule.roic != null ? C(roi(S.rule.roic), cls(S.rule.roic)) : '–'}`), 'opening line · closing line'],
+              ['Opening line · closing line', PAIR(`${lineAvg(c, 'line')} · ${lineAvg(c, 'close')}`), ''],
+              ['Model line · actual total', PAIR(`${lineAvg(c, 'mu')} · ${lineAvg(c, 'total')}`), ''],
+              [RK[0][0], C(RK[0][1], RK[0][2]), 'at 1 unit a pick'],
+              ...(c.length ? mvTiles(c) : []),
+              ...RK.slice(1).map(([k, v, cl]) => [k, C(v, cl), ''])]);
   if (k === 'all') h += calib(BT, `How often the picks won against the chance the model gave them, at the opening line. A well-calibrated model wins about as often as it says in every band. Worst drawdown: the biggest fall from a high point of the running profit, at 1 unit a pick, in date order; expect a run like it again.`);
   const T = (title, first, body, note='') => `<h2>${title}</h2>${nt(note)}<div class="scroll"><table style="max-width:1040px">${GHEAD(first, BHEAD)}<tbody>${body}</tbody></table></div>`;
   const EP = Math.round(DATA.rule.edge * 100);
@@ -408,7 +435,8 @@ function quarters(){
 // the 1H Live test tab (14 Nov 2026): the 1H record first, then open and settled 1H picks
 function renderH1Live(){
   if (!LIVE.h1) return '<p class="empty">No first-half data yet.</p>';
-  return firstHalf() + firstHalf('open') + firstHalf('settled');
+  const o = firstHalf('open');
+  return (o || '<p class="empty">No open 1H picks right now. New ones appear here as first-half lines open.</p>') + firstHalf() + firstHalf('settled');
 }
 
 function firstHalf(part = ''){                               // part: 'open' or 'settled' gives that table alone
@@ -416,14 +444,8 @@ function firstHalf(part = ''){                               // part: 'open' or 
   if (!H) return '';
   const e8 = Math.round(LE() * 100), side = b => (b.side === 'over' ? 'Over ' : 'Under ') + b.line;
   const mlink = b => b.slug ? `<a class="gm" href="games/${b.slug}/">${b.home} – ${b.away}</a>` : `${b.home} – ${b.away}`;
-  let h = `<h2 id="h1">First half: line v model <span class="pill">Test</span></h2><p class="note">A separate live test, started ${H.start}, not part of the main record on the Live test tab. <b>Model 1H</b>: built only from earlier first halves, the way the full-game projection is built from earlier totals: the league's first-half average and each team's first halves this season, plus ${sgn(H.bias, 1)} (first halves came in that much above this projection in every season from 2022–23 to 2025–26). Its chance of the over comes from how widely first halves spread around the projection in each league (${H.sd} points on average). It never sees the full-game line or the full-game model. <b>The pick</b>: the over, the first time its edge is above ${e8}% (overs only, like the main picks), on a .5 line, regular season, both teams ${LIVE.min_gp ?? 3}+ games in (5+ in Latin America), in the same ${LIVE.leagues.length} leagues. Settled on first-half points (no overtime). There is no backtest: first-half prices were not saved before ${H.start}.</p>`;
+  let h = `<p class="note" id="h1">A separate live test, started ${H.start}, not part of the main record on the Live test tab. <b>Model 1H</b>: built only from earlier first halves, the way the full-game projection is built from earlier totals: the league's first-half average and each team's first halves this season, plus ${sgn(H.bias, 1)} (first halves came in that much above this projection in every season from 2022–23 to 2025–26). Its chance of the over comes from how widely first halves spread around the projection in each league (${H.sd} points on average). It never sees the full-game line or the full-game model. <b>The pick</b>: the over, the first time its edge is above ${e8}% (overs only, like the main picks), on a .5 line, regular season, both teams ${LIVE.min_gp ?? 3}+ games in (5+ in Latin America), in the same ${LIVE.leagues.length} leagues. Settled on first-half points (no overtime). There is no backtest: first-half prices were not saved before ${H.start}.</p>`;
   const S = H.stats || {}, A = H.acc;
-  const T = [['1H picks · open', PAIR(`${(S.n || 0).toLocaleString('en')} · ${H.picks.filter(b => !b.done).length}`)], ['1H picks settled', S.settled ? PAIR(`${S.w}–${S.settled - S.w} · ${pct(S.w / S.settled, 1)}`) : '–'], ['ROI', roi(S.roi), cls(S.roi)]];
-  if (A) T.push(['Line · model off by', PAIR(`${A.mae_line.toFixed(1)} · <b class="${A.mae_model < A.mae_line ? 'pos' : A.mae_model > A.mae_line ? 'neg' : ''}" style="font-weight:inherit">${A.mae_model.toFixed(1)}</b> pts`)],
-                ['Model on the right side', A.model_right != null ? pct(A.model_right, 1) : '–']);
-  const cl1 = H.picks.filter(b => b.done && b.close != null && b.ret != null);   // overs: the close moved toward the pick when it ended above the line taken
-  if (cl1.length) T.push(...mvTiles(cl1).map(([k, v]) => [k.replace('Closing line', 'Closing 1H line'), v]));
-  h += tiles(T).replace('class="metrics"', 'class="metrics m5"');      // two rows of five, like the Live test tab
   if (A) h += `<p class="note">Over all ${A.n.toLocaleString('en')} settled first halves the test tracked, picks or not: first 1H line ${A.line}, model ${A.model}, first-half points ${A.res}; the over won ${A.over != null ? pct(A.over) : '–'} at the first line. Off by: the average gap to the first-half points, so the lower one came closer. Right side: how often the first half finished on the side of the line the model was on.</p>`;
   const open = H.picks.filter(b => !b.done);
   let oH = '', dH = '';
@@ -627,7 +649,8 @@ function render(){
   if (view === 'h1') keys = keys.filter(k => ((LIVE.h1 || {}).rows || []).some(g => g.lg === k));
   const chips = CHIPS[view] ? [['all', 'All leagues'], ...keys.map(k => [k, lgShort(k)])] : [];
   $('chips').innerHTML = chips.map(([k, t]) => `<a href="#view=${view}${k === 'all' ? '' : '&lg=' + k}" class="${k === lg ? 'on' : ''}">${t}</a>`).join('');
-  $('top').style.display = $('sub').style.display = view === 'backtest' || view === 'h1live' ? 'none' : '';   // the main live record stays off the Backtest and 1H Live test tabs     // the live record stays off the Backtest tab
+  $('top').style.display = $('sub').style.display = view === 'backtest' ? 'none' : '';
+  $('top').innerHTML = view === 'h1live' ? TOP_H1 : TOP_MAIN;                  // the 1H Live test tab has its own record tiles   // the main live record stays off the Backtest and 1H Live test tabs     // the live record stays off the Backtest tab
   $('out').innerHTML = RENDER[view]();
 }
 function fromHash(){
