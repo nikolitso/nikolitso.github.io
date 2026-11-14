@@ -210,7 +210,7 @@ html{scroll-behavior:smooth;font-size:17.5px}   /* one step larger: the page siz
     <li>A match is flagged when the model total is 2+ goals beyond the market's line, once both teams have played 6 games. Each league has one side: Over or Under.</li>
     <li>A pick is logged once, with the line and odds at that moment, and settled at that price, at equal stakes. ROI = profit ÷ total staked on won and lost picks; pushes are left out.</li>
     <li>Line movement: every pick also stores the market's opening and closing line. The record is graded at the line taken; the Line movement table grades the same picks at the opening and at the closing line too, so the edge can be checked against both.</li>
-    <li>Max drawdown is the largest fall in running profit from a high point to a later low, in units at 1 unit per pick, with the picks in date order.</li>
+    <li>Longest losing run is the most picks lost in a row, with the picks in date order.</li>
     <li>A data check runs every hour: if a league's source comes back empty, or matches already played still have no result, a note appears at the top of the page.</li>
   </ol>
 </section>
@@ -312,7 +312,7 @@ const sg=(v,d=2)=>v==null||isNaN(v)?'–':(v>0?'+':'')+(+v).toFixed(d);
 const cls=v=>v>0?'pos':v<0?'neg':'';
 // max drawdown (units, peak to trough of the running profit, 1 unit flat) and longest losing run, in date order
 const ddOf=R=>{const A=R.filter(a=>a.status==='won'||a.status==='lost'||a.status==='push').slice().sort((a,b)=>((a.date||'')+(a.time||'')).localeCompare((b.date||'')+(b.time||'')));let c=0,pk=0,dd=0,run=0,lr=0;for(const a of A){c+=a.profit||0;pk=Math.max(pk,c);dd=Math.max(dd,pk-c);if(a.status==='lost'){run++;lr=Math.max(lr,run)}else if(a.status==='won')run=0}return {dd,lr,n:A.length}};
-const ddTile=R=>{const d=ddOf(R);return ['Max drawdown',d.n?(d.dd?`<span class="neg">−${d.dd.toFixed(1)}</span>`:'0'):'–',d.n?`units, peak to low · longest losing run ${d.lr}`:'nothing settled yet']};
+const ddTile=R=>{const d=ddOf(R);return ['Longest losing run',d.n?d.lr:'–',d.n?`picks in a row`:'nothing settled yet']};
 const pct=v=>v==null?'–':`${v>0?'+':''}${f(v,0)}%`;
 const day=d=>{if(!d)return '–';const [y,m,dd]=d.split('-');return new Date(+y,+m-1,+dd).toLocaleDateString('en-GB',{weekday:'short',day:'2-digit',month:'short'})};
 
@@ -366,12 +366,12 @@ const day=d=>{if(!d)return '–';const [y,m,dd]=d.split('-');return new Date(+y,
     const row=(lab,note,get)=>{const G=D.map(x=>[x,get(x)]).filter(([,g])=>g),w=G.filter(([,g])=>g.st==='won').length,l=G.filter(([,g])=>g.st==='lost').length,pr=G.reduce((a,[,g])=>a+g.p,0),
       L=G.map(([x])=>lab==='opening'?x.open.line:lab==='closing'?x.close.line:x.line),ln=L.length?L.reduce((a,b)=>a+b,0)/L.length:null,
       b=G.map(([x],i)=>bt(x,L[i])).filter(v=>v!=null),bb=b.length?b.reduce((a,c)=>a+c,0)/b.length:null;
-      return `<tr><td class="l"><b>${note}</b></td><td>${G.length}</td><td>${w}–${l}</td><td class="${cls(pr)}"><b>${w+l?sg(pr/(w+l)*100,1)+'%':'–'}</b></td><td class="${cls(pr)}">${sg(pr,2)}</td><td>${f(ln,1)}</td><td class="${cls(bb)}">${sg(bb,1)}</td></tr>`};
+      return `<tr><td class="l"><b>${note}</b></td><td>${G.length}</td><td>${w}–${l}</td><td class="${cls(pr)}"><b>${w+l?sg(pr/(w+l)*100,1)+'%':'–'}</b></td><td>${f(ln,1)}</td><td class="${cls(bb)}">${sg(bb,1)}</td></tr>`};
     const M=D.filter(x=>x.close&&x.close.line!=null),fo=M.filter(x=>mv(x)>0).length,ag=M.filter(x=>mv(x)<0).length,
       dv=M.map(x=>(x.close.line-x.line)*(x.side==='under'?-1:1)),da=dv.length?dv.reduce((a,b)=>a+b,0)/dv.length:null,
       O=D.filter(x=>x.open&&x.open.line!=null),ov=O.map(x=>(x.line-x.open.line)*(x.side==='under'?-1:1)),oa=ov.length?ov.reduce((a,b)=>a+b,0)/ov.length:null;
-    return `<thead><tr><th class="l">Graded at</th><th>Picks</th><th>Win–Loss</th><th>ROI</th><th>Profit (units)</th><th>Avg line</th><th>Beat line by</th></tr></thead><tbody>${row('taken','Line and price taken when flagged',x=>({st:x.status,p:x.profit||0}))}${row('opening','Opening line',x=>gradeAt(x,x.open))}${row('closing','Closing line',x=>gradeAt(x,x.close))}</tbody>
-      <tfoot><tr><td class="l" colspan="7" style="white-space:normal"><span class="small">After the pick the market moved <b class="pos">towards the model ${fo}</b> times, <b class="neg">against it ${ag}</b>, unchanged ${M.length-fo-ag}${da!=null?` · average move flagged → closing <b class="${cls(da)}">${sg(da,1)}</b> goals in the model's favour`:''}${oa!=null?` · the line taken was on average <b class="${cls(oa)}">${f(Math.abs(oa),1)} goals ${oa>=0?'better':'worse'}</b> than the opening line`:''}.</span></td></tr></tfoot>`};
+    return `<thead><tr><th class="l">Graded at</th><th>Picks</th><th>Win–Loss</th><th>ROI</th><th>Avg line</th><th>Beat line by</th></tr></thead><tbody>${row('taken','Line and price taken when flagged',x=>({st:x.status,p:x.profit||0}))}${row('opening','Opening line',x=>gradeAt(x,x.open))}${row('closing','Closing line',x=>gradeAt(x,x.close))}</tbody>
+      <tfoot><tr><td class="l" colspan="6" style="white-space:normal"><span class="small">After the pick the market moved <b class="pos">towards the model ${fo}</b> times, <b class="neg">against it ${ag}</b>, unchanged ${M.length-fo-ag}${da!=null?` · average move flagged → closing <b class="${cls(da)}">${sg(da,1)}</b> goals in the model's favour`:''}${oa!=null?` · the line taken was on average <b class="${cls(oa)}">${f(Math.abs(oa),1)} goals ${oa>=0?'better':'worse'}</b> than the opening line`:''}.</span></td></tr></tfoot>`};
   const avgRow=(S,noLg)=>{const d=S.filter(x=>x.status!=='open'),a=g=>{const v=d.map(g).filter(v=>v!=null&&!isNaN(v));return v.length?v.reduce((p,q)=>p+q,0)/v.length:null},
     b=g=>{const v=a(g);return v==null?'–':`<b class="${cls(v)}">${sg(v,1)}</b>`};
     return d.length?`<tfoot><tr><td class="l" colspan="${noLg?2:3}"><b>Average</b> <span class="muted">(${d.length} settled)</span></td><td>${f(a(x=>x.line),1)}</td><td>${f(a(x=>x.odds))}</td><td><b>${f(a(x=>x.ours),1)}</b></td><td>${f(a(x=>x.total),1)}</td><td></td><td><b>${f(a(x=>x.open&&x.open.line),1)}</b></td><td><b>${f(a(x=>x.close&&x.close.line),1)}</b></td><td>${b(x=>bt(x,x.open&&x.open.line))}</td><td>${b(x=>bt(x,x.close&&x.close.line))}</td></tr></tfoot>`:''};
@@ -402,8 +402,6 @@ const day=d=>{if(!d)return '–';const [y,m,dd]=d.split('-');return new Date(+y,
       T('Won · moved toward',st(wU==null?'–':f(wU,1)+'%'),`${aU}–${bU} win – loss`),
       T('Won · moved against',st(wD==null?'–':f(wD,1)+'%'),`${aD}–${bD} win – loss`),
       T('Won · no move',st(wN==null?'–':f(wN,1)+'%'),`${pc(no.length,M.length)} of picks · ROI ${roN==null?'–':`<span class="${cls(roN)}">${sg(roN,1)}%</span>`}`),
-      T('Profit',st(`<span class="${cls(pr)}">${sg(pr,2)} units</span>`),'at 1 unit a pick'),
-      T('Worst drawdown',st(dd.dd?`<span class="neg">−${dd.dd.toFixed(1)} units</span>`:'0'),'peak to low, at 1 unit a pick'),
       T('Longest losing run',st(`${dd.lr} pick${dd.lr===1?'':'s'}`),'')].join('')}</div>`};
   const LSn=sd=>L.filter(l=>l.side===sd).map(l=>l.name.split(' · ')[0]).join(', ');
   const pkSum=l=>{const d=l.filter(x=>x.status!=='open'),w=d.filter(x=>x.status==='won').length,lo=d.filter(x=>x.status==='lost').length,r=d.reduce((a,x)=>a+x.profit,0);return `<b>${w}–${lo}</b> win – loss · <b class="${cls(r)}">${w+lo?sg(r/(w+lo)*100,0)+'%':'–'}</b> ROI${d.length?` · beat the line by ${[['opening',o=>o.open&&o.open.line],['closing',o=>o.close&&o.close.line]].map(([n,g])=>{const v=d.map(x=>bt(x,g(x))).filter(v=>v!=null),a=v.reduce((p,q)=>p+q,0)/(v.length||1);return v.length?`<b class="${cls(a)}">${sg(a,1)}</b> ${n}`:''}).filter(Boolean).join(' · ')} goals on average`:''}`};
@@ -478,7 +476,6 @@ const day=d=>{if(!d)return '–';const [y,m,dd]=d.split('-');return new Date(+y,
         T('ROI',two('Opening line',ro(rO),'Closing line',ro(rC)),`on the ${O.length} of ${R.length} picks with an opening line · all ${R.length} at closing ${ro(t.roi)}`),
         T('Average line',two('Opening',f(avg(O.map(a=>a.open.line)),1),'Closing',f(avg(O.map(a=>a.line)),1)),''),
         T('Average total',two('Model',f(av(R,a=>a.ours),1),'Actual',f(av(R,a=>a.act),1)),''),
-        T('Profit',st(`<span class="${cls(t.pr)}">${sg(t.pr,1)} units</span>`),'at the closing line, 1 unit a pick'),
         T('Line moved',two('Toward pick',pc(up.length,O.length),'Against',pc(dn.length,O.length),'h-up','h-dn'),`opening → closing · ${O.length} picks`),
         T('Avg move toward pick',st(up.length?sg(avg(up.map(mvG)),1)+' goals':'–'),`avg of ${up.length} picks`),
         T('Avg move against pick',st(dn.length?sg(avg(dn.map(mvG)),1)+' goals':'–'),`avg of ${dn.length} picks`),
@@ -486,8 +483,7 @@ const day=d=>{if(!d)return '–';const [y,m,dd]=d.split('-');return new Date(+y,
         T('Won · moved against',st(wD==null?'–':f(wD,1)+'%'),`${aD}–${bD} win – loss`),
         T('Won · no move',st(wN==null?'–':f(wN,1)+'%'),`${pc(no.length,O.length)} of picks · ROI ${rN==null?'–':`<span class="${cls(rN)}">${sg(rN,1)}%</span>`}`),
         T('Beat line by',st(`<span class="${cls(b)}">${sg(b,1)} goals</span>`),"closing line, in the pick's direction"),
-        T('Worst drawdown',st(dd.dd?`<span class="neg">−${dd.dd.toFixed(1)} units</span>`:'0'),'peak to low, at 1 unit a pick'),
-        T('Longest losing run',st(`${dd.lr} picks`),'')].join('')};
+          T('Longest losing run',st(`${dd.lr} picks`),'')].join('')};
     $('#arSum').innerHTML=['over','under'].map(sd=>[sd,rows.filter(a=>a.side===sd)]).filter(([,R])=>R.length).map(([sd,R])=>`<h3 class="sub">${sd==='over'?'Overs':'Unders'} <span class="small muted">${and(LS.filter(l=>l.side===sd).map(l=>l.name.split(' · ')[0]))}</span></h3><div class="tiles lt">${tiles(R)}</div>`).join('');
     tbl('#btGap','Gap',[2,3,4].map(g=>[`${g}+ goals`,rows.filter(a=>gapOf(a)>=g)]));
     $('#btLg').innerHTML=HEAD('League')+`<tbody>${LS.map(l=>[l,rows.filter(a=>a.league===l.key)]).filter(([,R])=>R.length).map(([l,R])=>`<tr><td class="l"><a href="${arHref(l.key)}"><b>${l.name.split(' · ')[0]}</b></a> <span class="muted">${side(l.side)}</span></td>${cells(R)}</tr>`).join('')}</tbody>`;

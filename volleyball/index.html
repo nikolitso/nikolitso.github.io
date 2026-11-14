@@ -174,19 +174,6 @@ th{font-size:13px}
 <!-- sitebar:end -->
 
 
-<nav class="an-project-nav" aria-label="Sports analytics projects"><div>
-<a href="/volleyball/" aria-current="page">Super League</a>
-<a href="/football/greek-cup/">Greek Cup</a>
-<a href="/basketball/">Basketball</a>
-<a href="/basketball/overs/">Basketball Totals</a>
-<a href="/basketball/women/">Women's Totals</a>
-<a href="/eurocup/">EuroCup</a>
-<a href="/fibaeuropecup/">FIBA Europe Cup</a>
-<a href="/paok-hub/">PAOK FC</a>
-<a href="/paok-basketball/">PAOK Basketball</a>
-<a href="/volleyball/">Volleyball</a>
-<a href="/handball/">Handball</a>
-</div></nav>
 <style>
 .sets{display:flex;height:8px;border-radius:4px;overflow:hidden;margin:12px 0 6px;background:var(--line)}
 .sets i{display:block} .sets i:nth-child(1){background:var(--an-bar)} .sets i:nth-child(2){background:var(--an-muted)} .sets i:nth-child(3){background:var(--gold)}
@@ -220,17 +207,6 @@ a.metric{display:block;color:inherit;text-decoration:none} a.metric:hover{border
 .lgt{font:500 12.5px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--gold)}
 a.gm{color:inherit;text-decoration:none} a.gm:hover{color:var(--gold);text-decoration:underline}
 </style>
-<header class="an-head"><div><a class="an-home" href="/" aria-label="Back to the homepage">← Home</a>
-  <a class="an-brand" href="/volleyball/"><svg class="an-mark" aria-hidden="true"><use href="/assets/marks.svg#volleyball"/></svg><span><small class="an-kicker">Volleyball · Projections</small><h1>Volleyball</h1></span></a>
-  <nav class="tabs an-tabs" id="tabs" aria-label="Sections">
-    <a href="#view=home" data-view="home" class="on">Home</a>
-    <a href="#view=projections" data-view="projections">Projections</a>
-    <a href="#view=picks" data-view="picks">Live test</a>
-    <a href="#view=season" data-view="season">Season</a>
-    <a href="#view=backtest" data-view="backtest">Backtest</a>
-    <a href="#view=method" data-view="method">How it works</a>
-  </nav>
-</div></header>
 <nav class="an-project-nav" aria-label="Sports analytics projects"><div>
 <a href="/superleague/">Super League</a>
 <a href="/football/greek-cup/">Greek Cup</a>
@@ -244,6 +220,17 @@ a.gm{color:inherit;text-decoration:none} a.gm:hover{color:var(--gold);text-decor
 <a href="/volleyball/" aria-current="page">Volleyball</a>
 <a href="/handball/">Handball</a>
 </div></nav>
+<header class="an-head"><div><a class="an-home" href="/" aria-label="Back to the homepage">← Home</a>
+  <a class="an-brand" href="/volleyball/"><svg class="an-mark" aria-hidden="true"><use href="/assets/marks.svg#volleyball"/></svg><span><small class="an-kicker">Volleyball · Projections</small><h1>Volleyball</h1></span></a>
+  <nav class="tabs an-tabs" id="tabs" aria-label="Sections">
+    <a href="#view=home" data-view="home" class="on">Home</a>
+    <a href="#view=projections" data-view="projections">Projections</a>
+    <a href="#view=picks" data-view="picks">Live test</a>
+    <a href="#view=season" data-view="season">Season</a>
+    <a href="#view=backtest" data-view="backtest">Backtest</a>
+    <a href="#view=method" data-view="method">How it works</a>
+  </nav>
+</div></header>
 <div class="wrap">
 <div class="an-project-context"><span class="an-project-context__label">Scope</span><span>Men's and women's league projections cover set count and total points. The live test, historical backtest and upcoming projections remain separate; league coverage and sample sizes matter when comparing records.</span></div>
 <div class="an-data-key" role="group" aria-label="How to read volleyball projections">
@@ -256,7 +243,7 @@ a.gm{color:inherit;text-decoration:none} a.gm:hover{color:var(--gold);text-decor
   <div class="chips" id="chips"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=7117426b"></script>
+<script src="data.js?v=cd33bb41"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
