@@ -285,6 +285,38 @@ body { overflow-x: clip; }  /* safety net */
   .project-group { margin-top: 1.15rem; }
   .project-cards { gap: .9rem; }
 }
+
+/* 1.1 homepage refinement: stronger identity, hierarchy and readable project entry points. */
+.hero-in { padding-block: clamp(4rem, 10vw, 8rem); }
+.hero h1 {
+  display: block;
+  max-width: 13ch;
+  font-size: clamp(3.1rem, 6.4vw, 5.4rem);
+  line-height: .98;
+  letter-spacing: -.035em;
+}
+.hero h1 em { display: inline; }
+.hero .eyebrow { color: #9aa1b2; margin-bottom: 1.1rem; }
+.hero .lede { max-width: 43ch; font-size: clamp(1.18rem, 2vw, 1.42rem); line-height: 1.58; }
+.hero .ctas { gap: .8rem; }
+.hero .btn { font-size: .82rem; padding: 1rem 1.45rem; }
+.project-cards { align-items: stretch; }
+.project-cards .card { padding: clamp(1.4rem, 2.5vw, 2rem); }
+.project-cards .card h3:not(.project-group) { font-size: clamp(1.85rem, 2.6vw, 2.25rem); }
+.project-cards .card p { font-size: 1.02rem; line-height: 1.65; }
+.project-cards .card .meta { font-size: .86rem; }
+@media (max-width: 860px) {
+  .hero-in { gap: 2.5rem; }
+  .project-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 600px) {
+  .hero-in { padding-block: 3.5rem; }
+  .hero h1 { font-size: clamp(2.7rem, 12vw, 4rem); }
+  .hero .ctas { align-items: stretch; }
+  .hero .btn { justify-content: center; }
+  .project-cards { grid-template-columns: minmax(0, 1fr); }
+}
+
 </style>
 <link rel="stylesheet" href="/assets/an.css?v=1">
 </head>
@@ -317,10 +349,12 @@ body { overflow-x: clip; }  /* safety net */
   <div class="hero">
     <div class="wrap hero-in">
       <div>
-        <h1 class="sr-only">Antonis Nikolitsopoulos</h1>
+        <p class="eyebrow">Sports analytics · Writing · Cinema</p>
+        <h1>Sports analytics.<br><em>And the things around it.</em></h1>
         <p class="lede">Football pricing by day, data obsessive by nature. Outside of work, mostly books on sports analytics, decision-making, getting better at things. And films; the quiet ones, the brave ones, the kind that stick around long after they're over.</p>
         <div class="ctas">
-          <a class="btn primary" href="/books/">Books</a>
+          <a class="btn primary" href="#projects">Explore the projects</a>
+          <a class="btn ghost" href="/books/">Books</a>
           <a class="btn ghost" href="https://whatalgomissed.com/" target="_blank" rel="noopener">What Algo Missed</a>
         </div>
       </div>
@@ -338,7 +372,7 @@ body { overflow-x: clip; }  /* safety net */
   <section id="latest" aria-labelledby="h-latest">
     <div class="wrap">
       <p class="kicker">Latest</p>
-      <h2 id="h-latest">Fresh from both</h2>
+      <h2 id="h-latest">Recently added</h2>
       <div class="feeds">
       <!-- posts:start -->
       <div class="feed-row" data-feed="Books">
@@ -365,7 +399,7 @@ body { overflow-x: clip; }  /* safety net */
   <section id="writing" class="alt" aria-labelledby="h-writing">
     <div class="wrap">
       <p class="kicker">Publications</p>
-      <h2 id="h-writing">Books &amp; Films</h2>
+      <h2 id="h-writing">Outside the numbers</h2>
       <p class="sec-intro">Four side projects that began as personal notes: one for the books that change how we think, one for the films that change how we see, one for the wines that belong at the table, and one for the lines worth living by.</p>
       <div class="cards">
         <a class="card" href="/books/">
@@ -408,7 +442,7 @@ body { overflow-x: clip; }  /* safety net */
     <span id="paok"></span>
     <div class="wrap">
       <p class="kicker">Projects</p>
-      <h2 id="h-projects">Data &amp; models</h2>
+      <h2 id="h-projects">Sports analytics</h2>
       <p class="sec-intro">Independent sports projects across Greek and European football, European basketball, volleyball and handball, alongside two PAOK statistics hubs. The Greek Cup is a data and presentation project; the other forecasting projects are in their 2026-27 test season. Treat live records as early results. ROI is profit ÷ total staked, with pushes left out.</p>
       <div class="cards project-cards">
         <h3 class="project-group">Football</h3>
