@@ -194,12 +194,13 @@ details.picks>summary .muted{font-size:14px;font-weight:400}
 </div></header>
 <div class="wrap">
   <div class="chips" id="chips" style="margin:0 0 12px"></div>
+  <div class="chips" id="secs" style="margin:-4px 0 12px"></div>
   <div class="sub" id="sub" style="margin:0 0 12px"></div>
   <div class="tiles" id="top"></div>
   <div id="out"></div>
 </div>
 
-<script src="live.js?v=202611141008"></script>
+<script src="live.js?v=202611141012"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
@@ -329,11 +330,15 @@ function renderGame(){
   }
   return h + '</div>';
 }
+const SECTIONS = [['str', 'Team strength'], ['mk', 'Vs Market'], ['std', 'Standings'], ['rat', 'Team ratings'], ['rd', 'Box scores and reports'], ['lg', 'League stats'], ['fat', 'Fatigue factor'], ['off', 'Official table'], ['ros', 'Rosters and imports']];
 const RENDER = {matches: renderMatches, teams: renderTeams, method: renderMethod, game: renderGame};
 function render(){
   document.querySelectorAll('#tabs a').forEach(a => { a.classList.toggle('on', a.dataset.view === (view === 'game' ? 'matches' : view)); a.href = `#view=${a.dataset.view}${lg === 'all' || a.dataset.view === 'method' ? '' : '&lg=' + lg}`; });
   const keys = LIVE.leagues.map(l => l.key), chips = view === 'method' || view === 'game' ? [] : keys.map(k => [k, lgShort(k)]);   // one pill per league, no combined view
   $('chips').innerHTML = chips.map(([k, t]) => `<a href="#view=${view}${k === 'all' ? '' : '&lg=' + k}" class="${k === lg ? 'on' : ''}">${esc(t)}</a>`).join('');
+  /* the league page's sections, each opening on its own pane there */
+  const page = {'greece-basket-league': 'greece', 'cyprus-division-a': 'cyprus'}[lg];
+  $('secs').innerHTML = page && view !== 'method' ? SECTIONS.map(([k, t]) => `<a href="/basketball/${page}/#${k}">${t}</a>`).join('') : '';
   $('top').innerHTML = view === 'matches' ? topTiles() : '';
   $('out').innerHTML = RENDER[view]();
 }
