@@ -763,7 +763,8 @@
       "walk-on-water",
       "mostly-martha",
       "working-woman",
-      "cinema-paradiso"
+      "cinema-paradiso",
+      "capernaum"
     ],
     "log": [
       {
@@ -1061,11 +1062,17 @@
         "slot": "2026-11-13 20",
         "slug": "cinema-paradiso",
         "id": "2121302132254978173"
+      },
+      {
+        "day": "2026-11-14",
+        "slot": "2026-11-14 20",
+        "slug": "capernaum",
+        "id": "2121664512281432154"
       }
     ],
-    "last_day": "2026-11-13"
+    "last_day": "2026-11-14"
   },
-  "last_slot": "2026-11-14 14",
+  "last_slot": "2026-11-14 20",
   "quote": {
     "seen": [
       "1",
