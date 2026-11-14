@@ -368,7 +368,7 @@ function TL(list){
 // the Backtest tiles for a list of backtest picks (all leagues or one), as on the Live test tab; '' when there are none (14 Nov 2026, as the men's page)
 function btTiles(BT){
   if (!BT.length) return '';
-  const T = stat(BT), c = BT.filter(b => b.close != null), W = BT.filter(b => b.ret > 0).length, Lo = BT.filter(b => b.ret < 0).length, RK = riskTiles(BT);
+  const T = stat(BT), c = BT.filter(b => b.close != null), W = BT.filter(b => b.ret > 0).length, Lo = BT.filter(b => b.ret < 0).length;
   const cc = c.filter(b => b.cpx != null && b.total !== b.close), rc = cc.length ? cc.reduce((a, b) => a + (b.total > b.close ? b.cpx - 1 : -1), 0) / cc.length : null;
   const C = (v, k) => k ? `<b class="${k}" style="font-weight:inherit">${v}</b>` : v;
   const z = c.filter(b => b.close === b.line), zd = z.filter(b => b.ret !== 0), zw = zd.filter(b => b.ret > 0).length, zr = zd.length ? zd.reduce((x, b) => x + b.ret, 0) / zd.length : null;
@@ -377,14 +377,7 @@ function btTiles(BT){
                ['Average line', TWO('Opening', lineAvg(c, 'line'), 'Closing', lineAvg(c, 'close')), ''],
                ['Average total', TWO('Model', lineAvg(c, 'mu'), 'Actual', lineAvg(c, 'total')), ''],
                ...(c.length ? mvTiles(c) : []),
-               ...(z.length ? [['Won when no move', zd.length ? pct(zw / zd.length, 1) : '–', `${pct(z.length / c.length)} of picks · ROI ${C(roi(zr), cls(zr))}`]] : []),
-               ...RK.map(([k, v, cl]) => [k, C(v, cl), ''])]);
-}
-
-// the longest losing run, in date order
-function riskTiles(list){
-  const K = runs(list.filter(b => b.ret != null));
-  return [['Longest losing run', `${K.worst} picks`]];
+               ...(z.length ? [['Won when no move', zd.length ? pct(zw / zd.length, 1) : '–', `${pct(z.length / c.length)} of picks · ROI ${C(roi(zr), cls(zr))}`]] : [])]);
 }
 
 // profit in units, the deepest fall from a high point (units) and the longest run of losses, in date order; pushes change nothing
@@ -617,7 +610,6 @@ function renderPicks(){
   h += `<h2>The ${sn(DATA.season)} record</h2>`;
   h += `<p class="note">The closing line moved toward the pick when it ended above the line picked. A few hundred picks are needed before the record says much. Picks stay as they were logged, under the rules of their day. The record starts on ${LIVE.start}, under the rules in How it works. Click a column heading to sort.</p>`;
   if (!set.length) return h + '<p class="empty">No settled picks yet.</p>';
-  h += TL(riskTiles(set.filter(b => !b.pre)).map(([k, v, c]) => [k, c ? `<b class="${c}" style="font-weight:inherit">${v}</b>` : v, '']));
   h += liveTables(set.filter(b => !b.pre));
   return h;
 }
