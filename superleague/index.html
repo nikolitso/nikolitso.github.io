@@ -165,6 +165,49 @@ th{font-size:13px}
 #tabs a{font-size:16px}
 @media(max-width:700px){body{font-size:16.5px}.wrap{padding-left:14px;padding-right:14px}h2{font-size:26px}td{font-size:15px}}
 
+
+/* Presentation refinement — no data, calculations, views or interaction logic changed. */
+:where(a,button,[tabindex]):focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+#tabs{gap:8px 12px;scroll-padding-inline:18px}
+#tabs a{border-radius:999px;padding:8px 13px;transition:background .16s ease,color .16s ease}
+#tabs a.on{background:var(--an-accent-soft);color:var(--an-accent);box-shadow:inset 0 0 0 1px var(--an-accent-line)}
+.an-project-context{max-width:100%;line-height:1.65}
+.an-data-key{padding:12px 14px;border:1px solid var(--an-rule);border-radius:12px;background:color-mix(in srgb,var(--an-soft) 72%,transparent)}
+.card{border-radius:14px;box-shadow:0 8px 24px rgba(0,0,0,.10)}
+.card h3{line-height:1.2}
+.metric{border-radius:12px}
+.scroll{max-width:100%;overscroll-behavior-inline:contain;scrollbar-width:thin;scrollbar-color:var(--an-rule) transparent}
+.scroll:focus-within{outline:1px solid var(--an-accent-line);outline-offset:2px}
+table{font-variant-numeric:tabular-nums}
+th{line-height:1.45}
+td{line-height:1.5}
+.chip,.seg button{min-height:38px}
+@media(max-width:760px){
+  .wrap{padding-top:16px;padding-bottom:56px}
+  #tabs{display:flex;flex-wrap:nowrap;overflow-x:auto;white-space:nowrap;gap:8px;padding:8px 0 12px;scrollbar-width:thin}
+  #tabs a{flex:0 0 auto;min-height:42px;padding:9px 13px}
+  .an-project-context{line-height:1.6}
+  .an-data-key{display:grid;grid-template-columns:1fr 1fr;gap:10px 12px;padding:12px}
+  .an-data-key__title{grid-column:1/-1}
+  .grid{grid-template-columns:minmax(0,1fr);gap:14px}
+  .card{padding:15px 13px 10px}
+  .bar{gap:9px 12px}
+  .chips{gap:7px}
+  .chip{padding:7px 11px}
+  .metrics{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+  .metric{padding:10px 11px}
+  .metric .big{font-size:21px}
+  .scroll{margin-inline:-2px}
+}
+@media(max-width:480px){
+  .an-data-key{grid-template-columns:1fr}
+  .an-data-key__title{grid-column:auto}
+  .card h3{font-size:24px}
+  .metrics{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .seg button{padding:8px 11px;font-size:12px}
+  .doc p,.doc li{font-size:15.5px}
+}
+
 </style>
 <link rel="stylesheet" href="/assets/an.css?v=4">
 </head>
