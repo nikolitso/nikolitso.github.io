@@ -205,7 +205,7 @@ a.tile:hover{border-color:var(--gold)}
   <div class="chips" id="chips"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=w71"></script>
+<script src="data.js?v=w72"></script>
 <script src="live.js"></script>
 <script>
 const $ = id => document.getElementById(id);
@@ -302,13 +302,13 @@ function renderH1Live(){
 function renderH1(){
   const H = LIVE.h1;
   if (!H) return '<p class="empty">No first-half projections yet.</p>';
-  let h = `<p class="note">Games in the next 7 days with <b>Model 1H</b>, the first-half projection built only from earlier first halves (the league's first-half average and each team's first halves this season, plus ${sgn(H.bias, 1)}), next to the first-half line across the books. It never sees the full-game line or the model total. Over chance from how widely first halves spread around the projection in each league; edge = chance × average price − 1. Highlighted games have a 1H test pick, logged in the <a href="#view=h1live">1H Live test</a> tab at the line and price shown when it was taken: the over, with an edge above ${Math.round(H.edge * 100)}% on a .5 line. Regular season only. Greyed: no pick possible (whole-number line or too few games). Each match page shows the projection part by part.</p>`;
+  let h = `<p class="note">Games in the next 7 days with <b>Model 1H</b>, the first-half projection built only from earlier first halves (the league's first-half average and each team's first halves this season, plus ${sgn(H.bias, 1)}), next to the first-half line across the books. It never sees the full-game line or the model total. Over chance from how widely first halves spread around the projection in each league; edge = chance × average price − 1. Edge under is shown for reference: the 1H picks are overs only. Highlighted games have a 1H test pick, logged in the <a href="#view=h1live">1H Live test</a> tab at the line and price shown when it was taken: the over, with an edge above ${Math.round(H.edge * 100)}% on a .5 line. Regular season only. Greyed: no pick possible (whole-number line or too few games). Each match page shows the projection part by part.</p>`;
   const fx = H.rows.filter(inLg);
   if (!fx.length) return h + '<p class="empty">No games in the next 7 days.</p>';
   const byDay = {};
   fx.forEach(g => (byDay[g.dt.slice(0, 10)] ||= []).push(g));
   const taken = Object.fromEntries(H.picks.map(b => [b.home + '|' + b.away, b]));
-  const head = `<thead><tr><th>Time</th>${lg === 'all' ? '<th>League</th>' : ''}<th>Match</th><th class="n">Model 1H</th><th class="n">1H line</th><th class="n">Over</th><th class="n">Under</th><th class="n">Over chance</th><th class="n">Edge over</th></tr></thead>`;
+  const head = `<thead><tr><th>Time</th>${lg === 'all' ? '<th>League</th>' : ''}<th>Match</th><th class="n">Model 1H</th><th class="n">1H line</th><th class="n">Over</th><th class="n">Under</th><th class="n">Over chance</th><th class="n">Edge over</th><th class="n">Edge under</th></tr></thead>`;
   for (const [d, gs] of Object.entries(byDay)){
     h += `<h2 class="day">${dayName(d)}</h2><div class="scroll"><table class="proj">${head}<tbody>`;
     for (const g of gs){
@@ -316,7 +316,7 @@ function renderH1(){
       const ed = tk ? `<td class="n pos">${sgn(tk.edge * 100, 0)}%</td>` : !g.ok ? `<td class="n muted">${sgn(g.eo * 100, 0)}%</td>` : edgeNow(g.eo);
       h += `<tr class="${g.pick ? 'pk' : ''}"><td>${g.dt.slice(11)}</td>${lg === 'all' ? `<td>${lgShort(g.lg)}</td>` : ''}
         <td class="wr">${g.slug ? `<a class="gm" href="games/${g.slug}/">${g.home} – ${g.away}</a>` : `${g.home} – ${g.away}`}${g.pick ? `<span class="badge">${g.pick}</span>` : ''}</td><td class="n"><b>${g.m1.toFixed(1)}</b></td>
-        ${g.line == null ? '<td class="n muted" colspan="5">no first-half line yet</td>' : `<td class="n">${g.line}</td><td class="n">${g.op.toFixed(2)}</td><td class="n">${g.up.toFixed(2)}</td><td class="n">${pct(g.p)}</td>${ed}`}</tr>`;
+        ${g.line == null ? '<td class="n muted" colspan="6">no first-half line yet</td>' : `<td class="n">${g.line}</td><td class="n">${g.op.toFixed(2)}</td><td class="n">${g.up.toFixed(2)}</td><td class="n">${pct(g.p)}</td>${ed}<td class="n muted">${sgn(((1 - g.p) * g.up - 1) * 100, 0)}%</td>`}</tr>`;
     }
     h += '</tbody></table></div>';
   }
@@ -473,7 +473,35 @@ function btBody(BT, S, pool, leagues){
     'The second row is the play-off games the rule skips: every other rule met, with the chance worked out as for a regular-season game.');
   h += `<h2>By season</h2>` + btTable('Season', S.seasons.map(s => [sn(s.season), BT.filter(x => seasonOf(x) === s.season)]));
   h += `<h2>By month</h2>` + btTable('Month', S.months.map(m => [MON[m.m - 1], BT.filter(x => +x.dt.slice(5, 7) === m.m)]));
-  return h + bets(BT);
+  return h + quarters(BT) + bets(BT);
+}
+
+// By quarter (14 Nov 2026, as the men's page): points per quarter in the picked games, against the line and against every game the rule looked at
+function quarters(list){
+  const B = list.filter(b => b.q), QA = DATA.qall || {};
+  if (!B.length) return '';
+  const avg = (L, i) => L.length ? L.reduce((a, b) => a + b.q[i], 0) / L.length : null;
+  const W = B.filter(b => b.ret > 0), Lo = B.filter(b => b.ret < 0);
+  const mix = i => B.reduce((a, b) => { const t = QA[b.lg]; return a + (t ? t[i + 1] / t[0] : 0); }, 0) / B.length;   // every game, weighted to the picks' leagues
+  const f1 = v => v == null ? '–' : v.toFixed(1);
+  const line4 = B.reduce((a, b) => a + b.line, 0) / B.length / 4;
+  const names = ['1st quarter', '2nd quarter', '3rd quarter', '4th quarter', 'Overtime'];
+  let r1 = names.map((nm, i) => { const p = avg(B, i), m = mix(i);
+    return `<tr><td>${nm}</td><td class="n">${i < 4 ? f1(line4) : '–'}</td><td class="n"><b>${f1(p)}</b></td><td class="n">${f1(avg(W, i))}</td><td class="n">${f1(avg(Lo, i))}</td><td class="n">${f1(m)}</td><td class="n ${cls(p - m)}">${sgn(p - m, 1)}</td></tr>`; }).join('');
+  const tot = L => L.length ? L.reduce((a, b) => a + b.q.reduce((x, y) => x + y, 0), 0) / L.length : null;
+  const mt = [0, 1, 2, 3, 4].reduce((a, i) => a + mix(i), 0);
+  r1 += `<tr class="sub"><td><b>Full game</b></td><td class="n">${f1(line4 * 4)}</td><td class="n"><b>${f1(tot(B))}</b></td><td class="n">${f1(tot(W))}</td><td class="n">${f1(tot(Lo))}</td><td class="n">${f1(mt)}</td><td class="n ${cls(tot(B) - mt)}">${sgn(tot(B) - mt, 1)}</td></tr>`;
+  const hit = L => L.filter(b => b.ret !== 0).length ? pct(L.filter(b => b.ret > 0).length / L.filter(b => b.ret !== 0).length, 1) : '–';
+  const r2 = [['After the 1st quarter', 1], ['At half-time', 2], ['After the 3rd quarter', 3]].map(([nm, k]) => {
+    const cum = b => b.q.slice(0, k).reduce((a, v) => a + v, 0), on = B.filter(b => cum(b) > b.line * k / 4), off = B.filter(b => cum(b) <= b.line * k / 4);
+    const d = B.reduce((a, b) => a + cum(b) - b.line * k / 4, 0) / B.length;
+    return `<tr><td>${nm}</td><td class="n ${cls(d)}">${sgn(d, 1)}</td><td class="n">${on.length.toLocaleString('en')} <span class="muted">(${pct(on.length / B.length)})</span></td><td class="n pos">${hit(on)}</td><td class="n">${off.length.toLocaleString('en')}</td><td class="n neg">${hit(off)}</td></tr>`; }).join('');
+  const otw = W.filter(b => b.q.slice(0, 4).reduce((a, v) => a + v, 0) < b.line).length;
+  let h = `<h2>By quarter</h2><p class="note">Points per quarter, both teams together, in the ${B.length.toLocaleString('en')} picked games with quarter scores. Line ÷ 4: the opening line picked, spread evenly over the four quarters. All games: every regular-season game the rule looked at, weighted to the picks' leagues, so the last column is what the picks scored above an ordinary game in the same leagues.</p>`;
+  h += `<div class="scroll"><table style="max-width:1040px"><thead><tr><th>Quarter</th><th class="n">Line ÷ 4</th><th class="n">Picks</th><th class="n">Won picks</th><th class="n">Lost picks</th><th class="n">All games</th><th class="n">Picks v all games</th></tr></thead><tbody>${r1}</tbody></table></div>`;
+  h += `<h3>On course at each break</h3><p class="note">On course: more points so far than the line's share of the game (a quarter of the line after the 1st quarter, half at half-time, three quarters after the 3rd). Points v course is the average over all picks. ${otw} of the ${W.length.toLocaleString('en')} won picks were under the line after regulation and won in overtime.</p>`;
+  h += `<div class="scroll"><table style="max-width:1040px"><thead><tr><th>Break</th><th class="n">Points v course</th><th class="n">On course</th><th class="n">Hit rate</th><th class="n">Behind</th><th class="n">Hit rate</th></tr></thead><tbody>${r2}</tbody></table></div>`;
+  return h;
 }
 
 function bets(list){
