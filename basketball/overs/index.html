@@ -172,10 +172,12 @@ table.proj tr.pk td{background:var(--an-accent-soft)}table.proj tr.pk td:first-c
 a.tile:hover{border-color:var(--gold)}
 .tile .klabel{font:400 12.5px var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
 .tile .stat{font:500 26px var(--mono);line-height:1.15;font-variant-numeric:tabular-nums;display:flex;flex-wrap:wrap;align-items:center;gap:2px 6px}
-.tile .small{font-size:14.5px;color:var(--muted)}
+.tile .small{font-size:14.5px;color:var(--muted)}
+.tile .two{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%;font-size:24px}
+.tile .two i{display:block;font:400 11px var(--mono);font-style:normal;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px;white-space:nowrap}
 /* two rows of five: the record, then the closing line (14 Nov 2026) */
 #top,.metrics.m5,.tiles.t5{grid-template-columns:repeat(5,minmax(0,1fr))}   /* 1H Live test tiles: two rows of five too */
-@media(max-width:760px){#top,.metrics.m5,.tiles.t5{grid-template-columns:repeat(2,minmax(0,1fr))}#top .stat b,.metrics.m5 .big b,.tiles.t5 .stat b{white-space:normal!important}}
+@media(max-width:760px){.tile .two{font-size:19px;gap:6px}.tile .two i{white-space:normal}#top,.metrics.m5,.tiles.t5{grid-template-columns:repeat(2,minmax(0,1fr))}#top .stat b,.metrics.m5 .big b,.tiles.t5 .stat b{white-space:normal!important}}
 .tiles .pos{color:var(--up)} .tiles .neg{color:var(--dn)}
 .stale{color:#ef7a70;font-weight:600}
 details.picks{margin-top:28px}
@@ -254,10 +256,10 @@ $('sub').innerHTML = (AGE > 3 ? `<span class="stale">Not updated for ${Math.floo
   const cc = cl.filter(b => b.cpx != null && b.total !== b.close), uc = cc.reduce((a, b) => a + (b.total > b.close ? b.cpx - 1 : -1), 0);
   const mu = set.filter(b => b.mu != null), nS = `${set.length} settled picks`;
   $('top').innerHTML = [['Open picks', nOpen, nOpen ? 'to play' : 'none right now'], ['Settled picks', won + lost ? `${won}–${lost}` : '–', won + lost ? `${pct(won / (won + lost), 1)} hit rate · ${set.length} settled` : `${set.length} settled`],
-    ['ROI at opening · closing', PAIR(`${won + lost ? `<b class="${cls(units)}" style="font-weight:inherit">${roi(units / (won + lost))}</b>` : '–'} · ${cc.length ? `<b class="${cls(uc)}" style="font-weight:inherit">${roi(uc / cc.length)}</b>` : '–'}`),
-     'opening line · closing line'],
-    ['Opening line · closing line', PAIR(`${avg(cl, b => b.line)} · ${avg(cl, b => b.close)}`), ''],
-    ['Model line · actual total', PAIR(`${avg(mu, b => b.mu)} · ${avg(cl, b => b.total)}`), ''],
+    ['ROI', TWO('Opening line', won + lost ? `<b class="${cls(units)}" style="font-weight:inherit">${roi(units / (won + lost))}</b>` : '–', 'Closing line', cc.length ? `<b class="${cls(uc)}" style="font-weight:inherit">${roi(uc / cc.length)}</b>` : '–'),
+     ''],
+    ['Average line', TWO('Opening line', avg(cl, b => b.line), 'Closing line', avg(cl, b => b.close)), ''],
+    ['Average total', TWO('Model line', avg(mu, b => b.mu), 'Actual total', avg(cl, b => b.total)), ''],
     ...mvTiles(cl)]
     .map(([k, v, n]) => `<a class="tile" href="#view=livetest"><span class="klabel">${k}</span><span class="stat">${v}</span><span class="small">${n}</span></a>`).join('');
 }
@@ -271,8 +273,8 @@ const TOP_H1 = (() => {
   return [['Open 1H picks', nOpen, nOpen ? 'to play' : 'none right now'],
     ['Settled 1H picks', dec ? `${S.w}–${dec - S.w}` : '–', dec ? `${pct(S.w / dec, 1)} hit rate · ${dec} settled` : 'none yet'],
     ['ROI', S.roi != null ? `<b class="${cls(S.roi)}" style="font-weight:inherit">${roi(S.roi)}</b>` : '–', 'at the 1H line taken'],
-    ['Line · model off by', A ? PAIR(`${A.mae_line.toFixed(1)} · <b class="${A.mae_model < A.mae_line ? 'pos' : A.mae_model > A.mae_line ? 'neg' : ''}" style="font-weight:inherit">${A.mae_model.toFixed(1)}</b>`) : '–', 'points from the first-half score'],
-    ['Model on the right side', A && A.model_right != null ? pct(A.model_right, 1) : '–', A ? `of ${A.n} first halves` : ''],
+    ['Off by, points', A ? TWO('First line', A.mae_line.toFixed(1), 'Model 1H', `<b class="${A.mae_model < A.mae_line ? 'pos' : A.mae_model > A.mae_line ? 'neg' : ''}" style="font-weight:inherit">${A.mae_model.toFixed(1)}</b>`) : '–', 'from the first-half score'],
+    ['Model on right side', A && A.model_right != null ? pct(A.model_right, 1) : '–', A ? `of ${A.n} first halves` : ''],
     ...mvTiles(cl1).map(([k, v, n]) => [k.replace('Closing line', 'Closing 1H line'), v, n])]
     .map(([k, v, n]) => `<a class="tile" href="#view=h1live"><span class="klabel">${k}</span><span class="stat">${v}</span><span class="small">${n}</span></a>`).join('');
 })();
@@ -284,12 +286,14 @@ function mvTiles(list){
   const dec = L => L.filter(b => b.ret != null && b.ret !== 0);
   const hit = L => { const d = dec(L); return d.length ? pct(d.filter(b => b.ret > 0).length / d.length, 1) : '–'; };
   const wl_ = L => { const d = dec(L), w = d.filter(b => b.ret > 0).length; return `${w}–${d.length - w}`; };
-  return [['Closing line moved toward · against the pick', n ? PAIR(`${pct(up.length / n)} · ${pct(dn.length / n)}`) : '–', ''],
-          ['Avg move toward the pick', up.length ? a(up) + ' pts' : '–', `avg of ${up.length} picks`], ['Avg move against it', dn.length ? a(dn) + ' pts' : '–', `avg of ${dn.length} picks`],
-          ['Won when the line moved toward the pick', hit(up), `${wl_(up)} win – loss`], ['Won when it moved against', hit(dn), `${wl_(dn)} win – loss`]];
+  return [['Closing line moved', n ? TWO('Toward pick', pct(up.length / n), 'Against', pct(dn.length / n)) : '–', ''],
+          ['Avg move toward pick', up.length ? a(up) + ' pts' : '–', `avg of ${up.length} picks`], ['Avg move against pick', dn.length ? a(dn) + ' pts' : '–', `avg of ${dn.length} picks`],
+          ['Won when moved toward', hit(up), `${wl_(up)} win – loss`], ['Won when moved against', hit(dn), `${wl_(dn)} win – loss`]];
 }
 
 // two numbers in one tile, a little smaller so they stay on one line (14 Nov 2026)
+// two numbers in one tile, each with its own label above it (14 Nov 2026)
+function TWO(l1, v1, l2, v2){ return `<span class="two"><span><i>${l1}</i>${v1}</span><span><i>${l2}</i>${v2}</span></span>`; }
 function PAIR(v){ return `<b style="font-size:.86em;font-weight:inherit;white-space:nowrap">${v}</b>`; }
 
 // tiles in the Live test style, five to a row (14 Nov 2026)
@@ -378,13 +382,13 @@ function analysis(k, notes = true){
   const c = BT.filter(b => b.close != null), W = BT.filter(b => b.ret > 0).length, Lo = BT.filter(b => b.ret < 0).length, RK = riskTiles(BT);
   const C = (v, k) => k ? `<b class="${k}" style="font-weight:inherit">${v}</b>` : v;
   let h = TL([['Picks', `${W.toLocaleString('en')}–${Lo.toLocaleString('en')}`, `${pct(W / (W + Lo), 1)} hit rate · ${BT.length.toLocaleString('en')} picks`],
-              ['ROI at opening · closing', PAIR(`${C(roi(S.rule.roi), cls(S.rule.roi))} · ${S.rule.roic != null ? C(roi(S.rule.roic), cls(S.rule.roic)) : '–'}`), 'opening line · closing line'],
-              ['Opening line · closing line', PAIR(`${lineAvg(c, 'line')} · ${lineAvg(c, 'close')}`), ''],
-              ['Model line · actual total', PAIR(`${lineAvg(c, 'mu')} · ${lineAvg(c, 'total')}`), ''],
+              ['ROI', TWO('Opening line', C(roi(S.rule.roi), cls(S.rule.roi)), 'Closing line', S.rule.roic != null ? C(roi(S.rule.roic), cls(S.rule.roic)) : '–'), ''],
+              ['Average line', TWO('Opening line', lineAvg(c, 'line'), 'Closing line', lineAvg(c, 'close')), ''],
+              ['Average total', TWO('Model line', lineAvg(c, 'mu'), 'Actual total', lineAvg(c, 'total')), ''],
               [RK[0][0], C(RK[0][1], RK[0][2]), 'at 1 unit a pick'],
               ...(c.length ? mvTiles(c) : []),
               ...(() => { const z = c.filter(b => b.close === b.line), d = z.filter(b => b.ret !== 0), w = d.filter(b => b.ret > 0).length, r = d.length ? d.reduce((x, b) => x + b.ret, 0) / d.length : null;   // the line did not move (14 Nov 2026)
-                 return z.length ? [['Won when the line did not move', d.length ? pct(w / d.length, 1) : '–', `${pct(z.length / c.length)} of picks · ROI ${C(roi(r), cls(r))}`]] : []; })(),
+                 return z.length ? [['Won when no move', d.length ? pct(w / d.length, 1) : '–', `${pct(z.length / c.length)} of picks · ROI ${C(roi(r), cls(r))}`]] : []; })(),
               ...RK.slice(1).map(([k, v, cl]) => [k, C(v, cl), ''])]);
   if (k === 'all') h += calib(BT, `How often the picks won against the chance the model gave them, at the opening line. A well-calibrated model wins about as often as it says in every band. Worst drawdown: the biggest fall from a high point of the running profit, at 1 unit a pick, in date order; expect a run like it again.`);
   const T = (title, first, body, note='') => `<h2>${title}</h2>${nt(note)}<div class="scroll"><table style="max-width:1040px">${GHEAD(first, BHEAD)}<tbody>${body}</tbody></table></div>`;
