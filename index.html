@@ -265,8 +265,15 @@ section.alt .card .meta span { background: var(--paper-2); }
 @media (max-width: 420px) { .site-head .social { display: none; } }
 body { overflow-x: clip; }  /* safety net */
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } html { scroll-behavior: auto; } }
+
+/* Sports project directory grouping */
+.cards.project-groups{row-gap:1rem}
+.project-group{grid-column:1/-1;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin:1.1rem 0 .15rem;padding:0 0 .55rem;border-bottom:1px solid var(--rule);font:400 1.45rem/1.15 var(--display)}
+.project-group:first-child{margin-top:0}
+.project-group span{font:400 .76rem/1.4 var(--body);letter-spacing:0;color:var(--muted)}
+@media(max-width:620px){.project-group{font-size:1.25rem;gap:5px 10px}.project-group span{flex-basis:100%}}
 </style>
-<link rel="stylesheet" href="/assets/an.css?v=1">
+<link rel="stylesheet" href="/assets/an.css?v=2">
 </head>
 <body>
 
@@ -390,7 +397,8 @@ body { overflow-x: clip; }  /* safety net */
       <p class="kicker">Projects</p>
       <h2 id="h-projects">Data &amp; models</h2>
       <p class="sec-intro">Twelve data projects: models I build and test myself, in Greek and European football, European basketball, volleyball and handball, and two hubs for PAOK, a lifelong passion. 2026-27 is the models' test season, so read their records as early results. ROI is profit ÷ total staked, with pushes left out.</p>
-      <div class="cards">
+      <div class="cards project-groups">
+        <h3 class="project-group">Football <span>Match projections and competition statistics</span></h3>
         <a class="card" href="/superleague/">
           <span class="tag"><svg class="an-mark-sm" aria-hidden="true"><use href="/assets/marks.svg#football"/></svg>Modelling · Football · Test season</span>
           <h3>Greek Super League</h3>
@@ -405,6 +413,7 @@ body { overflow-x: clip; }  /* safety net */
           <!-- live:greek-cup:start --><div class="meta"><span>Last: Volos 1–3 Atromitos</span><span>24 games</span></div><!-- live:greek-cup:end -->
           <span class="go">Open <i aria-hidden="true">→</i></span>
         </a>
+        <h3 class="project-group">PAOK <span>Football and basketball season reference hubs</span></h3>
         <a class="card" href="/paok-hub/">
           <span class="tag"><svg class="an-mark-sm" aria-hidden="true"><use href="/assets/marks.svg#paok"/></svg>Stats hub · PAOK FC</span>
           <h3>PAOK Hub</h3>
@@ -419,6 +428,7 @@ body { overflow-x: clip; }  /* safety net */
           <!-- live:paok-basketball:start --><div class="meta"><span>Next: Karditsa – PAOK, Sat 14 Nov</span><span>Basket League 6–0</span></div><!-- live:paok-basketball:end -->
           <span class="go">Open <i aria-hidden="true">→</i></span>
         </a>
+        <h3 class="project-group">Basketball <span>Team strength, projections and market testing</span></h3>
         <a class="card" href="/eurocup/">
           <span class="tag"><svg class="an-mark-sm" aria-hidden="true"><use href="/assets/marks.svg#basketball"/></svg>Modelling · Basketball · Test season</span>
           <h3>EuroCup</h3>
@@ -454,6 +464,7 @@ body { overflow-x: clip; }  /* safety net */
           <!-- live:basketball-women:start --><div class="meta"><span>Record 1–0</span><span class="roi">ROI +82.0%</span><span>No open picks</span></div><!-- live:basketball-women:end -->
           <span class="go">Open <i aria-hidden="true">→</i></span>
         </a>
+        <h3 class="project-group">Other sports <span>Volleyball and handball modelling</span></h3>
         <a class="card" href="/volleyball/">
           <span class="tag"><svg class="an-mark-sm" aria-hidden="true"><use href="/assets/marks.svg#volleyball"/></svg>Modelling · Volleyball · Test season</span>
           <h3>Volleyball</h3>
