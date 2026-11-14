@@ -133,3 +133,77 @@ html[data-site] .games-link a{text-decoration-thickness:1px;text-underline-offse
   .an-project-context{display:block}
   .an-project-context__label{display:block;margin-bottom:4px}
 }
+
+
+/* ---- larger, more comfortable typography across sports dashboards ---- */
+html[data-site]{font-size:17px}
+html[data-site] body{font-size:17px;line-height:1.6}
+html[data-site] p,
+html[data-site] li,
+html[data-site] .desc,
+html[data-site] .lede,
+html[data-site] .intro,
+html[data-site] .note,
+html[data-site] .dwarn{font-size:1rem;line-height:1.65}
+html[data-site] .an-brand h1{font-size:34px}
+html[data-site] .an-kicker{font-size:14px}
+html[data-site] .an-tabs{font-size:17px;gap:24px}
+html[data-site] .an-tabs a{padding-bottom:12px;min-height:42px}
+html[data-site] .an-project-nav a{font-size:13px;min-height:46px}
+html[data-site] .an-project-context{font-size:15px;line-height:1.65;padding:13px 16px}
+html[data-site] .an-project-context__label{font-size:11px}
+html[data-site] .an-data-key{font-size:14px;line-height:1.55;gap:10px 20px;padding:12px 14px}
+html[data-site] .an-data-key__title{font-size:11px}
+html[data-site] .an-data-key__item{font-size:14px}
+html[data-site] .an-meta-strip{font-size:13.5px;line-height:1.55;padding:10px 14px}
+html[data-site] .an-pill{font-size:15.5px;padding:5px 12px}
+html[data-site] .an-home{font-size:14px}
+html[data-site] .klabel,
+html[data-site] .metric .lbl,
+html[data-site] .tile .klabel{font-size:12px;letter-spacing:.075em}
+html[data-site] .games-link{font-size:15px;line-height:1.6}
+html[data-site] .small,
+html[data-site] .muted.small,
+html[data-site] .sub,
+html[data-site] .hint,
+html[data-site] .caption,
+html[data-site] .footnote{font-size:14px;line-height:1.55}
+html[data-site] label,
+html[data-site] select,
+html[data-site] input,
+html[data-site] button{font-size:15px}
+html[data-site] table{font-size:15px}
+html[data-site] table th{font-size:13.5px;line-height:1.45}
+html[data-site] table td{font-size:15px;line-height:1.55}
+html[data-site] .stat,
+html[data-site] .metric .big2{line-height:1.15}
+@media(max-width:760px){
+  html[data-site]{font-size:16px}
+  html[data-site] body{font-size:16px}
+  html[data-site] .an-brand h1{font-size:29px}
+  html[data-site] .an-tabs{font-size:16px;gap:20px}
+  html[data-site] .an-project-nav a{font-size:12px;min-height:44px}
+  html[data-site] .an-project-context{font-size:14px}
+  html[data-site] .an-data-key,
+  html[data-site] .an-data-key__item{font-size:13px}
+  html[data-site] .an-data-key__title{font-size:10.5px}
+  html[data-site] .an-meta-strip{font-size:12.5px}
+  html[data-site] table{font-size:14px}
+  html[data-site] table th{font-size:12.5px}
+  html[data-site] table td{font-size:14px}
+  html[data-site] .small,
+  html[data-site] .muted.small,
+  html[data-site] .sub,
+  html[data-site] .hint,
+  html[data-site] .caption,
+  html[data-site] .footnote{font-size:13px}
+}
+@media(max-width:480px){
+  html[data-site] .an-brand h1{font-size:27px}
+  html[data-site] .an-project-context{font-size:13.5px}
+  html[data-site] .an-data-key,
+  html[data-site] .an-data-key__item{font-size:12.5px}
+  html[data-site] .an-meta-strip{font-size:12px}
+  html[data-site] table{font-size:13.5px}
+  html[data-site] table td{font-size:13.5px}
+}
