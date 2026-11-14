@@ -21,7 +21,7 @@
   --cream:#f6ecdb; --text:#eadfcd; --muted:#bba998; --gold:#d6b066; --gold2:#e8cb8f;
   --wine:#7d2236; --wine2:#5c1627; --white:#e9d98d; --rose:#e79aa6; --red:#b13a52;
   --display:"Playfair Display","Noto Serif",Georgia,serif; --body:"Source Serif 4","Noto Serif",Georgia,serif;
-  --label:600 11px/1.2 "Source Serif 4","Noto Serif",Georgia,serif;
+  --label:600 12px/1.2 "Source Serif 4","Noto Serif",Georgia,serif;
 }
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
@@ -39,6 +39,8 @@ header{padding:44px 0 30px}
 @media(max-width:1020px){.brand .kicker{display:none}}
 @media(max-width:760px){.top{display:grid;grid-template-columns:auto 1fr auto;}.top .views{grid-column:1/-1;grid-row:2;width:100%}.top .topr{grid-column:3;grid-row:1}}
 .brand{display:flex;align-items:center;gap:14px}
+.an-home{display:inline-flex;align-items:center;min-height:34px;padding:8px 12px;border:1px solid var(--line2);border-radius:999px;color:var(--muted);font:600 13px/1 var(--body);letter-spacing:.03em;text-decoration:none;white-space:nowrap;transition:color .2s,border-color .2s,background .2s}
+.an-home:hover,.an-home:focus-visible{color:var(--cream);border-color:var(--gold);background:rgba(255,246,232,.05)}
 .logo{display:block;line-height:0;flex:none;transition:transform .2s}
 .logo:hover{transform:translateY(-2px)}
 .logo svg{width:38px;height:44px}
@@ -71,8 +73,8 @@ h1::after{content:"";display:block;width:64px;height:2px;margin-top:18px;backgro
 .chips.collapsed{max-height:92px;overflow:hidden;-webkit-mask-image:linear-gradient(#000 62%,transparent);mask-image:linear-gradient(#000 62%,transparent)}
 .chips-toggle{background:none;border:0;color:var(--gold);font:500 15px var(--body);cursor:pointer;padding:8px 0 0;text-decoration:underline;text-decoration-color:rgba(214,176,102,.5);text-underline-offset:4px}
 .chips-toggle:hover{color:var(--gold2)}
-.chip{font:500 15px/1.2 var(--body);color:var(--text);background:var(--panel);border:1px solid var(--line);
-  padding:9px 15px;border-radius:999px;cursor:pointer;transition:border-color .2s,background .2s,color .2s}
+.chip{font:500 16px/1.2 var(--body);color:var(--text);background:var(--panel);border:1px solid var(--line);
+  padding:10px 16px;border-radius:999px;cursor:pointer;transition:border-color .2s,background .2s,color .2s}
 .chip:hover{border-color:var(--gold);color:var(--cream)}
 .chip.on{background:linear-gradient(180deg,var(--wine),var(--wine2));color:var(--cream);border-color:var(--gold)}
 main{margin-top:14px}
@@ -83,7 +85,7 @@ h2{font:500 clamp(26px,4vw,32px)/1.2 var(--display);color:var(--cream);margin:52
   box-shadow:0 14px 34px rgba(0,0,0,.28);transition:border-color .2s}
 .card:hover{border-color:var(--line2)}
 .card h3{font:700 22px/1.3 var(--display);color:var(--cream);margin:0 0 6px}
-.meta{font:400 14px/1.5 var(--body);color:var(--muted);letter-spacing:.01em}
+.meta{font:400 15px/1.5 var(--body);color:var(--muted);letter-spacing:.01em}
 .grape{margin:14px 0 6px}
 .grape b{color:var(--gold2);font-weight:600}
 .why{margin:0 0 12px;color:var(--text)}

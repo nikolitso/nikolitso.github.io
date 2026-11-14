@@ -55,7 +55,7 @@
 html { scroll-behavior: smooth; }
 body {
   margin: 0; background: var(--paper); color: var(--ink);
-  font-family: var(--body); font-size: 1.0625rem; line-height: 1.7; font-weight: 400;
+  font-family: var(--body); font-size: 1.125rem; line-height: 1.7; font-weight: 400;
   -webkit-font-smoothing: antialiased;
 }
 a { color: inherit; }
@@ -274,15 +274,26 @@ body { overflow-x: clip; }  /* safety net */
   padding: .8rem 0 .55rem;
   border-bottom: 1px solid var(--rule);
   color: var(--muted);
-  font: 600 .72rem/1.2 var(--body);
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  font: 700 .8rem/1.2 var(--body);
   letter-spacing: .16em;
   text-transform: uppercase;
+}
+.project-group-note {
+  font: 500 .85rem/1.35 var(--body);
+  letter-spacing: 0;
+  text-transform: none;
+  text-align: right;
 }
 .project-group:first-child { margin-top: 0; }
 .project-cards .card { min-height: 100%; }
 .project-cards .card .meta { row-gap: .45rem; }
 @media (max-width: 640px) {
-  .project-group { margin-top: 1.15rem; }
+  .project-group { margin-top: 1.15rem; align-items: flex-start; flex-direction: column; gap: .3rem; }
+  .project-group-note { text-align: left; }
   .project-cards { gap: .9rem; }
 }
 </style>
@@ -317,10 +328,12 @@ body { overflow-x: clip; }  /* safety net */
   <div class="hero">
     <div class="wrap hero-in">
       <div>
-        <h1 class="sr-only">Antonis Nikolitsopoulos</h1>
-        <p class="lede">Football pricing by day, data obsessive by nature. Outside of work, mostly books on sports analytics, decision-making, getting better at things. And films; the quiet ones, the brave ones, the kind that stick around long after they're over.</p>
+        <p class="eyebrow">Sports analytics · books · ideas</p>
+        <h1>Sports analytics,<br><em>made useful.</em></h1>
+        <p class="lede">Football pricing by day, data obsessive by nature. Explore live sports models, PAOK dashboards and the books that sharpen the thinking behind them.</p>
         <div class="ctas">
-          <a class="btn primary" href="/books/">Books</a>
+          <a class="btn primary" href="#projects">Explore the projects</a>
+          <a class="btn ghost" href="/books/">Books</a>
           <a class="btn ghost" href="https://whatalgomissed.com/" target="_blank" rel="noopener">What Algo Missed</a>
         </div>
       </div>
@@ -411,7 +424,7 @@ body { overflow-x: clip; }  /* safety net */
       <h2 id="h-projects">Data &amp; models</h2>
       <p class="sec-intro">Independent sports projects across Greek and European football, European basketball, volleyball and handball, alongside two PAOK statistics hubs. The Greek Cup is a data and presentation project; the other forecasting projects are in their 2026-27 test season. Treat live records as early results. ROI is profit ÷ total staked, with pushes left out.</p>
       <div class="cards project-cards">
-        <h3 class="project-group">Football</h3>
+        <h3 class="project-group"><span>Football</span><span class="project-group-note">Greek competitions and match projections</span></h3>
         <a class="card" href="/superleague/">
           <span class="tag"><svg class="an-mark-sm" aria-hidden="true"><use href="/assets/marks.svg#football"/></svg>Modelling · Football · Test season</span>
           <h3>Greek Super League</h3>
@@ -426,7 +439,7 @@ body { overflow-x: clip; }  /* safety net */
           <!-- live:greek-cup:start --><div class="meta"><span>Last: Volos 1–3 Atromitos</span><span>24 games</span></div><!-- live:greek-cup:end -->
           <span class="go">Open <i aria-hidden="true">→</i></span>
         </a>
-        <h3 class="project-group">PAOK</h3>
+        <h3 class="project-group"><span>PAOK</span><span class="project-group-note">Football and basketball season hubs</span></h3>
         <a class="card" href="/paok-hub/">
           <span class="tag"><svg class="an-mark-sm" aria-hidden="true"><use href="/assets/marks.svg#paok"/></svg>Stats hub · PAOK FC</span>
           <h3>PAOK Hub</h3>
@@ -441,7 +454,7 @@ body { overflow-x: clip; }  /* safety net */
           <!-- live:paok-basketball:start --><div class="meta"><span>Next: Karditsa – PAOK, Sat 14 Nov</span><span>Basket League 6–0</span></div><!-- live:paok-basketball:end -->
           <span class="go">Open <i aria-hidden="true">→</i></span>
         </a>
-        <h3 class="project-group">Basketball</h3>
+        <h3 class="project-group"><span>Basketball</span><span class="project-group-note">European competitions and totals models</span></h3>
         <a class="card" href="/eurocup/">
           <span class="tag"><svg class="an-mark-sm" aria-hidden="true"><use href="/assets/marks.svg#basketball"/></svg>Modelling · Basketball · Test season</span>
           <h3>EuroCup</h3>
@@ -477,7 +490,7 @@ body { overflow-x: clip; }  /* safety net */
           <!-- live:basketball-women:start --><div class="meta"><span>Record 1–0 · n=1</span><span class="roi">ROI +82.0%</span><span>No open picks</span></div><!-- live:basketball-women:end -->
           <span class="go">Open <i aria-hidden="true">→</i></span>
         </a>
-        <h3 class="project-group">Other sports</h3>
+        <h3 class="project-group"><span>Other sports</span><span class="project-group-note">Volleyball and handball projections</span></h3>
         <a class="card" href="/volleyball/">
           <span class="tag"><svg class="an-mark-sm" aria-hidden="true"><use href="/assets/marks.svg#volleyball"/></svg>Modelling · Volleyball · Test season</span>
           <h3>Volleyball</h3>

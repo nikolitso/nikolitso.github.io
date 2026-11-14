@@ -46,7 +46,7 @@
 html { scroll-behavior: smooth; }
 body {
   margin: 0; background: var(--paper); color: var(--ink);
-  font-family: var(--body); font-size: 1.0625rem; line-height: 1.7; font-weight: 400;
+  font-family: var(--body); font-size: 1.125rem; line-height: 1.7; font-weight: 400;
   -webkit-font-smoothing: antialiased;
 }
 a { color: inherit; }
@@ -132,7 +132,7 @@ h2 { font-family: var(--display); font-weight: 400; font-size: clamp(2.2rem, 4.6
 .q-lede { color: var(--muted); max-width: 56ch; margin: 1rem 0 0; }
 .q-filter { display: flex; flex-wrap: wrap; gap: .5rem; margin: .6rem 0 0; scroll-margin-top: 140px; padding: 0; list-style: none; }
 .q-filter button {
-  font: inherit; font-size: .8rem; font-weight: 600; letter-spacing: .04em; cursor: pointer;
+  font: inherit; font-size: .88rem; font-weight: 600; letter-spacing: .04em; cursor: pointer;
   border: 1px solid var(--rule); background: var(--card); color: var(--ink);
   border-radius: 999px; padding: .5rem .95rem; transition: border-color .2s, background .2s, color .2s;
   display: inline-flex; align-items: center; gap: .45rem;
@@ -148,10 +148,10 @@ h2 { font-family: var(--display); font-weight: 400; font-size: clamp(2.2rem, 4.6
 .q-filter button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .q-filter button:disabled { opacity: .4; cursor: default; }
 .q-filter button:disabled:hover { border-color: var(--rule); }
-.q-label { font-size: .7rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin: 1.6rem 0 0; }
+.q-label { font-size: .76rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin: 1.6rem 0 0; }
 .q-label + .q-filter { margin-top: .6rem; }
 .q-author {
-  font: inherit; font-size: .78rem; font-weight: 600; letter-spacing: .03em; cursor: pointer;
+  font: inherit; font-size: .86rem; font-weight: 600; letter-spacing: .03em; cursor: pointer;
   border: 1px solid transparent; background: var(--c-soft); color: var(--c-ink);
   border-radius: 999px; padding: .35rem .85rem; margin-top: .9rem; transition: border-color .2s, background .2s;
 }
@@ -180,15 +180,15 @@ h2 { font-family: var(--display); font-weight: 400; font-size: clamp(2.2rem, 4.6
 .q-top { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; }
 .q-link { font-size: .78rem; color: var(--muted); text-decoration: none; opacity: .6; transition: opacity .2s, color .2s; }
 .q-link:hover, .q-link:focus-visible { opacity: 1; color: var(--c-ink); }
-.q h3 { font-family: var(--display); font-weight: 400; font-size: clamp(1.5rem, 2.4vw, 1.8rem); line-height: 1.2; letter-spacing: 0; margin: .55rem 0 0; }
+.q h3 { font-family: var(--display); font-weight: 400; font-size: clamp(1.6rem, 2.5vw, 1.9rem); line-height: 1.2; letter-spacing: 0; margin: .55rem 0 0; }
 .q-text { margin-top: .75rem; }
 .q-text p { margin: 0 0 .85rem; line-height: 1.7; }
 .q-text p:last-child { margin-bottom: 0; }
 .q-text ul, .q-text ol { margin: 0 0 .85rem; padding-left: 1.2rem; }
 .q-text li { margin: .15rem 0; }
 .q.short .q-text p { font-family: var(--display); font-size: clamp(1.45rem, 2.4vw, 1.75rem); line-height: 1.3; }
-.q-context { font-size: .9rem; color: var(--muted); font-style: italic; margin: .75rem 0 0; }
-.q-note { font-size: .82rem; color: var(--muted); margin: .75rem 0 0; }
+.q-context { font-size: .96rem; color: var(--muted); font-style: italic; margin: .75rem 0 0; }
+.q-note { font-size: .9rem; color: var(--muted); margin: .75rem 0 0; }
 .q-note::before { content: "Note: "; font-weight: 600; }
 .q-empty { color: var(--muted); }
 
@@ -278,9 +278,9 @@ body { overflow-x: clip; }  /* safety net */
       <p class="kicker">Collection</p>
       <h1>Thought <em>Bank</em></h1>
       <p class="q-lede">Lines worth keeping, collected one at a time from books, articles and people worth listening to. Filed in seven folders so they stay usable and compound over time.</p>
-      <p class="q-label" id="q-filter-label">Folder</p>
+      <p class="q-label" id="q-filter-label">Browse by folder</p>
       <ul class="q-filter" id="q-filter" aria-labelledby="q-filter-label"></ul>
-      <p class="q-label" id="q-by-label">Who said it</p>
+      <p class="q-label" id="q-by-label">Filter by author</p>
       <ul class="q-filter" id="q-by" aria-labelledby="q-by-label"></ul>
       <div class="q-list" id="q-list" aria-live="polite">
         <noscript><p class="q-empty">Turn on JavaScript to read the quotes.</p></noscript>
