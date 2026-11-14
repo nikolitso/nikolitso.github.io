@@ -282,6 +282,21 @@ footer{margin-top:72px;padding-top:22px;border-top:1px solid var(--line);color:v
 .showall{display:block;margin:28px auto 0;font:var(--label);letter-spacing:.14em;text-transform:uppercase;color:var(--cream);background:linear-gradient(180deg,var(--wine),var(--wine2));border:1px solid var(--gold);border-radius:999px;padding:14px 26px;cursor:pointer}
 @media(max-width:560px){.views{width:100%;overflow:visible}.views button{flex:1;white-space:normal;text-align:center;padding:10px 6px;font-size:10px;letter-spacing:.08em;line-height:1.3}body{font-size:17px}.wrap{padding:0 16px 80px}.card{padding:20px}.pill summary{padding:18px 20px}.pill-body{padding:4px 20px 22px}}
 .an-home{font:600 13px/1 "Hanken Grotesk",system-ui,-apple-system,"Segoe UI",sans-serif;letter-spacing:.03em;color:rgba(244,236,226,.72);text-decoration:none;white-space:nowrap;border:1px solid rgba(214,176,102,.35);border-radius:999px;padding:9px 14px;transition:color .15s,border-color .15s}.an-home:hover,.an-home:focus-visible{color:#f4ece2;border-color:rgba(214,176,102,.75)}@media(max-width:600px){.an-home{font-size:12px;padding:7px 11px}}
+
+/* Task-led entry points: dish, ingredient, grape and region */
+.task-paths{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:22px 0 28px}
+.task-paths button{min-height:76px;padding:14px 16px;text-align:left;border:1px solid var(--line);border-radius:10px;background:rgba(255,255,255,.035);color:var(--ink);font:600 15px/1.2 var(--body);cursor:pointer;transition:background .15s,border-color .15s,transform .15s}
+.task-paths button:before{display:block;color:var(--accent);font:600 10px/1.4 var(--mono);letter-spacing:.14em;text-transform:uppercase;margin-bottom:8px}
+.task-paths button[data-path="dish"]:before{content:"01"}
+.task-paths button[data-path="ingredient"]:before{content:"02"}
+.task-paths button[data-path="grape"]:before{content:"03"}
+.task-paths button[data-path="region"]:before{content:"04"}
+.task-paths button:hover{border-color:var(--accent);background:rgba(255,255,255,.07);transform:translateY(-1px)}
+.task-paths button:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.search{margin:14px 0 20px}
+.search input{width:100%;min-height:48px;padding:11px 15px;border:1px solid var(--line);border-radius:8px;background:rgba(255,255,255,.045);color:var(--ink);font:500 16px var(--body)}
+.search input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+@media(max-width:620px){.task-paths{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.task-paths button{min-height:68px;padding:12px}}
 </style>
 </head>
 <body>
@@ -307,6 +322,12 @@ footer{margin-top:72px;padding-top:22px;border-top:1px solid var(--line);color:v
   </div>
   <div class="hero" id="hero" aria-hidden="true"></div>
   <div id="season"></div>
+  <div class="task-paths" id="taskPaths" aria-label="Choose how to explore wine" hidden>
+    <button type="button" data-path="dish"></button>
+    <button type="button" data-path="ingredient"></button>
+    <button type="button" data-path="grape"></button>
+    <button type="button" data-path="region"></button>
+  </div>
   <h1 id="title"></h1>
   <p class="lede" id="lede"></p>
   <div class="search"><input id="q" type="search" autocomplete="off"></div>
@@ -338,7 +359,7 @@ const ALLR = D.recipes, R = ALLR.filter(r => r.category !== 'Cheeses'), C = ALLR
 
 const UI = {
   en: {
-    docTitle: 'Greek Wine & Food Pairing Finder', kicker: 'Greek wine · Food pairing', title: 'The Pairing Finder',
+    docTitle: 'Greek Wine & Food Pairing Finder', pathDish: 'Dish', pathIngredient: 'Ingredient', pathGrape: 'Grape', pathRegion: 'Region', kicker: 'Greek wine · Food pairing', title: 'The Pairing Finder',
     lede: 'Every dish with the wine that suits it best. Select a dish to see the grape, the reason and more wines.',
     placeholder: 'Try moussaka, octopus, lamb, feta, tomato…', cats: 'Dish type', tags: 'Food or occasion', grapes: 'Grape',
     showAll: 'Show all', showLess: 'Show fewer', viewFinder: 'Pairing Finder', viewList: 'Wine list', viewEstates: 'Estates', estatesTitle: 'The Estates',
@@ -356,7 +377,7 @@ const UI = {
     foot: (w, r, e) => `${w} wines · ${e} estates · ${r} dishes`,
   },
   el: {
-    docTitle: 'Οδηγός Ταιριάσματος Ελληνικού Κρασιού και Φαγητού', kicker: 'Ελληνικό κρασί · Κρασί και φαγητό', title: 'Ο Οδηγός Ταιριάσματος',
+    docTitle: 'Οδηγός Ταιριάσματος Ελληνικού Κρασιού και Φαγητού', pathDish: 'Πιάτο', pathIngredient: 'Υλικό', pathGrape: 'Ποικιλία', pathRegion: 'Περιοχή', kicker: 'Ελληνικό κρασί · Κρασί και φαγητό', title: 'Ο Οδηγός Ταιριάσματος',
     lede: 'Κάθε πιάτο με το κρασί που του ταιριάζει καλύτερα. Επιλέξτε ένα πιάτο για να δείτε την ποικιλία, το γιατί και περισσότερα κρασιά.',
     placeholder: 'Δοκιμάστε μουσακά, χταπόδι, αρνί, φέτα, ντομάτα…', cats: 'Είδος πιάτου', tags: 'Φαγητό / περίσταση', grapes: 'Ποικιλία',
     showAll: 'Εμφάνιση όλων', showLess: 'Λιγότερα', viewFinder: 'Οδηγός Ταιριάσματος', viewList: 'Λίστα κρασιών', viewEstates: 'Κτήματα', estatesTitle: 'Τα Κτήματα',
@@ -395,6 +416,7 @@ const tags = Object.keys(tagCount).sort((a, b) => tagCount[b] - tagCount[a] || a
 const HASH = {home: '/wine/', list: '#list', wineries: '#estates', finder: '#finder'};
 let view = location.hash === '#finder' ? 'finder' : location.hash === '#estates' ? 'wineries' : location.hash === '#list' ? 'list' : 'home';
 let state = {q: '', cat: '', tag: '', grape: '', region: '', colour: '', variety: ''};
+let taskMode = 'dish';
 let topColour = 'White';
 const G = D.grapes, gByKey = Object.fromEntries(G.map(g => [g.key, g]));
 
@@ -1040,7 +1062,10 @@ function render() {
   }
   document.querySelectorAll('.views button').forEach(b => { b.textContent = t({list: 'viewList', wineries: 'viewEstates', finder: 'viewFinder'}[b.dataset.view]); b.classList.toggle('on', b.dataset.view === view); });
   document.getElementById('hero').innerHTML = heroSvg(home ? 'list' : view);
-  document.querySelector('.search').hidden = true;  // Antonis: no search box on any page; filter with the chips
+  document.querySelector('.search').hidden = view !== 'finder';
+  document.getElementById('taskPaths').hidden = !home;
+  const pathLabels = {dish: t('pathDish'), ingredient: t('pathIngredient'), grape: t('pathGrape'), region: t('pathRegion')};
+  document.querySelectorAll('[data-path]').forEach(b => { b.textContent = pathLabels[b.dataset.path]; });
   ['tagsLabel', 'tags', 'grapesLabel', 'grapes'].forEach(id => { document.getElementById(id).hidden = view === 'finder'; });
   document.getElementById('season').innerHTML = home ? seasonHtml() : '';
   document.getElementById('musicKick').textContent = t('music');
@@ -1052,7 +1077,7 @@ function render() {
   document.getElementById('wineryLabel').textContent = t('winery');
   document.getElementById('varietyLabel').textContent = t('grapes');
   document.getElementById('colourLabel').textContent = t('colour');
-  document.getElementById('q').placeholder = view === 'wineries' ? (lang === 'el' ? 'Αναζήτηση κτήματος ή κρασιού' : 'Search an estate or a wine') : window.matchMedia('(max-width:560px)').matches ? (lang === 'el' ? 'Αναζήτηση πιάτου ή κρασιού' : 'Search a dish or wine') : t('placeholder');
+  document.getElementById('q').placeholder = view === 'wineries' ? (lang === 'el' ? 'Αναζήτηση κτήματος ή κρασιού' : 'Search an estate or a wine') : taskMode === 'ingredient' ? (lang === 'el' ? 'Δοκίμασε ντομάτα, λεμόνι, μυρωδικά, ελαιόλαδο…' : 'Try tomato, lemon, herbs, olive oil…') : taskMode === 'grape' ? (lang === 'el' ? 'Επίλεξε ποικιλία σταφυλιού παρακάτω' : 'Choose a grape variety below') : window.matchMedia('(max-width:560px)').matches ? (lang === 'el' ? 'Αναζήτηση πιάτου ή κρασιού' : 'Search a dish or wine') : t('placeholder');
   document.getElementById('catsLabel').textContent = t('cats');
   document.getElementById('tagsLabel').textContent = t('tags');
   document.getElementById('grapesLabel').textContent = t('grapes');
@@ -1104,6 +1129,17 @@ function openModal(html) {
 function closeModal() { document.getElementById('modal').hidden = true; document.body.style.overflow = ''; }
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 document.addEventListener('click', e => {
+  const path = e.target.closest('[data-path]');
+  if (path) {
+    taskMode = path.dataset.path;
+    state = {q: '', cat: '', tag: '', grape: '', region: '', colour: '', variety: ''};
+    document.getElementById('q').value = '';
+    if (taskMode === 'region') { view = 'wineries'; location.hash = '#estates'; }
+    else { view = 'finder'; location.hash = '#finder'; }
+    render();
+    if (taskMode === 'dish' || taskMode === 'ingredient') document.getElementById('q').focus();
+    return;
+  }
   if (e.target.closest('[data-close]') || e.target.id === 'modal') { closeModal(); return; }
   if (e.target.closest('[data-showall]')) { state.showAll = true; render(); return; }
   const mb = e.target.closest('[data-month]');
