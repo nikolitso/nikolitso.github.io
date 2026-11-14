@@ -306,15 +306,18 @@ body { overflow-x: clip; }  /* safety net */
 .project-cards .card p { font-size: 1.02rem; line-height: 1.65; }
 .project-cards .card .meta { font-size: .86rem; }
 @media (max-width: 860px) {
-  .hero-in { gap: 2.5rem; }
+  .hero-in { grid-template-columns: minmax(0, 1fr); gap: 2.5rem; }
+  .picks { justify-self: stretch; width: 100%; }
   .project-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (max-width: 600px) {
   .hero-in { padding-block: 3.5rem; }
-  .hero h1 { font-size: clamp(2.7rem, 12vw, 4rem); }
+  .hero h1 { font-size: clamp(2.15rem, 10.5vw, 3.2rem); line-height: 1.02; }
   .hero .ctas { align-items: stretch; }
   .hero .btn { justify-content: center; }
   .project-cards { grid-template-columns: minmax(0, 1fr); }
+  .pick { grid-template-columns: minmax(5.5rem, 7rem) minmax(0, 1fr); gap: .8rem; }
+  .pick-title { font-size: 1.25rem; }
 }
 
 </style>
