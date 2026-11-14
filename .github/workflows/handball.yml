@@ -1,10 +1,13 @@
 name: Site · Handball
 
 # /handball/: refresh from Flashscore, rebuild the pages, publish them, save the ledgers to nikolitso/BettingSignal
-# (scripts in handball/projector there). 03:00, then hourly 07:00-21:00 Athens.
+# (scripts in handball/projector there). Every hour, day and night (from 14 Nov 2026, on request).
 on:
   schedule:
-    - cron: "0 1,5-19 * * *"   # 03:00, then hourly 07:00-21:00 Athens in winter (an hour later in summer), for match-day lines
+    # odds and results every hour; two slots because GitHub often skips scheduled runs (only ~3 of 16 ran 12-14 Nov),
+    # so a skipped slot is covered within 30 minutes. Off the hour on purpose: :00 is GitHub's busiest minute.
+    - cron: "17 * * * *"
+    - cron: "47 * * * *"
   workflow_dispatch:          # Run workflow button: Actions tab, or the GitHub mobile app
 
 permissions:
