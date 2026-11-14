@@ -152,7 +152,7 @@ const VIEWS = {
       const ps = playerTotals(c);
       if (!ps.length) return '';
       const top = (k) => [...ps].sort((a, b) => b[k] / b.gp - a[k] / a.gp)[0];
-      return `<div class="card"><div class="label">${esc(compName(c))} leaders (per game)</div><ul class="leaders">
+      return `<div class="card"><div class="label">${esc(compName(c))} leaders</div><ul class="leaders">
         ${[['pts', 'Points'], ['reb', 'Rebounds'], ['ast', 'Assists'], ['pir', 'PIR']].map(([k, l]) => { const p = top(k); return `<li><span>${l}: ${esc(p.name)}</span><b>${f1(p[k] / p.gp)}</b></li>`; }).join('')}
       </ul></div>`;
     }).join('');

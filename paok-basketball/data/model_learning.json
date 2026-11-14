@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-14T14:00:12Z",
+ "updated": "2026-11-14T22:22:04Z",
  "comps": {
   "EuroCup": {
    "games": 1109,
@@ -15,14 +15,14 @@
    "marginSd": 11.4
   },
   "GBL": {
-   "games": 969,
-   "lineGames": 945,
-   "homeEdge": 2.19,
-   "totalBias": 1.49,
+   "games": 972,
+   "lineGames": 946,
+   "homeEdge": 2.18,
+   "totalBias": 1.51,
    "spreadSd": 9.0,
-   "lineWeight": 0.89,
-   "lineWeightRaw": 0.89,
-   "marginGames": 945,
+   "lineWeight": 0.88,
+   "lineWeightRaw": 0.88,
+   "marginGames": 946,
    "marginWeight": 0.84,
    "marginWeightRaw": 0.84,
    "marginSd": 9.7
@@ -124,6 +124,18 @@
    "realMargin": 23,
    "modelMargin": -1.3,
    "hcp": 11.5
+  },
+  {
+   "comp": "GBL",
+   "opp": "Karditsa",
+   "model": 145.4,
+   "shown": 155.5,
+   "line": 156.5,
+   "real": 143,
+   "margin": 5.3,
+   "realMargin": 5,
+   "modelMargin": -1.0,
+   "hcp": 6.5
   }
  ]
 }
