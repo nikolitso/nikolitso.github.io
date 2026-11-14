@@ -4,7 +4,7 @@ name: Site · Volleyball
 # homepage card. Scripts and data in nikolitso/BettingSignal (volleyball/). Every 6 hours, on its own schedule.
 on:
   schedule:
-    - cron: "17 */6 * * *"   # backup only: the 2-hourly runs come from cron-job.org (job 'Volleyball', workflow_dispatch)
+    - cron: "17 */6 * * *"   # backup only: the hourly runs come from cron-job.org (hourly from 15 Nov 2026) (job 'Volleyball', workflow_dispatch)
   workflow_dispatch:          # Run workflow button: Actions tab, or the GitHub mobile app
 
 permissions:
