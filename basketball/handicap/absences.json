@@ -4,10 +4,12 @@
   "fa": 0.0,
   "eh": null,
   "ea": null,
-  "h": 0.1,
+  "h": -0.5,
   "a": 0.1,
   "oh": [
-   "Heurtel"
+   "Heurtel",
+   "Brown Iii",
+   "Williams"
   ],
   "oa": []
  },
@@ -110,7 +112,7 @@
   "eh": null,
   "ea": null,
   "h": -0.0,
-  "a": -0.0,
+  "a": -0.1,
   "oh": [
    "Bogues Jr"
   ],
@@ -161,12 +163,13 @@
    "days": 3
   },
   "h": -0.9,
-  "a": -0.2,
+  "a": -1.2,
   "oh": [
    "Morgan"
   ],
   "oa": [
-   "Montero"
+   "Montero",
+   "Milutinov"
   ]
  },
  "dAyWqUTk": {
@@ -271,10 +274,12 @@
    "days": 3
   },
   "h": 0.0,
-  "a": 0.1,
+  "a": -0.5,
   "oh": [],
   "oa": [
-   "Heurtel"
+   "Heurtel",
+   "Brown Iii",
+   "Williams"
   ]
  }
 }
