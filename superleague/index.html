@@ -841,17 +841,19 @@ document.addEventListener('click', e => {
 });
 $('refdlg').onclick = e => { if (e.target === $('refdlg')) $('refdlg').close(); };
 
-function refRatings(R){
+function refRatings(R, foreign){
   const g = {};
-  for (const r of R.report) if (r[4] != null && !R.foreign.includes(r[3])) (g[r[3]] ||= []).push(r[4]);
-  return Object.entries(g).map(([ref, v]) => ({ref, n: v.length, avg: v.reduce((a, b) => a + b, 0) / v.length, best: Math.max(...v), worst: Math.min(...v)}))
-    .sort((a, b) => Math.abs(b.avg - a.avg) > 1e-9 ? b.avg - a.avg : b.n - a.n);
+  for (const r of R.report) if (r[4] != null && R.foreign.includes(r[3]) === foreign) (g[r[3]] ||= []).push(r[4]);
+  const v = Object.values(g).flat();
+  const avg = v.length ? {n: v.length, avg: v.reduce((a, b) => a + b, 0) / v.length, best: Math.max(...v), worst: Math.min(...v)} : null;
+  return [avg, Object.entries(g).map(([ref, v]) => ({ref, n: v.length, avg: v.reduce((a, b) => a + b, 0) / v.length, best: Math.max(...v), worst: Math.min(...v)}))
+    .sort((a, b) => Math.abs(b.avg - a.avg) > 1e-9 ? b.avg - a.avg : b.n - a.n)];
 }
 function renderRefs(){
   const R = window.SLREF;
   if (!R) return '<p class="empty">Referee data is not available.</p>';
   const all = refGameList(), T = all ? refTables(all) : R;
-  const sec = [['rf-cards', 'Card averages'], ['rf-odds', 'By the odds'], ['rf-big4', 'Big-4 games'], ['rf-small', 'Other games'], ['rf-report', 'Referee reports'], ['rf-ked', 'Committee rulings'], ['rf-rating', 'Ratings']];
+  const sec = [['rf-cards', 'Card averages'], ['rf-odds', 'By the odds'], ['rf-big4', 'Big-4 games'], ['rf-small', 'Other games'], ['rf-report', 'Referee reports'], ['rf-ked', 'Committee rulings'], ['rf-rating', 'Greek ratings'], ['rf-rating-f', 'Foreign ratings']];
   let h = `<p class="note">How many cards each referee shows, how cards follow the odds, and how each referee did this season. Card numbers cover league games since 2024–25 (Big-4 against Big-4 since 2021–22); ratings and comments are from diaititis.gr's referee reports. ${T.live ? `Worked out from all ${T.games} league games since 2024–25 in our own match data (the same games the model uses), refreshed with every update, so each round is in once its results are (last update ${window.SLREFGAMES.updated}, Athens). Cards are every yellow and red shown; home odds are the market's average closing 1X2 price.` : `A snapshot from ${dayName(R.updated)}; it switches to tables worked out from every game once those have all been read.`} Click a referee's name to see their games.</p>
     <div class="jump">${sec.map(([id, t]) => `<button class="chip" data-jump="${id}">${t}</button>`).join('')}</div>`;
 
@@ -904,11 +906,17 @@ function renderRefs(){
     h += '</tbody></table></div>';
   }
 
-  const rt = refRatings(R);
-  h += `<h2 id="rf-rating">Referee ratings 2026–27</h2><p class="note">Average diaititis.gr rating per Greek referee this season, worked out from the reports above (referees from abroad left out).</p>
+  const rtab = (title, id, note, foreign) => {
+    const [avg, rt] = refRatings(R, foreign);
+    let t = `<h2 id="${id}">${title}</h2><p class="note">${note}</p>
     <div class="scroll"><table class="mk sortable" style="max-width:520px"><thead><tr><th>Referee</th><th class="n">Games</th><th class="n">Rating</th><th class="n">Best</th><th class="n">Worst</th></tr></thead><tbody>`;
-  for (const r of rt) h += `<tr><td>${refLink(r.ref)}</td><td class="n">${r.n}</td><td class="n">${rate(r.avg)}</td><td class="n">${r.best.toFixed(1)}</td><td class="n">${r.worst.toFixed(1)}</td></tr>`;
-  return h + '</tbody></table></div>';
+    if (avg) t += `<tr class="avg"><td>${foreign ? 'Foreign' : 'Greek'} referees (average)</td><td class="n">${avg.n}</td><td class="n">${rate(avg.avg)}</td><td class="n">${avg.best.toFixed(1)}</td><td class="n">${avg.worst.toFixed(1)}</td></tr>`;
+    for (const r of rt) t += `<tr><td>${refLink(r.ref)}</td><td class="n">${r.n}</td><td class="n">${rate(r.avg)}</td><td class="n">${r.best.toFixed(1)}</td><td class="n">${r.worst.toFixed(1)}</td></tr>`;
+    return t + '</tbody></table></div>';
+  };
+  h += rtab('Greek referee ratings 2026–27', 'rf-rating', 'Average diaititis.gr rating per Greek referee this season, worked out from the reports above. The top row averages every game a Greek referee rated.', false);
+  h += rtab('Foreign referee ratings 2026–27', 'rf-rating-f', 'The same for referees brought in from abroad, kept apart from the Greek ones. The top row averages every game a foreign referee rated.', true);
+  return h;
 }
 // click a column header to sort; averages stay on top, totals at the bottom; data-ord columns sort in the original order
 function sortKey(td, ord, i){
