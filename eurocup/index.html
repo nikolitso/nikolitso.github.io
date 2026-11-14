@@ -861,7 +861,7 @@ function renderPicks(){
       ${card('Picks', full[0] + full[1], `in 3 seasons, ${PICK_BT.games} games with a line`)}
       ${card('Record', `${full[0]}–${full[1]}`, 'won – lost')}
       ${card('ROI', `<span class="${cls(fr)}">${btPct(fr)}</span>`, `at ${PICK_PRICE.toFixed(2)}`)}
-      ${card('Worst drop', `<span class="l">−${PICK_BT.dd.toFixed(1)}</span>`, `units; longest losing run ${PICK_BT.run}`)}
+      ${card('Longest losing run', PICK_BT.run, 'picks in a row')}
     </div>
     <div class="scroll"><table class="fx pjpk"><tr><th>Part of the rule</th>${PICK_BT.seasons.map(x => `<th class="n">${x}</th>`).join('')}<th class="n">All</th><th class="n">ROI</th></tr>` +
       PICK_BT.parts.map(([name, r]) => { const t = btSum(r), v = btRoi(...t); return `<tr><td>${name}</td>${r.map(x => `<td class="n">${x[0]}–${x[1]}</td>`).join('')}<td class="n"><b>${t[0]}–${t[1]}</b></td><td class="n ${cls(v)}"><b>${btPct(v)}</b></td></tr>`; }).join('') +
