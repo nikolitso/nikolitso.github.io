@@ -1,0 +1,43 @@
+name: Site · Quality check
+
+# scripts/qc.py on every published page: no units, no bookmaker wording, one projects menu with the page's project marked,
+# the ← Home link, nothing under 14px on the sports pages, the current shared stylesheet, no broken internal links,
+# sitemaps that point at real pages, a title and description on every page. Read-only: it changes nothing.
+# Twice a day (07:20 and 19:20 Athens in winter) and from the button. A failed check sends one ntfy message
+# (NTFY_TOPIC secret) and the run's summary lists every problem.
+on:
+  schedule:
+    - cron: "20 5,17 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.14"
+      - name: Check every page
+        run: python -u scripts/qc.py | tee /tmp/qc.log
+      - name: Message the problems
+        if: ${{ failure() }}
+        env:
+          NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
+        shell: python
+        run: |
+          import os, urllib.request
+          topic = os.environ.get('NTFY_TOPIC', '').strip()
+          lines = [l.rstrip() for l in open('/tmp/qc.log', encoding='utf-8') if l.strip()]
+          body = '\n'.join(lines[-1:] + lines[:8]).encode('utf-8')
+          if topic:
+              req = urllib.request.Request('https://ntfy.sh/' + topic, data=body, method='POST', headers={
+                  'Title': 'Site check: problems found', 'Tags': 'warning',
+                  'Click': 'https://github.com/nikolitso/nikolitso.github.io/actions/workflows/site-check.yml'})
+              print(urllib.request.urlopen(req, timeout=30).status)
+          else:
+              print('no NTFY_TOPIC secret: nothing sent')
