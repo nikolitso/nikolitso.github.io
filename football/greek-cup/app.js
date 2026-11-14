@@ -1,11 +1,11 @@
 (function () {
   var D = window.CUP, GF = D.games;
   var STATS = [
-    ["goals", "Goals"], ["xg", "xG"], ["xgot", "xG on target"], ["bc", "Big chances"], ["co", "Corners"],
+    ["goals", "Goals"], ["xg", "xG"], ["xgot", "xG on target"], ["co", "Corners"],
     ["shots", "Shots"], ["sot", "Shots on target"], ["fouls", "Fouls"], ["gk", "Goal kicks"], ["ti", "Throw-ins"],
     ["sv", "Goalkeeper saves"], ["cards", "Cards"]
   ];
-  var SHORT = {goals: "Goals", xg: "xG", xgot: "xGOT", shots: "Shots", sot: "SoT", bc: "Big ch.", co: "Corners", fouls: "Fouls", gk: "Goal kicks", ti: "Throw-ins", sv: "Saves", cards: "Cards"};
+  var SHORT = {goals: "Goals", xg: "xG", xgot: "xGOT", shots: "Shots", sot: "SoT", co: "Corners", fouls: "Fouls", gk: "Goal kicks", ti: "Throw-ins", sv: "Saves", cards: "Cards"};
   var XG = {xg: 1, xgot: 1};   // shown with two decimals, no over line
   // first-half copy of every game: same shape, stats taken from g.h1
   var G1 = GF.filter(function (g) { return g.h1; }).map(function (g) {
@@ -23,7 +23,7 @@
     return '<div class="seg" id="per"><button data-p="0"' + (st.half ? '' : ' class="on"') + '>Full match</button><button data-p="1"' + (st.half ? ' class="on"' : '') + '>1st half</button></div>';
   }
   // wide tables show one group of stats at a time so they fit the page
-  var GROUPS = {att: ["goals", "xg", "xgot", "bc", "co", "shots", "sot"], oth: ["fouls", "gk", "ti", "sv", "cards"]};
+  var GROUPS = {att: ["goals", "xg", "xgot", "co", "shots", "sot"], oth: ["fouls", "gk", "ti", "sv", "cards"]};
   function COLS() { return STATS.filter(function (s) { return GROUPS[st.grp].indexOf(s[0]) >= 0; }); }
   function grpSeg() {
     return '<div class="seg grp"><button data-g="att"' + (st.grp === "att" ? ' class="on"' : '') + '>Attack</button><button data-g="oth"' + (st.grp === "oth" ? ' class="on"' : '') + '>Other</button></div>';
@@ -332,12 +332,12 @@
       ["h1", "1H stats", "the first half on its own"], ["teams", "Teams", "every club, for and against"],
       ["odds", "By odds", "stats by the favourite's price and the over 2.5 price"], ["matches", "Matches", "every game by date"]];
     var h = '<div class="doc">' +
-      '<p>Every Greek Cup ' + D.season + ' league-phase game with team stats for the full match and the first half: goals, xG, xG on target, shots, shots on target, big chances, corners, fouls, goal kicks, throw-ins, goalkeeper saves and cards. The August qualifiers are not included.</p>';
+      '<p>Every Greek Cup ' + D.season + ' league-phase game with team stats for the full match and the first half: goals, xG, xG on target, shots, shots on target, corners, fouls, goal kicks, throw-ins, goalkeeper saves and cards. The August qualifiers are not included.</p>';
     h += '<div class="facts">';
     links.forEach(function (l) { h += '<a class="fact" href="#view=' + l[0] + '" style="text-decoration:none"><b>' + l[1] + '</b>' + l[2] + '</a>'; });
     h += '</div>' +
       '<ul><li><b>All stats are 90 minutes plus stoppage time</b>, as recorded in the match stats. Extra time is not included, as it does not count in betting settlements.</li>' +
-      '<li><b>xG</b> (expected goals) and <b>xG on target</b> are shown with two decimals. <b>Big chances</b> are clear scoring chances as logged for each game.</li>' +
+      '<li><b>xG</b> (expected goals) and <b>xG on target</b> are shown with two decimals.</li>' +
       '<li><b>Cards</b> are counted as: yellow 1, straight red 2, a player sent off with two yellows 3. Counted from the match incidents.</li>' +
       '<li><b>Tiers</b>: SL1 = Super League clubs, SL2 = Super League 2 (' + sl2.join(", ") + '). "SL1 v SL2" counts the tie whoever is at home.</li>' +
       '<li><b>Odds</b>: 1X2 and over/under 2.5 goals before kick-off, the middle market price for each game. "Odds %" removes the margin.</li>' +
