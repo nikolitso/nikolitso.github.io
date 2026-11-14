@@ -325,12 +325,15 @@ function settled(){
   let h = '';
   if (!done.length) return '<h2>Settled picks</h2><p class="empty">No settled picks yet. Each pick is added here once its match is played.</p>';
   if (lg === 'all'){
-    h += `<h2>By league</h2><div class="scroll"><table style="max-width:940px"><thead><tr><th>League</th><th class="n">Picks</th><th class="n">Won</th><th class="n">Hit</th><th class="n">Avg market line</th><th class="n">Avg model line</th><th class="n">Avg actual total</th><th class="n">ROI</th></tr></thead><tbody>`;
-    for (const l of DATA.leagues){
-      const g = done.filter(p => p.lg === l.key); if (!g.length) continue;
-      const gw = g.filter(p => p.won).length, gu = g.reduce((s, p) => s + p.profit, 0);
+    // click a column to sort by it, again to reverse (user, 14 Nov 2026)
+    const avg = (g, k) => { const v = g.map(p => p[k]).filter(x => x != null); return v.length ? v.reduce((s, x) => s + x, 0) / v.length : -1; };
+    const rows = DATA.leagues.map(l => { const g = done.filter(p => p.lg === l.key), w = g.filter(p => p.won).length, u = g.reduce((s, p) => s + p.profit, 0);
+      return {l, g, w, u, league: l.country + ' ' + l.name, n: g.length, hit: w / g.length, line: avg(g, 'line'), fair: avg(g, 'fair'), total: avg(g, 'total'), roi: u / g.length}; }).filter(r => r.n);
+    rows.sort((a, b) => { const x = a[lSort.k], y = b[lSort.k]; return (x < y ? -1 : x > y ? 1 : 0) * lSort.d || b.roi - a.roi; });
+    const th = (k, lab, n = true) => `<th class="${n ? 'n ' : ''}tsort" data-lsort="${k}">${lab}${lSort.k === k ? (lSort.d > 0 ? ' ▴' : ' ▾') : ''}</th>`;
+    h += `<h2>By league</h2><p class="note">Click a column to sort by it.</p><div class="scroll"><table style="max-width:940px"><thead><tr>${th('league', 'League', false)}${th('n', 'Picks')}${th('w', 'Won')}${th('hit', 'Hit')}${th('line', 'Avg market line')}${th('fair', 'Avg model line')}${th('total', 'Avg actual total')}${th('roi', 'ROI')}</tr></thead><tbody>`;
+    for (const {l, g, w: gw, u: gu} of rows)
       h += `<tr><td>${l.country} <span class="muted">${l.name} ${sexAb(l)}</span></td><td class="n">${g.length}</td><td class="n">${gw}</td><td class="n">${pct(gw / g.length)}</td><td class="n">${avgLine(g, 'line')}</td><td class="n">${avgLine(g, 'fair')}</td><td class="n">${avgLine(g, 'total')}</td><td class="n ${cls(gu)}">${sgn(gu / g.length * 100, 1)}%</td></tr>`;
-    }
     h += '</tbody></table></div>';
   }
   h += `<h2>Settled picks, latest first</h2><div class="scroll"><table><thead><tr><th>Date</th>${lg === 'all' ? '<th>League</th>' : ''}<th>Match</th><th class="n">Market line</th><th class="n">Price</th><th class="n">Model line</th><th class="n">Over chance</th><th class="n">Edge</th><th class="n">Sets</th><th class="n">Total</th></tr></thead><tbody>`;
@@ -415,7 +418,7 @@ function renderBacktest(){
 
 // every league the backtest ran on, women's and men's, the same rule and unseen seasons (most are not on the page);
 // click a header to sort by it, again to flip the order
-let tSort = {k: 'roi', d: -1};
+let tSort = {k: 'roi', d: -1}, lSort = {k: 'roi', d: -1};   // lSort: By league on Live test
 const tKey = {league: t => (t.women ? 0 : 1) + t.country + ' ' + t.name, seasons: t => t.seasons, n: t => t.n,
               hit: t => t.n ? t.w / t.n : -1, roi: t => t.n ? t.roi : -9, blind: t => t.blind_n ? t.blind_roi : -9};
 function testedTable(){
@@ -431,6 +434,7 @@ function testedTable(){
 document.addEventListener('click', e => {
   const c = e.target.closest('th.tsort');
   if (!c) return;
+  if (c.dataset.lsort){ const k = c.dataset.lsort; lSort = lSort.k === k ? {k, d: -lSort.d} : {k, d: k === 'league' ? 1 : -1}; render(); return; }
   const k = c.dataset.tsort;
   tSort = tSort.k === k ? {k, d: -tSort.d} : {k, d: k === 'league' ? 1 : -1};
   render();
