@@ -4,6 +4,8 @@
   var list = document.getElementById("q-list");
   var filter = document.getElementById("q-filter");
   var byFilter = document.getElementById("q-by");
+  var search = document.getElementById("q-search");
+  var count = document.getElementById("q-count");
   var onAuthor = function () {};
   var wide = window.matchMedia("(min-width: 861px)");
   // The seven Thought Bank folders in order, each with its one-line summary. Unknown categories go last.
@@ -23,6 +25,10 @@
   function personTone(n) { var h = 0; for (var i = 0; i < n.length; i++) h = (h * 31 + n.charCodeAt(i)) >>> 0; return h % 10; }
 
   function who(q) { return String(q.author || "").trim(); }
+  function matchesQuery(q, query) {
+    if (!query) return true;
+    return [q.title, q.text, q.context, q.note, who(q), q.category].join(" ").toLowerCase().indexOf(query) > -1;
+  }
   function slug(s) { return s.toLowerCase().replace(/&/g, "and").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, ""); }
   function el(tag, cls, text) {
     var n = document.createElement(tag);
@@ -93,16 +99,19 @@
     });
   }
 
-  function render(quotes, active, by) {
+  function render(quotes, active, by, query) {
     list.textContent = "";
     var groups = {};
     quotes.forEach(function (q) {
       if (active && slug(q.category || "") !== active) return;
       if (by && slug(who(q)) !== by) return;
+      if (!matchesQuery(q, query)) return;
       (groups[q.category] = groups[q.category] || []).push(q);
     });
     var cats = Object.keys(groups).sort(function (a, b) { return rank(a) - rank(b) || a.localeCompare(b); });
-    if (!cats.length) { list.appendChild(el("p", "q-empty", "No quotes match this folder and author yet.")); return; }
+    var shown = cats.reduce(function (n, c) { return n + groups[c].length; }, 0);
+    if (count) count.textContent = "Showing " + shown + " of " + quotes.length + " quotes";
+    if (!cats.length) { if (count) count.textContent = "No matches"; list.appendChild(el("p", "q-empty", "No quotes match this search and filter combination yet.")); return; }
     cats.forEach(function (c) {
       var sec = list.appendChild(el("section", "q-chapter"));
       sec.id = slug(c);
@@ -133,11 +142,11 @@
     });
   }
 
-  function buttons(quotes, active, by, onChapter, onBy) {
+  function buttons(quotes, active, by, query, onChapter, onBy) {
     var cats = {}, names = {}, catTotal = 0, byTotal = 0;
     quotes.forEach(function (q) { cats[q.category] = 0; if (who(q)) names[who(q)] = 0; });
     quotes.forEach(function (q) {
-      var inCat = !active || slug(q.category || "") === active, inBy = !by || slug(who(q)) === by;
+      var inSearch = matchesQuery(q, query), inCat = inSearch && (!active || slug(q.category || "") === active), inBy = inSearch && (!by || slug(who(q)) === by);
       if (inBy) { cats[q.category]++; catTotal++; }
       if (inCat) { if (who(q)) names[who(q)]++; byTotal++; }
     });
@@ -158,13 +167,15 @@
         .map(function (q, i) { if (q.id == null) q.id = i + 1; return q; })
         .sort(function (a, b) { return a.id - b.id; });
       var params = new URLSearchParams(location.search);
-      var active = params.get("topic") || "", by = params.get("by") || "";
+      var active = params.get("topic") || "", by = params.get("by") || "", query = (params.get("q") || "").trim().toLowerCase();
+      if (search) search.value = query;
       if (active && !quotes.some(function (q) { return slug(q.category || "") === active; })) active = "";
       if (by && !quotes.some(function (q) { return who(q) && slug(who(q)) === by; })) by = "";
       function update() {
         var u = new URL(location.href);
         if (active) u.searchParams.set("topic", active); else u.searchParams.delete("topic");
         if (by) u.searchParams.set("by", by); else u.searchParams.delete("by");
+        if (query) u.searchParams.set("q", query); else u.searchParams.delete("q");
         u.hash = "";
         history.replaceState(null, "", u);
         draw();
@@ -173,9 +184,10 @@
       function pickBy(s) { by = s; update(); }
       // An author pill on a card shows everything by that person, across all chapters.
       onAuthor = function (s) { by = s; active = ""; update(); filter.scrollIntoView({ behavior: "smooth", block: "start" }); };
-      function draw() { buttons(quotes, active, by, pickChapter, pickBy); render(quotes, active, by); }
+      function draw() { buttons(quotes, active, by, query, pickChapter, pickBy); render(quotes, active, by, query); }
       draw();
-      wide.addEventListener("change", function () { render(quotes, active, by); });
+      if (search) search.addEventListener("input", function () { query = String(search.value || "").trim().toLowerCase(); update(); });
+      wide.addEventListener("change", function () { render(quotes, active, by, query); });
       if (location.hash) { var t = document.getElementById(location.hash.slice(1)); if (t) t.scrollIntoView(); }
     })
     .catch(function () {
