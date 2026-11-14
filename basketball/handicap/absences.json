@@ -311,5 +311,50 @@
   "oa": [
    "Anderson"
   ]
+ },
+ "MBguMXFO": {
+  "fh": -1.9,
+  "fa": 0.0,
+  "eh": {
+   "comp": "EuroLeague",
+   "opp": "Zalgiris Kaunas",
+   "away": true,
+   "days": 2
+  },
+  "ea": null,
+  "h": -0.7,
+  "a": -0.1,
+  "oh": [
+   "Yabusele",
+   "Nunn",
+   "Fall"
+  ],
+  "oa": [
+   "Jackson"
+  ]
+ },
+ "xztapJM9": {
+  "fh": -0.9,
+  "fa": -0.9,
+  "eh": {
+   "comp": "EuroCup",
+   "opp": "Manresa",
+   "away": true,
+   "days": 3
+  },
+  "ea": {
+   "comp": "EuroCup",
+   "opp": "Le Mans",
+   "away": false,
+   "days": 3
+  },
+  "h": -0.8,
+  "a": -1.0,
+  "oh": [
+   "Osman"
+  ],
+  "oa": [
+   "Morgan"
+  ]
  }
 }

@@ -205,8 +205,6 @@ details.picks>summary .muted{font-size:14px;font-weight:400}
 <a href="/superleague/">Super League</a>
 <a href="/football/greek-cup/">Greek Cup</a>
 <a href="/basketball/" aria-current="page">Basketball</a>
-<a href="/basketball/overs/">Basketball Totals</a>
-<a href="/basketball/women/">Women's Totals</a>
 <a href="/eurocup/">EuroCup</a>
 <a href="/fibaeuropecup/">FIBA Europe Cup</a>
 <a href="/paok-hub/">PAOK FC</a>
@@ -214,10 +212,14 @@ details.picks>summary .muted{font-size:14px;font-weight:400}
 <a href="/volleyball/">Volleyball</a>
 <a href="/handball/">Handball</a>
 </div></nav>
-
 <div class="wrap">
-<div class="an-project-context"><span class="an-project-context__label">Scope</span><span>Team and player results estimate each team's expected margin. This page compares the projected home margin with the bookmaker handicap and final score margin; it is a projection study, not a picks ledger.</span></div><div class="an-data-key" role="group" aria-label="How to read projected margins"><span class="an-data-key__title">Reading the numbers</span><span class="an-data-key__item"><i class="an-data-key__dot an-data-key__dot--expected" aria-hidden="true"></i><b>Model</b> projected home margin</span><span class="an-data-key__item"><i class="an-data-key__dot an-data-key__dot--market" aria-hidden="true"></i><b>Market</b> bookmaker handicap / line</span><span class="an-data-key__item"><i class="an-data-key__dot an-data-key__dot--actual" aria-hidden="true"></i><b>Actual</b> final score margin</span></div>
-
+<div class="an-project-context"><span class="an-project-context__label">Scope</span><span>Team and player results estimate each team's expected margin. This page compares the projected home margin with the bookmaker handicap and final score margin; it is a projection study, not a picks ledger.</span></div>
+<div class="an-data-key" role="group" aria-label="How to read projected margins">
+<span class="an-data-key__title">Reading the numbers</span>
+<span class="an-data-key__item"><i class="an-data-key__dot an-data-key__dot--expected" aria-hidden="true"></i><b>Model</b> projected home margin</span>
+<span class="an-data-key__item"><i class="an-data-key__dot an-data-key__dot--market" aria-hidden="true"></i><b>Market</b> bookmaker handicap / line</span>
+<span class="an-data-key__item"><i class="an-data-key__dot an-data-key__dot--actual" aria-hidden="true"></i><b>Actual</b> final score margin</span>
+</div>
   <style>#chips{gap:10px}#chips a{display:inline-flex;align-items:center;gap:10px;font-size:18px;padding:9px 20px 9px 12px}#chips .lgflag{display:inline-flex;width:30px;height:20px;border-radius:3px;overflow:hidden;box-shadow:0 0 0 1px rgba(127,127,127,.35)}#chips .lgflag svg{width:100%;height:100%;display:block}#secs{gap:8px}#secs a{border:1px solid var(--line);background:var(--surface,transparent);color:var(--ink);padding:5px 15px;border-radius:99px;font-family:inherit;font-size:15px;text-decoration:none}#secs a:hover{border-color:var(--gold)}#secs a.on{background:var(--gold);border-color:var(--gold);color:var(--an-on-accent)}</style>
   <div class="chips" id="chips" style="margin:0 0 12px"></div>
   <div class="chips" id="secs" style="margin:-4px 0 12px"></div>
@@ -226,7 +228,7 @@ details.picks>summary .muted{font-size:14px;font-weight:400}
   <div id="out"></div>
 </div>
 
-<script src="live.js?v=202611141704"></script>
+<script src="live.js?v=202611141749"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
