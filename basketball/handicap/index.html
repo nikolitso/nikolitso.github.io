@@ -207,7 +207,7 @@ details.picks>summary .muted{font-size:14px;font-weight:400}
   <div id="out"></div>
 </div>
 
-<script src="live.js?v=202611141132"></script>
+<script src="live.js?v=202611141143"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
@@ -274,16 +274,18 @@ function renderMethod(){
 <p>Each team gets one number, its <b>strength</b>: how many points better or worse than its league's average team it is. It comes from this season's games only, because rosters change from year to year, with recent games counting more (half-life ${P.half_life} days) and pulled toward 0 while a team has few games. Each league also has a <b>home edge</b>: the average home margin, this season and earlier ones. Overtime counts, as the books settle the handicap. The Teams tab lists every team's strength.</p>
 <div class="calc">projected home margin = home edge + home strength − away strength</div>
 ${E ? `<p>Example: ${esc(E.home)} v ${esc(E.away)} (${dayName(E.date)}): the model had the home side by ${sgn(E.mu)}, a handicap of ${hc(E.mu)}; the books opened at ${hc(E.open)} and closed at ${hc(E.line)}. Final score ${E.hp}–${E.ap}.</p>` : ''}
-<h3><span class="num">2</span>Only after ${GP} games</h3>
+<h3><span class="num">2</span>Absences</h3>
+<p>Results alone cannot see who plays. Since 14 Nov 2026 the margin adds each team's line-up change from the <a class="gm" href="/basketball/greece/#str">Team strength</a> model, which values every player from the official box scores and knows who is out (missed the last game, or ruled out by club news, often imports): (the team's average line-up cost in its games so far − the cost of the line-up expected next) × possessions ÷ 100. Players back or a new import count the other way. The value is frozen at tip-off, so a played game keeps what the page showed. Not backtested: there is no line-up history before this season.</p>
+<h3><span class="num">3</span>Only after ${GP} games</h3>
 <p>An estimate is shown once both teams have played at least <b>${GP} games</b> of the regular season, so that a team's strength rests on enough of its own games; before that the number is mostly the league average. Play-off games are left out.</p>
-<h3><span class="num">3</span>Against the handicap</h3>
+<h3><span class="num">4</span>Against the handicap</h3>
 <p>The line is the books' handicap for the home side: the median of each book's main handicap (the one it prices closest to evens), at the opening and at the latest or closing line. The <b>model's side</b> is the home team when the projected margin is above the line, the away team when below; <b>Diff</b> is the gap in points. The <b>chance</b> that side covers assumes the final margin falls around the projection with the league's usual miss: about ${f1(sdG)} points in Greece and ${f1(sdC)} in Cyprus.</p>
 <div class="calc">chance the home side covers = P(margin &gt; line), margin ~ Normal(projection, league miss)</div>
-<h3><span class="num">4</span>Projected total and points</h3>
+<h3><span class="num">5</span>Projected total and points</h3>
 <p>Each match page also projects the total: the <a class="gm" href="/basketball/overs/#view=method">totals page</a>'s model (league average plus both teams' scoring numbers), plus pace and 3-point luck, with each league's own weights fitted on its 2022–26 games: Greece +0.45 points per possession of pace above the league average and −0.51 per point of 3-point luck; Cyprus +1.63 and −0.13 (hot shooting tends to cool). Fitted on 2022–25 alone, they cut the miss on unseen 2025–27 games from 18.38 to 18.30 points in Greece and from 16.56 to 16.30 in Cyprus. Each side's points = (total ± margin) ÷ 2.</p>
-<h3><span class="num">5</span>Match by match</h3>
+<h3><span class="num">6</span>Match by match</h3>
 <p>Click any match for its full calculation: the home edge, each team's games behind its strength, the projected margin, the line and the chance. The page shows estimates only: no picks and no betting record. <b>Played this season</b> keeps every game's estimate as it stood before tip-off, worked out from the games before that day, with the result and whether the model's side covered at the opening and the closing handicap. The model cannot see news: injuries, rest and roster moves count only once they show up in results, while the line knows them.</p>
-<h3><span class="num">6</span>Data</h3>
+<h3><span class="num">7</span>Data</h3>
 <p>Results and handicaps for the two leagues of the <a class="gm" href="/basketball/">basketball projections</a>, the Greek Basket League and Cyprus Division A. The model's settings were fitted once on 2021–22 results of 43 leagues, since two leagues alone give too few games to set them. The page refreshes every hour or so.</p>
 </div>`;
 }
@@ -300,7 +302,7 @@ function renderGame(){
   const id = (location.hash.match(/id=([^&]+)/) || [])[1], gid = id && decodeURIComponent(id);
   const g = LIVE.fixtures.find(x => x.id === gid) || LIVE.played.find(x => x.id === gid);
   if (!g || !g.wk) return '<p class="empty">This game is no longer on the page: estimates cover the next 7 days and this season\'s played games.</p>';
-  const W = g.wk, done = g.hp != null, line = g.line, sd = g.sd, est = g.ok !== false, mu = W.hca + W.rh - W.ra;
+  const W = g.wk, done = g.hp != null, line = g.line, sd = g.sd, est = g.ok !== false, AB = g.ab, mu = W.hca + W.rh - W.ra + (AB ? AB.h - AB.a : 0);
   const step = (n, t) => `<h3><span class="num">${n}</span>${t}</h3>`, calc = x => `<div class="calc">${x}</div>`;
   const tbl = (head, rows, w = 620) => `<div class="scroll"><table class="mk mini" style="max-width:${w}px"><tr>${head.map((x, i) => `<th${i ? ' class="n"' : ''}>${x}</th>`).join('')}</tr>${rows.join('')}</table></div>`;
   const pts = (hm, tot) => tot == null || hm == null ? ['–', '–'] : [f1((tot + hm) / 2), f1((tot - hm) / 2)];
@@ -311,14 +313,20 @@ function renderGame(){
   h += step(1, 'Home edge') + `<p>The league's average home margin, recent games counting more: <b>${sgn(W.hca)}</b>.</p>`;
   h += step(2, `${esc(g.home)} strength`) + `<p>Points better (+) or worse (−) than the league's average team, from this season's results, each margin adjusted for the opponent and the venue: <b>${sgn(W.rh)}</b>.</p>${gamesTable(g.home, W.th, W.rh)}`;
   h += step(3, `${esc(g.away)} strength`) + `<p>The same for the away side: <b>${sgn(W.ra)}</b>.</p>${gamesTable(g.away, W.ta, W.ra)}`;
-  h += step(4, 'Projected margin') + calc(`home edge + home strength − away strength<br>${sgn(W.hca)} ${W.rh < 0 ? '−' : '+'} ${Math.abs(W.rh).toFixed(1)} ${W.ra < 0 ? '+' : '−'} ${Math.abs(W.ra).toFixed(1)} = <b>${sgn(mu)}</b> for ${esc(g.home)} (the model's handicap; home favourite = +)`);
+  h += step(4, 'Absences') + (AB
+    ? `<p>The strengths above come from the line-ups each team fielded so far. The <a class="gm" href="/basketball/${{'greece-basket-league': 'greece', 'cyprus-division-a': 'cyprus'}[g.lg]}/#str">Team strength</a> model values every player from the official box scores and knows who is out (missed the last game or ruled out by the news): each team's expected line-up against its usual one this season, in points.</p>`
+      + tbl(['Team', 'Out', 'Points'], [`<tr><td>${esc(g.home)}</td><td class="n">${AB.oh.length ? AB.oh.map(esc).join(', ') : '–'}</td><td class="n">${sgn(AB.h)}</td></tr>`, `<tr><td>${esc(g.away)}</td><td class="n">${AB.oa.length ? AB.oa.map(esc).join(', ') : '–'}</td><td class="n">${sgn(AB.a)}</td></tr>`], 620)
+      + `<p class="muted">Points also move when players come back or a new import joins, so a team can gain with someone out.</p>`
+    : `<p class="muted">No line-up data for this game: no change.</p>`);
+  const ab = AB ? AB.h - AB.a : 0;
+  h += step(5, 'Projected margin') + calc(`home edge + home strength − away strength + absences<br>${sgn(W.hca)} ${W.rh < 0 ? '−' : '+'} ${Math.abs(W.rh).toFixed(1)} ${W.ra < 0 ? '+' : '−'} ${Math.abs(W.ra).toFixed(1)} ${ab < 0 ? '−' : '+'} ${Math.abs(ab).toFixed(1)} = <b>${sgn(mu)}</b> for ${esc(g.home)} (the model's handicap; home favourite = +)`);
   const PL = g.pl || {}, tb = g.tb != null ? g.tb : g.tot;
   const tr = (n, x) => `<tr><td>${esc(n)}</td><td class="n">${x ? sgn(x[0]) : '–'}</td><td class="n">${x && x[2] != null ? sgn(x[2]) : '–'}</td></tr>`;
-  h += step(5, 'Projected total') + `<p>The <a class="gm" href="/basketball/overs/#view=method">totals page</a>'s model (the league's average total plus both teams' scoring numbers), then pace and 3-point luck: each possession of pace above the league average${PL.avg ? ` (${f1(PL.avg)})` : ''} is worth ${g.tk ? sgn(g.tk[0], 2) : '–'} points and each point of 3-point luck ${g.tk ? sgn(g.tk[1], 2) : '–'} (luck counts against: hot shooting tends to cool), both fitted on ${g.tk ? g.tk[2] : '–'} games of this league, 2022–26.</p>`
+  h += step(6, 'Projected total') + `<p>The <a class="gm" href="/basketball/overs/#view=method">totals page</a>'s model (the league's average total plus both teams' scoring numbers), then pace and 3-point luck: each possession of pace above the league average${PL.avg ? ` (${f1(PL.avg)})` : ''} is worth ${g.tk ? sgn(g.tk[0], 2) : '–'} points and each point of 3-point luck ${g.tk ? sgn(g.tk[1], 2) : '–'} (luck counts against: hot shooting tends to cool), both fitted on ${g.tk ? g.tk[2] : '–'} games of this league, 2022–26.</p>`
     + (PL.home ? tbl(['Team', 'Pace', '3-pt luck'], [tr(g.home, PL.home), tr(g.away, PL.away), `<tr class="sum"><td>This game</td><td class="n">${PL.pace != null ? sgn(PL.pace) : '–'}</td><td class="n">${PL.luck != null ? sgn(PL.luck) : '–'}</td></tr>`], 520) : '')
     + calc(`totals model ${tb == null ? '–' : f1(tb)} + pace ${g.tpace == null ? '0 (not enough games)' : sgn(g.tpace)} + luck ${g.tluck == null ? '0 (not enough games)' : sgn(g.tluck)} = <b>${T}</b> points`);
   const [mh, ma] = pts(est ? g.mu : null, g.tot);
-  h += step(6, 'Points for each side') + calc(`${esc(g.home)} = (total + margin) ÷ 2 = <b>${mh}</b><br>${esc(g.away)} = (total − margin) ÷ 2 = <b>${ma}</b>`);
+  h += step(7, 'Points for each side') + calc(`${esc(g.home)} = (total + margin) ÷ 2 = <b>${mh}</b><br>${esc(g.away)} = (total − margin) ÷ 2 = <b>${ma}</b>`);
   const modelRow = cls => `<tr class="${cls}"><td><b>Model</b></td><td class="n">${mh}</td><td class="n">${ma}</td><td class="n">${est ? hc(g.mu) : '–'}</td><td class="n">${T}</td></tr>`;
   h += tbl(['', esc(g.home), esc(g.away), 'Handicap', 'Total'], [modelRow('sum')], 760);
   // last: the books
