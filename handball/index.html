@@ -152,7 +152,7 @@ th[aria-sort=ascending]::after{content:" \25B2";font-size:.7em}th[aria-sort=desc
 html{scroll-behavior:smooth;font-size:17.5px}   /* one step larger: the page sizes its text in rem */section{scroll-margin-top:60px}
 @media (max-width:700px){.rule{grid-template-columns:1fr}}
 </style>
-<link rel="stylesheet" href="/assets/an.css?v=1">
+<link rel="stylesheet" href="/assets/an.css?v=2">
 <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "b67bbb76d0e24af196b24ded3ab71ad0"}'></script>
 
 <!-- sitebar:start (link back to antonisnikolitsopoulos.com; keep on every page) -->
@@ -167,7 +167,14 @@ html{scroll-behavior:smooth;font-size:17.5px}   /* one step larger: the page siz
 </div></header>
 <div class="wrap" data-page="home" data-base="/handball/">
 
-<p class="small muted" id="updTop" style="margin-top:-28px"></p>
+  <div class="an-project-context"><span class="an-project-context__label">Scope</span><span>Handball goal projections are built from team attack and defence ratings. Live-test picks, historical backtests and experimental leagues are kept separate; line movement compares the same picks at taken, opening and closing prices.</span></div>
+  <div class="an-data-key" role="group" aria-label="How to read the numbers">
+    <span class="an-data-key__title">Reading the numbers</span>
+    <span class="an-data-key__item"><i class="an-data-key__dot an-data-key__dot--expected" aria-hidden="true"></i><b>Model</b> expected match goals</span>
+    <span class="an-data-key__item"><i class="an-data-key__dot an-data-key__dot--market" aria-hidden="true"></i><b>Market</b> bookmaker opening / closing goals line</span>
+    <span class="an-data-key__item"><i class="an-data-key__dot an-data-key__dot--actual" aria-hidden="true"></i><b>Actual</b> final match goals</span>
+  </div>
+<p class="small muted an-meta-strip" id="updTop"></p>
 
 <section id="home">
   <div><h2>Handball goal model</h2></div>
