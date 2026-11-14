@@ -383,6 +383,8 @@ function analysis(k, notes = true){
               ['Model line · actual total', PAIR(`${lineAvg(c, 'mu')} · ${lineAvg(c, 'total')}`), ''],
               [RK[0][0], C(RK[0][1], RK[0][2]), 'at 1 unit a pick'],
               ...(c.length ? mvTiles(c) : []),
+              ...(() => { const z = c.filter(b => b.close === b.line), d = z.filter(b => b.ret !== 0), w = d.filter(b => b.ret > 0).length, r = d.length ? d.reduce((x, b) => x + b.ret, 0) / d.length : null;   // the line did not move (14 Nov 2026)
+                 return z.length ? [['Won when the line did not move', d.length ? pct(w / d.length, 1) : '–', `${pct(z.length / c.length)} of picks · ROI ${C(roi(r), cls(r))}`]] : []; })(),
               ...RK.slice(1).map(([k, v, cl]) => [k, C(v, cl), ''])]);
   if (k === 'all') h += calib(BT, `How often the picks won against the chance the model gave them, at the opening line. A well-calibrated model wins about as often as it says in every band. Worst drawdown: the biggest fall from a high point of the running profit, at 1 unit a pick, in date order; expect a run like it again.`);
   const T = (title, first, body, note='') => `<h2>${title}</h2>${nt(note)}<div class="scroll"><table style="max-width:1040px">${GHEAD(first, BHEAD)}<tbody>${body}</tbody></table></div>`;
