@@ -197,7 +197,7 @@ a.gm{color:inherit;text-decoration:none} a.gm:hover{color:var(--gold);text-decor
   <nav class="tabs an-tabs" id="tabs" aria-label="Sections">
     <a href="#view=home" data-view="home" class="on">Home</a>
     <a href="#view=projections" data-view="projections">Projections</a>
-    <a href="#view=picks" data-view="picks">Picks</a>
+    <a href="#view=picks" data-view="picks">Live test</a>
     <a href="#view=season" data-view="season">Season</a>
     <a href="#view=backtest" data-view="backtest">Backtest</a>
     <a href="#view=method" data-view="method">How it works</a>
@@ -284,7 +284,7 @@ function renderHome(){
   const best = DATA.leagues.map(l => ({l, s: B.leagues[l.key]})).sort((a, b) => b.s.roi - a.s.roi)
     .map(({l, s}) => `${l.country} ${sexAb(l)} ${sgn(s.roi * 100, 1)}%`).join(', ');
   const said = bets.reduce((s, b) => s + b.p, 0) / bets.length, hit = bets.filter(b => b.won).length / bets.length;
-  const over = ` The model is too confident: its bets said ${pct(said)} and won ${pct(hit)}. So the over chance and edge shown on Projections and Picks keep only ${REAL * 100}% of its advantage over the price; picks are still chosen on the model's own figure (see Calibration in <b>Backtest</b>).`;
+  const over = ` The model is too confident: its bets said ${pct(said)} and won ${pct(hit)}. So the over chance and edge shown on Projections and Live test keep only ${REAL * 100}% of its advantage over the price; picks are still chosen on the model's own figure (see Calibration in <b>Backtest</b>).`;
   return pickTiles() + `<div class="doc">
   <h2>Do the model's overs make a profit?</h2>
   <p>Modestly, on the fair test. With each season's leagues chosen in advance from earlier seasons only, the bets returned <b>${sgn(B.fair.roi * 100, 1)}%</b> over ${B.fair.n} bets (${B.fair.first}–${(B.fair.first + 1) % 100} to ${B.fair.last}–${(B.fair.last + 1) % 100}), against ${sgn(B.fair.left_roi * 100, 1)}% in the leagues left out. Across the leagues as they stand now, ${A.n} bets over ${seasons.length} past seasons returned ${sgn(A.roi * 100, 1)}%, but that figure knows which leagues were kept, so it runs high. Backing every low-line over in these leagues without the model returned ${sgn(A.blind_roi * 100, 1)}%. The ${DATA.season.replace('-', '–')} record above is the real test.</p>
