@@ -209,7 +209,7 @@ details.picks>summary .muted{font-size:14px;font-weight:400}
   <div id="out"></div>
 </div>
 
-<script src="live.js?v=202611141233"></script>
+<script src="live.js?v=202611141239"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
@@ -286,9 +286,11 @@ ${E ? `<p>Example: ${esc(E.home)} v ${esc(E.away)} (${dayName(E.date)}): the mod
 <div class="calc">chance the home side covers = P(margin &gt; line), margin ~ Normal(projection, league miss)</div>
 <h3><span class="num">5</span>Projected total and points</h3>
 <p>Each match page also projects the total: the <a class="gm" href="/basketball/overs/#view=method">totals page</a>'s model (league average plus both teams' scoring numbers), plus pace and 3-point luck, with each league's own weights fitted on its 2022–26 games: Greece +0.45 points per possession of pace above the league average and −0.51 per point of 3-point luck; Cyprus +1.63 and −0.13 (hot shooting tends to cool). Fitted on 2022–25 alone, they cut the miss on unseen 2025–27 games from 18.38 to 18.30 points in Greece and from 16.56 to 16.30 in Cyprus. Each side's points = (total ± margin) ÷ 2.</p>
-<h3><span class="num">6</span>Match by match</h3>
+<h3><span class="num">6</span>Live test: the 2026–27 season</h3>
+<p>The model is frozen from 14 Nov 2026 for the rest of the season: results margin + absences + fatigue against the books' line, settings and weights as on this page, no tuning. Every game is judged at the opening and the closing handicap in <b>Played this season</b> and the tiles above it. Prices are about 1.87, so the model's side needs to cover about 53.5% of games to make a profit; the season, not this page's history, decides whether it does.</p>
+<h3><span class="num">7</span>Match by match</h3>
 <p>Click any match for its full calculation: the home edge, each team's games behind its strength, the projected margin, the line and the chance. The page shows estimates only: no picks and no betting record. <b>Played this season</b> keeps every game's estimate as it stood before tip-off, worked out from the games before that day, with the result and whether the model's side covered at the opening and the closing handicap. The model sees news through the absences step only (missed last game, or club news added by hand); anything else counts once it shows up in results or the lines.</p>
-<h3><span class="num">7</span>Data</h3>
+<h3><span class="num">8</span>Data</h3>
 <p>Results and handicaps for the two leagues of the <a class="gm" href="/basketball/">basketball projections</a>, the Greek Basket League and Cyprus Division A. The model's settings were fitted once on 2021–22 results of 43 leagues, since two leagues alone give too few games to set them. The page refreshes every hour or so.</p>
 </div>`;
 }
