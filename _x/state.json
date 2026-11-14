@@ -167,7 +167,8 @@
       "the-numbers-game-why-everything-you",
       "net-gains-inside-the-beautiful-games",
       "how-to-win-the-premier-league",
-      "how-to-be-good-at-life"
+      "how-to-be-good-at-life",
+      "168-hours-you-have-more-time-than"
     ],
     "log": [
       {
@@ -493,9 +494,15 @@
         "slot": "2026-11-13 14",
         "slug": "how-to-be-good-at-life",
         "id": "2121211535221833869"
+      },
+      {
+        "day": "2026-11-14",
+        "slot": "2026-11-14 14",
+        "slug": "168-hours-you-have-more-time-than",
+        "id": "2121573910739025997"
       }
     ],
-    "last_day": "2026-11-13"
+    "last_day": "2026-11-14"
   },
   "film": {
     "seen": [
@@ -1058,7 +1065,7 @@
     ],
     "last_day": "2026-11-13"
   },
-  "last_slot": "2026-11-14 11",
+  "last_slot": "2026-11-14 14",
   "quote": {
     "seen": [
       "1",
