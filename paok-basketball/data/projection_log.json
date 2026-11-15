@@ -2566,7 +2566,7 @@
   "date": "2026-11-18T19:30:00Z",
   "opp": "Manresa",
   "home": false,
-  "saved": "2026-11-15T00:47:17Z",
+  "saved": "2026-11-15T14:33:14Z",
   "paok": 82.9,
   "oppScore": 87.9,
   "winProb": 34,
@@ -2851,7 +2851,7 @@
   "date": "2026-11-21T15:30:00Z",
   "opp": "Aris",
   "home": true,
-  "saved": "2026-11-15T00:47:17Z",
+  "saved": "2026-11-15T14:33:14Z",
   "paok": 80.7,
   "oppScore": 77.3,
   "winProb": 64,
@@ -2865,7 +2865,7 @@
    "fg2m": {
     "paok": 17.6,
     "opp": 18.1,
-    "total": 35.7
+    "total": 35.6
    },
    "fg3m": {
     "paok": 8.7,
@@ -2878,34 +2878,34 @@
     "total": 35.7
    },
    "ast": {
-    "paok": 16.4,
+    "paok": 16.5,
     "opp": 16.8,
-    "total": 33.2
+    "total": 33.3
    },
    "oreb": {
-    "paok": 11.0,
-    "opp": 10.3,
-    "total": 21.4
+    "paok": 11.1,
+    "opp": 10.4,
+    "total": 21.5
    },
    "dreb": {
-    "paok": 24.9,
-    "opp": 23.8,
-    "total": 48.7
+    "paok": 25.1,
+    "opp": 23.9,
+    "total": 49.0
    },
    "tov": {
     "paok": 14.4,
     "opp": 13.2,
-    "total": 27.5
+    "total": 27.6
    },
    "reb": {
-    "paok": 35.9,
-    "opp": 34.1,
-    "total": 70.1
+    "paok": 36.2,
+    "opp": 34.3,
+    "total": 70.5
    }
   },
-  "modelTotal": 152.1,
+  "modelTotal": 152.7,
   "line": 158.5,
-  "modelMargin": 2.9,
+  "modelMargin": 3.1,
   "hcp": 3.5,
   "players": {
    "paok": [
@@ -2922,7 +2922,7 @@
      "name": "Ben Moore",
      "no": "26",
      "min": 18,
-     "pts": 6.0,
+     "pts": 6.1,
      "reb": 5.4,
      "ast": 1.0,
      "pir": 9.8
@@ -2940,7 +2940,7 @@
      "name": "Trevor Hudgins",
      "no": "12",
      "min": 18,
-     "pts": 8.5,
+     "pts": 8.6,
      "reb": 2.1,
      "ast": 2.2,
      "pir": 9.0
@@ -2949,7 +2949,7 @@
      "name": "Marcus Foster",
      "no": "17",
      "min": 25,
-     "pts": 11.3,
+     "pts": 11.4,
      "reb": 2.8,
      "ast": 2.5,
      "pir": 8.7
@@ -2967,7 +2967,7 @@
      "name": "Naz Mitrou-Long",
      "no": "1",
      "min": 15,
-     "pts": 7.1,
+     "pts": 7.2,
      "reb": 2.4,
      "ast": 1.7,
      "pir": 7.3
@@ -2994,7 +2994,7 @@
      "name": "Nikos Chougkaz",
      "no": "9",
      "min": 15,
-     "pts": 3.8,
+     "pts": 3.9,
      "reb": 2.2,
      "ast": 0.4,
      "pir": 3.7
@@ -3050,7 +3050,7 @@
      "name": "Matt Morgan",
      "no": "30",
      "min": 20,
-     "pts": 11.7,
+     "pts": 11.8,
      "reb": 1.7,
      "ast": 2.1,
      "pir": 11.5

@@ -1,7 +1,7 @@
 {
  "competition": "Stoiximan GBL",
  "season": "2026-27",
- "updated": "2026-11-15T00:45:51Z",
+ "updated": "2026-11-15T14:31:41Z",
  "source": "https://www.esake.gr/",
  "roster": [
   {
@@ -3676,15 +3676,15 @@
   },
   {
    "pos": 2,
-   "team": "Karditsa",
+   "team": "Panathinaikos",
    "paok": false,
    "pts": 11,
    "gp": 7,
-   "w": 4,
-   "l": 3,
-   "pf": 516,
-   "pa": 503,
-   "diff": 13
+   "w": 6,
+   "l": 1,
+   "pf": 612,
+   "pa": 520,
+   "diff": 92
   },
   {
    "pos": 3,
@@ -3700,6 +3700,30 @@
   },
   {
    "pos": 4,
+   "team": "Karditsa",
+   "paok": false,
+   "pts": 11,
+   "gp": 7,
+   "w": 4,
+   "l": 3,
+   "pf": 516,
+   "pa": 503,
+   "diff": 13
+  },
+  {
+   "pos": 5,
+   "team": "Peristeri",
+   "paok": false,
+   "pts": 11,
+   "gp": 7,
+   "w": 4,
+   "l": 3,
+   "pf": 567,
+   "pa": 592,
+   "diff": -25
+  },
+  {
+   "pos": 6,
    "team": "Olympiacos",
    "paok": false,
    "pts": 10,
@@ -3711,7 +3735,19 @@
    "diff": 108
   },
   {
-   "pos": 5,
+   "pos": 7,
+   "team": "Kolossos",
+   "paok": false,
+   "pts": 10,
+   "gp": 7,
+   "w": 3,
+   "l": 4,
+   "pf": 557,
+   "pa": 569,
+   "diff": -12
+  },
+  {
+   "pos": 8,
    "team": "Doxa Lefkadas",
    "paok": false,
    "pts": 10,
@@ -3723,7 +3759,7 @@
    "diff": -15
   },
   {
-   "pos": 6,
+   "pos": 9,
    "team": "Iraklis",
    "paok": false,
    "pts": 10,
@@ -3733,42 +3769,6 @@
    "pf": 561,
    "pa": 535,
    "diff": 26
-  },
-  {
-   "pos": 7,
-   "team": "Panathinaikos",
-   "paok": false,
-   "pts": 9,
-   "gp": 6,
-   "w": 5,
-   "l": 1,
-   "pf": 534,
-   "pa": 447,
-   "diff": 87
-  },
-  {
-   "pos": 8,
-   "team": "Kolossos",
-   "paok": false,
-   "pts": 9,
-   "gp": 6,
-   "w": 3,
-   "l": 3,
-   "pf": 484,
-   "pa": 491,
-   "diff": -7
-  },
-  {
-   "pos": 9,
-   "team": "Peristeri",
-   "paok": false,
-   "pts": 9,
-   "gp": 6,
-   "w": 3,
-   "l": 3,
-   "pf": 483,
-   "pa": 525,
-   "diff": -42
   },
   {
    "pos": 10,
@@ -3784,6 +3784,18 @@
   },
   {
    "pos": 11,
+   "team": "Mykonos",
+   "paok": false,
+   "pts": 8,
+   "gp": 7,
+   "w": 1,
+   "l": 6,
+   "pf": 508,
+   "pa": 591,
+   "diff": -83
+  },
+  {
+   "pos": 12,
    "team": "Promitheas",
    "paok": false,
    "pts": 8,
@@ -3793,18 +3805,6 @@
    "pf": 513,
    "pa": 618,
    "diff": -105
-  },
-  {
-   "pos": 12,
-   "team": "Mykonos",
-   "paok": false,
-   "pts": 7,
-   "gp": 6,
-   "w": 1,
-   "l": 5,
-   "pf": 441,
-   "pa": 507,
-   "diff": -66
   },
   {
    "pos": 13,

@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-15T00:47:17Z",
+ "updated": "2026-11-15T14:33:14Z",
  "reports": [
   {
    "comp": "EuroCup",
@@ -1379,49 +1379,49 @@
     "drebPct": 68.8
    },
    "league": {
-    "pts": 78.8,
-    "fg2m": 18.3,
-    "fg2a": 35.6,
+    "pts": 78.6,
+    "fg2m": 18.2,
+    "fg2a": 35.5,
     "fg3m": 8.9,
-    "fg3a": 26.0,
+    "fg3a": 26.1,
     "ftm": 15.6,
-    "fta": 21.9,
+    "fta": 21.8,
     "oreb": 10.5,
     "dreb": 25.7,
     "reb": 36.2,
-    "ast": 16.8,
+    "ast": 17.0,
     "stl": 7.4,
     "tov": 13.6,
     "blk": 2.9,
-    "pf": 22.3,
-    "pir": 84.5,
-    "gp": 90,
-    "w": 45,
-    "allowed": 78.8,
-    "fgp": 44.1,
+    "pf": 22.2,
+    "pir": 84.6,
+    "gp": 94,
+    "w": 47,
+    "allowed": 78.6,
+    "fgp": 44.0,
     "fg2p": 51.3,
-    "fg3p": 34.2,
-    "ftp": 71.3,
-    "opp_fgp": 44.1,
-    "poss": 74.3,
-    "pace": 73.7,
+    "fg3p": 34.1,
+    "ftp": 71.5,
+    "opp_fgp": 44.0,
+    "poss": 74.2,
+    "pace": 73.6,
     "ortg": 106.0,
     "drtg": 106.0,
-    "efg": 51.3,
+    "efg": 51.2,
     "ts": 55.3,
     "tovPct": 18.3,
     "orebPct": 29.0,
-    "ftr": 25.4,
-    "astPct": 62.1,
-    "par3": 42.2,
+    "ftr": 25.3,
+    "astPct": 62.6,
+    "par3": 42.4,
     "fgm": 27.1,
-    "fga": 61.6,
-    "opp_efg": 51.3,
+    "fga": 61.5,
+    "opp_efg": 51.2,
     "forcedTov": 18.3,
     "drebPct": 71.0,
-    "opp_ftr": 25.4,
+    "opp_ftr": 25.3,
     "rebPct": 50.0,
-    "l": 45,
+    "l": 47,
     "net": 0.0
    },
    "impact": [
@@ -2131,7 +2131,7 @@
        "name": "Ben Moore",
        "no": "26",
        "min": 18,
-       "pts": 6.0,
+       "pts": 6.1,
        "reb": 5.4,
        "ast": 1.0,
        "pir": 9.8
@@ -2149,7 +2149,7 @@
        "name": "Trevor Hudgins",
        "no": "12",
        "min": 18,
-       "pts": 8.5,
+       "pts": 8.6,
        "reb": 2.1,
        "ast": 2.2,
        "pir": 9.0
@@ -2158,7 +2158,7 @@
        "name": "Marcus Foster",
        "no": "17",
        "min": 25,
-       "pts": 11.3,
+       "pts": 11.4,
        "reb": 2.8,
        "ast": 2.5,
        "pir": 8.7
@@ -2176,7 +2176,7 @@
        "name": "Naz Mitrou-Long",
        "no": "1",
        "min": 15,
-       "pts": 7.1,
+       "pts": 7.2,
        "reb": 2.4,
        "ast": 1.7,
        "pir": 7.3
@@ -2203,7 +2203,7 @@
        "name": "Nikos Chougkaz",
        "no": "9",
        "min": 15,
-       "pts": 3.8,
+       "pts": 3.9,
        "reb": 2.2,
        "ast": 0.4,
        "pir": 3.7
@@ -2230,7 +2230,7 @@
      "missing": [
       "Cedi Osman"
      ],
-     "pace": 72.6
+     "pace": 72.7
     },
     "opp": {
      "score": 77.3,
@@ -2266,7 +2266,7 @@
        "name": "Matt Morgan",
        "no": "30",
        "min": 20,
-       "pts": 11.7,
+       "pts": 11.8,
        "reb": 1.7,
        "ast": 2.1,
        "pir": 11.5
@@ -2345,21 +2345,21 @@
       }
      ],
      "missing": [],
-     "pace": 72.6
+     "pace": 72.7
     },
     "winProb": 64,
-    "pace": 72.6,
+    "pace": 72.7,
     "lineupSource": "manual",
     "note": "PAOK without Osman, who is out for one to two months.",
-    "modelTotal": 152.1,
+    "modelTotal": 152.7,
     "line": 158.5,
-    "modelMargin": 2.9,
+    "modelMargin": 3.1,
     "hcp": 3.5,
     "learned": {
-     "games": 972,
+     "games": 974,
      "lineGames": 946,
      "homeEdge": 2.18,
-     "totalBias": 1.51,
+     "totalBias": 1.48,
      "spreadSd": 9.0,
      "lineWeight": 0.88,
      "lineWeightRaw": 0.88,
@@ -2377,7 +2377,7 @@
      "fg2m": {
       "paok": 17.6,
       "opp": 18.1,
-      "total": 35.7
+      "total": 35.6
      },
      "fg3m": {
       "paok": 8.7,
@@ -2390,29 +2390,29 @@
       "total": 35.7
      },
      "ast": {
-      "paok": 16.4,
+      "paok": 16.5,
       "opp": 16.8,
-      "total": 33.2
+      "total": 33.3
      },
      "oreb": {
-      "paok": 11.0,
-      "opp": 10.3,
-      "total": 21.4
+      "paok": 11.1,
+      "opp": 10.4,
+      "total": 21.5
      },
      "dreb": {
-      "paok": 24.9,
-      "opp": 23.8,
-      "total": 48.7
+      "paok": 25.1,
+      "opp": 23.9,
+      "total": 49.0
      },
      "tov": {
       "paok": 14.4,
       "opp": 13.2,
-      "total": 27.5
+      "total": 27.6
      },
      "reb": {
-      "paok": 35.9,
-      "opp": 34.1,
-      "total": 70.1
+      "paok": 36.2,
+      "opp": 34.3,
+      "total": 70.5
      }
     }
    }
