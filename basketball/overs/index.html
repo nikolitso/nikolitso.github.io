@@ -229,7 +229,7 @@ details.picks>summary .muted{font-size:14px;font-weight:400}
   <div class="chips" id="chips"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=4d5d86c7"></script>
+<script src="data.js?v=5438d371"></script>
 <script src="live.js"></script>
 <script>
 const $ = id => document.getElementById(id);
@@ -254,7 +254,7 @@ const LK = () => LIVE.max_luck ?? 1.5;                       // rule 6: 3-point 
 const GPL = () => { const k = (LIVE.min_gp_by_tier || {latam: 5}).latam; return k ? ` (${k}+ in Latin America)` : ''; };
 const LKs = () => '+' + LK();
 const luckCell = v => `<td class="n">${v != null ? sgn(v) : '–'}</td>`;
-const lgShort = k => !LG[k] ? k : LG[k].country === 'Europe' ? LG[k].name : LG[k].country + (LG[k].tier === 'second' ? ' (tier 2)' : '');   // EuroLeague and EuroCup share a country
+const lgShort = k => !LG[k] ? k : LG[k].country === 'Europe' ? LG[k].name : LG[k].country + (LG[k].tier === 'second' ? ' (2)' : '');   // EuroLeague and EuroCup share a country
 const inLg = x => lg === 'all' || x.lg === lg;
 const R = DATA.rule;
 const LE = () => LIVE.edge ?? R.edge;
@@ -360,8 +360,8 @@ const TIERS = [
   ['Tier 2 · Top European', ['poland-basket-liga', 'turkey-super-lig', 'italy-lega-a', 'greece-basket-league', 'israel-super-league']],
   ['Tier 3 · Mid European', ['czechia-nbl', 'lithuania-lkl', 'croatia-premijer-liga', 'switzerland-sb-league', 'austria-superliga']],
 ];
-const tierOf = k => { const t = TIERS.find(([, L]) => L.includes(k)); return t ? t[0] : LG[k] && LG[k].tier === 'second' ? 'Second divisions (tier 2)' : 'Tier 4 · Low European and Latin America'; };
-const TIER_NAMES = [...TIERS.map(t => t[0]), 'Tier 4 · Low European and Latin America', 'Second divisions (tier 2)'];
+const tierOf = k => { const t = TIERS.find(([, L]) => L.includes(k)); return t ? t[0] : LG[k] && LG[k].tier === 'second' ? 'Second divisions (2)' : 'Tier 4 · Low European and Latin America'; };
+const TIER_NAMES = [...TIERS.map(t => t[0]), 'Tier 4 · Low European and Latin America', 'Second divisions (2)'];
 const bandRow = (label, g, pl = false) => { const n = g.length, sum = f => g.reduce((a, x) => a + f(x), 0);
   return grp(label, {n, w: g.filter(x => x.ret > 0).length, px: n ? sum(x => x.px) / n : 0, roi: n ? sum(x => x.ret) / n : 0}, '', btCells(g, pl)); };
 
@@ -447,7 +447,7 @@ function analysis(k, notes = true){
     const body = TIER_NAMES.map(t => {
       const g = BT.filter(b => tierOf(b.lg) === t), lgs = [...new Set(g.map(b => b.lg))].sort((x, y) => g.filter(b => b.lg === y).length - g.filter(b => b.lg === x).length);
       return g.length ? row(`<b>${t}</b>`, g) + lgs.map(L_ => row(`<span style="padding-left:18px" class="muted">${lgShort(L_)}</span>`, g.filter(b => b.lg === L_))).join('') : ''; }).join('');
-    h += `<h2>By tier</h2>${nt(`The leagues in four tiers by how deep their betting market is. Tier 1: the deepest markets (Spain, Germany, France). Tier 2: Poland, Turkey, Italy, Greece, Israel. Tier 3: Czechia, Lithuania, Croatia, Switzerland, Austria. Tier 4: the other European leagues and Latin America. Then the second divisions from the Tier 1–3 countries (tier 2). Each tier's leagues are listed under it, most picks first. ROI at the closing line: the same picks taken at the closing line and price.`)}`
+    h += `<h2>By tier</h2>${nt(`The leagues in four tiers by how deep their betting market is. Tier 1: the deepest markets (Spain, Germany, France). Tier 2: Poland, Turkey, Italy, Greece, Israel. Tier 3: Czechia, Lithuania, Croatia, Switzerland, Austria. Tier 4: the other European leagues and Latin America. Then the second divisions from the Tier 1–3 countries (2). Each tier's leagues are listed under it, most picks first. ROI at the closing line: the same picks taken at the closing line and price.`)}`
        + `<div class="scroll"><table style="max-width:1040px"><thead><tr><th>Tier and league</th><th class="n">Picks</th><th class="n">Hit</th><th class="n">Avg price</th><th class="n">ROI at<br>opening line</th><th class="n">ROI at<br>closing line</th><th class="n">Opening<br>line</th><th class="n">Closing<br>line</th><th class="n">Model<br>line</th><th class="n">Actual<br>total</th></tr></thead><tbody>${body}</tbody></table></div>`;
   }
   h += T('By stage', 'Stage', bandRow('Regular season', BT) + bandRow('Play-offs <span class="muted">(skipped)</span>', (DATA.skipped_po || []).filter(f)),
