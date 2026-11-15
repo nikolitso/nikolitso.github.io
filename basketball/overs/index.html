@@ -354,6 +354,14 @@ const btCells = (list, pl = false) => { const c = list.filter(b => b.close != nu
     + (!pl ? '' : (q.length ? `<td class="n">${sgn(q.reduce((a, b) => a + b.pace, 0) / q.length)}</td>` : '<td class="n muted">–</td>')
     + (u.length ? `<td class="n">${sgn(u.reduce((a, b) => a + b.luck, 0) / u.length)}</td>` : '<td class="n muted">–</td>')); };
 
+// league tiers (15 Nov 2026, the user's grouping by market depth)
+const TIERS = [
+  ['Tier 1 · Elite European', ['spain-acb', 'germany-bbl', 'france-lnb']],
+  ['Tier 2 · Top European', ['poland-basket-liga', 'turkey-super-lig', 'italy-lega-a', 'greece-basket-league', 'israel-super-league']],
+  ['Tier 3 · Mid European', ['czechia-nbl', 'lithuania-lkl', 'croatia-premijer-liga', 'switzerland-sb-league', 'austria-superliga']],
+];
+const tierOf = k => { const t = TIERS.find(([, L]) => L.includes(k)); return t ? t[0] : 'Tier 4 · Low European and Latin America'; };
+const TIER_NAMES = [...TIERS.map(t => t[0]), 'Tier 4 · Low European and Latin America'];
 const bandRow = (label, g, pl = false) => { const n = g.length, sum = f => g.reduce((a, x) => a + f(x), 0);
   return grp(label, {n, w: g.filter(x => x.ret > 0).length, px: n ? sum(x => x.px) / n : 0, roi: n ? sum(x => x.ret) / n : 0}, '', btCells(g, pl)); };
 
@@ -431,6 +439,10 @@ function analysis(k, notes = true){
     `Edge: the model's chance of the over × the price − 1, at the opening line. The first two rows are the games the rule skips: every other rule met, with an edge above 0 but not above ${EP}%. They are not in any other figure on this page.`);
   h += T('By line', 'Line band', [['Under 170', 0, 170], ['170 to 179.5', 170, 180], ['180 or more', 180, 999]].map(([label, lo, hi]) => bandRow(label, BT.filter(x => x.line >= lo && x.line < hi))).join(''),
     `The opening line. There is no line cap since 9 Nov 2026: games at 180 or more were skipped before, but they made a profit in every season and at the closing line.`);
+  if (k === 'all') h += T('By tier', 'Tier and league', TIER_NAMES.map(t => {
+      const g = BT.filter(b => tierOf(b.lg) === t), lgs = [...new Set(g.map(b => b.lg))].sort((x, y) => g.filter(b => b.lg === y).length - g.filter(b => b.lg === x).length);
+      return g.length ? bandRow(`<b>${t}</b>`, g) + lgs.map(L_ => bandRow(`<span style="padding-left:18px" class="muted">${lgShort(L_)}</span>`, g.filter(b => b.lg === L_))).join('') : ''; }).join(''),
+    `The leagues in four tiers by how deep their betting market is. Tier 1: the deepest markets (Spain, Germany, France). Tier 2: Poland, Turkey, Italy, Greece, Israel. Tier 3: Czechia, Lithuania, Croatia, Switzerland, Austria. Tier 4: the other European leagues and Latin America. Each tier's leagues are listed under it, most picks first.`);
   h += T('By stage', 'Stage', bandRow('Regular season', BT) + bandRow('Play-offs <span class="muted">(skipped)</span>', (DATA.skipped_po || []).filter(f)),
     `The second row is the play-off games the rule skips: every other rule met, with the model's chance worked out as for a regular-season game. The model has a play-off signal of its own that on its own keeps it off play-off overs, so this row shows what would happen without it. They are not in any other figure on this page.`);
   h += T('By season', 'Season', S.seasons.map(s => grp(sn(s.season) + (s.season === DATA.tuned ? ' <span class="muted">(tuned on)</span>' : '') + (s.season === DATA.season ? ' <span class="muted">(so far)</span>' : ''), s, '', btCells(BT.filter(b => seasonOf(b) === s.season)))).join(''));
