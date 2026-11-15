@@ -230,7 +230,7 @@ details.picks>summary .muted{font-size:14px;font-weight:400}
   <div id="out"></div>
 </div>
 
-<script src="live.js?v=202611152050"></script>
+<script src="live.js?v=202611152053"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
@@ -336,6 +336,11 @@ function renderGame(){
   const T = g.tot == null ? '–' : f1(g.tot);
   let h = `<p><a class="gm" href="#view=matches&lg=${g.lg}">← All matches</a></p>`;
   h += `<h2 style="margin-top:6px">${esc(g.home)} – ${esc(g.away)}</h2><p class="muted">${esc(lgName(g.lg))} · ${dayName(g.when || g.date)}${g.when ? ' ' + g.when.slice(11) : ''}${done ? ` · final <b>${g.hp}–${g.ap}</b>` : ''} · games played ${g.gh}·${g.ga}${est ? '' : ` · <b>no estimate yet</b>: a team has fewer than ${GP} games`}</p>`;
+  {const N = g.news || [], outs = AB ? [[g.home, AB.oh], [g.away, AB.oa]] : [], host = u => { try { return new URL(u).hostname.replace(/^www\./, ''); } catch (e) { return 'source'; } };
+    h += `<div class="doc"><h2 class="day">News and absences</h2>`
+      + (AB ? `<p><b>Counted out by the model</b>${done ? ' (frozen at tip-off)' : ''}: ${outs.map(([t, o]) => `${esc(t)}: ${o && o.length ? o.map(esc).join(', ') : 'nobody'}`).join(' · ')}. Points in step 6 below.</p>` : `<p class="muted">The model counts nobody out for this game.</p>`)
+      + (N.length ? `<ul>${N.map(n => `<li><span class="muted">${dayName(n.date)}</span> · <b>${esc(n.team || '')}</b>: ${esc(n.text)}${n.src ? ` <a class="gm" href="${esc(n.src)}" target="_blank" rel="noopener">${esc(host(n.src))}</a>` : ''}</li>`).join('')}</ul>` : `<p class="muted">No club news logged for this game.</p>`)
+      + `<p class="small muted">News is logged with each update. The model uses it only through who is out: a player named out in the news counts as out; other news counts once it shows in results or the lines.</p></div>`; }
   h += `<div class="doc"><h2 class="day">The model, step by step</h2>`;
   h += step(1, 'Home edge') + `<p>The league's average home margin, recent games counting more: <b>${sgn(W.hca)}</b>.</p>`;
   h += step(2, `${esc(g.home)} strength`) + `<p>Points better (+) or worse (−) than the league's average team, from this season's results, each margin adjusted for the opponent and the venue: <b>${sgn(W.rh)}</b>.</p>${gamesTable(g.home, W.th, W.rh)}`;
