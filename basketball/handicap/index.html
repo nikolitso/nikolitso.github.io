@@ -230,7 +230,7 @@ details.picks>summary .muted{font-size:14px;font-weight:400}
   <div id="out"></div>
 </div>
 
-<script src="live.js?v=202611152059"></script>
+<script src="live.js?v=202611152102"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
@@ -256,8 +256,6 @@ function topTiles(){
     ['Played', t.n, `games estimated this season`],
     ['Side covered at opening', o ? pct(t.ow / o, 1) : '–', `${t.ow}–${t.ol} cover · fail`],
     ['Side covered at closing', c ? pct(t.cw / c, 1) : '–', `${t.cw}–${t.cl} cover · fail`],
-    ['Miss: model', f1(t.mm), 'points from the final margin'],
-    ['Miss: closing line', f1(t.ml), 'points from the final margin'],
   ]);
 }
 
