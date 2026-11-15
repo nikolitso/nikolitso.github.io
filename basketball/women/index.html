@@ -376,8 +376,9 @@ function btTiles(BT){
                ['ROI', TWO('Opening line', C(roi(T.roi), cls(T.roi)), 'Closing line', rc != null ? C(roi(rc), cls(rc)) : '–'), ''],
                ['Average line', TWO('Opening', lineAvg(c, 'line'), 'Closing', lineAvg(c, 'close')), ''],
                ['Average total', TWO('Model', lineAvg(c, 'mu'), 'Actual', lineAvg(c, 'total')), ''],
-               ...(c.length ? mvTiles(c) : []),
-               ...(z.length ? [['Won when no move', zd.length ? pct(zw / zd.length, 1) : '–', `${pct(z.length / c.length)} of picks · ROI ${C(roi(zr), cls(zr))}`]] : [])]);
+               ...(c.length ? mvTiles(c).slice(0, -1) : []),
+               ...(z.length ? [['Won when no move', zd.length ? pct(zw / zd.length, 1) : '–', `${pct(z.length / c.length)} of picks · ROI ${C(roi(zr), cls(zr))}`]] : []),
+               ...(c.length ? mvTiles(c).slice(-1) : [])]);
 }
 
 // profit in units, the deepest fall from a high point (units) and the longest run of losses, in date order; pushes change nothing
