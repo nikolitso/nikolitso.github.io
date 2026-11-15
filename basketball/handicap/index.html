@@ -230,7 +230,7 @@ details.picks>summary .muted{font-size:14px;font-weight:400}
   <div id="out"></div>
 </div>
 
-<script src="live.js?v=202611152034"></script>
+<script src="live.js?v=202611152050"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
@@ -250,7 +250,7 @@ const inLg = g => lg === 'all' || g.lg === lg;
 
 function tiles(list){ return list.map(([l, v, c]) => `<div class="tile"><span class="klabel">${l}</span><span class="stat">${v}</span><span class="small">${c}</span></div>`).join(''); }
 function topTiles(){
-  const t = LIVE.tally[lg] || LIVE.tally.all, F = LIVE.fixtures.filter(inLg);
+  const t = LIVE.tally[lg] || LIVE.tally.all, F = LIVE.fixtures.filter(g => inLg(g) && !(g.ts && g.ts * 1000 < Date.now() - 5400e3) && !LIVE.played.some(x => x.id === g.id));
   const o = t.ow + t.ol, c = t.cw + t.cl;
   return tiles([
     ['Played', t.n, `games estimated this season`],
@@ -263,7 +263,7 @@ function topTiles(){
 
 const mark = v => v == null ? '<span class="muted">–</span>' : v ? '<b class="w">✓</b>' : '<b class="l">✗</b>';
 function renderMatches(){
-  const F = LIVE.fixtures.filter(inLg), P = LIVE.played.filter(inLg);
+  const F = LIVE.fixtures.filter(g => inLg(g) && !(g.ts && g.ts * 1000 < Date.now() - 5400e3) && !LIVE.played.some(x => x.id === g.id)), P = LIVE.played.filter(inLg);
   let h = '';
   h += `<h2>Next games</h2>`;
   if (!F.length) h += '<p class="empty">No games in the next 7 days.</p>';
