@@ -373,5 +373,23 @@
   "oa": [
    "Bogues Jr"
   ]
+ },
+ "xOTlty1t": {
+  "fh": 0.0,
+  "fa": -1.9,
+  "eh": null,
+  "ea": {
+   "comp": "EuroLeague",
+   "opp": "Real Madrid",
+   "away": false,
+   "days": 2
+  },
+  "h": 0.0,
+  "a": -1.2,
+  "oh": [],
+  "oa": [
+   "Montero",
+   "Milutinov"
+  ]
  }
 }
