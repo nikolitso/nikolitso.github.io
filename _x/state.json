@@ -714,6 +714,7 @@
       "walk-on-water",
       "what-will-people-say",
       "where-do-we-go-now",
+      "where-the-wind-comes-from",
       "winter-sleep",
       "woman-at-war",
       "working-woman",
@@ -771,7 +772,8 @@
       "mostly-martha",
       "working-woman",
       "cinema-paradiso",
-      "capernaum"
+      "capernaum",
+      "where-the-wind-comes-from"
     ],
     "log": [
       {
@@ -1075,11 +1077,17 @@
         "slot": "2026-11-14 20",
         "slug": "capernaum",
         "id": "2121664512281432154"
+      },
+      {
+        "day": "2026-11-15",
+        "slot": "2026-11-15 20",
+        "slug": "where-the-wind-comes-from",
+        "id": "2122026905268617244"
       }
     ],
-    "last_day": "2026-11-14"
+    "last_day": "2026-11-15"
   },
-  "last_slot": "2026-11-15 14",
+  "last_slot": "2026-11-15 20",
   "quote": {
     "seen": [
       "1",
