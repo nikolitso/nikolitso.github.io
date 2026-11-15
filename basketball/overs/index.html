@@ -689,6 +689,7 @@ function render(){
   const chips = CHIPS[view] ? [['all', 'All leagues'], ...keys.map(k => [k, lgShort(k)])] : [];
   $('chips').innerHTML = chips.map(([k, t]) => `<a href="#view=${view}${k === 'all' ? '' : '&lg=' + k}" class="${k === lg ? 'on' : ''}">${t}</a>`).join('');
   $('top').style.display = $('sub').style.display = view === 'backtest' ? 'none' : '';
+  if (view === 'leagues') $('top').style.display = 'none';      // the live record stays off the Leagues tab (15 Nov 2026)
   $('top').innerHTML = view === 'h1live' || view === 'h1' ? TOP_H1 : TOP_MAIN;     // 1H tabs show the 1H record                  // the 1H Live test tab has its own record tiles   // the main live record stays off the Backtest and 1H Live test tabs     // the live record stays off the Backtest tab
   $('out').innerHTML = RENDER[view]();
 }
