@@ -168,7 +168,8 @@
       "net-gains-inside-the-beautiful-games",
       "how-to-win-the-premier-league",
       "how-to-be-good-at-life",
-      "168-hours-you-have-more-time-than"
+      "168-hours-you-have-more-time-than",
+      "weighing-the-odds-in-sports-betting"
     ],
     "log": [
       {
@@ -500,9 +501,15 @@
         "slot": "2026-11-14 14",
         "slug": "168-hours-you-have-more-time-than",
         "id": "2121573910739025997"
+      },
+      {
+        "day": "2026-11-15",
+        "slot": "2026-11-15 14",
+        "slug": "weighing-the-odds-in-sports-betting",
+        "id": "2121936322159907313"
       }
     ],
-    "last_day": "2026-11-14"
+    "last_day": "2026-11-15"
   },
   "film": {
     "seen": [
@@ -1072,7 +1079,7 @@
     ],
     "last_day": "2026-11-14"
   },
-  "last_slot": "2026-11-15 11",
+  "last_slot": "2026-11-15 14",
   "quote": {
     "seen": [
       "1",
