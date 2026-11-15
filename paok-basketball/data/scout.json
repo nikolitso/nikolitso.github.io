@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-15T14:33:14Z",
+ "updated": "2026-11-15T17:55:35Z",
  "reports": [
   {
    "comp": "EuroCup",
@@ -1379,49 +1379,49 @@
     "drebPct": 68.8
    },
    "league": {
-    "pts": 78.6,
+    "pts": 79.0,
     "fg2m": 18.2,
-    "fg2a": 35.5,
+    "fg2a": 35.4,
     "fg3m": 8.9,
     "fg3a": 26.1,
-    "ftm": 15.6,
-    "fta": 21.8,
-    "oreb": 10.5,
+    "ftm": 15.9,
+    "fta": 22.2,
+    "oreb": 10.6,
     "dreb": 25.7,
-    "reb": 36.2,
-    "ast": 17.0,
+    "reb": 36.3,
+    "ast": 16.9,
     "stl": 7.4,
     "tov": 13.6,
     "blk": 2.9,
-    "pf": 22.2,
-    "pir": 84.6,
-    "gp": 94,
-    "w": 47,
-    "allowed": 78.6,
+    "pf": 22.3,
+    "pir": 84.9,
+    "gp": 96,
+    "w": 48,
+    "allowed": 79.0,
     "fgp": 44.0,
-    "fg2p": 51.3,
+    "fg2p": 51.4,
     "fg3p": 34.1,
-    "ftp": 71.5,
+    "ftp": 71.7,
     "opp_fgp": 44.0,
-    "poss": 74.2,
-    "pace": 73.6,
-    "ortg": 106.0,
-    "drtg": 106.0,
-    "efg": 51.2,
-    "ts": 55.3,
+    "poss": 74.3,
+    "pace": 73.7,
+    "ortg": 106.4,
+    "drtg": 106.4,
+    "efg": 51.3,
+    "ts": 55.4,
     "tovPct": 18.3,
-    "orebPct": 29.0,
-    "ftr": 25.3,
-    "astPct": 62.6,
+    "orebPct": 29.3,
+    "ftr": 25.9,
+    "astPct": 62.3,
     "par3": 42.4,
     "fgm": 27.1,
-    "fga": 61.5,
-    "opp_efg": 51.2,
+    "fga": 61.6,
+    "opp_efg": 51.3,
     "forcedTov": 18.3,
-    "drebPct": 71.0,
-    "opp_ftr": 25.3,
+    "drebPct": 70.7,
+    "opp_ftr": 25.9,
     "rebPct": 50.0,
-    "l": 47,
+    "l": 48,
     "net": 0.0
    },
    "impact": [
@@ -2116,7 +2116,7 @@
    ],
    "projection": {
     "paok": {
-     "score": 80.7,
+     "score": 80.5,
      "players": [
       {
        "name": "Kyle Alexander",
@@ -2176,7 +2176,7 @@
        "name": "Naz Mitrou-Long",
        "no": "1",
        "min": 15,
-       "pts": 7.2,
+       "pts": 7.1,
        "reb": 2.4,
        "ast": 1.7,
        "pir": 7.3
@@ -2203,7 +2203,7 @@
        "name": "Nikos Chougkaz",
        "no": "9",
        "min": 15,
-       "pts": 3.9,
+       "pts": 3.8,
        "reb": 2.2,
        "ast": 0.4,
        "pir": 3.7
@@ -2230,10 +2230,10 @@
      "missing": [
       "Cedi Osman"
      ],
-     "pace": 72.7
+     "pace": 72.6
     },
     "opp": {
-     "score": 77.3,
+     "score": 77.5,
      "players": [
       {
        "name": "Jeremiah Robinson-Earl",
@@ -2345,16 +2345,16 @@
       }
      ],
      "missing": [],
-     "pace": 72.7
+     "pace": 72.6
     },
-    "winProb": 64,
-    "pace": 72.7,
+    "winProb": 62,
+    "pace": 72.6,
     "lineupSource": "manual",
     "note": "PAOK without Osman, who is out for one to two months.",
     "modelTotal": 152.7,
     "line": 158.5,
-    "modelMargin": 3.1,
-    "hcp": 3.5,
+    "modelMargin": 2.9,
+    "hcp": 3.0,
     "learned": {
      "games": 974,
      "lineGames": 946,
@@ -2370,49 +2370,49 @@
     },
     "teamStats": {
      "pts": {
-      "paok": 80.7,
-      "opp": 77.3,
+      "paok": 80.5,
+      "opp": 77.5,
       "total": 158.0
      },
      "fg2m": {
-      "paok": 17.6,
+      "paok": 17.5,
       "opp": 18.1,
       "total": 35.6
      },
      "fg3m": {
       "paok": 8.7,
-      "opp": 8.3,
+      "opp": 8.4,
       "total": 17.0
      },
      "ftm": {
       "paok": 19.5,
-      "opp": 16.1,
+      "opp": 16.2,
       "total": 35.7
      },
      "ast": {
-      "paok": 16.5,
+      "paok": 16.4,
       "opp": 16.8,
-      "total": 33.3
+      "total": 33.2
      },
      "oreb": {
       "paok": 11.1,
       "opp": 10.4,
-      "total": 21.5
+      "total": 21.4
      },
      "dreb": {
-      "paok": 25.1,
+      "paok": 25.0,
       "opp": 23.9,
-      "total": 49.0
+      "total": 48.9
      },
      "tov": {
       "paok": 14.4,
       "opp": 13.2,
-      "total": 27.6
+      "total": 27.5
      },
      "reb": {
-      "paok": 36.2,
+      "paok": 36.1,
       "opp": 34.3,
-      "total": 70.5
+      "total": 70.3
      }
     }
    }

@@ -2566,7 +2566,7 @@
   "date": "2026-11-18T19:30:00Z",
   "opp": "Manresa",
   "home": false,
-  "saved": "2026-11-15T14:33:14Z",
+  "saved": "2026-11-15T17:55:35Z",
   "paok": 82.9,
   "oppScore": 87.9,
   "winProb": 34,
@@ -2851,62 +2851,62 @@
   "date": "2026-11-21T15:30:00Z",
   "opp": "Aris",
   "home": true,
-  "saved": "2026-11-15T14:33:14Z",
-  "paok": 80.7,
-  "oppScore": 77.3,
-  "winProb": 64,
+  "saved": "2026-11-15T17:55:35Z",
+  "paok": 80.5,
+  "oppScore": 77.5,
+  "winProb": 62,
   "lineupSource": "manual",
   "teamStats": {
    "pts": {
-    "paok": 80.7,
-    "opp": 77.3,
+    "paok": 80.5,
+    "opp": 77.5,
     "total": 158.0
    },
    "fg2m": {
-    "paok": 17.6,
+    "paok": 17.5,
     "opp": 18.1,
     "total": 35.6
    },
    "fg3m": {
     "paok": 8.7,
-    "opp": 8.3,
+    "opp": 8.4,
     "total": 17.0
    },
    "ftm": {
     "paok": 19.5,
-    "opp": 16.1,
+    "opp": 16.2,
     "total": 35.7
    },
    "ast": {
-    "paok": 16.5,
+    "paok": 16.4,
     "opp": 16.8,
-    "total": 33.3
+    "total": 33.2
    },
    "oreb": {
     "paok": 11.1,
     "opp": 10.4,
-    "total": 21.5
+    "total": 21.4
    },
    "dreb": {
-    "paok": 25.1,
+    "paok": 25.0,
     "opp": 23.9,
-    "total": 49.0
+    "total": 48.9
    },
    "tov": {
     "paok": 14.4,
     "opp": 13.2,
-    "total": 27.6
+    "total": 27.5
    },
    "reb": {
-    "paok": 36.2,
+    "paok": 36.1,
     "opp": 34.3,
-    "total": 70.5
+    "total": 70.3
    }
   },
   "modelTotal": 152.7,
   "line": 158.5,
-  "modelMargin": 3.1,
-  "hcp": 3.5,
+  "modelMargin": 2.9,
+  "hcp": 3.0,
   "players": {
    "paok": [
     {
@@ -2967,7 +2967,7 @@
      "name": "Naz Mitrou-Long",
      "no": "1",
      "min": 15,
-     "pts": 7.2,
+     "pts": 7.1,
      "reb": 2.4,
      "ast": 1.7,
      "pir": 7.3
@@ -2994,7 +2994,7 @@
      "name": "Nikos Chougkaz",
      "no": "9",
      "min": 15,
-     "pts": 3.9,
+     "pts": 3.8,
      "reb": 2.2,
      "ast": 0.4,
      "pir": 3.7
