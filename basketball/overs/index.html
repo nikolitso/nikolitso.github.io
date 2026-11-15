@@ -275,12 +275,12 @@ $('sub').innerHTML = (AGE > 3 ? `<span class="stale">Not updated for ${Math.floo
   const cl = set.filter(b => b.close != null), avg = (L, f) => L.length ? (L.reduce((a, b) => a + f(b), 0) / L.length).toFixed(1) : '–';
   // the same picks at the closing line and price (overs); pushes left out, as for the ROI at opening
   const cc = cl.filter(b => b.cpx != null && b.total !== b.close), uc = cc.reduce((a, b) => a + (b.total > b.close ? b.cpx - 1 : -1), 0);
-  const mu = set.filter(b => b.mu != null), nS = `${set.length} settled picks`;
+  const mu = set.filter(b => (b.ma ?? b.mu) != null), nS = `${set.length} settled picks`;
   $('top').innerHTML = [['Open picks', nOpen, nOpen ? 'to play' : 'none right now'], ['Settled picks', won + lost ? `${won}–${lost}` : '–', won + lost ? `${pct(won / (won + lost), 1)} hit rate · ${set.length} settled` : `${set.length} settled`],
     ['ROI', TWO('Opening line', won + lost ? `<b class="${cls(units)}" style="font-weight:inherit">${roi(units / (won + lost))}</b>` : '–', 'Closing line', cc.length ? `<b class="${cls(uc)}" style="font-weight:inherit">${roi(uc / cc.length)}</b>` : '–'),
      ''],
     ['Average line', TWO('Opening', avg(cl, b => b.line), 'Closing', avg(cl, b => b.close)), ''],
-    ['Average total', TWO('Model', avg(mu, b => b.mu), 'Actual', avg(cl, b => b.total)), ''],
+    ['Average total', TWO('Model', avg(mu, b => b.ma ?? b.mu), 'Actual', avg(cl, b => b.total)), ''],
     ...mvTiles(cl)]
     .map(([k, v, n]) => `<a class="tile" href="#view=livetest"${k === 'Settled picks' ? ' data-to="settled"' : k === 'Open picks' ? ' data-to="openpicks"' : ''}><span class="klabel">${k}</span><span class="stat">${v}</span><span class="small">${n}</span></a>`).join('');
 }
@@ -337,7 +337,7 @@ const BHEAD = LHEAD + '<th class="n">Model line</th><th class="n">Actual total</
 const GHEAD = (first, more='') => `<thead><tr><th>${first}</th><th class="n">Picks</th><th class="n">Hit</th><th class="n">Avg price</th><th class="n">ROI</th>${more}</tr></thead>`;
 // average opening and closing line of a list of bets, as two table cells
 const seasonOf = b => { const y = +b.dt.slice(0, 4); return +b.dt.slice(5, 7) >= 7 ? `${y}-${y + 1}` : `${y - 1}-${y}`; };
-const lineAvg = (list, k) => (list.reduce((a, b) => a + b[k], 0) / list.length).toFixed(1);
+const lineAvg = (list, k) => (list.reduce((a, b) => a + (k === 'mu' ? (b.ma ?? b.mu) : b[k]), 0) / list.length).toFixed(1);   // model total = every signal in (15 Nov 2026)
 const lineCells = list => { const c = list.filter(b => b.close != null); return c.length ? `<td class="n">${lineAvg(c, 'line')}</td><td class="n">${lineAvg(c, 'close')}</td>` : '<td class="n muted">–</td><td class="n muted">–</td>'; };
 
 function renderFindings(){
