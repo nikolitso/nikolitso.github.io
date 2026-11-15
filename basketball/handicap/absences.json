@@ -356,5 +356,22 @@
   "oa": [
    "Morgan"
   ]
+ },
+ "p0q7rciM": {
+  "fh": 0.0,
+  "fa": 0.0,
+  "eh": {
+   "comp": "FIBA Europe Cup",
+   "opp": "Fribourg Olympic",
+   "away": false,
+   "days": 5
+  },
+  "ea": null,
+  "h": 0.0,
+  "a": -0.0,
+  "oh": [],
+  "oa": [
+   "Bogues Jr"
+  ]
  }
 }
