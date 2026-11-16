@@ -577,7 +577,6 @@ document.addEventListener('click', e => {
 // Leagues tab, laid out like Basketball totals (user, 16 Nov 2026): each league's games and market, then the model's
 // picks at the closing line (where the backtest takes them) and the same picks at the opening line; click a league for
 // its seasons and an analysis of all its games
-let lgOpen = null;
 function renderLeagues(){
   const T = DATA.backtest.lgtab, B = DATA.backtest, r1 = x => x == null ? '–' : x.toFixed(1);
   const rp = x => x == null ? '<td class="n muted">–</td>' : `<td class="n ${cls(x)}">${sgn(x * 100, 1)}%</td>`;
@@ -588,29 +587,31 @@ function renderLeagues(){
   const pk = p => !p || !p.n ? '<td class="n muted" style="border-left:1px solid var(--line)">–</td>' + '<td class="n muted">–</td>'.repeat(7)
     : `<td class="n" style="border-left:1px solid var(--line)">${p.n}</td><td class="n">${r1(p.fair)}</td><td class="n">${r1(p.line)}</td><td class="n">${r1(p.total)}</td><td class="n">${pct(p.w / p.n)}</td><td class="n ${cls(p.pl)}">${sgn(p.pl, 1)}</td>${rp(p.roi)}${rp(p.roi_open)}`;
   const row = (label, s, attrs = '') => `<tr${attrs}><td>${label}</td><td class="n">${s.games.toLocaleString('en-US')}</td><td class="n">${s.over == null ? '–' : pct(s.over)}</td><td class="n">${s.low.toLocaleString('en-US')}</td>${rp(s.low_bo)}${pk(s.picks)}</tr>`;
-  h += row('<b>All live leagues</b>', T.all);
-  for (const women of [true, false]){
-    h += `<tr><td colspan="13" class="tier" style="padding-top:18px">${women ? "Women's leagues" : "Men's leagues"}</td></tr>`;
-    for (const l of DATA.leagues.filter(l => l.women === women)){
-      const s = T[l.key]; if (!s) continue;
-      const on = lgOpen === l.key;
-      h += row(`<span class="caret">${on ? '▾' : '▸'}</span> ${l.country} <span class="muted">${l.name} ${sexAb(l)}</span>`, s, ` class="srow${on ? ' on' : ''}" data-open="${l.key}"`);
-      if (on) for (const x of s.seasons) h += row(`<span style="padding-left:1.2em">${x.label.replace('-', '–')}</span>`, x, ' class="sub"');
+  const L_ = lg !== 'all' && LG[lg], A = L_ && T[lg];
+  if (!A){                                             // the overview: every league, each opens its own page (user, 16 Nov 2026)
+    h += row('<b>All live leagues</b>', T.all);
+    for (const women of [true, false]){
+      h += `<tr><td colspan="13" class="tier" style="padding-top:18px">${women ? "Women's leagues" : "Men's leagues"}</td></tr>`;
+      for (const l of DATA.leagues.filter(l => l.women === women)){
+        const s = T[l.key]; if (!s) continue;
+        h += row(`<span class="caret">▸</span> <a class="gm" href="#view=leagues&lg=${l.key}">${l.country} <span class="muted">${l.name} ${sexAb(l)}</span></a>`, s, ` class="srow" data-open="${l.key}"`);
+      }
     }
+    return h + '</tbody></table></div><p class="note">Click a league to open its own page: its seasons and an analysis of every game.</p>' + intro;
   }
-  h += '</tbody></table></div>';
-  const L_ = lgOpen && LG[lgOpen], A = L_ && T[lgOpen];
-  if (!A) return h + '<p class="note">Click a league for its seasons and an analysis of every game.</p>' + intro;
-  const P = A.picks, name = `${L_.country} ${L_.name} ${sexAb(L_)}`;
+  const head = h, P = A.picks, name = `${L_.country} ${L_.name} ${sexAb(L_)}`;
+  h = `<p class="note"><a href="#view=leagues">← All leagues</a></p><h2 style="margin-top:6px">${name}</h2>`;
   if (P.n){
     const t = [['Record', `${P.w}–${P.n - P.w}`, `${pct(P.w / P.n)} hit rate`],
                ['ROI', `<span class="${cls(P.roi)}">${sgn(P.roi * 100, 1)}%</span>`, `closing line · ${P.n} picks`],
                ['ROI at open', P.roi_open == null ? '–' : `<span class="${cls(P.roi_open)}">${sgn(P.roi_open * 100, 1)}%</span>`, `opening line · ${P.n_open} picks`],
                ['Market line', r1(P.line), 'avg of the picks'], ['Model line', r1(P.fair), 'avg of the picks'], ['Actual total', r1(P.total), 'avg of the picks']];
-    h += `<h2 id="lgan" style="margin-top:32px">${name}: the model's picks</h2><div class="metrics">${t.map(([l, v, n]) => `<div class="metric"><div class="lbl">${l}</div><div class="big">${v}</div><div class="sm">${n}</div></div>`).join('')}</div>`
-       + `<p class="note"><a href="#view=backtest&lg=${lgOpen}&to=bets">Every pick in this league, one by one →</a></p>`;
+    h += `<h3 style="margin-top:14px">The model's picks</h3><div class="metrics">${t.map(([l, v, n]) => `<div class="metric"><div class="lbl">${l}</div><div class="big">${v}</div><div class="sm">${n}</div></div>`).join('')}</div>`
+       + `<p class="note"><a href="#view=backtest&lg=${lg}&to=bets">Every pick in this league, one by one →</a></p>`;
   }
-  h += `<h2${P.n ? '' : ' id="lgan"'} style="margin-top:32px">${name}: analysis of every game</h2><p class="note">Every game with a line, not only the picks. <b>4+ sets</b>: the part of the games that went past 3 sets. <b>Total − line</b>: the average final total minus the average closing line. <b>Blind over</b>: backing the over in every game, at the closing line and price, and at the opening line and price (where an opening line was recorded). <b>Picks</b> and <b>ROI</b>: the model's picks in that row, at the closing line.</p>`;
+  h += `<h2 style="margin-top:32px">Season by season</h2>` + head.replace('<th>League</th>', '<th>Season</th>') + row('<b>All seasons</b>', A)
+     + A.seasons.map(x => row(x.label.replace('-', '–'), x)).join('') + '</tbody></table></div>';
+  h += `<h2 style="margin-top:32px">Analysis of every game</h2><p class="note">Every game with a line, not only the picks. <b>4+ sets</b>: the part of the games that went past 3 sets. <b>Total − line</b>: the average final total minus the average closing line. <b>Blind over</b>: backing the over in every game, at the closing line and price, and at the opening line and price (where an opening line was recorded). <b>Picks</b> and <b>ROI</b>: the model's picks in that row, at the closing line.</p>`;
   const AH = `<th class="n">Games</th><th class="n">Over %</th><th class="n">4+<br>sets</th><th class="n">Total</th><th class="n">Closing<br>line</th><th class="n">Total −<br>line</th><th class="n">Opening<br>line</th><th class="n">Blind over<br>close</th><th class="n">Blind over<br>open</th><th class="n" style="border-left:1px solid var(--line)">Picks</th><th class="n">ROI</th>`;
   const ar = (lab, x) => `<tr><td>${lab}</td><td class="n">${x.games}</td><td class="n">${pct(x.over)}</td><td class="n">${pct(x.sets4)}</td><td class="n">${r1(x.total)}</td><td class="n">${r1(x.line)}</td><td class="n">${sgn(x.total - x.line, 1)}</td><td class="n">${r1(x.open)}</td>${rp(x.bo)}${rp(x.boo)}<td class="n" style="border-left:1px solid var(--line)">${x.picks.n || '–'}</td>${x.picks.n ? rp(x.picks.roi) : '<td class="n muted">–</td>'}</tr>`;
   const TB = (title, first, rows) => rows.length ? `<h2>${title}</h2><div class="scroll"><table style="max-width:1180px"><thead><tr><th>${first}</th>${AH}</tr></thead><tbody>${rows.join('')}</tbody></table></div>` : '';
@@ -622,10 +623,8 @@ function renderLeagues(){
 }
 document.addEventListener('click', e => {
   const r = e.target.closest('tr.srow[data-open]');
-  if (!r) return;
-  lgOpen = lgOpen === r.dataset.open ? null : r.dataset.open;
-  render();
-  if (lgOpen) document.getElementById('lgan').scrollIntoView({behavior: 'smooth', block: 'start'});
+  if (!r || e.target.closest('a')) return;
+  location.hash = `view=leagues&lg=${r.dataset.open}`;
 });
 
 function renderMethod(){
@@ -680,7 +679,7 @@ function worked(){
 const RENDER = {home: renderHome, projections: renderProjections, picks: renderPicks, season: renderSeason, backtest: renderBacktest, leagues: renderLeagues, method: renderMethod};
 function render(){
   document.querySelectorAll('#tabs a').forEach(a => { a.classList.toggle('on', a.dataset.view === view); a.href = `#view=${a.dataset.view}${lg === 'all' ? '' : '&lg=' + lg}`; });
-  const chips = view === 'method' || view === 'home' || view === 'leagues' ? [] : [['all', 'All leagues'], ...DATA.leagues.map(l => [l.key, `${l.country} ${sexAb(l)}`])];
+  const chips = view === 'method' || view === 'home' ? [] : [['all', 'All leagues'], ...DATA.leagues.map(l => [l.key, `${l.country} ${sexAb(l)}`])];
   $('chips').innerHTML = chips.map(([k, t]) => `<a href="#view=${view}${k === 'all' ? '' : '&lg=' + k}" class="${k === lg ? 'on' : ''}">${t}</a>`).join('');
   $('out').innerHTML = RENDER[view]();
 }
@@ -688,9 +687,11 @@ function fromHash(){
   const m = location.hash.match(/view=(\w+)/), l = location.hash.match(/lg=([\w-]+)/);
   view = m && m[1] === 'results' ? 'picks' : m && RENDER[m[1]] ? m[1] : 'home';   // Results merged into Picks (8 Nov 2026)
   const nlg = l && LG[l[1]] ? l[1] : 'all';
-  if (nlg !== lg) btSeason = null;
+  const moved = nlg !== lg;
+  if (moved) btSeason = null;
   lg = nlg;
   render();
+  if (moved && view === 'leagues') window.scrollTo(0, 0);   // a league's own page opens at its top
   if (/to=settled/.test(location.hash)) toSettled();   // the Record pill opens the settled picks (user, 15 Nov 2026)
   if (/to=bets/.test(location.hash)){ const el = document.getElementById('btbets'); if (el) el.scrollIntoView({behavior: 'smooth', block: 'start'}); }
 }
