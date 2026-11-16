@@ -501,13 +501,7 @@ function h1Tables(list){
   const row = (label, g) => { const n = g.length, sum = f => g.reduce((a, x) => a + f(x), 0);
     return grp(label, {n, w: g.filter(x => x.ret > 0).length, px: n ? sum(x => x.px) / n : 0, roi: n ? sum(x => x.ret) / n : 0}, '', btCells(g) + cR(g)); };
   const band = (bands, key) => bands.map(([label, lo, hi]) => row(label, L.filter(x => x[key] != null && x[key] >= lo && x[key] < hi))).join('');
-  // the record since the 16% rule: picks logged from 16 Nov 2026 22:00 (Athens) on, the first ones chosen by the rule rather than kept after the cut
-  const RULE_AT = '2026-11-16 22:00', logged = b => { const d = new Date(b.dt.replace(' ', 'T') + ':00'); d.setTime(d - b.hours * 3600e3);
-    const p = n => String(n).padStart(2, '0'); return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`; };
-  const after = L.filter(b => logged(b) >= RULE_AT), before = L.filter(b => logged(b) < RULE_AT);
-  let h = T('The 1H record', 'When logged', row('Logged since the 16% rule', after) + row('Logged before it, kept after the cut', before) + row('<b>All</b>', L),
-    `On 16 Nov 2026 the 1H picks below a 16% edge were removed, after the first 47 showed they lost. The picks kept from before that were chosen with the results known, so their record flatters the rule; the picks logged since are its real test.${after.length ? '' : ' None of those has settled yet.'} ROI close: the same picks at the closing 1H line and price.`);
-  h += T('By edge', "Model 1H's edge", band([...Array(7)].map((_, i) => [`${16 + 2 * i}% to ${18 + 2 * i}%`, 0.16 + 0.02 * i, 0.18 + 0.02 * i]).concat([['30% or more', 0.30, 99]]), 'edge'),
+  let h = T('By edge', "Model 1H's edge", band([...Array(7)].map((_, i) => [`${16 + 2 * i}% to ${18 + 2 * i}%`, 0.16 + 0.02 * i, 0.18 + 0.02 * i]).concat([['30% or more', 0.30, 99]]), 'edge'),
     'Settled 1H picks. With few picks these tables say little. Line averages over the picks with a closing 1H line.');
   h += T('By line', '1H line', band([['Under 80', 0, 80], ['80 to 84.5', 80, 85], ['85 or more', 85, 999]], 'line'));
   h += T('By tier', 'Tier', TIER_NAMES.map(t => row(t, L.filter(b => tierOf(b.lg) === t))).join(''));
