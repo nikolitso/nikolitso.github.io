@@ -299,7 +299,7 @@ const TOP_H1 = (() => {
     ['ROI', TWO('Opening line', won + lost ? roi(units / (won + lost)) : '–', 'Closing line', cc.length ? roi(uc / cc.length) : '–'), ''],
     ['Average line', TWO('Opening', avg(cl, b => b.line), 'Closing', avg(cl, b => b.close)), ''],
     ['Average total', TWO('Model', avg(set.filter(b => b.m1 != null), b => b.m1), 'Actual', avg(set.filter(b => b.res != null), b => b.res)), ''],
-    ...mvTiles(cl).map(([k, v, n, mv]) => [k.replace('Closing line', 'Closing 1H line'), v, n, mv])]
+    ...mvTiles(cl).map(([k, v, n, mv]) => [k.replace('Closing line', 'Closing 1H line').replace('closing line', 'closing 1H line'), v, n, mv])]
     .map(([k, v, n, mv]) => `<a class="tile" href="#view=h1live"${mv ? ` data-to="h1settled" data-mv="${mv}"` : k === 'Settled 1H picks' ? ' data-to="h1settled"' : k === 'Open 1H picks' ? ' data-to="h1open"' : ''}><span class="klabel">${k}</span><span class="stat">${v}</span><span class="small">${n}</span></a>`).join('');
 })();
 
@@ -312,7 +312,7 @@ function mvTiles(list){
   const ROIs = L => { const d = dec(L); if (!d.length) return ''; const r = d.reduce((x, b) => x + b.ret, 0) / d.length; return ` · ROI <b class="${cls(r)}" style="font-weight:inherit">${roi(r)}</b>`; };   // as on Won when no move
   const wl_ = L => { const d = dec(L), w = d.filter(b => b.ret > 0).length; return `${w}–${d.length - w}`; };
   return [['Closing line moved', n ? TWO('Toward pick', pct(up.length / n), 'Against', pct(dn.length / n), 'h-up', 'h-dn') : '–', ''],
-          ['Avg move toward pick', up.length ? a(up) + ' pts' : '–', `avg of ${up.length} pick${up.length === 1 ? '' : 's'}`, 'up'], ['Avg move against pick', dn.length ? a(dn) + ' pts' : '–', `avg of ${dn.length} pick${dn.length === 1 ? '' : 's'}`, 'dn'],
+          ['Avg closing line move', TWO('Toward pick', up.length ? a(up) : '–', 'Against', dn.length ? a(dn) : '–', 'h-up', 'h-dn'), `points · avg of ${up.length} and ${dn.length} pick${dn.length === 1 ? '' : 's'}`],   // one tile (16 Nov 2026)
           ['Won when moved toward', hit(up), `${wl_(up)} win – loss${ROIs(up)}`, 'up'], ['Won when moved against', hit(dn), `${wl_(dn)} win – loss${ROIs(dn)}`, 'dn'],
           ['Won when it did not move', hit(same), `${wl_(same)} win – loss${ROIs(same)}`, '0']];   // 16 Nov 2026   // a 4th item: the tile opens those picks (16 Nov 2026)
 }
