@@ -229,7 +229,7 @@ details.picks>summary .muted{font-size:14px;font-weight:400}
   <div class="chips" id="chips"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=h1e16a"></script>
+<script src="data.js?v=h1e14a"></script>
 <script src="live.js"></script>
 <script>
 const $ = id => document.getElementById(id);
@@ -501,7 +501,7 @@ function h1Tables(list){
   const row = (label, g) => { const n = g.length, sum = f => g.reduce((a, x) => a + f(x), 0);
     return grp(label, {n, w: g.filter(x => x.ret > 0).length, px: n ? sum(x => x.px) / n : 0, roi: n ? sum(x => x.ret) / n : 0}, '', btCells(g) + cR(g)); };
   const band = (bands, key) => bands.map(([label, lo, hi]) => row(label, L.filter(x => x[key] != null && x[key] >= lo && x[key] < hi))).join('');
-  let h = T('By edge', "Model 1H's edge", band([...Array(7)].map((_, i) => [`${16 + 2 * i}% to ${18 + 2 * i}%`, 0.16 + 0.02 * i, 0.18 + 0.02 * i]).concat([['30% or more', 0.30, 99]]), 'edge'),
+  let h = T('By edge', "Model 1H's edge", band([...Array(8)].map((_, i) => [`${14 + 2 * i}% to ${16 + 2 * i}%`, 0.14 + 0.02 * i, 0.16 + 0.02 * i]).concat([['30% or more', 0.30, 99]]), 'edge'),
     'Settled 1H picks. With few picks these tables say little. Line averages over the picks with a closing 1H line.');
   h += T('By line', '1H line', band([['Under 80', 0, 80], ['80 to 84.5', 80, 85], ['85 or more', 85, 999]], 'line'));
   h += T('By tier', 'Tier', TIER_NAMES.map(t => row(t, L.filter(b => tierOf(b.lg) === t))).join(''));
