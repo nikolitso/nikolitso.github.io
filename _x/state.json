@@ -634,6 +634,7 @@
       "patty-is-a-very-girly-name",
       "perfect-strangers",
       "prague",
+      "queen-at-sea",
       "queen-of-hearts",
       "quiet-chaos",
       "r",
@@ -780,7 +781,8 @@
       "working-woman",
       "cinema-paradiso",
       "capernaum",
-      "where-the-wind-comes-from"
+      "where-the-wind-comes-from",
+      "queen-at-sea"
     ],
     "log": [
       {
@@ -1090,11 +1092,17 @@
         "slot": "2026-11-15 20",
         "slug": "where-the-wind-comes-from",
         "id": "2122026905268617244"
+      },
+      {
+        "day": "2026-11-16",
+        "slot": "2026-11-16 20",
+        "slug": "queen-at-sea",
+        "id": "2122389290541871259"
       }
     ],
-    "last_day": "2026-11-15"
+    "last_day": "2026-11-16"
   },
-  "last_slot": "2026-11-16 14",
+  "last_slot": "2026-11-16 20",
   "quote": {
     "seen": [
       "1",
