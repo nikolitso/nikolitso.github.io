@@ -624,14 +624,14 @@ function renderH1(){
   if (!fx.length) return h + '<p class="empty">No games in the next 7 days.</p>';
   const byDay = {};
   fx.forEach(g => (byDay[g.dt.slice(0, 10)] ||= []).push(g));
-  const head = `<thead><tr><th>Time</th>${lg === 'all' ? '<th>League</th>' : ''}<th>Match</th><th class="n">Model 1H</th><th class="n">1H line</th><th class="n">Over</th><th class="n">Under</th><th class="n">Over chance</th><th class="n">Edge over</th><th class="n">Edge under</th></tr></thead>`;
+  const head = `<thead><tr><th>Time</th>${lg === 'all' ? '<th>League</th>' : ''}<th>Match</th><th class="n">Model 1H</th><th class="n">Opening 1H line</th><th class="n">1H line now</th><th class="n">Over</th><th class="n">Under</th><th class="n">Over chance</th><th class="n">Edge over</th><th class="n">Edge under</th></tr></thead>`;
   for (const [d, gs] of Object.entries(byDay)){
     h += `<h2 class="day">${dayName(d)}</h2><div class="scroll"><table class="proj">${head}<tbody>`;
     for (const g of gs){
       const ed = v => !g.ok && !g.pk ? `<td class="n muted">${sgn(v * 100, 0)}%</td>` : edgeNow(v);   // every column is now; a pick's own edge is in its badge (16 Nov 2026)
       h += `<tr class="${g.pick ? 'pk' : ''}"><td>${g.dt.slice(11)}</td>${lg === 'all' ? `<td>${lgShort(g.lg)}</td>` : ''}
         <td class="wr">${g.slug ? `<a class="gm" href="games/${g.slug}/">${g.home} – ${g.away}</a>` : `${g.home} – ${g.away}`}${g.pick ? `<span class="badge">${g.pick}${g.pk ? ` · ${sgn(g.pk.edge * 100, 0)}%` : ''}</span>` : ''}</td><td class="n"><b>${g.m1.toFixed(1)}</b></td>
-        ${g.line == null ? '<td class="n muted" colspan="6">no first-half line yet</td>' : `<td class="n">${g.line}</td><td class="n">${g.op.toFixed(2)}</td><td class="n">${g.up.toFixed(2)}</td><td class="n">${pct(g.p)}</td>${ed(g.eo)}${ed(g.eu)}`}</tr>`;
+        ${g.line == null ? '<td class="n muted" colspan="7">no first-half line yet</td>' : `<td class="n">${g.l0 ?? '–'}</td><td class="n">${g.line}</td><td class="n">${g.op.toFixed(2)}</td><td class="n">${g.up.toFixed(2)}</td><td class="n">${pct(g.p)}</td>${ed(g.eo)}${ed(g.eu)}`}</tr>`;
     }
     h += '</tbody></table></div>';
   }
