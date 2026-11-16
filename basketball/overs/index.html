@@ -305,7 +305,7 @@ const TOP_H1 = (() => {
 
 // how far the closing line moved, on average, for the picks it moved toward and for those it moved against (14 Nov 2026)
 function mvTiles(list){
-  const up = list.filter(b => b.close > b.line), dn = list.filter(b => b.close < b.line), n = list.length;
+  const up = list.filter(b => b.close > b.line), dn = list.filter(b => b.close < b.line), same = list.filter(b => b.close === b.line), n = list.length;
   const a = L => L.length ? sgn(L.reduce((x, b) => x + b.close - b.line, 0) / L.length, 1) : '–';
   const dec = L => L.filter(b => b.ret != null && b.ret !== 0);
   const hit = L => { const d = dec(L); return d.length ? pct(d.filter(b => b.ret > 0).length / d.length, 1) : '–'; };
@@ -313,7 +313,8 @@ function mvTiles(list){
   const wl_ = L => { const d = dec(L), w = d.filter(b => b.ret > 0).length; return `${w}–${d.length - w}`; };
   return [['Closing line moved', n ? TWO('Toward pick', pct(up.length / n), 'Against', pct(dn.length / n), 'h-up', 'h-dn') : '–', ''],
           ['Avg move toward pick', up.length ? a(up) + ' pts' : '–', `avg of ${up.length} pick${up.length === 1 ? '' : 's'}`, 'up'], ['Avg move against pick', dn.length ? a(dn) + ' pts' : '–', `avg of ${dn.length} pick${dn.length === 1 ? '' : 's'}`, 'dn'],
-          ['Won when moved toward', hit(up), `${wl_(up)} win – loss${ROIs(up)}`, 'up'], ['Won when moved against', hit(dn), `${wl_(dn)} win – loss${ROIs(dn)}`, 'dn']];   // a 4th item: the tile opens those picks (16 Nov 2026)
+          ['Won when moved toward', hit(up), `${wl_(up)} win – loss${ROIs(up)}`, 'up'], ['Won when moved against', hit(dn), `${wl_(dn)} win – loss${ROIs(dn)}`, 'dn'],
+          ['Won when it did not move', hit(same), `${wl_(same)} win – loss${ROIs(same)}`, '0']];   // 16 Nov 2026   // a 4th item: the tile opens those picks (16 Nov 2026)
 }
 
 // two numbers in one tile, a little smaller so they stay on one line (14 Nov 2026)
@@ -747,7 +748,7 @@ function pickFilter(h, mv){
   if (!mv) { if (note) note.remove(); return; }
   const n = rows.filter(r => r.dataset.mv === mv).length;
   if (!note) { note = document.createElement('p'); note.className = 'note mvnote'; note.dataset.for = h.id; el.before(note); }
-  note.innerHTML = `<b>Showing the ${n} pick${n === 1 ? '' : 's'} whose closing line moved ${mv === 'up' ? 'toward' : 'against'} the pick.</b> <a href="#" class="gm" data-showall="${h.id}">Show all ${rows.length}</a>`;
+  note.innerHTML = `<b>Showing the ${n} pick${n === 1 ? '' : 's'} whose closing line ${mv === 'up' ? 'moved toward the pick' : mv === 'dn' ? 'moved against the pick' : 'did not move'}.</b> <a href="#" class="gm" data-showall="${h.id}">Show all ${rows.length}</a>`;
 }
 document.addEventListener('click', e => {
   const a = e.target.closest('a[data-showall]'); if (!a) return;
