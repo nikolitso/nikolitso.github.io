@@ -619,7 +619,7 @@ function renderProjections(){
 function renderH1(){
   const H = LIVE.h1;
   if (!H) return '<p class="empty">No first-half projections yet.</p>';
-  let h = `<p class="note">Games in the next 7 days with <b>Model 1H</b>, the first-half projection built only from earlier first halves (the league's first-half average and each team's first halves this season, plus ${sgn(H.bias, 1)}), next to the first-half line across the books. It never sees the full-game line or the model total. Over chance from how widely first halves spread around the projection in each league; edge = chance × average price − 1. Highlighted games have a 1H test pick, logged in the <a href="#view=h1live">1H Live test</a> tab at the line and price shown when it was taken: the over, with an edge of ${Math.round((H.edge ?? LE()) * 100)}% or more on a .5 line. Regular season only: play-off games are left out of the 1H test. Greyed: no pick possible (whole-number line or too few games). Each match page shows the projection part by part.</p>`;
+  let h = `<p class="note">Games in the next 7 days with <b>Model 1H</b>, the first-half projection built only from earlier first halves (the league's first-half average and each team's first halves this season, plus ${sgn(H.bias, 1)}), next to the first-half line across the books. It never sees the full-game line or the model total. Over chance from how widely first halves spread around the projection in each league; edge = chance × average price − 1. Highlighted games have a 1H test pick, logged in the <a href="#view=h1live">1H Live test</a> tab; the badge shows the line taken and the edge it was taken at, while the other columns are the line, prices and edges now: the over, with an edge of ${Math.round((H.edge ?? LE()) * 100)}% or more on a .5 line. Regular season only: play-off games are left out of the 1H test. Greyed: no pick possible (whole-number line or too few games). Each match page shows the projection part by part.</p>`;
   const fx = H.rows.filter(inLg);
   if (!fx.length) return h + '<p class="empty">No games in the next 7 days.</p>';
   const byDay = {};
@@ -628,10 +628,10 @@ function renderH1(){
   for (const [d, gs] of Object.entries(byDay)){
     h += `<h2 class="day">${dayName(d)}</h2><div class="scroll"><table class="proj">${head}<tbody>`;
     for (const g of gs){
-      const ed = (v, sd) => g.pk ? (g.pk.side === sd ? `<td class="n pos">${sgn(g.pk.edge * 100, 0)}%</td>` : '<td class="n muted">–</td>') : !g.ok ? `<td class="n muted">${sgn(v * 100, 0)}%</td>` : edgeNow(v);
+      const ed = v => !g.ok && !g.pk ? `<td class="n muted">${sgn(v * 100, 0)}%</td>` : edgeNow(v);   // every column is now; a pick's own edge is in its badge (16 Nov 2026)
       h += `<tr class="${g.pick ? 'pk' : ''}"><td>${g.dt.slice(11)}</td>${lg === 'all' ? `<td>${lgShort(g.lg)}</td>` : ''}
-        <td class="wr">${g.slug ? `<a class="gm" href="games/${g.slug}/">${g.home} – ${g.away}</a>` : `${g.home} – ${g.away}`}${g.pick ? `<span class="badge">${g.pick}</span>` : ''}</td><td class="n"><b>${g.m1.toFixed(1)}</b></td>
-        ${g.line == null ? '<td class="n muted" colspan="6">no first-half line yet</td>' : `<td class="n">${g.line}</td><td class="n">${g.op.toFixed(2)}</td><td class="n">${g.up.toFixed(2)}</td><td class="n">${pct(g.p)}</td>${ed(g.eo, 'over')}${ed(g.eu, 'under')}`}</tr>`;
+        <td class="wr">${g.slug ? `<a class="gm" href="games/${g.slug}/">${g.home} – ${g.away}</a>` : `${g.home} – ${g.away}`}${g.pick ? `<span class="badge">${g.pick}${g.pk ? ` · ${sgn(g.pk.edge * 100, 0)}%` : ''}</span>` : ''}</td><td class="n"><b>${g.m1.toFixed(1)}</b></td>
+        ${g.line == null ? '<td class="n muted" colspan="6">no first-half line yet</td>' : `<td class="n">${g.line}</td><td class="n">${g.op.toFixed(2)}</td><td class="n">${g.up.toFixed(2)}</td><td class="n">${pct(g.p)}</td>${ed(g.eo)}${ed(g.eu)}`}</tr>`;
     }
     h += '</tbody></table></div>';
   }
