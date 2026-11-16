@@ -619,9 +619,10 @@ function renderProjections(){
 function renderH1(){
   const H = LIVE.h1;
   if (!H) return '<p class="empty">No first-half projections yet.</p>';
-  let h = `<p class="note">Games in the next 7 days with <b>Model 1H</b>, the first-half projection built only from earlier first halves (the league's first-half average and each team's first halves this season, plus ${sgn(H.bias, 1)}), next to the first-half line across the books. It never sees the full-game line or the model total. Over chance from how widely first halves spread around the projection in each league; edge = chance × average price − 1. Highlighted games have a 1H test pick, logged in the <a href="#view=h1live">1H Live test</a> tab; the badge shows the line taken and the edge it was taken at, while the other columns are the line, prices and edges now: the over, with an edge of ${Math.round((H.edge ?? LE()) * 100)}% or more on a .5 line. Regular season only: play-off games are left out of the 1H test. Greyed: no pick possible (whole-number line or too few games). Each match page shows the projection part by part.</p>`;
+  let h = '';   // the note goes under the tables (16 Nov 2026)
+  const note = `<p class="note">Games in the next 7 days with <b>Model 1H</b>, the first-half projection built only from earlier first halves (the league's first-half average and each team's first halves this season, plus ${sgn(H.bias, 1)}), next to the first-half line across the books. It never sees the full-game line or the model total. Over chance from how widely first halves spread around the projection in each league; edge = chance × average price − 1. Highlighted games have a 1H test pick, logged in the <a href="#view=h1live">1H Live test</a> tab; the badge shows the line taken and the edge it was taken at, while the other columns are the line, prices and edges now: the over, with an edge of ${Math.round((H.edge ?? LE()) * 100)}% or more on a .5 line. Regular season only: play-off games are left out of the 1H test. Greyed: no pick possible (whole-number line or too few games). Each match page shows the projection part by part.</p>`;
   const fx = H.rows.filter(inLg);
-  if (!fx.length) return h + '<p class="empty">No games in the next 7 days.</p>';
+  if (!fx.length) return h + '<p class="empty">No games in the next 7 days.</p>' + note;
   const byDay = {};
   fx.forEach(g => (byDay[g.dt.slice(0, 10)] ||= []).push(g));
   const head = `<thead><tr><th>Time</th>${lg === 'all' ? '<th>League</th>' : ''}<th>Match</th><th class="n">Model 1H</th><th class="n">Opening 1H line</th><th class="n">1H line now</th><th class="n">Over</th><th class="n">Under</th><th class="n">Over chance</th><th class="n">Edge over</th><th class="n">Edge under</th></tr></thead>`;
@@ -635,7 +636,7 @@ function renderH1(){
     }
     h += '</tbody></table></div>';
   }
-  return h;
+  return h + note;
 }
 
 function renderPicks(){
