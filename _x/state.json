@@ -169,7 +169,8 @@
       "how-to-win-the-premier-league",
       "how-to-be-good-at-life",
       "168-hours-you-have-more-time-than",
-      "weighing-the-odds-in-sports-betting"
+      "weighing-the-odds-in-sports-betting",
+      "range-how-generalists-triumph-in"
     ],
     "log": [
       {
@@ -507,9 +508,15 @@
         "slot": "2026-11-15 14",
         "slug": "weighing-the-odds-in-sports-betting",
         "id": "2121936322159907313"
+      },
+      {
+        "day": "2026-11-16",
+        "slot": "2026-11-16 14",
+        "slug": "range-how-generalists-triumph-in",
+        "id": "2122298699778818141"
       }
     ],
-    "last_day": "2026-11-15"
+    "last_day": "2026-11-16"
   },
   "film": {
     "seen": [
@@ -1087,7 +1094,7 @@
     ],
     "last_day": "2026-11-15"
   },
-  "last_slot": "2026-11-16 11",
+  "last_slot": "2026-11-16 14",
   "quote": {
     "seen": [
       "1",
