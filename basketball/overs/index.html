@@ -494,8 +494,8 @@ function renderH1Live(){
 function h1Tables(list){
   if (!list.length) return '';
   const L = list.map(b => ({...b, ma: b.m1, total: b.res}));
-  const HEAD = '<th class="n">Opening 1H line</th><th class="n">Closing 1H line</th><th class="n">Model 1H</th><th class="n">1H points</th><th class="n">ROI close</th>';
-  const T = (title, first, body, note='') => `<h2>${title}</h2>${note ? `<p class="note">${note}</p>` : ''}<div class="scroll"><table style="max-width:1100px">${GHEAD(first, HEAD)}<tbody>${body}</tbody></table></div>`;
+  const HEAD = '<th class="n">Opening line</th><th class="n">Closing line</th><th class="n">Model 1H</th><th class="n">1H pts</th><th class="n">ROI close</th>';   // short headings: the table fits without scrolling sideways
+  const T = (title, first, body, note='') => `<h2>${title}</h2>${note ? `<p class="note">${note}</p>` : ''}<div class="scroll"><table style="max-width:1100px" class="h1t">${GHEAD(first, HEAD)}<tbody>${body}</tbody></table></div>`;
   const cR = g => { const c = g.filter(b => b.cpx != null && b.close != null && b.res !== b.close); if (!c.length) return '<td class="n muted">–</td>';
     const r = c.reduce((a, b) => a + (b.res > b.close ? b.cpx - 1 : -1), 0) / c.length; return `<td class="n ${cls(r)}">${roi(r)}</td>`; };
   const row = (label, g) => { const n = g.length, sum = f => g.reduce((a, x) => a + f(x), 0);
