@@ -497,7 +497,7 @@ function h1Tables(list){
   const HEAD = '<th class="n">Opening 1H line</th><th class="n">Closing 1H line</th><th class="n">Model 1H</th><th class="n">1H points</th>';
   const T = (title, first, body, note='') => `<h2>${title}</h2>${note ? `<p class="note">${note}</p>` : ''}<div class="scroll"><table style="max-width:1040px">${GHEAD(first, HEAD)}<tbody>${body}</tbody></table></div>`;
   const band = (bands, key) => bands.map(([label, lo, hi]) => bandRow(label, L.filter(x => x[key] != null && x[key] >= lo && x[key] < hi), false)).join('');
-  let h = T('By edge', "Model 1H's edge", band([['16% to 20%', 0.16, 0.20], ['20% to 25%', 0.20, 0.25], ['25% or more', 0.25, 99]], 'edge'),
+  let h = T('By edge', "Model 1H's edge", band([...Array(7)].map((_, i) => [`${16 + 2 * i}% to ${18 + 2 * i}%`, 0.16 + 0.02 * i, 0.18 + 0.02 * i]).concat([['30% or more', 0.30, 99]]), 'edge'),
     'Settled 1H picks. With few picks these tables say little. Line averages over the picks with a closing 1H line.');
   h += T('By line', '1H line', band([['Under 80', 0, 80], ['80 to 84.5', 80, 85], ['85 or more', 85, 999]], 'line'));
   h += T('By tier', 'Tier', TIER_NAMES.map(t => bandRow(t, L.filter(b => tierOf(b.lg) === t), false)).join(''));
