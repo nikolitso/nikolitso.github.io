@@ -313,8 +313,8 @@ function mvTiles(list){
   const wl_ = L => { const d = dec(L), w = d.filter(b => b.ret > 0).length; return `${w}–${d.length - w}`; };
   return [['Closing line moved', n ? TWO('Toward pick', pct(up.length / n), 'Against', pct(dn.length / n), 'h-up', 'h-dn') : '–', ''],
           ['Avg closing line move', TWO('Toward pick', up.length ? a(up) : '–', 'Against', dn.length ? a(dn) : '–', 'h-up', 'h-dn'), `points · avg of ${up.length} and ${dn.length} pick${dn.length === 1 ? '' : 's'}`],   // one tile (16 Nov 2026)
-          ['Won when moved toward', hit(up), `${wl_(up)} win – loss${ROIs(up)}`, 'up'], ['Won when moved against', hit(dn), `${wl_(dn)} win – loss${ROIs(dn)}`, 'dn'],
-          ['Won when it did not move', hit(same), `${wl_(same)} win – loss${ROIs(same)}`, '0']];   // 16 Nov 2026   // a 4th item: the tile opens those picks (16 Nov 2026)
+          ['Won when moved toward', hit(up), `${wl_(up)} win – loss${ROIs(up)}`, 'up'], ['Won when it did not move', hit(same), `${wl_(same)} win – loss${ROIs(same)}`, '0'],
+          ['Won when moved against', hit(dn), `${wl_(dn)} win – loss${ROIs(dn)}`, 'dn']];   // 16 Nov 2026   // a 4th item: the tile opens those picks (16 Nov 2026)
 }
 
 // two numbers in one tile, a little smaller so they stay on one line (14 Nov 2026)
