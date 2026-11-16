@@ -243,7 +243,7 @@ a.gm{color:inherit;text-decoration:none} a.gm:hover{color:var(--gold);text-decor
   <div class="chips" id="chips"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=aff07e39"></script>
+<script src="data.js?v=ee94b150"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -448,8 +448,20 @@ function renderBacktest(){
   h += `<table class="seasons" style="max-width:560px"><thead><tr><th>Season</th><th class="n">Bets</th><th class="n">Won</th><th class="n">Hit</th><th class="n">ROI</th></tr></thead><tbody>`;
   for (const s of B.seasons.filter(inLg)) h += `<tr class="srow${s.season === btSeason ? ' on' : ''}" data-season="${s.season}"><td><span class="caret">${s.season === btSeason ? '▾' : '▸'}</span> ${s.season.replace('-','–')}${s.tuned ? ' <span class="muted">(tuned on)</span>' : ''}</td><td class="n">${s.n}</td><td class="n">${s.w}</td><td class="n">${pct(s.w/s.n)}</td><td class="n ${cls(s.roi)}">${sgn(s.roi*100, 1)}%</td></tr>`;
   h += '</tbody></table>' + byMonth() + byLine() + calibration();
-  if (btSeason) h += seasonBets(btSeason);
+  h += btSeason ? seasonBets(btSeason) : leagueBets();   // a league's page lists all its bets (user, 16 Nov 2026)
   return h;
+}
+
+// every backtest bet of the league, latest first; the tuned-on season left out, as in the league's totals
+function leagueBets(){
+  const tuned = new Set(DATA.backtest.seasons.filter(x => x.tuned).map(x => x.lg + '|' + x.season));
+  const list = DATA.backtest.bets.filter(b => b.lg === lg && !tuned.has(b.lg + '|' + b.season)).sort((a, b) => a.dt < b.dt ? 1 : -1);
+  let h = `<h2 id="btbets">All ${list.length} bets, latest first</h2>`;
+  if (!list.length) return h + '<p class="note">No bets in this league.</p>';
+  h += `<div class="scroll"><table><thead><tr><th>Date</th><th>Match</th><th class="n">Line</th><th class="n">Price</th><th class="n">Model</th><th class="n">Edge</th><th class="n">Sets</th><th class="n">Total</th><th class="n">P/L</th></tr></thead><tbody>`;
+  for (const b of list)
+    h += `<tr><td>${short(b.dt)} ${b.dt.slice(0,4)}</td><td class="wr">${b.home} – ${b.away}</td><td class="n">Over ${b.line}</td><td class="n">${b.px.toFixed(2)}</td><td class="n">${pct(b.p)}</td><td class="n">${sgn(b.edge*100, 0)}%</td><td class="n">${b.sets}</td><td class="n ${b.won ? 'w' : 'l'}">${b.total}</td><td class="n ${cls(b.ret)}">${sgn(b.ret, 2)}</td></tr>`;
+  return h + '</tbody></table></div>';
 }
 
 // every league the backtest ran on, women's and men's, the same rule and unseen seasons (most are not on the page);
@@ -552,7 +564,7 @@ let btSeason = null;
 document.addEventListener('click', e => {
   const r = e.target.closest('tr.srow');
   if (!r) return;
-  if (r.dataset.lg){ location.hash = `view=backtest&lg=${r.dataset.lg}`; return; }
+  if (r.dataset.lg){ location.hash = `view=backtest&lg=${r.dataset.lg}&to=bets`; return; }   // straight to the league's bets (user, 16 Nov 2026)
   btSeason = btSeason === r.dataset.season ? null : r.dataset.season;
   render();
   if (btSeason) document.getElementById('btbets').scrollIntoView({behavior: 'smooth', block: 'start'});
@@ -622,6 +634,7 @@ function fromHash(){
   lg = nlg;
   render();
   if (/to=settled/.test(location.hash)) toSettled();   // the Record pill opens the settled picks (user, 15 Nov 2026)
+  if (/to=bets/.test(location.hash)){ const el = document.getElementById('btbets'); if (el) el.scrollIntoView({behavior: 'smooth', block: 'start'}); }
 }
 function toSettled(){ const el = document.getElementById('settled'); if (el) el.scrollIntoView({behavior: 'smooth', block: 'start'}); }
 document.addEventListener('click', e => { const a = e.target.closest('a[href*="to=settled"]'); if (a && location.hash === a.getAttribute('href')) { e.preventDefault(); toSettled(); } });
