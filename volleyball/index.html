@@ -193,6 +193,7 @@ th{font-size:14px}
 td.wr{white-space:normal}
 table.proj tr.pk td{background:var(--an-accent-soft)}table.proj tr.pk td:first-child{box-shadow:inset 3px 0 var(--gold)}table.proj .flag{margin-top:4px;font-size:14px}
 .pos{color:var(--win)} .neg{color:var(--loss)}
+tr.sub td{color:var(--muted);font-size:.94em} td.tier{font:500 14px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--gold)}
 tr.srow{cursor:pointer} tr.srow:hover td,tr.srow.on td{background:color-mix(in srgb,var(--gold) 10%,transparent)}
 .caret{color:var(--gold);display:inline-block;width:1em}
 th.tsort{cursor:pointer;user-select:none} th.tsort:hover{color:var(--gold)}
@@ -228,6 +229,7 @@ a.gm{color:inherit;text-decoration:none} a.gm:hover{color:var(--gold);text-decor
     <a href="#view=picks" data-view="picks">Live test</a>
     <a href="#view=season" data-view="season">Season</a>
     <a href="#view=backtest" data-view="backtest">Backtest</a>
+    <a href="#view=leagues" data-view="leagues">Leagues</a>
     <a href="#view=method" data-view="method">How it works</a>
   </nav>
 </div></header>
@@ -243,7 +245,7 @@ a.gm{color:inherit;text-decoration:none} a.gm:hover{color:var(--gold);text-decor
   <div class="chips" id="chips"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=4c047917"></script>
+<script src="data.js?v=37f115ab"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -563,11 +565,64 @@ function seasonBets(season){
 let btSeason = null;
 document.addEventListener('click', e => {
   const r = e.target.closest('tr.srow');
-  if (!r) return;
+  if (!r || r.dataset.open) return;
   if (r.dataset.lg){ location.hash = `view=backtest&lg=${r.dataset.lg}&to=bets`; return; }   // straight to the league's bets (user, 16 Nov 2026)
   btSeason = btSeason === r.dataset.season ? null : r.dataset.season;
   render();
   if (btSeason) document.getElementById('btbets').scrollIntoView({behavior: 'smooth', block: 'start'});
+});
+
+// Leagues tab, laid out like Basketball totals (user, 16 Nov 2026): each league's games and market, then the model's
+// picks at the closing line (where the backtest takes them) and the same picks at the opening line; click a league for
+// its seasons and an analysis of all its games
+let lgOpen = null;
+function renderLeagues(){
+  const T = DATA.backtest.lgtab, B = DATA.backtest, r1 = x => x == null ? '–' : x.toFixed(1);
+  const rp = x => x == null ? '<td class="n muted">–</td>' : `<td class="n ${cls(x)}">${sgn(x * 100, 1)}%</td>`;
+  const tunedTxt = B.tuned_seasons && B.tuned_seasons.length ? ` Turkey's ${B.tuned_seasons.map(s => s.replace('-', '–')).join(', ')} season, which the settings were tuned on, is left out.` : '';
+  let h = `<p class="note">Regular-season games of past seasons from ${B.first.slice(0, 4)} on, with a market line of ${DATA.min_line}.5 or more; play-offs are left out, as in the rule.${tunedTxt} <b>All games</b> describes the league and its market. <b>Over %</b>: how often the total went over the closing line. <b>Low lines</b>: the games with a line below ${DATA.low}, the only ones the rule bets on. <b>No model</b>: backing the over in every one of them at the closing line and average price; a league needs −3.0% or better here for live picks. <b>Model's picks</b>: the picks under the current rule, taken at the closing line. <b>Model line</b>: the average of the model's total, <b>Line</b>: the average line taken, and <b>Result</b>: the average final total, all over the picks only. Then how often the picks went over (hit), the units won or lost (P/L), and their ROI at the closing line and price (close, where the backtest takes them) and for the same picks at the opening line and price (open). Click a league for its seasons and an analysis of all its games below the table.</p>`;
+  h += `<div class="scroll"><table style="max-width:1180px"><thead><tr><th style="border-bottom:0"></th><th colspan="4" style="text-align:center;color:var(--gold)">All games</th><th colspan="8" style="text-align:center;color:var(--gold);border-left:1px solid var(--line)">Model's picks</th></tr><tr><th>League</th><th class="n">Games</th><th class="n">Over %</th><th class="n">Low<br>lines</th><th class="n">No<br>model</th><th class="n" style="border-left:1px solid var(--line)">Picks</th><th class="n">Model<br>line</th><th class="n">Line</th><th class="n">Result</th><th class="n">Hit</th><th class="n">P/L</th><th class="n">ROI<br>close</th><th class="n">ROI<br>open</th></tr></thead><tbody>`;
+  const pk = p => !p || !p.n ? '<td class="n muted" style="border-left:1px solid var(--line)">–</td>' + '<td class="n muted">–</td>'.repeat(7)
+    : `<td class="n" style="border-left:1px solid var(--line)">${p.n}</td><td class="n">${r1(p.fair)}</td><td class="n">${r1(p.line)}</td><td class="n">${r1(p.total)}</td><td class="n">${pct(p.w / p.n)}</td><td class="n ${cls(p.pl)}">${sgn(p.pl, 1)}</td>${rp(p.roi)}${rp(p.roi_open)}`;
+  const row = (label, s, attrs = '') => `<tr${attrs}><td>${label}</td><td class="n">${s.games.toLocaleString('en-US')}</td><td class="n">${s.over == null ? '–' : pct(s.over)}</td><td class="n">${s.low.toLocaleString('en-US')}</td>${rp(s.low_bo)}${pk(s.picks)}</tr>`;
+  h += row('<b>All live leagues</b>', T.all);
+  for (const women of [true, false]){
+    h += `<tr><td colspan="13" class="tier" style="padding-top:18px">${women ? "Women's leagues" : "Men's leagues"}</td></tr>`;
+    for (const l of DATA.leagues.filter(l => l.women === women)){
+      const s = T[l.key]; if (!s) continue;
+      const on = lgOpen === l.key;
+      h += row(`<span class="caret">${on ? '▾' : '▸'}</span> ${l.country} <span class="muted">${l.name} ${sexAb(l)}</span>`, s, ` class="srow${on ? ' on' : ''}" data-open="${l.key}"`);
+      if (on) for (const x of s.seasons) h += row(`<span style="padding-left:1.2em">${x.label.replace('-', '–')}</span>`, x, ' class="sub"');
+    }
+  }
+  h += '</tbody></table></div>';
+  const L_ = lgOpen && LG[lgOpen], A = L_ && T[lgOpen];
+  if (!A) return h + '<p class="note">Click a league for its seasons and an analysis of every game.</p>';
+  const P = A.picks, name = `${L_.country} ${L_.name} ${sexAb(L_)}`;
+  if (P.n){
+    const t = [['Record', `${P.w}–${P.n - P.w}`, `${pct(P.w / P.n)} hit rate`],
+               ['ROI', `<span class="${cls(P.roi)}">${sgn(P.roi * 100, 1)}%</span>`, `closing line · ${P.n} picks`],
+               ['ROI at open', P.roi_open == null ? '–' : `<span class="${cls(P.roi_open)}">${sgn(P.roi_open * 100, 1)}%</span>`, `opening line · ${P.n_open} picks`],
+               ['Market line', r1(P.line), 'avg of the picks'], ['Model line', r1(P.fair), 'avg of the picks'], ['Actual total', r1(P.total), 'avg of the picks']];
+    h += `<h2 id="lgan" style="margin-top:32px">${name}: the model's picks</h2><div class="metrics">${t.map(([l, v, n]) => `<div class="metric"><div class="lbl">${l}</div><div class="big">${v}</div><div class="sm">${n}</div></div>`).join('')}</div>`
+       + `<p class="note"><a href="#view=backtest&lg=${lgOpen}&to=bets">Every pick in this league, one by one →</a></p>`;
+  }
+  h += `<h2${P.n ? '' : ' id="lgan"'} style="margin-top:32px">${name}: analysis of every game</h2><p class="note">Every game with a line, not only the picks. <b>4+ sets</b>: the part of the games that went past 3 sets. <b>Total − line</b>: the average final total minus the average closing line. <b>Blind over</b>: backing the over in every game, at the closing line and price, and at the opening line and price (where an opening line was recorded). <b>Picks</b> and <b>ROI</b>: the model's picks in that row, at the closing line.</p>`;
+  const AH = `<th class="n">Games</th><th class="n">Over %</th><th class="n">4+<br>sets</th><th class="n">Total</th><th class="n">Closing<br>line</th><th class="n">Total −<br>line</th><th class="n">Opening<br>line</th><th class="n">Blind over<br>close</th><th class="n">Blind over<br>open</th><th class="n" style="border-left:1px solid var(--line)">Picks</th><th class="n">ROI</th>`;
+  const ar = (lab, x) => `<tr><td>${lab}</td><td class="n">${x.games}</td><td class="n">${pct(x.over)}</td><td class="n">${pct(x.sets4)}</td><td class="n">${r1(x.total)}</td><td class="n">${r1(x.line)}</td><td class="n">${sgn(x.total - x.line, 1)}</td><td class="n">${r1(x.open)}</td>${rp(x.bo)}${rp(x.boo)}<td class="n" style="border-left:1px solid var(--line)">${x.picks.n || '–'}</td>${x.picks.n ? rp(x.picks.roi) : '<td class="n muted">–</td>'}</tr>`;
+  const TB = (title, first, rows) => rows.length ? `<h2>${title}</h2><div class="scroll"><table style="max-width:1180px"><thead><tr><th>${first}</th>${AH}</tr></thead><tbody>${rows.join('')}</tbody></table></div>` : '';
+  h += TB('All games', '', [ar('All', A)])
+     + TB('By line', 'Closing line', A.bands.map(x => ar(x.label, x)))
+     + TB('By season', 'Season', A.seasons.map(x => ar(x.label.replace('-', '–'), x)))
+     + TB('By month', 'Month', A.months.map(x => ar(MON[+x.label - 1], x)));
+  return h;
+}
+document.addEventListener('click', e => {
+  const r = e.target.closest('tr.srow[data-open]');
+  if (!r) return;
+  lgOpen = lgOpen === r.dataset.open ? null : r.dataset.open;
+  render();
+  if (lgOpen) document.getElementById('lgan').scrollIntoView({behavior: 'smooth', block: 'start'});
 });
 
 function renderMethod(){
@@ -619,10 +674,10 @@ function worked(){
   <p>${e.won ? 'A' : 'Even a'} ${p1(e.p_over)} bet ${e.won ? 'still loses' : 'loses'} ${p1(1 - e.p_over)} of the time. The edge only shows over many bets, which is why the page judges itself at 100 picks. This example always shows the latest bet, win or loss.</p>`;
 }
 
-const RENDER = {home: renderHome, projections: renderProjections, picks: renderPicks, season: renderSeason, backtest: renderBacktest, method: renderMethod};
+const RENDER = {home: renderHome, projections: renderProjections, picks: renderPicks, season: renderSeason, backtest: renderBacktest, leagues: renderLeagues, method: renderMethod};
 function render(){
   document.querySelectorAll('#tabs a').forEach(a => { a.classList.toggle('on', a.dataset.view === view); a.href = `#view=${a.dataset.view}${lg === 'all' ? '' : '&lg=' + lg}`; });
-  const chips = view === 'method' || view === 'home' ? [] : [['all', 'All leagues'], ...DATA.leagues.map(l => [l.key, `${l.country} ${sexAb(l)}`])];
+  const chips = view === 'method' || view === 'home' || view === 'leagues' ? [] : [['all', 'All leagues'], ...DATA.leagues.map(l => [l.key, `${l.country} ${sexAb(l)}`])];
   $('chips').innerHTML = chips.map(([k, t]) => `<a href="#view=${view}${k === 'all' ? '' : '&lg=' + k}" class="${k === lg ? 'on' : ''}">${t}</a>`).join('');
   $('out').innerHTML = RENDER[view]();
 }
