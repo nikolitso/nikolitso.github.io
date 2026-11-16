@@ -384,7 +384,8 @@ function settled(){
 
 function renderSeason(){
   const k = one(), res = DATA.results.filter(r => r.lg === k);
-  let h = `<p class="note"><b>${lgName(k)}</b>${lg === 'all' ? ' (pick a league above for the others)' : ''}, ${LG[k].season.replace('-','–')} season${LG[k].season !== DATA.season ? ' (its latest: the next one has not started)' : ''}. The matches with the projection each one had before it was played (fitted on earlier matches only), next to the closing line. No projection until both teams have played ${DATA.min_games}. Ratings: the chance of winning a rally against an average team, from points won, recent matches weighted more.</p>`;
+  const intro = `<p class="note" style="margin-top:28px"><b>${lgName(k)}</b>${lg === 'all' ? ' (pick a league above for the others)' : ''}, ${LG[k].season.replace('-','–')} season${LG[k].season !== DATA.season ? ' (its latest: the next one has not started)' : ''}. The matches with the projection each one had before it was played (fitted on earlier matches only), next to the closing line. No projection until both teams have played ${DATA.min_games}. Ratings: the chance of winning a rally against an average team, from points won, recent matches weighted more.</p>`;   // below the tables (user, 16 Nov 2026)
+  let h = '';
   h += '<div class="cols"><div><h2>Results</h2>';
   if (!res.length) h += '<p class="empty">No matches played yet.</p>';
   else {
@@ -398,7 +399,7 @@ function renderSeason(){
   }
   h += `</div><div><h2>Ratings</h2><table><thead><tr><th>Team</th><th class="n">Rally</th><th class="n">W–L</th></tr></thead><tbody>`;
   for (const r of DATA.ratings.filter(r => r.lg === k)) h += `<tr><td>${r.team}${r.new ? ' <span class="muted">(new)</span>' : ''}</td><td class="n">${(r.rally*100).toFixed(1)}%</td><td class="n">${r.w}–${r.l}</td></tr>`;
-  return h + `</tbody></table><p class="note" style="margin-top:12px">Home side: ${(LG[k].home_adv*100).toFixed(1)}% of rallies between equal teams.</p></div></div>`;
+  return h + `</tbody></table><p class="note" style="margin-top:12px">Home side: ${(LG[k].home_adv*100).toFixed(1)}% of rallies between equal teams.</p></div></div>` + intro;
 }
 
 // the record tiles of Home and Projections, for the backtest bets of the view (the tuned-on season left out, as in the totals)
@@ -422,7 +423,8 @@ function sexTiles(women){
 
 function renderBacktest(){
   const B = DATA.backtest, S = lg === 'all' ? B.all : B.leagues[lg];
-  let h = `<p class="note">Past seasons since ${B.first.slice(0,4)}, regular-season games only, using the live rule at the closing line and average price. Each match is projected only from earlier matches that season, and no pick is made before both teams have played ${DATA.min_games}. These totals run high because they know which leagues were kept; Home gives the fair figure. ${S.blind_n ? `<b>Backing every low-line over without the model</b> returned ${sgn(S.blind_roi*100, 1)}% over ${S.blind_n.toLocaleString('en-US')} matches.` : `<b>This league never has a line below ${DATA.low}</b> (its totals run higher), so the rule has had nothing to bet on.`}</p>`;
+  const intro = `<p class="note" style="margin-top:28px">Past seasons since ${B.first.slice(0,4)}, regular-season games only, using the live rule at the closing line and average price. Each match is projected only from earlier matches that season, and no pick is made before both teams have played ${DATA.min_games}. These totals run high because they know which leagues were kept; Home gives the fair figure. ${S.blind_n ? `<b>Backing every low-line over without the model</b> returned ${sgn(S.blind_roi*100, 1)}% over ${S.blind_n.toLocaleString('en-US')} matches.` : `<b>This league never has a line below ${DATA.low}</b> (its totals run higher), so the rule has had nothing to bet on.`}</p>`;   // below the tables (user, 16 Nov 2026)
+  let h = '';
   h += (lg === 'all' ? '<h2>All leagues</h2>' : '') + btTiles(S);
   if (lg === 'all'){
     h += sexTiles(true) + sexTiles(false);
@@ -444,14 +446,14 @@ function renderBacktest(){
     for (const [season, t] of Object.entries(by).sort()) h += `<tr class="srow${season === btSeason ? ' on' : ''}" data-season="${season}"><td><span class="caret">${season === btSeason ? '▾' : '▸'}</span> ${season.replace('-','–')}</td><td class="n">${t.n}</td><td class="n">${t.w}</td><td class="n">${pct(t.w / t.n)}</td><td class="n ${cls(t.pl)}">${sgn(t.pl / t.n * 100, 1)}%</td></tr>`;
     h += '</tbody></table>' + byMonth() + byLine() + calibration();
     if (btSeason) h += seasonBets(btSeason);
-    return h;
+    return h + intro;
   }
   h += `<p class="note">Click a season to see its bets one by one.</p>`;
   h += `<table class="seasons" style="max-width:560px"><thead><tr><th>Season</th><th class="n">Bets</th><th class="n">Won</th><th class="n">Hit</th><th class="n">ROI</th></tr></thead><tbody>`;
   for (const s of B.seasons.filter(inLg)) h += `<tr class="srow${s.season === btSeason ? ' on' : ''}" data-season="${s.season}"><td><span class="caret">${s.season === btSeason ? '▾' : '▸'}</span> ${s.season.replace('-','–')}${s.tuned ? ' <span class="muted">(tuned on)</span>' : ''}</td><td class="n">${s.n}</td><td class="n">${s.w}</td><td class="n">${pct(s.w/s.n)}</td><td class="n ${cls(s.roi)}">${sgn(s.roi*100, 1)}%</td></tr>`;
   h += '</tbody></table>' + byMonth() + byLine() + calibration();
   h += btSeason ? seasonBets(btSeason) : leagueBets();   // a league's page lists all its bets (user, 16 Nov 2026)
-  return h;
+  return h + intro;
 }
 
 // every backtest bet of the league, latest first; the tuned-on season left out, as in the league's totals
@@ -580,7 +582,8 @@ function renderLeagues(){
   const T = DATA.backtest.lgtab, B = DATA.backtest, r1 = x => x == null ? '–' : x.toFixed(1);
   const rp = x => x == null ? '<td class="n muted">–</td>' : `<td class="n ${cls(x)}">${sgn(x * 100, 1)}%</td>`;
   const tunedTxt = B.tuned_seasons && B.tuned_seasons.length ? ` Turkey's ${B.tuned_seasons.map(s => s.replace('-', '–')).join(', ')} season, which the settings were tuned on, is left out.` : '';
-  let h = `<p class="note">Regular-season games of past seasons from ${B.first.slice(0, 4)} on, with a market line of ${DATA.min_line}.5 or more; play-offs are left out, as in the rule.${tunedTxt} <b>All games</b> describes the league and its market. <b>Over %</b>: how often the total went over the closing line. <b>Low lines</b>: the games with a line below ${DATA.low}, the only ones the rule bets on. <b>No model</b>: backing the over in every one of them at the closing line and average price; a league needs −3.0% or better here for live picks. <b>Model's picks</b>: the picks under the current rule, taken at the closing line. <b>Model line</b>: the average of the model's total, <b>Line</b>: the average line taken, and <b>Result</b>: the average final total, all over the picks only. Then how often the picks went over (hit), the units won or lost (P/L), and their ROI at the closing line and price (close, where the backtest takes them) and for the same picks at the opening line and price (open). Click a league for its seasons and an analysis of all its games below the table.</p>`;
+  const intro = `<p class="note" style="margin-top:28px">Regular-season games of past seasons from ${B.first.slice(0, 4)} on, with a market line of ${DATA.min_line}.5 or more; play-offs are left out, as in the rule.${tunedTxt} <b>All games</b> describes the league and its market. <b>Over %</b>: how often the total went over the closing line. <b>Low lines</b>: the games with a line below ${DATA.low}, the only ones the rule bets on. <b>No model</b>: backing the over in every one of them at the closing line and average price; a league needs −3.0% or better here for live picks. <b>Model's picks</b>: the picks under the current rule, taken at the closing line. <b>Model line</b>: the average of the model's total, <b>Line</b>: the average line taken, and <b>Result</b>: the average final total, all over the picks only. Then how often the picks went over (hit), the units won or lost (P/L), and their ROI at the closing line and price (close, where the backtest takes them) and for the same picks at the opening line and price (open).</p>`;   // below the tables (user, 16 Nov 2026)
+  let h = '';
   h += `<div class="scroll"><table style="max-width:1180px"><thead><tr><th style="border-bottom:0"></th><th colspan="4" style="text-align:center;color:var(--gold)">All games</th><th colspan="8" style="text-align:center;color:var(--gold);border-left:1px solid var(--line)">Model's picks</th></tr><tr><th>League</th><th class="n">Games</th><th class="n">Over %</th><th class="n">Low<br>lines</th><th class="n">No<br>model</th><th class="n" style="border-left:1px solid var(--line)">Picks</th><th class="n">Model<br>line</th><th class="n">Line</th><th class="n">Result</th><th class="n">Hit</th><th class="n">P/L</th><th class="n">ROI<br>close</th><th class="n">ROI<br>open</th></tr></thead><tbody>`;
   const pk = p => !p || !p.n ? '<td class="n muted" style="border-left:1px solid var(--line)">–</td>' + '<td class="n muted">–</td>'.repeat(7)
     : `<td class="n" style="border-left:1px solid var(--line)">${p.n}</td><td class="n">${r1(p.fair)}</td><td class="n">${r1(p.line)}</td><td class="n">${r1(p.total)}</td><td class="n">${pct(p.w / p.n)}</td><td class="n ${cls(p.pl)}">${sgn(p.pl, 1)}</td>${rp(p.roi)}${rp(p.roi_open)}`;
@@ -597,7 +600,7 @@ function renderLeagues(){
   }
   h += '</tbody></table></div>';
   const L_ = lgOpen && LG[lgOpen], A = L_ && T[lgOpen];
-  if (!A) return h + '<p class="note">Click a league for its seasons and an analysis of every game.</p>';
+  if (!A) return h + '<p class="note">Click a league for its seasons and an analysis of every game.</p>' + intro;
   const P = A.picks, name = `${L_.country} ${L_.name} ${sexAb(L_)}`;
   if (P.n){
     const t = [['Record', `${P.w}–${P.n - P.w}`, `${pct(P.w / P.n)} hit rate`],
@@ -615,7 +618,7 @@ function renderLeagues(){
      + TB('By line', 'Closing line', A.bands.map(x => ar(x.label, x)))
      + TB('By season', 'Season', A.seasons.map(x => ar(x.label.replace('-', '–'), x)))
      + TB('By month', 'Month', A.months.map(x => ar(MON[+x.label - 1], x)));
-  return h;
+  return h + intro;
 }
 document.addEventListener('click', e => {
   const r = e.target.closest('tr.srow[data-open]');
