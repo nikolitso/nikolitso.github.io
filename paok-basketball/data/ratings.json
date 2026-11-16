@@ -1,5 +1,5 @@
 {
-"updated": "2026-11-15T17:57:05Z",
+"updated": "2026-11-16T00:51:30Z",
 "weights": {
 "pts": 0.89,
 "miss": -1.09,
@@ -1569,7 +1569,7 @@
 }
 },
 "GBL": {
-"rated": 135,
+"rated": 136,
 "minMinutes": 66,
 "minutesToHalf": {
 "off": 197,
@@ -1590,26 +1590,26 @@
 "pts": 11.6,
 "pir": 9.4
 },
-"off": 31,
+"off": 33,
 "offLo": 1,
-"offHi": 80,
-"offRank": 93,
+"offHi": 79,
+"offRank": 92,
 "def": 36,
 "defLo": 7,
-"defHi": 70,
+"defHi": 71,
 "defRank": 87,
 "bars": [
 {
 "key": "ts",
 "label": "Scoring efficiency",
 "v": 48.1,
-"p": 21
+"p": 22
 },
 {
 "key": "fg3",
 "label": "3-pt shooting",
 "v": 35.5,
-"p": 58
+"p": 59
 },
 {
 "key": "ast",
@@ -1627,7 +1627,7 @@
 "key": "stocks",
 "label": "Steals & blocks",
 "v": 1.5,
-"p": 34
+"p": 33
 },
 {
 "key": "tov",
@@ -1639,7 +1639,7 @@
 "key": "pf",
 "label": "Foul discipline",
 "v": 3.0,
-"p": 79
+"p": 80
 }
 ],
 "strengths": [
@@ -1663,12 +1663,12 @@
 "pts": 6.4,
 "pir": 11.8
 },
-"off": 43,
+"off": 44,
 "offLo": 3,
 "offHi": 84,
-"offRank": 78,
+"offRank": 77,
 "def": 95,
-"defLo": 80,
+"defLo": 79,
 "defHi": 99,
 "defRank": 7,
 "bars": [
@@ -1700,7 +1700,7 @@
 "key": "tov",
 "label": "Ball security",
 "v": 2.1,
-"p": 54
+"p": 55
 },
 {
 "key": "pf",
@@ -1733,9 +1733,9 @@
 "off": 9,
 "offLo": 1,
 "offHi": 56,
-"offRank": 123,
+"offRank": 124,
 "def": 73,
-"defLo": 34,
+"defLo": 35,
 "defHi": 95,
 "defRank": 37,
 "bars": [
@@ -1743,7 +1743,7 @@
 "key": "ts",
 "label": "Scoring efficiency",
 "v": 52.6,
-"p": 38
+"p": 39
 },
 {
 "key": "ast",
@@ -1755,25 +1755,25 @@
 "key": "reb",
 "label": "Rebounding",
 "v": 7.1,
-"p": 63
+"p": 64
 },
 {
 "key": "stocks",
 "label": "Steals & blocks",
 "v": 1.9,
-"p": 50
+"p": 52
 },
 {
 "key": "tov",
 "label": "Ball security",
 "v": 3.2,
-"p": 26
+"p": 27
 },
 {
 "key": "pf",
 "label": "Foul discipline",
 "v": 3.9,
-"p": 65
+"p": 66
 }
 ],
 "strengths": [],
@@ -1794,13 +1794,13 @@
 "pts": 10.0,
 "pir": 9.0
 },
-"off": 80,
-"offLo": 27,
+"off": 78,
+"offLo": 28,
 "offHi": 99,
-"offRank": 28,
-"def": 35,
+"offRank": 30,
+"def": 36,
 "defLo": 7,
-"defHi": 73,
+"defHi": 75,
 "defRank": 88,
 "bars": [
 {
@@ -1813,13 +1813,13 @@
 "key": "fg3",
 "label": "3-pt shooting",
 "v": 35.3,
-"p": 56
+"p": 58
 },
 {
 "key": "ast",
 "label": "Playmaking",
 "v": 5.6,
-"p": 82
+"p": 81
 },
 {
 "key": "reb",
@@ -1831,7 +1831,7 @@
 "key": "stocks",
 "label": "Steals & blocks",
 "v": 2.0,
-"p": 52
+"p": 53
 },
 {
 "key": "tov",
@@ -1862,14 +1862,14 @@
 "pts": 19.0,
 "pir": 17.2,
 "rated": true,
-"off": 98,
-"offLo": 75,
+"off": 97,
+"offLo": 74,
 "offHi": 99,
-"offRank": 3,
+"offRank": 5,
 "def": 22,
 "defLo": 1,
-"defHi": 59,
-"defRank": 106,
+"defHi": 61,
+"defRank": 107,
 "bars": [
 {
 "key": "ts",
@@ -1881,13 +1881,13 @@
 "key": "fg3",
 "label": "3-pt shooting",
 "v": 44.8,
-"p": 86
+"p": 87
 },
 {
 "key": "ast",
 "label": "Playmaking",
 "v": 2.8,
-"p": 54
+"p": 53
 },
 {
 "key": "reb",
@@ -1905,7 +1905,7 @@
 "key": "tov",
 "label": "Ball security",
 "v": 1.0,
-"p": 91
+"p": 92
 },
 {
 "key": "pf",
@@ -1915,8 +1915,8 @@
 }
 ],
 "strengths": [
-"Scoring efficiency",
 "Ball security",
+"Scoring efficiency",
 "3-pt shooting"
 ],
 "weak": [
@@ -1933,31 +1933,31 @@
 "pir": 10.8,
 "rated": true,
 "off": 86,
-"offLo": 44,
+"offLo": 46,
 "offHi": 99,
 "offRank": 19,
 "def": 6,
 "defLo": 1,
-"defHi": 33,
-"defRank": 128,
+"defHi": 34,
+"defRank": 129,
 "bars": [
 {
 "key": "ts",
 "label": "Scoring efficiency",
 "v": 57.9,
-"p": 63
+"p": 62
 },
 {
 "key": "fg3",
 "label": "3-pt shooting",
 "v": 20.8,
-"p": 6
+"p": 8
 },
 {
 "key": "ast",
 "label": "Playmaking",
 "v": 2.1,
-"p": 40
+"p": 42
 },
 {
 "key": "reb",
@@ -1969,19 +1969,19 @@
 "key": "stocks",
 "label": "Steals & blocks",
 "v": 1.8,
-"p": 45
+"p": 46
 },
 {
 "key": "tov",
 "label": "Ball security",
 "v": 2.1,
-"p": 55
+"p": 56
 },
 {
 "key": "pf",
 "label": "Foul discipline",
 "v": 5.3,
-"p": 29
+"p": 30
 }
 ],
 "strengths": [],
@@ -2006,7 +2006,7 @@
 "off": 19,
 "offLo": 1,
 "offHi": 73,
-"offRank": 110,
+"offRank": 111,
 "def": 11,
 "defLo": 1,
 "defHi": 49,
@@ -2022,7 +2022,7 @@
 "key": "fg3",
 "label": "3-pt shooting",
 "v": 33.3,
-"p": 50
+"p": 51
 },
 {
 "key": "ast",
@@ -2034,7 +2034,7 @@
 "key": "reb",
 "label": "Rebounding",
 "v": 5.6,
-"p": 47
+"p": 49
 },
 {
 "key": "stocks",
@@ -2052,7 +2052,7 @@
 "key": "pf",
 "label": "Foul discipline",
 "v": 5.6,
-"p": 26
+"p": 25
 }
 ],
 "strengths": [
@@ -2060,7 +2060,8 @@
 ],
 "weak": [
 "Playmaking",
-"Scoring efficiency"
+"Scoring efficiency",
+"Foul discipline"
 ]
 },
 {
@@ -2071,14 +2072,14 @@
 "pts": 5.4,
 "pir": 8.4,
 "rated": true,
-"off": 35,
+"off": 36,
 "offLo": 1,
 "offHi": 83,
 "offRank": 88,
-"def": 55,
+"def": 54,
 "defLo": 18,
 "defHi": 87,
-"defRank": 61,
+"defRank": 63,
 "bars": [
 {
 "key": "ts",
@@ -2090,19 +2091,19 @@
 "key": "fg3",
 "label": "3-pt shooting",
 "v": 18.8,
-"p": 4
+"p": 5
 },
 {
 "key": "ast",
 "label": "Playmaking",
 "v": 9.0,
-"p": 94
+"p": 95
 },
 {
 "key": "reb",
 "label": "Rebounding",
 "v": 6.7,
-"p": 60
+"p": 61
 },
 {
 "key": "stocks",
@@ -2120,7 +2121,7 @@
 "key": "pf",
 "label": "Foul discipline",
 "v": 4.1,
-"p": 57
+"p": 58
 }
 ],
 "strengths": [
@@ -2145,14 +2146,14 @@
 "pts": 6.8,
 "pir": 6.6
 },
-"off": 76,
+"off": 75,
 "offLo": 21,
 "offHi": 99,
-"offRank": 33,
+"offRank": 35,
 "def": 21,
 "defLo": 1,
-"defHi": 60,
-"defRank": 107,
+"defHi": 62,
+"defRank": 108,
 "bars": [
 {
 "key": "ts",
@@ -2164,19 +2165,19 @@
 "key": "fg3",
 "label": "3-pt shooting",
 "v": 26.1,
-"p": 26
+"p": 24
 },
 {
 "key": "ast",
 "label": "Playmaking",
 "v": 4.9,
-"p": 77
+"p": 76
 },
 {
 "key": "reb",
 "label": "Rebounding",
 "v": 6.2,
-"p": 54
+"p": 55
 },
 {
 "key": "stocks",
@@ -2188,20 +2189,21 @@
 "key": "tov",
 "label": "Ball security",
 "v": 2.5,
-"p": 43
+"p": 44
 },
 {
 "key": "pf",
 "label": "Foul discipline",
 "v": 4.1,
-"p": 57
+"p": 59
 }
 ],
 "strengths": [
 "Playmaking"
 ],
 "weak": [
-"Steals & blocks"
+"Steals & blocks",
+"3-pt shooting"
 ]
 },
 {
@@ -2217,14 +2219,14 @@
 "pts": 4.4,
 "pir": 8.8
 },
-"off": 73,
-"offLo": 18,
-"offHi": 98,
-"offRank": 37,
-"def": 68,
-"defLo": 27,
+"off": 72,
+"offLo": 17,
+"offHi": 96,
+"offRank": 38,
+"def": 69,
+"defLo": 28,
 "defHi": 95,
-"defRank": 44,
+"defRank": 42,
 "bars": [
 {
 "key": "ts",
@@ -2236,7 +2238,7 @@
 "key": "ast",
 "label": "Playmaking",
 "v": 1.8,
-"p": 32
+"p": 33
 },
 {
 "key": "reb",
@@ -2248,13 +2250,13 @@
 "key": "stocks",
 "label": "Steals & blocks",
 "v": 1.4,
-"p": 29
+"p": 28
 },
 {
 "key": "tov",
 "label": "Ball security",
 "v": 2.3,
-"p": 49
+"p": 50
 },
 {
 "key": "pf",
@@ -2280,10 +2282,10 @@
 "pir": 6.0,
 "rated": true,
 "off": 71,
-"offLo": 13,
-"offHi": 98,
+"offLo": 12,
+"offHi": 96,
 "offRank": 40,
-"def": 34,
+"def": 35,
 "defLo": 3,
 "defHi": 79,
 "defRank": 89,
@@ -2304,7 +2306,7 @@
 "key": "stocks",
 "label": "Steals & blocks",
 "v": 1.1,
-"p": 20
+"p": 19
 },
 {
 "key": "tov",
@@ -2324,8 +2326,8 @@
 ],
 "weak": [
 "Foul discipline",
-"Playmaking",
-"Steals & blocks"
+"Steals & blocks",
+"Playmaking"
 ]
 },
 {
@@ -2373,145 +2375,145 @@
 "Aris": [
 {
 "name": "Jeremiah Robinson-Earl",
-"gp": 6,
-"min": 166,
-"mpg": 27.6,
-"pts": 14.8,
-"pir": 17.0,
+"gp": 7,
+"min": 199,
+"mpg": 28.5,
+"pts": 14.0,
+"pir": 16.7,
 "rated": true,
 "form": {
 "gp": 5,
-"pts": 12.8,
-"pir": 15.2
+"pts": 11.6,
+"pir": 14.8
 },
-"off": 75,
-"offLo": 24,
-"offHi": 98,
-"offRank": 34,
-"def": 92,
-"defLo": 67,
+"off": 61,
+"offLo": 17,
+"offHi": 92,
+"offRank": 53,
+"def": 94,
+"defLo": 75,
 "defHi": 97,
-"defRank": 11,
+"defRank": 9,
 "bars": [
 {
 "key": "ts",
 "label": "Scoring efficiency",
-"v": 60.7,
-"p": 73
+"v": 58.8,
+"p": 66
 },
 {
 "key": "fg3",
 "label": "3-pt shooting",
-"v": 39.1,
-"p": 74
+"v": 37.0,
+"p": 66
 },
 {
 "key": "ast",
 "label": "Playmaking",
-"v": 2.2,
-"p": 43
+"v": 2.0,
+"p": 38
 },
 {
 "key": "reb",
 "label": "Rebounding",
-"v": 8.9,
-"p": 80
+"v": 9.6,
+"p": 83
 },
 {
 "key": "stocks",
 "label": "Steals & blocks",
-"v": 3.1,
-"p": 87
+"v": 3.0,
+"p": 86
 },
 {
 "key": "tov",
 "label": "Ball security",
 "v": 2.4,
-"p": 44
+"p": 45
 },
 {
 "key": "pf",
 "label": "Foul discipline",
-"v": 2.7,
-"p": 86
+"v": 2.6,
+"p": 89
 }
 ],
 "strengths": [
-"Steals & blocks",
 "Foul discipline",
+"Steals & blocks",
 "Rebounding"
 ],
 "weak": []
 },
 {
 "name": "E.J. Liddell",
-"gp": 6,
-"min": 140,
-"mpg": 23.3,
+"gp": 7,
+"min": 161,
+"mpg": 23.0,
 "pts": 12.0,
-"pir": 15.0,
+"pir": 14.7,
 "rated": true,
 "form": {
 "gp": 5,
-"pts": 11.6,
-"pir": 15.4
+"pts": 12.8,
+"pir": 15.6
 },
-"off": 92,
-"offLo": 59,
+"off": 91,
+"offLo": 58,
 "offHi": 99,
-"offRank": 11,
-"def": 81,
-"defLo": 44,
+"offRank": 13,
+"def": 84,
+"defLo": 51,
 "defHi": 96,
-"defRank": 26,
+"defRank": 22,
 "bars": [
 {
 "key": "ts",
 "label": "Scoring efficiency",
-"v": 62.7,
-"p": 79
+"v": 61.0,
+"p": 74
 },
 {
 "key": "fg3",
 "label": "3-pt shooting",
-"v": 38.5,
-"p": 70
+"v": 37.5,
+"p": 69
 },
 {
 "key": "ast",
 "label": "Playmaking",
-"v": 2.3,
-"p": 46
+"v": 2.5,
+"p": 48
 },
 {
 "key": "reb",
 "label": "Rebounding",
-"v": 8.9,
-"p": 80
+"v": 9.2,
+"p": 81
 },
 {
 "key": "stocks",
 "label": "Steals & blocks",
-"v": 2.9,
-"p": 82
+"v": 2.7,
+"p": 78
 },
 {
 "key": "tov",
 "label": "Ball security",
-"v": 1.1,
-"p": 86
+"v": 1.5,
+"p": 75
 },
 {
 "key": "pf",
 "label": "Foul discipline",
-"v": 5.7,
-"p": 21
+"v": 6.0,
+"p": 18
 }
 ],
 "strengths": [
-"Ball security",
+"Rebounding",
 "Steals & blocks",
-"Rebounding"
+"Ball security"
 ],
 "weak": [
 "Foul discipline"
@@ -2519,55 +2521,55 @@
 },
 {
 "name": "Adam Mokoka",
-"gp": 6,
-"min": 131,
-"mpg": 21.9,
-"pts": 5.2,
-"pir": 4.7,
+"gp": 7,
+"min": 159,
+"mpg": 22.7,
+"pts": 4.9,
+"pir": 4.9,
 "rated": true,
 "form": {
 "gp": 5,
-"pts": 5.0,
-"pir": 5.0
+"pts": 5.2,
+"pir": 6.8
 },
-"off": 15,
+"off": 17,
 "offLo": 1,
-"offHi": 66,
-"offRank": 115,
-"def": 34,
-"defLo": 7,
-"defHi": 70,
-"defRank": 90,
+"offHi": 68,
+"offRank": 113,
+"def": 23,
+"defLo": 1,
+"defHi": 57,
+"defRank": 105,
 "bars": [
 {
 "key": "ts",
 "label": "Scoring efficiency",
-"v": 38.7,
-"p": 4
+"v": 40.4,
+"p": 7
 },
 {
 "key": "fg3",
 "label": "3-pt shooting",
-"v": 28.6,
-"p": 31
+"v": 31.2,
+"p": 41
 },
 {
 "key": "ast",
 "label": "Playmaking",
-"v": 3.0,
-"p": 60
+"v": 3.3,
+"p": 62
 },
 {
 "key": "reb",
 "label": "Rebounding",
-"v": 4.9,
-"p": 37
+"v": 4.3,
+"p": 30
 },
 {
 "key": "stocks",
 "label": "Steals & blocks",
 "v": 1.8,
-"p": 46
+"p": 44
 },
 {
 "key": "tov",
@@ -2578,8 +2580,8 @@
 {
 "key": "pf",
 "label": "Foul discipline",
-"v": 5.8,
-"p": 20
+"v": 6.0,
+"p": 17
 }
 ],
 "strengths": [],
@@ -2590,67 +2592,67 @@
 },
 {
 "name": "Vasilis Toliopoulos",
-"gp": 6,
-"min": 122,
-"mpg": 20.3,
-"pts": 9.0,
-"pir": 7.8,
+"gp": 7,
+"min": 139,
+"mpg": 19.9,
+"pts": 8.6,
+"pir": 7.6,
 "rated": true,
 "form": {
 "gp": 5,
-"pts": 9.8,
-"pir": 9.4
+"pts": 9.2,
+"pir": 9.0
 },
 "off": 49,
-"offLo": 3,
-"offHi": 87,
+"offLo": 6,
+"offHi": 89,
 "offRank": 70,
 "def": 37,
 "defLo": 7,
-"defHi": 76,
+"defHi": 75,
 "defRank": 86,
 "bars": [
 {
 "key": "ts",
 "label": "Scoring efficiency",
-"v": 55.4,
-"p": 53
+"v": 51.1,
+"p": 33
 },
 {
 "key": "fg3",
 "label": "3-pt shooting",
-"v": 31.0,
-"p": 40
+"v": 32.4,
+"p": 47
 },
 {
 "key": "ast",
 "label": "Playmaking",
-"v": 5.6,
-"p": 80
+"v": 6.6,
+"p": 86
 },
 {
 "key": "reb",
 "label": "Rebounding",
-"v": 3.3,
-"p": 14
+"v": 2.9,
+"p": 9
 },
 {
 "key": "stocks",
 "label": "Steals & blocks",
-"v": 2.0,
-"p": 51
+"v": 2.3,
+"p": 64
 },
 {
 "key": "tov",
 "label": "Ball security",
-"v": 3.9,
-"p": 14
+"v": 3.4,
+"p": 22
 },
 {
 "key": "pf",
 "label": "Foul discipline",
-"v": 3.9,
-"p": 63
+"v": 4.3,
+"p": 53
 }
 ],
 "strengths": [
@@ -2662,95 +2664,26 @@
 ]
 },
 {
-"name": "Elijah Long",
+"name": "Nenad Dimitrijevic",
 "gp": 6,
-"min": 118,
-"mpg": 19.7,
-"pts": 5.7,
-"pir": 6.7,
+"min": 139,
+"mpg": 23.2,
+"pts": 13.3,
+"pir": 15.7,
 "rated": true,
 "form": {
 "gp": 5,
-"pts": 6.8,
-"pir": 8.4
+"pts": 15.4,
+"pir": 17.2
 },
-"off": 18,
-"offLo": 1,
-"offHi": 73,
-"offRank": 111,
-"def": 69,
-"defLo": 29,
-"defHi": 94,
-"defRank": 42,
-"bars": [
-{
-"key": "ts",
-"label": "Scoring efficiency",
-"v": 42.2,
-"p": 12
-},
-{
-"key": "fg3",
-"label": "3-pt shooting",
-"v": 29.4,
-"p": 32
-},
-{
-"key": "ast",
-"label": "Playmaking",
-"v": 4.7,
-"p": 73
-},
-{
-"key": "reb",
-"label": "Rebounding",
-"v": 7.1,
-"p": 63
-},
-{
-"key": "stocks",
-"label": "Steals & blocks",
-"v": 2.7,
-"p": 77
-},
-{
-"key": "tov",
-"label": "Ball security",
-"v": 3.4,
-"p": 23
-},
-{
-"key": "pf",
-"label": "Foul discipline",
-"v": 6.8,
-"p": 7
-}
-],
-"strengths": [
-"Steals & blocks"
-],
-"weak": [
-"Foul discipline",
-"Scoring efficiency",
-"Ball security"
-]
-},
-{
-"name": "Matt Morgan",
-"gp": 5,
-"min": 115,
-"mpg": 22.9,
-"pts": 17.4,
-"pir": 13.6,
-"rated": true,
 "off": 97,
-"offLo": 70,
+"offLo": 75,
 "offHi": 99,
 "offRank": 4,
-"def": 8,
-"defLo": 1,
-"defHi": 44,
-"defRank": 125,
+"def": 56,
+"defLo": 21,
+"defHi": 87,
+"defRank": 60,
 "bars": [
 {
 "key": "ts",
@@ -2761,38 +2694,113 @@
 {
 "key": "fg3",
 "label": "3-pt shooting",
-"v": 40.5,
-"p": 76
+"v": 56.5,
+"p": 96
 },
 {
 "key": "ast",
 "label": "Playmaking",
-"v": 4.2,
+"v": 10.0,
+"p": 97
+},
+{
+"key": "reb",
+"label": "Rebounding",
+"v": 5.5,
+"p": 47
+},
+{
+"key": "stocks",
+"label": "Steals & blocks",
+"v": 1.1,
+"p": 21
+},
+{
+"key": "tov",
+"label": "Ball security",
+"v": 4.3,
+"p": 10
+},
+{
+"key": "pf",
+"label": "Foul discipline",
+"v": 2.9,
+"p": 82
+}
+],
+"strengths": [
+"Playmaking",
+"3-pt shooting",
+"Scoring efficiency"
+],
+"weak": [
+"Ball security",
+"Steals & blocks"
+]
+},
+{
+"name": "Matt Morgan",
+"gp": 6,
+"min": 138,
+"mpg": 23.1,
+"pts": 18.0,
+"pir": 14.8,
+"rated": true,
+"form": {
+"gp": 5,
+"pts": 20.2,
+"pir": 17.4
+},
+"off": 99,
+"offLo": 87,
+"offHi": 99,
+"offRank": 2,
+"def": 6,
+"defLo": 1,
+"defHi": 32,
+"defRank": 128,
+"bars": [
+{
+"key": "ts",
+"label": "Scoring efficiency",
+"v": 68.8,
+"p": 90
+},
+{
+"key": "fg3",
+"label": "3-pt shooting",
+"v": 40.5,
+"p": 77
+},
+{
+"key": "ast",
+"label": "Playmaking",
+"v": 4.0,
 "p": 66
 },
 {
 "key": "reb",
 "label": "Rebounding",
-"v": 2.1,
+"v": 2.3,
 "p": 2
 },
 {
 "key": "stocks",
 "label": "Steals & blocks",
-"v": 1.0,
-"p": 18
+"v": 1.2,
+"p": 22
 },
 {
 "key": "tov",
 "label": "Ball security",
-"v": 3.1,
-"p": 26
+"v": 2.6,
+"p": 38
 },
 {
 "key": "pf",
 "label": "Foul discipline",
-"v": 3.8,
-"p": 66
+"v": 4.0,
+"p": 60
 }
 ],
 "strengths": [
@@ -2805,170 +2813,106 @@
 ]
 },
 {
-"name": "Kostas Antetokounmpo",
-"gp": 12,
-"min": 113,
-"mpg": 9.4,
-"pts": 2.7,
-"pir": 4.3,
+"name": "Elijah Long",
+"gp": 7,
+"min": 136,
+"mpg": 19.5,
+"pts": 6.6,
+"pir": 7.4,
 "rated": true,
 "form": {
 "gp": 5,
-"pts": 2.2,
-"pir": 3.6
+"pts": 8.0,
+"pir": 9.4
 },
-"off": 72,
-"offLo": 18,
-"offHi": 98,
-"offRank": 38,
-"def": 52,
-"defLo": 14,
-"defHi": 86,
-"defRank": 65,
+"off": 28,
+"offLo": 1,
+"offHi": 76,
+"offRank": 99,
+"def": 75,
+"defLo": 37,
+"defHi": 95,
+"defRank": 35,
 "bars": [
 {
 "key": "ts",
 "label": "Scoring efficiency",
-"v": 53.6,
-"p": 45
-},
-{
-"key": "ast",
-"label": "Playmaking",
-"v": 2.1,
-"p": 41
-},
-{
-"key": "reb",
-"label": "Rebounding",
-"v": 8.9,
-"p": 79
-},
-{
-"key": "stocks",
-"label": "Steals & blocks",
-"v": 3.9,
-"p": 94
-},
-{
-"key": "tov",
-"label": "Ball security",
-"v": 1.4,
-"p": 77
-},
-{
-"key": "pf",
-"label": "Foul discipline",
-"v": 9.6,
-"p": 1
-}
-],
-"strengths": [
-"Steals & blocks",
-"Rebounding",
-"Ball security"
-],
-"weak": [
-"Foul discipline"
-]
-},
-{
-"name": "Nenad Dimitrijevic",
-"gp": 5,
-"min": 112,
-"mpg": 22.4,
-"pts": 12.2,
-"pir": 15.0,
-"rated": true,
-"off": 94,
-"offLo": 56,
-"offHi": 99,
-"offRank": 9,
-"def": 65,
-"defLo": 27,
-"defHi": 94,
-"defRank": 48,
-"bars": [
-{
-"key": "ts",
-"label": "Scoring efficiency",
-"v": 67.9,
-"p": 88
+"v": 46.6,
+"p": 19
 },
 {
 "key": "fg3",
 "label": "3-pt shooting",
-"v": 62.5,
-"p": 99
+"v": 35.0,
+"p": 57
 },
 {
 "key": "ast",
 "label": "Playmaking",
-"v": 10.4,
-"p": 98
+"v": 4.7,
+"p": 73
 },
 {
 "key": "reb",
 "label": "Rebounding",
-"v": 6.1,
-"p": 54
+"v": 6.5,
+"p": 59
 },
 {
 "key": "stocks",
 "label": "Steals & blocks",
-"v": 1.1,
-"p": 20
+"v": 2.9,
+"p": 83
 },
 {
 "key": "tov",
 "label": "Ball security",
-"v": 4.7,
-"p": 8
+"v": 3.2,
+"p": 25
 },
 {
 "key": "pf",
 "label": "Foul discipline",
-"v": 2.5,
-"p": 91
+"v": 6.5,
+"p": 12
 }
 ],
 "strengths": [
-"3-pt shooting",
-"Playmaking",
-"Foul discipline"
+"Steals & blocks"
 ],
 "weak": [
-"Ball security",
-"Steals & blocks"
+"Foul discipline",
+"Scoring efficiency",
+"Ball security"
 ]
 },
 {
-"name": "Khem Birch",
-"gp": 6,
-"min": 100,
-"mpg": 16.7,
-"pts": 5.5,
-"pir": 8.3,
+"name": "Kostas Antetokounmpo",
+"gp": 13,
+"min": 120,
+"mpg": 9.2,
+"pts": 2.8,
+"pir": 4.5,
 "rated": true,
 "form": {
 "gp": 5,
-"pts": 5.4,
-"pir": 7.6
+"pts": 3.0,
+"pir": 4.6
 },
-"off": 62,
+"off": 63,
 "offLo": 10,
-"offHi": 96,
-"offRank": 52,
-"def": 78,
-"defLo": 36,
-"defHi": 96,
-"defRank": 30,
+"offHi": 94,
+"offRank": 51,
+"def": 61,
+"defLo": 22,
+"defHi": 88,
+"defRank": 53,
 "bars": [
 {
 "key": "ts",
 "label": "Scoring efficiency",
-"v": 57.5,
-"p": 59
+"v": 53.2,
+"p": 43
 },
 {
 "key": "ast",
@@ -2979,32 +2923,99 @@
 {
 "key": "reb",
 "label": "Rebounding",
-"v": 8.8,
+"v": 10.0,
+"p": 86
+},
+{
+"key": "stocks",
+"label": "Steals & blocks",
+"v": 4.0,
+"p": 94
+},
+{
+"key": "tov",
+"label": "Ball security",
+"v": 2.0,
+"p": 62
+},
+{
+"key": "pf",
+"label": "Foul discipline",
+"v": 9.7,
+"p": 1
+}
+],
+"strengths": [
+"Steals & blocks",
+"Rebounding"
+],
+"weak": [
+"Foul discipline"
+]
+},
+{
+"name": "Khem Birch",
+"gp": 7,
+"min": 120,
+"mpg": 17.2,
+"pts": 6.7,
+"pir": 9.7,
+"rated": true,
+"form": {
+"gp": 5,
+"pts": 7.6,
+"pir": 10.0
+},
+"off": 83,
+"offLo": 35,
+"offHi": 99,
+"offRank": 24,
+"def": 74,
+"defLo": 35,
+"defHi": 95,
+"defRank": 36,
+"bars": [
+{
+"key": "ts",
+"label": "Scoring efficiency",
+"v": 65.2,
+"p": 84
+},
+{
+"key": "ast",
+"label": "Playmaking",
+"v": 1.7,
+"p": 31
+},
+{
+"key": "reb",
+"label": "Rebounding",
+"v": 8.3,
 "p": 77
 },
 {
 "key": "stocks",
 "label": "Steals & blocks",
-"v": 3.2,
+"v": 3.3,
 "p": 88
 },
 {
 "key": "tov",
 "label": "Ball security",
-"v": 1.2,
-"p": 83
+"v": 1.0,
+"p": 93
 },
 {
 "key": "pf",
 "label": "Foul discipline",
-"v": 4.8,
-"p": 46
+"v": 5.0,
+"p": 39
 }
 ],
 "strengths": [
-"Steals & blocks",
 "Ball security",
-"Rebounding"
+"Steals & blocks",
+"Scoring efficiency"
 ],
 "weak": []
 },
@@ -3036,21 +3047,21 @@
 "rated": false
 },
 {
+"name": "Eleftherios Bochoridis",
+"gp": 2,
+"min": 12,
+"mpg": 6.2,
+"pts": 0.0,
+"pir": 1.0,
+"rated": false
+},
+{
 "name": "Stelios Poulianitis",
 "gp": 2,
 "min": 10,
 "mpg": 5.0,
 "pts": 0.0,
 "pir": -0.5,
-"rated": false
-},
-{
-"name": "Eleftherios Bochoridis",
-"gp": 1,
-"min": 9,
-"mpg": 9.5,
-"pts": 0.0,
-"pir": 2.0,
 "rated": false
 }
 ]

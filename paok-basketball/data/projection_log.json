@@ -2566,7 +2566,7 @@
   "date": "2026-11-18T19:30:00Z",
   "opp": "Manresa",
   "home": false,
-  "saved": "2026-11-15T17:55:35Z",
+  "saved": "2026-11-16T00:50:46Z",
   "paok": 82.9,
   "oppScore": 87.9,
   "winProb": 34,
@@ -2851,62 +2851,62 @@
   "date": "2026-11-21T15:30:00Z",
   "opp": "Aris",
   "home": true,
-  "saved": "2026-11-15T17:55:35Z",
-  "paok": 80.5,
-  "oppScore": 77.5,
-  "winProb": 62,
+  "saved": "2026-11-16T00:50:46Z",
+  "paok": 80.3,
+  "oppScore": 77.9,
+  "winProb": 60,
   "lineupSource": "manual",
   "teamStats": {
    "pts": {
-    "paok": 80.5,
-    "opp": 77.5,
-    "total": 158.0
+    "paok": 80.3,
+    "opp": 77.9,
+    "total": 158.2
    },
    "fg2m": {
-    "paok": 17.5,
-    "opp": 18.1,
-    "total": 35.6
+    "paok": 17.9,
+    "opp": 18.4,
+    "total": 36.2
    },
    "fg3m": {
-    "paok": 8.7,
+    "paok": 8.4,
     "opp": 8.4,
-    "total": 17.0
+    "total": 16.8
    },
    "ftm": {
     "paok": 19.5,
-    "opp": 16.2,
-    "total": 35.7
+    "opp": 15.9,
+    "total": 35.4
    },
    "ast": {
-    "paok": 16.4,
-    "opp": 16.8,
-    "total": 33.2
+    "paok": 16.1,
+    "opp": 16.9,
+    "total": 33.0
    },
    "oreb": {
-    "paok": 11.1,
-    "opp": 10.4,
-    "total": 21.4
+    "paok": 10.9,
+    "opp": 10.6,
+    "total": 21.5
    },
    "dreb": {
-    "paok": 25.0,
-    "opp": 23.9,
+    "paok": 25.2,
+    "opp": 23.7,
     "total": 48.9
    },
    "tov": {
-    "paok": 14.4,
-    "opp": 13.2,
-    "total": 27.5
+    "paok": 14.6,
+    "opp": 13.0,
+    "total": 27.6
    },
    "reb": {
     "paok": 36.1,
     "opp": 34.3,
-    "total": 70.3
+    "total": 70.4
    }
   },
-  "modelTotal": 152.7,
+  "modelTotal": 154.6,
   "line": 158.5,
-  "modelMargin": 2.9,
-  "hcp": 3.0,
+  "modelMargin": 1.6,
+  "hcp": 2.5,
   "players": {
    "paok": [
     {
@@ -2931,7 +2931,7 @@
      "name": "Breein Tyree",
      "no": "5",
      "min": 20,
-     "pts": 12.1,
+     "pts": 12.2,
      "reb": 1.5,
      "ast": 1.2,
      "pir": 9.2
@@ -2967,7 +2967,7 @@
      "name": "Naz Mitrou-Long",
      "no": "1",
      "min": 15,
-     "pts": 7.1,
+     "pts": 7.2,
      "reb": 2.4,
      "ast": 1.7,
      "pir": 7.3
@@ -2994,7 +2994,7 @@
      "name": "Nikos Chougkaz",
      "no": "9",
      "min": 15,
-     "pts": 3.8,
+     "pts": 3.9,
      "reb": 2.2,
      "ast": 0.4,
      "pir": 3.7
@@ -3012,7 +3012,7 @@
      "name": "Dimitris Kaklamanakis",
      "no": "14",
      "min": 7,
-     "pts": 1.9,
+     "pts": 2.0,
      "reb": 1.9,
      "ast": 0.5,
      "pir": 3.2
@@ -3022,92 +3022,92 @@
     {
      "name": "Jeremiah Robinson-Earl",
      "no": "3",
-     "min": 26,
-     "pts": 11.8,
-     "reb": 5.6,
-     "ast": 1.7,
-     "pir": 15.6
+     "min": 27,
+     "pts": 11.4,
+     "reb": 6.3,
+     "ast": 1.6,
+     "pir": 15.7
     },
     {
      "name": "E.J. Liddell",
      "no": "32",
      "min": 21,
-     "pts": 9.4,
-     "reb": 4.8,
+     "pts": 9.6,
+     "reb": 4.9,
      "ast": 1.5,
-     "pir": 13.6
+     "pir": 13.5
     },
     {
      "name": "Nenad Dimitrijevic",
      "no": "7",
-     "min": 20,
-     "pts": 8.8,
-     "reb": 3.1,
-     "ast": 4.3,
-     "pir": 12.3
+     "min": 21,
+     "pts": 9.8,
+     "reb": 3.0,
+     "ast": 4.6,
+     "pir": 13.3
     },
     {
      "name": "Matt Morgan",
      "no": "30",
-     "min": 20,
-     "pts": 11.8,
+     "min": 21,
+     "pts": 12.6,
      "reb": 1.7,
      "ast": 2.1,
-     "pir": 11.5
-    },
-    {
-     "name": "Vasilis Toliopoulos",
-     "no": "4",
-     "min": 20,
-     "pts": 7.4,
-     "reb": 2.0,
-     "ast": 2.6,
-     "pir": 8.1
+     "pir": 12.7
     },
     {
      "name": "Khem Birch",
      "no": "92",
-     "min": 16,
-     "pts": 5.0,
+     "min": 17,
+     "pts": 5.8,
      "reb": 3.3,
-     "ast": 1.0,
-     "pir": 8.0
+     "ast": 0.9,
+     "pir": 9.1
+    },
+    {
+     "name": "Vasilis Toliopoulos",
+     "no": "4",
+     "min": 19,
+     "pts": 7.2,
+     "reb": 1.8,
+     "ast": 2.9,
+     "pir": 7.8
     },
     {
      "name": "Elijah Long",
      "no": "0",
      "min": 19,
-     "pts": 5.3,
-     "reb": 3.3,
-     "ast": 2.2,
-     "pir": 7.2
+     "pts": 5.8,
+     "reb": 3.1,
+     "ast": 2.1,
+     "pir": 7.7
     },
     {
      "name": "Kostas Antetokounmpo",
      "no": "37",
-     "min": 14,
-     "pts": 3.8,
-     "reb": 2.8,
-     "ast": 0.9,
-     "pir": 6.3
+     "min": 13,
+     "pts": 3.7,
+     "reb": 2.9,
+     "ast": 0.8,
+     "pir": 6.1
     },
     {
      "name": "Adam Mokoka",
      "no": "95",
-     "min": 21,
-     "pts": 5.1,
-     "reb": 2.8,
-     "ast": 1.7,
+     "min": 22,
+     "pts": 4.9,
+     "reb": 2.6,
+     "ast": 1.9,
      "pir": 5.9
     },
     {
      "name": "Vasilis Charalampopoulos",
      "no": "33",
      "min": 9,
-     "pts": 2.3,
-     "reb": 2.1,
+     "pts": 2.2,
+     "reb": 2.0,
      "ast": 0.8,
-     "pir": 4.3
+     "pir": 4.2
     },
     {
      "name": "Stefan Jovic",
@@ -3116,16 +3116,16 @@
      "pts": 2.6,
      "reb": 1.0,
      "ast": 1.2,
-     "pir": 3.5
+     "pir": 3.4
     },
     {
      "name": "Eleftherios Bochoridis",
      "no": "13",
-     "min": 5,
-     "pts": 1.6,
-     "reb": 0.8,
-     "ast": 0.7,
-     "pir": 2.3
+     "min": 4,
+     "pts": 1.1,
+     "reb": 0.6,
+     "ast": 0.4,
+     "pir": 1.6
     }
    ]
   }
