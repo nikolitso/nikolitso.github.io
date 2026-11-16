@@ -487,9 +487,22 @@ function quarters(){
 function renderH1Live(){
   if (!LIVE.h1) return '<p class="empty">No first-half data yet.</p>';
   const o = firstHalf('open');
-  return (o || '<p class="empty">No open 1H picks right now. New ones appear here as first-half lines open.</p>') + firstHalf() + firstHalf('settled');
+  return (o || '<p class="empty">No open 1H picks right now. New ones appear here as first-half lines open.</p>') + firstHalf() + calib(LIVE.h1.picks.filter(b => b.done), `Settled 1H picks: how often they won against the chance Model 1H gave them when they were logged. With few picks the bands say little.`) + h1Tables(LIVE.h1.picks.filter(b => b.done && b.ret != null)) + firstHalf('settled');
 }
 
+// By edge, line and tier for the settled 1H picks (16 Nov 2026): the live tables' columns with Model 1H and first-half points
+function h1Tables(list){
+  if (!list.length) return '';
+  const L = list.map(b => ({...b, ma: b.m1, total: b.res}));
+  const HEAD = '<th class="n">Opening 1H line</th><th class="n">Closing 1H line</th><th class="n">Model 1H</th><th class="n">1H points</th>';
+  const T = (title, first, body, note='') => `<h2>${title}</h2>${note ? `<p class="note">${note}</p>` : ''}<div class="scroll"><table style="max-width:1040px">${GHEAD(first, HEAD)}<tbody>${body}</tbody></table></div>`;
+  const band = (bands, key) => bands.map(([label, lo, hi]) => bandRow(label, L.filter(x => x[key] != null && x[key] >= lo && x[key] < hi), false)).join('');
+  let h = T('By edge', "Model 1H's edge", band([['8% to 12%', 0.08, 0.12], ['12% to 16%', 0.12, 0.16], ['16% to 20%', 0.16, 0.20], ['20% or more', 0.20, 99]], 'edge'),
+    'Settled 1H picks. With few picks these tables say little. Line averages over the picks with a closing 1H line.');
+  h += T('By line', '1H line', band([['Under 80', 0, 80], ['80 to 84.5', 80, 85], ['85 or more', 85, 999]], 'line'));
+  h += T('By tier', 'Tier', TIER_NAMES.map(t => bandRow(t, L.filter(b => tierOf(b.lg) === t), false)).join(''));
+  return h;
+}
 function firstHalf(part = ''){                               // part: 'open' or 'settled' gives that table alone
   const H = LIVE.h1;
   if (!H) return '';
