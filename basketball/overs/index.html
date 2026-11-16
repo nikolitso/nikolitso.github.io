@@ -490,17 +490,32 @@ function renderH1Live(){
   return (o || '<p class="empty">No open 1H picks right now. New ones appear here as first-half lines open.</p>') + firstHalf() + calib(LIVE.h1.picks.filter(b => b.done), `Settled 1H picks: how often they won against the chance Model 1H gave them when they were logged. With few picks the bands say little.`) + h1Tables(LIVE.h1.picks.filter(b => b.done && b.ret != null)) + firstHalf('settled');
 }
 
-// By edge, line and tier for the settled 1H picks (16 Nov 2026): the live tables' columns with Model 1H and first-half points
+// the settled 1H picks broken down (16 Nov 2026): the live tables' columns with Model 1H, first-half points and ROI at the closing 1H line
 function h1Tables(list){
   if (!list.length) return '';
   const L = list.map(b => ({...b, ma: b.m1, total: b.res}));
-  const HEAD = '<th class="n">Opening 1H line</th><th class="n">Closing 1H line</th><th class="n">Model 1H</th><th class="n">1H points</th>';
-  const T = (title, first, body, note='') => `<h2>${title}</h2>${note ? `<p class="note">${note}</p>` : ''}<div class="scroll"><table style="max-width:1040px">${GHEAD(first, HEAD)}<tbody>${body}</tbody></table></div>`;
-  const band = (bands, key) => bands.map(([label, lo, hi]) => bandRow(label, L.filter(x => x[key] != null && x[key] >= lo && x[key] < hi), false)).join('');
-  let h = T('By edge', "Model 1H's edge", band([...Array(7)].map((_, i) => [`${16 + 2 * i}% to ${18 + 2 * i}%`, 0.16 + 0.02 * i, 0.18 + 0.02 * i]).concat([['30% or more', 0.30, 99]]), 'edge'),
+  const HEAD = '<th class="n">Opening 1H line</th><th class="n">Closing 1H line</th><th class="n">Model 1H</th><th class="n">1H points</th><th class="n">ROI close</th>';
+  const T = (title, first, body, note='') => `<h2>${title}</h2>${note ? `<p class="note">${note}</p>` : ''}<div class="scroll"><table style="max-width:1100px">${GHEAD(first, HEAD)}<tbody>${body}</tbody></table></div>`;
+  const cR = g => { const c = g.filter(b => b.cpx != null && b.close != null && b.res !== b.close); if (!c.length) return '<td class="n muted">–</td>';
+    const r = c.reduce((a, b) => a + (b.res > b.close ? b.cpx - 1 : -1), 0) / c.length; return `<td class="n ${cls(r)}">${roi(r)}</td>`; };
+  const row = (label, g) => { const n = g.length, sum = f => g.reduce((a, x) => a + f(x), 0);
+    return grp(label, {n, w: g.filter(x => x.ret > 0).length, px: n ? sum(x => x.px) / n : 0, roi: n ? sum(x => x.ret) / n : 0}, '', btCells(g) + cR(g)); };
+  const band = (bands, key) => bands.map(([label, lo, hi]) => row(label, L.filter(x => x[key] != null && x[key] >= lo && x[key] < hi))).join('');
+  // the record since the 16% rule: picks logged from 16 Nov 2026 22:00 (Athens) on, the first ones chosen by the rule rather than kept after the cut
+  const RULE_AT = '2026-11-16 22:00', logged = b => { const d = new Date(b.dt.replace(' ', 'T') + ':00'); d.setTime(d - b.hours * 3600e3);
+    const p = n => String(n).padStart(2, '0'); return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`; };
+  const after = L.filter(b => logged(b) >= RULE_AT), before = L.filter(b => logged(b) < RULE_AT);
+  let h = T('The 1H record', 'When logged', row('Logged since the 16% rule', after) + row('Logged before it, kept after the cut', before) + row('<b>All</b>', L),
+    `On 16 Nov 2026 the 1H picks below a 16% edge were removed, after the first 47 showed they lost. The picks kept from before that were chosen with the results known, so their record flatters the rule; the picks logged since are its real test.${after.length ? '' : ' None of those has settled yet.'} ROI close: the same picks at the closing 1H line and price.`);
+  h += T('By edge', "Model 1H's edge", band([...Array(7)].map((_, i) => [`${16 + 2 * i}% to ${18 + 2 * i}%`, 0.16 + 0.02 * i, 0.18 + 0.02 * i]).concat([['30% or more', 0.30, 99]]), 'edge'),
     'Settled 1H picks. With few picks these tables say little. Line averages over the picks with a closing 1H line.');
   h += T('By line', '1H line', band([['Under 80', 0, 80], ['80 to 84.5', 80, 85], ['85 or more', 85, 999]], 'line'));
-  h += T('By tier', 'Tier', TIER_NAMES.map(t => bandRow(t, L.filter(b => tierOf(b.lg) === t), false)).join(''));
+  h += T('By tier', 'Tier', TIER_NAMES.map(t => row(t, L.filter(b => tierOf(b.lg) === t))).join(''));
+  h += T('By hours before tip-off', 'Logged', band([['24 hours or more', 24, 999], ['12 to 24 hours', 12, 24], ['Under 12 hours', 0, 12]], 'hours'),
+    'How long before tip-off the pick was logged: whether the first-half lines that open early are the softer ones.');
+  const fg = new Set(LIVE.picks.flatMap(b => [b.dt.slice(0, 10) + b.home + '|' + b.away, b.dt.slice(0, 10) + b.away + '|' + b.home])), both = b => fg.has(b.dt.slice(0, 10) + b.home + '|' + b.away);
+  h += T('With or without a full-game pick', 'Same game', row('Full-game over also a pick', L.filter(both)) + row('No full-game pick', L.filter(b => !both(b))),
+    'Whether the full-game over was a pick too. If both win and lose together, a game with both picks is close to one bet staked twice.');
   return h;
 }
 function firstHalf(part = ''){                               // part: 'open' or 'settled' gives that table alone
