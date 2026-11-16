@@ -171,6 +171,7 @@ table.proj tr.pk td{background:var(--an-accent-soft)}table.proj tr.pk td:first-c
 .tile{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px;display:flex;flex-direction:column;gap:3px;min-width:0;color:inherit;text-decoration:none}
 a.tile:hover{border-color:var(--gold)}
 .tile .klabel{font:400 14px var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+.tile .stat:not(:has(.two)){margin-top:17px}   /* a single number sits on the same line as the two-number tiles' numbers (17 Nov 2026) */
 .tile .stat{font:500 26px var(--mono);line-height:1.15;font-variant-numeric:tabular-nums;display:flex;flex-wrap:wrap;align-items:center;gap:2px 6px}
 .tile .small{font-size:14.5px;color:var(--muted)}
 .tile .two{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%;font-size:24px}
@@ -277,7 +278,7 @@ $('sub').innerHTML = (AGE > 3 ? `<span class="stale">Not updated for ${Math.floo
   const cc = cl.filter(b => b.cpx != null && b.total !== b.close), uc = cc.reduce((a, b) => a + (b.total > b.close ? b.cpx - 1 : -1), 0);
   const mu = set.filter(b => (b.ma ?? b.mu) != null), nS = `${set.length} settled picks`;
   $('top').innerHTML = [['Open picks', nOpen, nOpen ? 'to play' : 'none right now'], ['Settled picks', won + lost ? `${won}–${lost}` : '–', won + lost ? `${pct(won / (won + lost), 1)} hit rate · ${set.length} settled` : `${set.length} settled`],
-    ['ROI', TWO('Opening line', won + lost ? `<b class="${cls(units)}" style="font-weight:inherit">${roi(units / (won + lost))}</b>` : '–', 'Closing line', cc.length ? `<b class="${cls(uc)}" style="font-weight:inherit">${roi(uc / cc.length)}</b>` : '–'),
+    ['ROI', TWO('Opening', won + lost ? `<b class="${cls(units)}" style="font-weight:inherit">${roi(units / (won + lost))}</b>` : '–', 'Closing', cc.length ? `<b class="${cls(uc)}" style="font-weight:inherit">${roi(uc / cc.length)}</b>` : '–'),
      ''],
     ['Average line', TWO('Opening', avg(cl, b => b.line), 'Closing', avg(cl, b => b.close)), ''],
     ['Average total', TWO('Model', avg(mu, b => b.ma ?? b.mu), 'Actual', avg(cl, b => b.total)), ''],
@@ -296,7 +297,7 @@ const TOP_H1 = (() => {
   const cc = cl.filter(b => b.cpx != null && b.res !== b.close), uc = cc.reduce((a, b) => a + (b.res > b.close ? b.cpx - 1 : -1), 0);
   return [['Open 1H picks', nOpen, nOpen ? 'to play' : 'none right now'],
     ['Settled 1H picks', won + lost ? `${won}–${lost}` : '–', won + lost ? `${pct(won / (won + lost), 1)} hit rate · ${set.length} settled` : `${set.length} settled`],
-    ['ROI', TWO('Opening line', won + lost ? roi(units / (won + lost)) : '–', 'Closing line', cc.length ? roi(uc / cc.length) : '–'), ''],
+    ['ROI', TWO('Opening', won + lost ? roi(units / (won + lost)) : '–', 'Closing', cc.length ? roi(uc / cc.length) : '–'), ''],
     ['Average line', TWO('Opening', avg(cl, b => b.line), 'Closing', avg(cl, b => b.close)), ''],
     ['Average total', TWO('Model', avg(set.filter(b => b.m1 != null), b => b.m1), 'Actual', avg(set.filter(b => b.res != null), b => b.res)), ''],
     ...mvTiles(cl).map(([k, v, n, mv]) => [k.replace('Closing line', 'Closing 1H line').replace('closing line', 'closing 1H line'), v, n, mv])]
@@ -312,9 +313,9 @@ function mvTiles(list){
   const ROIs = L => { const d = dec(L); if (!d.length) return ''; const r = d.reduce((x, b) => x + b.ret, 0) / d.length; return ` · ROI <b class="${cls(r)}" style="font-weight:inherit">${roi(r)}</b>`; };   // as on Won when no move
   const wl_ = L => { const d = dec(L), w = d.filter(b => b.ret > 0).length; return `${w}–${d.length - w}`; };
   return [['Closing line moved', n ? TWO('Toward pick', pct(up.length / n), 'Against', pct(dn.length / n), 'h-up', 'h-dn') : '–', ''],
-          ['Avg closing line move', TWO('Toward pick', up.length ? a(up) : '–', 'Against', dn.length ? a(dn) : '–', 'h-up', 'h-dn'), `points · avg of ${up.length} and ${dn.length} pick${dn.length === 1 ? '' : 's'}`],   // one tile (16 Nov 2026)
-          ['Won when moved toward', hit(up), `${wl_(up)} win – loss${ROIs(up)}`, 'up'], ['Won when it did not move', hit(same), `${wl_(same)} win – loss${ROIs(same)}`, '0'],
-          ['Won when moved against', hit(dn), `${wl_(dn)} win – loss${ROIs(dn)}`, 'dn']];   // 16 Nov 2026   // a 4th item: the tile opens those picks (16 Nov 2026)
+          ['Avg line move', TWO('Toward pick', up.length ? a(up) : '–', 'Against', dn.length ? a(dn) : '–', 'h-up', 'h-dn'), `points · avg of ${up.length} and ${dn.length} pick${dn.length === 1 ? '' : 's'}`],   // one tile (16 Nov 2026)
+          ['Won: moved toward', hit(up), `${wl_(up)} win – loss${ROIs(up)}`, 'up'], ['Won: no move', hit(same), `${wl_(same)} win – loss${ROIs(same)}`, '0'],
+          ['Won: moved against', hit(dn), `${wl_(dn)} win – loss${ROIs(dn)}`, 'dn']];   // 16 Nov 2026   // a 4th item: the tile opens those picks (16 Nov 2026)
 }
 
 // two numbers in one tile, a little smaller so they stay on one line (14 Nov 2026)
@@ -418,7 +419,7 @@ function btTiles(k){
   const c = BT.filter(b => b.close != null), W = BT.filter(b => b.ret > 0).length, Lo = BT.filter(b => b.ret < 0).length, RK = riskTiles(BT);
   const C = (v, k) => k ? `<b class="${k}" style="font-weight:inherit">${v}</b>` : v;
   return TL([['Settled picks', `${W}–${Lo}`, `${pct(W / (W + Lo), 1)} hit rate · ${BT.length.toLocaleString('en')} settled`],
-              ['ROI', TWO('Opening line', C(roi(S.rule.roi), cls(S.rule.roi)), 'Closing line', S.rule.roic != null ? C(roi(S.rule.roic), cls(S.rule.roic)) : '–'), ''],
+              ['ROI', TWO('Opening', C(roi(S.rule.roi), cls(S.rule.roi)), 'Closing', S.rule.roic != null ? C(roi(S.rule.roic), cls(S.rule.roic)) : '–'), ''],
               ['Average line', TWO('Opening', lineAvg(c, 'line'), 'Closing', lineAvg(c, 'close')), ''],
               ['Average total', TWO('Model', lineAvg(c, 'mu'), 'Actual', lineAvg(c, 'total')), ''],
               ...(c.length ? mvTiles(c).slice(0, -1) : []),
