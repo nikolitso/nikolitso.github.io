@@ -1,7 +1,7 @@
 // Bookmaker lines for upcoming fixtures, keyed by the fixture's home and away club.
 // sp = handicap on the home side (+ means the home side is the underdog), spH / spA = its odds home / away,
 // tot = points total, ov / un = odds over / under, mlH / mlA = money line odds (null when not offered).
-window.ODDS = {"updated": "2026-11-17", "source": "pre-game lines, earlier ones kept", "list": [
+window.ODDS = {"updated": "2026-11-18", "source": "pre-game lines, earlier ones kept", "list": [
   {"h": "AEK Larnaca", "a": "Tartu Ulikool", "sp": -5.5, "spH": 1.83, "spA": 1.83, "tot": 165.5, "ov": 1.83, "un": 1.83, "mlH": 1.19, "mlA": 4.0},
   {"h": "CSM Oradea", "a": "VEF Riga", "sp": -3.5, "spH": 1.83, "spA": 1.83, "tot": 172.5, "ov": 1.83, "un": 1.83, "mlH": 1.62, "mlA": 2.1},
   {"h": "Esenler Erokspor", "a": "SCM Craiova", "sp": -19.5, "spH": 1.83, "spA": 1.83, "tot": 163.5, "ov": 1.83, "un": 1.83, "mlH": 1.01, "mlA": 11.5},
@@ -97,5 +97,21 @@ window.ODDS = {"updated": "2026-11-17", "source": "pre-game lines, earlier ones 
   {"h": "Wurzburg", "a": "Iraklis", "sp": -1.5, "spH": 1.83, "spA": 1.9, "tot": 161.5, "ov": 1.86, "un": 1.86, "mlH": 1.74, "mlA": 2.0},
   {"h": "Basquet Girona", "a": "Oostende", "sp": -13.5, "spH": 1.9, "spA": 1.83, "tot": 162.5, "ov": 1.83, "un": 1.9, "mlH": 1.1, "mlA": 6.25},
   {"h": "Chalon/Saone", "a": "Korfez Basket", "sp": -7.5, "spH": 1.95, "spA": 1.8, "tot": 166.5, "ov": 1.9, "un": 1.83, "mlH": 1.29, "mlA": 3.25},
-  {"h": "Nancy", "a": "Parnu", "sp": -22.5, "spH": 1.86, "spA": 1.86, "tot": 157.5, "ov": 1.83, "un": 1.9, "mlH": 1.02, "mlA": 15.0}
+  {"h": "Nancy", "a": "Parnu", "sp": -22.5, "spH": 1.86, "spA": 1.86, "tot": 157.5, "ov": 1.83, "un": 1.9, "mlH": 1.02, "mlA": 15.0},
+  {"h": "Absheron Lions", "a": "BC Prievidza", "sp": 6.5, "spH": 1.83, "spA": 1.83, "tot": 174.5, "ov": 1.85, "un": 1.83, "mlH": 3.3, "mlA": 1.31},
+  {"h": "Esenler Erokspor", "a": "Rilski Sportist", "sp": -24.5, "spH": 1.85, "spA": 1.83, "tot": 166.5, "ov": 1.85, "un": 1.83, "mlH": 1.01, "mlA": 19.0},
+  {"h": "Kolossos Rhodes", "a": "Gence", "sp": -18.5, "spH": 1.83, "spA": 1.85, "tot": 160.5, "ov": 1.85, "un": 1.83, "mlH": 1.03, "mlA": 8.5},
+  {"h": "AEK Larnaca", "a": "Dziki Warszawa", "sp": 4.5, "spH": 1.85, "spA": 1.83, "tot": 166.5, "ov": 1.85, "un": 1.83, "mlH": 2.7, "mlA": 1.45},
+  {"h": "CSM Oradea", "a": "Lok. Plovdiv", "sp": -10.5, "spH": 1.95, "spA": 1.72, "tot": 169.5, "ov": 1.9, "un": 1.78, "mlH": 1.13, "mlA": 5.7},
+  {"h": "Keravnos", "a": "Nitra Blue Wings", "sp": -8.5, "spH": 1.83, "spA": 1.85, "tot": 164.5, "ov": 1.83, "un": 1.83, "mlH": 1.25, "mlA": 3.8},
+  {"h": "Opava", "a": "Batumi", "sp": -15.5, "spH": 1.83, "spA": 1.83, "tot": 170.5, "ov": 1.9, "un": 1.78, "mlH": 1.06, "mlA": 8.5},
+  {"h": "Szolnoki Olaj", "a": "Dinamo Bucharest", "sp": 1.5, "spH": 1.85, "spA": 1.83, "tot": 166.5, "ov": 1.83, "un": 1.83, "mlH": 2.05, "mlA": 1.74},
+  {"h": "Tartu Ulikool", "a": "MZT Skopje", "sp": -7.5, "spH": 1.72, "spA": 1.95, "tot": 170.5, "ov": 1.83, "un": 1.85, "mlH": 1.21, "mlA": 4.25},
+  {"h": "VEF Riga", "a": "Neftchi IK", "sp": -15.5, "spH": 1.62, "spA": 2.1, "tot": 174.5, "ov": 1.83, "un": 1.83, "mlH": 1.04, "mlA": 11.0},
+  {"h": "Bakken Bears", "a": "Geneva Lions", "sp": -5.5, "spH": 1.83, "spA": 1.83, "tot": 167.5, "ov": 1.83, "un": 1.83, "mlH": 1.35, "mlA": 3.1},
+  {"h": "Trepca", "a": "Split", "sp": -1.5, "spH": 1.83, "spA": 1.83, "tot": 160.5, "ov": 1.83, "un": 1.83, "mlH": 1.62, "mlA": 2.24},
+  {"h": "Bashkimi", "a": "Manchester Basketball", "sp": -3.5, "spH": 1.85, "spA": 1.83, "tot": 162.5, "ov": 1.83, "un": 1.83, "mlH": 1.5, "mlA": 2.54},
+  {"h": "Szczecin", "a": "Vienna Basket", "sp": -8.5, "spH": 1.85, "spA": 1.83, "tot": 170.5, "ov": 1.83, "un": 1.85, "mlH": 1.27, "mlA": 3.6},
+  {"h": "Trier", "a": "Promitheas", "sp": -11.5, "spH": 1.65, "spA": 2.05, "tot": 174.5, "ov": 1.83, "un": 1.83, "mlH": 1.09, "mlA": 7.0},
+  {"h": "Sporting CP", "a": "SCM Craiova", "sp": -6.5, "spH": 1.9, "spA": 1.83, "tot": 171.5, "ov": 1.83, "un": 1.83, "mlH": 1.33, "mlA": 3.2}
 ]};
