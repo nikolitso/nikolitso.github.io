@@ -191,6 +191,7 @@ def load():
             topic=tname, tslug=tslug, tcol=tcol,
             cover=cover_for(slug, str(meta.get("cover") or "")),
             body=body_html, excerpt=plain(body_html, 220), url=f"{BASE}{slug}/", logline=str(meta.get("logline") or ""),
+            search_title=str(meta.get("search_title") or ""), search_description=str(meta.get("search_description") or ""),
             added=ADDED.get(slug) or NOW,
         ))
     books.sort(key=lambda b: (b["date"], b["title"]), reverse=True)
@@ -427,12 +428,14 @@ def by_line(authors):
 
 
 def book_title(b):
+    if b.get("search_title"):                     # a note can set its own (front matter search_title)
+        return b["search_title"]
     core = f"{b['title']} by {by_line(b['authors'])}: key ideas" if b["authors"] else f"{b['title']}: key ideas"
     return core if len(core) > 44 else f"{core} — Antonis Nikolitsopoulos"
 
 
 def book_desc(b):
-    d = (b.get("logline") or b["subtitle"] or b["excerpt"]).strip()
+    d = (b.get("search_description") or b.get("logline") or b["subtitle"] or b["excerpt"]).strip()
     if len(d) > 158:
         d = d[:158].rsplit(" ", 1)[0].rstrip(",;:—– ") + "…"
     return d if d.endswith((".", "…", "?", "!")) else d + "."
@@ -581,7 +584,7 @@ def forward_old(books):
         f.parent.mkdir(parents=True, exist_ok=True)
         f.write_text(f"""<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><title>Moved to {SITE}{new}</title>
-<link rel="canonical" href="{SITE}{new}"><meta name="robots" content="noindex">
+<link rel="canonical" href="{SITE}{new}">
 <script>location.replace("{new}" + location.search + location.hash);</script>
 <meta http-equiv="refresh" content="0; url={new}"></head>
 <body><p>This page has moved to <a href="{new}">{SITE}{new}</a>.</p></body></html>
