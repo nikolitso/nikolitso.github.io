@@ -353,8 +353,8 @@ def page_index(books, n_authors):
         for s, n, c in TOPICS if counts[s])
     body = f"""<section class="hero">
   <div class="wrap">
-    <p class="kicker">Book takeaways</p>
-    <h1>Books</h1>
+    <p class="kicker">Books</p>
+    <h1>Book takeaways and key ideas</h1>
     <p class="lede">Every good book leaves a few ideas worth keeping. These are the ones worth keeping from books on sports analytics, betting, decision-making and personal development: what each book argues, the key ideas, and who it is for.</p>
     <div class="stats"><span><b>{len(books)}</b> books</span><span><b>{n_authors}</b> authors</span><span><b>{len([1 for s,_,_ in TOPICS if counts[s]])}</b> topics</span></div>
   </div>
@@ -480,7 +480,7 @@ def book_ld(b):
     if b["cover"]:
         data["image"] = b["cover"] if b["cover"].startswith("http") else SITE + b["cover"]
     page = {"@context": "https://schema.org", "@type": "WebPage", "name": book_title(b), "url": SITE + b["url"],
-            "author": ME, "about": data}
+            "author": ME, "publisher": ME, "about": data}
     return ld_script(page)
 
 
@@ -495,7 +495,7 @@ def ld_script(data):
 def collection_ld(name, path, desc, items):
     """A CollectionPage whose ItemList is the page's entries, in page order: [(name, url), ...]."""
     return ld_script({"@context": "https://schema.org", "@type": "CollectionPage", "name": name, "url": SITE + path,
-                      "description": desc, "inLanguage": "en", "author": ME,
+                      "description": desc, "inLanguage": "en", "author": ME, "publisher": ME,
                       "isPartOf": {"@type": "WebSite", "@id": SITE + "/#website", "url": SITE + "/"},
                       "mainEntity": {"@type": "ItemList", "numberOfItems": len(items), "itemListElement": [
                           {"@type": "ListItem", "position": i, "name": n, "url": SITE + u}
