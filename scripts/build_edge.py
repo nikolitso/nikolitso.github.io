@@ -259,6 +259,10 @@ def site_footer():
 def layout(title, body, path, desc, image=None, active="books", full=None, ld=None, og_type="website"):
     full = full or (f"{title} — Antonis Nikolitsopoulos" if title != "Books" else "Books — Book takeaways by Antonis Nikolitsopoulos")
     img = image if (image or "").startswith("http") else SITE + (image or ("/books.jpg" if active else "/og.png"))
+    # Social previews: a book page shows its cover; other pages the fixed banner, whose size is known.
+    alt = f"Cover of {title}" if image else ("Books by Antonis Nikolitsopoulos" if active else "Antonis Nikolitsopoulos")
+    size = "" if image else ('<meta property="og:image:width" content="1200">\n<meta property="og:image:height" content="'
+                             + ("675" if active else "630") + '">\n')
     sub = lambda key, href, label: f'<a href="{href}"{" class=on" if active == key else ""}>{label}</a>'
     subnav = (f'<nav class="subnav" aria-label="Books"><div class="wrap"><a class="an-home" href="/" aria-label="Back to the homepage">← Home</a>{sub("books", BASE, "All books")}'
               f'{sub("authors", BASE + "authors/", "Authors")}</div></nav>') if active else ""
@@ -276,8 +280,16 @@ def layout(title, body, path, desc, image=None, active="books", full=None, ld=No
 <meta property="og:url" content="{SITE}{path}">
 <meta property="og:type" content="{og_type}">
 <meta property="og:image" content="{esc(img)}">
+<meta property="og:image:alt" content="{esc(alt)}">
+{size}<meta property="og:site_name" content="Antonis Nikolitsopoulos">
+<meta property="og:locale" content="en_US">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@nikolitso">
 <meta name="twitter:creator" content="@nikolitso">
+<meta name="twitter:title" content="{esc(full)}">
+<meta name="twitter:description" content="{esc(desc)}">
+<meta name="twitter:image" content="{esc(img)}">
+<meta name="twitter:image:alt" content="{esc(alt)}">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/favicon.png" type="image/png" sizes="64x64">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
