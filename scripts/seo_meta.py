@@ -12,6 +12,7 @@ says (og:title, og:description, og:image, <title>, meta description, canonical, 
   twitter:image, twitter:image:alt
 - a schema.org WebPage tied to the homepage's Person (#person) and WebSite (#website), if the page has
   no structured data of its own
+- the heading-level repairs listed in OUTLINE, for templates kept in other repos
 
 It never changes a tag that is there, so running it twice changes nothing. A page it cannot read is skipped.
 """
@@ -56,6 +57,25 @@ def image_size(path):
 def meta(head, attr, key):
     m = re.search(rf'<meta\s+{attr}="{re.escape(key)}"\s+content="([^"]*)"', head)
     return m.group(1) if m else None
+
+
+# Heading-level repairs for generated pages whose templates live elsewhere (the BettingSignal repo).
+# Each is an exact piece of the built page and what it becomes; it applies only while the old piece is there,
+# so it does nothing once the template itself is fixed (and can then be removed here).
+HIDDEN = "position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0"
+OUTLINE = [
+    # /basketball/: the Projections tab starts at <h3> straight under the page's <h1> (make_site.py). A visually
+    # hidden <h2> gives it its level, and the page looks the same.
+    ('<section id="projections" hidden>\n  <div class="tiles" id="bLeagues"></div>',
+     f'<section id="projections" hidden>\n  <h2 style="{HIDDEN}">Projections</h2>\n  <div class="tiles" id="bLeagues"></div>'),
+]
+
+
+def fix_outline(text):
+    for old, new in OUTLINE:
+        if old in text and new not in text:
+            text = text.replace(old, new, 1)
+    return text
 
 
 def head_end(text):
@@ -149,7 +169,7 @@ def main(args):
             text = p.read_text(encoding="utf-8")
         except (OSError, UnicodeDecodeError):
             continue
-        new = fix(text)
+        new = fix_outline(fix(text))
         if new != text:
             p.write_text(new, encoding="utf-8")
             changed += 1
