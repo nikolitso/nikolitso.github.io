@@ -6,6 +6,8 @@ on:
     paths:
       - "_edge/**"
       - "scripts/build_edge.py"
+      - "scripts/seo_meta.py"   # the Person and WebSite every Books page carries
+      - "index.html"            # ... read from the homepage
       - "scripts/edge.css"
       - ".github/workflows/build-edge.yml"
   workflow_dispatch:        # "Run workflow" button in the Actions tab

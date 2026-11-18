@@ -3,7 +3,8 @@ name: Site · Person sync
 # The homepage's schema.org block holds the full Person and WebSite records. Every other page carries the same
 # two records (scripts/seo_meta.py keeps them in step). When the homepage changes, this copies the current
 # records into the pages that no pipeline rebuilds (About, Wine, the Thought Bank, archived pages); the pipelines
-# do the same for their own pages each time they publish.
+# do the same for their own pages each time they publish. The Books pages (and 404.html) are left to the Build
+# Books workflow, which also runs on a homepage change, so the two never write the same files at once.
 
 on:
   push:
@@ -33,7 +34,7 @@ jobs:
           # the pipelines push often: each try starts from the latest main, so a rejected push just tries again
           for i in 1 2 3 4 5; do
             git fetch -q origin main && git reset -q --hard origin/main
-            python3 scripts/seo_meta.py 404.html about thought-bank wine books paok-hub paok-basketball football \
+            python3 scripts/seo_meta.py about thought-bank wine paok-hub paok-basketball football \
               superleague basketball eurocup fibaeuropecup volleyball handball
             git add -A -- '*.html'
             if git diff --cached --quiet; then echo "pages already in step"; exit 0; fi
