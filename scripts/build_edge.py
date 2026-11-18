@@ -34,6 +34,8 @@ TOPICS = [  # order shown on the site
     ("personal-development", "Personal development", "#b0476b"),
     ("work-leadership", "Work & leadership", "#3d6bff"),
 ]
+# books moved to a new address (18 Nov 2026): the old one redirects, with a canonical, and the book keeps its added date
+MOVED = {"statistical-sports-models-in-excel-d49": "statistical-sports-models-in-excel-volume-1"}
 OLD_TOPIC = {"betting": "betting-markets", "thinking": "thinking-decisions", "work": "work-leadership"}  # links shared before the rename
 TOPIC_BY_NAME = {n.lower(): (s, n, c) for s, n, c in TOPICS}
 
@@ -166,6 +168,9 @@ def added_dates():
     for line in out.splitlines():
         if line.startswith("@"): when = line[1:]
         elif line.endswith(".md"): added[Path(line).stem] = when   # log is newest first: the last hit is the first add
+    for old, new in MOVED.items():
+        if old in added:
+            added[new] = added[old]
     return added
 
 
@@ -590,6 +595,17 @@ def forward_old(books):
 <body><p>This page has moved to <a href="{new}">{SITE}{new}</a>.</p></body></html>
 """, encoding="utf-8")
     shutil.copyfile(OUT / "feed.xml", OLD / "feed.xml")  # RSS readers subscribed to the old feed
+    for old, new in MOVED.items():                    # moved books: /books/<old>/ and /the-edge/<old>/ forward to the new page
+        to = f"{BASE}{new}/"
+        for f in (OUT / old / "index.html", OLD / old / "index.html"):
+            f.parent.mkdir(parents=True, exist_ok=True)
+            f.write_text(f"""<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Moved to {SITE}{to}</title>
+<link rel="canonical" href="{SITE}{to}">
+<script>location.replace("{to}" + location.search + location.hash);</script>
+<meta http-equiv="refresh" content="0; url={to}"></head>
+<body><p>This page has moved to <a href="{to}">{SITE}{to}</a>.</p></body></html>
+""", encoding="utf-8")
 
 
 def write(path, content):

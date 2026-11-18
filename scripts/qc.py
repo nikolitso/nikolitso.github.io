@@ -76,7 +76,10 @@ def sports(html, path):
 
 
 def check_page(path, problems):
-    html = open(path, encoding="utf-8", errors="replace").read()
+    try:
+        html = open(path, encoding="utf-8", errors="replace").read()
+    except FileNotFoundError:                 # removed while the check ran (another job rewriting pages)
+        return
     if 'http-equiv="refresh"' in html[:3000]:
         return
     r = rel(path)
