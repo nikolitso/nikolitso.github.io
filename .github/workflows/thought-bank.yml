@@ -1,0 +1,40 @@
+name: Site · Thought Bank
+
+# The quotes live in thought-bank/quotes.json and the page draws them in the browser. This writes the same quotes
+# into thought-bank/index.html as plain HTML whenever they change, so the page also reads without its script.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "thought-bank/quotes.json"
+      - "thought-bank/quotes.js"
+      - "scripts/build_thought_bank.py"
+      - ".github/workflows/thought-bank.yml"
+  workflow_dispatch:        # "Run workflow" button in the Actions tab
+
+permissions:
+  contents: write
+
+concurrency:
+  group: thought-bank
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+      - run: python scripts/build_thought_bank.py
+      - name: Commit if changed
+        run: |
+          git add thought-bank/index.html
+          if git diff --cached --quiet; then exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Thought Bank: the quotes in the page itself"
+          git pull --rebase
+          git push

@@ -9,6 +9,7 @@ import json
 import os
 import re
 import shutil
+import subprocess
 import urllib.parse
 import urllib.request
 from collections import defaultdict
@@ -608,7 +609,20 @@ def sitemap(books):
     for f in sorted((ROOT / "paok-hub").glob("*.html")):   # every PAOK Hub page, redirects excluded
         if f.name != "index.html" and "http-equiv=\"refresh\"" not in f.read_text(encoding="utf-8", errors="ignore")[:1500]:
             paths.append(f"/paok-hub/{f.name}")
-    urls = "".join(f"<url><loc>{SITE}{p}</loc></url>" for p in dict.fromkeys(paths))
+    added = {b["url"]: str(b["date"])[:10] for b in books if re.match(r"\d{4}-\d{2}-\d{2}", str(b.get("date") or ""))}
+
+    def lastmod(p):
+        """When the page last changed: a book's note by its date, any other page by its last commit. Nothing when unknown."""
+        if p in added:
+            return added[p]
+        f = ROOT / p.strip("/") if p.endswith(".html") else ROOT / p.strip("/") / "index.html"
+        try:
+            day = subprocess.run(["git", "log", "-1", "--format=%cs", "--", str(f.relative_to(ROOT))], cwd=ROOT, capture_output=True, text=True, timeout=30).stdout.strip()
+        except Exception:
+            day = ""
+        return day if re.fullmatch(r"\d{4}-\d{2}-\d{2}", day) else ""
+
+    urls = "".join(f"<url><loc>{SITE}{p}</loc>" + (f"<lastmod>{d}</lastmod>" if (d := lastmod(p)) else "") + "</url>" for p in dict.fromkeys(paths))
     (ROOT / "sitemap.xml").write_text(
         f'<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">{urls}</urlset>\n',
         encoding="utf-8")

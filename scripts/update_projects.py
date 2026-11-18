@@ -40,6 +40,14 @@ def js_object(path, start):
     return json.JSONDecoder().raw_decode(s[m.end():].lstrip())[0]
 
 
+def page_data(section, page):
+    """A section's `const D = {...}`: in its data.js (since 19 Nov 2026), or in the page itself before that."""
+    try:
+        return js_object(f"/{section}/data.js", r"const D\s*=")
+    except Exception:
+        return js_object(page, r"const D\s*=")
+
+
 def when(dt, time=False):
     dt = dt.astimezone(ATHENS) if dt.tzinfo else dt
     day = f"{dt:%a} {dt.day} {dt:%b}"
@@ -164,7 +172,7 @@ def basketball_cup(folder):
 
 
 def handball():
-    d = js_object("/handball/live-test/overs/", r"const D\s*=")
+    d = page_data("handball", "/handball/live-test/overs/")
     sig = d["sig"]["signals"]
     done = [x for x in sig if x.get("status") in ("won", "lost")]
     return record(sum(x["status"] == "won" for x in done), sum(x["status"] == "lost" for x in done),
@@ -172,7 +180,7 @@ def handball():
 
 
 def basketball():
-    d = js_object("/basketball/", r"const D\s*=")
+    d = page_data("basketball", "/basketball/")
     rec = d.get("record") or {}
     won, lost, open_, units = (sum(r.get(k, 0) for r in rec.values()) for k in ("won", "lost", "open", "units"))
     if won or lost or open_:
