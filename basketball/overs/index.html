@@ -520,6 +520,8 @@ function h1Tables(list){
   h += T('By line', '1H line', band([['Under 80', 0, 80], ['80 to 84.5', 80, 85], ['85 or more', 85, 999]], 'line'));
   h += T('By pace', 'Pace', band([['Under +1', -99, 1], ['+1 to +2', 1, 2], ['+2 to +3', 2, 3], ['+3 or more', 3, 99]], 'pace'),
     'Pace when the pick was logged: possessions a game the two teams are expected to play above the league average. 1H picks logged before 19 Nov 2026 use the last pace worked out for the game before tip-off.');
+  const lgs = [...new Set(L.map(b => b.lg))].sort((x, y) => lgShort(x) < lgShort(y) ? -1 : 1);
+  h += T('By league', 'League', lgs.map(k => row(lgShort(k), L.filter(b => b.lg === k))).join(''));   // 19 Nov 2026
   h += T('By hours before tip-off', 'Logged', band([['24 hours or more', 24, 999], ['12 to 24 hours', 12, 24], ['Under 12 hours', 0, 12]], 'hours'),
     'How long before tip-off the pick was logged: whether the first-half lines that open early are the softer ones.');
   const fg = new Set(LIVE.picks.flatMap(b => [b.dt.slice(0, 10) + b.home + '|' + b.away, b.dt.slice(0, 10) + b.away + '|' + b.home])), both = b => fg.has(b.dt.slice(0, 10) + b.home + '|' + b.away);
