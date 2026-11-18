@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>2. Bundesliga (M): handball standings, team averages and league average</title>
-<meta name="description" content="2. Bundesliga (M) 2026-27: the standings, every team&#x27;s goals scored and conceded per game, home and away totals, attack and defence ratings, and the league&#x27;s average goals.">
+<title>2. Bundesliga (M): handball standings and team averages</title>
+<meta name="description" content="2. Bundesliga (M) 2026-27: the standings, every team&#x27;s goals scored and conceded per game, and the league&#x27;s average goals.">
 <link rel="canonical" href="https://antonisnikolitsopoulos.com/handball/leagues/2-bundesliga/">
-<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "WebPage", "@id": "https://antonisnikolitsopoulos.com/handball/leagues/2-bundesliga/#webpage", "url": "https://antonisnikolitsopoulos.com/handball/leagues/2-bundesliga/", "name": "2. Bundesliga (M): handball standings, team averages and league average", "description": "2. Bundesliga (M) 2026-27: the standings, every team's goals scored and conceded per game, home and away totals, attack and defence ratings, and the league's average goals.", "inLanguage": "en", "isPartOf": {"@id": "https://antonisnikolitsopoulos.com/#website"}, "author": {"@id": "https://antonisnikolitsopoulos.com/#person"}}]}</script>
-<meta property="og:title" content="2. Bundesliga (M): handball standings, team averages and league average">
-<meta property="og:description" content="2. Bundesliga (M) 2026-27: the standings, every team&#x27;s goals scored and conceded per game, home and away totals, attack and defence ratings, and the league&#x27;s average goals.">
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "WebPage", "@id": "https://antonisnikolitsopoulos.com/handball/leagues/2-bundesliga/#webpage", "url": "https://antonisnikolitsopoulos.com/handball/leagues/2-bundesliga/", "name": "2. Bundesliga (M): handball standings and team averages", "description": "2. Bundesliga (M) 2026-27: the standings, every team's goals scored and conceded per game, and the league's average goals.", "inLanguage": "en", "isPartOf": {"@id": "https://antonisnikolitsopoulos.com/#website"}, "author": {"@id": "https://antonisnikolitsopoulos.com/#person"}}]}</script>
+<meta property="og:title" content="2. Bundesliga (M): handball standings and team averages">
+<meta property="og:description" content="2. Bundesliga (M) 2026-27: the standings, every team&#x27;s goals scored and conceded per game, and the league&#x27;s average goals.">
 <meta property="og:url" content="https://antonisnikolitsopoulos.com/handball/leagues/2-bundesliga/">
 <meta property="og:type" content="article">
 <meta property="og:image" content="https://antonisnikolitsopoulos.com/handball.jpg">
@@ -49,7 +49,7 @@ tr.hi td{background:var(--an-accent-soft)}
 <header class="an-head"><div><a class="an-home" href="/" aria-label="Back to the homepage">← Home</a>
   <a class="an-brand" href="/handball/live-test/overs/"><svg class="an-mark" aria-hidden="true"><use href="/assets/marks.svg#handball"/></svg><span><small class="an-kicker">Handball · 2. Bundesliga (M)</small><h1>2. Bundesliga (M): table and averages</h1></span></a>
 </div></header>
-<div class="wrap">
+<main class="wrap">
 <style>table.srt th{cursor:pointer;user-select:none;white-space:nowrap} table.srt th:hover{color:var(--an-ink)} table.srt th[data-d]::after{content:' \2193'} table.srt th[data-d=asc]::after{content:' \2191'} table.st td:nth-child(2){white-space:nowrap} .sub{color:var(--an-muted);font-size:14px;margin:-4px 0 12px} .hint{color:var(--an-muted);font-size:14px;line-height:1.5} @media (max-width:1100px){table.srt{display:block;overflow-x:auto}}</style>
 <p class=lede>2. Bundesliga (M), this season: 100 games played, <b>60.4 goals a game</b> on average. The model plays <b>Over</b> here.</p>
 <h2>League averages</h2><table><tr><th></th><th class=n>Per game</th></tr><tr><td><b>Total goals</b></td><td class=n><b>60.39</b></td></tr><tr><td>Home side</td><td class=n>30.50</td></tr><tr><td>Away side</td><td class=n>29.89</td></tr><tr><td>Lowest and highest total</td><td class=n>42 – 77</td></tr><tr><td>Home wins · draws · away wins</td><td class=n>58 · 5 · 37</td></tr><tr><td>Games played</td><td class=n>100</td></tr><tr><td>League correction the model adds</td><td class=n>+0.96</td></tr></table>
@@ -64,6 +64,6 @@ document.querySelectorAll('table.srt').forEach(t=>{const hs=[...t.rows[0].cells]
   hs.forEach(h=>delete h.dataset.d);th.dataset.d=d;
   rows.sort((a,b)=>{const x=v(a),y=v(b);if(x===null)return 1;if(y===null)return -1;const c=x<y?-1:x>y?1:0;return d==='asc'?c:-c}).forEach(r=>t.tBodies[0].appendChild(r))}))});
 </script>
-</div>
+</main>
 </body>
 </html>

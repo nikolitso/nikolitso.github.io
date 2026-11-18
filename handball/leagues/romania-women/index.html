@@ -4,11 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Romania (W): handball standings, team averages and league average</title>
-<meta name="description" content="Romania (W) · Liga Națională 2026-27: the standings, every team&#x27;s goals scored and conceded per game, home and away totals, attack and defence ratings, and the league&#x27;s average goals.">
+<meta name="description" content="Romania (W) · Liga Națională 2026-27: the standings, every team&#x27;s goals scored and conceded per game, and the league&#x27;s average goals.">
 <link rel="canonical" href="https://antonisnikolitsopoulos.com/handball/leagues/romania-women/">
-<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "WebPage", "@id": "https://antonisnikolitsopoulos.com/handball/leagues/romania-women/#webpage", "url": "https://antonisnikolitsopoulos.com/handball/leagues/romania-women/", "name": "Romania (W): handball standings, team averages and league average", "description": "Romania (W) · Liga Națională 2026-27: the standings, every team's goals scored and conceded per game, home and away totals, attack and defence ratings, and the league's average goals.", "inLanguage": "en", "isPartOf": {"@id": "https://antonisnikolitsopoulos.com/#website"}, "author": {"@id": "https://antonisnikolitsopoulos.com/#person"}}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "WebPage", "@id": "https://antonisnikolitsopoulos.com/handball/leagues/romania-women/#webpage", "url": "https://antonisnikolitsopoulos.com/handball/leagues/romania-women/", "name": "Romania (W): handball standings, team averages and league average", "description": "Romania (W) · Liga Națională 2026-27: the standings, every team's goals scored and conceded per game, and the league's average goals.", "inLanguage": "en", "isPartOf": {"@id": "https://antonisnikolitsopoulos.com/#website"}, "author": {"@id": "https://antonisnikolitsopoulos.com/#person"}}]}</script>
 <meta property="og:title" content="Romania (W): handball standings, team averages and league average">
-<meta property="og:description" content="Romania (W) · Liga Națională 2026-27: the standings, every team&#x27;s goals scored and conceded per game, home and away totals, attack and defence ratings, and the league&#x27;s average goals.">
+<meta property="og:description" content="Romania (W) · Liga Națională 2026-27: the standings, every team&#x27;s goals scored and conceded per game, and the league&#x27;s average goals.">
 <meta property="og:url" content="https://antonisnikolitsopoulos.com/handball/leagues/romania-women/">
 <meta property="og:type" content="article">
 <meta property="og:image" content="https://antonisnikolitsopoulos.com/handball.jpg">
@@ -49,7 +49,7 @@ tr.hi td{background:var(--an-accent-soft)}
 <header class="an-head"><div><a class="an-home" href="/" aria-label="Back to the homepage">← Home</a>
   <a class="an-brand" href="/handball/live-test/overs/"><svg class="an-mark" aria-hidden="true"><use href="/assets/marks.svg#handball"/></svg><span><small class="an-kicker">Handball · Romania (W) · Liga Națională</small><h1>Romania (W): table and averages</h1></span></a>
 </div></header>
-<div class="wrap">
+<main class="wrap">
 <style>table.srt th{cursor:pointer;user-select:none;white-space:nowrap} table.srt th:hover{color:var(--an-ink)} table.srt th[data-d]::after{content:' \2193'} table.srt th[data-d=asc]::after{content:' \2191'} table.st td:nth-child(2){white-space:nowrap} .sub{color:var(--an-muted);font-size:14px;margin:-4px 0 12px} .hint{color:var(--an-muted);font-size:14px;line-height:1.5} @media (max-width:1100px){table.srt{display:block;overflow-x:auto}}</style>
 <p class=lede>Romania (W), this season: 70 games played, <b>56.4 goals a game</b> on average. The model plays <b>Under</b> here.</p>
 <h2>League averages</h2><table><tr><th></th><th class=n>Per game</th></tr><tr><td><b>Total goals</b></td><td class=n><b>56.41</b></td></tr><tr><td>Home side</td><td class=n>29.00</td></tr><tr><td>Away side</td><td class=n>27.41</td></tr><tr><td>Lowest and highest total</td><td class=n>39 – 76</td></tr><tr><td>Home wins · draws · away wins</td><td class=n>35 · 6 · 29</td></tr><tr><td>Games played</td><td class=n>70</td></tr><tr><td>League correction the model adds</td><td class=n>+0.02</td></tr></table>
@@ -64,6 +64,6 @@ document.querySelectorAll('table.srt').forEach(t=>{const hs=[...t.rows[0].cells]
   hs.forEach(h=>delete h.dataset.d);th.dataset.d=d;
   rows.sort((a,b)=>{const x=v(a),y=v(b);if(x===null)return 1;if(y===null)return -1;const c=x<y?-1:x>y?1:0;return d==='asc'?c:-c}).forEach(r=>t.tBodies[0].appendChild(r))}))});
 </script>
-</div>
+</main>
 </body>
 </html>
