@@ -308,14 +308,14 @@ def cover_img(b, cls="", eager=False):
             f'{"" if eager else "loading=lazy "}decoding="async" width="326" height="500">')
 
 
-def card(b):
+def card(b, h="h3"):
     authors = ", ".join(b["authors"])
     key = f'{b["title"]} {b.get("subtitle","")} {authors}'.lower()
     return f"""<a class="book" href="{b['url']}" data-topic="{b['tslug']}" data-key="{esc(key)}" data-date="{b['date']}" data-title="{esc(b['title'].lower())}">
   <div class="book-cover">{cover_img(b)}</div>
   <div class="book-meta">
     <span class="book-topic" style="--t:{b['tcol']}">{esc(b['topic'])}</span>
-    <h3>{esc(b['title'])}</h3>
+    <{h}>{esc(b['title'])}</{h}>
     <p>{esc(authors)}</p>
   </div>
 </a>"""
@@ -348,7 +348,7 @@ def page_index(books, n_authors):
     </div>
     <p class="count" id="count"></p>
     <div class="books" id="books">
-{chr(10).join(card(b) for b in books)}
+{chr(10).join(card(b, "h2") for b in books)}
     </div>
     <p class="empty" id="empty" hidden>No books match that search.</p>
   </div>
@@ -436,7 +436,9 @@ def book_title(b):
     if b.get("search_title"):                     # a note can set its own (front matter search_title)
         return b["search_title"]
     core = f"{b['title']} by {by_line(b['authors'])}: key ideas" if b["authors"] else f"{b['title']}: key ideas"
-    return core if len(core) > 44 else f"{core} — Antonis Nikolitsopoulos"
+    if len(core) > 65:                            # a search result shows about 65 characters: drop the tail, then the authors
+        core = next((t for t in (f"{b['title']} by {by_line(b['authors'])}", f"{b['title']}: key ideas") if len(t) <= 65), b["title"])
+    return core if len(core) > 39 else f"{core} — Antonis Nikolitsopoulos"   # the name only where the whole title still fits
 
 
 def book_desc(b):
