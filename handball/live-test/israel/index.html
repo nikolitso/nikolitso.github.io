@@ -333,7 +333,7 @@ html{scroll-behavior:smooth;font-size:17.5px}   /* one step larger: the page siz
 </footer>
 </div>
 
-<script src="/handball/data.js?v=09638822"></script>
+<script src="/handball/data.js?v=eecdaef2"></script>
 <script>
 const $=s=>document.querySelector(s);
 const f=(v,d=2)=>v==null||isNaN(v)?'–':(+v).toFixed(d);
@@ -349,7 +349,7 @@ const day=d=>{if(!d)return '–';const [y,m,dd]=d.split('-');return new Date(+y,
 (function(){
   const G=D.sig, L=G.leagues, byKey=Object.fromEntries(L.map(l=>[l.key,l]));
   const side=s=>s==='over'?'Over':s==='under'?'Under':'Over or Under';
-  const LSL={bl2:'2-bundesliga',il:'israel',w_es:'spain-women',w_pt:'portugal-women',w_ro:'romania-women',t_de:'bundesliga',t_no:'norway',t_pt:'portugal',t_si:'slovenia',t_qa:'qatar',t_gr:'greece'}, lgS=(k,t)=>LSL[k]?`<a class="gl" href="${document.querySelector('.wrap').dataset.base?'/handball/':'https://antonisnikolitsopoulos.com/handball/'}leagues/${LSL[k]}/" title="Standings and averages">${t}</a>`:t;
+  const LSL={bl2:'2-bundesliga',il:'israel',w_es:'spain-women',w_pt:'portugal-women',w_ro:'romania-women',t_de:'bundesliga',t_no:'norway',t_pt:'portugal',t_qa:'qatar',t_gr:'greece'}, lgS=(k,t)=>LSL[k]?`<a class="gl" href="${document.querySelector('.wrap').dataset.base?'/handball/':'https://antonisnikolitsopoulos.com/handball/'}leagues/${LSL[k]}/" title="Standings and averages">${t}</a>`:t;
   // every match links to its page with the model's workings (/handball/games/<date>-<home>-<away>/, built by games.py)
   const gs=t=>String(t).toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,''), gUrl=x=>`${document.querySelector('.wrap').dataset.base?'/handball/':'https://antonisnikolitsopoulos.com/handball/'}games/${x.date}-${gs(x.home)}-${gs(x.away)}/`, ml=(x,plain)=>`<a class="gl" href="${gUrl(x)}" title="How the model got its total">${plain?x.home:'<b>'+x.home+'</b>'} – ${x.away}</a>`;
   window.__gmH={ml,lgS};
