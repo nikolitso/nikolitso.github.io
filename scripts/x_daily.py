@@ -167,7 +167,7 @@ def quotes():
         return {}
     items = {}
     for i, q in enumerate(json.loads(QUOTES.read_text(encoding="utf-8")), 1):
-        if not q or not q.get("text") or q.get("draft"):
+        if not q or not q.get("text") or q.get("draft") or q.get("skip_x"):   # skip_x: on the site, never posted to X
             continue
         n = q.get("id") or i
         src = (q.get("author") or q.get("source") or "").strip()   # Pages CMS field is "author"

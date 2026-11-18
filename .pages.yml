@@ -93,3 +93,6 @@ content:
       - name: draft
         label: Draft (hide from the site)
         type: boolean
+      - name: skip_x
+        label: Skip on X (stays on the site, never posted to X)
+        type: boolean
