@@ -3,6 +3,7 @@ name: Post · Daily X
 # Three posts a day (Athens time): 11:00 quote, 14:00 book, 20:00 film.
 # A Cloudflare Worker (x-daily-scheduler) triggers this at each slot and again 30 minutes later ("auto");
 # GitHub's own hourly schedule is a backup. Each slot posts once; late runs still post the current slot, never a burst.
+# Each run also refreshes the homepage's Today's picks card and its Latest books and films.
 on:
   schedule:
     - cron: "7 * * * *"
@@ -61,6 +62,11 @@ jobs:
         env:
           WAM_DIR: wam
         run: python scripts/update_picks.py
+      - name: Update the homepage's Latest books and films
+        # here rather than only in its own daily workflow, whose GitHub schedule starts hours late: this job is
+        # started on time at each slot, so a film dated 11:00 Athens reaches the homepage within minutes
+        if: ${{ !cancelled() }}
+        run: python scripts/update_posts.py || echo "latest posts update skipped"
       - name: Save what was posted
         if: ${{ !cancelled() }}   # record a successful post even if the other kind failed
         run: |

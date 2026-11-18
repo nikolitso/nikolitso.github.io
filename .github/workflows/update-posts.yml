@@ -2,7 +2,7 @@ name: Homepage · Latest posts
 
 on:
   schedule:
-    - cron: "17 5 * * *"   # every day, 05:17 UTC
+    - cron: "17 5 * * *"   # every day, 05:17 UTC; a backup since 18 Nov 2026: Post · Daily X runs the same update on time at each slot
   workflow_dispatch:        # "Run workflow" button in the Actions tab
 
 permissions:
