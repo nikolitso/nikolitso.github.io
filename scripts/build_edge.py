@@ -257,13 +257,22 @@ def site_footer():
 </footer>"""
 
 
+def cover_size(image):
+    """(width, height) of a cover stored in this repo (for og:image:width/height), or None."""
+    if not image or image.startswith("http"):
+        return None
+    from seo_meta import image_size   # scripts/seo_meta.py, next to this file
+    return image_size(ROOT / image.lstrip("/").split("?")[0])
+
+
 def layout(title, body, path, desc, image=None, active="books", full=None, ld=None, og_type="website"):
     full = full or (f"{title} — Antonis Nikolitsopoulos" if title != "Books" else "Books — Book takeaways by Antonis Nikolitsopoulos")
     img = image if (image or "").startswith("http") else SITE + (image or ("/books.jpg" if active else "/og.png"))
     # Social previews: a book page shows its cover; other pages the fixed banner, whose size is known.
     alt = f"Cover of {title}" if image else ("Books by Antonis Nikolitsopoulos" if active else "Antonis Nikolitsopoulos")
-    size = "" if image else ('<meta property="og:image:width" content="1200">\n<meta property="og:image:height" content="'
-                             + ("675" if active else "630") + '">\n')
+    dims = cover_size(image) if image else (1200, 675 if active else 630)
+    size = (f'<meta property="og:image:width" content="{dims[0]}">\n<meta property="og:image:height" content="{dims[1]}">\n'
+            if dims else "")
     sub = lambda key, href, label: f'<a href="{href}"{" class=on" if active == key else ""}>{label}</a>'
     subnav = (f'<nav class="subnav" aria-label="Books"><div class="wrap"><a class="an-home" href="/" aria-label="Back to the homepage">← Home</a>{sub("books", BASE, "All books")}'
               f'{sub("authors", BASE + "authors/", "Authors")}</div></nav>') if active else ""
