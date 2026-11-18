@@ -1,7 +1,7 @@
 // Bookmaker lines for upcoming fixtures, keyed by the fixture's home and away club.
 // sp = handicap on the home side (+ means the home side is the underdog), spH / spA = its odds home / away,
 // tot = points total, ov / un = odds over / under, mlH / mlA = money line odds (null when not offered).
-window.ODDS = {"updated": "2026-11-18", "source": "pre-game lines, earlier ones kept", "list": [
+window.ODDS = {"updated": "2026-11-19", "source": "pre-game lines, earlier ones kept", "list": [
   {"h": "AEK Larnaca", "a": "Tartu Ulikool", "sp": -5.5, "spH": 1.83, "spA": 1.83, "tot": 165.5, "ov": 1.83, "un": 1.83, "mlH": 1.19, "mlA": 4.0},
   {"h": "CSM Oradea", "a": "VEF Riga", "sp": -3.5, "spH": 1.83, "spA": 1.83, "tot": 172.5, "ov": 1.83, "un": 1.83, "mlH": 1.62, "mlA": 2.1},
   {"h": "Esenler Erokspor", "a": "SCM Craiova", "sp": -19.5, "spH": 1.83, "spA": 1.83, "tot": 163.5, "ov": 1.83, "un": 1.83, "mlH": 1.01, "mlA": 11.5},
@@ -113,5 +113,6 @@ window.ODDS = {"updated": "2026-11-18", "source": "pre-game lines, earlier ones 
   {"h": "Tartu Ulikool", "a": "MZT Skopje", "sp": -9.5, "spH": 1.9, "spA": 1.83, "tot": 169.5, "ov": 1.86, "un": 1.86, "mlH": 1.2, "mlA": 4.25},
   {"h": "VEF Riga", "a": "Neftchi IK", "sp": -17.5, "spH": 1.83, "spA": 1.9, "tot": 174.5, "ov": 1.83, "un": 1.9, "mlH": 1.04, "mlA": 10.0},
   {"h": "Bakken Bears", "a": "Geneva Lions", "sp": -5.5, "spH": 1.83, "spA": 1.9, "tot": 168.5, "ov": 1.9, "un": 1.83, "mlH": 1.4, "mlA": 2.8},
-  {"h": "Trepca", "a": "Split", "sp": -2.5, "spH": 1.86, "spA": 1.86, "tot": 160.5, "ov": 1.83, "un": 1.9, "mlH": 1.6, "mlA": 2.2}
+  {"h": "Trepca", "a": "Split", "sp": -2.5, "spH": 1.86, "spA": 1.86, "tot": 160.5, "ov": 1.83, "un": 1.9, "mlH": 1.6, "mlA": 2.2},
+  {"h": "Levice", "a": "Zielona Gora", "sp": 3.5, "spH": 1.83, "spA": 1.83, "tot": 162.5, "ov": 1.83, "un": 1.83, "mlH": 2.25, "mlA": 1.55}
 ]};
