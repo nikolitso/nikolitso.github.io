@@ -81,10 +81,15 @@
  },
  "EuroCup:126": {
   "paok_out": [
-   "Osman"
+   "Osman",
+   "Foster"
   ],
-  "opp_out": [],
-  "note": "PAOK without Osman, who is out for one to two months."
+  "opp_out": [
+   "Villar"
+  ],
+  "note": "PAOK without Osman, who is out for one to two months, and Foster (ankle). Manresa without Villar.",
+  "line": 172.5,
+  "hcp": -1.5
  },
  "GBL:95F2FDAA": {
   "paok_out": [
