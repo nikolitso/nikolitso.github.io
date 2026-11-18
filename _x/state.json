@@ -170,7 +170,8 @@
       "how-to-be-good-at-life",
       "168-hours-you-have-more-time-than",
       "weighing-the-odds-in-sports-betting",
-      "range-how-generalists-triumph-in"
+      "range-how-generalists-triumph-in",
+      "statistical-sports-models-in-excel"
     ],
     "log": [
       {
@@ -514,9 +515,15 @@
         "slot": "2026-11-16 14",
         "slug": "range-how-generalists-triumph-in",
         "id": "2122298699778818141"
+      },
+      {
+        "day": "2026-11-18",
+        "slot": "2026-11-18 14",
+        "slug": "statistical-sports-models-in-excel",
+        "id": "2123038799072518598"
       }
     ],
-    "last_day": "2026-11-16"
+    "last_day": "2026-11-18"
   },
   "film": {
     "seen": [
@@ -1102,7 +1109,7 @@
     ],
     "last_day": "2026-11-16"
   },
-  "last_slot": "2026-11-16 20",
+  "last_slot": "2026-11-18 14",
   "quote": {
     "seen": [
       "1",
