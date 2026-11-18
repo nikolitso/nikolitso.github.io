@@ -1,0 +1,23 @@
+# Antonis Nikolitsopoulos
+
+> Personal site of Antonis Nikolitsopoulos, Thessaloniki, Greece: independent sports analytics projects (football, basketball, volleyball, handball and two PAOK statistics hubs), notes on books, a collection of quotes, and a Greek wine and food pairing finder. The forecasting projects are in their 2026-27 test season; their live records are early results.
+
+## Sports projects
+- [Greek Super League](https://antonisnikolitsopoulos.com/superleague/): projections for every game, stat by stat, against the market's lines
+- [Greek Cup](https://antonisnikolitsopoulos.com/football/greek-cup/): results and match stats for every game
+- [Basketball, Greece and Cyprus](https://antonisnikolitsopoulos.com/basketball/): team strength, game projections and handicap margins
+- [Basketball totals](https://antonisnikolitsopoulos.com/basketball/overs/): a totals model for 45 domestic leagues in Europe and Latin America
+- [Women's basketball totals](https://antonisnikolitsopoulos.com/basketball/women/): a totals model for 20 European leagues
+- [EuroCup](https://antonisnikolitsopoulos.com/eurocup/) and [FIBA Europe Cup](https://antonisnikolitsopoulos.com/fibaeuropecup/): club ratings, projections and market lines
+- [Volleyball](https://antonisnikolitsopoulos.com/volleyball/): sets and total points projections
+- [Handball](https://antonisnikolitsopoulos.com/handball/): total goals projections, live tests and backtests
+- [PAOK Hub](https://antonisnikolitsopoulos.com/paok-hub/) and [PAOK Basketball](https://antonisnikolitsopoulos.com/paok-basketball/): PAOK's seasons in numbers
+
+## Writing and collections
+- [Books](https://antonisnikolitsopoulos.com/books/): key ideas from 109 books on sports analytics, betting markets, decision-making and personal development
+- [Thought Bank](https://antonisnikolitsopoulos.com/thought-bank/): quotes and ideas, in seven folders
+- [Wine](https://antonisnikolitsopoulos.com/wine/): Greek wine and food pairing finder, 950+ wines from 110+ estates
+- [What Algo Missed](https://whatalgomissed.com/): a personal map of world cinema
+
+## About
+- [About](https://antonisnikolitsopoulos.com/about/): the story behind the site and its projects
