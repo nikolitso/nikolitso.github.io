@@ -65,6 +65,7 @@ jobs:
           TZ: Europe/Athens
         run: |
           python -u _bs/fibaeuropecup/games.py
+          python3 "$GITHUB_WORKSPACE/scripts/seo_meta.py" fibaeuropecup/games || echo "seo_meta failed: publishing the pages as built"
           git add fibaeuropecup/games fibaeuropecup/sitemap.xml
           if git diff --cached --quiet; then echo "game pages unchanged"; exit 0; fi
           git commit -q -m "FIBA Europe Cup: game pages $(date '+%Y-%m-%d %H:%M')"

@@ -44,6 +44,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          python3 "$GITHUB_WORKSPACE/scripts/seo_meta.py" basketball/women/games || echo "seo_meta failed: publishing the pages as built"
           git add basketball/women/live.js basketball/women/games basketball/women/sitemap.xml
           if git diff --cached --quiet; then echo "page unchanged"; exit 0; fi
           git commit -q -m "Women's basketball totals: refresh $(TZ=Europe/Athens date '+%Y-%m-%d %H:%M')"

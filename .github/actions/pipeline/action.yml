@@ -65,6 +65,8 @@ runs:
       run: |
         git config user.name "github-actions[bot]"
         git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        # social-preview tags and basic schema.org data the builds leave out (scripts/seo_meta.py)
+        python3 "$GITHUB_WORKSPACE/scripts/seo_meta.py" ${{ inputs.pages }} || echo "seo_meta failed: publishing the pages as built"
         git add ${{ inputs.pages }}
         if git diff --cached --quiet; then echo "pages unchanged"; exit 0; fi
         git commit -q -m "${{ inputs.label }}: refresh $(TZ=Europe/Athens date '+%Y-%m-%d %H:%M')"
