@@ -87,7 +87,9 @@ def current_block(page, name):
 
 def card(feed, p):
     meta = p["year"] if feed["kind"] == "film" else f'{p["date"].day} {p["date"]:%b %Y}'
-    img = (f'<span class="pc-img"><img src="{html.escape(p["img"])}" alt="" loading="lazy" decoding="async"></span>'
+    size = 'width="640" height="360"' if feed["kind"] == "film" else 'width="400" height="600"'   # the card's shape: 16:9 film, 2:3 cover
+    alt = ("Still from " if feed["kind"] == "film" else "Cover of ") + p["title"]
+    img = (f'<span class="pc-img"><img src="{html.escape(p["img"])}" alt="{html.escape(alt)}" {size} loading="lazy" decoding="async"></span>'
            if p["img"] else '<span class="pc-img"></span>')
     return (f'          <li><a class="pc" href="{html.escape(p["link"])}"{ext_attrs(p["link"])}>{img}'
             f'<span class="pc-meta">{html.escape(meta)}</span>'

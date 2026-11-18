@@ -33,7 +33,8 @@ def item(kind, it):
     sub = it["by"] if kind == "book" else ", ".join(x for x in (str(it.get("year") or ""), it["by"]) if x)
     ext = "" if it["url"].startswith(UP.SELF) else ' target="_blank" rel="noopener"'
     return (f'        <a class="pick {kind}" href="{html.escape(it["url"])}"{ext}>'
-            f'<span class="pick-img"><img src="{html.escape(img)}" alt="" decoding="async"></span>'
+            f'<span class="pick-img"><img src="{html.escape(img)}" alt="{html.escape(("Cover of " if kind == "book" else "Still from ") + it["title"])}" '
+            f'{'width="400" height="600"' if kind == "book" else 'width="640" height="400"'} decoding="async"></span>'
             f'<span class="pick-text"><span class="pick-kind">{label}</span>'
             f'<span class="pick-title">{html.escape(it["title"])}</span>'
             f'<span class="pick-sub">{html.escape(sub)}</span></span></a>')
