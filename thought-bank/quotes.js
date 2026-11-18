@@ -153,6 +153,26 @@
     }).map(function (n) { return [slug(n), n, names[n], personTone(n)]; }), byTotal, by, onBy);
   }
 
+  // Structured data: every quote on the page as a Quotation, so search engines can read the list (quotes load from JSON).
+  function structuredData(quotes) {
+    var base = "https://antonisnikolitsopoulos.com/thought-bank/";
+    var s = document.createElement("script");
+    s.type = "application/ld+json";
+    s.textContent = JSON.stringify({
+      "@context": "https://schema.org", "@type": "ItemList", "name": "Thought Bank",
+      "url": base, "numberOfItems": quotes.length,
+      "isPartOf": { "@id": base + "#page" },
+      "itemListElement": quotes.map(function (q, i) {
+        var item = { "@type": "Quotation", "text": String(q.text || "").replace(/^[-•*]\s+/gm, "").replace(/\s*\n\s*/g, " ").trim(),
+                     "url": base + "#q-" + q.id, "genre": q.category || undefined };
+        if (q.title) item.name = q.title;
+        if (q.author) item.creator = { "@type": "Person", "name": q.author };
+        return { "@type": "ListItem", "position": i + 1, "item": item };
+      })
+    }).replace(/<\//g, "<\\/");
+    document.head.appendChild(s);
+  }
+
   fetch("/thought-bank/quotes.json", { cache: "no-cache" })
     .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
     .then(function (data) {
@@ -178,6 +198,7 @@
       onAuthor = function (s) { by = s; active = ""; update(); filter.scrollIntoView({ behavior: "smooth", block: "start" }); };
       function draw() { buttons(quotes, active, by, pickChapter, pickBy); render(quotes, active, by); }
       draw();
+      structuredData(quotes);
       wide.addEventListener("change", function () { render(quotes, active, by); });
       if (location.hash) { var t = document.getElementById(location.hash.slice(1)); if (t) t.scrollIntoView(); }
     })
