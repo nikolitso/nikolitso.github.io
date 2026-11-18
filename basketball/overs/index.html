@@ -242,7 +242,7 @@ details.picks>summary .muted{font-size:14px;font-weight:400}
   <div class="chips" id="chips"></div>
   <div id="out"></div>
 </div>
-<script src="data.js?v=h1e14a"></script>
+<script src="data.js?v=h1t4a"></script>
 <script src="live.js"></script>
 <script>
 const $ = id => document.getElementById(id);
@@ -518,7 +518,6 @@ function h1Tables(list){
   let h = T('By edge', "Model 1H's edge", band([...Array(8)].map((_, i) => [`${14 + 2 * i}% to ${16 + 2 * i}%`, 0.14 + 0.02 * i, 0.16 + 0.02 * i]).concat([['30% or more', 0.30, 99]]), 'edge'),
     'Settled 1H picks. With few picks these tables say little. Line averages over the picks with a closing 1H line.');
   h += T('By line', '1H line', band([['Under 80', 0, 80], ['80 to 84.5', 80, 85], ['85 or more', 85, 999]], 'line'));
-  h += T('By tier', 'Tier', TIER_NAMES.map(t => row(t, L.filter(b => tierOf(b.lg) === t))).join(''));
   h += T('By hours before tip-off', 'Logged', band([['24 hours or more', 24, 999], ['12 to 24 hours', 12, 24], ['Under 12 hours', 0, 12]], 'hours'),
     'How long before tip-off the pick was logged: whether the first-half lines that open early are the softer ones.');
   const fg = new Set(LIVE.picks.flatMap(b => [b.dt.slice(0, 10) + b.home + '|' + b.away, b.dt.slice(0, 10) + b.away + '|' + b.home])), both = b => fg.has(b.dt.slice(0, 10) + b.home + '|' + b.away);
@@ -531,7 +530,7 @@ function firstHalf(part = ''){                               // part: 'open' or 
   if (!H) return '';
   const e8 = Math.round((H.edge ?? LE()) * 100), side = b => (b.side === 'over' ? 'Over ' : 'Under ') + b.line;
   const mlink = b => b.slug ? `<a class="gm" href="games/${b.slug}/">${b.home} – ${b.away}</a>` : `${b.home} – ${b.away}`;
-  let h = `<p class="note" id="h1">A separate live test, started ${H.start}, not part of the main record on the Live test tab. <b>Model 1H</b>: built only from earlier first halves, the way the full-game projection is built from earlier totals: the league's first-half average and each team's first halves this season, plus ${sgn(H.bias, 1)} (first halves came in that much above this projection in every season from 2022–23 to 2025–26). Its chance of the over comes from how widely first halves spread around the projection in each league (${H.sd} points on average). It never sees the full-game line or the full-game model. <b>The pick</b>: the over, the first time its edge is ${e8}% or more (overs only, like the main picks), on a .5 line, regular season, both teams ${LIVE.min_gp ?? 3}+ games in (5+ in Latin America), in the same ${LIVE.leagues.length} leagues. Settled on first-half points (no overtime) at the first run after half-time. There is no backtest: first-half prices were not saved before ${H.start}.</p>`;
+  let h = `<p class="note" id="h1">A separate live test, started ${H.start}, not part of the main record on the Live test tab. <b>Model 1H</b>: built only from earlier first halves, the way the full-game projection is built from earlier totals: the league's first-half average and each team's first halves this season, plus ${sgn(H.bias, 1)} (first halves came in that much above this projection in every season from 2022–23 to 2025–26). Its chance of the over comes from how widely first halves spread around the projection in each league (${H.sd} points on average). It never sees the full-game line or the full-game model. <b>The pick</b>: the over, the first time its edge is ${e8}% or more (overs only, like the main picks), on a .5 line, regular season, both teams ${LIVE.min_gp ?? 3}+ games in (5+ in Latin America), in the Tier 4 leagues only: the low European and Latin American top divisions (since 19 Nov 2026; the 1H picks in the other tiers were removed from the test). Settled on first-half points (no overtime) at the first run after half-time. There is no backtest: first-half prices were not saved before ${H.start}.</p>`;
   const S = H.stats || {}, A = H.acc;
   if (A) h += `<p class="note">Over all ${A.n.toLocaleString('en')} settled first halves the test tracked, picks or not: first 1H line ${A.line}, model ${A.model}, first-half points ${A.res}; the over won ${A.over != null ? pct(A.over) : '–'} at the first line. Off by: the average gap to the first-half points, so the lower one came closer. Right side: how often the first half finished on the side of the line the model was on.</p>`;
   const open = H.picks.filter(b => !b.done);
@@ -634,7 +633,7 @@ function renderH1(){
   const H = LIVE.h1;
   if (!H) return '<p class="empty">No first-half projections yet.</p>';
   let h = '';   // the note goes under the tables (16 Nov 2026)
-  const note = `<p class="note">Games in the next 7 days with <b>Model 1H</b>, the first-half projection built only from earlier first halves (the league's first-half average and each team's first halves this season, plus ${sgn(H.bias, 1)}), next to the first-half line across the books. It never sees the full-game line or the model total. Over chance from how widely first halves spread around the projection in each league; edge = chance × average price − 1. Highlighted games have a 1H test pick, logged in the <a href="#view=h1live">1H Live test</a> tab; the badge shows the line taken and the edge it was taken at, while the other columns are the line, prices and edges now: the over, with an edge of ${Math.round((H.edge ?? LE()) * 100)}% or more on a .5 line. Regular season only: play-off games are left out of the 1H test. Greyed: no pick possible (whole-number line or too few games). Each match page shows the projection part by part.</p>`;
+  const note = `<p class="note">Games in the next 7 days with <b>Model 1H</b>, the first-half projection built only from earlier first halves (the league's first-half average and each team's first halves this season, plus ${sgn(H.bias, 1)}), next to the first-half line across the books. It never sees the full-game line or the model total. Over chance from how widely first halves spread around the projection in each league; edge = chance × average price − 1. Highlighted games have a 1H test pick, logged in the <a href="#view=h1live">1H Live test</a> tab; the badge shows the line taken and the edge it was taken at, while the other columns are the line, prices and edges now: the over, with an edge of ${Math.round((H.edge ?? LE()) * 100)}% or more on a .5 line, in Tier 4 leagues only (the low European and Latin American top divisions). Regular season only: play-off games are left out of the 1H test. Greyed: no pick possible (whole-number line or too few games). Each match page shows the projection part by part.</p>`;
   const fx = H.rows.filter(inLg);
   if (!fx.length) return h + '<p class="empty">No games in the next 7 days.</p>' + note;
   const byDay = {};
