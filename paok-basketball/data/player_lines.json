@@ -1,0 +1,361 @@
+{
+ "games": {
+  "EuroCup:126": {
+   "comp": "EuroCup",
+   "code": 126,
+   "date": "2026-11-18T19:30:00Z",
+   "opp": "Manresa",
+   "home": false,
+   "lines": [
+    {
+     "player": "alexander",
+     "stat": "pts",
+     "first": {
+      "line": 8.5,
+      "over": 2.1,
+      "under": 1.64,
+      "t": "2026-11-18T18:49:26Z"
+     },
+     "last": {
+      "line": 8.5,
+      "over": 2.1,
+      "under": 1.64,
+      "t": "2026-11-18T18:49:39Z"
+     },
+     "proj": 9.5,
+     "projMin": 23,
+     "projWo": 6.0,
+     "projWoGames": 4
+    },
+    {
+     "player": "alexander",
+     "stat": "reb",
+     "first": {
+      "line": 6.5,
+      "over": 2.08,
+      "under": 1.63,
+      "t": "2026-11-18T18:49:26Z"
+     },
+     "last": {
+      "line": 6.5,
+      "over": 2.08,
+      "under": 1.63,
+      "t": "2026-11-18T18:49:39Z"
+     },
+     "proj": 6.3,
+     "projMin": 23,
+     "projWo": 5.0,
+     "projWoGames": 4
+    },
+    {
+     "player": "calathes",
+     "stat": "ast",
+     "first": {
+      "line": 6.5,
+      "over": 1.7,
+      "under": 2.02,
+      "t": "2026-11-18T18:49:26Z"
+     },
+     "last": {
+      "line": 6.5,
+      "over": 1.7,
+      "under": 2.02,
+      "t": "2026-11-18T18:49:39Z"
+     },
+     "proj": 6.4,
+     "projMin": 24,
+     "projWo": 6.7,
+     "projWoGames": 3
+    },
+    {
+     "player": "calathes",
+     "stat": "fg3m",
+     "first": {
+      "line": 0.5,
+      "over": 1.62,
+      "under": 2.1,
+      "t": "2026-11-18T18:49:26Z"
+     },
+     "last": {
+      "line": 0.5,
+      "over": 1.62,
+      "under": 2.1,
+      "t": "2026-11-18T18:49:39Z"
+     },
+     "proj": null,
+     "projMin": 24,
+     "projWo": 0.3,
+     "projWoGames": 3
+    },
+    {
+     "player": "calathes",
+     "stat": "pts",
+     "first": {
+      "line": 6.5,
+      "over": 1.95,
+      "under": 1.76,
+      "t": "2026-11-18T18:49:26Z"
+     },
+     "last": {
+      "line": 6.5,
+      "over": 1.95,
+      "under": 1.76,
+      "t": "2026-11-18T18:49:39Z"
+     },
+     "proj": 8.7,
+     "projMin": 24,
+     "projWo": 5.0,
+     "projWoGames": 3
+    },
+    {
+     "player": "calathes",
+     "stat": "reb",
+     "first": {
+      "line": 3.5,
+      "over": 1.77,
+      "under": 1.9,
+      "t": "2026-11-18T18:49:26Z"
+     },
+     "last": {
+      "line": 3.5,
+      "over": 1.77,
+      "under": 1.9,
+      "t": "2026-11-18T18:49:39Z"
+     },
+     "proj": 4.4,
+     "projMin": 24,
+     "projWo": 3.0,
+     "projWoGames": 3
+    },
+    {
+     "player": "chougkaz",
+     "stat": "fg3m",
+     "first": {
+      "line": 0.5,
+      "over": 1.53,
+      "under": 2.3,
+      "t": "2026-11-18T18:49:26Z"
+     },
+     "last": {
+      "line": 0.5,
+      "over": 1.53,
+      "under": 2.3,
+      "t": "2026-11-18T18:49:39Z"
+     },
+     "proj": null,
+     "projMin": 17,
+     "projWo": 0.8,
+     "projWoGames": 4
+    },
+    {
+     "player": "chougkaz",
+     "stat": "pts",
+     "first": {
+      "line": 4.5,
+      "over": 1.57,
+      "under": 2.3,
+      "t": "2026-11-18T18:49:26Z"
+     },
+     "last": {
+      "line": 4.5,
+      "over": 1.57,
+      "under": 2.3,
+      "t": "2026-11-18T18:49:39Z"
+     },
+     "proj": 5.0,
+     "projMin": 17,
+     "projWo": 4.2,
+     "projWoGames": 4
+    },
+    {
+     "player": "gray",
+     "stat": "ast",
+     "first": {
+      "line": 1.5,
+      "over": 1.59,
+      "under": 2.15,
+      "t": "2026-11-18T18:49:26Z"
+     },
+     "last": {
+      "line": 1.5,
+      "over": 1.59,
+      "under": 2.15,
+      "t": "2026-11-18T18:49:39Z"
+     },
+     "proj": 2.0,
+     "projMin": 23,
+     "projWo": 0.5,
+     "projWoGames": 2
+    },
+    {
+     "player": "gray",
+     "stat": "pts",
+     "first": {
+      "line": 5.5,
+      "over": 2.15,
+      "under": 1.62,
+      "t": "2026-11-18T18:49:26Z"
+     },
+     "last": {
+      "line": 5.5,
+      "over": 2.15,
+      "under": 1.62,
+      "t": "2026-11-18T18:49:39Z"
+     },
+     "proj": 5.4,
+     "projMin": 23,
+     "projWo": 10.5,
+     "projWoGames": 2
+    },
+    {
+     "player": "hudgins",
+     "stat": "fg3m",
+     "first": {
+      "line": 1.5,
+      "over": 1.6,
+      "under": 2.15,
+      "t": "2026-11-18T18:49:26Z"
+     },
+     "last": {
+      "line": 1.5,
+      "over": 1.6,
+      "under": 2.15,
+      "t": "2026-11-18T18:49:39Z"
+     },
+     "proj": null,
+     "projMin": 19,
+     "projWo": 2.2,
+     "projWoGames": 4
+    },
+    {
+     "player": "hudgins",
+     "stat": "pts",
+     "first": {
+      "line": 10.5,
+      "over": 1.94,
+      "under": 1.76,
+      "t": "2026-11-18T18:49:26Z"
+     },
+     "last": {
+      "line": 10.5,
+      "over": 1.94,
+      "under": 1.76,
+      "t": "2026-11-18T18:49:39Z"
+     },
+     "proj": 7.9,
+     "projMin": 19,
+     "projWo": 10.0,
+     "projWoGames": 4
+    },
+    {
+     "player": "moore",
+     "stat": "pts",
+     "first": {
+      "line": 4.5,
+      "over": 1.91,
+      "under": 1.79,
+      "t": "2026-11-18T18:49:26Z"
+     },
+     "last": {
+      "line": 4.5,
+      "over": 1.91,
+      "under": 1.79,
+      "t": "2026-11-18T18:49:39Z"
+     },
+     "proj": 5.6,
+     "projMin": 19,
+     "projWo": 4.0,
+     "projWoGames": 4
+    },
+    {
+     "player": "moore",
+     "stat": "reb",
+     "first": {
+      "line": 4.5,
+      "over": 2.2,
+      "under": 1.57,
+      "t": "2026-11-18T18:49:26Z"
+     },
+     "last": {
+      "line": 4.5,
+      "over": 2.2,
+      "under": 1.57,
+      "t": "2026-11-18T18:49:39Z"
+     },
+     "proj": 3.6,
+     "projMin": 19,
+     "projWo": 4.8,
+     "projWoGames": 4
+    },
+    {
+     "player": "tyree",
+     "stat": "ast",
+     "first": {
+      "line": 1.5,
+      "over": 1.58,
+      "under": 2.2,
+      "t": "2026-11-18T18:49:26Z"
+     },
+     "last": {
+      "line": 1.5,
+      "over": 1.58,
+      "under": 2.2,
+      "t": "2026-11-18T18:49:39Z"
+     },
+     "proj": 1.7,
+     "projMin": 22,
+     "projWo": 1.5,
+     "projWoGames": 4
+    },
+    {
+     "player": "tyree",
+     "stat": "fg3m",
+     "first": {
+      "line": 2.5,
+      "over": 2.15,
+      "under": 1.59,
+      "t": "2026-11-18T18:49:26Z"
+     },
+     "last": {
+      "line": 2.5,
+      "over": 2.15,
+      "under": 1.59,
+      "t": "2026-11-18T18:49:39Z"
+     },
+     "proj": null,
+     "projMin": 22,
+     "projWo": 1.2,
+     "projWoGames": 4
+    },
+    {
+     "player": "tyree",
+     "stat": "pts",
+     "first": {
+      "line": 19.5,
+      "over": 1.95,
+      "under": 1.75,
+      "t": "2026-11-18T18:49:26Z"
+     },
+     "last": {
+      "line": 19.5,
+      "over": 1.95,
+      "under": 1.75,
+      "t": "2026-11-18T18:49:39Z"
+     },
+     "proj": 18.2,
+     "projMin": 22,
+     "projWo": 16.8,
+     "projWoGames": 4
+    }
+   ],
+   "paokOut": [
+    "foster",
+    "osman"
+   ],
+   "projWoOut": [
+    "osman"
+   ]
+  }
+ },
+ "updated": "2026-11-18T18:49:39Z"
+}
