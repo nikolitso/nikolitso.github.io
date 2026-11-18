@@ -32,6 +32,32 @@ def quote(q):
     return f'<blockquote id="q{q["id"]}">{paras}' + (f"<footer>{by}</footer>" if by else "") + "</blockquote>"
 
 
+def with_quote_list(page, quotes):
+    """The quotes as a schema.org ItemList of Quotations, in the page's <head> (id tb-quotes), so search engines
+    read the list without the script; quotes.js adds its own copy only when this one is missing."""
+    base = "https://antonisnikolitsopoulos.com/thought-bank/"
+    items = []
+    for i, q in enumerate(quotes, 1):
+        text = re.sub(r"\s*\n\s*", " ", re.sub(r"(?m)^[-•*]\s+", "", str(q["text"]))).strip()
+        item = {"@type": "Quotation", "text": text, "url": f"{base}#q-{q['id']}"}
+        if q.get("category"):
+            item["genre"] = q["category"]
+        if q.get("title"):
+            item["name"] = q["title"]
+        if q.get("author"):
+            item["creator"] = {"@type": "Person", "name": q["author"]}
+        items.append({"@type": "ListItem", "position": i, "item": item})
+    data = {"@context": "https://schema.org", "@type": "ItemList", "name": "Thought Bank", "url": base,
+            "numberOfItems": len(items), "isPartOf": {"@id": base + "#page"}, "itemListElement": items}
+    tag = ('<script type="application/ld+json" id="tb-quotes">'
+           + json.dumps(data, ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/") + "</script>")
+    old = re.search(r'<script type="application/ld\+json" id="tb-quotes">.*?</script>', page, re.S)
+    if old:
+        return page[:old.start()] + tag + page[old.end():]
+    end = page.index("</head>")
+    return page[:end] + tag + "\n" + page[end:]
+
+
 def main():
     quotes = [q for q in json.loads((ROOT / "thought-bank" / "quotes.json").read_text(encoding="utf-8")) if q and q.get("text") and not q.get("draft")]
     quotes.sort(key=lambda q: q.get("id", 0))
@@ -52,6 +78,7 @@ def main():
         old = re.search(r'<noscript><p class="q-empty">[^<]*</p></noscript>', page)
         assert old, "the q-list placeholder was not found"
         page = page[:old.start()] + block + page[old.end():]
+    page = with_quote_list(page, quotes)
     PAGE.write_text(page, encoding="utf-8", newline="")
     print(f"thought bank: {len(quotes)} quotes in {sum(1 for c in names if any(q.get('category') == c for q in quotes))} folders")
 

@@ -155,9 +155,11 @@
 
   // Structured data: every quote on the page as a Quotation, so search engines can read the list (quotes load from JSON).
   function structuredData(quotes) {
+    if (document.getElementById("tb-quotes")) return;   // build_thought_bank.py already wrote the list into the page
     var base = "https://antonisnikolitsopoulos.com/thought-bank/";
     var s = document.createElement("script");
     s.type = "application/ld+json";
+    s.id = "tb-quotes";
     s.textContent = JSON.stringify({
       "@context": "https://schema.org", "@type": "ItemList", "name": "Thought Bank",
       "url": base, "numberOfItems": quotes.length,
