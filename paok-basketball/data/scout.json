@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-17T16:40:36Z",
+ "updated": "2026-11-18T02:43:29Z",
  "reports": [
   {
    "comp": "GBL",
@@ -1237,49 +1237,49 @@
     "drebPct": 66.2
    },
    "league": {
-    "pts": 83.0,
-    "fg2m": 21.2,
+    "pts": 82.9,
+    "fg2m": 21.1,
     "fg2a": 37.7,
     "fg3m": 8.3,
-    "fg3a": 25.2,
+    "fg3a": 25.1,
     "ftm": 15.8,
-    "fta": 20.9,
-    "oreb": 11.3,
-    "dreb": 23.6,
+    "fta": 21.0,
+    "oreb": 11.2,
+    "dreb": 23.7,
     "reb": 34.8,
-    "ast": 17.4,
+    "ast": 17.6,
     "stl": 7.9,
-    "tov": 15.3,
+    "tov": 15.4,
     "blk": 2.6,
     "pf": 22.6,
     "pir": 88.8,
-    "gp": 56,
-    "w": 28,
-    "allowed": 83.0,
-    "fgp": 46.8,
-    "fg2p": 56.1,
-    "fg3p": 32.9,
-    "ftp": 75.5,
-    "opp_fgp": 46.8,
-    "poss": 76.1,
-    "pace": 75.8,
-    "ortg": 109.0,
-    "drtg": 109.0,
-    "efg": 53.4,
+    "gp": 60,
+    "w": 30,
+    "allowed": 82.9,
+    "fgp": 46.9,
+    "fg2p": 56.0,
+    "fg3p": 33.1,
+    "ftp": 75.1,
+    "opp_fgp": 46.9,
+    "poss": 76.3,
+    "pace": 76.0,
+    "ortg": 108.7,
+    "drtg": 108.7,
+    "efg": 53.5,
     "ts": 57.6,
-    "tovPct": 20.1,
-    "orebPct": 32.4,
+    "tovPct": 20.2,
+    "orebPct": 32.1,
     "ftr": 25.1,
-    "astPct": 58.9,
-    "par3": 40.1,
-    "fgm": 29.5,
-    "fga": 62.9,
-    "opp_efg": 53.4,
-    "forcedTov": 20.1,
-    "drebPct": 67.6,
+    "astPct": 59.7,
+    "par3": 40.0,
+    "fgm": 29.4,
+    "fga": 62.8,
+    "opp_efg": 53.5,
+    "forcedTov": 20.2,
+    "drebPct": 67.9,
     "opp_ftr": 25.1,
     "rebPct": 50.0,
-    "l": 28,
+    "l": 30,
     "net": 0.0
    },
    "impact": [
@@ -2228,7 +2228,7 @@
      "missing": [
       "Cedi Osman"
      ],
-     "pace": 76.0
+     "pace": 75.9
     },
     "opp": {
      "score": 87.9,
@@ -2343,10 +2343,10 @@
       }
      ],
      "missing": [],
-     "pace": 76.0
+     "pace": 75.9
     },
     "winProb": 34,
-    "pace": 76.0,
+    "pace": 75.9,
     "lineupSource": "manual",
     "note": "PAOK without Osman, who is out for one to two months.",
     "modelTotal": 169.6,
@@ -2354,11 +2354,11 @@
     "modelMargin": -5.0,
     "hcp": null,
     "learned": {
-     "games": 1109,
+     "games": 1114,
      "lineGames": 1033,
      "homeEdge": 1.42,
-     "totalBias": 1.19,
-     "spreadSd": 12.2,
+     "totalBias": 1.16,
+     "spreadSd": 12.1,
      "lineWeight": 0.78,
      "lineWeightRaw": 0.78,
      "marginGames": 1033,
@@ -2380,7 +2380,7 @@
      "fg3m": {
       "paok": 8.5,
       "opp": 9.1,
-      "total": 17.5
+      "total": 17.6
      },
      "ftm": {
       "paok": 15.4,
@@ -2388,29 +2388,29 @@
       "total": 31.5
      },
      "ast": {
-      "paok": 16.2,
+      "paok": 16.3,
       "opp": 19.2,
-      "total": 35.4
+      "total": 35.5
      },
      "oreb": {
-      "paok": 11.1,
+      "paok": 11.0,
       "opp": 10.8,
-      "total": 21.9
+      "total": 21.8
      },
      "dreb": {
       "paok": 22.5,
-      "opp": 22.8,
-      "total": 45.3
+      "opp": 22.7,
+      "total": 45.2
      },
      "tov": {
       "paok": 15.5,
       "opp": 14.8,
-      "total": 30.4
+      "total": 30.3
      },
      "reb": {
-      "paok": 33.6,
-      "opp": 33.6,
-      "total": 67.2
+      "paok": 33.5,
+      "opp": 33.5,
+      "total": 67.0
      }
     }
    }

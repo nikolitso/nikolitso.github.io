@@ -2566,7 +2566,7 @@
   "date": "2026-11-18T19:30:00Z",
   "opp": "Manresa",
   "home": false,
-  "saved": "2026-11-17T16:40:36Z",
+  "saved": "2026-11-18T02:43:29Z",
   "paok": 82.9,
   "oppScore": 87.9,
   "winProb": 34,
@@ -2585,7 +2585,7 @@
    "fg3m": {
     "paok": 8.5,
     "opp": 9.1,
-    "total": 17.5
+    "total": 17.6
    },
    "ftm": {
     "paok": 15.4,
@@ -2593,29 +2593,29 @@
     "total": 31.5
    },
    "ast": {
-    "paok": 16.2,
+    "paok": 16.3,
     "opp": 19.2,
-    "total": 35.4
+    "total": 35.5
    },
    "oreb": {
-    "paok": 11.1,
+    "paok": 11.0,
     "opp": 10.8,
-    "total": 21.9
+    "total": 21.8
    },
    "dreb": {
     "paok": 22.5,
-    "opp": 22.8,
-    "total": 45.3
+    "opp": 22.7,
+    "total": 45.2
    },
    "tov": {
     "paok": 15.5,
     "opp": 14.8,
-    "total": 30.4
+    "total": 30.3
    },
    "reb": {
-    "paok": 33.6,
-    "opp": 33.6,
-    "total": 67.2
+    "paok": 33.5,
+    "opp": 33.5,
+    "total": 67.0
    }
   },
   "modelTotal": 169.6,
@@ -2851,7 +2851,7 @@
   "date": "2026-11-21T15:30:00Z",
   "opp": "Aris",
   "home": true,
-  "saved": "2026-11-17T16:40:36Z",
+  "saved": "2026-11-18T02:43:29Z",
   "paok": 79.9,
   "oppScore": 78.4,
   "winProb": 56,
