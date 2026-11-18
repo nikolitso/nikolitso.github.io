@@ -25,7 +25,9 @@
      "proj": 9.5,
      "projMin": 23,
      "projWo": 6.0,
-     "projWoGames": 4
+     "projWoGames": 4,
+     "actual": 9,
+     "min": 18
     },
     {
      "player": "alexander",
@@ -45,7 +47,9 @@
      "proj": 6.3,
      "projMin": 23,
      "projWo": 5.0,
-     "projWoGames": 4
+     "projWoGames": 4,
+     "actual": 6,
+     "min": 18
     },
     {
      "player": "calathes",
@@ -65,7 +69,9 @@
      "proj": 6.4,
      "projMin": 24,
      "projWo": 6.7,
-     "projWoGames": 3
+     "projWoGames": 3,
+     "actual": 5,
+     "min": 26
     },
     {
      "player": "calathes",
@@ -85,7 +91,9 @@
      "proj": null,
      "projMin": 24,
      "projWo": 0.3,
-     "projWoGames": 3
+     "projWoGames": 3,
+     "actual": 0,
+     "min": 26
     },
     {
      "player": "calathes",
@@ -105,7 +113,9 @@
      "proj": 8.7,
      "projMin": 24,
      "projWo": 5.0,
-     "projWoGames": 3
+     "projWoGames": 3,
+     "actual": 6,
+     "min": 26
     },
     {
      "player": "calathes",
@@ -125,7 +135,9 @@
      "proj": 4.4,
      "projMin": 24,
      "projWo": 3.0,
-     "projWoGames": 3
+     "projWoGames": 3,
+     "actual": 5,
+     "min": 26
     },
     {
      "player": "chougkaz",
@@ -145,7 +157,9 @@
      "proj": null,
      "projMin": 17,
      "projWo": 0.8,
-     "projWoGames": 4
+     "projWoGames": 4,
+     "actual": 2,
+     "min": 22
     },
     {
      "player": "chougkaz",
@@ -165,7 +179,9 @@
      "proj": 5.0,
      "projMin": 17,
      "projWo": 4.2,
-     "projWoGames": 4
+     "projWoGames": 4,
+     "actual": 8,
+     "min": 22
     },
     {
      "player": "gray",
@@ -185,7 +201,9 @@
      "proj": 2.0,
      "projMin": 23,
      "projWo": 0.5,
-     "projWoGames": 2
+     "projWoGames": 2,
+     "actual": 1,
+     "min": 26
     },
     {
      "player": "gray",
@@ -205,7 +223,9 @@
      "proj": 5.4,
      "projMin": 23,
      "projWo": 10.5,
-     "projWoGames": 2
+     "projWoGames": 2,
+     "actual": 3,
+     "min": 26
     },
     {
      "player": "hudgins",
@@ -225,7 +245,9 @@
      "proj": null,
      "projMin": 19,
      "projWo": 2.2,
-     "projWoGames": 4
+     "projWoGames": 4,
+     "actual": 4,
+     "min": 27
     },
     {
      "player": "hudgins",
@@ -245,7 +267,9 @@
      "proj": 7.9,
      "projMin": 19,
      "projWo": 10.0,
-     "projWoGames": 4
+     "projWoGames": 4,
+     "actual": 18,
+     "min": 27
     },
     {
      "player": "moore",
@@ -265,7 +289,9 @@
      "proj": 5.6,
      "projMin": 19,
      "projWo": 4.0,
-     "projWoGames": 4
+     "projWoGames": 4,
+     "actual": 2,
+     "min": 18
     },
     {
      "player": "moore",
@@ -285,7 +311,9 @@
      "proj": 3.6,
      "projMin": 19,
      "projWo": 4.8,
-     "projWoGames": 4
+     "projWoGames": 4,
+     "actual": 3,
+     "min": 18
     },
     {
      "player": "tyree",
@@ -305,7 +333,9 @@
      "proj": 1.7,
      "projMin": 22,
      "projWo": 1.5,
-     "projWoGames": 4
+     "projWoGames": 4,
+     "actual": 5,
+     "min": 30
     },
     {
      "player": "tyree",
@@ -325,7 +355,9 @@
      "proj": null,
      "projMin": 22,
      "projWo": 1.2,
-     "projWoGames": 4
+     "projWoGames": 4,
+     "actual": 0,
+     "min": 30
     },
     {
      "player": "tyree",
@@ -345,7 +377,9 @@
      "proj": 18.2,
      "projMin": 22,
      "projWo": 16.8,
-     "projWoGames": 4
+     "projWoGames": 4,
+     "actual": 25,
+     "min": 30
     }
    ],
    "paokOut": [
@@ -357,5 +391,5 @@
    ]
   }
  },
- "updated": "2026-11-18T18:49:39Z"
+ "updated": "2026-11-18T22:28:49Z"
 }

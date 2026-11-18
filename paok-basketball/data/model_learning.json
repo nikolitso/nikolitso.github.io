@@ -1,17 +1,17 @@
 {
- "updated": "2026-11-18T16:10:19Z",
+ "updated": "2026-11-18T22:27:24Z",
  "comps": {
   "EuroCup": {
-   "games": 1114,
-   "lineGames": 1033,
-   "homeEdge": 1.42,
-   "totalBias": 1.16,
+   "games": 1125,
+   "lineGames": 1034,
+   "homeEdge": 1.43,
+   "totalBias": 1.22,
    "spreadSd": 12.1,
    "lineWeight": 0.78,
    "lineWeightRaw": 0.78,
-   "marginGames": 1033,
-   "marginWeight": 0.82,
-   "marginWeightRaw": 0.82,
+   "marginGames": 1034,
+   "marginWeight": 0.83,
+   "marginWeightRaw": 0.83,
    "marginSd": 11.4
   },
   "GBL": {
@@ -136,6 +136,18 @@
    "realMargin": 5,
    "modelMargin": -1.0,
    "hcp": 6.5
+  },
+  {
+   "comp": "EuroCup",
+   "opp": "Manresa",
+   "model": 167.4,
+   "shown": 171.6,
+   "line": 172.5,
+   "real": 168,
+   "margin": -2.4,
+   "realMargin": 8,
+   "modelMargin": -6.4,
+   "hcp": -1.5
   }
  ]
 }
