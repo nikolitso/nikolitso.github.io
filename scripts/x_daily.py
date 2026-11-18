@@ -8,8 +8,9 @@ Usage:  python scripts/x_daily.py auto [--dry-run]                (scheduled: po
 - New additions go first, newest first; otherwise a random pick from what this
   round hasn't posted yet. When everything has been posted, a new round starts.
 - Quotes too long for one post go out as a short thread; the source and the link close it.
-- Three slots a day (SLOTS, Athens time). Each slot posts once; a late run still posts the
-  current slot, but missed earlier slots are skipped rather than posted in a burst.
+- One post a day at POST_HOUR (Athens time), taking turns: quote, book, film (ROTATION, by date).
+  The day's slot posts once; a late run still posts it, but a missed day is skipped rather than
+  posted in a burst. (Three slots a day until 18 Nov 2026.)
 - Credentials come from env: X_API_KEY, X_API_SECRET, X_ACCESS_TOKEN, X_ACCESS_TOKEN_SECRET.
   Without them (or with --dry-run) it only prints the post.
 - State lives in _x/state.json (committed by the workflow).
@@ -35,8 +36,9 @@ STATE = ROOT / "_x" / "state.json"
 BOOKS = ROOT / "_edge" / "books"
 FILMS = Path(os.environ.get("WAM_DIR", ROOT.parent / "whatalgomissed")) / "content" / "films"
 ATHENS = ZoneInfo("Europe/Athens")
-# Three slots a day (Athens time): a quote, a book, a film
-SLOTS = [(11, "quote"), (14, "book"), (20, "film")]
+# One post a day (Athens time), the kind taking turns by date: 19 Nov 2026 quote, 20 Nov book, 21 Nov film, ...
+POST_HOUR = 14
+ROTATION = ["film", "quote", "book"]          # indexed by date.toordinal() % 3
 QUOTES = ROOT / "thought-bank" / "quotes.json"
 URL_LEN = 23  # X counts every link as 23 characters
 
@@ -368,12 +370,9 @@ def pick_and_post(state, kind, dry, slot_key, redo=None):
 
 
 def current_slot(now):
-    """The latest slot that has started (Athens time), as ("YYYY-MM-DD HH", kind)."""
-    for hour, kind in sorted(SLOTS, reverse=True):
-        if now.hour >= hour:
-            return f"{now.date().isoformat()} {hour:02d}", kind
-    hour, kind = max(SLOTS)                      # before the first slot: yesterday's last one
-    return f"{(now - timedelta(days=1)).date().isoformat()} {hour:02d}", kind
+    """The latest daily slot that has started (Athens time), as ("YYYY-MM-DD HH", kind)."""
+    day = now.date() if now.hour >= POST_HOUR else (now - timedelta(days=1)).date()   # before 14:00: yesterday's
+    return f"{day.isoformat()} {POST_HOUR:02d}", ROTATION[day.toordinal() % 3]
 
 
 def main():
@@ -391,15 +390,7 @@ def main():
             if (state.get(kind) or {}).get("last_day") == now.date().isoformat():
                 state["last_slot"] = key
         if state.get("last_slot") == key:
-            # The quote slot is the only one of its kind each day, so a run that comes after the next slot
-            # has started (GitHub's schedule often runs hours late) still posts it, once, until midnight.
-            qhour = next(h for h, k in SLOTS if k == "quote")
-            qkey = f"{now.date().isoformat()} {qhour:02d}"
-            logged = {e["slot"] for e in (state.get("quote") or {}).get("log", [])}
-            if now.hour >= qhour and qkey not in logged and pick_and_post(state, "quote", dry, qkey):
-                print(f"slot {key} ({kind}): already posted; posted today's missed quote instead")
-            else:
-                print(f"slot {key} ({kind}): already posted")
+            print(f"slot {key} ({kind}): already posted")
             if dry: return
         elif pick_and_post(state, kind, dry, key):
             state["last_slot"] = key
