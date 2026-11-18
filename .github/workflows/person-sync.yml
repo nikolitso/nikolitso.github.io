@@ -1,0 +1,44 @@
+name: Site · Person sync
+
+# The homepage's schema.org block holds the full Person and WebSite records. Every other page carries the same
+# two records (scripts/seo_meta.py keeps them in step). When the homepage changes, this copies the current
+# records into the pages that no pipeline rebuilds (About, Wine, the Thought Bank, archived pages); the pipelines
+# do the same for their own pages each time they publish.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "index.html"
+      - "scripts/seo_meta.py"
+      - ".github/workflows/person-sync.yml"
+  workflow_dispatch:        # "Run workflow" button in the Actions tab
+
+permissions:
+  contents: write
+
+concurrency:
+  group: person-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Copy the homepage's Person and WebSite into every page, and publish
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          # the pipelines push often: each try starts from the latest main, so a rejected push just tries again
+          for i in 1 2 3 4 5; do
+            git fetch -q origin main && git reset -q --hard origin/main
+            python3 scripts/seo_meta.py 404.html about thought-bank wine books paok-hub paok-basketball football \
+              superleague basketball eurocup fibaeuropecup volleyball handball
+            git add -A -- '*.html'
+            if git diff --cached --quiet; then echo "pages already in step"; exit 0; fi
+            git commit -q -m "Person sync: the homepage's Person and WebSite on every page"
+            git push -q origin HEAD:main && exit 0
+            sleep $((RANDOM % 10 + 5))
+          done
+          exit 1

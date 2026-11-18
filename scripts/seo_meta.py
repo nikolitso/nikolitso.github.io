@@ -13,6 +13,7 @@ says (og:title, og:description, og:image, <title>, meta description, canonical, 
 - a schema.org WebPage tied to the homepage's Person (#person) and WebSite (#website), if the page has
   no structured data of its own
 - the heading-level repairs listed in OUTLINE, for templates kept in other repos
+- the full Person and WebSite records (read from the homepage) in the page's schema.org block
 
 It never changes a tag that is there, so running it twice changes nothing. A page it cannot read is skipped.
 """
@@ -69,6 +70,71 @@ OUTLINE = [
     ('<section id="projections" hidden>\n  <div class="tiles" id="bLeagues"></div>',
      f'<section id="projections" hidden>\n  <h2 style="{HIDDEN}">Projections</h2>\n  <div class="tiles" id="bLeagues"></div>'),
 ]
+
+
+LD = re.compile(r'(<script type="application/ld\+json"[^>]*>)(.*?)(</script>)', re.S)
+_OWNER = None
+
+
+def owner():
+    """[Person, WebSite]: the full records from the homepage's schema.org block, the one source for every page."""
+    global _OWNER
+    if _OWNER is None:
+        person = {"@type": "Person", "@id": SITE + "/#person", "name": NAME, "url": SITE + "/"}
+        website = {"@type": "WebSite", "@id": SITE + "/#website", "url": SITE + "/", "name": NAME}
+        try:
+            m = LD.search((ROOT / "index.html").read_text(encoding="utf-8"))
+            nodes = json.loads(m.group(2).replace("<\\/", "</"))["@graph"]
+            person = next(n for n in nodes if n.get("@type") == "Person" and n.get("@id") == person["@id"])
+            website = next(n for n in nodes if n.get("@type") == "WebSite" and n.get("@id") == website["@id"])
+        except (OSError, AttributeError, KeyError, StopIteration, ValueError):
+            pass
+        _OWNER = [person, website]
+    return _OWNER
+
+
+def with_owner(text):
+    """Keep the page's schema.org data in step with the homepage: the full Person and WebSite, exactly as the
+    homepage has them, in the page's first block (as one @graph). A copy of either that differs is replaced, one
+    that is missing is added. Pages with no block, blocks that do not parse, and the homepage itself are left alone."""
+    blocks = list(LD.finditer(text))
+    if not blocks or '<link rel="canonical" href="' + SITE + '/">' in text:
+        return text
+    person, website = owner()
+    parsed = []
+    for b in blocks:
+        try:
+            d = json.loads(b.group(2).replace("<\\/", "</"))
+        except ValueError:
+            return text
+        if not isinstance(d, dict):
+            return text
+        parsed.append(d)
+    def nodes_of(d):
+        return d["@graph"] if isinstance(d.get("@graph"), list) else None
+    changed = False
+    # replace stale copies wherever they are (top-level nodes only)
+    for d in parsed:
+        g = nodes_of(d)
+        for i, n in enumerate(g or []):
+            for ref in (person, website):
+                if isinstance(n, dict) and n.get("@type") == ref["@type"] and n.get("@id") == ref["@id"] and n != ref:
+                    g[i] = ref; changed = True
+    # add whatever is still missing to the first block
+    have = {(n.get("@type"), n.get("@id")) for d in parsed for n in (nodes_of(d) or [d]) if isinstance(n, dict)}
+    first = parsed[0]
+    missing = [r for r in (person, website) if (r["@type"], r["@id"]) not in have]
+    if missing:
+        if nodes_of(first) is None:
+            ctx = first.get("@context", "https://schema.org")
+            parsed[0] = first = {"@context": ctx, "@graph": [{k: v for k, v in first.items() if k != "@context"}]}
+        first["@graph"].extend(missing); changed = True
+    if not changed:
+        return text
+    out = text
+    for b, d in sorted(zip(blocks, parsed), key=lambda x: -x[0].start(2)):
+        out = out[:b.start(2)] + json.dumps(d, ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/") + out[b.end(2):]
+    return out
 
 
 def fix_outline(text):
@@ -169,7 +235,7 @@ def main(args):
             text = p.read_text(encoding="utf-8")
         except (OSError, UnicodeDecodeError):
             continue
-        new = fix_outline(fix(text))
+        new = with_owner(fix_outline(fix(text)))
         if new != text:
             p.write_text(new, encoding="utf-8")
             changed += 1

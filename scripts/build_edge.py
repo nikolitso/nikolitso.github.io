@@ -489,6 +489,10 @@ ME = {"@type": "Person", "@id": SITE + "/#person", "name": "Antonis Nikolitsopou
 
 
 def ld_script(data):
+    """One schema.org block: the page's own node, plus the full Person and WebSite from the homepage (seo_meta.owner)."""
+    from seo_meta import owner   # scripts/seo_meta.py, next to this file
+    node = {k: v for k, v in data.items() if k != "@context"}
+    data = {"@context": "https://schema.org", "@graph": [node] + owner()}
     return '<script type="application/ld+json">' + json.dumps(data, ensure_ascii=False).replace("</", "<\\/") + "</script>\n"
 
 
