@@ -377,8 +377,9 @@ def page_index(books, n_authors):
   apply();
 }})();
 </script>"""
-    write(BASE, layout("Books", body, BASE,
-                       f"Practical takeaways from {len(books)} books on sports analytics, betting, decision-making and personal development, by Antonis Nikolitsopoulos."))
+    desc = f"Practical takeaways from {len(books)} books on sports analytics, betting, decision-making and personal development, by Antonis Nikolitsopoulos."
+    write(BASE, layout("Books", body, BASE, desc,
+                       ld=collection_ld("Books", BASE, desc, [(b["title"], b["url"]) for b in books])))
 
 
 def page_book(b, books, by_date):
@@ -457,8 +458,26 @@ def book_ld(b):
     if b["cover"]:
         data["image"] = b["cover"] if b["cover"].startswith("http") else SITE + b["cover"]
     page = {"@context": "https://schema.org", "@type": "WebPage", "name": book_title(b), "url": SITE + b["url"],
-            "author": {"@type": "Person", "name": "Antonis Nikolitsopoulos", "url": SITE + "/about/"}, "about": data}
-    return '<script type="application/ld+json">' + json.dumps(page, ensure_ascii=False).replace("</", "<\\/") + "</script>\n"
+            "author": ME, "about": data}
+    return ld_script(page)
+
+
+# Structured data: the same Person (@id from the homepage) and WebSite tie every page to one owner.
+ME = {"@type": "Person", "@id": SITE + "/#person", "name": "Antonis Nikolitsopoulos", "url": SITE + "/"}
+
+
+def ld_script(data):
+    return '<script type="application/ld+json">' + json.dumps(data, ensure_ascii=False).replace("</", "<\\/") + "</script>\n"
+
+
+def collection_ld(name, path, desc, items):
+    """A CollectionPage whose ItemList is the page's entries, in page order: [(name, url), ...]."""
+    return ld_script({"@context": "https://schema.org", "@type": "CollectionPage", "name": name, "url": SITE + path,
+                      "description": desc, "inLanguage": "en", "author": ME,
+                      "isPartOf": {"@type": "WebSite", "@id": SITE + "/#website", "url": SITE + "/"},
+                      "mainEntity": {"@type": "ItemList", "numberOfItems": len(items), "itemListElement": [
+                          {"@type": "ListItem", "position": i, "name": n, "url": SITE + u}
+                          for i, (n, u) in enumerate(items, 1)]}})
 
 
 def share_x(b):
@@ -517,7 +536,9 @@ def page_authors(books):
     {''.join(grouped)}
   </div>
 </section>"""
-    write(BASE + "authors/", layout("Authors", body, BASE + "authors/", f"The {len(names)} authors behind the books on antonisnikolitsopoulos.com.", active="authors"))
+    desc = f"The {len(names)} authors behind the books on antonisnikolitsopoulos.com."
+    write(BASE + "authors/", layout("Authors", body, BASE + "authors/", desc, active="authors",
+                                    ld=collection_ld("Authors", BASE + "authors/", desc, [(a, BASE + "authors/#" + slug(a)) for a in names])))
     return len(names)
 
 
