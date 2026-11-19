@@ -4,11 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Handball live test: overs | Antonis Nikolitsopoulos</title>
-<meta name="description" content="The handball goal model's overs in the 2026-27 live test, 2. Bundesliga (M), Bundesliga (M) and Israel (M): record, ROI at the opening and closing line, and next matches.">
+<meta name="description" content="Handball goal model overs in the 2026-27 live test, 2. Bundesliga (M), Bundesliga (M) and Israel (M): record, ROI at the opening and closing line, next matches.">
 <link rel="canonical" href="https://antonisnikolitsopoulos.com/handball/live-test/overs/">
-<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebPage","@id":"https://antonisnikolitsopoulos.com/handball/live-test/overs/#webpage","url":"https://antonisnikolitsopoulos.com/handball/live-test/overs/","name":"Handball live test: overs","description":"The handball goal model's overs in the 2026-27 live test, 2. Bundesliga (M), Bundesliga (M) and Israel (M): record, ROI at the opening and closing line, and next matches.","inLanguage":"en","isPartOf":{"@id":"https://antonisnikolitsopoulos.com/#website"},"author":{"@id":"https://antonisnikolitsopoulos.com/#person"}},{"@type":"Person","@id":"https://antonisnikolitsopoulos.com/#person","name":"Antonis Nikolitsopoulos","url":"https://antonisnikolitsopoulos.com/","image":"https://antonisnikolitsopoulos.com/photo.jpg","homeLocation":{"@type":"Place","name":"Thessaloniki, Greece"},"knowsAbout":["Sports analytics","Football","Basketball","Probability modelling","Books","World cinema","Greek wine"],"sameAs":["https://www.linkedin.com/in/antonis-nikolitsopoulos/","https://x.com/nikolitso","https://letterboxd.com/nikolitso/","https://whatalgomissed.com/"]},{"@type":"WebSite","@id":"https://antonisnikolitsopoulos.com/#website","url":"https://antonisnikolitsopoulos.com/","name":"Antonis Nikolitsopoulos","inLanguage":"en","publisher":{"@id":"https://antonisnikolitsopoulos.com/#person"}}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebPage","@id":"https://antonisnikolitsopoulos.com/handball/live-test/overs/#webpage","url":"https://antonisnikolitsopoulos.com/handball/live-test/overs/","name":"Handball live test: overs","description":"Handball goal model overs in the 2026-27 live test, 2. Bundesliga (M), Bundesliga (M) and Israel (M): record, ROI at the opening and closing line, next matches.","inLanguage":"en","isPartOf":{"@id":"https://antonisnikolitsopoulos.com/#website"},"author":{"@id":"https://antonisnikolitsopoulos.com/#person"}},{"@type":"Person","@id":"https://antonisnikolitsopoulos.com/#person","name":"Antonis Nikolitsopoulos","url":"https://antonisnikolitsopoulos.com/","image":"https://antonisnikolitsopoulos.com/photo.jpg","homeLocation":{"@type":"Place","name":"Thessaloniki, Greece"},"knowsAbout":["Sports analytics","Football","Basketball","Probability modelling","Books","World cinema","Greek wine"],"sameAs":["https://www.linkedin.com/in/antonis-nikolitsopoulos/","https://x.com/nikolitso","https://letterboxd.com/nikolitso/","https://whatalgomissed.com/"]},{"@type":"WebSite","@id":"https://antonisnikolitsopoulos.com/#website","url":"https://antonisnikolitsopoulos.com/","name":"Antonis Nikolitsopoulos","inLanguage":"en","publisher":{"@id":"https://antonisnikolitsopoulos.com/#person"}}]}</script>
 <meta property="og:title" content="Handball live test: overs | Antonis Nikolitsopoulos">
-<meta property="og:description" content="The handball goal model's overs in the 2026-27 live test, 2. Bundesliga (M), Bundesliga (M) and Israel (M): record, ROI at the opening and closing line, and next matches.">
+<meta property="og:description" content="Handball goal model overs in the 2026-27 live test, 2. Bundesliga (M), Bundesliga (M) and Israel (M): record, ROI at the opening and closing line, next matches.">
 <meta property="og:url" content="https://antonisnikolitsopoulos.com/handball/live-test/overs/">
 <meta property="og:type" content="website">
 <meta property="og:image" content="https://antonisnikolitsopoulos.com/handball.jpg">
@@ -158,6 +158,20 @@ html{scroll-behavior:smooth;font-size:17.5px}   /* one step larger: the page siz
 
 /* the three boxes at the top sit close together (16 Nov 2026) */
 .an-top{display:flex;flex-direction:column;gap:12px}.an-top>*{margin:0!important}
+/* Open picks box (19 Nov 2026): its own panel under the top tiles, one card per pick, the call in large type */
+.opbox{border:2px solid var(--pos);border-radius:12px;padding:14px 16px;background:color-mix(in srgb,var(--pos) 6%,var(--surface));display:flex;flex-direction:column;gap:10px}
+.opbox .ophd{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.opbox .ophd h3{margin:0}
+.opbox .opn{display:inline-block;min-width:1.6em;text-align:center;font-weight:700;padding:1px 9px;border-radius:99px;background:var(--pos);color:#fff}
+.opgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px}
+.opc{background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--pos);border-radius:10px;padding:10px 12px;display:flex;flex-direction:column;gap:4px;min-width:0}
+.opc .opwhen{display:flex;justify-content:space-between;gap:8px;font-size:max(14px,.8rem);color:var(--muted)}
+.opc .opm{font-weight:600}
+.opc .opcall{font-size:1.45rem;font-weight:700;line-height:1.2}
+.opc .opcall .odds{font-size:1rem;font-weight:600;color:var(--muted)}
+.opc .opfig{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:max(14px,.8rem)}
+.opc .opfig b{font-weight:700}
+.opempty{color:var(--muted)}
 </style>
 <link rel="stylesheet" href="/assets/an.css?v=5">
 <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "b67bbb76d0e24af196b24ded3ab71ad0"}'></script>
@@ -186,7 +200,7 @@ html{scroll-behavior:smooth;font-size:17.5px}   /* one step larger: the page siz
 <meta property="og:image:height" content="675">
 <meta name="twitter:site" content="@nikolitso">
 <meta name="twitter:title" content="Handball live test: overs | Antonis Nikolitsopoulos">
-<meta name="twitter:description" content="The handball goal model's overs in the 2026-27 live test, 2. Bundesliga (M), Bundesliga (M) and Israel (M): record, ROI at the opening and closing line, and next matches.">
+<meta name="twitter:description" content="Handball goal model overs in the 2026-27 live test, 2. Bundesliga (M), Bundesliga (M) and Israel (M): record, ROI at the opening and closing line, next matches.">
 <meta name="twitter:image" content="https://antonisnikolitsopoulos.com/handball.jpg">
 <meta name="twitter:image:alt" content="Handball live test: overs | Antonis Nikolitsopoulos">
 </head>
@@ -214,10 +228,8 @@ html{scroll-behavior:smooth;font-size:17.5px}   /* one step larger: the page siz
   <p class="muted" id="hmLead"></p>
   <p class="small dwarn" id="hmWarn" hidden></p>
   <div class="tiles" id="sgTiles"></div>
+  <div class="opbox" id="sgQBox"><div class="ophd"><h3 id="sgQH">Open picks</h3><span class="opn" id="sgQN"></span></div><div class="opgrid" id="sgQ"></div><p class="small muted" id="sgQNote"></p></div>
   <div id="sgPicks" hidden><div class="pks" id="sgPickPills"><a href="#" data-m="all" class="on">All</a><a href="#" data-m="over">Overs</a><a href="#" data-m="under">Unders</a><span class="small muted" id="sgPicksSum" style="margin-left:6px;align-self:center"></span></div><div class="tbl"><table id="sgPicksT"></table></div></div>
-  <h3 id="sgQH">Open picks</h3>
-  <p class="small muted" id="sgQNote"></p>
-  <div class="tbl"><table id="sgQ"></table></div>
   <h3>Line movement</h3>
   <p class="small muted">Each settled pick graded three ways: at the line and price taken when it was flagged (the record above), at the market's opening line and at its closing line, each with that line's price. Beat line by = goals the real total landed past the line in the pick's direction. Graded at the closing line is the harder test: it shows whether the edge survives the market's final view.</p>
   <div class="tbl"><table id="sgLM"></table></div>
@@ -296,8 +308,7 @@ html{scroll-behavior:smooth;font-size:17.5px}   /* one step larger: the page siz
   <p class="muted" id="tsLead"></p>
   <p class="small dwarn" id="tsWarn" hidden></p>
   <div class="tiles" id="tsTiles"></div>
-  <h3>Open picks</h3>
-  <div class="tbl"><table id="tsOpen"></table></div>
+  <div class="opbox"><div class="ophd"><h3>Open picks</h3><span class="opn" id="tsOpenN"></span></div><div class="opgrid" id="tsOpen"></div></div>
   <h3>Leagues</h3>
   <div class="tbl"><table id="tsLg"></table></div>
   <p class="small muted">Backtest: every flagged match from 2022-23 to 2025-26, at the market's line. Live: 2026-27 picks since the league joined testing on 6 Nov 2026.</p>
@@ -334,7 +345,7 @@ html{scroll-behavior:smooth;font-size:17.5px}   /* one step larger: the page siz
 </footer>
 </main>
 
-<script src="/handball/data.js?v=f45dd115"></script>
+<script src="/handball/data.js?v=0d166c1c"></script>
 <script>
 const $=s=>document.querySelector(s);
 const f=(v,d=2)=>v==null||isNaN(v)?'–':(+v).toFixed(d);
@@ -372,6 +383,9 @@ const day=d=>{if(!d)return '–';const [y,m,dd]=d.split('-');return new Date(+y,
   const flg=x=>{const o=OPEN[x.url];return o?`<span class="sig go">Flagged: ${side(o.side)} ${f(o.line,1)}</span>`:x.signal?`<span class="sig go">Flagged: ${side(x.side)}</span>`:x.line!=null?'<span class="muted">not flagged</span>':'<span class="muted">waiting for line</span>'};
   const nowCell=x=>{const c=CUR[x.url];if(!c||c.line==null)return '<td class="muted">–</td>';const d=Math.sign((c.line-x.line)*(x.side==='under'?-1:1)),g=(c.ours-c.line)*(x.side==='under'?-1:1);
     return `<td><span class="${d>0?'pos':d<0?'neg':''}">${d?'<b>'+f(c.line,1)+'</b>':f(c.line,1)}</span><br><span class="small muted">${g>=c.gapMin?'still value':'no value now'}</span></td>`};
+  const nowTxt=x=>{const c=CUR[x.url];if(!c||c.line==null)return '';const d=Math.sign((c.line-x.line)*(x.side==='under'?-1:1)),g=(c.ours-c.line)*(x.side==='under'?-1:1);
+    return `<span>Line now <b class="${d>0?'pos':d<0?'neg':''}">${f(c.line,1)}</b> · ${g>=c.gapMin?'<span class="sig go">still value</span>':'<span class="sig wait">no value now</span>'}</span>`};
+  const opCards=(A,lgName,now)=>A.map(x=>`<div class="opc"><div class="opwhen"><span>${lgS(x.league,lgName(x))}</span><span>${day(x.date)} ${x.time||''}</span></div><div class="opm">${ml(x)}</div><div class="opcall">${side(x.side||'under')} ${f(x.line,1)} <span class="odds">@ ${f(x.odds,2)}</span></div><div class="opfig"><span>Model total <b>${f(x.ours,1)}</b></span><span>Model − line <b class="${cls(x.side==='over'?x.gap:-x.gap)}">${sg(x.gap,1)}</b></span>${now?nowTxt(x):''}</div></div>`).join('');
   // open picks: in kick-off order, listed until 1.5 hours after the start (times are Athens time)
   const athMs=(d,t)=>{const u=Date.parse(`${d}T${t||'00:00'}:00Z`),P=new Intl.DateTimeFormat('en-GB',{timeZone:'Europe/Athens',hourCycle:'h23',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}).formatToParts(new Date(u)),g=k=>P.find(x=>x.type===k).value;return u-(Date.parse(`${g('year')}-${g('month')}-${g('day')}T${g('hour')}:${g('minute')}:00Z`)-u)};
   const liveOpen=A=>A.filter(x=>x.status==='open'&&(!x.date||athMs(x.date,x.time)+90*60000>Date.now())).sort((a,b)=>((a.date||'')+(a.time||'')).localeCompare((b.date||'')+(b.time||'')));
@@ -450,7 +464,8 @@ const day=d=>{if(!d)return '–';const [y,m,dd]=d.split('-');return new Date(+y,
     const hasBt=l=>Object.values(l.past||{}).some(p=>p&&p.train&&p.train.n), noBt=TL.filter(l=>!hasBt(l)).map(l=>l.name.split(' · ')[0]), lostBt=TL.filter(l=>l.key==='t_gr'&&hasBt(l)).map(l=>l.name.split(' · ')[0]);
     $('#tsLead').textContent=`${TL.length} leagues on trial, kept out of the main record until they earn a place. ${TL.length-noBt.length-lostBt.length} of them made a profit in the 2022-26 backtest, both up to 2024-25 and in 2025-26, but are not proven yet: they were chosen because those results were good, so part of that record may be luck, and each runs live with one side. ${noBt.length?`${noBt.join(' and ')} ${noBt.length===1?'has':'have'} no past market lines, so there is no backtest: the model's settings come from past results only. Picks there are unders only (from 14 Nov 2026).`:''} ${lostBt.length?`${lostBt.join(' and ')} ${lostBt.length===1?'was':'were'} added on request although the backtest lost on both sides, over and under: picks there are overs only (from 14 Nov 2026), to see whether that holds live.`:''}`;
     $('#tsTiles').innerHTML=[['Leagues',TL.length,'on trial'],['Open picks',tOpen.length,tOpen.length?'to play':'none right now'],['Record',`${tw}–${tl}`,tw+tl?'win – loss · see results ↓':'win – loss',1],['ROI',tw+tl?`<span class="${cls(tp)}">${sg(100*tp/(tw+tl),1)}%</span>`:'–',`on ${tw+tl} pick${tw+tl===1?'':'s'}`,1],ddTile(tDone)].map(([k,v,n,go])=>go&&tw+tl?`<a class="tile" href="#tsDoneH" onclick="event.preventDefault();document.getElementById('tsDoneH').scrollIntoView({behavior:'smooth'})" title="Show the settled picks"><span class="klabel">${k}</span><span class="stat">${v}</span><span class="small muted">${n}</span></a>`:`<div class="tile"><span class="klabel">${k}</span><span class="stat">${v}</span><span class="small muted">${n}</span></div>`).join('');
-    $('#tsOpen').innerHTML=tOpen.length?`<thead><tr><th class="l">League</th><th class="l">Match</th><th class="l">Date</th><th>Call</th><th>Odds</th><th>Model total</th><th>Model − line</th></tr></thead><tbody>${tOpen.map(x=>`<tr class="hot"><td class="l">${lgS(x.league,tName(x.league))}</td><td class="l m">${ml(x)}</td><td class="l">${day(x.date)} <span class="muted">${x.time||''}</span></td><td><b>${side(x.side)} ${f(x.line,1)}</b></td><td>${f(x.odds,2)}</td><td>${f(x.ours,1)}</td><td>${sg(x.gap,1)}</td></tr>`).join('')}</tbody>`:'<tbody><tr><td class="l empty">No open picks in the testing leagues right now.</td></tr></tbody>';
+    $('#tsOpenN').textContent=tOpen.length;
+    $('#tsOpen').innerHTML=tOpen.length?opCards(tOpen,x=>tName(x.league),0):'<p class="opempty">No open picks in the testing leagues right now.</p>';
     const per=p=>p&&p.n?`${p.n} <span class="muted">·</span> <span class="${cls(p.roi)}">${sg(p.roi,1)}%</span>`:'–', bt4=p=>{const a=p.train||{},b=p.test||{},n=(a.n||0)+(b.n||0);return n?{n,roi:((a.n||0)*(a.roi||0)+(b.n||0)*(b.roi||0))/n}:null};
     $('#tsLg').innerHTML=`<thead><tr><th class="l">League</th><th class="l">Call</th><th>Backtest 2022-26: picks · ROI</th><th>Live win – loss</th><th>Live ROI</th><th>Open</th></tr></thead><tbody>${TL.map(l=>{const m=TS.filter(x=>x.league===l.key),d=m.filter(x=>x.status!=='open'),w=d.filter(x=>x.status==='won').length,lo=d.filter(x=>x.status==='lost').length,r=d.reduce((a,x)=>a+(x.profit||0),0),p=(l.past||{})[l.side]||{};return `<tr><td class="l">${lgS(l.key,l.name.split(' · ')[0])}</td><td class="l">${side(l.side)}</td><td>${!hasBt(l)?'<span class="muted">no past lines</span>':l.side==='both'?`Over ${per(bt4(l.past.over||{}))}<br>Under ${per(bt4(l.past.under||{}))}`:per(bt4(p))}</td><td>${d.length?`<a href="#tsDoneH" title="Show this league's settled picks" onclick="event.preventDefault();window.__tsDone('${l.key}');document.getElementById('tsDoneH').scrollIntoView({behavior:'smooth'})">${w}–${lo}</a>`:'–'}</td><td class="${d.length?cls(r):''}">${w+lo?sg(100*r/(w+lo),1)+'%':'–'}</td><td>${m.length-d.length||'–'}</td></tr>`}).join('')}</tbody>`;
     const tU=TL.flatMap(l=>(l.proj||[]).map(x=>({...x,lg:l}))).sort((a,b)=>(a.date+(a.time||'')).localeCompare(b.date+(b.time||'')));
@@ -460,7 +475,8 @@ const day=d=>{if(!d)return '–';const [y,m,dd]=d.split('-');return new Date(+y,
     window.__tsDone=lk=>{const tD=lk?tDone.filter(x=>x.league===lk):tDone;$('#tsDoneH').innerHTML=lk?`Settled picks · ${tName(lk)} <a class="small" href="#tsDoneH" onclick="event.preventDefault();window.__tsDone()">show all leagues</a>`:'Settled picks';$('#tsDone').innerHTML=tD.length?`<thead><tr><th class="l">Date</th><th class="l">League</th><th class="l">Match</th><th>Call</th><th>Odds</th><th>Opening line</th><th>Closing line</th><th>Total</th><th>Result</th><th>Profit</th></tr></thead><tbody>${tD.map(x=>`<tr><td class="l">${day(x.date)}</td><td class="l">${lgS(x.league,tName(x.league))}</td><td class="l m">${ml(x)}</td><td><b>${side(x.side)} ${f(x.line,1)}</b></td><td>${f(x.odds,2)}</td><td>${x.open?f(x.open.line,1):'–'}</td><td>${x.close?(mv(x)?`<b class="${cls(mv(x))}">${f(x.close.line,1)}</b>`:f(x.close.line,1)):'–'}</td><td>${x.total??'–'}</td><td><b class="${x.status==='won'?'pos':x.status==='lost'?'neg':''}">${x.status==='won'?'Win':x.status==='lost'?'Loss':'Void'}</b></td><td class="${cls(x.profit||0)}">${sg(x.profit||0,2)}</td></tr>`).join('')}</tbody>`:'<tbody><tr><td class="l empty">No settled picks yet.</td></tr></tbody>'};};window.__tsDone();
   const Q=liveOpen(S);
   $('#sgQNote').innerHTML=Q.length?`${Q.length} flagged match${Q.length===1?'':'es'} to play. Each was logged with the line and odds at the moment it was flagged; the record is graded at that line. Line now is today's market (green = moved the model's way) and whether the model still sees 2+ goals at it.`:'';
-  $('#sgQ').innerHTML=Q.length?`<thead><tr><th class="l">League</th><th class="l">Match</th><th class="l">Date</th><th>Call</th><th>Odds</th><th>Model total</th><th>Model − line</th><th>Line now</th></tr></thead><tbody>${Q.map(x=>`<tr class="hot"><td class="l muted">${lgS(x.league,(x.leagueName||'').split(' · ')[0])}</td><td class="l m">${ml(x)}</td><td class="l">${day(x.date)} <span class="muted">${x.time||''}</span></td><td><b>${side(x.side||'under')} ${f(x.line,1)}</b></td><td>${f(x.odds)}</td><td>${f(x.ours,1)}</td><td class="${cls(x.side==='over'?x.gap:-x.gap)}">${sg(x.gap,1)}</td>${nowCell(x)}</tr>`).join('')}</tbody>`:'<tbody><tr><td class="l empty">No open picks right now.</td></tr></tbody>';
+  $('#sgQN').textContent=Q.length;
+  $('#sgQ').innerHTML=Q.length?opCards(Q,x=>(x.leagueName||'').split(' · ')[0],1):'<p class="opempty">No open picks right now.</p>';
   // Live test pages (14 Nov 2026): /live-test/overs/ and /live-test/unders/ show one side each — tiles, leagues, next matches, model v market
   const L0=L,U0=U,S0=S;
   window.__lt=sd=>{const L=L0.filter(l=>l.side===sd),U=U0.filter(x=>x.lg.side===sd),S=S0.filter(x=>x.side===sd);
