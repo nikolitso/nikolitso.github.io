@@ -37,6 +37,19 @@ def image_size(path):
             head = f.read(26)
             if head[:8] == b"\x89PNG\r\n\x1a\n":
                 return struct.unpack(">II", head[16:24])
+            if head[:4] == b"RIFF" and head[8:12] == b"WEBP":
+                f.seek(12)
+                chunk = f.read(30)
+                kind = chunk[:4]
+                if kind == b"VP8X":      # extended: 24-bit width-1 and height-1
+                    return 1 + int.from_bytes(chunk[12:15], "little"), 1 + int.from_bytes(chunk[15:18], "little")
+                if kind == b"VP8L":      # lossless: 14-bit fields after a signature byte
+                    bits = int.from_bytes(chunk[9:13], "little")
+                    return 1 + (bits & 0x3FFF), 1 + ((bits >> 14) & 0x3FFF)
+                if kind == b"VP8 ":      # lossy: after the frame tag and start code
+                    w, h = struct.unpack("<HH", chunk[14:18])
+                    return w & 0x3FFF, h & 0x3FFF
+                return None
             if head[:2] != b"\xff\xd8":
                 return None
             f.seek(2)

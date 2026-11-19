@@ -378,10 +378,10 @@ def faq_html(items):
 </section>"""
 
 
-def faq_ld(items):
+def faq_node(items):
     plain = lambda h: re.sub(r"<[^>]+>", "", html.unescape(h))
-    return ld_script({"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
-        {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": plain(a)}} for q, a in items]})
+    return {"@type": "FAQPage", "mainEntity": [
+        {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": plain(a)}} for q, a in items]}
 
 
 # ---------------------------------------------------------------- pages
@@ -444,7 +444,7 @@ def page_index(books, n_authors):
 </script>"""
     desc = f"Practical takeaways from {len(books)} books on sports analytics, betting, decision-making and personal development, by Antonis Nikolitsopoulos."
     write(BASE, layout("Books", body, BASE, desc,
-                       ld=collection_ld("Books", BASE, desc, [(b["title"], b["url"]) for b in books]) + faq_ld(faq)))
+                       ld=ld_script(collection_node("Books", BASE, desc, [(b["title"], b["url"]) for b in books]), faq_node(faq))))
 
 
 def page_book(b, books, by_date):
@@ -531,17 +531,20 @@ def book_ld(b):
 ME = {"@type": "Person", "@id": SITE + "/#person", "name": "Antonis Nikolitsopoulos", "url": SITE + "/"}
 
 
-def ld_script(data):
-    """One schema.org block: the page's own node, plus the full Person and WebSite from the homepage (seo_meta.owner)."""
+def ld_script(*nodes):
+    """One schema.org block: the page's own node(s), plus the full Person and WebSite from the homepage (seo_meta.owner)."""
     from seo_meta import owner   # scripts/seo_meta.py, next to this file
-    node = {k: v for k, v in data.items() if k != "@context"}
-    data = {"@context": "https://schema.org", "@graph": [node] + owner()}
+    data = {"@context": "https://schema.org", "@graph": [{k: v for k, v in n.items() if k != "@context"} for n in nodes] + owner()}
     return '<script type="application/ld+json">' + json.dumps(data, ensure_ascii=False).replace("</", "<\\/") + "</script>\n"
 
 
 def collection_ld(name, path, desc, items):
+    return ld_script(collection_node(name, path, desc, items))
+
+
+def collection_node(name, path, desc, items):
     """A CollectionPage whose ItemList is the page's entries, in page order: [(name, url), ...]."""
-    return ld_script({"@context": "https://schema.org", "@type": "CollectionPage", "name": name, "url": SITE + path,
+    return ({"@context": "https://schema.org", "@type": "CollectionPage", "name": name, "url": SITE + path,
                       "description": desc, "inLanguage": "en", "author": ME, "publisher": ME,
                       "isPartOf": {"@type": "WebSite", "@id": SITE + "/#website", "url": SITE + "/"},
                       "mainEntity": {"@type": "ItemList", "numberOfItems": len(items), "itemListElement": [
