@@ -697,12 +697,13 @@ function render() {
   document.title = t('docTitle');
   document.getElementById('kicker').textContent = t('kicker');
   const home = view === 'home';
-  // the active tab already says where we are: the Wine list and Estates have no title or intro (Antonis)
-  ['title', 'lede'].forEach(id => { document.getElementById(id).hidden = home || view === 'list' || view === 'wineries'; });
-  if (!home) {
-    document.getElementById('title').textContent = t({list: 'listTitle', wineries: 'estatesTitle', finder: 'title'}[view]);
-    document.getElementById('lede').textContent = t({list: 'listLede', wineries: 'estatesLede', finder: 'lede'}[view]);
-  }
+  // the active tab already says where we are: the Wine list and Estates have no title or intro (Antonis).
+  // The title is only hidden from view there: it stays the page's <h1> for screen readers and search engines.
+  const bare = home || view === 'list' || view === 'wineries';
+  document.getElementById('lede').hidden = bare;
+  document.getElementById('title').classList.toggle('vh', bare);
+  document.getElementById('title').textContent = t({home: 'docTitle', list: 'listTitle', wineries: 'estatesTitle', finder: 'title'}[view]);
+  if (!home) document.getElementById('lede').textContent = t({list: 'listLede', wineries: 'estatesLede', finder: 'lede'}[view]);
   document.querySelectorAll('.views button').forEach(b => { b.textContent = t({list: 'viewList', wineries: 'viewEstates', finder: 'viewFinder'}[b.dataset.view]); b.classList.toggle('on', b.dataset.view === view); });
   document.getElementById('hero').innerHTML = heroSvg(home ? 'list' : view);
   document.querySelector('.search').hidden = true;  // Antonis: no search box on any page; filter with the chips
