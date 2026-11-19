@@ -196,3 +196,15 @@ body { overflow-x: clip; }  /* safety net */
 .nf-search button { font: inherit; font-size: max(14px,.85rem); font-weight: 600; color: #fff; background: var(--accent); border: 0; border-radius: 999px; padding: .55rem 1.2rem; cursor: pointer; }
 .nf-search button:hover { background: #2f58e0; }
 .hero .lede a { color: var(--on-dark); }
+
+/* Books list page: FAQ */
+.faq { padding-block: 0 clamp(3.5rem, 8vw, 6rem); }
+.faq h2 { font-family: var(--display); font-weight: 500; font-size: clamp(1.5rem, 3vw, 2rem); line-height: 1.2; margin: 0 0 1.2rem; }
+.faq-q { max-width: 46rem; border-top: 1px solid var(--rule); }
+.faq-q:last-child { border-bottom: 1px solid var(--rule); }
+.faq-q summary { cursor: pointer; list-style: none; padding: 1rem 2rem 1rem 0; font-weight: 600; position: relative; }
+.faq-q summary::-webkit-details-marker { display: none; }
+.faq-q summary::after { content: "+"; position: absolute; right: .25rem; top: .9rem; font-weight: 400; font-size: 1.3rem; color: var(--muted); }
+.faq-q[open] summary::after { content: "−"; }
+.faq-q p { margin: 0 0 1.1rem; color: var(--muted); max-width: 60ch; }
+.faq-q a { color: var(--accent); }

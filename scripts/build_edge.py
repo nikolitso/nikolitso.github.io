@@ -343,6 +343,47 @@ def card(b, h="h3"):
 </a>"""
 
 
+# ---------------------------------------------------------------- FAQ (Books list page)
+def books_faq(books, n_authors, counts):
+    """[(question, answer_html)]: shown on the page and, as plain text, in the FAQPage data"""
+    topics = ", ".join(f"{n.lower()} ({counts[s]})" for s, n, _ in TOPICS if counts[s])
+    return [
+        ("What is this page?",
+         "A shelf of book takeaways by Antonis Nikolitsopoulos. Each book has its own page with a short summary of what it argues, "
+         "the key ideas worth keeping, and a line on who the book is for."),
+        ("Which topics do the books cover?",
+         f"There are {len(books)} books by {n_authors} authors, in six topics: {esc(topics)}. "
+         "Use the topic buttons above the shelf to show one topic at a time."),
+        ("Are these full book summaries?",
+         "No. Each page is a short set of takeaways, not a chapter-by-chapter summary. "
+         "It is meant to help you decide whether a book is worth your time and to remind you of its main ideas after reading."),
+        ("How do I find a particular book or author?",
+         f'Type a title or an author’s name in the search box above the shelf, or browse the <a href="{BASE}authors/">Authors</a> page, '
+         "which lists every author with their books."),
+        ("How often are new books added?",
+         "New books are added as they are read. The newest additions appear first under Latest on the "
+         '<a href="/">homepage</a>.'),
+        ("How can I follow new books?",
+         f'Subscribe to the <a href="{BASE}feed.xml">RSS feed</a> in any feed reader; every new book is added to it.'),
+    ]
+
+
+def faq_html(items):
+    qs = "".join(f'<details class="faq-q"><summary>{esc(q)}</summary><p>{a}</p></details>' for q, a in items)
+    return f"""<section class="faq">
+  <div class="wrap">
+    <h2>Questions about the Books page</h2>
+    {qs}
+  </div>
+</section>"""
+
+
+def faq_ld(items):
+    plain = lambda h: re.sub(r"<[^>]+>", "", html.unescape(h))
+    return ld_script({"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [
+        {"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": plain(a)}} for q, a in items]})
+
+
 # ---------------------------------------------------------------- pages
 def page_index(books, n_authors):
     counts = defaultdict(int)
@@ -351,6 +392,7 @@ def page_index(books, n_authors):
     chips = f'<button class="chip on" data-t="">All <b>{len(books)}</b></button>' + "".join(
         f'<button class="chip" data-t="{s}" style="--t:{c}">{esc(n)} <b>{counts[s]}</b></button>'
         for s, n, c in TOPICS if counts[s])
+    faq = books_faq(books, n_authors, counts)
     body = f"""<section class="hero">
   <div class="wrap">
     <p class="kicker">Books</p>
@@ -375,6 +417,7 @@ def page_index(books, n_authors):
     <p class="empty" id="empty" hidden>No books match that search.</p>
   </div>
 </section>
+{faq_html(faq)}
 <script>
 (function(){{
   var grid=document.getElementById('books'),cards=[].slice.call(grid.children),q=document.getElementById('q'),
@@ -401,7 +444,7 @@ def page_index(books, n_authors):
 </script>"""
     desc = f"Practical takeaways from {len(books)} books on sports analytics, betting, decision-making and personal development, by Antonis Nikolitsopoulos."
     write(BASE, layout("Books", body, BASE, desc,
-                       ld=collection_ld("Books", BASE, desc, [(b["title"], b["url"]) for b in books])))
+                       ld=collection_ld("Books", BASE, desc, [(b["title"], b["url"]) for b in books]) + faq_ld(faq)))
 
 
 def page_book(b, books, by_date):
