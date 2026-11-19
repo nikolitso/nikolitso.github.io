@@ -250,6 +250,8 @@ html{scroll-behavior:smooth;font-size:17.5px}   /* one step larger: the page siz
 <section id="projections">
   <div><h2 id="ltH">Live test</h2></div>
   <div id="ltSides"></div>
+  <h3 id="ltOpenH">Open picks</h3>
+  <div class="tbl"><table id="ltOpen"></table></div>
   <div class="lgs" id="sgLeagues"></div>
   <h3 id="ltNextH">Next matches</h3>
   <div class="tbl"><table id="sgNext"></table></div>
@@ -257,6 +259,9 @@ html{scroll-behavior:smooth;font-size:17.5px}   /* one step larger: the page siz
   <h3>Model vs market</h3>
   <p class="small muted">Lines now: the next 5 days. Picks: settled picks, comparing the line when flagged with the closing line. The samples are small.</p>
   <div class="tbl"><table id="sgMkt"></table></div>
+  <h3 id="ltDoneH">Settled picks</h3>
+  <p class="small muted">Newest first, graded at the line and price taken when flagged. Closing line in green when it moved the pick's way, red when it moved against.</p>
+  <div class="tbl"><table id="ltDone"></table></div>
   <div hidden><div id="sgRec"></div><table id="sgLog"></table></div>
 </section>
 
@@ -345,7 +350,7 @@ html{scroll-behavior:smooth;font-size:17.5px}   /* one step larger: the page siz
 </footer>
 </main>
 
-<script src="/handball/data.js?v=0d166c1c"></script>
+<script src="/handball/data.js?v=dff89d73"></script>
 <script>
 const $=s=>document.querySelector(s);
 const f=(v,d=2)=>v==null||isNaN(v)?'–':(+v).toFixed(d);
@@ -436,16 +441,14 @@ const day=d=>{if(!d)return '–';const [y,m,dd]=d.split('-');return new Date(+y,
     const [wU,aU,bU]=wr(up),[wD,aD,bD]=wr(dn),[wN,aN,bN]=wr(no),roN=(()=>{const d=no.filter(x=>x.status!=='push');return d.length?no.reduce((a,x)=>a+(x.profit||0),0)/d.length*100:null})();
     if(!D.length)return '<p class="small muted">No settled picks yet.</p>';
     return `<div class="tiles lt">${[
-      `<a class="tile" href="#ltNextH" onclick="event.preventDefault();document.getElementById('ltNextH').scrollIntoView({behavior:'smooth'})" title="Show the next matches"><span class="klabel">Open picks</span>${st(nOpen)}<span class="small muted">${nOpen?'to play · see below ↓':'none right now'}</span></a>`,
-      T('Settled picks',st(`${w}–${lo}`),`${w+lo?f(w/(w+lo)*100,1):'–'}% hit rate · ${D.length} settled`),
-      T('ROI',two('Opening line',ro(roiAt(x=>gradeAt(x,x.open))),'Closing line',ro(roiAt(x=>gradeAt(x,x.close)))),`at the price taken ${w+lo?sg(pr/(w+lo)*100,1)+'%':'–'}`),
+      `<a class="tile" href="#ltOpenH" onclick="event.preventDefault();document.getElementById('ltOpenH').scrollIntoView({behavior:'smooth'})" title="Show the open picks"><span class="klabel">Open picks</span>${st(nOpen)}<span class="small muted">${nOpen?'to play · see below ↓':'none right now'}</span></a>`,
+      `<a class="tile" href="#ltDoneH" onclick="event.preventDefault();document.getElementById('ltDoneH').scrollIntoView({behavior:'smooth'})" title="Show the settled picks"><span class="klabel">Settled picks</span>${st(`${w}–${lo}`)}<span class="small muted">${w+lo?f(w/(w+lo)*100,1):'–'}% hit rate · ${D.length} settled · see list ↓</span></a>`,
+      T('ROI',two('Opening',ro(roiAt(x=>gradeAt(x,x.open))),'Closing',ro(roiAt(x=>gradeAt(x,x.close)))),`at the price taken ${w+lo?sg(pr/(w+lo)*100,1)+'%':'–'}`),
       T('Average line',two('Opening',f(avg(D.map(x=>x.open&&x.open.line)),1),'Closing',f(avg(D.map(x=>x.close&&x.close.line)),1)),''),
       T('Average total',two('Model',f(avg(D.map(x=>x.ours)),1),'Actual',f(avg(D.map(x=>x.total)),1)),''),
-      T('Closing line moved',two('Toward pick',pc(up.length,M.length),'Against',pc(dn.length,M.length),'h-up','h-dn'),`v the line taken · ${M.length} picks`),
-      T('Avg move toward pick',st(up.length?sg(avg(up.map(mvG)),1)+' goals':'–'),`avg of ${up.length} picks`),
-      T('Avg move against pick',st(dn.length?sg(avg(dn.map(mvG)),1)+' goals':'–'),`avg of ${dn.length} picks`),
-      T('Won · moved toward',st(wU==null?'–':f(wU,1)+'%'),`${aU}–${bU} win – loss`),
-      T('Won · moved against',st(wD==null?'–':f(wD,1)+'%'),`${aD}–${bD} win – loss`),
+      T('Closing line moved',two('Toward',pc(up.length,M.length),'Against',pc(dn.length,M.length),'h-up','h-dn'),`v the line taken · ${M.length} picks`),
+      T('Avg move',two('Toward',up.length?sg(avg(up.map(mvG)),1):'–','Against',dn.length?sg(avg(dn.map(mvG)),1):'–','h-up','h-dn'),`goals · avg of ${up.length} and ${dn.length} picks`),
+      T('Won when line moved',two('Toward',wU==null?'–':f(wU,0)+'%','Against',wD==null?'–':f(wD,0)+'%','h-up','h-dn'),`${aU}–${bU} and ${aD}–${bD} win – loss`),
       T('Won · no move',st(wN==null?'–':f(wN,1)+'%'),`${pc(no.length,M.length)} of picks · ROI ${roN==null?'–':`<span class="${cls(roN)}">${sg(roN,1)}%</span>`}`),
       T('Longest losing run',st(`${dd.lr} pick${dd.lr===1?'':'s'}`),'')].join('')}</div>`};
   const LSn=sd=>L.filter(l=>l.side===sd).map(l=>l.name.split(' · ')[0]).join(', ');
@@ -482,6 +485,9 @@ const day=d=>{if(!d)return '–';const [y,m,dd]=d.split('-');return new Date(+y,
   window.__lt=sd=>{const L=L0.filter(l=>l.side===sd),U=U0.filter(x=>x.lg.side===sd),S=S0.filter(x=>x.side===sd);
   $('#ltH').textContent='Live test · '+(sd==='over'?'Overs':'Unders');
   $('#ltSides').innerHTML=`<p class="muted">${LSn(sd)}: every pick since the league joined, graded at the line taken, the opening line and the closing line.</p>${ltTiles(S)}`;
+  {const lgN=x=>lgS(x.league,(x.leagueName||'').split(' · ')[0]), O=liveOpen(S), Dn=S.filter(x=>x.status!=='open').sort((a,b)=>((b.date||'')+(b.time||'')).localeCompare((a.date||'')+(a.time||'')));
+   $('#ltOpen').innerHTML=O.length?`<thead><tr><th class="l">League</th><th class="l">Match</th><th class="l">Date</th><th>Call</th><th>Odds</th><th>Model total</th><th>Model − line</th><th>Line now</th></tr></thead><tbody>${O.map(x=>`<tr class="hot"><td class="l">${lgN(x)}</td><td class="l m">${ml(x)}</td><td class="l">${day(x.date)} <span class="muted">${x.time||''}</span></td><td><b>${side(x.side)} ${f(x.line,1)}</b></td><td>${f(x.odds,2)}</td><td>${f(x.ours,1)}</td><td class="${cls(x.side==='over'?x.gap:-x.gap)}">${sg(x.gap,1)}</td>${nowCell(x)}</tr>`).join('')}</tbody>`:'<tbody><tr><td class="l empty">No open picks right now.</td></tr></tbody>';
+   $('#ltDone').innerHTML=Dn.length?`<thead><tr><th class="l">Date</th><th class="l">League</th><th class="l">Match</th><th>Call</th><th>Odds</th><th>Opening line</th><th>Closing line</th><th>Total</th><th>Result</th><th>Profit</th></tr></thead><tbody>${Dn.map(x=>`<tr><td class="l">${day(x.date)}</td><td class="l">${lgN(x)}</td><td class="l m">${ml(x)}</td><td><b>${side(x.side)} ${f(x.line,1)}</b></td><td>${f(x.odds,2)}</td><td>${x.open?f(x.open.line,1):'–'}</td><td>${x.close?(mv(x)?`<b class="${cls(mv(x))}">${f(x.close.line,1)}</b>`:f(x.close.line,1)):'–'}</td><td>${x.total??'–'}</td><td><b class="${x.status==='won'?'pos':x.status==='lost'?'neg':''}">${x.status==='won'?'Win':x.status==='lost'?'Loss':'Void'}</b></td><td class="${cls(x.profit||0)}">${sg(x.profit||0,2)}</td></tr>`).join('')}</tbody>`:'<tbody><tr><td class="l empty">No settled picks yet.</td></tr></tbody>';}
   $('#sgNext').innerHTML=U.length?`<thead><tr><th class="l">League</th><th class="l">Match</th><th class="l">Date</th><th>Model total</th><th>Market line</th><th>Model − line</th><th class="l">Call</th></tr></thead><tbody>${U.map(x=>`<tr class="${x.signal||OPEN[x.url]?'hot':''}"><td class="l"><a href="${lgHref(x.lg.key)}">${nm(x)}</a></td><td class="l m">${ml(x)}</td><td class="l">${day(x.date)} <span class="muted">${x.time||''}</span></td><td><b>${f(x.ours,1)}</b></td><td>${x.line!=null?lineCell(x):'<span class="muted">not out</span>'}</td><td class="${x.line!=null?cls(x.side==='over'?x.gap:-x.gap):''}">${x.line!=null?sg(x.gap,1):'–'}</td><td class="l">${flg(x)}</td></tr>`).join('')}</tbody>`:`<tbody><tr><td class="l empty">No projections yet. They start once both teams have played ${L[0].start} games (so far: ${L.map(l=>nm({lg:l})+' '+l.gamesMin+'+').join(' · ')}).</td></tr></tbody>`;
   const MV=L.map(l=>{const P=U.filter(x=>x.lg.key===l.key&&x.line!=null),a=P.reduce((t,x)=>t+x.gap,0)/(P.length||1),b=P.slice().sort((p,q)=>Math.abs(q.gap)-Math.abs(p.gap))[0],c=mk.filter(x=>x.league===l.key);return `<tr><td class="l"><a href="${lgHref(l.key)}">${nm({lg:l})}</a></td><td class="l">${side(l.side)}</td><td>${P.length||'–'}</td><td>${P.length?sg(a,1):'–'}</td><td class="l m">${b?`${ml(b,1)} <b>${sg(b.gap,1)}</b>`:'–'}</td><td>${c.length?`${c.filter(x=>mv(x)>0).length} of ${c.length}`:'–'}</td><td>${c.length?c.filter(x=>mv(x)<0).length:'–'}</td></tr>`}).join('');
   $('#sgMkt').innerHTML=`<thead><tr><th class="l">League</th><th class="l">System</th><th>Lines now</th><th>Average model − line</th><th class="l">Biggest gap</th><th>Picks: moved the model's way</th><th>Against</th></tr></thead><tbody>${MV}</tbody>`;
