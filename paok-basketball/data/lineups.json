@@ -96,13 +96,20 @@
    "Osman"
   ],
   "opp_out": [],
-  "note": "PAOK without Osman, who is out for one to two months."
+  "note": "PAOK without Osman, who is out until the spring. Foster (ankle) is doubtful."
  },
  "GBL:578190A6": {
   "paok_out": [
    "Osman"
   ],
   "opp_out": [],
-  "note": "PAOK without Osman, who is out for one to two months."
+  "note": "PAOK without Osman, who is out until the spring."
+ },
+ "EuroCup:144": {
+  "paok_out": [
+   "Osman"
+  ],
+  "opp_out": [],
+  "note": "PAOK without Osman, who is out until the spring."
  }
 }
