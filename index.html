@@ -313,6 +313,14 @@ body { overflow-x: clip; }  /* safety net */
 .proj-chip.on b { color: rgba(255,255,255,.8); }
 .proj-chips + .project-cards { margin-top: 1.5rem; }
 .project-cards [hidden] { display: none !important; }
+
+/* Keyboard access and reduced-motion preferences */
+.skip-link { position: fixed; z-index: 1000; top: .75rem; left: .75rem; padding: .7rem 1rem; border-radius: .5rem; background: var(--paper); color: var(--ink); border: 2px solid var(--accent); transform: translateY(-160%); transition: transform .15s ease; }
+.skip-link:focus { transform: translateY(0); }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
+}
 </style>
 <link rel="stylesheet" href="/assets/an.css?v=5">
 <script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Person","@id":"https://antonisnikolitsopoulos.com/#person","name":"Antonis Nikolitsopoulos","url":"https://antonisnikolitsopoulos.com/","image":"https://antonisnikolitsopoulos.com/photo.jpg","homeLocation":{"@type":"Place","name":"Thessaloniki, Greece"},"knowsAbout":["Sports analytics","Football","Basketball","Probability modelling","Books","World cinema","Greek wine"],"sameAs":["https://www.linkedin.com/in/antonis-nikolitsopoulos/","https://x.com/nikolitso","https://letterboxd.com/nikolitso/","https://whatalgomissed.com/"]},{"@type":"WebSite","@id":"https://antonisnikolitsopoulos.com/#website","url":"https://antonisnikolitsopoulos.com/","name":"Antonis Nikolitsopoulos","inLanguage":"en","publisher":{"@id":"https://antonisnikolitsopoulos.com/#person"}},{"@type":"WebPage","@id":"https://antonisnikolitsopoulos.com/#page","url":"https://antonisnikolitsopoulos.com/","name":"Antonis Nikolitsopoulos | Football Trading & Sports Analytics","description":"Antonis Nikolitsopoulos is a football trading team leader focused on pre-event pricing and quantitative modelling, with independent public-data sports projects.","inLanguage":"en","isPartOf":{"@id":"https://antonisnikolitsopoulos.com/#website"},"primaryImageOfPage":{"@type":"ImageObject","url":"https://antonisnikolitsopoulos.com/og.png","width":1200,"height":630},"hasPart":{"@type":"ItemList","name":"Projects and collections","numberOfItems":15,"itemListElement":[{"@type":"ListItem","position":1,"name":"Books","url":"https://antonisnikolitsopoulos.com/books/"},{"@type":"ListItem","position":2,"name":"What Algo Missed","url":"https://whatalgomissed.com/"},{"@type":"ListItem","position":3,"name":"Thought Bank","url":"https://antonisnikolitsopoulos.com/thought-bank/"},{"@type":"ListItem","position":4,"name":"Wine","url":"https://antonisnikolitsopoulos.com/wine/"},{"@type":"ListItem","position":5,"name":"Greek Super League","url":"https://antonisnikolitsopoulos.com/superleague/"},{"@type":"ListItem","position":6,"name":"Greek Cup","url":"https://antonisnikolitsopoulos.com/football/greek-cup/"},{"@type":"ListItem","position":7,"name":"PAOK Hub","url":"https://antonisnikolitsopoulos.com/paok-hub/"},{"@type":"ListItem","position":8,"name":"PAOK Basketball","url":"https://antonisnikolitsopoulos.com/paok-basketball/"},{"@type":"ListItem","position":9,"name":"Basketball projections","url":"https://antonisnikolitsopoulos.com/basketball/"},{"@type":"ListItem","position":10,"name":"Basketball totals","url":"https://antonisnikolitsopoulos.com/basketball/overs/"},{"@type":"ListItem","position":11,"name":"Women's basketball totals","url":"https://antonisnikolitsopoulos.com/basketball/women/"},{"@type":"ListItem","position":12,"name":"EuroCup","url":"https://antonisnikolitsopoulos.com/eurocup/"},{"@type":"ListItem","position":13,"name":"FIBA Europe Cup","url":"https://antonisnikolitsopoulos.com/fibaeuropecup/"},{"@type":"ListItem","position":14,"name":"Volleyball","url":"https://antonisnikolitsopoulos.com/volleyball/"},{"@type":"ListItem","position":15,"name":"Handball","url":"https://antonisnikolitsopoulos.com/handball/"}]},"about":{"@id":"https://antonisnikolitsopoulos.com/#person"}}]}</script>
@@ -326,7 +334,7 @@ body { overflow-x: clip; }  /* safety net */
   <symbol id="i-lb" viewBox="0 0 24 24"><circle cx="4.6" cy="12" r="4.1" fill="#ff8000"/><circle cx="12" cy="12" r="4.1" fill="#00e054"/><circle cx="19.4" cy="12" r="4.1" fill="#40bcf4"/></symbol>
 </svg>
 
-<header class="site-head">
+<a class="skip-link" href="#main-content">Skip to content</a>\n<header class="site-head">
   <div class="wrap bar">
     <a class="brand" href="#top" aria-label="Antonis Nikolitsopoulos, home">
       <span class="mono">A<i>N</i></span>
@@ -342,7 +350,7 @@ body { overflow-x: clip; }  /* safety net */
   </div>
 </header>
 
-<main id="top">
+<main id="main-content">
   <div class="hero">
     <div class="wrap hero-in">
       <div>
