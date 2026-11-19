@@ -1,6 +1,7 @@
 name: Post · Daily X
 
-# One post a day at 14:00 Athens, taking turns: quote, book, film (scripts/x_daily.py ROTATION; three a day until 18 Nov 2026).
+# One post a day at 14:00 Athens, taking turns: book, quote (scripts/x_daily.py ROTATION; three a day until 18 Nov 2026,
+# films too until 19 Nov 2026; films now go out on Bluesky).
 # A Cloudflare Worker (x-daily-scheduler) triggers this at each slot and again 30 minutes later ("auto");
 # GitHub's own hourly schedule is a backup. The day's post goes out once; a late run still posts it, never a burst.
 # The 11:00 and 20:00 triggers no longer post; they still refresh the homepage cards below.
@@ -13,7 +14,7 @@ on:
       kind:
         description: "What to post (auto = the regular check: the current slot, if not posted yet; redo-quote = delete the last quote and post it again)"
         type: choice
-        options: [book, film, quote, auto, redo-quote]
+        options: [book, quote, auto, redo-quote]
         default: book
       dry_run:
         description: "Dry run (show the post, don't publish)"

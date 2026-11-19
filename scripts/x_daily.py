@@ -8,7 +8,8 @@ Usage:  python scripts/x_daily.py auto [--dry-run]                (scheduled: po
 - New additions go first, newest first; otherwise a random pick from what this
   round hasn't posted yet. When everything has been posted, a new round starts.
 - Quotes too long for one post go out as a short thread; the source and the link close it.
-- One post a day at POST_HOUR (Athens time), taking turns: quote, book, film (ROTATION, by date).
+- One post a day at POST_HOUR (Athens time), taking turns: book, quote (ROTATION, by date). Films stopped on
+  19 Nov 2026: they are posted on Bluesky instead. 'film' still works by hand but is not offered in the workflow.
   The day's slot posts once; a late run still posts it, but a missed day is skipped rather than
   posted in a burst. (Three slots a day until 18 Nov 2026.)
 - Credentials come from env: X_API_KEY, X_API_SECRET, X_ACCESS_TOKEN, X_ACCESS_TOKEN_SECRET.
@@ -38,7 +39,7 @@ FILMS = Path(os.environ.get("WAM_DIR", ROOT.parent / "whatalgomissed")) / "conte
 ATHENS = ZoneInfo("Europe/Athens")
 # One post a day (Athens time), the kind taking turns by date: 19 Nov 2026 quote, 20 Nov book, 21 Nov film, ...
 POST_HOUR = 14
-ROTATION = ["film", "quote", "book"]          # indexed by date.toordinal() % 3
+ROTATION = ["book", "quote"]                  # indexed by date.toordinal() % 2; no films on X since 19 Nov 2026 (they go out on Bluesky)
 QUOTES = ROOT / "thought-bank" / "quotes.json"
 URL_LEN = 23  # X counts every link as 23 characters
 
@@ -372,7 +373,7 @@ def pick_and_post(state, kind, dry, slot_key, redo=None):
 def current_slot(now):
     """The latest daily slot that has started (Athens time), as ("YYYY-MM-DD HH", kind)."""
     day = now.date() if now.hour >= POST_HOUR else (now - timedelta(days=1)).date()   # before 14:00: yesterday's
-    return f"{day.isoformat()} {POST_HOUR:02d}", ROTATION[day.toordinal() % 3]
+    return f"{day.isoformat()} {POST_HOUR:02d}", ROTATION[day.toordinal() % len(ROTATION)]
 
 
 def main():
