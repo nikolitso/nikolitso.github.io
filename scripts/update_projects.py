@@ -167,7 +167,7 @@ def basketball_cup(folder):
     if games:
         rnd = games[0]["round"]
         n = sum(1 for g in games if g["round"] == rnd)
-        pills += [f"Next: {rnd}, from {when(parse(games[0]['when']))}", f"{n} games projected"]
+        pills += [f"Next: {rnd}, from {when(parse(games[0]['when']))}", f"{n} game{'' if n == 1 else 's'} projected"]
     return pills
 
 
