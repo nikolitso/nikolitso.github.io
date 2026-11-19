@@ -238,6 +238,7 @@ html{scroll-behavior:smooth;font-size:17.5px}   /* one step larger: the page siz
   <h3>How it works</h3>
   <ol class="small">
     <li>Each team gets attack and defence ratings from this season's results only.</li>
+    <li>Bundesliga (M) and 2. Bundesliga (M) add a shooting and pace correction (from 19 Nov 2026), from the leagues' official box scores: totals come back towards normal when opponents have been shooting unusually well or badly against the two teams (hot or cold goalkeepers even out), and go up when the two teams play more possessions a game (shots plus technical faults) than the league average. Its weights are fitted on earlier seasons only; tested season by season from 2018-19, it cut the average miss of the total in 8 of 9 seasons, and in the backtest its picks beat the line by more.</li>
     <li>A match is flagged when the model total is 2+ goals beyond the market's line, once both teams have played 6 games. Each league has one side: Over or Under.</li>
     <li>A pick is logged once, with the line and odds at that moment, and settled at that price, at equal stakes. ROI = profit ÷ total staked on won and lost picks; pushes are left out.</li>
     <li>Line movement: every pick also stores the market's opening and closing line. The record is graded at the line taken; the Line movement table grades the same picks at the opening and at the closing line too, so the edge can be checked against both.</li>
@@ -350,7 +351,7 @@ html{scroll-behavior:smooth;font-size:17.5px}   /* one step larger: the page siz
 </footer>
 </main>
 
-<script src="/handball/data.js?v=dec7b183"></script>
+<script src="/handball/data.js?v=7e6ee9ee"></script>
 <script>
 const $=s=>document.querySelector(s);
 const f=(v,d=2)=>v==null||isNaN(v)?'–':(+v).toFixed(d);
@@ -515,7 +516,7 @@ const day=d=>{if(!d)return '–';const [y,m,dd]=d.split('-');return new Date(+y,
     const tbl=(id,lab,groups)=>{const G=groups.filter(([,R])=>R.length);$(id).innerHTML=G.length?HEAD(lab)+`<tbody>${G.map(([k,R])=>`<tr><td class="l">${k}</td>${cells(R)}</tr>`).join('')}</tbody>`:'<tbody><tr><td class="l empty">Nothing flagged.</td></tr></tbody>'};
     $('#arLeague').innerHTML=arLg.map(([v,t])=>`<a class="chip${arState.lg===v?' on':''}" href="${arHref(v)}">${t}</a>`).join('');
     const LS=L.filter(l=>l.side===sd&&(!one||l.key===arState.lg)), and=a=>a.length>1?a.slice(0,-1).join(', ')+' and '+a[a.length-1]:a[0], calls=['over','under'].map(sd=>[sd,LS.filter(l=>l.side===sd).map(l=>l.name.split(' · ')[0])]).filter(([,n])=>n.length).map(([sd,n])=>`the ${sd} in ${and(n)}`);
-    $('#arRule').innerHTML=`The rule on every regular-season match in ${one?'this league':`these ${LS.length} leagues`} from 2022–23 to 2025–26, once both teams have played at least ${L[0].start} games: ${and(calls)}, when the model's total is ${L[0].gap}+ goals past the market's line, at equal stakes. Each projection uses only games played earlier that season, and the model's settings were fitted on 2022–23 to 2024–25 only. The leagues and the rule were chosen with these seasons known, which flatters the results; 2026–27 is the live test season (see Home). Lines and prices are the market's average closing line and price, and every pick is graded there; the opening line, read from the same odds feed as the live picks, is shown beside it for comparison (not every old match has one). A total landing on the line is a push. ROI = profit ÷ total staked on won and lost picks. Click a column heading to sort.`;
+    $('#arRule').innerHTML=`The rule on every regular-season match in ${one?'this league':`these ${LS.length} leagues`} from 2022–23 to 2025–26, once both teams have played at least ${L[0].start} games: ${and(calls)}, when the model's total is ${L[0].gap}+ goals past the market's line, at equal stakes. Each projection uses only games played earlier that season, and the model's settings were fitted on 2022–23 to 2024–25 only.${LS.some(l=>l.key==='t_de'||l.key==='bl2')?` In ${and(LS.filter(l=>l.key==='t_de'||l.key==='bl2').map(l=>l.name.split(' · ')[0]))} the total also carries the shooting and pace correction (from the league's box scores), with weights fitted on the seasons before each one.`:''} The leagues and the rule were chosen with these seasons known, which flatters the results; 2026–27 is the live test season (see Home). Lines and prices are the market's average closing line and price, and every pick is graded there; the opening line, read from the same odds feed as the live picks, is shown beside it for comparison (not every old match has one). A total landing on the line is a push. ROI = profit ÷ total staked on won and lost picks. Click a column heading to sort.`;
     // backtest tiles in the Live test style (14 Nov 2026): the backtest line is the closing line; the opening line comes from the odds feed (scan/open_lines.py)
     const tiles=R=>{const t=stat(R),O=R.filter(a=>a.open&&a.open.line!=null),avg=v=>{v=v.filter(z=>z!=null);return v.length?v.reduce((a,b)=>a+b,0)/v.length:null};
       const atOpen=a=>{const o=a.open,pr=a.side==='under'?o.under:o.over;if(a.act===o.line)return 0;return ((a.act>o.line)===(a.side==='over'))?pr-1:-1};
