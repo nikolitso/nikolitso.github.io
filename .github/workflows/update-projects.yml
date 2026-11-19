@@ -36,5 +36,18 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -u -- index.html '*.jpg'   # tracked files only (some local .jpg files are gitignored)
           git commit -m "Homepage: refresh project pills and screenshots"
-          git pull --rebase
-          git push
+          # Another workflow may push in the same seconds. Try up to four times; if the rebase clashes on index.html,
+          # start again from the newest main and redo the refresh on top of it.
+          for i in 1 2 3 4; do
+            if git pull --rebase && git push; then exit 0; fi
+            echo "Save attempt $i failed; retrying"
+            git rebase --abort 2>/dev/null || true
+            git fetch origin main && git reset --hard origin/main
+            python scripts/update_projects.py
+            python scripts/update_shots.py
+            if git diff --quiet -- index.html '*.jpg'; then exit 0; fi
+            git add -u -- index.html '*.jpg'
+            git commit -m "Homepage: refresh project pills and screenshots"
+            sleep $((i * 15))
+          done
+          exit 1
