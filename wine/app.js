@@ -104,6 +104,7 @@ const ICONS = {
   'Salads & vegetables': '<path d="M5 19.500C5 10.500 11 5 20 5c0 9-5.500 15-14.500 15"/><path d="M5 19.500 14 10.500"/>',
   'Soups & stews': '<path d="M3.500 12.500h17a8.500 8.500 0 0 1-17 0z"/><path d="M9 4.500c-1.500 2 1.500 3 0 5.500M14.500 4.500c-1.500 2 1.500 3 0 5.500"/>',
   'Dips & small dishes': '<path d="M3.500 12.500h17l-2 7h-13z"/><path d="M8 9.500c1-2 3-2 4-.5 1-2 3-1.500 4 .5"/>',
+  'Pasta': '<path d="M3.500 13.500h17a8.500 8.500 0 0 1-17 0z"/><path d="M8 13c0-3 1.500-6 4-8M12 13c0-3 1-6 3.500-8.500M16 13c0-2.500.500-5 2.500-7"/>',
   'Other savoury': '<path d="M7 3v7.500M4.500 3v5a2.500 2.500 0 0 0 5 0V3M7 11v10M16.500 3c-2.500 2-2.500 7 0 9v9"/>',
 };
 const icon = c => `<svg class="ic" viewBox="0 0 24 24" aria-hidden="true">${ICONS[c] || ICONS['Other savoury']}</svg>`;
@@ -506,7 +507,7 @@ const dishOptions = r => [...r.labels.filter(l => l.listed && byId[l.name]).map(
 const bestWine = r => { const o = dishOptions(r); return byId[o.find(x => colourKey(byId[x]) !== 'Red') || o[0]]; };
 const dishRow = ([r, w], i) => `<li><span class="rank">${i + 1}</span><div class="pr"><a class="wl rl dish" data-dish="${esc(r.name)}">${esc(L(r, 'name'))}</a>
       <div class="pw c-${colourKey(w)}">${bottle(w)}<span><a class="wl" data-wine="${esc(w.id)}">${esc(L(w, 'name'))}</a><small><b class="cw">${esc(t('col')[colourKey(w)])}</b>${esc(L(w, 'winery'))} · ${esc(L(w, 'region'))}${L(w, 'grapes') ? ' · ' + esc(L(w, 'grapes')) : ''}</small></span></div></div></li>`;
-const CAT_ORDER = ['Fish & seafood', 'Meat & poultry', 'Salads & vegetables', 'Soups & stews', 'Pies', 'Other savoury', 'Dips & small dishes', 'Breads', 'Cheeses'];
+const CAT_ORDER = ['Fish & seafood', 'Meat & poultry', 'Pasta', 'Salads & vegetables', 'Soups & stews', 'Pies', 'Other savoury', 'Dips & small dishes', 'Breads', 'Cheeses'];
 function finderList() {
   const list = state.cat ? [state.cat] : CAT_ORDER.filter(c => cats.includes(c)).concat(cats.filter(c => !CAT_ORDER.includes(c)));
   return list.map(c => {
@@ -697,13 +698,12 @@ function render() {
   document.title = t('docTitle');
   document.getElementById('kicker').textContent = t('kicker');
   const home = view === 'home';
-  // the active tab already says where we are: the Wine list and Estates have no title or intro (Antonis).
-  // The title is only hidden from view there: it stays the page's <h1> for screen readers and search engines.
-  const bare = home || view === 'list' || view === 'wineries';
-  document.getElementById('lede').hidden = bare;
-  document.getElementById('title').classList.toggle('vh', bare);
-  document.getElementById('title').textContent = t({home: 'docTitle', list: 'listTitle', wineries: 'estatesTitle', finder: 'title'}[view]);
-  if (!home) document.getElementById('lede').textContent = t({list: 'listLede', wineries: 'estatesLede', finder: 'lede'}[view]);
+  // the active tab already says where we are: the Wine list and Estates have no title or intro (Antonis)
+  ['title', 'lede'].forEach(id => { document.getElementById(id).hidden = home || view === 'list' || view === 'wineries'; });
+  if (!home) {
+    document.getElementById('title').textContent = t({list: 'listTitle', wineries: 'estatesTitle', finder: 'title'}[view]);
+    document.getElementById('lede').textContent = t({list: 'listLede', wineries: 'estatesLede', finder: 'lede'}[view]);
+  }
   document.querySelectorAll('.views button').forEach(b => { b.textContent = t({list: 'viewList', wineries: 'viewEstates', finder: 'viewFinder'}[b.dataset.view]); b.classList.toggle('on', b.dataset.view === view); });
   document.getElementById('hero').innerHTML = heroSvg(home ? 'list' : view);
   document.querySelector('.search').hidden = true;  // Antonis: no search box on any page; filter with the chips
