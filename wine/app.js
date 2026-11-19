@@ -706,7 +706,7 @@ function render() {
   }
   document.querySelectorAll('.views button').forEach(b => { b.textContent = t({list: 'viewList', wineries: 'viewEstates', finder: 'viewFinder'}[b.dataset.view]); b.classList.toggle('on', b.dataset.view === view); });
   document.getElementById('hero').innerHTML = heroSvg(home ? 'list' : view);
-  document.querySelector('.search').hidden = true;  // Antonis: no search box on any page; filter with the chips
+  document.querySelector('.search').hidden = false;  // search box back on every page (Antonis, 2026-11-19); typing on the home page opens the Pairing Finder
   ['tagsLabel', 'tags', 'grapesLabel', 'grapes'].forEach(id => { document.getElementById(id).hidden = view === 'finder'; });
   document.getElementById('season').innerHTML = home ? seasonHtml() : '';
   document.getElementById('musicKick').textContent = t('music');
@@ -718,7 +718,7 @@ function render() {
   document.getElementById('wineryLabel').textContent = t('winery');
   document.getElementById('varietyLabel').textContent = t('grapes');
   document.getElementById('colourLabel').textContent = t('colour');
-  document.getElementById('q').placeholder = view === 'wineries' ? (lang === 'el' ? 'Αναζήτηση κτήματος ή κρασιού' : 'Search an estate or a wine') : window.matchMedia('(max-width:560px)').matches ? (lang === 'el' ? 'Αναζήτηση πιάτου ή κρασιού' : 'Search a dish or wine') : t('placeholder');
+  document.getElementById('q').placeholder = view === 'wineries' ? (lang === 'el' ? 'Αναζήτηση κτήματος ή κρασιού' : 'Search an estate or a wine') : view === 'list' ? (lang === 'el' ? 'Αναζήτηση κρασιού, κτήματος ή ποικιλίας' : 'Search a wine, estate or grape') : window.matchMedia('(max-width:560px)').matches ? (lang === 'el' ? 'Αναζήτηση πιάτου ή κρασιού' : 'Search a dish or wine') : t('placeholder');
   document.getElementById('catsLabel').textContent = t('cats');
   document.getElementById('tagsLabel').textContent = t('tags');
   document.getElementById('grapesLabel').textContent = t('grapes');
@@ -761,7 +761,7 @@ function render() {
 }
 
 document.addEventListener('toggle', e => { const d = e.target.closest && e.target.closest('details.pill'); if (d) { d.open ? openEstates.add(d.dataset.w) : openEstates.delete(d.dataset.w); } }, true);
-document.getElementById('q').addEventListener('input', e => { state.q = e.target.value; state.grape = ''; render(); });
+document.getElementById('q').addEventListener('input', e => { state.q = e.target.value; state.grape = ''; if (view === 'home' && state.q.trim()) { view = 'finder'; try { history.replaceState(null, '', HASH[view]); } catch (x) {} } render(); });
 function openModal(html) {
   const m = document.getElementById('modal');
   document.getElementById('modalBody').innerHTML = html;
