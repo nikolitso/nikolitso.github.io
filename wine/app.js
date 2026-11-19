@@ -668,10 +668,13 @@ function seasonHtml() {
     <h3 class="stitle">${esc(t('top10Pairs'))}</h3>
     <ol class="slist big">${pairs.map(row).join('')}</ol></section>`;
 }
+// the Wine list search also finds a dish: a wine matches when one of its dishes does (Antonis, 2026-11-19)
+const listCache = {};
+const listText = w => listCache[w.id] || (listCache[w.id] = wineText(w) + ' ' + norm((dishesOf[w.id] || []).map(r => r.name + ' ' + r.el.name).join(' ')));
 function renderList() {
   const terms = norm(state.q.trim()).split(/\s+/).filter(Boolean);
   const ws = W.filter(w => (!state.region || w.region === state.region) && (!state.colour || colourKey(w) === state.colour) && (!state.variety || w.vars.includes(state.variety))
-    && terms.every(x => wineText(w).includes(x)));
+    && terms.every(x => listText(w).includes(x)));
   if (!ws.length) return `<p class="empty">${esc(t('none'))}</p>`;
   const filtering = state.q.trim() || state.colour || state.variety || state.region;
   // Antonis: one colour at a time, White by default; the tabs switch to the Top 20 rosé or red
@@ -718,7 +721,7 @@ function render() {
   document.getElementById('wineryLabel').textContent = t('winery');
   document.getElementById('varietyLabel').textContent = t('grapes');
   document.getElementById('colourLabel').textContent = t('colour');
-  document.getElementById('q').placeholder = view === 'wineries' ? (lang === 'el' ? 'Αναζήτηση κτήματος ή κρασιού' : 'Search an estate or a wine') : view === 'list' ? (lang === 'el' ? 'Αναζήτηση κρασιού, κτήματος ή ποικιλίας' : 'Search a wine, estate or grape') : window.matchMedia('(max-width:560px)').matches ? (lang === 'el' ? 'Αναζήτηση πιάτου ή κρασιού' : 'Search a dish or wine') : t('placeholder');
+  document.getElementById('q').placeholder = view === 'wineries' ? (lang === 'el' ? 'Αναζήτηση κτήματος ή κρασιού' : 'Search an estate or a wine') : view === 'list' ? (lang === 'el' ? 'Αναζήτηση κρασιού, κτήματος, ποικιλίας ή πιάτου' : 'Search a wine, estate, grape or dish') : window.matchMedia('(max-width:560px)').matches ? (lang === 'el' ? 'Αναζήτηση πιάτου ή κρασιού' : 'Search a dish or wine') : t('placeholder');
   document.getElementById('catsLabel').textContent = t('cats');
   document.getElementById('tagsLabel').textContent = t('tags');
   document.getElementById('grapesLabel').textContent = t('grapes');
