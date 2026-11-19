@@ -333,7 +333,7 @@ function contextHtml(g){
     rows.push(ctxRow('After Europe', `${g.europe.lines.join('. ')}. ${EU[g.europe.key] || ''} · not in the model · <a href="/superleague/research/europe/">study</a>`));
   }
   if (!rows.length) return '';
-  return `<div class="ctx"><h4>Context</h4>${rows.join('')}</div>`;
+  return `<div class="ctx"><h3>Context</h3>${rows.join('')}</div>`;
 }
 function matchCard(g){
   const r = g.result, t = g.kickoff.slice(11) + (g.started ? ' <span class="live">Started</span>' : '');
