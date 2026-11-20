@@ -301,12 +301,9 @@
    "away": true,
    "days": 3
   },
-  "h": 1.2,
+  "h": 2.2,
   "a": -0.6,
-  "oh": [
-   "Harris",
-   "Karampelas"
-  ],
+  "oh": [],
   "oa": [
    "Evans Ii",
    "Kalaitzakis",
@@ -413,7 +410,7 @@
    "days": 2
   },
   "h": 0.1,
-  "a": -0.1,
+  "a": -0.2,
   "oh": [
    "Smith"
   ],
