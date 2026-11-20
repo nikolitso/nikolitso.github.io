@@ -355,7 +355,7 @@ html{scroll-behavior:smooth;font-size:17.5px}   /* one step larger: the page siz
 </footer>
 </main>
 
-<script src="/handball/data.js?v=06de3bfa"></script>
+<script src="/handball/data.js?v=0c72f32f"></script>
 <script>
 const $=s=>document.querySelector(s);
 const f=(v,d=2)=>v==null||isNaN(v)?'–':(+v).toFixed(d);
@@ -391,8 +391,8 @@ const day=d=>{if(!d)return '–';const [y,m,dd]=d.split('-');return new Date(+y,
   const OPEN=Object.fromEntries(G.signals.filter(x=>x.status==='open').map(x=>[x.url,x]));
   const CUR=Object.fromEntries(L.flatMap(l=>(l.proj||[]).map(x=>[x.url,{...x,gapMin:l.gap}])));
   const flg=x=>{const o=OPEN[x.url];return o?`<span class="sig go">Flagged: ${side(o.side)} ${f(o.line,1)}</span>`:x.signal?`<span class="sig go">Flagged: ${side(x.side)}</span>`:x.line!=null?'<span class="muted">not flagged</span>':'<span class="muted">waiting for line</span>'};
-  const nowCell=x=>{const c=CUR[x.url];if(!c||c.line==null)return '<td class="muted">–</td>';const d=Math.sign((c.line-x.line)*(x.side==='under'?-1:1)),g=(c.ours-c.line)*(x.side==='under'?-1:1);
-    return `<td><span class="${d>0?'pos':d<0?'neg':''}">${d?'<b>'+f(c.line,1)+'</b>':f(c.line,1)}</span><br><span class="small muted">${g>=c.gapMin?'still value':'no value now'}</span></td>`};
+  const nowCell=x=>{const c=CUR[x.url];if(!c||c.line==null)return '<td class="muted">–</td>';const d=Math.sign((c.line-x.line)*(x.side==='under'?-1:1));
+    return `<td><span class="${d>0?'pos':d<0?'neg':''}">${d?'<b>'+f(c.line,1)+'</b>':f(c.line,1)}</span></td>`};
   // Open picks as a list (20 Nov 2026, on request): one row per pick inside the Open picks box, kick-off order
   const opTable=(A,lgName,now)=>`<thead><tr><th class="l">League</th><th class="l">Match</th><th class="l">Date</th><th class="l">Call</th><th>Odds</th><th>Model total</th><th>Model − line</th>${now?'<th>Line now</th>':''}</tr></thead><tbody>${A.map(x=>`<tr><td class="l">${lgS(x.league,lgName(x))}</td><td class="l m">${ml(x)}</td><td class="l">${day(x.date)} <span class="muted">${x.time||''}</span></td><td class="l call"><b>${side(x.side||'under')} ${f(x.line,1)}</b></td><td>${f(x.odds,2)}</td><td>${f(x.ours,1)}</td><td class="${cls(x.side==='over'?x.gap:-x.gap)}">${sg(x.gap,1)}</td>${now?nowCell(x):''}</tr>`).join('')}</tbody>`;
   // open picks: in kick-off order, listed until 1.5 hours after the start (times are Athens time)
@@ -493,7 +493,7 @@ const day=d=>{if(!d)return '–';const [y,m,dd]=d.split('-');return new Date(+y,
     $('#tsLM').innerHTML=lmHTML(tDone);
     window.__tsDone=lk=>{const tD=lk?tDone.filter(x=>x.league===lk):tDone;$('#tsDoneH').innerHTML=lk?`Settled picks · ${tName(lk)} <a class="small" href="#tsDoneH" onclick="event.preventDefault();window.__tsDone()">show all leagues</a>`:'Settled picks';$('#tsDone').innerHTML=tD.length?`<thead><tr><th class="l">Date</th><th class="l">League</th><th class="l">Match</th><th>Call</th><th>Odds</th><th>Opening line</th><th>Closing line</th><th>Total</th><th>Result</th><th>Profit</th></tr></thead><tbody>${tD.map(x=>`<tr><td class="l">${day(x.date)}</td><td class="l">${lgS(x.league,tName(x.league))}</td><td class="l m">${ml(x)}</td><td><b>${side(x.side)} ${f(x.line,1)}</b></td><td>${f(x.odds,2)}</td><td>${x.open?f(x.open.line,1):'–'}</td><td>${x.close?(mv(x)?`<b class="${cls(mv(x))}">${f(x.close.line,1)}</b>`:f(x.close.line,1)):'–'}</td><td>${x.total??'–'}</td><td><b class="${x.status==='won'?'pos':x.status==='lost'?'neg':''}">${x.status==='won'?'Win':x.status==='lost'?'Loss':'Void'}</b></td><td class="${cls(x.profit||0)}">${sg(x.profit||0,2)}</td></tr>`).join('')}</tbody>`:'<tbody><tr><td class="l empty">No settled picks yet.</td></tr></tbody>'};};window.__tsDone();
   const Q=liveOpen(S);
-  $('#sgQNote').innerHTML=Q.length?`${Q.length} flagged match${Q.length===1?'':'es'} to play. Each was logged with the line and odds at the moment it was flagged; the record is graded at that line. Line now is today's market (green = moved the model's way) and whether the model still sees 2+ goals at it.`:'';
+  $('#sgQNote').innerHTML=Q.length?`${Q.length} flagged match${Q.length===1?'':'es'} to play. Each was logged with the line and odds at the moment it was flagged; the record is graded at that line. Line now is today's market (green = moved the model's way).`:'';
   $('#sgQN').textContent=Q.length;
   $('#sgQ').innerHTML=Q.length?opTable(Q,x=>(x.leagueName||'').split(' · ')[0],1):'<tbody><tr><td class="l empty">No open picks right now.</td></tr></tbody>';
   // Live test pages (14 Nov 2026): /live-test/overs/ and /live-test/unders/ show one side each — tiles, leagues, next matches, model v market
