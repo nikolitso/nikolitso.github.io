@@ -272,8 +272,8 @@
    "away": false,
    "days": 3
   },
-  "h": 0.0,
-  "a": 0.1,
+  "h": 0.4,
+  "a": -0.3,
   "oh": [
    "Hutson (no cost)",
    "Arnokouros (no cost)"
@@ -281,7 +281,7 @@
   "oa": [
    "Brown Iii",
    "Williams",
-   "Pinckney (no cost)",
+   "Pinckney",
    "Lekavicius (no cost)"
   ]
  },
@@ -300,12 +300,15 @@
    "away": true,
    "days": 3
   },
-  "h": 0.0,
-  "a": 0.3,
-  "oh": [],
+  "h": -0.4,
+  "a": 0.1,
+  "oh": [
+   "Harris",
+   "Karampelas"
+  ],
   "oa": [
-   "Evans Ii (no cost)",
-   "Arms (no cost)",
+   "Evans Ii",
+   "Forrester (no cost)",
    "Poulos (no cost)"
   ]
  },
@@ -314,12 +317,12 @@
   "fa": 0.0,
   "eh": null,
   "ea": null,
-  "h": 0.1,
-  "a": 0.1,
-  "oh": [],
-  "oa": [
-   "Anderson"
-  ]
+  "h": -1.1,
+  "a": 0.2,
+  "oh": [
+   "Sharma"
+  ],
+  "oa": []
  },
  "MBguMXFO": {
   "fh": -1.9,
@@ -331,20 +334,17 @@
    "days": 2
   },
   "ea": null,
-  "h": -0.8,
-  "a": -0.4,
+  "h": 0.3,
+  "a": 0.4,
   "oh": [
-   "Yabusele",
-   "Nunn",
+   "Lessort",
+   "Badio",
    "Fall",
-   "Mantzoukas (no cost)",
-   "Rogavopoulos (no cost)",
-   "Sloukas (no cost)"
+   "Mantzoukas (no cost)"
   ],
   "oa": [
    "Salash",
-   "Jackson",
-   "Kuany (no cost)",
+   "Jackson (no cost)",
    "March Jr (no cost)"
   ]
  },
@@ -363,8 +363,8 @@
    "away": false,
    "days": 3
   },
-  "h": -0.8,
-  "a": -0.9,
+  "h": -0.6,
+  "a": 0.5,
   "oh": [
    "Osman",
    "Gray (no cost)",
@@ -372,8 +372,8 @@
    "Bazinas (no cost)"
   ],
   "oa": [
-   "Morgan",
    "Charalampopoulos (no cost)",
+   "Antetokounmpo (no cost)",
    "Jovic (no cost)",
    "Tanoulis"
   ]
@@ -389,13 +389,13 @@
   },
   "ea": null,
   "h": 0.0,
-  "a": 0.0,
+  "a": -0.1,
   "oh": [
+   "Cannady (no cost)",
    "Mantzaris (no cost)"
   ],
   "oa": [
-   "Bogues Jr",
-   "Smith (no cost)"
+   "Bogues Jr"
   ]
  },
  "xOTlty1t": {
@@ -409,7 +409,7 @@
    "days": 2
   },
   "h": 0.0,
-  "a": -1.2,
+  "a": -1.3,
   "oh": [
    "Smith (no cost)"
   ],
@@ -417,7 +417,6 @@
    "Montero",
    "Milutinov",
    "Dorsey (no cost)",
-   "Hall (no cost)",
    "Papathanasiou (Papas) (no cost)"
   ]
  }
