@@ -225,7 +225,7 @@ details.picks>summary .muted{font-size:14px;font-weight:400}
     <a href="#view=livetest" data-view="livetest">Live test</a>
     <a href="#view=backtest" data-view="backtest">Backtest</a>
     <a href="#view=projections" data-view="projections">Projections</a>
-    <a href="#view=h1" data-view="h1">First half</a>
+    <a href="#view=h1" data-view="h1">1H</a>
     <a href="#view=leagues" data-view="leagues">Leagues</a>
     <a href="#view=method" data-view="method">How it works</a>
   </nav>
@@ -246,7 +246,7 @@ details.picks>summary .muted{font-size:14px;font-weight:400}
 <p>Projections shows the next 7 days, and Live test records each pick at the line and price when it was logged; the 1H tabs cover first halves. Backtest covers 2022–23 to 2025–26, and Leagues shows each league's record. A game's line is the median of the main market lines.</p>
 </section>
 </main>
-<script src="data.js?v=fh1"></script>
+<script src="data.js?v=fh2"></script>
 <script src="live.js"></script>
 <script>
 const $ = id => document.getElementById(id);
@@ -644,7 +644,7 @@ function renderProjections(){
 }
 
 // 1H projections (14 Nov 2026): every game's first-half projection from earlier first halves only, against the market's first-half line
-function h1Proj(){                                          // the next 7 days, on the First half tab under the open 1H picks (20 Nov 2026)
+function h1Proj(){                                          // the next 7 days, on the 1H tab under the open 1H picks (20 Nov 2026)
   const H = LIVE.h1;
   if (!H) return '';
   let h = '<h2 id="h1proj">Next 7 days</h2>';   // the note goes under the tables (16 Nov 2026)
