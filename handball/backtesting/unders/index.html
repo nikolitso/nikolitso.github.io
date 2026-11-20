@@ -4,11 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Handball backtest: unders | Antonis Nikolitsopoulos</title>
-<meta name="description" content="Handball goal model unders against market lines in Norway (M), Portugal (W), Portugal (M), Qatar (M), 2022-23 to 2025-26: by gap, league and season, every pick.">
+<meta name="description" content="Handball goal model unders against market lines in Norway (M), Portugal (M), Qatar (M), Portugal (W), 2022-23 to 2025-26: by gap, league and season, every pick.">
 <link rel="canonical" href="https://antonisnikolitsopoulos.com/handball/backtesting/unders/">
-<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebPage","@id":"https://antonisnikolitsopoulos.com/handball/backtesting/unders/#webpage","url":"https://antonisnikolitsopoulos.com/handball/backtesting/unders/","name":"Handball backtest: unders","description":"Handball goal model unders against market lines in Norway (M), Portugal (W), Portugal (M), Qatar (M), 2022-23 to 2025-26: by gap, league and season, every pick.","inLanguage":"en","isPartOf":{"@id":"https://antonisnikolitsopoulos.com/#website"},"author":{"@id":"https://antonisnikolitsopoulos.com/#person"}},{"@type":"Person","@id":"https://antonisnikolitsopoulos.com/#person","name":"Antonis Nikolitsopoulos","url":"https://antonisnikolitsopoulos.com/","image":"https://antonisnikolitsopoulos.com/photo.jpg","homeLocation":{"@type":"Place","name":"Thessaloniki, Greece"},"knowsAbout":["Sports analytics","Football","Basketball","Probability modelling","Books","World cinema","Greek wine"],"sameAs":["https://www.linkedin.com/in/antonis-nikolitsopoulos/","https://x.com/nikolitso","https://letterboxd.com/nikolitso/","https://whatalgomissed.com/"]},{"@type":"WebSite","@id":"https://antonisnikolitsopoulos.com/#website","url":"https://antonisnikolitsopoulos.com/","name":"Antonis Nikolitsopoulos","inLanguage":"en","publisher":{"@id":"https://antonisnikolitsopoulos.com/#person"}}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebPage","@id":"https://antonisnikolitsopoulos.com/handball/backtesting/unders/#webpage","url":"https://antonisnikolitsopoulos.com/handball/backtesting/unders/","name":"Handball backtest: unders","description":"Handball goal model unders against market lines in Norway (M), Portugal (M), Qatar (M), Portugal (W), 2022-23 to 2025-26: by gap, league and season, every pick.","inLanguage":"en","isPartOf":{"@id":"https://antonisnikolitsopoulos.com/#website"},"author":{"@id":"https://antonisnikolitsopoulos.com/#person"}},{"@type":"Person","@id":"https://antonisnikolitsopoulos.com/#person","name":"Antonis Nikolitsopoulos","url":"https://antonisnikolitsopoulos.com/","image":"https://antonisnikolitsopoulos.com/photo.jpg","homeLocation":{"@type":"Place","name":"Thessaloniki, Greece"},"knowsAbout":["Sports analytics","Football","Basketball","Probability modelling","Books","World cinema","Greek wine"],"sameAs":["https://www.linkedin.com/in/antonis-nikolitsopoulos/","https://x.com/nikolitso","https://letterboxd.com/nikolitso/","https://whatalgomissed.com/"]},{"@type":"WebSite","@id":"https://antonisnikolitsopoulos.com/#website","url":"https://antonisnikolitsopoulos.com/","name":"Antonis Nikolitsopoulos","inLanguage":"en","publisher":{"@id":"https://antonisnikolitsopoulos.com/#person"}}]}</script>
 <meta property="og:title" content="Handball backtest: unders | Antonis Nikolitsopoulos">
-<meta property="og:description" content="Handball goal model unders against market lines in Norway (M), Portugal (W), Portugal (M), Qatar (M), 2022-23 to 2025-26: by gap, league and season, every pick.">
+<meta property="og:description" content="Handball goal model unders against market lines in Norway (M), Portugal (M), Qatar (M), Portugal (W), 2022-23 to 2025-26: by gap, league and season, every pick.">
 <meta property="og:url" content="https://antonisnikolitsopoulos.com/handball/backtesting/unders/">
 <meta property="og:type" content="website">
 <meta property="og:image" content="https://antonisnikolitsopoulos.com/handball.jpg">
@@ -200,7 +200,7 @@ html{scroll-behavior:smooth;font-size:17.5px}   /* one step larger: the page siz
 <meta property="og:image:height" content="675">
 <meta name="twitter:site" content="@nikolitso">
 <meta name="twitter:title" content="Handball backtest: unders | Antonis Nikolitsopoulos">
-<meta name="twitter:description" content="Handball goal model unders against market lines in Norway (M), Portugal (W), Portugal (M), Qatar (M), 2022-23 to 2025-26: by gap, league and season, every pick.">
+<meta name="twitter:description" content="Handball goal model unders against market lines in Norway (M), Portugal (M), Qatar (M), Portugal (W), 2022-23 to 2025-26: by gap, league and season, every pick.">
 <meta name="twitter:image" content="https://antonisnikolitsopoulos.com/handball.jpg">
 <meta name="twitter:image:alt" content="Handball backtest: unders | Antonis Nikolitsopoulos">
 </head>
@@ -228,7 +228,7 @@ html{scroll-behavior:smooth;font-size:17.5px}   /* one step larger: the page siz
   <p class="muted" id="hmLead"></p>
   <p class="small dwarn" id="hmWarn" hidden></p>
   <div class="tiles" id="sgTiles"></div>
-  <div class="opbox" id="sgQBox"><div class="ophd"><h3 id="sgQH">Open picks</h3><span class="opn" id="sgQN"></span></div><div class="tbl"><table id="sgQ"></table></div><p class="small muted" id="sgQNote"></p></div>
+  <div class="opbox" id="sgQBox"><div class="ophd"><h3 id="sgQH">Open picks</h3><span class="opn" id="sgQN"></span></div><div class="tbl"><table id="sgQ"></table></div><p class="small muted" id="sgQNote"></p><div id="sgMd" hidden><h3 class="sub">Done by the Break · Magdeburg 1st half</h3><div class="tbl"><table id="sgMdT"></table></div><p class="small muted" id="sgMdNote"></p></div></div>
   <div id="sgPicks" hidden><div class="pks" id="sgPickPills"><a href="#" data-m="all" class="on">All</a><a href="#" data-m="over">Overs</a><a href="#" data-m="under">Unders</a><span class="small muted" id="sgPicksSum" style="margin-left:6px;align-self:center"></span></div><div class="tbl"><table id="sgPicksT"></table></div></div>
   <h3 id="hmCalH">Calibration</h3>
   <p class="small muted" id="hmCalNote"></p>
@@ -355,7 +355,7 @@ html{scroll-behavior:smooth;font-size:17.5px}   /* one step larger: the page siz
 </footer>
 </main>
 
-<script src="/handball/data.js?v=2fe77011"></script>
+<script src="/handball/data.js?v=1f1bae46"></script>
 <script>
 const $=s=>document.querySelector(s);
 const f=(v,d=2)=>v==null||isNaN(v)?'–':(+v).toFixed(d);
@@ -496,6 +496,12 @@ const day=d=>{if(!d)return '–';const [y,m,dd]=d.split('-');return new Date(+y,
   $('#sgQNote').innerHTML=Q.length?`${Q.length} flagged match${Q.length===1?'':'es'} to play. Each was logged with the line and odds at the moment it was flagged; the record is graded at that line. Line now is today's market (green = moved the model's way).`:'';
   $('#sgQN').textContent=Q.length;
   $('#sgQ').innerHTML=Q.length?opTable(Q,x=>(x.leagueName||'').split(' · ')[0],1):'<tbody><tr><td class="l empty">No open picks right now.</td></tr></tbody>';
+  // Done by the Break on Home (21 Nov 2026, on request): Magdeburg home games at 1.10 or shorter, shown with the open picks
+  {const MF=((D.md||{}).fixtures||[]).filter(x=>x.o1!=null&&x.o1<=1.105), BS=document.querySelector('.wrap').dataset.base;
+   if(MF.length){const weak=x=>(x.fromBottom!=null&&x.fromBottom<=6)||x.promoted;
+     $('#sgMdT').innerHTML=`<thead><tr><th class="l">Match</th><th class="l">Date</th><th class="l">Call</th><th>Magdeburg odds</th><th>Model 1H projection</th><th class="l">Setup</th></tr></thead><tbody>${MF.map(x=>{const pm=x.ph!=null?x.ph-x.pa:null;return `<tr><td class="l m"><b>SC Magdeburg</b> – ${x.opp}</td><td class="l">${day(x.date)} <span class="muted">${x.time||''}</span></td><td class="l call"><b>Magdeburg 1st half ${x.h1?`${sg(x.h1.line,1)}</b> @ ${f(x.h1.odds)}`:'−3</b> <span class="muted">(line not out)</span>'}</td><td>${f(x.o1)}</td><td>${pm!=null?`${f(x.ph,1)}–${f(x.pa,1)} <span class="${cls(pm)}">(${sg(pm,1)})</span>`:'–'}</td><td class="l">${weak(x)?'<span class="sig go">Strongest setup</span>':'<span class="sig wait">Setup</span>'}</td></tr>`}).join('')}</tbody>`;
+     $('#sgMdNote').innerHTML=`Magdeburg at home at odds of 1.10 or shorter: they tend to do most of their damage before half-time, strongest against bottom-table or promoted teams. A −3 first-half handicap needs a lead of 4+ at half-time. Not part of the record above. <a href="${BS?BS+'done-by-the-break/':'#done-by-the-break'}">The pattern and the evidence</a>.`;
+     $('#sgMd').hidden=false}}
   // Live test pages (14 Nov 2026): /live-test/overs/ and /live-test/unders/ show one side each — tiles, leagues, next matches, model v market
   const L0=L,U0=U,S0=S;
   window.__lt=sd=>{const L=L0.filter(l=>l.side===sd),U=U0.filter(x=>x.lg.side===sd),S=S0.filter(x=>x.side===sd);
@@ -694,6 +700,6 @@ $('#upd').textContent=`Updated ${D.scraped}.`;
 if(D.scraped){const [dd,tt]=D.scraped.split(' ');$('#updTop').innerHTML=`Last update: <b>${day(dd)}, ${tt||''}</b> (Greek time)`}
 </script>
 
-<footer class="an-related" aria-label="More pages"><span>By league: Bundesliga (M): <a href="/handball/live-test/bundesliga/">projections</a>, <a href="/handball/backtesting/bundesliga/">backtest</a> · 2. Bundesliga (M): <a href="/handball/live-test/2-bundesliga/">projections</a>, <a href="/handball/backtesting/2-bundesliga/">backtest</a> · Israel (M): <a href="/handball/live-test/israel/">projections</a>, <a href="/handball/backtesting/israel/">backtest</a> · Norway (M): <a href="/handball/live-test/norway/">projections</a>, <a href="/handball/backtesting/norway/">backtest</a> · Portugal (W): <a href="/handball/live-test/portugal/">projections</a>, <a href="/handball/backtesting/portugal/">backtest</a> · Portugal (M): <a href="/handball/live-test/portugal-men/">projections</a>, <a href="/handball/backtesting/portugal-men/">backtest</a> · Greece (M): <a href="/handball/live-test/greece/">projections</a>, <a href="/handball/backtesting/greece/">backtest</a> · Qatar (M): <a href="/handball/live-test/qatar/">projections</a>, <a href="/handball/backtesting/qatar/">backtest</a></span>Game by game: <a href="/handball/games/">every handball game, projected and played</a> · More projects: <a href="/basketball/">Greek and Cyprus basketball projections</a> · <a href="/volleyball/">Volleyball projections</a></footer>
+<footer class="an-related" aria-label="More pages"><span>By league: Bundesliga (M): <a href="/handball/live-test/bundesliga/">projections</a>, <a href="/handball/backtesting/bundesliga/">backtest</a> · 2. Bundesliga (M): <a href="/handball/live-test/2-bundesliga/">projections</a>, <a href="/handball/backtesting/2-bundesliga/">backtest</a> · Israel (M): <a href="/handball/live-test/israel/">projections</a>, <a href="/handball/backtesting/israel/">backtest</a> · Norway (M): <a href="/handball/live-test/norway/">projections</a>, <a href="/handball/backtesting/norway/">backtest</a> · Portugal (M): <a href="/handball/live-test/portugal-men/">projections</a>, <a href="/handball/backtesting/portugal-men/">backtest</a> · Greece (M): <a href="/handball/live-test/greece/">projections</a>, <a href="/handball/backtesting/greece/">backtest</a> · Qatar (M): <a href="/handball/live-test/qatar/">projections</a>, <a href="/handball/backtesting/qatar/">backtest</a> · Portugal (W): <a href="/handball/live-test/portugal/">projections</a>, <a href="/handball/backtesting/portugal/">backtest</a></span>Game by game: <a href="/handball/games/">every handball game, projected and played</a> · More projects: <a href="/basketball/">Greek and Cyprus basketball projections</a> · <a href="/volleyball/">Volleyball projections</a></footer>
 </body>
 </html>
