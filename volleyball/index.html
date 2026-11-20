@@ -262,7 +262,7 @@ a.gm{color:inherit;text-decoration:none} a.gm:hover{color:var(--gold);text-decor
 <p>Projections shows the next 7 days against the market line, and Live test records the picks, logged before the first serve. Season, Backtest and Leagues show the ratings, past seasons since 2020 and each league's market. <a href="/volleyball/games/">Every game</a> has its own page.</p>
 </section>
 </main>
-<script src="data.js?v=58086fcd"></script>
+<script src="data.js?v=239feb01"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -365,9 +365,9 @@ function renderPicks(){
   const note = `<p class="note">Picks logged before the first serve: an over on a line from ${DATA.min_line}.5 to ${DATA.low - 0.5}, when the model's chance × the average price is more than ${DATA.edge*100}% above 1. Leagues: ${liveNames()}. Regular-season games only: no playoffs, play-outs or placement games. Equal stakes. Until the start a pick follows the latest line. Once played it moves to Settled picks, at the price logged before the first serve. ROI = profit ÷ total staked (lines end in .5, so there are no pushes). The page judges itself at <b>100 settled picks</b>; before that, the record is mostly noise. Over chance and Edge are corrected: they keep ${REAL * 100}% of the model's advantage over the price, as the model runs too confident, so a pick can show an edge under ${DATA.edge*100}%.</p>`;
   let h = pickTiles();                            // the note goes below the picks (user, 14 Nov 2026)
   if (!open.length) return h + '<h2>Open picks</h2><p class="empty">No open picks. New ones appear once the market posts lines for a match that qualifies.</p>' + settled() + note;
-  h += `<h2>Open picks</h2><div class="scroll"><table><thead><tr><th>Date</th>${lg === 'all' ? '<th>League</th>' : ''}<th>Match</th><th class="n">Market line</th><th class="n">Price</th><th class="n">Model line</th><th class="n">Over chance</th><th class="n">Edge</th></tr></thead><tbody>`;
+  h += `<h2>Open picks</h2><div class="scroll"><table><thead><tr><th>Date</th>${lg === 'all' ? '<th>League</th>' : ''}<th>Match</th><th class="n">Opening line</th><th class="n">Pick line</th><th class="n">Closing line</th><th class="n">Price</th><th class="n">Model line</th><th class="n">Over chance</th><th class="n">Edge</th></tr></thead><tbody>`;
   for (const p of open)
-    h += `<tr><td>${short(p.dt)} ${p.dt.slice(11)}</td>${lg === 'all' ? `<td>${LG[p.lg].country} ${sexAb(LG[p.lg])}</td>` : ''}<td class="wr">${p.home} – ${p.away}</td><td class="n">Over ${p.line}</td><td class="n">${p.px.toFixed(2)}</td>
+    h += `<tr><td>${short(p.dt)} ${p.dt.slice(11)}</td>${lg === 'all' ? `<td>${LG[p.lg].country} ${sexAb(LG[p.lg])}</td>` : ''}<td class="wr">${p.home} – ${p.away}</td><td class="n">${p.line_open ?? "–"}</td><td class="n">Over ${p.line}</td><td class="n">${p.line_close ?? "–"}</td><td class="n">${p.px.toFixed(2)}</td>
       ${fairCell(p)}<td class="n">${pct(realP(p.p, p.px))}</td><td class="n ${cls(p.edge)}">${sgn(p.edge*REAL*100, 0)}%</td></tr>`;
   return h + '</tbody></table></div>' + settled() + note;
 }
@@ -391,10 +391,10 @@ function settled(){
       h += `<tr><td>${l.country} <span class="muted">${l.name} ${sexAb(l)}</span></td><td class="n">${g.length}</td><td class="n">${gw}</td><td class="n">${pct(gw / g.length)}</td><td class="n">${avgLine(g, 'line')}</td><td class="n">${avgLine(g, 'fair')}</td><td class="n">${avgLine(g, 'total')}</td><td class="n ${cls(gu)}">${sgn(gu / g.length * 100, 1)}%</td></tr>`;
     h += '</tbody></table></div>';
   }
-  h += `<h2 id="settled">Settled picks, latest first</h2><div class="scroll"><table><thead><tr><th>Date</th>${lg === 'all' ? '<th>League</th>' : ''}<th>Match</th><th class="n">Market line</th><th class="n">Price</th><th class="n">Model line</th><th class="n">Over chance</th><th class="n">Edge</th><th class="n">Sets</th><th class="n">Total</th></tr></thead><tbody>`;
+  h += `<h2 id="settled">Settled picks, latest first</h2><div class="scroll"><table><thead><tr><th>Date</th>${lg === 'all' ? '<th>League</th>' : ''}<th>Match</th><th class="n">Opening line</th><th class="n">Pick line</th><th class="n">Closing line</th><th class="n">Price</th><th class="n">Model line</th><th class="n">Over chance</th><th class="n">Edge</th><th class="n">Sets</th><th class="n">Total</th></tr></thead><tbody>`;
   let run = 0;
   const rows = done.map(p => { run += p.profit;
-    return `<tr><td>${short(p.dt)}</td>${lg === 'all' ? `<td>${LG[p.lg].country} ${sexAb(LG[p.lg])}</td>` : ''}<td class="wr">${p.home} – ${p.away}</td><td class="n">Over ${p.line}</td><td class="n">${p.px.toFixed(2)}</td>
+    return `<tr><td>${short(p.dt)}</td>${lg === 'all' ? `<td>${LG[p.lg].country} ${sexAb(LG[p.lg])}</td>` : ''}<td class="wr">${p.home} – ${p.away}</td><td class="n">${p.line_open ?? "–"}</td><td class="n">Over ${p.line}</td><td class="n">${p.line_close ?? "–"}</td><td class="n">${p.px.toFixed(2)}</td>
       ${fairCell(p)}<td class="n">${pct(realP(p.p, p.px))}</td><td class="n">${sgn(p.edge*REAL*100, 0)}%</td><td class="n">${p.sets}</td><td class="n ${p.won ? 'w' : 'l'}">${p.total}</td></tr>`; });
   return h + rows.reverse().join('') + '</tbody></table></div>';
 }
@@ -479,9 +479,9 @@ function leagueBets(){
   const list = DATA.backtest.bets.filter(b => b.lg === lg && !tuned.has(b.lg + '|' + b.season)).sort((a, b) => a.dt < b.dt ? 1 : -1);
   let h = `<h2 id="btbets">All ${list.length} bets, latest first</h2>`;
   if (!list.length) return h + '<p class="note">No bets in this league.</p>';
-  h += `<div class="scroll"><table><thead><tr><th>Date</th><th>Match</th><th class="n">Line</th><th class="n">Price</th><th class="n">Model</th><th class="n">Edge</th><th class="n">Sets</th><th class="n">Total</th><th class="n">P/L</th></tr></thead><tbody>`;
+  h += `<div class="scroll"><table><thead><tr><th>Date</th><th>Match</th><th class="n">Opening line</th><th class="n">Closing line</th><th class="n">Price</th><th class="n">Model</th><th class="n">Edge</th><th class="n">Sets</th><th class="n">Total</th><th class="n">P/L</th></tr></thead><tbody>`;
   for (const b of list)
-    h += `<tr><td>${short(b.dt)} ${b.dt.slice(0,4)}</td><td class="wr">${b.home} – ${b.away}</td><td class="n">Over ${b.line}</td><td class="n">${b.px.toFixed(2)}</td><td class="n">${pct(b.p)}</td><td class="n">${sgn(b.edge*100, 0)}%</td><td class="n">${b.sets}</td><td class="n ${b.won ? 'w' : 'l'}">${b.total}</td><td class="n ${cls(b.ret)}">${sgn(b.ret, 2)}</td></tr>`;
+    h += `<tr><td>${short(b.dt)} ${b.dt.slice(0,4)}</td><td class="wr">${b.home} – ${b.away}</td><td class="n">${b.line_open ?? "–"}</td><td class="n">Over ${b.line}</td><td class="n">${b.px.toFixed(2)}</td><td class="n">${pct(b.p)}</td><td class="n">${sgn(b.edge*100, 0)}%</td><td class="n">${b.sets}</td><td class="n ${b.won ? 'w' : 'l'}">${b.total}</td><td class="n ${cls(b.ret)}">${sgn(b.ret, 2)}</td></tr>`;
   return h + '</tbody></table></div>';
 }
 
@@ -571,10 +571,10 @@ function seasonBets(season){
   const tuned = new Set(DATA.backtest.seasons.filter(x => x.tuned).map(x => x.lg + '|' + x.season));
   const list = DATA.backtest.bets.filter(b => b.season === season && (lg === 'all' ? live.has(b.lg) && !tuned.has(b.lg + '|' + b.season) : b.lg === lg));
   let run = 0;
-  let h = `<h2 id="btbets">${season.replace('-','–')}: ${list.length} bets</h2><div class="scroll"><table><thead><tr><th>Date</th>${lg === 'all' ? '<th>League</th>' : ''}<th>Match</th><th class="n">Line</th><th class="n">Price</th><th class="n">Model</th><th class="n">Edge</th><th class="n">Sets</th><th class="n">Total</th></tr></thead><tbody>`;
+  let h = `<h2 id="btbets">${season.replace('-','–')}: ${list.length} bets</h2><div class="scroll"><table><thead><tr><th>Date</th>${lg === 'all' ? '<th>League</th>' : ''}<th>Match</th><th class="n">Opening line</th><th class="n">Closing line</th><th class="n">Price</th><th class="n">Model</th><th class="n">Edge</th><th class="n">Sets</th><th class="n">Total</th></tr></thead><tbody>`;
   for (const b of list){
     run += b.ret;
-    h += `<tr><td>${short(b.dt)} ${b.dt.slice(0,4)}</td>${lg === 'all' ? `<td>${LG[b.lg].country} ${sexAb(LG[b.lg])}</td>` : ''}<td class="wr">${b.home} – ${b.away}</td><td class="n">Over ${b.line}</td><td class="n">${b.px.toFixed(2)}</td>
+    h += `<tr><td>${short(b.dt)} ${b.dt.slice(0,4)}</td>${lg === 'all' ? `<td>${LG[b.lg].country} ${sexAb(LG[b.lg])}</td>` : ''}<td class="wr">${b.home} – ${b.away}</td><td class="n">${b.line_open ?? "–"}</td><td class="n">Over ${b.line}</td><td class="n">${b.px.toFixed(2)}</td>
       <td class="n">${pct(b.p)}</td><td class="n">${sgn(b.edge*100, 0)}%</td><td class="n">${b.sets}</td><td class="n ${b.won ? 'w' : 'l'}">${b.total}</td>
       </tr>`;
   }
