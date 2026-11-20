@@ -529,7 +529,7 @@ function calibration(){
   };
   return `<h2>Calibration</h2><p class="note">Is the model's chance right? The same bets, comparing what the model said with how often the over actually won. Gap is actual minus model, in percentage points: near zero means the chance can be trusted, negative means the model was too confident. Market no-vig removes the bookmaker margin using the average over and under prices. 4+ sets is the part of the matches that went past 3 sets. Market line, Model line and Actual total are averages for the band. Small bands move a lot by chance.</p>`
     + table('By edge', [['5–8%', .05, .08], ['8–10%', .08, .10], ['10–12%', .10, .12], ['12–14%', .12, .14], ['14–16%', .14, .16], ['16–18%', .16, .18], ['18–20%', .18, .20], ['20%+', .20, 9]], b => b.edge)
-    + table('By model chance', [['65–70%', .65, .7], ['70–75%', .7, .75], ['75–80%', .75, .8], ['80%+', .8, 2]], b => b.p);
+    + table('By model chance', [['65–73.75%', .65, .7375], ['73.75–82.5%', .7375, .825], ['82.5–91.25%', .825, .9125], ['91.25%+', .9125, 2]], b => b.p);
 }
 
 // P/L by the market's total line: the live rule's bets in unseen seasons, in 5-point bands of the line (121.5–125.5 ...; user, 14 Nov 2026)
