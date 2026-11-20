@@ -248,7 +248,7 @@ details.picks>summary .muted{font-size:14px;font-weight:400}
 </section>
 </main>
 
-<script src="live.js?v=202611210124"></script>
+<script src="live.js?v=202611210133"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
@@ -373,8 +373,11 @@ function renderGame(){
     : calc(`results margin <b>${sgn(A)}</b>`));
   h += step(6, 'Absences') + (AB
     ? `<p>The strengths above come from the line-ups each team fielded so far. The <a class="gm" href="/basketball/${{'greece-basket-league': 'greece', 'cyprus-division-a': 'cyprus'}[g.lg]}/#str">Team strength</a> model values every player from the official box scores and knows who is out (missed the last game or ruled out by the news): each team's expected line-up against its usual one this season, in points.</p>`
-      + tbl(['Team', 'Out', 'Points'], [`<tr><td>${esc(g.home)}</td><td class="n">${AB.oh.length ? AB.oh.map(esc).join(', ') : '–'}</td><td class="n">${sgn(AB.h)}</td></tr>`, `<tr><td>${esc(g.away)}</td><td class="n">${AB.oa.length ? AB.oa.map(esc).join(', ') : '–'}</td><td class="n">${sgn(AB.a)}</td></tr>`], 620)
-      + `<p class="muted">Points also move when players come back or a new import joins, so a team can gain with someone out.</p>`
+      + (AB.ph
+        ? tbl(['Team', 'Out next game', 'V full strength', 'Usual', 'Change'], [[g.home, AB.ph, AB.nh, AB.uh, AB.h], [g.away, AB.pa, AB.na, AB.ua, AB.a]].map(([t, P, n, u, c]) => `<tr><td>${esc(t)}</td><td class="n" style="white-space:normal;min-width:14rem;max-width:30rem">${P.length ? P.map(([nm, x]) => `${esc(nm)} ${x == null ? '<span class="muted">(out all season)</span>' : sgn(-x)}`).join(', ') : '–'}</td><td class="n">${sgn(-n)}</td><td class="n">${sgn(-u)}</td><td class="n"><b>${sgn(c)}</b></td></tr>`), 900)
+          + `<p class="muted">The same numbers as the <a class="gm" href="/basketball/${{'greece-basket-league': 'greece', 'cyprus-division-a': 'cyprus'}[g.lg]}/#str">Team strength</a> tab: each player's cost, and the expected line-up against full strength (the players together, so it need not equal the sum). The team's results were earned with its usual absences (the average cost of the line-ups it fielded this season), so the margin moves only by the difference: <b>usual − next game</b>. A team missing fewer players than usual gains.</p>`
+        : tbl(['Team', 'Out', 'Points'], [`<tr><td>${esc(g.home)}</td><td class="n">${AB.oh.length ? AB.oh.map(esc).join(', ') : '–'}</td><td class="n">${sgn(AB.h)}</td></tr>`, `<tr><td>${esc(g.away)}</td><td class="n">${AB.oa.length ? AB.oa.map(esc).join(', ') : '–'}</td><td class="n">${sgn(AB.a)}</td></tr>`], 620)
+          + `<p class="muted">Points also move when players come back or a new import joins, so a team can gain with someone out.</p>`)
     : `<p class="muted">No line-up data for this game: no change.</p>`);
   const ab = AB ? AB.h - AB.a : 0;
   const eu = e => e ? `${esc(e.comp)} ${e.away ? 'at' : 'v'} ${esc(e.opp)}` : '–';

@@ -497,6 +497,42 @@
    "Williams",
    "Lekavicius",
    "Brown Iii"
+  ],
+  "nh": 3.3,
+  "na": 5.9,
+  "uh": 2.3,
+  "ua": 4.3,
+  "ph": [
+   [
+    "Diarra",
+    2.4
+   ],
+   [
+    "Hutson",
+    0.5
+   ],
+   [
+    "Arnokouros",
+    0.4
+   ]
+  ],
+  "pa": [
+   [
+    "Pinckney",
+    2.4
+   ],
+   [
+    "Williams",
+    2.4
+   ],
+   [
+    "Lekavicius",
+    0.5
+   ],
+   [
+    "Brown Iii",
+    0.4
+   ]
   ]
  },
  "zm37vTYj": {
@@ -522,6 +558,29 @@
    "Kalaitzakis",
    "Forrester",
    "Poulos"
+  ],
+  "nh": 0.0,
+  "na": 4.2,
+  "uh": 2.2,
+  "ua": 3.6,
+  "ph": [],
+  "pa": [
+   [
+    "Evans Ii",
+    2.4
+   ],
+   [
+    "Kalaitzakis",
+    0.6
+   ],
+   [
+    "Forrester",
+    0.5
+   ],
+   [
+    "Poulos",
+    0.3
+   ]
   ]
  },
  "4Msinuhc": {
@@ -536,6 +595,22 @@
   ],
   "oa": [
    "Payne"
+  ],
+  "nh": 1.4,
+  "na": 0.6,
+  "uh": 0.4,
+  "ua": 0.6,
+  "ph": [
+   [
+    "Sharma",
+    1.4
+   ]
+  ],
+  "pa": [
+   [
+    "Payne",
+    0.7
+   ]
   ]
  },
  "MBguMXFO": {
@@ -561,6 +636,46 @@
    "Salash",
    "Jackson",
    "March Jr"
+  ],
+  "nh": 2.5,
+  "na": 4.3,
+  "uh": 3.8,
+  "ua": 3.1,
+  "ph": [
+   [
+    "Mantzoukas",
+    0.7
+   ],
+   [
+    "Badio",
+    0.7
+   ],
+   [
+    "Lessort",
+    0.6
+   ],
+   [
+    "Fall",
+    0.4
+   ]
+  ],
+  "pa": [
+   [
+    "Walker",
+    2.4
+   ],
+   [
+    "Salash",
+    0.7
+   ],
+   [
+    "Jackson",
+    0.6
+   ],
+   [
+    "March Jr",
+    0.4
+   ]
   ]
  },
  "xztapJM9": {
@@ -590,6 +705,42 @@
    "Charalampopoulos",
    "Antetokounmpo",
    "Tanoulis"
+  ],
+  "nh": 3.6,
+  "na": 1.1,
+  "uh": 2.7,
+  "ua": 1.0,
+  "ph": [
+   [
+    "Osman",
+    2.4
+   ],
+   [
+    "Foster",
+    0.7
+   ],
+   [
+    "Bazinas",
+    0.4
+   ]
+  ],
+  "pa": [
+   [
+    "Jovic",
+    0.4
+   ],
+   [
+    "Charalampopoulos",
+    0.4
+   ],
+   [
+    "Antetokounmpo",
+    0.3
+   ],
+   [
+    "Tanoulis",
+    null
+   ]
   ]
  },
  "p0q7rciM": {
@@ -610,6 +761,26 @@
   ],
   "oa": [
    "Bogues Jr"
+  ],
+  "nh": 2.8,
+  "na": 1.0,
+  "uh": 2.4,
+  "ua": 0.9,
+  "ph": [
+   [
+    "Cannady",
+    2.4
+   ],
+   [
+    "Mantzaris",
+    0.4
+   ]
+  ],
+  "pa": [
+   [
+    "Bogues Jr",
+    1.0
+   ]
   ]
  },
  "xOTlty1t": {
@@ -632,6 +803,34 @@
    "Milutinov",
    "Dorsey",
    "Papathanasiou (Papas)"
+  ],
+  "nh": 0.6,
+  "na": 4.5,
+  "uh": 0.7,
+  "ua": 4.4,
+  "ph": [
+   [
+    "Smith",
+    0.6
+   ]
+  ],
+  "pa": [
+   [
+    "Montero",
+    2.2
+   ],
+   [
+    "Milutinov",
+    1.0
+   ],
+   [
+    "Dorsey",
+    0.6
+   ],
+   [
+    "Papathanasiou (Papas)",
+    0.4
+   ]
   ]
  }
 }
