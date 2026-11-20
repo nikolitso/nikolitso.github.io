@@ -4,13 +4,16 @@
   "fa": 0.0,
   "eh": null,
   "ea": null,
-  "h": 0.0,
-  "a": 0.1,
+  "h": -1.8,
+  "a": 0.3,
   "oh": [
-   "Brown Iii",
-   "Williams"
+   "Pinckney",
+   "Williams",
+   "Lekavicius",
+   "Brown Iii"
   ],
-  "oa": []
+  "oa": [],
+  "rerated": "2026-11-21"
  },
  "QRp0kj6S": {
   "fh": 0.0,
@@ -32,12 +35,17 @@
    "away": true,
    "days": 4
   },
-  "h": 0.0,
-  "a": -0.8,
-  "oh": [],
+  "h": 0.1,
+  "a": -1.2,
+  "oh": [
+   "Smith"
+  ],
   "oa": [
-   "Osman"
-  ]
+   "Osman",
+   "Gray",
+   "Bazinas"
+  ],
+  "rerated": "2026-11-21"
  },
  "jacEkgsh": {
   "fh": -0.9,
@@ -54,10 +62,16 @@
    "away": false,
    "days": 3
   },
-  "h": 0.2,
-  "a": 0.0,
-  "oh": [],
-  "oa": []
+  "h": 3.0,
+  "a": -0.2,
+  "oh": [
+   "Arms",
+   "Poulos"
+  ],
+  "oa": [
+   "Arnokouros"
+  ],
+  "rerated": "2026-11-21"
  },
  "6LnPPFGa": {
   "fh": -1.9,
@@ -74,14 +88,18 @@
    "away": true,
    "days": 4
   },
-  "h": -0.7,
+  "h": -0.1,
   "a": 0.0,
   "oh": [
    "Yabusele",
+   "Mantzoukas",
+   "Rogavopoulos",
    "Nunn",
+   "Sloukas",
    "Fall"
   ],
-  "oa": []
+  "oa": [],
+  "rerated": "2026-11-21"
  },
  "bP0MmXB4": {
   "fh": 0.0,
@@ -98,26 +116,33 @@
    "away": true,
    "days": 4
   },
-  "h": 0.1,
-  "a": 0.0,
+  "h": -0.1,
+  "a": 1.9,
   "oh": [
    "Anderson"
   ],
-  "oa": []
+  "oa": [
+   "Mantzaris"
+  ],
+  "rerated": "2026-11-21"
  },
  "6k4UoBtH": {
   "fh": 0.0,
   "fa": 0.0,
   "eh": null,
   "ea": null,
-  "h": -0.0,
-  "a": -0.0,
+  "h": -0.1,
+  "a": 1.4,
   "oh": [
-   "Bogues Jr"
+   "Bogues Jr",
+   "Smith"
   ],
   "oa": [
-   "Jackson"
-  ]
+   "Jackson",
+   "March Jr",
+   "Kuany"
+  ],
+  "rerated": "2026-11-21"
  },
  "6clpgY63": {
   "fh": 0.0,
@@ -161,15 +186,21 @@
    "away": false,
    "days": 3
   },
-  "h": -1.0,
-  "a": -1.2,
+  "h": -0.9,
+  "a": -0.5,
   "oh": [
-   "Morgan"
+   "Morgan",
+   "Charalampopoulos"
   ],
   "oa": [
    "Montero",
-   "Milutinov"
-  ]
+   "Milutinov",
+   "Dorsey",
+   "Papanikolaou",
+   "Hall",
+   "Papathanasiou (Papas)"
+  ],
+  "rerated": "2026-11-21"
  },
  "dAyWqUTk": {
   "fh": 0.0,
