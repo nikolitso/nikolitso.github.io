@@ -2851,46 +2851,46 @@
   "date": "2026-11-21T15:30:00Z",
   "opp": "Aris",
   "home": true,
-  "saved": "2026-11-20T08:12:50Z",
-  "paok": 78.6,
-  "oppScore": 79.6,
+  "saved": "2026-11-20T15:11:38Z",
+  "paok": 79.0,
+  "oppScore": 80.0,
   "winProb": 46,
   "lineupSource": "manual",
   "teamStats": {
    "pts": {
-    "paok": 78.6,
-    "opp": 79.6,
-    "total": 158.2
+    "paok": 79.0,
+    "opp": 80.0,
+    "total": 159.0
    },
    "fg2m": {
-    "paok": 17.5,
-    "opp": 18.8,
-    "total": 36.2
+    "paok": 17.6,
+    "opp": 18.9,
+    "total": 36.4
    },
    "fg3m": {
     "paok": 8.2,
     "opp": 8.6,
-    "total": 16.8
+    "total": 16.9
    },
    "ftm": {
-    "paok": 19.1,
-    "opp": 16.3,
-    "total": 35.4
+    "paok": 19.2,
+    "opp": 16.4,
+    "total": 35.5
    },
    "ast": {
-    "paok": 15.8,
+    "paok": 15.9,
     "opp": 17.3,
-    "total": 33.0
+    "total": 33.2
    },
    "oreb": {
     "paok": 11.1,
     "opp": 10.4,
-    "total": 21.5
+    "total": 21.4
    },
    "dreb": {
-    "paok": 24.8,
-    "opp": 24.1,
-    "total": 48.9
+    "paok": 24.7,
+    "opp": 24.0,
+    "total": 48.7
    },
    "tov": {
     "paok": 14.6,
@@ -2898,13 +2898,13 @@
     "total": 27.6
    },
    "reb": {
-    "paok": 35.9,
-    "opp": 34.5,
-    "total": 70.4
+    "paok": 35.8,
+    "opp": 34.4,
+    "total": 70.1
    }
   },
   "modelTotal": 154.5,
-  "line": 158.5,
+  "line": 159.5,
   "modelMargin": 1.7,
   "hcp": -1.5,
   "players": {
@@ -3136,7 +3136,7 @@
   "date": "2026-12-08T18:00:00Z",
   "opp": "Bosna",
   "home": true,
-  "saved": "2026-11-20T08:12:50Z",
+  "saved": "2026-11-20T15:11:38Z",
   "paok": 85.6,
   "oppScore": 80.7,
   "winProb": 66,
