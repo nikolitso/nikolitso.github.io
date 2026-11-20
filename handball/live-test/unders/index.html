@@ -355,7 +355,7 @@ html{scroll-behavior:smooth;font-size:17.5px}   /* one step larger: the page siz
 </footer>
 </main>
 
-<script src="/handball/data.js?v=753df65e"></script>
+<script src="/handball/data.js?v=59e46d6f"></script>
 <script>
 const $=s=>document.querySelector(s);
 const f=(v,d=2)=>v==null||isNaN(v)?'–':(+v).toFixed(d);
@@ -371,7 +371,7 @@ const day=d=>{if(!d)return '–';const [y,m,dd]=d.split('-');return new Date(+y,
 (function(){
   const G=D.sig, L=G.leagues, byKey=Object.fromEntries(L.map(l=>[l.key,l]));
   const side=s=>s==='over'?'Over':s==='under'?'Under':'Over or Under';
-  const LSL={bl2:'2-bundesliga',il:'israel',w_es:'spain-women',w_pt:'portugal-women',w_ro:'romania-women',t_de:'bundesliga',t_no:'norway',t_pt:'portugal',t_qa:'qatar',t_gr:'greece'}, lgS=(k,t)=>LSL[k]?`<a class="gl" href="${document.querySelector('.wrap').dataset.base?'/handball/':'https://antonisnikolitsopoulos.com/handball/'}leagues/${LSL[k]}/" title="Standings and averages">${t}</a>`:t;
+  const LSL={bl2:'2-bundesliga',il:'israel',w_pt:'portugal-women',t_de:'bundesliga',t_no:'norway',t_pt:'portugal',t_qa:'qatar',t_gr:'greece'}, lgS=(k,t)=>LSL[k]?`<a class="gl" href="${document.querySelector('.wrap').dataset.base?'/handball/':'https://antonisnikolitsopoulos.com/handball/'}leagues/${LSL[k]}/" title="Standings and averages">${t}</a>`:t;
   // every match links to its page with the model's workings (/handball/games/<date>-<home>-<away>/, built by games.py)
   const gs=t=>String(t).toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,''), gUrl=x=>`${document.querySelector('.wrap').dataset.base?'/handball/':'https://antonisnikolitsopoulos.com/handball/'}games/${x.date}-${gs(x.home)}-${gs(x.away)}/`, ml=(x,plain)=>`<a class="gl" href="${gUrl(x)}" title="How the model got its total">${plain?x.home:'<b>'+x.home+'</b>'} – ${x.away}</a>`;
   window.__gmH={ml,lgS};
@@ -474,7 +474,7 @@ const day=d=>{if(!d)return '–';const [y,m,dd]=d.split('-');return new Date(+y,
   const U=L.flatMap(l=>(l.proj||[]).map(x=>({...x,lg:l}))).sort((a,b)=>(a.date+(a.time||'')).localeCompare(b.date+(b.time||'')));
   const nm=x=>x.lg.name.split(' · ').slice(0,1).join(' · ');
   const lineCell=x=>(x.first==null||x.first===x.line?f(x.line,1):`<span class="muted">${f(x.first,1)} →</span> <b class="${cls(Math.abs(x.ours-x.first)-Math.abs(x.ours-x.line))}">${f(x.line,1)}</b>`);
-  const LG=Object.fromEntries(Object.entries({'2-bundesliga':'bl2',bundesliga:'t_de',israel:'il',norway:'t_no',spain:'w_es',portugal:'w_pt',romania:'w_ro'}).filter(([,k])=>L.some(l=>l.key===k))), SL=Object.fromEntries(Object.entries(LG).map(([a,b])=>[b,a]));
+  const LG=Object.fromEntries(Object.entries({'2-bundesliga':'bl2',bundesliga:'t_de',israel:'il',norway:'t_no',portugal:'w_pt'}).filter(([,k])=>L.some(l=>l.key===k))), SL=Object.fromEntries(Object.entries(LG).map(([a,b])=>[b,a]));
   const BASE=document.querySelector('.wrap').dataset.base, lgHref=k=>BASE?`${BASE}live-test/${SL[k]}/`:'#'+SL[k];
   window.__LG=LG;
   // League pills on the live test pages (20 Nov 2026): all leagues of the side, then each league; the page's own pill is lit
