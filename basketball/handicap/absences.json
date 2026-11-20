@@ -274,10 +274,15 @@
   },
   "h": 0.0,
   "a": 0.1,
-  "oh": [],
+  "oh": [
+   "Hutson (no cost)",
+   "Arnokouros (no cost)"
+  ],
   "oa": [
    "Brown Iii",
-   "Williams"
+   "Williams",
+   "Pinckney (no cost)",
+   "Lekavicius (no cost)"
   ]
  },
  "zm37vTYj": {
@@ -298,7 +303,10 @@
   "h": 0.0,
   "a": 0.3,
   "oh": [],
-  "oa": []
+  "oa": [
+   "Arms (no cost)",
+   "Poulos (no cost)"
+  ]
  },
  "4Msinuhc": {
   "fh": 0.0,
@@ -327,11 +335,16 @@
   "oh": [
    "Yabusele",
    "Nunn",
-   "Fall"
+   "Fall",
+   "Mantzoukas (no cost)",
+   "Rogavopoulos (no cost)",
+   "Sloukas (no cost)"
   ],
   "oa": [
    "Salash",
-   "Jackson"
+   "Jackson",
+   "Kuany (no cost)",
+   "March Jr (no cost)"
   ]
  },
  "xztapJM9": {
@@ -352,10 +365,15 @@
   "h": -0.8,
   "a": -0.9,
   "oh": [
-   "Osman"
+   "Osman",
+   "Gray (no cost)",
+   "Foster (no cost)",
+   "Bazinas (no cost)"
   ],
   "oa": [
    "Morgan",
+   "Charalampopoulos (no cost)",
+   "Jovic (no cost)",
    "Tanoulis"
   ]
  },
@@ -371,9 +389,12 @@
   "ea": null,
   "h": 0.0,
   "a": 0.0,
-  "oh": [],
+  "oh": [
+   "Mantzaris (no cost)"
+  ],
   "oa": [
-   "Bogues Jr"
+   "Bogues Jr",
+   "Smith (no cost)"
   ]
  },
  "xOTlty1t": {
@@ -388,10 +409,15 @@
   },
   "h": 0.0,
   "a": -1.2,
-  "oh": [],
+  "oh": [
+   "Smith (no cost)"
+  ],
   "oa": [
    "Montero",
-   "Milutinov"
+   "Milutinov",
+   "Dorsey (no cost)",
+   "Hall (no cost)",
+   "Papathanasiou (Papas) (no cost)"
   ]
  }
 }
