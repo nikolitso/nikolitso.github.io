@@ -244,7 +244,7 @@ a.gm{color:inherit;text-decoration:none} a.gm:hover{color:var(--gold);text-decor
     <a href="#view=method" data-view="method">How it works</a>
   </nav>
 </div></header>
-<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebPage","@id":"https://antonisnikolitsopoulos.com/volleyball/#webpage","url":"https://antonisnikolitsopoulos.com/volleyball/","name":"Volleyball projections: sets and total points","inLanguage":"en","isPartOf":{"@id":"https://antonisnikolitsopoulos.com/#website"},"author":{"@id":"https://antonisnikolitsopoulos.com/#person"}},{"@type":"Person","@id":"https://antonisnikolitsopoulos.com/#person","name":"Antonis Nikolitsopoulos","url":"https://antonisnikolitsopoulos.com/","image":"https://antonisnikolitsopoulos.com/photo.jpg","homeLocation":{"@type":"Place","name":"Thessaloniki, Greece"},"knowsAbout":["Sports analytics","Football","Basketball","Probability modelling","Books","World cinema","Greek wine"],"sameAs":["https://www.linkedin.com/in/antonis-nikolitsopoulos/","https://x.com/nikolitso","https://letterboxd.com/nikolitso/","https://whatalgomissed.com/"]},{"@type":"WebSite","@id":"https://antonisnikolitsopoulos.com/#website","url":"https://antonisnikolitsopoulos.com/","name":"Antonis Nikolitsopoulos","inLanguage":"en","publisher":{"@id":"https://antonisnikolitsopoulos.com/#person"}}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebPage", "@id": "https://antonisnikolitsopoulos.com/volleyball/#webpage", "url": "https://antonisnikolitsopoulos.com/volleyball/", "name": "Volleyball projections: sets and total points", "inLanguage": "en", "isPartOf": {"@id": "https://antonisnikolitsopoulos.com/#website"}, "author": {"@id": "https://antonisnikolitsopoulos.com/#person"}}</script>
 <main class="wrap">
 <div class="an-project-context"><span class="an-project-context__label">Scope</span><span>Men's and women's league projections cover set count and total points. The live test, historical backtest and upcoming projections remain separate; league coverage and sample sizes matter when comparing records.</span></div>
 <div class="an-data-key" role="group" aria-label="How to read volleyball projections">
@@ -262,7 +262,7 @@ a.gm{color:inherit;text-decoration:none} a.gm:hover{color:var(--gold);text-decor
 <p>Projections shows the next 7 days against the market line, and Live test records the picks, logged before the first serve. Season, Backtest and Leagues show the ratings, past seasons since 2020 and each league's market. <a href="/volleyball/games/">Every game</a> has its own page.</p>
 </section>
 </main>
-<script src="data.js?v=2e68b504"></script>
+<script src="data.js?v=fddbb5bf"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -369,7 +369,7 @@ function renderPicks(){
   if (!open.length) return h + '<h2>Open picks</h2><p class="empty">No open picks. New ones appear once the market posts lines for a match that qualifies.</p>' + settled() + note;
   h += `<h2>Open picks</h2><div class="scroll"><table><thead><tr><th>Date</th>${lg === 'all' ? '<th>League</th>' : ''}<th>Match</th><th class="n">Opening line</th><th class="n">Pick line</th><th class="n">Closing line</th><th class="n">Price</th><th class="n">Model line</th><th class="n">Over chance</th><th class="n">Edge</th></tr></thead><tbody>`;
   for (const p of open)
-    h += `<tr><td>${short(p.dt)} ${p.dt.slice(11)}</td>${lg === 'all' ? `<td>${LG[p.lg].country} ${sexAb(LG[p.lg])}</td>` : ''}<td class="wr">${p.home} – ${p.away}</td><td class="n">${p.line_open ?? "–"}</td><td class="n">Over ${p.line}</td><td class="n">${p.line_close ?? "–"}</td><td class="n">${p.px.toFixed(2)}</td>
+    h += `<tr><td>${short(p.dt)} ${p.dt.slice(11)}</td>${lg === 'all' ? `<td>${LG[p.lg].country} ${sexAb(LG[p.lg])}</td>` : ''}<td class="wr">${gameLink(p)}</td><td class="n">${p.line_open ?? "–"}</td><td class="n">Over ${p.line}</td><td class="n">${p.line_close ?? "–"}</td><td class="n">${p.px.toFixed(2)}</td>
       ${fairCell(p)}<td class="n">${pct(realP(p.p, p.px, p.under_px))}</td><td class="n ${cls(p.edge)}">${sgn(realEdge(p.p, p.px, p.under_px)*100, 0)}%</td></tr>`;
   return h + '</tbody></table></div>' + settled() + note;
 }
@@ -396,7 +396,7 @@ function settled(){
   h += `<h2 id="settled">Settled picks, latest first</h2><div class="scroll"><table><thead><tr><th>Date</th>${lg === 'all' ? '<th>League</th>' : ''}<th>Match</th><th class="n">Opening line</th><th class="n">Pick line</th><th class="n">Closing line</th><th class="n">Price</th><th class="n">Model line</th><th class="n">Over chance</th><th class="n">Edge</th><th class="n">Sets</th><th class="n">Total</th></tr></thead><tbody>`;
   let run = 0;
   const rows = done.map(p => { run += p.profit;
-    return `<tr><td>${short(p.dt)}</td>${lg === 'all' ? `<td>${LG[p.lg].country} ${sexAb(LG[p.lg])}</td>` : ''}<td class="wr">${p.home} – ${p.away}</td><td class="n">${p.line_open ?? "–"}</td><td class="n">Over ${p.line}</td><td class="n">${p.line_close ?? "–"}</td><td class="n">${p.px.toFixed(2)}</td>
+    return `<tr><td>${short(p.dt)}</td>${lg === 'all' ? `<td>${LG[p.lg].country} ${sexAb(LG[p.lg])}</td>` : ''}<td class="wr">${gameLink(p)}</td><td class="n">${p.line_open ?? "–"}</td><td class="n">Over ${p.line}</td><td class="n">${p.line_close ?? "–"}</td><td class="n">${p.px.toFixed(2)}</td>
       ${fairCell(p)}<td class="n">${pct(realP(p.p, p.px, p.under_px))}</td><td class="n">${sgn(realEdge(p.p, p.px, p.under_px)*100, 0)}%</td><td class="n">${p.sets}</td><td class="n ${p.won ? 'w' : 'l'}">${p.total}</td></tr>`; });
   return h + rows.reverse().join('') + '</tbody></table></div>';
 }
@@ -532,13 +532,8 @@ function calibration(){
     const g = chance.slice(Math.floor(i * chance.length / 4), Math.floor((i + 1) * chance.length / 4));
     return [`${(g[0].p * 100).toFixed(1)}–${(g[g.length - 1].p * 100).toFixed(1)}%`, g];
   });
-  const edge = bets.filter(b => b.edge >= .10).sort((a, b) => a.edge - b.edge);
-  const edgeBands = [0, 1, 2, 3].map(i => {
-    const g = edge.slice(Math.floor(i * edge.length / 4), Math.floor((i + 1) * edge.length / 4));
-    return [`${(g[0].edge * 100).toFixed(1)}–${(g[g.length - 1].edge * 100).toFixed(1)}%`, g];
-  });
-  return `<h2>Calibration</h2><p class="note">Is the model's chance right? The same bets, comparing what the model said with how often the over actually won. Gap is actual minus model, in percentage points: near zero means the chance can be trusted, negative means the model was too confident. Market no-vig removes the bookmaker margin using the average over and under prices. The 10%+ edge and model-chance bands each contain equal numbers of bets. 4+ sets is the part of the matches that went past 3 sets. Market line, Model line and Actual total are averages for the band. Small bands move a lot by chance.</p>`
-    + table('By edge (10%+)', edgeBands, b => b.edge)
+  return `<h2>Calibration</h2><p class="note">Is the model's chance right? The same bets, comparing what the model said with how often the over actually won. Gap is actual minus model, in percentage points: near zero means the chance can be trusted, negative means the model was too confident. Market no-vig removes the bookmaker margin using the average over and under prices. The model-chance bands contain equal numbers of bets. 4+ sets is the part of the matches that went past 3 sets. Market line, Model line and Actual total are averages for the band. Small bands move a lot by chance.</p>`
+    + table('By edge (10%+)', [['10–20%', .10, .20], ['20–30%', .20, .30], ['30%+', .30, 9]], b => b.edge)
     + table('By model chance', chanceBands, b => b.p);
 }
 
