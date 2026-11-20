@@ -771,8 +771,6 @@ const CHIPS = {projections: 1};
 const SCOPE = {ft: ['The model estimates full-game and first-half totals. Historical backtests, prospective live records and upcoming projections are separate; opening-line and closing-line comparisons are shown independently.', 'expected game total', 'opening / closing total and price', 'settled game total'],
   h1: ['The 1H model estimates first-half totals only, built from earlier first halves; it never sees the full-game line or model. The 1H live test is a prospective record of its own, apart from the full-game record; opening-line and closing-line comparisons are shown independently.', 'expected first-half total (Model 1H)', 'opening / closing first-half line and price', 'first-half points (no overtime)']};
 function render(){
-  { const doc = view === 'how-it-works';                     // How it works is text only: no scope, key, updated strip or tiles (20 Nov 2026)
-    document.querySelectorAll('.an-project-context, .an-data-key').forEach(e => { e.style.display = doc ? 'none' : ''; }); }
   { const s = SCOPE[view === 'h1' ? 'h1' : 'ft'], el = id => document.getElementById(id);
     if (el('scopeTxt')) { el('scopeTxt').textContent = s[0]; el('keyM').textContent = s[1]; el('keyK').textContent = s[2]; el('keyA').textContent = s[3]; } }
   document.querySelector('.wrap').classList.toggle('wide', view === 'leagues');   // the Leagues table needs the room
@@ -786,7 +784,6 @@ function render(){
   $('top').style.display = $('sub').style.display = view === 'backtest' ? 'none' : '';
   if (view === 'leagues' || view === 'league') $('top').style.display = 'none';      // the live record stays off the Leagues tab (15 Nov 2026)
   $('top').innerHTML = view === 'h1' ? TOP_H1 : TOP_MAIN;     // 1H tabs show the 1H record                  // the 1H Live test tab has its own record tiles   // the main live record stays off the Backtest and 1H Live test tabs     // the live record stays off the Backtest tab
-  if (view === 'how-it-works') $('top').style.display = $('sub').style.display = 'none';
   $('out').innerHTML = RENDER[view]();
 }
 function fromHash(){
