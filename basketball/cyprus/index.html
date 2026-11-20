@@ -328,7 +328,7 @@ html{scroll-behavior:smooth;font-size:17.5px}   /* one step larger: the page siz
 </main>
 
 <script>/* the handicap estimates refresh hourly: a new address every 10 minutes so browsers do not keep an old copy */document.write('<script src="/basketball/handicap/live.js?t='+Math.floor(Date.now()/6e5)+'"><\/script>')</script>
-<script src="/basketball/data.js?v=dd7d2d8f"></script>
+<script src="/basketball/data.js?v=2852ebe4"></script>
 <script>
 const $=s=>document.querySelector(s);
 if(D.showProjections===false)document.body.classList.add('noproj');   /* projections hidden until the season is far enough in */
@@ -608,14 +608,15 @@ function profilesBlock(l){
       ${off.length||def.length||pmT?`<div class="ptags">${off.map(t=>pill(t)).join('')}${def.map(t=>pill(t,t==='Foul trouble'?'':'pos')).join('')}${pmT?pill(pmT,p.pm>0?'pos':'neg'):''}</div>`:''}
       ${p.rated?`<div class="pt-bars">${(p.bars||[]).map(b=>`<div class="pbar" title="Better than ${b.p}% of rated players"><span>${esc(b.label)}</span><div class="ptrack"><i style="width:${b.p}%"></i></div><b>${val(b)}</b><span class="muted">${b.p}%</span></div>`).join('')}</div>
       <p class="small muted">Offence ${p.off} (likely ${p.offLo}–${p.offHi}), Defence ${p.def} (likely ${p.defLo}–${p.defHi}), out of 100. Bars: better than this % of the league's rated players.</p>`:''}</div>`};
-  const draw=()=>{const t=T[open], regs=t.players.filter(p=>p.gp>=Math.max(1,Math.ceil(t.gp/2))), R=t.players.filter(p=>p.rated), U=t.players.filter(p=>!p.rated);
+  const draw=()=>{const t=T[open], regs=t.players.filter(p=>p.gp>=Math.max(1,Math.ceil(t.gp/2))), R=t.players.filter(p=>p.rated&&!p.left), U=t.players.filter(p=>!p.rated&&!p.left), G=t.players.filter(p=>p.left);
     $('#pfBody').innerHTML=`<div class="chips">${T.map((x,i)=>`<button type="button" class="chip${open===i?' on':''}" data-i="${i}">${esc(x.team)}</button>`).join('')}</div>
       ${teamBox(t)}
       <div class="plist">
         <div class="prow phd"><span>Player</span><span class="n">Min</span><span class="n">Pts</span><span>Offence</span><span>Defence</span><span class="pw">In short</span></div>
         ${R.map((p,i)=>`<div class="prow${row===i?' on':''}" data-r="${i}" role="button" tabindex="0"><span class="pn"><b>${esc(sname(p))}</b>${p.no!=null&&p.no!==''?` <span class="muted small">#${esc(p.no)}</span>`:''}</span><span class="n">${f(p.mpg)}</span><span class="n">${f(p.pts)}</span><span>${band(p.off)}</span><span>${band(p.def)}</span><span class="pw small">${summary(p)}</span></div>${row===i?detail(p,regs):''}`).join('')}
       </div>
-      ${U.length?`<p class="small muted" style="margin-top:8px">Not enough minutes to judge yet: ${U.map(p=>`${esc(sname(p))} (${p.gp} gm, ${f(p.mpg)} min)`).join(', ')}.</p>`:''}`;
+      ${U.length?`<p class="small muted" style="margin-top:8px">Not enough minutes to judge yet: ${U.map(p=>`${esc(sname(p))} (${p.gp} gm, ${f(p.mpg)} min)`).join(', ')}.</p>`:''}
+      ${G.length?`<p class="small muted" style="margin-top:4px"><b>Left the club</b> (counted in the team numbers above, out of the projections): ${G.map(p=>`${esc(sname(p))} (${p.gp} gm, ${f(p.mpg)} min, ${f(p.pts)} pts)`).join(', ')}.</p>`:''}`;
     $('#pfBody').querySelectorAll('button[data-i]').forEach(b=>b.onclick=()=>{open=+b.dataset.i;row=null;draw()});
     $('#pfBody').querySelectorAll('.prow[data-r]').forEach(b=>{const go=()=>{const i=+b.dataset.r;row=row===i?null:i;draw()};b.onclick=go;b.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();go()}}})};
   draw();
