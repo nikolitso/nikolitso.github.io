@@ -13,7 +13,30 @@
    "Brown Iii"
   ],
   "oa": [],
-  "rerated": "2026-11-21"
+  "rerated": "2026-11-21",
+  "nh": 5.9,
+  "na": 0.0,
+  "uh": 4.0,
+  "ua": 0.3,
+  "ph": [
+   [
+    "Pinckney",
+    2.4
+   ],
+   [
+    "Williams",
+    2.4
+   ],
+   [
+    "Lekavicius",
+    0.5
+   ],
+   [
+    "Brown Iii",
+    0.4
+   ]
+  ],
+  "pa": []
  },
  "QRp0kj6S": {
   "fh": 0.0,
@@ -45,7 +68,31 @@
    "Gray",
    "Bazinas"
   ],
-  "rerated": "2026-11-21"
+  "rerated": "2026-11-21",
+  "nh": 0.6,
+  "na": 3.5,
+  "uh": 0.7,
+  "ua": 2.2,
+  "ph": [
+   [
+    "Smith",
+    0.6
+   ]
+  ],
+  "pa": [
+   [
+    "Osman",
+    2.4
+   ],
+   [
+    "Gray",
+    0.6
+   ],
+   [
+    "Bazinas",
+    0.4
+   ]
+  ]
  },
  "jacEkgsh": {
   "fh": -0.9,
@@ -71,7 +118,27 @@
   "oa": [
    "Arnokouros"
   ],
-  "rerated": "2026-11-21"
+  "rerated": "2026-11-21",
+  "nh": 1.3,
+  "na": 0.4,
+  "uh": 4.2,
+  "ua": 0.2,
+  "ph": [
+   [
+    "Arms",
+    0.5
+   ],
+   [
+    "Poulos",
+    0.3
+   ]
+  ],
+  "pa": [
+   [
+    "Arnokouros",
+    0.4
+   ]
+  ]
  },
  "6LnPPFGa": {
   "fh": -1.9,
@@ -99,7 +166,38 @@
    "Fall"
   ],
   "oa": [],
-  "rerated": "2026-11-21"
+  "rerated": "2026-11-21",
+  "nh": 4.5,
+  "na": 0.0,
+  "uh": 4.4,
+  "ua": 0.0,
+  "ph": [
+   [
+    "Yabusele",
+    1.3
+   ],
+   [
+    "Mantzoukas",
+    0.7
+   ],
+   [
+    "Rogavopoulos",
+    0.7
+   ],
+   [
+    "Nunn",
+    0.7
+   ],
+   [
+    "Sloukas",
+    0.5
+   ],
+   [
+    "Fall",
+    0.4
+   ]
+  ],
+  "pa": []
  },
  "bP0MmXB4": {
   "fh": 0.0,
@@ -124,7 +222,23 @@
   "oa": [
    "Mantzaris"
   ],
-  "rerated": "2026-11-21"
+  "rerated": "2026-11-21",
+  "nh": 0.7,
+  "na": 0.4,
+  "uh": 0.7,
+  "ua": 2.3,
+  "ph": [
+   [
+    "Anderson",
+    0.7
+   ]
+  ],
+  "pa": [
+   [
+    "Mantzaris",
+    0.4
+   ]
+  ]
  },
  "6k4UoBtH": {
   "fh": 0.0,
@@ -142,7 +256,35 @@
    "March Jr",
    "Kuany"
   ],
-  "rerated": "2026-11-21"
+  "rerated": "2026-11-21",
+  "nh": 1.3,
+  "na": 1.5,
+  "uh": 1.2,
+  "ua": 2.8,
+  "ph": [
+   [
+    "Bogues Jr",
+    1.0
+   ],
+   [
+    "Smith",
+    0.3
+   ]
+  ],
+  "pa": [
+   [
+    "Jackson",
+    0.6
+   ],
+   [
+    "March Jr",
+    0.4
+   ],
+   [
+    "Kuany",
+    0.4
+   ]
+  ]
  },
  "6clpgY63": {
   "fh": 0.0,
@@ -200,7 +342,47 @@
    "Hall",
    "Papathanasiou (Papas)"
   ],
-  "rerated": "2026-11-21"
+  "rerated": "2026-11-21",
+  "nh": 1.8,
+  "na": 5.1,
+  "uh": 0.9,
+  "ua": 4.6,
+  "ph": [
+   [
+    "Morgan",
+    1.4
+   ],
+   [
+    "Charalampopoulos",
+    0.4
+   ]
+  ],
+  "pa": [
+   [
+    "Montero",
+    2.1
+   ],
+   [
+    "Milutinov",
+    0.8
+   ],
+   [
+    "Dorsey",
+    0.6
+   ],
+   [
+    "Papanikolaou",
+    0.5
+   ],
+   [
+    "Hall",
+    0.4
+   ],
+   [
+    "Papathanasiou (Papas)",
+    0.4
+   ]
+  ]
  },
  "dAyWqUTk": {
   "fh": 0.0,
