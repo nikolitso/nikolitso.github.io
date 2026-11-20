@@ -320,11 +320,13 @@
   "eh": null,
   "ea": null,
   "h": -1.1,
-  "a": 0.2,
+  "a": -0.2,
   "oh": [
    "Sharma"
   ],
-  "oa": []
+  "oa": [
+   "Payne"
+  ]
  },
  "MBguMXFO": {
   "fh": -1.9,
@@ -336,7 +338,7 @@
    "days": 2
   },
   "ea": null,
-  "h": 0.3,
+  "h": 0.2,
   "a": -0.6,
   "oh": [
    "Lessort",
@@ -370,7 +372,6 @@
   "a": 0.5,
   "oh": [
    "Osman",
-   "Gray (no cost)",
    "Foster (no cost)",
    "Bazinas (no cost)"
   ],
