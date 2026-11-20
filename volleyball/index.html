@@ -262,7 +262,7 @@ a.gm{color:inherit;text-decoration:none} a.gm:hover{color:var(--gold);text-decor
 <p>Projections shows the next 7 days against the market line, and Live test records the picks, logged before the first serve. Season, Backtest and Leagues show the ratings, past seasons since 2020 and each league's market. <a href="/volleyball/games/">Every game</a> has its own page.</p>
 </section>
 </main>
-<script src="data.js?v=405a1562"></script>
+<script src="data.js?v=d54ae751"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -528,7 +528,7 @@ function calibration(){
     return t + '</tbody></table></div>';
   };
   return `<h2>Calibration</h2><p class="note">Is the model's chance right? The same bets, comparing what the model said with how often the over actually won. Gap is actual minus model, in percentage points: near zero means the chance can be trusted, negative means the model was too confident. Market no-vig removes the bookmaker margin using the average over and under prices. 4+ sets is the part of the matches that went past 3 sets. Market line, Model line and Actual total are averages for the band. Small bands move a lot by chance.</p>`
-    + table('By edge', [['5–10%', .05, .1], ['10–20%', .1, .2], ['20%+', .2, 9]], b => b.edge)
+    + table('By edge', [['5–8%', .05, .08], ['8–10%', .08, .10], ['10–12%', .10, .12], ['12–14%', .12, .14], ['14–16%', .14, .16], ['16–18%', .16, .18], ['18–20%', .18, .20], ['20%+', .20, 9]], b => b.edge)
     + table('By model chance', [['65–70%', .65, .7], ['70–75%', .7, .75], ['75–80%', .75, .8], ['80%+', .8, 2]], b => b.p);
 }
 
