@@ -234,7 +234,7 @@ html{scroll-behavior:smooth;font-size:17.5px}   /* one step larger: the page siz
   <p class="small muted" id="hmCalNote"></p>
   <div id="hmCalW"><div class="tbl"><table id="hmCal"></table></div><div class="tbl"><table id="hmCal2"></table></div></div>
   <h3>Line movement</h3>
-  <p class="small muted">Each settled pick graded three ways: at the line and price taken when it was flagged (the record above), at the market's opening line and at its closing line, each with that line's price. Beat line by = goals the real total landed past the line in the pick's direction. Graded at the closing line is the harder test: it shows whether the edge survives the market's final view.</p>
+  <p class="small muted">Each settled pick graded three ways: at the opening line, which is also the line of the record above, and at the closing line, each with that line's price. Beat line by = goals the real total landed past the line in the pick's direction. Graded at the closing line is the harder test: it shows whether the edge survives the market's final view.</p>
   <div class="tbl"><table id="sgLM"></table></div>
   <h3>Explore</h3>
   <div class="tiles" id="hmPages"></div>
@@ -243,8 +243,8 @@ html{scroll-behavior:smooth;font-size:17.5px}   /* one step larger: the page siz
     <li>Each team gets attack and defence ratings from this season's results only.</li>
     <li>Bundesliga (M) and 2. Bundesliga (M) add a shooting and pace correction (from 19 Nov 2026), from the leagues' official box scores: totals come back towards normal when opponents have been shooting unusually well or badly against the two teams (hot or cold goalkeepers even out), and go up when the two teams play more possessions a game (shots plus technical faults) than the league average. Its weights are fitted on earlier seasons only; tested season by season from 2018-19, it cut the average miss of the total in 8 of 9 seasons, and in the backtest its picks beat the line by more.</li>
     <li>A match is flagged when the model total is 2+ goals beyond the market's line, once both teams have played 6 games. Each league has one side: Over or Under.</li>
-    <li>A pick is logged once, with the line and odds at that moment, and settled at that price, at equal stakes. ROI = profit ÷ total staked on won and lost picks; pushes are left out.</li>
-    <li>Line movement: every pick also stores the market's opening and closing line. The record is graded at the line taken; the Line movement table grades the same picks at the opening and at the closing line too, so the edge can be checked against both.</li>
+    <li>A pick is graded at the market's opening line and its price, at equal stakes (from 21 Nov 2026): a single book's early line does not set the call. A match that is flagged but is not 2+ goals past the opening line is not a pick. ROI = profit ÷ total staked on won and lost picks; pushes are left out.</li>
+    <li>Line movement: every pick also stores the market's opening and closing line. The record is graded at the opening line; the Line movement table grades the same picks at the opening and at the closing line too, so the edge can be checked against both.</li>
     <li>Longest losing run is the most picks lost in a row, with the picks in date order.</li>
     <li>Every league the model follows is in the main record (from 20 Nov 2026). Qatar (M) has no past market lines, so it has no backtest; Greece (M) lost in its backtest and is followed live to see whether that holds.</li>
     <li>A data check runs every hour: if a league's source comes back empty, or matches already played still have no result, a note appears at the top of the page.</li>
@@ -265,7 +265,7 @@ html{scroll-behavior:smooth;font-size:17.5px}   /* one step larger: the page siz
   <p class="small muted">Lines now: the next 5 days. Picks: settled picks, comparing the line when flagged with the closing line. The samples are small.</p>
   <div class="tbl"><table id="sgMkt"></table></div>
   <h3 id="ltDoneH">Settled picks</h3>
-  <p class="small muted">Newest first, graded at the line and price taken when flagged. Closing line in green when it moved the pick's way, red when it moved against.</p>
+  <p class="small muted">Newest first, graded at the market's opening line and price. Closing line in green when it moved the pick's way, red when it moved against.</p>
   <div class="tbl"><table id="ltDone"></table></div>
   <div hidden><div id="sgRec"></div><table id="sgLog"></table></div>
 </section>
@@ -355,7 +355,7 @@ html{scroll-behavior:smooth;font-size:17.5px}   /* one step larger: the page siz
 </footer>
 </main>
 
-<script src="/handball/data.js?v=1f1bae46"></script>
+<script src="/handball/data.js?v=4be39df8"></script>
 <script>
 const $=s=>document.querySelector(s);
 const f=(v,d=2)=>v==null||isNaN(v)?'–':(+v).toFixed(d);
@@ -493,7 +493,7 @@ const day=d=>{if(!d)return '–';const [y,m,dd]=d.split('-');return new Date(+y,
     $('#tsLM').innerHTML=lmHTML(tDone);
     window.__tsDone=lk=>{const tD=lk?tDone.filter(x=>x.league===lk):tDone;$('#tsDoneH').innerHTML=lk?`Settled picks · ${tName(lk)} <a class="small" href="#tsDoneH" onclick="event.preventDefault();window.__tsDone()">show all leagues</a>`:'Settled picks';$('#tsDone').innerHTML=tD.length?`<thead><tr><th class="l">Date</th><th class="l">League</th><th class="l">Match</th><th>Call</th><th>Odds</th><th>Opening line</th><th>Closing line</th><th>Total</th><th>Result</th><th>Profit</th></tr></thead><tbody>${tD.map(x=>`<tr><td class="l">${day(x.date)}</td><td class="l">${lgS(x.league,tName(x.league))}</td><td class="l m">${ml(x)}</td><td><b>${side(x.side)} ${f(x.line,1)}</b></td><td>${f(x.odds,2)}</td><td>${x.open?f(x.open.line,1):'–'}</td><td>${x.close?(mv(x)?`<b class="${cls(mv(x))}">${f(x.close.line,1)}</b>`:f(x.close.line,1)):'–'}</td><td>${x.total??'–'}</td><td><b class="${x.status==='won'?'pos':x.status==='lost'?'neg':''}">${x.status==='won'?'Win':x.status==='lost'?'Loss':'Void'}</b></td><td class="${cls(x.profit||0)}">${sg(x.profit||0,2)}</td></tr>`).join('')}</tbody>`:'<tbody><tr><td class="l empty">No settled picks yet.</td></tr></tbody>'};};window.__tsDone();
   const Q=liveOpen(S);
-  $('#sgQNote').innerHTML=Q.length?`${Q.length} flagged match${Q.length===1?'':'es'} to play. Each was logged with the line and odds at the moment it was flagged; the record is graded at that line. Line now is today's market (green = moved the model's way).`:'';
+  $('#sgQNote').innerHTML=Q.length?`${Q.length} flagged match${Q.length===1?'':'es'} to play. Each is graded at the market's opening line and price. Line now is today's market (green = moved the model's way).`:'';
   $('#sgQN').textContent=Q.length;
   $('#sgQ').innerHTML=Q.length?opTable(Q,x=>(x.leagueName||'').split(' · ')[0],1):'<tbody><tr><td class="l empty">No open picks right now.</td></tr></tbody>';
   // Done by the Break on Home (21 Nov 2026, on request): Magdeburg home games at 1.10 or shorter, shown with the open picks
@@ -507,7 +507,7 @@ const day=d=>{if(!d)return '–';const [y,m,dd]=d.split('-');return new Date(+y,
   window.__lt=sd=>{const L=L0.filter(l=>l.side===sd),U=U0.filter(x=>x.lg.side===sd),S=S0.filter(x=>x.side===sd);
   $('#ltH').textContent='Live test · '+(sd==='over'?'Overs':'Unders');
   $('#ltChips').outerHTML=ltChips(sd,null).replace('<div class="chips ltchips">','<div class="chips ltchips" id="ltChips">');
-  $('#ltSides').innerHTML=`<p class="muted">${LSn(sd)}: every pick since the league joined, graded at the line taken, the opening line and the closing line.</p>${ltTiles(S)}`;
+  $('#ltSides').innerHTML=`<p class="muted">${LSn(sd)}: every pick since the league joined, graded at the opening line and at the closing line.</p>${ltTiles(S)}`;
   {const lgN=x=>lgS(x.league,(x.leagueName||'').split(' · ')[0]), O=liveOpen(S), Dn=S.filter(x=>x.status!=='open').sort((a,b)=>((b.date||'')+(b.time||'')).localeCompare((a.date||'')+(a.time||'')));
    $('#ltOpen').innerHTML=O.length?`<thead><tr><th class="l">League</th><th class="l">Match</th><th class="l">Date</th><th>Call</th><th>Odds</th><th>Model total</th><th>Model − line</th><th>Line now</th></tr></thead><tbody>${O.map(x=>`<tr class="hot"><td class="l">${lgN(x)}</td><td class="l m">${ml(x)}</td><td class="l">${day(x.date)} <span class="muted">${x.time||''}</span></td><td><b>${side(x.side)} ${f(x.line,1)}</b></td><td>${f(x.odds,2)}</td><td>${f(x.ours,1)}</td><td class="${cls(x.side==='over'?x.gap:-x.gap)}">${sg(x.gap,1)}</td>${nowCell(x)}</tr>`).join('')}</tbody>`:'<tbody><tr><td class="l empty">No open picks right now.</td></tr></tbody>';
    $('#ltDone').innerHTML=Dn.length?`<thead><tr><th class="l">Date</th><th class="l">League</th><th class="l">Match</th><th>Call</th><th>Odds</th><th>Opening line</th><th>Closing line</th><th>Total</th><th>Result</th><th>Profit</th></tr></thead><tbody>${Dn.map(x=>`<tr><td class="l">${day(x.date)}</td><td class="l">${lgN(x)}</td><td class="l m">${ml(x)}</td><td><b>${side(x.side)} ${f(x.line,1)}</b></td><td>${f(x.odds,2)}</td><td>${x.open?f(x.open.line,1):'–'}</td><td>${x.close?(mv(x)?`<b class="${cls(mv(x))}">${f(x.close.line,1)}</b>`:f(x.close.line,1)):'–'}</td><td>${x.total??'–'}</td><td><b class="${x.status==='won'?'pos':x.status==='lost'?'neg':''}">${x.status==='won'?'Win':x.status==='lost'?'Loss':'Void'}</b></td><td class="${cls(x.profit||0)}">${sg(x.profit||0,2)}</td></tr>`).join('')}</tbody>`:'<tbody><tr><td class="l empty">No settled picks yet.</td></tr></tbody>';}
