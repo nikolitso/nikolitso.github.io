@@ -155,7 +155,7 @@ th.rs{cursor:pointer;user-select:none} th.rs:hover,th.rs.on{color:var(--gold)}
 <!-- sitebar:end -->
 <style>
 .pos{color:var(--win)} .neg{color:var(--loss)} .elow{color:#e8c547} .eneg{color:#eb7a6c} .wrap.wide{max-width:1340px} table.lgt td,table.lgt th{padding-left:6px;padding-right:6px}
-tr.srow{cursor:pointer} tr.srow:hover td,tr.srow.on td{background:color-mix(in srgb,var(--gold) 10%,transparent)}
+tr.srow{cursor:pointer} a.lglink{color:inherit;text-decoration:none} tr.srow:hover td,tr.srow.on td{background:color-mix(in srgb,var(--gold) 10%,transparent)}
 tr.sub td{background:color-mix(in srgb,var(--panel) 70%,transparent);font-size:15px}
 tr.sub td:first-child{padding-left:28px;color:var(--muted)}
 .caret{color:var(--gold);display:inline-block;width:1em}
@@ -259,7 +259,7 @@ const sgn = (x, d=1) => x == null ? '–' : (x > 0 ? '+' : x < 0 ? '−' : '') +
 const roi = x => x == null ? '–' : sgn(x*100, 1) + '%';
 const cls = x => x > 0 ? 'pos' : x < 0 ? 'neg' : '';
 const sn = s => s.replace('-', '–');
-let view = 'home', lg = 'all', open = null;
+let view = 'home', lg = 'all', sub = 'picks';
 const LG = Object.fromEntries(DATA.leagues.map(l => [l.key, l]));
 if (DATA.cur) DATA.cur.bets = [];                                 // the record starts on 8 Nov 2026 with the current model          // domestic leagues only: no record outside the rule's leagues
 const lgName = k => !LG[k] ? k : `${LG[k].country} · ${LG[k].name}`;
@@ -385,7 +385,7 @@ const bandRow = (label, g, pl = false) => { const n = g.length, sum = f => g.red
   return grp(label, {n, w: g.filter(x => x.ret > 0).length, px: n ? sum(x => x.px) / n : 0, roi: n ? sum(x => x.ret) / n : 0}, '', btCells(g, pl)); };
 
 function renderLeagues(){
-  let h = `<p class="note">Regular-season games from ${sn(DATA.first)} on (2020–21 only warms the ratings up; play-offs are left out, as in the rule). <b>All games</b> describes the league and its market. <b>Over %</b>: how often the final score (overtime included) went over the closing line. Blind over: backing the over in every game at the average price. <b>Model's picks</b>: the picks under the current rule, 2022–23 to 2025–26. <b>Model total</b>: the average of the model's total with every signal in it, <b>Line</b>: the average opening line taken, and <b>Result</b>: the average final score (overtime included), all over the picks only. Then how often the picks went over (hit), and their ROI at the opening line and price (open, where picks are taken) and at the closing line and price (close, the same picks). ROI at closing is the harder test: the market has had its say. Click a league for its seasons and an analysis of all its games below the table.</p>`;
+  let h = `<p class="note">Regular-season games from ${sn(DATA.first)} on (2020–21 only warms the ratings up; play-offs are left out, as in the rule). <b>All games</b> describes the league and its market. <b>Over %</b>: how often the final score (overtime included) went over the closing line. Blind over: backing the over in every game at the average price. <b>Model's picks</b>: the picks under the current rule, 2022–23 to 2025–26. <b>Model total</b>: the average of the model's total with every signal in it, <b>Line</b>: the average opening line taken, and <b>Result</b>: the average final score (overtime included), all over the picks only. Then how often the picks went over (hit), and their ROI at the opening line and price (open, where picks are taken) and at the closing line and price (close, the same picks). ROI at closing is the harder test: the market has had its say. Click a league to open its own page: an analysis of its picks and of all its games.</p>`;
   h += `<div class="scroll"><table class="lgt"><thead><tr><th style="border-bottom:0"></th><th colspan="3" style="text-align:center;color:var(--gold)">All games</th><th colspan="8" style="text-align:center;color:var(--gold);border-left:1px solid var(--line)">Model's picks</th></tr><tr><th>League</th><th class="n">Games</th><th class="n">Over %</th><th class="n">Blind over</th><th class="n" style="border-left:1px solid var(--line)">Picks</th><th class="n">Model total</th><th class="n">Line</th><th class="n">Result</th><th class="n">Hit</th><th class="n">P/L</th><th class="n">ROI open</th><th class="n">ROI close</th></tr></thead><tbody>`;
   const mod = g => g.n ? `${g.n} <span class="${cls(g.roi)}">${roi(g.roi)}</span>` : '<span class="muted">–</span>';
   const row = (label, s, attrs='', list=[]) => `<tr${attrs}><td>${label}</td><td class="n">${s.games}</td><td class="n">${pct(s.over, 1)}</td>
@@ -405,17 +405,26 @@ function renderLeagues(){
     if (!DATA.leagues.some(l => l.tier === tier)) continue;
     h += `<tr><td colspan="12" class="tier" style="padding-top:18px">${tierName[tier]}</td></tr>`;
     for (const l of DATA.leagues.filter(l => l.tier === tier)){
-      const on = open === l.key;
-      h += row(`<span class="caret">${on ? '▾' : '▸'}</span> ${lgFull(l)}`, l.all, ` class="srow${on ? ' on' : ''}" data-open="${l.key}"`, DATA.bets.filter(b => b.lg === l.key));
-      if (on) for (const s of l.seasons) h += row(sn(s.season) + (s.season === DATA.tuned ? ' (tuned on)' : '') + (s.season === DATA.season ? ' (so far)' : ''), s, ' class="sub"', [...DATA.bets, ...((DATA.cur || {}).bets || [])].filter(b => b.lg === l.key && seasonOf(b) === s.season));
+      h += row(`<a class="lglink" href="#view=league&lg=${l.key}"><span class="caret">▸</span> ${lgFull(l)}</a>`, l.all, ` class="srow" data-open="${l.key}"`, DATA.bets.filter(b => b.lg === l.key));   // each league has its own page (20 Nov 2026)
     }
   }
-  h += '</tbody></table></div>';
-  const L_ = open && LG[open], A = open && (DATA.lgan || {})[open];
-  if (!L_) return h + '<p class="note">Click a league for its analysis: every game in that league, by the same bands as the Backtest tab.</p>';
-  const LT = btTiles(open);
-  if (LT) h += `<h2 id="lgan" style="margin-top:32px">${lgFull(L_)}: the model's picks, 2022–23 to 2025–26</h2>` + LT;
-  h += `<h2${LT ? '' : ' id="lgan"'} style="margin-top:32px">${lgFull(L_)}: analysis of every game</h2><p class="note">Every game with odds, 2022–23 to 2025–26, not only the picks. <b>Over %</b>: how often the total went over the closing line. <b>Total − line</b>: the average final score minus the average closing line. <b>Blind over</b>: backing the over in every game, at the closing line and price, and at the opening line and price. The edge is as on the Backtest tab and needs ${LIVE.min_gp ?? 3}+ games per team, so the first games of each season are not in that table. All tables but By stage are regular season.</p>`;
+  return h + '</tbody></table></div>';
+}
+
+// one league's own page, #view=league&lg=<key>: Picks (default) or All games (20 Nov 2026)
+function renderLeague(){
+  const k = lg, L_ = LG[k], games = sub === 'games';
+  let h = `<p class="note"><a href="#view=leagues">← All leagues</a></p><h2 style="margin-top:8px">${lgFull(L_)}</h2>`;
+  h += `<div class="chips"><a href="#view=league&lg=${k}" class="${games ? '' : 'on'}">Picks</a><a href="#view=league&lg=${k}&a=games" class="${games ? 'on' : ''}">All games</a></div>`;
+  if (!games) {
+    const A = analysis(k);
+    return h + (A ? `<p class="note">The model's picks in this league under the current rule, 2022–23 to 2025–26, by the same bands as the Backtest tab.</p>` + A : '<p class="empty">No picks in this league in the backtest.</p>');
+  }
+  return h + lgGames(k);
+}
+function lgGames(k){
+  const A = (DATA.lgan || {})[k];
+  let h = `<p class="note">Every game with odds, 2022–23 to 2025–26, not only the picks. <b>Over %</b>: how often the total went over the closing line. <b>Total − line</b>: the average final score minus the average closing line. <b>Blind over</b>: backing the over in every game, at the closing line and price, and at the opening line and price. The edge is as on the Backtest tab and needs ${LIVE.min_gp ?? 3}+ games per team, so the first games of each season are not in that table. All tables but By stage are regular season.</p>`;
   if (!A) return h + '<p class="empty">No games with odds in this league.</p>';
   const AH = `<th class="n">Games</th><th class="n">Over %</th><th class="n">Total</th><th class="n">Closing line</th><th class="n">Total − line</th><th class="n">Opening line</th><th class="n">Blind over, close</th><th class="n">Blind over, open</th>`;
   const ar = x => `<tr><td>${x.label}</td><td class="n">${x.n}</td><td class="n">${pct(x.over, 1)}</td><td class="n">${x.total.toFixed(1)}</td><td class="n">${x.line.toFixed(1)}</td><td class="n">${sgn(x.total - x.line)}</td><td class="n">${x.open != null ? x.open.toFixed(1) : '–'}</td><td class="n ${cls(x.bo)}">${roi(x.bo)}</td><td class="n ${cls(x.boo)}">${x.boo != null ? roi(x.boo) : '–'}</td></tr>`;
@@ -729,19 +738,17 @@ function renderMethod(){ return `<div class="doc">${DATA.method}</div>`; }
 
 document.addEventListener('click', e => {
   const r = e.target.closest('tr.srow');
-  if (!r || !r.dataset.open) return;
-  open = open === r.dataset.open ? null : r.dataset.open;
-  render();
-  if (open && view === 'leagues') { const a = document.getElementById('lgan'); if (a) a.scrollIntoView({behavior: 'smooth', block: 'start'}); }
+  if (!r || !r.dataset.open || e.target.closest('a')) return;
+  location.hash = `view=league&lg=${r.dataset.open}`;
 });
 
 // Edge now for a pick: orange above the bar, yellow at the bar or under, red below 0
 const edgeNow = v => v == null ? '<td class="n muted">–</td>' : `<td class="n ${v > LE() ? 'pos' : v > 0 ? 'elow' : 'eneg'}">${sgn(v*100, 0)}%</td>`;
-const RENDER = {home: renderFindings, livetest: renderPicks, leagues: renderLeagues, backtest: renderBacktest, projections: renderProjections, h1: renderH1, h1live: renderH1Live, method: renderMethod};
+const RENDER = {home: renderFindings, livetest: renderPicks, leagues: renderLeagues, league: renderLeague, backtest: renderBacktest, projections: renderProjections, h1: renderH1, h1live: renderH1Live, method: renderMethod};
 const CHIPS = {projections: 1, h1: 1};
 function render(){
   document.querySelector('.wrap').classList.toggle('wide', view === 'leagues');   // the Leagues table needs the room
-  document.querySelectorAll('#tabs a').forEach(a => { a.classList.toggle('on', a.dataset.view === view); a.href = `#view=${a.dataset.view}${lg === 'all' || !CHIPS[a.dataset.view] ? '' : '&lg=' + lg}`; });
+  document.querySelectorAll('#tabs a').forEach(a => { a.classList.toggle('on', a.dataset.view === (view === 'league' ? 'leagues' : view)); a.href = `#view=${a.dataset.view}${lg === 'all' || !CHIPS[a.dataset.view] ? '' : '&lg=' + lg}`; });
   let keys = DATA.leagues.map(l => l.key);
   if (view === 'backtest') keys = keys.filter(k => DATA.backtest.leagues[k] && DATA.backtest.leagues[k].rule.n);
   if (view === 'projections') keys = keys.filter(k => LIVE.fixtures.some(g => g.lg === k));
@@ -749,16 +756,20 @@ function render(){
   const chips = CHIPS[view] ? [['all', 'All leagues'], ...keys.map(k => [k, lgShort(k)])] : [];
   $('chips').innerHTML = chips.map(([k, t]) => `<a href="#view=${view}${k === 'all' ? '' : '&lg=' + k}" class="${k === lg ? 'on' : ''}">${t}</a>`).join('');
   $('top').style.display = $('sub').style.display = view === 'backtest' ? 'none' : '';
-  if (view === 'leagues') $('top').style.display = 'none';      // the live record stays off the Leagues tab (15 Nov 2026)
+  if (view === 'leagues' || view === 'league') $('top').style.display = 'none';      // the live record stays off the Leagues tab (15 Nov 2026)
   $('top').innerHTML = view === 'h1live' || view === 'h1' ? TOP_H1 : TOP_MAIN;     // 1H tabs show the 1H record                  // the 1H Live test tab has its own record tiles   // the main live record stays off the Backtest and 1H Live test tabs     // the live record stays off the Backtest tab
   $('out').innerHTML = RENDER[view]();
 }
 function fromHash(){
   const m = location.hash.match(/view=(\w+)/), l = location.hash.match(/lg=([\w-]+)/);
   const old = {live: 'livetest', picks: 'livetest', findings: 'home'}, v = m && (old[m[1]] || m[1]);   // old links: Picks is now Live test, Findings is Home
+  const was = view;
   view = RENDER[v] ? v : 'home';
   lg = l && LG[l[1]] ? l[1] : 'all';
+  if (view === 'league' && lg === 'all') view = 'leagues';
+  sub = /[&#]a=games/.test(location.hash) ? 'games' : 'picks';
   render();
+  if (view === 'league' && was !== 'league') window.scrollTo(0, 0);
 }
 window.addEventListener('hashchange', fromHash);
 // a closing-line tile shows only the settled picks it counts, with a way back to all of them (16 Nov 2026)
