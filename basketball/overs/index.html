@@ -227,7 +227,7 @@ details.picks>summary .muted{font-size:14px;font-weight:400}
     <a href="#view=projections" data-view="projections">Projections</a>
     <a href="#view=h1" data-view="h1">1H live test</a>
     <a href="#view=leagues" data-view="leagues">Leagues</a>
-    <a href="#view=method" data-view="method">How it works</a>
+    <a href="#view=how-it-works" data-view="how-it-works">How it works</a>
   </nav>
 </div></header>
 
@@ -246,7 +246,7 @@ details.picks>summary .muted{font-size:14px;font-weight:400}
 <p>Projections shows the next 7 days, and Live test records each pick at the line and price when it was logged; the 1H live test tabs cover first halves. Backtest covers 2022–23 to 2025–26, and Leagues shows each league's record. A game's line is the median of the main market lines.</p>
 </section>
 </main>
-<script src="data.js?v=fh2"></script>
+<script src="data.js?v=hiw1"></script>
 <script src="live.js"></script>
 <script>
 const $ = id => document.getElementById(id);
@@ -744,7 +744,18 @@ document.addEventListener('click', e => {
   groups.flat().forEach(r => tb.appendChild(r));
 });
 
-function renderMethod(){ return `<div class="doc">${DATA.method}</div>`; }
+// How it works (20 Nov 2026): what each page shows, then the method
+function renderMethod(){
+  const P = [
+    ['Home', 'home', 'The answer in short: do the model’s overs make a profit? The backtest in a few numbers, then the main findings: every season, every league, out-of-sample weights, the line moving toward the picks, calibration and the worst run.'],
+    ['FT live test', 'livetest', `The full-game picks logged live since ${LIVE.start || '8 Nov 2026'}. The tiles give the record, ROI at the opening and closing line and how the line moved. <b>Open picks</b> are the games still to play, with the line, price and edge when logged and now (Line now, Price now, Edge now); <span class="badge">Bet now</span> marks the Fast Moving Leagues, where the line moves toward the picks. Then the rule, every settled pick, and the record broken down by line, edge, pace, league and month.`],
+    ['Backtest', 'backtest', 'The same rule on every game from 2022–23 to 2025–26, with each projection frozen 4 days before the game. Tiles, then Calibration (chance given v how often the picks won), By edge, By line, By tier, Fast Moving Leagues, By stage, By season, By month and By quarter. Every figure is shown at the opening line, where picks are taken, and at the closing line.'],
+    ['Projections', 'projections', 'Every game in the next 7 days: the model total next to the line and price on offer, and the edge of the over. Highlighted games are picks. The league buttons filter the list; each game links to its own match page, which shows how its total is built.'],
+    ['1H live test', 'h1', 'A separate test on first-half totals, apart from the full-game record. The tiles give the 1H record; then the open 1H picks with their rules, the next 7 days in the leagues where 1H picks can be made, Calibration and the tables of the settled 1H picks, and every settled 1H pick. There is no backtest: first-half prices were not saved before the test started.'],
+    ['Leagues', 'leagues', 'One row a league: its market (games, how often games went over the closing line, backing every over) and the model’s picks (model total, line, result, hit rate, profit, ROI at the opening and closing line). Click a league for its own page: <b>Picks</b> (the default) breaks its picks down like the Backtest tab, <b>All games</b> describes every game in it.'],
+    ['How it works', 'how-it-works', 'This page: the pages, then how the model and the rules work.']];
+  return `<div class="doc"><h3>The pages</h3><ul>${P.map(([t, v, s]) => `<li><b><a href="#view=${v}">${t}</a></b>: ${s}</li>`).join('')}</ul>${DATA.method.replace(/#view=method/g, '#view=how-it-works')}</div>`;
+}
 
 document.addEventListener('click', e => {
   const r = e.target.closest('tr.srow');
@@ -754,12 +765,14 @@ document.addEventListener('click', e => {
 
 // Edge now for a pick: orange above the bar, yellow at the bar or under, red below 0
 const edgeNow = v => v == null ? '<td class="n muted">–</td>' : `<td class="n ${v > LE() ? 'pos' : v > 0 ? 'elow' : 'eneg'}">${sgn(v*100, 0)}%</td>`;
-const RENDER = {home: renderFindings, livetest: renderPicks, leagues: renderLeagues, league: renderLeague, backtest: renderBacktest, projections: renderProjections, h1: renderH1Live, method: renderMethod};
+const RENDER = {home: renderFindings, livetest: renderPicks, leagues: renderLeagues, league: renderLeague, backtest: renderBacktest, projections: renderProjections, h1: renderH1Live, 'how-it-works': renderMethod};
 const CHIPS = {projections: 1};
 // the scope line and the number key follow the tab: the 1H live test is about first halves only (20 Nov 2026)
 const SCOPE = {ft: ['The model estimates full-game and first-half totals. Historical backtests, prospective live records and upcoming projections are separate; opening-line and closing-line comparisons are shown independently.', 'expected game total', 'opening / closing total and price', 'settled game total'],
   h1: ['The 1H model estimates first-half totals only, built from earlier first halves; it never sees the full-game line or model. The 1H live test is a prospective record of its own, apart from the full-game record; opening-line and closing-line comparisons are shown independently.', 'expected first-half total (Model 1H)', 'opening / closing first-half line and price', 'first-half points (no overtime)']};
 function render(){
+  { const doc = view === 'how-it-works';                     // How it works is text only: no scope, key, updated strip or tiles (20 Nov 2026)
+    document.querySelectorAll('.an-project-context, .an-data-key').forEach(e => { e.style.display = doc ? 'none' : ''; }); }
   { const s = SCOPE[view === 'h1' ? 'h1' : 'ft'], el = id => document.getElementById(id);
     if (el('scopeTxt')) { el('scopeTxt').textContent = s[0]; el('keyM').textContent = s[1]; el('keyK').textContent = s[2]; el('keyA').textContent = s[3]; } }
   document.querySelector('.wrap').classList.toggle('wide', view === 'leagues');   // the Leagues table needs the room
@@ -773,11 +786,12 @@ function render(){
   $('top').style.display = $('sub').style.display = view === 'backtest' ? 'none' : '';
   if (view === 'leagues' || view === 'league') $('top').style.display = 'none';      // the live record stays off the Leagues tab (15 Nov 2026)
   $('top').innerHTML = view === 'h1' ? TOP_H1 : TOP_MAIN;     // 1H tabs show the 1H record                  // the 1H Live test tab has its own record tiles   // the main live record stays off the Backtest and 1H Live test tabs     // the live record stays off the Backtest tab
+  if (view === 'how-it-works') $('top').style.display = $('sub').style.display = 'none';
   $('out').innerHTML = RENDER[view]();
 }
 function fromHash(){
-  const m = location.hash.match(/view=(\w+)/), l = location.hash.match(/lg=([\w-]+)/);
-  const old = {live: 'livetest', picks: 'livetest', findings: 'home', h1live: 'h1'}, v = m && (old[m[1]] || m[1]);   // old links: Picks is now Live test, Findings is Home
+  const m = location.hash.match(/view=([\w-]+)/), l = location.hash.match(/lg=([\w-]+)/);
+  const old = {live: 'livetest', picks: 'livetest', findings: 'home', h1live: 'h1', method: 'how-it-works'}, v = m && (old[m[1]] || m[1]);   // old links: Picks is now Live test, Findings is Home
   const was = view;
   view = RENDER[v] ? v : 'home';
   lg = l && LG[l[1]] ? l[1] : 'all';
