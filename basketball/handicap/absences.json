@@ -426,10 +426,16 @@
   "fa": 0.0,
   "eh": null,
   "ea": null,
-  "h": 0.2,
-  "a": 0.0,
+  "h": 0.3,
+  "a": 0.5,
   "oh": [],
-  "oa": []
+  "oa": [],
+  "nh": 0.0,
+  "na": 0.1,
+  "uh": 0.3,
+  "ua": 0.6,
+  "ph": [],
+  "pa": []
  },
  "UNZwr8b2": {
   "fh": 0.0,
@@ -439,35 +445,70 @@
   "h": 0.0,
   "a": 0.1,
   "oh": [],
-  "oa": []
+  "oa": [
+   "Mantovanis"
+  ],
+  "nh": 0.0,
+  "na": 0.4,
+  "uh": 0.0,
+  "ua": 0.5,
+  "ph": [],
+  "pa": [
+   [
+    "Mantovanis",
+    0.4
+   ]
+  ]
  },
  "AVxy6UD8": {
   "fh": 0.0,
   "fa": 0.0,
   "eh": null,
   "ea": null,
-  "h": -0.5,
+  "h": -0.9,
   "a": 0.0,
   "oh": [
-   "Toles"
+   "Toles",
+   "El Bejani"
   ],
-  "oa": []
+  "oa": [],
+  "nh": 3.0,
+  "na": 0.0,
+  "uh": 2.1,
+  "ua": 0.0,
+  "ph": [
+   [
+    "Toles",
+    2.4
+   ],
+   [
+    "El Bejani",
+    0.6
+   ]
+  ],
+  "pa": []
  },
  "6XMWBBbk": {
   "fh": 0.0,
-  "fa": -1.9,
+  "fa": 0.0,
   "eh": null,
-  "ea": {
-   "comp": "FIBA Europe Cup",
-   "opp": "Nitra Blue Wings",
-   "away": false,
-   "days": 2
-  },
+  "ea": null,
   "h": 0.0,
-  "a": -0.2,
+  "a": 0.8,
   "oh": [],
   "oa": [
    "Grimes"
+  ],
+  "nh": 0.0,
+  "na": 1.2,
+  "uh": 0.0,
+  "ua": 2.0,
+  "ph": [],
+  "pa": [
+   [
+    "Grimes",
+    1.2
+   ]
   ]
  },
  "v32xpkBT": {
@@ -794,7 +835,7 @@
    "days": 2
   },
   "h": 0.1,
-  "a": -0.2,
+  "a": -0.1,
   "oh": [
    "Smith"
   ],
@@ -829,6 +870,29 @@
    ],
    [
     "Papathanasiou (Papas)",
+    0.4
+   ]
+  ]
+ },
+ "Y57ZN2Zg": {
+  "fh": 0.0,
+  "fa": 0.0,
+  "eh": null,
+  "ea": null,
+  "h": 0.3,
+  "a": 0.1,
+  "oh": [],
+  "oa": [
+   "Mantovanis"
+  ],
+  "nh": 0.0,
+  "na": 0.4,
+  "uh": 0.3,
+  "ua": 0.5,
+  "ph": [],
+  "pa": [
+   [
+    "Mantovanis",
     0.4
    ]
   ]
