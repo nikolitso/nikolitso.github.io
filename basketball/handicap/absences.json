@@ -320,7 +320,7 @@
   "eh": null,
   "ea": null,
   "h": -1.1,
-  "a": -0.2,
+  "a": -0.1,
   "oh": [
    "Sharma"
   ],
@@ -338,7 +338,7 @@
    "days": 2
   },
   "ea": null,
-  "h": 0.2,
+  "h": 0.3,
   "a": -0.6,
   "oh": [
    "Lessort",
@@ -404,16 +404,16 @@
  },
  "xOTlty1t": {
   "fh": 0.0,
-  "fa": 0.0,
+  "fa": -1.9,
   "eh": null,
   "ea": {
    "comp": "EuroLeague",
-   "opp": "Maccabi Tel Aviv",
-   "away": true,
-   "days": 5
+   "opp": "Real Madrid",
+   "away": false,
+   "days": 2
   },
   "h": 0.0,
-  "a": -1.4,
+  "a": -1.3,
   "oh": [
    "Smith (no cost)"
   ],
