@@ -1,13 +1,15 @@
 {
  "shown": {
   "book": [
-   "the-drunkards-walk-how-randomness"
+   "the-drunkards-walk-how-randomness",
+   "focus-use-different-ways-of-seeing"
   ],
   "film": [
-   "amal"
+   "amal",
+   "parasite"
   ]
  },
- "book": "the-drunkards-walk-how-randomness",
- "film": "amal",
- "day": "2026-11-19"
+ "book": "focus-use-different-ways-of-seeing",
+ "film": "parasite",
+ "day": "2026-11-20"
 }
