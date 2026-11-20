@@ -262,7 +262,7 @@ a.gm{color:inherit;text-decoration:none} a.gm:hover{color:var(--gold);text-decor
 <p>Projections shows the next 7 days against the market line, and Live test records the picks, logged before the first serve. Season, Backtest and Leagues show the ratings, past seasons since 2020 and each league's market. <a href="/volleyball/games/">Every game</a> has its own page.</p>
 </section>
 </main>
-<script src="data.js?v=2c921b8e"></script>
+<script src="data.js?v=405a1562"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -294,7 +294,7 @@ const one = () => lg === 'all' ? DATA.leagues[0].key : lg;      // tabs that sho
 $('sub').textContent = `${DATA.leagues.length} leagues, women's and men's · ${DATA.season.replace('-','–')} · updated ${DATA.updated} (Athens)`;
 
 function renderProjections(){
-  const note = `<p class="note">Every match in the next 7 days once both teams have played ${DATA.min_games} this season: the chance it ends in 3 sets or goes to 4 or 5, the model's line on total points (where over and under are even). Once the market posts a line, the row shows the market line, the average over price and the model's over chance against it. Only <b>picks</b> are highlighted (gold); they are backed and recorded: overs on lines ${DATA.min_line}.5 to ${DATA.low - 0.5}, the matches the market expects to end 3-0, where the edge is above ${DATA.edge*100}%. Playoff, play-out and placement games are never picks. Over chance and Edge are shown corrected, keeping ${REAL * 100}% of the model's advantage over the price, so a pick can show less than ${DATA.edge*100}%.</p>`;
+  const note = `<p class="note">Every match in the next 7 days once both teams have played ${DATA.min_games} this season: the chance it ends in 3 sets or goes to 4 or 5, the model's line on total points (where over and under are even). Once the market posts a line, the row shows the market line, the average over price and the model's over chance against it. Only <b>picks</b> are highlighted (gold); they are backed and recorded: overs on lines ${DATA.min_line}.5 to ${DATA.low - 0.5}, where model chance is at least ${DATA.min_chance*100}% and edge is at least ${DATA.edge*100}%. Playoff, play-out and placement games are never picks. Over chance and Edge are shown corrected, keeping ${REAL * 100}% of the model's advantage over the price, so a pick can show less than ${DATA.edge*100}%.</p>`;
   const foot = note + '<p class="note"><a href="/volleyball/games/">Every game, one page each →</a></p>';   // below the matches (user, 14 Nov 2026)
   let h = pickTiles();
   const fx = DATA.fixtures.filter(inLg);
@@ -346,7 +346,7 @@ function renderHome(){
   <h2>Do the model's overs make a profit?</h2>
   <p>Modestly, on the fair test. With each season's leagues chosen in advance from earlier seasons only, the bets returned <b>${sgn(B.fair.roi * 100, 1)}%</b> over ${B.fair.n} bets (${B.fair.first}–${(B.fair.first + 1) % 100} to ${B.fair.last}–${(B.fair.last + 1) % 100}), against ${sgn(B.fair.left_roi * 100, 1)}% in the leagues left out. Across the leagues as they stand now, ${A.n} bets over ${seasons.length} past seasons returned ${sgn(A.roi * 100, 1)}%, but that figure knows which leagues were kept, so it runs high. Backing every low-line over in these leagues without the model returned ${sgn(A.blind_roi * 100, 1)}%. The ${DATA.season.replace('-', '–')} record above is the real test.</p>
   <h3><span class="num">1</span>The bet</h3>
-  <p>One bet only: the <b>over on a low total-points line</b>, from ${DATA.min_line}.5 to ${DATA.low - 1}.5, when the model's chance × the average price is more than ${DATA.edge * 100}% above 1. A low line means the market expects a 3-0, so the bet is that the match goes to a fourth set. Every bet is the same stake, logged before the first serve. Team ratings use the current season only, as rosters change from year to year, so there are no picks until both teams have played ${DATA.min_games} matches this season.</p>
+  <p>One bet only: the <b>over on a low total-points line</b>, from ${DATA.min_line}.5 to ${DATA.low - 1}.5, when model chance is at least ${DATA.min_chance * 100}% and model chance × the average price is at least ${DATA.edge * 100}% above 1. A low line means the market expects a 3-0, so the bet is that the match goes to a fourth set. Every bet is the same stake, logged before the first serve. Team ratings use the current season only, as rosters change from year to year, so there are no picks until both teams have played ${DATA.min_games} matches this season.</p>
   <h3><span class="num">2</span>The leagues</h3>
   <p>${B.tested.length} leagues were tested, women's and men's. A league is here if, on past seasons, <b>backing every low-line over without the model lost 3% or less</b>: a fair market to start from, where a real edge has a chance. Past profit is not used. Chosen in advance, leagues with the best past ROI did no better the next season than the rest; this test did, because it rests on hundreds of matches rather than a few dozen bets. Leagues with thin data or lines from only one market are left out. ${DATA.leagues.length} leagues qualify: ${liveNames()}.</p>
   <h3><span class="num">3</span>What the backtest found</h3>
@@ -364,7 +364,7 @@ const fairCell = p => p.fair == null ? '<td class="n muted">–</td>' : `<td cla
 
 function renderPicks(){
   const open = DATA.picks.filter(inLg).filter(p => !('won' in p)).sort((a, b) => a.dt.localeCompare(b.dt));
-  const note = `<p class="note">Picks logged before the first serve: an over on a line from ${DATA.min_line}.5 to ${DATA.low - 0.5}, when the model's chance × the average price is more than ${DATA.edge*100}% above 1. Leagues: ${liveNames()}. Regular-season games only: no playoffs, play-outs or placement games. Equal stakes. Until the start a pick follows the latest line. Once played it moves to Settled picks, at the price logged before the first serve. ROI = profit ÷ total staked (lines end in .5, so there are no pushes). The page judges itself at <b>100 settled picks</b>; before that, the record is mostly noise. Over chance and Edge are corrected: they keep ${REAL * 100}% of the model's advantage over the no-vig market chance, as the model runs too confident, so a pick can show an edge under ${DATA.edge*100}%.</p>`;
+  const note = `<p class="note">Picks logged before the first serve: an over on a line from ${DATA.min_line}.5 to ${DATA.low - 0.5}, when model chance is at least ${DATA.min_chance*100}% and model chance × the average price is at least ${DATA.edge*100}% above 1. Leagues: ${liveNames()}. Regular-season games only: no playoffs, play-outs or placement games. Equal stakes. Until the start a pick follows the latest line. Once played it moves to Settled picks, at the price logged before the first serve. ROI = profit ÷ total staked (lines end in .5, so there are no pushes). The page judges itself at <b>100 settled picks</b>; before that, the record is mostly noise. Over chance and Edge are corrected: they keep ${REAL * 100}% of the model's advantage over the no-vig market chance, as the model runs too confident, so a pick can show an edge under ${DATA.edge*100}%.</p>`;
   let h = pickTiles();                            // the note goes below the picks (user, 14 Nov 2026)
   if (!open.length) return h + '<h2>Open picks</h2><p class="empty">No open picks. New ones appear once the market posts lines for a match that qualifies.</p>' + settled() + note;
   h += `<h2>Open picks</h2><div class="scroll"><table><thead><tr><th>Date</th>${lg === 'all' ? '<th>League</th>' : ''}<th>Match</th><th class="n">Opening line</th><th class="n">Pick line</th><th class="n">Closing line</th><th class="n">Price</th><th class="n">Model line</th><th class="n">Over chance</th><th class="n">Edge</th></tr></thead><tbody>`;
@@ -496,7 +496,7 @@ function testedTable(){
   const f = tKey[tSort.k];
   const T = DATA.backtest.tested.filter(t => t.live).sort((a, b) => { const x = f(a), y = f(b); return (x < y ? -1 : x > y ? 1 : 0) * tSort.d || b.roi - a.roi; });
   const th = (k, lab, n = true) => `<th class="${n ? 'n ' : ''}tsort" data-tsort="${k}">${lab}${tSort.k === k ? (tSort.d > 0 ? ' ▴' : ' ▾') : ''}</th>`;
-  let h = `<h2>All tested leagues</h2><p class="note">Every league the backtest was run on, with the same rule (lines ${DATA.min_line}.5 to ${DATA.low - 1}.5, edge above ${DATA.edge * 100}%) and only the seasons the settings never saw. Only the leagues with live picks are shown: backing every over without the model (No model) did −3.0% or better, with 100+ low-line matches and a market line from two or more sources. ${DATA.backtest.tested.length - T.length} of the ${DATA.backtest.tested.length} tested leagues are left out. Click a column to sort by it.</p>`;
+  let h = `<h2>All tested leagues</h2><p class="note">Every league the backtest was run on, with the same rule (lines ${DATA.min_line}.5 to ${DATA.low - 1}.5, model chance at least ${DATA.min_chance * 100}%, edge at least ${DATA.edge * 100}%) and only the seasons the settings never saw. Only the leagues with live picks are shown: backing every over without the model (No model) did −3.0% or better, with 100+ low-line matches and a market line from two or more sources. ${DATA.backtest.tested.length - T.length} of the ${DATA.backtest.tested.length} tested leagues are left out. Click a column to sort by it.</p>`;
   h += `<div class="scroll"><table style="max-width:900px"><thead><tr>${th('league', 'League', false)}${th('seasons', 'Seasons')}${th('n', 'Bets')}${th('hit', 'Hit')}${th('roi', 'ROI')}${th('blind', 'No model')}</tr></thead><tbody>`;
   for (const t of T)
     h += `<tr><td>${t.country} <span class="muted">${t.name}</span> <b>${sexAb(t)}</b>${t.live ? ' <span class="muted">· live</span>' : ''}</td><td class="n">${t.seasons}</td><td class="n">${t.n}</td><td class="n">${t.n ? pct(t.w / t.n) : '–'}</td><td class="n ${t.n ? cls(t.roi) : ''}">${t.n ? sgn(t.roi * 100, 1) + '%' : '–'}</td><td class="n ${cls(t.blind_roi)}">${t.blind_n ? sgn(t.blind_roi * 100, 1) + '%' : '–'}</td></tr>`;
@@ -528,8 +528,8 @@ function calibration(){
     return t + '</tbody></table></div>';
   };
   return `<h2>Calibration</h2><p class="note">Is the model's chance right? The same bets, comparing what the model said with how often the over actually won. Gap is actual minus model, in percentage points: near zero means the chance can be trusted, negative means the model was too confident. Market no-vig removes the bookmaker margin using the average over and under prices. 4+ sets is the part of the matches that went past 3 sets. Market line, Model line and Actual total are averages for the band. Small bands move a lot by chance.</p>`
-    + table('By edge', [['3–5%', .03, .05], ['5–10%', .05, .1], ['10–20%', .1, .2], ['20%+', .2, 9]], b => b.edge)
-    + table('By model chance', [['Under 60%', 0, .6], ['60–65%', .6, .65], ['65–70%', .65, .7], ['70–75%', .7, .75], ['75–80%', .75, .8], ['80%+', .8, 2]], b => b.p);
+    + table('By edge', [['5–10%', .05, .1], ['10–20%', .1, .2], ['20%+', .2, 9]], b => b.edge)
+    + table('By model chance', [['65–70%', .65, .7], ['70–75%', .7, .75], ['75–80%', .75, .8], ['80%+', .8, 2]], b => b.p);
 }
 
 // P/L by the market's total line: the live rule's bets in unseen seasons, in 5-point bands of the line (121.5–125.5 ...; user, 14 Nov 2026)
@@ -689,7 +689,7 @@ function worked(){
   <h3><span class="num">5</span>The edge and the decision</h3>
   <div class="calc">average over price <b>${e.px.toFixed(2)}</b><br>
   edge = ${e.p_over.toFixed(3)} × ${e.px.toFixed(2)} − 1 = <b>${sgn(edge*100, 1)}%</b><br>
-  line ${e.line} is below ${DATA.low} and the edge is above ${DATA.edge*100}% → <b>bet over ${e.line}</b></div>
+  line ${e.line} is below ${DATA.low}, chance is at least ${DATA.min_chance*100}% and edge is at least ${DATA.edge*100}% → <b>bet over ${e.line}</b></div>
   <h3><span class="num">6</span>What happened</h3>
   <div class="calc">${e.home} – ${e.away} ${e.sets}, <b>${e.total}</b> points → over ${e.line} <b class="${e.won ? 'pos' : 'neg'}">${e.won ? 'won' : 'lost'}</b></div>
   <p>${e.won ? 'A' : 'Even a'} ${p1(e.p_over)} bet ${e.won ? 'still loses' : 'loses'} ${p1(1 - e.p_over)} of the time. The edge only shows over many bets, which is why the page judges itself at 100 picks. This example always shows the latest bet, win or loss.</p>`;
