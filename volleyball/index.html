@@ -520,16 +520,26 @@ function calibration(){
   const table = (title, bands, val) => {
     let t = `<h3 style="margin-top:18px">${title}</h3><div class="scroll"><table style="max-width:1140px"><thead><tr><th>Band</th><th class="n">Bets</th><th class="n">Market<br>no-vig</th><th class="n">Model said</th><th class="n">Actual</th><th class="n">Gap</th><th class="n">4+ sets</th><th class="n">Market line</th><th class="n">Model line</th><th class="n">Actual total</th><th class="n">ROI</th></tr></thead><tbody>`;
     for (const [lab, lo, hi] of bands){
-      const g = bets.filter(b => val(b) >= lo && val(b) < hi);
+      const g = Array.isArray(lo) ? lo : bets.filter(b => val(b) >= lo && val(b) < hi);
       if (!g.length) continue;
       const said = mean(g, b => b.p), hit = mean(g, b => +b.won), roi = mean(g, b => b.ret);
       t += `<tr><td>${lab}</td><td class="n">${g.length}</td><td class="n">${(mean(g, b => noVigP(b.px, b.under_px)) * 100).toFixed(1)}%</td><td class="n">${(said * 100).toFixed(1)}%</td><td class="n">${(hit * 100).toFixed(1)}%</td><td class="n ${cls(hit - said)}">${sgn((hit - said) * 100, 1)}</td><td class="n">${(mean(g, b => +long(b)) * 100).toFixed(1)}%</td><td class="n">${avgLine(g, 'line')}</td><td class="n">${avgLine(g, 'fair')}</td><td class="n">${avgLine(g, 'total')}</td><td class="n ${cls(roi)}">${sgn(roi * 100, 1)}%</td></tr>`;
     }
     return t + '</tbody></table></div>';
   };
-  return `<h2>Calibration</h2><p class="note">Is the model's chance right? The same bets, comparing what the model said with how often the over actually won. Gap is actual minus model, in percentage points: near zero means the chance can be trusted, negative means the model was too confident. Market no-vig removes the bookmaker margin using the average over and under prices. 4+ sets is the part of the matches that went past 3 sets. Market line, Model line and Actual total are averages for the band. Small bands move a lot by chance.</p>`
-    + table('By edge', [['5–8%', .05, .08], ['8–10%', .08, .10], ['10–12%', .10, .12], ['12–14%', .12, .14], ['14–16%', .14, .16], ['16–18%', .16, .18], ['18–20%', .18, .20], ['20%+', .20, 9]], b => b.edge)
-    + table('By model chance', [['65–73.75%', .65, .7375], ['73.75–82.5%', .7375, .825], ['82.5–91.25%', .825, .9125], ['91.25%+', .9125, 2]], b => b.p);
+  const chance = [...bets].sort((a, b) => a.p - b.p);
+  const chanceBands = [0, 1, 2, 3].map(i => {
+    const g = chance.slice(Math.floor(i * chance.length / 4), Math.floor((i + 1) * chance.length / 4));
+    return [`${(g[0].p * 100).toFixed(1)}–${(g[g.length - 1].p * 100).toFixed(1)}%`, g];
+  });
+  const edge = bets.filter(b => b.edge >= .10).sort((a, b) => a.edge - b.edge);
+  const edgeBands = [0, 1, 2, 3].map(i => {
+    const g = edge.slice(Math.floor(i * edge.length / 4), Math.floor((i + 1) * edge.length / 4));
+    return [`${(g[0].edge * 100).toFixed(1)}–${(g[g.length - 1].edge * 100).toFixed(1)}%`, g];
+  });
+  return `<h2>Calibration</h2><p class="note">Is the model's chance right? The same bets, comparing what the model said with how often the over actually won. Gap is actual minus model, in percentage points: near zero means the chance can be trusted, negative means the model was too confident. Market no-vig removes the bookmaker margin using the average over and under prices. The 10%+ edge and model-chance bands each contain equal numbers of bets. 4+ sets is the part of the matches that went past 3 sets. Market line, Model line and Actual total are averages for the band. Small bands move a lot by chance.</p>`
+    + table('By edge (10%+)', edgeBands, b => b.edge)
+    + table('By model chance', chanceBands, b => b.p);
 }
 
 // P/L by the market's total line: the live rule's bets in unseen seasons, in 5-point bands of the line (121.5–125.5 ...; user, 14 Nov 2026)
