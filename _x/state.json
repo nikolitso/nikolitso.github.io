@@ -71,6 +71,7 @@
       "squares-and-sharps-suckers-and-sharks",
       "statistical-sports-models-in-excel",
       "statistical-sports-models-in-excel-d49",
+      "statistical-sports-models-in-excel-volume-1",
       "storytelling-with-data-a-data-visualization",
       "succeed-how-we-can-reach-our-goals",
       "superforecasting-the-art-and-science",
@@ -171,7 +172,8 @@
       "168-hours-you-have-more-time-than",
       "weighing-the-odds-in-sports-betting",
       "range-how-generalists-triumph-in",
-      "statistical-sports-models-in-excel"
+      "statistical-sports-models-in-excel",
+      "statistical-sports-models-in-excel-volume-1"
     ],
     "log": [
       {
@@ -521,9 +523,15 @@
         "slot": "2026-11-18 14",
         "slug": "statistical-sports-models-in-excel",
         "id": "2123038799072518598"
+      },
+      {
+        "day": "2026-11-20",
+        "slot": "2026-11-20 14",
+        "slug": "statistical-sports-models-in-excel-volume-1",
+        "id": "2123748272665927757"
       }
     ],
-    "last_day": "2026-11-18"
+    "last_day": "2026-11-20"
   },
   "film": {
     "seen": [
@@ -1109,7 +1117,7 @@
     ],
     "last_day": "2026-11-16"
   },
-  "last_slot": "2026-11-19 14",
+  "last_slot": "2026-11-20 14",
   "quote": {
     "seen": [
       "1",
