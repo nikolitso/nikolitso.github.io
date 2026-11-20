@@ -272,17 +272,17 @@
    "away": false,
    "days": 3
   },
-  "h": 0.4,
-  "a": -0.3,
+  "h": -1.0,
+  "a": -1.6,
   "oh": [
-   "Diarra (not priced by this frozen model)",
-   "Hutson (not priced by this frozen model)",
-   "Arnokouros (not priced by this frozen model)"
+   "Diarra",
+   "Hutson",
+   "Arnokouros"
   ],
   "oa": [
    "Pinckney",
    "Williams",
-   "Lekavicius (not priced by this frozen model)",
+   "Lekavicius",
    "Brown Iii"
   ]
  },
@@ -301,17 +301,17 @@
    "away": true,
    "days": 3
   },
-  "h": -0.4,
-  "a": 0.1,
+  "h": 1.2,
+  "a": -0.6,
   "oh": [
    "Harris",
    "Karampelas"
   ],
   "oa": [
    "Evans Ii",
-   "Kalaitzakis (not priced by this frozen model)",
-   "Forrester (not priced by this frozen model)",
-   "Poulos (not priced by this frozen model)"
+   "Kalaitzakis",
+   "Forrester",
+   "Poulos"
   ]
  },
  "4Msinuhc": {
@@ -319,8 +319,8 @@
   "fa": 0.0,
   "eh": null,
   "ea": null,
-  "h": -1.1,
-  "a": -0.1,
+  "h": -1.0,
+  "a": -0.0,
   "oh": [
    "Sharma"
   ],
@@ -338,10 +338,10 @@
    "days": 2
   },
   "ea": null,
-  "h": 0.3,
-  "a": -0.6,
+  "h": 1.3,
+  "a": -1.2,
   "oh": [
-   "Mantzoukas (not priced by this frozen model)",
+   "Mantzoukas",
    "Badio",
    "Lessort",
    "Fall"
@@ -349,8 +349,8 @@
   "oa": [
    "Walker",
    "Salash",
-   "Jackson (not priced by this frozen model)",
-   "March Jr (not priced by this frozen model)"
+   "Jackson",
+   "March Jr"
   ]
  },
  "xztapJM9": {
@@ -368,17 +368,17 @@
    "away": false,
    "days": 3
   },
-  "h": -0.6,
-  "a": 0.5,
+  "h": -0.9,
+  "a": -0.1,
   "oh": [
    "Osman",
-   "Foster (not priced by this frozen model)",
-   "Bazinas (not priced by this frozen model)"
+   "Foster",
+   "Bazinas"
   ],
   "oa": [
-   "Jovic (not priced by this frozen model)",
-   "Charalampopoulos (not priced by this frozen model)",
-   "Antetokounmpo (not priced by this frozen model)",
+   "Jovic",
+   "Charalampopoulos",
+   "Antetokounmpo",
    "Tanoulis"
   ]
  },
@@ -392,11 +392,11 @@
    "days": 5
   },
   "ea": null,
-  "h": 0.0,
+  "h": -0.4,
   "a": -0.1,
   "oh": [
-   "Cannady (not priced by this frozen model)",
-   "Mantzaris (not priced by this frozen model)"
+   "Cannady",
+   "Mantzaris"
   ],
   "oa": [
    "Bogues Jr"
@@ -412,16 +412,16 @@
    "away": false,
    "days": 2
   },
-  "h": 0.0,
-  "a": -1.3,
+  "h": 0.1,
+  "a": -0.1,
   "oh": [
-   "Smith (not priced by this frozen model)"
+   "Smith"
   ],
   "oa": [
    "Montero",
    "Milutinov",
-   "Dorsey (not priced by this frozen model)",
-   "Papathanasiou (Papas) (not priced by this frozen model)"
+   "Dorsey",
+   "Papathanasiou (Papas)"
   ]
  }
 }
