@@ -449,8 +449,6 @@ function btTiles(k){
               ['Average line', TWO('Opening', lineAvg(c, 'line'), 'Closing', lineAvg(c, 'close')), ''],
               ['Average total', TWO('Model', lineAvg(c, 'mu'), 'Actual', lineAvg(c, 'total')), ''],
               ...(c.length ? mvTiles(c).slice(0, -1) : []),
-              ...(() => { const z = c.filter(b => b.close === b.line), d = z.filter(b => b.ret !== 0), w = d.filter(b => b.ret > 0).length, r = d.length ? d.reduce((x, b) => x + b.ret, 0) / d.length : null;   // the line did not move (14 Nov 2026)
-                 return z.length ? [['Won when no move', d.length ? pct(w / d.length, 1) : '–', `${pct(z.length / c.length)} of picks · ROI ${C(roi(r), cls(r))}`]] : []; })(),
               ...(c.length ? mvTiles(c).slice(-1) : []),   // moved against last
               ]);
 }
