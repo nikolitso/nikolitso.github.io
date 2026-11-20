@@ -337,7 +337,7 @@
   },
   "ea": null,
   "h": 0.3,
-  "a": 0.4,
+  "a": -0.6,
   "oh": [
    "Lessort",
    "Badio",
@@ -345,6 +345,7 @@
    "Mantzoukas (no cost)"
   ],
   "oa": [
+   "Walker",
    "Salash",
    "Jackson (no cost)",
    "March Jr (no cost)"
@@ -402,16 +403,16 @@
  },
  "xOTlty1t": {
   "fh": 0.0,
-  "fa": -1.9,
+  "fa": 0.0,
   "eh": null,
   "ea": {
    "comp": "EuroLeague",
-   "opp": "Real Madrid",
-   "away": false,
-   "days": 2
+   "opp": "Maccabi Tel Aviv",
+   "away": true,
+   "days": 5
   },
   "h": 0.0,
-  "a": -1.3,
+  "a": -1.4,
   "oh": [
    "Smith (no cost)"
   ],
