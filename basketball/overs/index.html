@@ -225,7 +225,7 @@ details.picks>summary .muted{font-size:14px;font-weight:400}
     <a href="#view=livetest" data-view="livetest">Live test</a>
     <a href="#view=backtest" data-view="backtest">Backtest</a>
     <a href="#view=projections" data-view="projections">Projections</a>
-    <a href="#view=h1" data-view="h1">1H</a>
+    <a href="#view=h1" data-view="h1">1H live test</a>
     <a href="#view=leagues" data-view="leagues">Leagues</a>
     <a href="#view=method" data-view="method">How it works</a>
   </nav>
@@ -243,7 +243,7 @@ details.picks>summary .muted{font-size:14px;font-weight:400}
 <section class="an-page-about" aria-label="About this page">
 <p class="an-page-about__label">About this page</p>
 <p>This page projects totals in domestic basketball leagues: top divisions and a set of second divisions. Each team gets one number from this season's games: how many points above or below its league's average its games produce. With pace, 3-point luck and other signals, it gives the chance a game goes over the opening line. A pick is the over only, when the edge clears the page's bar, in the regular season and on half-point lines.</p>
-<p>Projections shows the next 7 days, and Live test records each pick at the line and price when it was logged; the 1H tabs cover first halves. Backtest covers 2022–23 to 2025–26, and Leagues shows each league's record. A game's line is the median of the main market lines.</p>
+<p>Projections shows the next 7 days, and Live test records each pick at the line and price when it was logged; the 1H live test tabs cover first halves. Backtest covers 2022–23 to 2025–26, and Leagues shows each league's record. A game's line is the median of the main market lines.</p>
 </section>
 </main>
 <script src="data.js?v=fh2"></script>
@@ -656,7 +656,7 @@ function renderProjections(){
 }
 
 // 1H projections (14 Nov 2026): every game's first-half projection from earlier first halves only, against the market's first-half line
-function h1Proj(){                                          // the next 7 days, on the 1H tab under the open 1H picks (20 Nov 2026)
+function h1Proj(){                                          // the next 7 days, on the 1H live test tab under the open 1H picks (20 Nov 2026)
   const H = LIVE.h1;
   if (!H) return '';
   let h = '<h2 id="h1proj">Next 7 days</h2>';   // the note goes under the tables (16 Nov 2026)
