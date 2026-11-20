@@ -148,7 +148,7 @@ details.more{margin-top:14px;border-top:1px solid var(--line);padding-top:6px}de
 th.srt{cursor:pointer;user-select:none}th.srt:hover{color:var(--ink)}
 th[aria-sort=ascending]::after{content:" \25B2";font-size:max(14px,.7em)}th[aria-sort=descending]::after{content:" \25BC";font-size:max(14px,.7em)}
 
-.chips{display:flex;gap:6px;flex-wrap:wrap}.chip{border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:3px 13px;border-radius:99px;font:inherit;font-size:max(14px,.86rem);cursor:pointer}a.chip{text-decoration:none;display:inline-block}.chip:hover{border-color:var(--accent)}.chip.on{background:var(--accent);border-color:var(--accent);color:var(--an-on-accent)}
+.chips{display:flex;gap:6px;flex-wrap:wrap}.ltchips{margin:2px 0 12px}.chip{border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:3px 13px;border-radius:99px;font:inherit;font-size:max(14px,.86rem);cursor:pointer}a.chip{text-decoration:none;display:inline-block}.chip:hover{border-color:var(--accent)}.chip.on{background:var(--accent);border-color:var(--accent);color:var(--an-on-accent)}
 .how3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.hcard{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px;font-size:max(14px,.86rem);line-height:1.5;color:var(--ink2)}.hcard b.t{display:block;font-family:var(--display);font-size:1.05rem;color:var(--ink);margin-bottom:4px}@media (max-width:820px){.how3{grid-template-columns:1fr}}
 
 html{scroll-behavior:smooth;font-size:17.5px}   /* one step larger: the page sizes its text in rem */section{scroll-margin-top:60px}
@@ -250,6 +250,7 @@ html{scroll-behavior:smooth;font-size:17.5px}   /* one step larger: the page siz
 
 <section id="projections">
   <div><h2 id="ltH">Live test</h2></div>
+  <div class="chips ltchips" id="ltChips"></div>
   <div id="ltSides"></div>
   <h3 id="ltOpenH">Open picks</h3>
   <div class="tbl"><table id="ltOpen"></table></div>
@@ -351,7 +352,7 @@ html{scroll-behavior:smooth;font-size:17.5px}   /* one step larger: the page siz
 </footer>
 </main>
 
-<script src="/handball/data.js?v=c94951e2"></script>
+<script src="/handball/data.js?v=81f15d44"></script>
 <script>
 const $=s=>document.querySelector(s);
 const f=(v,d=2)=>v==null||isNaN(v)?'–':(+v).toFixed(d);
@@ -464,6 +465,8 @@ const day=d=>{if(!d)return '–';const [y,m,dd]=d.split('-');return new Date(+y,
   const LG=Object.fromEntries(Object.entries({'2-bundesliga':'bl2',bundesliga:'t_de',israel:'il',norway:'t_no',spain:'w_es',portugal:'w_pt',romania:'w_ro'}).filter(([,k])=>L.some(l=>l.key===k))), SL=Object.fromEntries(Object.entries(LG).map(([a,b])=>[b,a]));
   const BASE=document.querySelector('.wrap').dataset.base, lgHref=k=>BASE?`${BASE}live-test/${SL[k]}/`:'#'+SL[k];
   window.__LG=LG;
+  // League pills on the live test pages (20 Nov 2026): all leagues of the side, then each league; the page's own pill is lit
+  const ltChips=(sd,on)=>`<div class="chips ltchips">${[[null,`All ${sd==='under'?'unders':'overs'}`,BASE?`${BASE}live-test/${sd==='under'?'unders':'overs'}/`:`#lt-${sd==='under'?'unders':'overs'}`],...L.filter(l=>l.side===sd&&SL[l.key]).map(l=>[l.key,l.name.split(' · ')[0],lgHref(l.key)])].map(([k,t,h])=>`<a class="chip${k===on?' on':''}" href="${h}">${t}</a>`).join('')}</div>`;
   {const TL=G.testLeagues||[],TS=G.testSignals||[],tOpen=liveOpen(TS),tDone=TS.filter(x=>x.status!=='open').sort((a,b)=>(b.date||'').localeCompare(a.date||'')),tw=tDone.filter(x=>x.status==='won').length,tl=tDone.filter(x=>x.status==='lost').length,tp=tDone.reduce((a,x)=>a+(x.profit||0),0),tO=Object.fromEntries(tOpen.map(x=>[x.url,x])),tName=k=>(TL.find(l=>l.key===k)||{name:k}).name.split(' · ')[0];
     const hasBt=l=>Object.values(l.past||{}).some(p=>p&&p.train&&p.train.n), noBt=TL.filter(l=>!hasBt(l)).map(l=>l.name.split(' · ')[0]), lostBt=TL.filter(l=>l.key==='t_gr'&&hasBt(l)).map(l=>l.name.split(' · ')[0]);
     $('#tsLead').textContent=`${TL.length} leagues on trial, kept out of the main record until they have 100 picks, backtest and live together, with a profit over them; a league that gets there moves across by itself. Each runs live with one side. ${noBt.length?`${noBt.join(' and ')} ${noBt.length===1?'has':'have'} no past market lines, so there is no backtest: the model's settings come from past results only. Picks there are unders only (from 14 Nov 2026).`:''} ${lostBt.length?`${lostBt.join(' and ')} ${lostBt.length===1?'was':'were'} added on request although the backtest lost on both sides, over and under: picks there are overs only (from 14 Nov 2026), to see whether that holds live.`:''}`;
@@ -485,6 +488,7 @@ const day=d=>{if(!d)return '–';const [y,m,dd]=d.split('-');return new Date(+y,
   const L0=L,U0=U,S0=S;
   window.__lt=sd=>{const L=L0.filter(l=>l.side===sd),U=U0.filter(x=>x.lg.side===sd),S=S0.filter(x=>x.side===sd);
   $('#ltH').textContent='Live test · '+(sd==='over'?'Overs':'Unders');
+  $('#ltChips').outerHTML=ltChips(sd,null).replace('<div class="chips ltchips">','<div class="chips ltchips" id="ltChips">');
   $('#ltSides').innerHTML=`<p class="muted">${LSn(sd)}: every pick since the league joined, graded at the line taken, the opening line and the closing line.</p>${ltTiles(S)}`;
   {const lgN=x=>lgS(x.league,(x.leagueName||'').split(' · ')[0]), O=liveOpen(S), Dn=S.filter(x=>x.status!=='open').sort((a,b)=>((b.date||'')+(b.time||'')).localeCompare((a.date||'')+(a.time||'')));
    $('#ltOpen').innerHTML=O.length?`<thead><tr><th class="l">League</th><th class="l">Match</th><th class="l">Date</th><th>Call</th><th>Odds</th><th>Model total</th><th>Model − line</th><th>Line now</th></tr></thead><tbody>${O.map(x=>`<tr class="hot"><td class="l">${lgN(x)}</td><td class="l m">${ml(x)}</td><td class="l">${day(x.date)} <span class="muted">${x.time||''}</span></td><td><b>${side(x.side)} ${f(x.line,1)}</b></td><td>${f(x.odds,2)}</td><td>${f(x.ours,1)}</td><td class="${cls(x.side==='over'?x.gap:-x.gap)}">${sg(x.gap,1)}</td>${nowCell(x)}</tr>`).join('')}</tbody>`:'<tbody><tr><td class="l empty">No open picks right now.</td></tr></tbody>';
@@ -574,7 +578,7 @@ const day=d=>{if(!d)return '–';const [y,m,dd]=d.split('-');return new Date(+y,
     <h3>The workings, match by match</h3>
     <div class="tbl"><table>${P.length?`<thead><tr><th class="l">Match</th><th>Home goals expected<br><span class="muted">${f(H.muH,1)} × attack × defence</span></th><th>Away goals expected<br><span class="muted">${f(H.muA,1)} × attack × defence</span></th><th>Sum</th><th>Correction</th><th>Model total</th><th>Market line</th></tr></thead><tbody>${P.map(x=>`<tr class="${x.signal||OPEN[x.url]?'hot':''}"><td class="l m">${ml(x)}</td><td>${f(H.muH,1)} × ${f(x.ah,2)} × ${f(x.da,2)} = <b>${f(x.ph,1)}</b></td><td>${f(H.muA,1)} × ${f(x.aa,2)} × ${f(x.dh,2)} = <b>${f(x.pa,1)}</b></td><td>${f(x.ph+x.pa,1)}</td><td>${sg(H.shift,1)}</td><td><b>${f(x.ours,1)}</b></td><td>${x.line!=null?f(x.line,1):'–'}</td></tr>`).join('')}</tbody>`:'<tbody><tr><td class="l empty">The workings appear here once matches qualify for a projection.</td></tr></tbody>'}</table></div>`:'';
     const tiles=[['Flagged now',mine.filter(x=>x.status==='open').length,'to play'],['2026-27 live test',`${w}–${lo}`,(w+lo?`${pct(pf/(w+lo)*100)} ROI`:'nothing settled yet')+(mine.length?' · see picks':''),mine.length?1:0],['Games played',l.gamesMin+'+',l.gamesMin>=l.start?'live':`starts after ${l.start}`]];
-    $('#league').innerHTML=`<p class="crumb"><a href="${BASE?BASE+'live-test/'+(l.side==='under'?'unders':'overs')+'/':'#lt-'+(l.side==='under'?'unders':'overs')}">← Live test ${l.side==='under'?'unders':'overs'}</a></p><div><div class="eyebrow">${l.side==='over'?'Over':'Under'}</div><h2>${nmL}</h2><p class="small">${lgS(l.key,'Standings, team averages and league average →')}</p><p class="muted">The model's projected total against the market's line. A match is flagged when its total is ${f(l.gap,0)}+ goals ${l.side==='over'?'above':'below'} the line and both teams have played ${l.start} games.</p></div>
+    $('#league').innerHTML=`<p class="crumb"><a href="${BASE?BASE+'live-test/'+(l.side==='under'?'unders':'overs')+'/':'#lt-'+(l.side==='under'?'unders':'overs')}">← Live test ${l.side==='under'?'unders':'overs'}</a></p>${ltChips(l.side,key)}<div><div class="eyebrow">${l.side==='over'?'Over':'Under'}</div><h2>${nmL}</h2><p class="small">${lgS(l.key,'Standings, team averages and league average →')}</p><p class="muted">The model's projected total against the market's line. A match is flagged when its total is ${f(l.gap,0)}+ goals ${l.side==='over'?'above':'below'} the line and both teams have played ${l.start} games.</p></div>
     <div class="tiles">${tiles.map(([k,v,n,pk])=>`<div class="tile${pk?' pick':''}"${pk?' role="button" tabindex="0" style="cursor:pointer"':''}><span class="klabel">${k}</span><span class="stat">${v}</span><span class="small muted">${n}</span></div>`).join('')}</div>
     <div id="lgPicks" hidden>${mine.length?`<p class="small muted">${window.__pkSum(mine)}</p>`:''}<div class="tbl"><table data-srt="1">${logT}</table></div></div>
     ${avgTiles}
