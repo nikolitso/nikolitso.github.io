@@ -230,6 +230,9 @@ html{scroll-behavior:smooth;font-size:17.5px}   /* one step larger: the page siz
   <div class="tiles" id="sgTiles"></div>
   <div class="opbox" id="sgQBox"><div class="ophd"><h3 id="sgQH">Open picks</h3><span class="opn" id="sgQN"></span></div><div class="opgrid" id="sgQ"></div><p class="small muted" id="sgQNote"></p></div>
   <div id="sgPicks" hidden><div class="pks" id="sgPickPills"><a href="#" data-m="all" class="on">All</a><a href="#" data-m="over">Overs</a><a href="#" data-m="under">Unders</a><span class="small muted" id="sgPicksSum" style="margin-left:6px;align-self:center"></span></div><div class="tbl"><table id="sgPicksT"></table></div></div>
+  <h3 id="hmCalH">Calibration</h3>
+  <p class="small muted" id="hmCalNote"></p>
+  <div id="hmCalW"><div class="tbl"><table id="hmCal"></table></div><div class="tbl"><table id="hmCal2"></table></div></div>
   <h3>Line movement</h3>
   <p class="small muted">Each settled pick graded three ways: at the line and price taken when it was flagged (the record above), at the market's opening line and at its closing line, each with that line's price. Beat line by = goals the real total landed past the line in the pick's direction. Graded at the closing line is the harder test: it shows whether the edge survives the market's final view.</p>
   <div class="tbl"><table id="sgLM"></table></div>
@@ -352,7 +355,7 @@ html{scroll-behavior:smooth;font-size:17.5px}   /* one step larger: the page siz
 </footer>
 </main>
 
-<script src="/handball/data.js?v=f7827994"></script>
+<script src="/handball/data.js?v=644638bf"></script>
 <script>
 const $=s=>document.querySelector(s);
 const f=(v,d=2)=>v==null||isNaN(v)?'–':(+v).toFixed(d);
@@ -430,6 +433,16 @@ const day=d=>{if(!d)return '–';const [y,m,dd]=d.split('-');return new Date(+y,
   const logHTML=(S,noLg)=>S.length?`<thead><tr>${noLg?'':'<th class="l">League</th>'}<th class="l">Match</th><th class="l">Date</th><th>Call</th><th>Odds</th><th>Model</th><th>Real</th><th class="l">Result</th><th>Opening line</th><th>Closing line</th><th>Beat opening</th><th>Beat closing</th></tr></thead><tbody>${S.map(x=>`<tr class="${x.status==='open'?'hot':''}">${noLg?'':`<td class="l muted">${lgS(x.league,(x.leagueName||'').split(' · ')[0])}</td>`}<td class="l m">${ml(x,1)}</td><td class="l">${day(x.date)}${x.status==='open'?` <span class="muted">${x.time||''}</span>`:''}</td><td><b>${side(x.side||'over')} ${f(x.line,1)}</b></td><td>${f(x.odds)}</td><td>${f(x.ours,1)}</td><td>${x.total??'–'}</td><td class="l">${st[x.status]}</td><td>${x.open?f(x.open.line,1):'–'}</td><td>${x.close?(mv(x)?`<b class="${cls(mv(x))}">${f(x.close.line,1)}</b>`:f(x.close.line,1)):'–'}</td><td>${x.total==null?'–':btd(x,x.open&&x.open.line)}</td><td>${x.total==null?'–':btd(x,x.close&&x.close.line)}</td></tr>`).join('')}</tbody>${avgRow(S,noLg)}`:'<tbody><tr><td class="l empty">Nothing yet.</td></tr></tbody>';
   $('#sgLog').innerHTML=logHTML(S);
   $('#sgLM').innerHTML=lmHTML(S);
+  // Calibration on Home (20 Nov 2026): a live table once the main record has 50 settled picks, same bands as the backtest; until then a pointer to it
+  {const CAL_MIN=50, Dn=S.filter(x=>x.status==='won'||x.status==='lost'||x.status==='push'), Pp=Dn.filter(x=>x.p!=null), ARm=(G.archive||[]).length,
+     btL=sd=>{const B=document.querySelector('.wrap').dataset.base;return B?`${B}backtesting/${sd}/`:`#bt-${sd}`}, avg=(R,fn)=>R.length?R.reduce((t,x)=>t+fn(x),0)/R.length:null;
+   if(Pp.length<CAL_MIN){$('#hmCalNote').innerHTML=`Is the model's confidence right? Live calibration appears here once the main record has ${CAL_MIN} settled picks (${Dn.length} so far): with fewer, each band holds a handful of picks and swings with every result. Until then, see Calibration on the backtest pages, ${ARm} picks: <a href="${btL('overs')}">overs</a> · <a href="${btL('unders')}">unders</a>.`;$('#hmCalW').hidden=true}
+   else{const gp=x=>x.side==='over'?x.ours-x.line:x.line-x.ours, head=lab=>`<thead><tr><th class="l">${lab}</th><th>Picks</th><th>Price implies</th><th>Model said</th><th>Actual</th><th>Actual − model</th><th>ROI</th></tr></thead>`,
+     row=(k,R)=>{const said=avg(R,x=>x.p)*100,dec=R.filter(x=>x.status!=='push'),hit=dec.length?dec.filter(x=>x.status==='won').length/dec.length*100:null,pr=R.reduce((t,x)=>t+(x.profit||0),0);return `<tr><td class="l">${k}</td><td>${R.length}</td><td>${f(avg(R,x=>100/x.odds),1)}%</td><td>${f(said,1)}%</td><td>${f(hit,1)}%</td><td class="${cls(hit-said)}">${sg(hit-said,1)}</td><td class="${cls(pr)}">${dec.length?sg(100*pr/dec.length,1)+'%':'–'}</td></tr>`},
+     band=(lab,B,val)=>head(lab)+`<tbody>${B.map(([k,lo,hi])=>[k,Pp.filter(x=>val(x)>=lo&&val(x)<hi)]).filter(([,R])=>R.length).map(([k,R])=>row(k,R)).join('')}${row('All',Pp)}</tbody>`;
+     $('#hmCalNote').innerHTML=`Is the model's confidence right? The ${Pp.length} settled live picks, comparing the chance the model gave (the real total spread around the model's total as in that league, 2022-25) with how often the pick won. Same bands as the <a href="${btL('overs')}">backtest calibration</a>; actual − model near zero means the chance can be trusted.`;
+     $('#hmCal').innerHTML=band('Model chance',[['Under 65%',0,.65],['65–70%',.65,.70],['70%+',.70,2]],x=>x.p);
+     $('#hmCal2').innerHTML=band('Gap',[['2 to 2.9 goals',2,3],['3 to 3.9 goals',3,4],['4+ goals',4,99]],gp);}}
   // Live test by side (14 Nov 2026): overs and unders each get the full tile set — record, ROI at the opening and closing line, lines, totals, line movement, drawdown
   const ltTiles=A=>{const D=A.filter(x=>x.status!=='open'&&x.total!=null),w=D.filter(x=>x.status==='won').length,lo=D.filter(x=>x.status==='lost').length,pr=D.reduce((a,x)=>a+(x.profit||0),0);
     const roiAt=g=>{const G=D.map(g).filter(Boolean),ww=G.filter(r=>r.st==='won').length,ll=G.filter(r=>r.st==='lost').length,p=G.reduce((a,r)=>a+r.p,0);return ww+ll?p/(ww+ll)*100:null};
