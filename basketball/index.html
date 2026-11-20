@@ -273,6 +273,16 @@ html{scroll-behavior:smooth;font-size:17.5px}   /* one step larger: the page siz
     <li><b>Players</b> (pick a team below): each player's Box, On/off and Value, in points per game in his usual minutes, with the columns explained under the team's table.</li>
   </ul>
   <div id="stPl"></div>
+  <details class="ros" style="margin-top:14px"><summary><b>What an absence costs, by role</b> <span class="muted small">· Greek League 2022–27, 594 games</span></summary>
+  <p class="small muted">How much a team's margin fell when a regular missed a game, by his minutes a game before it. Points lost per game: + = the team did worse without him.</p>
+  <div class="tbl"><table><thead><tr><th class="l">Missing player</th><th>Cases</th><th>Usual minutes</th><th>Points lost</th><th>Per 10 of his minutes</th></tr></thead><tbody>
+  <tr><td class="l"><b>Key starter</b> (25+ min)</td><td>170</td><td>27.9</td><td><b class="neg">+2.4</b> <span class="muted small">± 1.0</span></td><td>+0.9 <span class="muted small">± 0.3</span></td></tr>
+  <tr><td class="l"><b>Starter</b> (20–25 min)</td><td>234</td><td>22.4</td><td>−0.1 <span class="muted small">± 0.9</span></td><td>−0.0 <span class="muted small">± 0.4</span></td></tr>
+  <tr><td class="l"><b>Rotation</b> (15–20 min)</td><td>273</td><td>17.5</td><td>−0.2 <span class="muted small">± 0.8</span></td><td>−0.1 <span class="muted small">± 0.4</span></td></tr>
+  <tr><td class="l"><b>Bench</b> (10–15 min)</td><td>201</td><td>12.4</td><td>−1.1 <span class="muted small">± 0.9</span></td><td>−0.9 <span class="muted small">± 0.7</span></td></tr>
+  </tbody></table></div>
+  <ul class="boxlist small"><li>Only a missing <b>key starter</b> clearly costs points (about 2.4 a game); below 25 minutes the bench covers the gap, and the other figures are within chance (a figure under about twice its ± can be chance).</li><li>Position made no clear difference: a missing center cost no more than a missing guard or forward of the same minutes.</li><li>Counted: a player averaging 10+ minutes who had played 60%+ of his team's games, missed this one and played again later (injuries and rest, not departures). Each season's margins fitted with team ratings and the absences together. Measured on Greek League games (2022–25 and this season); Cyprus has no history of its own.</li><li>A study of the data, not a separate step: Team strength already costs each missing player by his own value and minutes.</li></ul>
+  </details>
   </div>
   <div class="pane" data-pane="ros" data-name="Rosters and imports" hidden>
   <h3 id="rosHead" hidden>Rosters and imports</h3>
@@ -318,7 +328,7 @@ html{scroll-behavior:smooth;font-size:17.5px}   /* one step larger: the page siz
 </main>
 
 <script>/* the handicap estimates refresh hourly: a new address every 10 minutes so browsers do not keep an old copy */document.write('<script src="/basketball/handicap/live.js?t='+Math.floor(Date.now()/6e5)+'"><\/script>')</script>
-<script src="/basketball/data.js?v=7915daba"></script>
+<script src="/basketball/data.js?v=9b9551a7"></script>
 <script>
 const $=s=>document.querySelector(s);
 if(D.showProjections===false)document.body.classList.add('noproj');   /* projections hidden until the season is far enough in */
