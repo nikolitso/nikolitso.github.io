@@ -248,7 +248,7 @@ details.picks>summary .muted{font-size:14px;font-weight:400}
 </section>
 </main>
 
-<script src="live.js?v=202611210141"></script>
+<script src="live.js?v=202611210145"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
@@ -314,7 +314,7 @@ function renderMethod(){
 <div class="calc">projected home margin = home edge + home strength − away strength</div>
 ${E ? `<p>Example: ${esc(E.home)} v ${esc(E.away)} (${dayName(E.date)}): the model had the home side by ${sgn(E.mu)}, a handicap of ${hc(E.mu)}; the books opened at ${hc(E.open)} and closed at ${hc(E.line)}. Final score ${E.hp}–${E.ap}.</p>` : ''}
 <h3><span class="num">2</span>The market's view, absences and fatigue</h3>
-<p>The same fit run on the books' closing handicaps of earlier games (instead of the results) gives the market's view of each team; the model's margin = 0.69 × results margin + 0.56 × market margin − 0.30. Weights fitted on 2022–25 games of the two leagues (563); on unseen 2025–27 games (190) the miss fell from 12.02 to 11.78 points (Greece 12.60 to 12.41, Cyprus 11.07 to 10.76). The attack/defence Team ratings were tested as a third part and added nothing, so they are left out. The books' closing line itself still missed by less (11.70). The blend is used for the projected score only: against the books (Diff, side, chance, covered) the page uses the model's own view, results + absences + fatigue, because the market part mostly repeats the line (unseen 2025–27, opening line: own view's side covered 56.8%, the blend's 52.6%).</p>
+<p>The same fit run on the books' closing handicaps of earlier games (instead of the results) gives the market's view of each team; the model's margin = 0.69 × results margin + 0.56 × market margin − 0.30. Weights fitted on 2022–25 games of the two leagues (563); on unseen 2025–27 games (190) the miss fell from 12.02 to 11.78 points (Greece 12.60 to 12.41, Cyprus 11.07 to 10.76). The attack/defence Team ratings were tested as a third part and added nothing, so they are left out. The books' closing line itself still missed by less (11.70). Since 21 Nov 2026 the page uses one margin everywhere, the model's own view: results + absences + fatigue. It gives the Model column, the projected score, Diff, side, chance and covered. The blend is shown on each match page for reference only, because the market part mostly repeats the line (unseen 2025–27, opening line: own view's side covered 56.8%, the blend's 52.6%).</p>
 <p>Results alone cannot see who plays. Since 14 Nov 2026 the margin adds each team's line-up change from the <a class="gm" href="/basketball/greece/#str">Team strength</a> model, which values every player from the official box scores and knows who is out (missed the last game, or ruled out by club news, often imports): (the team's average line-up cost in its games so far − the cost of the line-up expected next) × possessions ÷ 100. Players back or a new import count the other way. The value is frozen at tip-off, so a played game keeps what the page showed. From 21 Nov 2026 an absent player always costs something: at least 0.3 points per 10 of his usual minutes, and a key starter (25+ minutes a game) at least 2.4 points, the costs measured for missing players in 594 Greek League games (the line-up model alone often charged nothing). Round 7 of the Greek League (14-15 Nov) was re-rated with them on 21 Nov, as the model would have seen each game before tip-off: results and box scores from before that day and the availability list of 14 Nov. Not backtested: there is no line-up history before this season. <b>Fatigue</b> is added the same way, from the league pages' Fatigue factor: a team 2 days after a European game loses 1.9 points, 3 days after 0.9.</p>
 <h3><span class="num">3</span>Only after ${GP} games</h3>
 <p>An estimate is shown once both teams have played at least <b>${GP} games</b> of the regular season, so that a team's strength rests on enough of its own games; before that the number is mostly the league average. Play-off games are left out.</p>
@@ -367,8 +367,8 @@ function renderGame(){
     ? `<p>The same fit on the books' closing handicaps of this season's earlier games (${MK.n} games, the <a class="gm" href="/basketball/${pg}/#mk">Vs Market</a> data) instead of the results: how the books rate the two teams.</p>`
       + calc(`home edge ${sgn(MK.hca)} + ${esc(g.home)} ${sgn(MK.rh)} − ${esc(g.away)} ${sgn(MK.ra)} = <b>${sgn(MK.mu)}</b>`)
     : `<p class="muted">Not enough handicaps yet: the results margin is used alone.</p>`);
-  h += step(5, 'Results and market together') + (MK
-    ? `<p>Weights fitted on 2022–25 games of the two leagues; on unseen 2025–27 games the blend missed by 11.8 points, results alone by 12.0. Team ratings (attack/defence) were tested too and added nothing.</p>`
+  h += step(5, 'Results and market together (reference only)') + (MK
+    ? `<p>Weights fitted on 2022–25 games of the two leagues; on unseen 2025–27 games the blend missed by 11.8 points, results alone by 12.0. Team ratings (attack/defence) were tested too and added nothing. <b>Not used below</b>: the market part mostly repeats the books' line, so the model's margin is its own view (step 8).</p>`
       + calc(`${MK.w[0]} × ${sgn(A)} + ${MK.w[1]} × ${sgn(MK.mu)} ${pm(MK.w[2], 2)} = <b>${sgn(BL)}</b>`)
     : calc(`results margin <b>${sgn(A)}</b>`));
   h += step(6, 'Absences') + (AB
@@ -383,15 +383,15 @@ function renderGame(){
   const eu = e => e ? `${esc(e.comp)} ${e.away ? 'at' : 'v'} ${esc(e.opp)}` : '–';
   h += step(7, 'Fatigue') + `<p>A European game shortly before: 2 days before costs ${sgn(-1.9)} points, 3 days ${sgn(-0.9)}, 4 or more nothing (the <a class="gm" href="/basketball/${{'greece-basket-league': 'greece', 'cyprus-division-a': 'cyprus'}[g.lg]}/#fat">Fatigue factor</a>, from 10 seasons of league games after European ones).</p>`
     + tbl(['Team', 'European game', 'Days before', 'Points'], [[g.home, AB0.eh, AB0.fh], [g.away, AB0.ea, AB0.fa]].map(([t, e, p]) => `<tr><td>${esc(t)}</td><td class="n">${eu(e)}</td><td class="n">${e ? e.days : '–'}</td><td class="n">${sgn(p || 0)}</td></tr>`), 720);
-  h += step(8, 'Projected margin') + calc(`results and market + absences + fatigue<br>${sgn(BL)} ${pm(ab)} ${pm(FT)} = <b>${sgn(MP)}</b> for ${esc(g.home)} (the projected handicap; home favourite = +)`);
+  h += step(8, 'Projected margin') + calc(`results margin + absences + fatigue<br>${sgn(A)} ${pm(ab)} ${pm(FT)} = <b>${sgn(g.mu)}</b> for ${esc(g.home)} (the model's handicap; home favourite = +)`) + (MK ? `<p class="muted">With the market's view blended in (step 5) it would be ${sgn(MP)}: shown for reference, not used.</p>` : '');
   const PL = g.pl || {}, tb = g.tb != null ? g.tb : g.tot;
   const tr = (n, x) => `<tr><td>${esc(n)}</td><td class="n">${x ? sgn(x[0]) : '–'}</td><td class="n">${x && x[2] != null ? sgn(x[2]) : '–'}</td></tr>`;
   h += step(9, 'Projected total') + `<p>The <a class="gm" href="/basketball/overs/#view=method">totals page</a>'s model (the league's average total plus both teams' scoring numbers), then pace and 3-point luck: each possession of pace above the league average${PL.avg ? ` (${f1(PL.avg)})` : ''} is worth ${g.tk ? sgn(g.tk[0], 2) : '–'} points and each point of 3-point luck ${g.tk ? sgn(g.tk[1], 2) : '–'} (luck counts against: hot shooting tends to cool), both fitted on ${g.tk ? g.tk[2] : '–'} games of this league, 2022–26.</p>`
     + (PL.home ? tbl(['Team', 'Pace', '3-pt luck'], [tr(g.home, PL.home), tr(g.away, PL.away), `<tr class="sum"><td>This game</td><td class="n">${PL.pace != null ? sgn(PL.pace) : '–'}</td><td class="n">${PL.luck != null ? sgn(PL.luck) : '–'}</td></tr>`], 520) : '')
     + calc(`totals model ${tb == null ? '–' : f1(tb)} + pace ${g.tpace == null ? '0 (not enough games)' : sgn(g.tpace)} + luck ${g.tluck == null ? '0 (not enough games)' : sgn(g.tluck)} = <b>${T}</b> points`);
-  const [mh, ma] = pts(est ? MP : null, g.tot);
+  const [mh, ma] = pts(est ? g.mu : null, g.tot);
   h += step(10, 'Points for each side') + calc(`${esc(g.home)} = (total + margin) ÷ 2 = <b>${mh}</b><br>${esc(g.away)} = (total − margin) ÷ 2 = <b>${ma}</b>`);
-  const modelRow = cls => `<tr class="${cls}"><td><b>Model</b></td><td class="n">${mh}</td><td class="n">${ma}</td><td class="n">${est ? hc(MP) : '–'}</td><td class="n">${T}</td></tr>`;
+  const modelRow = cls => `<tr class="${cls}"><td><b>Model</b></td><td class="n">${mh}</td><td class="n">${ma}</td><td class="n">${est ? hc(g.mu) : '–'}</td><td class="n">${T}</td></tr>`;
   h += tbl(['', esc(g.home), esc(g.away), 'Handicap', 'Total'], [modelRow('sum')], 760);
   // last: the books
   h += `<h2 class="day">Against the books</h2>`;
@@ -409,7 +409,7 @@ function renderGame(){
     h += `<p class="muted">Diff: points between the model and the line. Chance: the model's chance its side covers, with the league's usual miss of ${f1(sd)} points (normal curve). Line: median of ${g.books} books.</p>`;
     if (done) {
       const res = (s, c) => s ? `${esc(g[s])} ${c == null ? 'push' : c ? '<b class="w">✓</b>' : '<b class="l">✗</b>'}` : '–';
-      h += `<p>Result: opening ${res(g.so, g.co)} · closing ${res(g.sc, g.cc)} · projection missed the margin by ${f1(Math.abs(g.hp - g.ap - MP))}, the line by ${f1(Math.abs(g.hp - g.ap - line))}.</p>`;
+      h += `<p>Result: opening ${res(g.so, g.co)} · closing ${res(g.sc, g.cc)} · the model missed the margin by ${f1(Math.abs(g.hp - g.ap - g.mu))}, the line by ${f1(Math.abs(g.hp - g.ap - line))}.</p>`;
     }
   }
   return h + '</div>';
