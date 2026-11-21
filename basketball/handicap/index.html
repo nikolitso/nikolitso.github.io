@@ -248,7 +248,7 @@ details.picks>summary .muted{font-size:14px;font-weight:400}
 </section>
 </main>
 
-<script src="live.js?v=202611210213"></script>
+<script src="live.js?v=202611210220"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
@@ -319,8 +319,8 @@ ${E ? `<p>Example: ${esc(E.home)} v ${esc(E.away)} (${dayName(E.date)}): the mod
 <h3><span class="num">3</span>Only after ${GP} games</h3>
 <p>An estimate is shown once both teams have played at least <b>${GP} games</b> of the regular season, so that a team's strength rests on enough of its own games; before that the number is mostly the league average. Play-off games are left out.</p>
 <h3><span class="num">4</span>Against the handicap</h3>
-<p>The line is the books' handicap for the home side: the median of each book's main handicap (the one it prices closest to evens), at the opening and at the latest or closing line. The <b>model's side</b> is the home team when the projected margin is above the line, the away team when below; <b>Diff</b> is the gap in points. The <b>chance</b> that side covers assumes the final margin falls around the projection with the league's usual miss (about ${f1(sdG)} points in Greece and ${f1(sdC)} in Cyprus), widened ×2: calibrated on 21 Nov 2026, because the raw chances ran high (said 60–70%, covered about 53%). The scale fitted the cover results better both in 2022–25 and on unseen 2025–27 games; it changes no side.</p>
-<div class="calc">chance the home side covers = P(margin &gt; line), margin ~ Normal(projection, 2 × league miss)</div>
+<p>The line is the books' handicap for the home side: the median of each book's main handicap (the one it prices closest to evens), at the opening and at the latest or closing line. The <b>model's side</b> is the home team when the projected margin is above the line, the away team when below; <b>Diff</b> is the gap in points. The <b>chance</b> that side covers assumes the final margin falls around the projection with the league's usual miss: about ${f1(sdG)} points in Greece and ${f1(sdC)} in Cyprus.</p>
+<div class="calc">chance the home side covers = P(margin &gt; line), margin ~ Normal(projection, league miss)</div>
 <h3><span class="num">5</span>Projected total and points</h3>
 <p>Each match page also projects the total: the <a class="gm" href="/basketball/overs/#view=method">totals page</a>'s model (league average plus both teams' scoring numbers), plus pace and 3-point luck, with each league's own weights fitted on its 2022–26 games: Greece +0.45 points per possession of pace above the league average and −0.51 per point of 3-point luck; Cyprus +1.63 and −0.13 (hot shooting tends to cool). Fitted on 2022–25 alone, they cut the miss on unseen 2025–27 games from 18.38 to 18.30 points in Greece and from 16.56 to 16.30 in Cyprus. Each side's points = (total ± margin) ÷ 2.</p>
 <h3><span class="num">6</span>Live test: the 2026–27 season</h3>
@@ -402,11 +402,11 @@ function renderGame(){
   if (line == null) h += `<p class="muted">No handicap from the books yet.</p>`;
   else if (est) {
     h += `<p>Against the line the model uses its <b>own view</b>, without the market part: results margin ${sgn(A)} + absences ${sgn(ab)} + fatigue ${sgn(FT)} = <b>${sgn(g.mu)}</b>. The market part makes the projection more accurate but mostly repeats the line: on unseen 2025–27 games the own view's side covered 56.8% at the opening line, the blend's 52.6%.</p>`;
-    const pH = ln => 1 - phi((ln - g.mu) / (sd * (LIVE.cs || 1)));
+    const pH = ln => 1 - phi((ln - g.mu) / sd);
     const lr = (lab, ln) => { if (ln == null) return ''; const d = g.mu - ln, s = d === 0 ? null : d > 0 ? 'home' : 'away', p = pH(ln);
       return `<tr><td>${lab}</td><td class="n">${hc(ln)}</td><td class="n">${f1(Math.abs(d))}</td><td class="n">${s ? esc(g[s]) : '–'}</td><td class="n">${s ? pct(s === 'home' ? p : 1 - p, 0) : '–'}</td></tr>`; };
     h += tbl(['Line', 'Handicap', 'Diff', "Model's side", 'Chance'], [lr(done ? 'Closing' : 'Latest', line), g.open != null && g.open !== line ? lr('Opening', g.open) : ''], 620);
-    h += `<p class="muted">Diff: points between the model and the line. Chance: the model's chance its side covers, with the league's usual miss of ${f1(sd)} points widened ×2 (calibrated on the cover results, see How it works). Line: median of ${g.books} books.</p>`;
+    h += `<p class="muted">Diff: points between the model and the line. Chance: the model's chance its side covers, with the league's usual miss of ${f1(sd)} points (normal curve). Line: median of ${g.books} books.</p>`;
     if (done) {
       const res = (s, c) => s ? `${esc(g[s])} ${c == null ? 'push' : c ? '<b class="w">✓</b>' : '<b class="l">✗</b>'}` : '–';
       h += `<p>Result: opening ${res(g.so, g.co)} · closing ${res(g.sc, g.cc)} · the model missed the margin by ${f1(Math.abs(g.hp - g.ap - g.mu))}, the line by ${f1(Math.abs(g.hp - g.ap - line))}.</p>`;
