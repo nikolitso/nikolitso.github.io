@@ -76,10 +76,17 @@ def upcoming(items, key):
     return sorted((it for it in items if parse(key(it)) >= NOW - timedelta(hours=2)), key=lambda it: parse(key(it)))
 
 
-def record(won, lost, profit, n_open, word="pick"):
-    """The three pills every card with picks shares, in this order: past record, its ROI (flat stakes), open picks."""
+def units(pl):
+    """Profit at 1-unit stakes, as the volleyball card writes it: 2 decimals under 10 units, 1 from 10 up."""
+    return f"{pl:+.{2 if abs(pl) < 10 else 1}f} units"
+
+
+def record(won, lost, profit, n_open, word="pick", show_units=False):
+    """The three pills every card with picks shares, in this order: past record, its ROI (flat stakes), open picks.
+    show_units adds the profit in units to the ROI pill ("ROI +24.7% · +10.37 units")."""
     n = won + lost
-    pills = [f"Record {won}–{lost} · n={n}", f"ROI {profit / n * 100:+.1f}%"] if n else [f"No settled {word}s yet"]
+    roi = f"ROI {profit / n * 100:+.1f}%" + (f" · {units(profit)}" if show_units else "") if n else ""
+    pills = [f"Record {won}–{lost} · n={n}", roi] if n else [f"No settled {word}s yet"]
     return pills + [f"{n_open} open {word}{'s' if n_open != 1 else ''}" if n_open else f"No open {word}s"]
 
 
@@ -147,7 +154,7 @@ def superleague():
     fx = upcoming(d.get("fixtures", []), lambda f: f["kickoff"])
     v = d.get("value") or {}
     rec = (v.get("record") or {}).get("all") or {}
-    pills = record(rec.get("won", 0), rec.get("bets", 0) - rec.get("won", 0), rec.get("profit", 0), len(v.get("bets") or []))
+    pills = record(rec.get("won", 0), rec.get("bets", 0) - rec.get("won", 0), rec.get("profit", 0), len(v.get("bets") or []), show_units=True)
     if fx:
         pills.append(nxt(fx[0]["home"], fx[0]["away"], parse(fx[0]["kickoff"])))
     return pills
