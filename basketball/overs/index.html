@@ -187,7 +187,7 @@ a.tile:hover{border-color:var(--gold)}
 .tile .small{font-size:14.5px;color:var(--muted)}
 .tile .two{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%;font-size:24px}
 #top .tile:nth-child(-n+3) .stat{font-size:36px}#top .tile:nth-child(-n+3) .two{font-size:28px;gap:4px}.tiles.t5 .tile:nth-child(-n+2) .stat{font-size:34px}.tiles.t5 .tile:nth-child(2) .two{font-size:26px;gap:4px}   /* open picks, settled picks, ROI stand out (14 Nov 2026) */
-.tile .two .h-a{color:var(--gold)}.tile .two .h-b{color:#7fb2ff}.tile .two .h-up{color:var(--up,#4cc47a)}.tile .two .h-dn{color:var(--dn,#ef7a70)}.tile .two span>i{color:inherit!important;opacity:.85}.tile .two span>b{color:inherit!important}   /* each value in its half's colour, ROI too */
+.tile .two .h-a{color:var(--gold)}.tile .two .h-b{color:#7fb2ff}.tile .two .h-up{color:var(--up,#4cc47a)}.tile .two .h-dn{color:var(--dn,#ef7a70)}.tile .two span>i{color:inherit!important;opacity:.85}.tile .two span>b{color:inherit!important}.tile .two .un{display:block;font-size:12px;font-weight:400;color:var(--muted,#9aa3b2);margin-top:2px;letter-spacing:0}   /* each value in its half's colour, ROI too */
 .tile .two i{display:block;font:400 14px var(--mono);font-style:normal;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px;white-space:nowrap}
 /* two rows of five: the record, then the closing line (14 Nov 2026) */
 #top,.metrics.m5,.tiles.t5{grid-template-columns:repeat(5,minmax(0,1fr))}   /* 1H Live test tiles: two rows of five too */
@@ -256,7 +256,7 @@ const pct = (x, d=0) => x == null ? '–' : (x*100).toFixed(d) + '%';
 const sgn = (x, d=1) => x == null ? '–' : (x > 0 ? '+' : x < 0 ? '−' : '') + Math.abs(x).toFixed(d);
 const roi = x => x == null ? '–' : sgn(x*100, 1) + '%';
 const units1 = u => `${sgn(u, Math.abs(u) < 10 ? 2 : 1)} units`;   // profit in equal-stake units on the ROI tiles (user, 21 Nov 2026)
-const UNITS = (uo, uc) => uo == null ? '' : `Profit: ${units1(uo)} opening${uc == null ? '' : ' · ' + units1(uc) + ' closing'}`;
+const UN = u => u == null ? '' : `<small class="un">${units1(u)}</small>`;   // the profit in units under each ROI (21 Nov 2026)
 const cls = x => x > 0 ? 'pos' : x < 0 ? 'neg' : '';
 const sn = s => s.replace('-', '–');
 let view = 'home', lg = 'all', sub = 'picks';
@@ -295,8 +295,8 @@ $('sub').innerHTML = (AGE > 3 ? `<span class="stale">Not updated for ${Math.floo
   const cc = cl.filter(b => b.cpx != null && b.total !== b.close), uc = cc.reduce((a, b) => a + (b.total > b.close ? b.cpx - 1 : -1), 0);
   const mu = set.filter(b => (b.ma ?? b.mu) != null), nS = `${set.length} settled picks`;
   $('top').innerHTML = [['Open picks', nOpen, nOpen ? 'to play' : 'none right now'], ['Settled picks', won + lost ? `${won}–${lost}` : '–', won + lost ? `${pct(won / (won + lost), 1)} hit rate · ${set.length} settled` : `${set.length} settled`],
-    ['ROI', TWO('Opening', won + lost ? `<b class="${cls(units)}" style="font-weight:inherit">${roi(units / (won + lost))}</b>` : '–', 'Closing', cc.length ? `<b class="${cls(uc)}" style="font-weight:inherit">${roi(uc / cc.length)}</b>` : '–'),
-     won + lost ? UNITS(units, cc.length ? uc : null) : ''],
+    ['ROI', TWO('Opening', won + lost ? `<b class="${cls(units)}" style="font-weight:inherit">${roi(units / (won + lost))}</b>${UN(units)}` : '–', 'Closing', cc.length ? `<b class="${cls(uc)}" style="font-weight:inherit">${roi(uc / cc.length)}</b>${UN(uc)}` : '–'),
+     ''],
     ['Average line', TWO('Opening', avg(cl, b => b.line), 'Closing', avg(cl, b => b.close)), ''],
     ['Average total', TWO('Model', avg(mu, b => b.ma ?? b.mu), 'Actual', avg(cl, b => b.total)), ''],
     ...mvTiles(cl)]
@@ -445,8 +445,8 @@ function btTiles(k){
   const c = BT.filter(b => b.close != null), W = BT.filter(b => b.ret > 0).length, Lo = BT.filter(b => b.ret < 0).length, RK = riskTiles(BT);
   const C = (v, k) => k ? `<b class="${k}" style="font-weight:inherit">${v}</b>` : v;
   return TL([['Settled picks', `${W}–${Lo}`, `${pct(W / (W + Lo), 1)} hit rate · ${BT.length.toLocaleString('en')} settled`],
-              ['ROI', TWO('Opening', C(roi(S.rule.roi), cls(S.rule.roi)), 'Closing', S.rule.roic != null ? C(roi(S.rule.roic), cls(S.rule.roic)) : '–'),
-               (() => { const cc = c.filter(b => b.cpx != null && b.total !== b.close); return UNITS(BT.reduce((a, b) => a + b.ret, 0), cc.length ? cc.reduce((a, b) => a + (b.total > b.close ? b.cpx - 1 : -1), 0) : null); })()],
+              ...(() => { const cc = c.filter(b => b.cpx != null && b.total !== b.close), uo = BT.reduce((a, b) => a + b.ret, 0), ucl = cc.length ? cc.reduce((a, b) => a + (b.total > b.close ? b.cpx - 1 : -1), 0) : null;
+               return [['ROI', TWO('Opening', C(roi(S.rule.roi), cls(S.rule.roi)) + UN(uo), 'Closing', S.rule.roic != null ? C(roi(S.rule.roic), cls(S.rule.roic)) + UN(ucl) : '–'), '']]; })(),
               ['Average line', TWO('Opening', lineAvg(c, 'line'), 'Closing', lineAvg(c, 'close')), ''],
               ['Average total', TWO('Model', lineAvg(c, 'mu'), 'Actual', lineAvg(c, 'total')), ''],
               ...(c.length ? mvTiles(c).slice(0, -1) : []),
