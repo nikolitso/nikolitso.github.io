@@ -2,14 +2,16 @@
  "shown": {
   "book": [
    "the-drunkards-walk-how-randomness",
-   "focus-use-different-ways-of-seeing"
+   "focus-use-different-ways-of-seeing",
+   "betting-on-football"
   ],
   "film": [
    "amal",
-   "parasite"
+   "parasite",
+   "what-will-people-say"
   ]
  },
- "book": "focus-use-different-ways-of-seeing",
- "film": "parasite",
- "day": "2026-11-20"
+ "book": "betting-on-football",
+ "film": "what-will-people-say",
+ "day": "2026-11-21"
 }
