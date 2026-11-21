@@ -496,6 +496,10 @@ function analysis(k, notes = true){
     if (m) mo += grp(MON[m.m - 1], {...m, pd: 1}, '', btCells(BT.filter(b => +b.dt.slice(5, 7) === m.m)));
   }
   h += T('By month', 'Month', mo, '', 1);
+  // By day of the week (22 Nov 2026, on request): from the game's date
+  { const DOW = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'], dw = b => (new Date(b.dt.slice(0, 10) + 'T12:00:00Z').getUTCDay() + 6) % 7;
+    const rows = DOW.map((d, i) => bandRow(d, BT.filter(b => dw(b) === i), false, 1)).join('');
+    h += T('By day of the week', 'Day', rows, 'The day of the week the game was played. Profit: units won with one unit on every pick.', 1); }
   // By games played (21 Nov 2026): how many games each team had played before the game (the fewer of the two), the whole season counted, in bands of four
   const RB = BT.filter(b => b.gp != null), top = RB.length ? Math.max(...RB.map(b => b.gp)) : 0, rr = [];
   for (let lo = 1; lo <= Math.min(top, 28); lo += 4) { const g = RB.filter(b => b.gp >= lo && b.gp < lo + 4); if (g.length) rr.push(bandRow(`${Math.max(lo, Math.min(...g.map(b => b.gp)))}–${lo + 3} games`, g, false, 1)); }
@@ -775,7 +779,7 @@ function renderMethod(){
   const P = [
     ['Home', 'home', 'The answer in short: do the model’s overs make a profit? The backtest in a few numbers, then the main findings: every season, every league, out-of-sample weights, the line moving toward the picks, calibration and the worst run.'],
     ['FT live test', 'livetest', `The full-game picks logged live since ${LIVE.start || '8 Nov 2026'}. The tiles give the record, ROI at the opening and closing line and how the line moved. <b>Open picks</b> are the games still to play, with the line, price and edge when logged and now (Line now, Price now, Edge now: the main book’s line and price, or the market’s middle line when it has none); <span class="badge">Bet now</span> marks the Fast Moving Leagues, where the line moves toward the picks. Then the rule, every settled pick, and the record broken down by line, edge, pace, league and month, with the picks against the blind over (the over in every game) by league.`],
-    ['Backtest', 'backtest', 'The same rule on every game from 2022–23 to 2025–26, with each projection frozen 4 days before the game. Tiles, then Calibration (chance given v how often the picks won), By edge, By line, By tier, Fast Moving Leagues, By stage, By season, By month, By games played and By quarter. Every figure is shown at the opening line, where picks are taken, and at the closing line.'],
+    ['Backtest', 'backtest', 'The same rule on every game from 2022–23 to 2025–26, with each projection frozen 4 days before the game. Tiles, then Calibration (chance given v how often the picks won), By edge, By line, By tier, Fast Moving Leagues, By stage, By season, By month, By day of the week, By games played and By quarter. Every figure is shown at the opening line, where picks are taken, and at the closing line.'],
     ['Projections', 'projections', 'Every game in the next 7 days: the model total next to the line and price on offer, and the edge of the over. Highlighted games are picks. The league buttons filter the list; each game links to its own match page, which shows how its total is built.'],
     ['Leagues', 'leagues', 'One row a league: its market (games, how often games went over the closing line, backing every over) and the model’s picks (model total, line, result, hit rate, profit, ROI at the opening and closing line). Click a league for its own page: <b>Picks</b> (the default) breaks its picks down like the Backtest tab, <b>All games</b> describes every game in it.'],
     ['How it works', 'how-it-works', 'This page: the pages, then how the model and the rules work.']];
