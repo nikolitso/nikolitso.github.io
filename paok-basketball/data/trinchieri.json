@@ -1,6 +1,6 @@
 {
   "_note": "Andrea Trinchieri's words, translated into English and lightly shortened. games[]: linked to the schedule by comp + code; pre = before the game, post = after. ref = where it was said/reported (not shown on the site). focus (post entries): the stat he said must improve, checked on the site against PAOK's next game; stat = tovPct | drebPct | oppEfg | ortg | drtg.",
-  "updated": "2026-11-19",
+  "updated": "2026-11-21",
   "themes": [
     {
       "title": "Effort is the one thing he guarantees",
@@ -343,6 +343,14 @@
       "setting": "Flash interview and press conference",
       "quote": "It's a huge win for us against a very good team; we were always in the game, even when we were playing badly and losing by ten or more. We knew how important this game was: we had the same record and Manresa play quality basketball. We started slowly and conceded 31 in the first quarter, nothing was working. Somehow we cut it in the second quarter, but our start to the third was tragic again. Still, despite the bad moments and the absences of Osman and Foster, who play similar positions and are our main scorers, we did what was needed at the right time. We held Manresa to 11 points in the fourth quarter and made the right plays at the end. Manresa defend aggressively and force an average of 21 turnovers on every team that visits; we committed fewer than that, and that is why we won. Is it our biggest win so far? Maybe you're right, but I work one game at a time. With the absences, players out of rhythm and so many mistakes, we could have collapsed. Now we are 2-0 against Manresa. Whatever you do has positives and negatives. Cedi will return in the spring, and I don't know about Marcus. I have to find players who can be effective.",
       "ref": "https://www.gazzetta.gr/basketball/eurocup/2587772/trinkieri-tha-mporoysame-na-katarreysoyme-brikame-ton-tropo ; https://eurohoops.net/el/eurocup-el/2037495/trinkieri-i-megaliteri-niki-tou-paok-mechri-simera-den-xero-alla-se-empistevome ; https://sportime.gr/paok/trinkieri-o-paok-nikise-me-schima-anagkis-pou-echi-kostos"
+    },
+    {
+      "comp": "GBL",
+      "code": "95F2FDAA",
+      "when": "post",
+      "setting": "Post-game statement",
+      "quote": "A very big win. We were waiting for this game, we controlled the tempo from the start and played with the energy it needed. The atmosphere was magical; the fans pushed us and I'm sure they'll be very happy tonight. It wasn't one thing, it was our approach: everyone was ready to contribute to the game plan, focused and united, and everyone gave something. That is how you have to play these games. Now we use the break to rest and recharge our batteries for what comes next.",
+      "ref": "https://www.sportal.gr/basket/article/trinkieri-magiki-i-atmosfaira-oloi-edosan-kati-gia-na-erthei-afti-i-megali-niki ; https://www.to10.gr/basket/basket-league/4464889/trinkieri-oli-itan-etimi-na-symvaloun-sto-plano-agona-imastan-sygkentromeni-ki-enomeni/"
     }
   ]
 }

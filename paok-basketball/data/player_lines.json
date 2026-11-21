@@ -415,7 +415,9 @@
      "proj": 0.8,
      "projMin": 20,
      "projWo": 0.6,
-     "projWoGames": 5
+     "projWoGames": 5,
+     "actual": 1,
+     "min": 15
     },
     {
      "player": "alexander",
@@ -435,7 +437,9 @@
      "proj": 7.0,
      "projMin": 20,
      "projWo": 6.6,
-     "projWoGames": 5
+     "projWoGames": 5,
+     "actual": 7,
+     "min": 15
     },
     {
      "player": "alexander",
@@ -455,7 +459,9 @@
      "proj": 5.8,
      "projMin": 20,
      "projWo": 5.2,
-     "projWoGames": 5
+     "projWoGames": 5,
+     "actual": 9,
+     "min": 15
     },
     {
      "player": "calathes",
@@ -475,7 +481,9 @@
      "proj": 4.1,
      "projMin": 22,
      "projWo": 6.2,
-     "projWoGames": 4
+     "projWoGames": 4,
+     "actual": 8,
+     "min": 33
     },
     {
      "player": "calathes",
@@ -495,7 +503,9 @@
      "proj": null,
      "projMin": 22,
      "projWo": 0.2,
-     "projWoGames": 4
+     "projWoGames": 4,
+     "actual": 4,
+     "min": 33
     },
     {
      "player": "calathes",
@@ -515,7 +525,9 @@
      "proj": 6.5,
      "projMin": 22,
      "projWo": 5.2,
-     "projWoGames": 4
+     "projWoGames": 4,
+     "actual": 12,
+     "min": 33
     },
     {
      "player": "calathes",
@@ -535,7 +547,9 @@
      "proj": 3.7,
      "projMin": 22,
      "projWo": 3.5,
-     "projWoGames": 4
+     "projWoGames": 4,
+     "actual": 8,
+     "min": 33
     },
     {
      "player": "chougkaz",
@@ -555,7 +569,9 @@
      "proj": null,
      "projMin": 15,
      "projWo": 1.0,
-     "projWoGames": 5
+     "projWoGames": 5,
+     "actual": 2,
+     "min": 20
     },
     {
      "player": "chougkaz",
@@ -575,7 +591,9 @@
      "proj": 4.0,
      "projMin": 15,
      "projWo": 5.0,
-     "projWoGames": 5
+     "projWoGames": 5,
+     "actual": 10,
+     "min": 20
     },
     {
      "player": "chougkaz",
@@ -595,7 +613,9 @@
      "proj": 2.3,
      "projMin": 15,
      "projWo": 2.4,
-     "projWoGames": 5
+     "projWoGames": 5,
+     "actual": 2,
+     "min": 20
     },
     {
      "player": "gray",
@@ -615,7 +635,9 @@
      "proj": 0.8,
      "projMin": 21,
      "projWo": 0.7,
-     "projWoGames": 3
+     "projWoGames": 3,
+     "actual": 0,
+     "min": 20
     },
     {
      "player": "gray",
@@ -635,7 +657,9 @@
      "proj": 7.1,
      "projMin": 21,
      "projWo": 8.0,
-     "projWoGames": 3
+     "projWoGames": 3,
+     "actual": 10,
+     "min": 20
     },
     {
      "player": "gray",
@@ -655,7 +679,9 @@
      "proj": 3.7,
      "projMin": 21,
      "projWo": 2.3,
-     "projWoGames": 3
+     "projWoGames": 3,
+     "actual": 3,
+     "min": 20
     },
     {
      "player": "hudgins",
@@ -675,7 +701,9 @@
      "proj": 2.3,
      "projMin": 18,
      "projWo": 1.2,
-     "projWoGames": 5
+     "projWoGames": 5,
+     "actual": 1,
+     "min": 10
     },
     {
      "player": "hudgins",
@@ -695,7 +723,9 @@
      "proj": null,
      "projMin": 18,
      "projWo": 2.6,
-     "projWoGames": 5
+     "projWoGames": 5,
+     "actual": 0,
+     "min": 10
     },
     {
      "player": "hudgins",
@@ -715,7 +745,9 @@
      "proj": 8.8,
      "projMin": 18,
      "projWo": 11.6,
-     "projWoGames": 5
+     "projWoGames": 5,
+     "actual": 0,
+     "min": 10
     },
     {
      "player": "long",
@@ -735,7 +767,9 @@
      "proj": null,
      "projMin": 15,
      "projWo": 1.4,
-     "projWoGames": 5
+     "projWoGames": 5,
+     "actual": 4,
+     "min": 22
     },
     {
      "player": "long",
@@ -755,7 +789,9 @@
      "proj": 7.2,
      "projMin": 15,
      "projWo": 9.2,
-     "projWoGames": 5
+     "projWoGames": 5,
+     "actual": 14,
+     "min": 22
     },
     {
      "player": "moore",
@@ -775,7 +811,9 @@
      "proj": 6.1,
      "projMin": 18,
      "projWo": 3.6,
-     "projWoGames": 5
+     "projWoGames": 5,
+     "actual": 7,
+     "min": 24
     },
     {
      "player": "moore",
@@ -795,7 +833,9 @@
      "proj": 5.4,
      "projMin": 18,
      "projWo": 4.4,
-     "projWoGames": 5
+     "projWoGames": 5,
+     "actual": 7,
+     "min": 24
     },
     {
      "player": "tyree",
@@ -815,7 +855,9 @@
      "proj": 1.2,
      "projMin": 20,
      "projWo": 2.2,
-     "projWoGames": 5
+     "projWoGames": 5,
+     "actual": 3,
+     "min": 30
     },
     {
      "player": "tyree",
@@ -835,7 +877,9 @@
      "proj": null,
      "projMin": 20,
      "projWo": 1.0,
-     "projWoGames": 5
+     "projWoGames": 5,
+     "actual": 2,
+     "min": 30
     },
     {
      "player": "tyree",
@@ -855,7 +899,9 @@
      "proj": 12.5,
      "projMin": 20,
      "projWo": 18.4,
-     "projWoGames": 5
+     "projWoGames": 5,
+     "actual": 19,
+     "min": 30
     },
     {
      "player": "tyree",
@@ -875,7 +921,9 @@
      "proj": 1.6,
      "projMin": 20,
      "projWo": 1.4,
-     "projWoGames": 5
+     "projWoGames": 5,
+     "actual": 1,
+     "min": 30
     }
    ],
    "paokOut": [
@@ -886,5 +934,5 @@
    ]
   }
  },
- "updated": "2026-11-20T17:35:38Z"
+ "updated": "2026-11-21T18:43:56Z"
 }
