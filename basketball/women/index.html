@@ -531,6 +531,11 @@ function qbands(list, key, k, fmt){
 // By line in three bands with about a third of the picks each (21 Nov 2026, user): cut at the lines a third and two thirds of the way up
 const thirds = L => { const v = L.map(b => b.line).sort((a, b) => a - b); return [v[Math.floor(v.length / 3)], v[Math.floor(2 * v.length / 3)]]; };
 const LBANDS = ([c1, c2]) => [[`Under ${c1}`, 0, c1], [`${c1} to ${c2 - 1}`, c1, c2], [`${c2} and over`, c2, 999]];
+// By games played (21 Nov 2026), as on the men's page: the fewer of the two teams' games that season before the game, every game counted, in bands of four; the first band starts at the minimum games rule
+const gpRows = L => { const R = L.filter(b => b.gp != null), lo0 = LIVE.min_gp ?? 4, out = [];
+  for (let lo = 1; lo <= 28; lo += 4) { const a = Math.max(lo, lo0), z = lo + 3; if (a <= z) out.push([a === z ? `${a} games` : `${a}–${z} games`, R.filter(b => b.gp >= a && b.gp <= z)]); }
+  return [...out, ['29 or more games', R.filter(b => b.gp >= 29)]]; };
+const GPNOTE = 'How many games each team had played that season before the game: the fewer of the two teams. Every game of the season counts, a second phase carrying on from the first.';
 const NB = 4;   // four bands: of 2 to 8, the one whose band results repeated best between 2021–23 and 2024–26 (11 Nov 2026)
 
 
@@ -546,6 +551,7 @@ function btBody(BT, S, pool, leagues){
     'The second row is the play-off games the rule skips: every other rule met, with the chance worked out as for a regular-season game.');
   h += `<h2>By season</h2>` + btTable('Season', S.seasons.map(s => [sn(s.season), BT.filter(x => seasonOf(x) === s.season)]));
   h += `<h2>By month</h2>` + btTable('Month', S.months.map(m => [MON[m.m - 1], BT.filter(x => +x.dt.slice(5, 7) === m.m)]));
+  h += `<h2>By games played</h2>` + btTable('Games played', gpRows(BT), GPNOTE);
   return h + halves(BT) + bets(BT);
 }
 
@@ -610,6 +616,7 @@ function liveTables(L){
   const lgs = [...new Set(L.map(b => b.lg))].sort((a, b) => lgShort(a) < lgShort(b) ? -1 : 1);
   h += `<h2>By league</h2>` + btTable('League', lgs.map(k => [lgShort(k), L.filter(b => b.lg === k)]));
   h += `<h2>By month</h2>` + btTable('Month', [9, 10, 11, 12, 1, 2, 3, 4, 5, 6].map(mm => [MON[mm - 1], L.filter(b => +b.dt.slice(5, 7) === mm)]));
+  if (L.some(b => b.gp != null)) h += `<h2>By games played</h2>` + btTable('Games played', gpRows(L), GPNOTE);
   return h;
 }
 
