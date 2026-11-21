@@ -600,13 +600,15 @@ function riskTiles(list){
 // calibration: the model's chance against how often the picks won, in bands of the model's chance
 function calib(list, note){
   const P = b => b.p ?? (1 + b.edge) / b.px, L = list.filter(b => b.ret != null && b.ret !== 0);
+  const PR = (g, bold) => { const u = g.reduce((a, b) => a + b.ret, 0), B = x => bold ? `<b>${x}</b>` : x;   // ROI and profit in equal-stake units per band (21 Nov 2026)
+    return `<td class="n ${cls(u)}">${B(roi(u / g.length))}</td><td class="n ${cls(u)}">${B(sgn(u, Math.abs(u) < 100 ? 2 : 1))}</td>`; };
   if (!L.length) return '';
   const rows = [['Under 60%', 0, .6], ['60% to 65%', .6, .65], ['65% to 70%', .65, .7], ['70% or more', .7, 2]].map(([label, lo, hi]) => {
     const g = L.filter(b => P(b) >= lo && P(b) < hi); if (!g.length) return '';
     const m = g.reduce((a, b) => a + P(b), 0) / g.length, w = g.filter(b => b.ret > 0).length / g.length;
-    return `<tr><td>${label}</td><td class="n">${g.length}</td><td class="n">${pct(m, 1)}</td><td class="n">${pct(w, 1)}</td><td class="n ${cls(w - m)}">${sgn((w - m) * 100)} pts</td></tr>`; }).join('');
+    return `<tr><td>${label}</td><td class="n">${g.length}</td><td class="n">${pct(m, 1)}</td><td class="n">${pct(w, 1)}</td><td class="n ${cls(w - m)}">${sgn((w - m) * 100)} pts</td>${PR(g)}</tr>`; }).join('');
   const m = L.reduce((a, b) => a + P(b), 0) / L.length, w = L.filter(b => b.ret > 0).length / L.length;
-  return `<h2>Calibration</h2><p class="note">${note}</p><div class="scroll"><table style="max-width:640px"><thead><tr><th>Model's chance</th><th class="n">Picks</th><th class="n">Model said</th><th class="n">Won</th><th class="n">Difference</th></tr></thead><tbody>${rows}<tr><td><b>All</b></td><td class="n"><b>${L.length}</b></td><td class="n"><b>${pct(m, 1)}</b></td><td class="n"><b>${pct(w, 1)}</b></td><td class="n ${cls(w - m)}"><b>${sgn((w - m) * 100)} pts</b></td></tr></tbody></table></div>`;
+  return `<h2>Calibration</h2><p class="note">${note}</p><div class="scroll"><table style="max-width:860px"><thead><tr><th>Model's chance</th><th class="n">Picks</th><th class="n">Model said</th><th class="n">Won</th><th class="n">Difference</th><th class="n">ROI</th><th class="n">Profit (units)</th></tr></thead><tbody>${rows}<tr><td><b>All</b></td><td class="n"><b>${L.length}</b></td><td class="n"><b>${pct(m, 1)}</b></td><td class="n"><b>${pct(w, 1)}</b></td><td class="n ${cls(w - m)}"><b>${sgn((w - m) * 100)} pts</b></td>${PR(L, true)}</tr></tbody></table></div>`;
 }
 
 function liveTables(L){
