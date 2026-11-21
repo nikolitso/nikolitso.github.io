@@ -448,11 +448,11 @@ function renderBacktest(){
   h += (lg === 'all' ? '<h2>All leagues</h2>' : '') + btTiles(S);
   if (lg === 'all'){
     h += sexTiles(true) + sexTiles(false);
-    h += `<p class="note">${lg === 'all' && DATA.leagues.some(l => !l.live) ? 'The totals above count the leagues with live picks only. ' : ''}Click a league to see its seasons and bets.</p>`;
-    h += `<div class="scroll"><table style="max-width:760px"><thead><tr><th>League</th><th class="n">Bets</th><th class="n">Hit</th><th class="n">ROI</th><th class="n">No model</th></tr></thead><tbody>`;
+    h += `<p class="note">${lg === 'all' && DATA.leagues.some(l => !l.live) ? 'The totals above count the leagues with live picks only. ' : ''}Profit is in equal-stake units (1 unit per bet). Click a league to see its seasons and bets.</p>`;
+    h += `<div class="scroll"><table style="max-width:760px"><thead><tr><th>League</th><th class="n">Bets</th><th class="n">Hit</th><th class="n">Profit</th><th class="n">ROI</th><th class="n">No model</th></tr></thead><tbody>`;
     for (const l of DATA.leagues){
       const s = B.leagues[l.key];
-      h += `<tr class="srow" data-lg="${l.key}"><td><span class="caret">▸</span> ${l.country} <span class="muted">${l.name} ${sexAb(l)}${l.live ? '' : ' · no picks'}</span></td><td class="n">${s.n}</td><td class="n">${s.n ? pct(s.w/s.n) : '–'}</td><td class="n ${cls(s.roi)}">${sgn(s.roi*100, 1)}%</td><td class="n ${cls(s.blind_roi)}">${sgn(s.blind_roi*100, 1)}%</td></tr>`;
+      h += `<tr class="srow" data-lg="${l.key}"><td><span class="caret">▸</span> ${l.country} <span class="muted">${l.name} ${sexAb(l)}${l.live ? '' : ' · no picks'}</span></td><td class="n">${s.n}</td><td class="n">${s.n ? pct(s.w/s.n) : '–'}</td><td class="n ${cls(s.roi)}">${s.n ? sgn(s.roi * s.n, 2) : '–'}</td><td class="n ${cls(s.roi)}">${sgn(s.roi*100, 1)}%</td><td class="n ${cls(s.blind_roi)}">${sgn(s.blind_roi*100, 1)}%</td></tr>`;
     }
     h += '</tbody></table></div>' + testedTable();
     // the same bets by season, the live leagues together (the tuned-on season left out, as in the totals)
@@ -461,14 +461,14 @@ function renderBacktest(){
       const t = by[x.season] ||= {n: 0, w: 0, pl: 0};
       t.n += x.n; t.w += x.w; t.pl += x.pl;
     }
-    h += `<h2>By season</h2><p class="note">Profit is in equal-stake units. Click a season to see its bets one by one.</p>`;
+    h += `<h2>By season</h2><p class="note">Profit is in equal-stake units (1 unit per bet). Click a season to see its bets one by one.</p>`;
     h += `<table class="seasons" style="max-width:720px"><thead><tr><th>Season</th><th class="n">Bets</th><th class="n">Won</th><th class="n">Hit</th><th class="n">Profit</th><th class="n">ROI</th></tr></thead><tbody>`;
     for (const [season, t] of Object.entries(by).sort()) h += `<tr class="srow${season === btSeason ? ' on' : ''}" data-season="${season}"><td><span class="caret">${season === btSeason ? '▾' : '▸'}</span> ${season.replace('-','–')}</td><td class="n">${t.n}</td><td class="n">${t.w}</td><td class="n">${pct(t.w / t.n)}</td><td class="n ${cls(t.pl)}">${sgn(t.pl, 2)}</td><td class="n ${cls(t.pl)}">${sgn(t.pl / t.n * 100, 1)}%</td></tr>`;
     h += '</tbody></table>' + byMonth() + byLine() + calibration();
     if (btSeason) h += seasonBets(btSeason);
     return h + intro;
   }
-  h += `<p class="note">Profit is in equal-stake units. Click a season to see its bets one by one.</p>`;
+  h += `<p class="note">Profit is in equal-stake units (1 unit per bet). Click a season to see its bets one by one.</p>`;
   h += `<table class="seasons" style="max-width:660px"><thead><tr><th>Season</th><th class="n">Bets</th><th class="n">Won</th><th class="n">Hit</th><th class="n">Profit</th><th class="n">ROI</th></tr></thead><tbody>`;
   for (const s of B.seasons.filter(inLg)) h += `<tr class="srow${s.season === btSeason ? ' on' : ''}" data-season="${s.season}"><td><span class="caret">${s.season === btSeason ? '▾' : '▸'}</span> ${s.season.replace('-','–')}${s.tuned ? ' <span class="muted">(tuned on)</span>' : ''}</td><td class="n">${s.n}</td><td class="n">${s.w}</td><td class="n">${pct(s.w/s.n)}</td><td class="n ${cls(s.pl)}">${sgn(s.pl, 2)}</td><td class="n ${cls(s.roi)}">${sgn(s.roi*100, 1)}%</td></tr>`;
   h += '</tbody></table>' + byMonth() + byLine() + calibration();
@@ -492,15 +492,15 @@ function leagueBets(){
 // click a header to sort by it, again to flip the order
 let tSort = {k: 'roi', d: -1}, lSort = {k: 'roi', d: -1};   // lSort: By league on Live test
 const tKey = {league: t => (t.women ? 0 : 1) + t.country + ' ' + t.name, seasons: t => t.seasons, n: t => t.n,
-              hit: t => t.n ? t.w / t.n : -1, roi: t => t.n ? t.roi : -9, blind: t => t.blind_n ? t.blind_roi : -9};
+              hit: t => t.n ? t.w / t.n : -1, pl: t => t.n ? t.roi * t.n : -999, roi: t => t.n ? t.roi : -9, blind: t => t.blind_n ? t.blind_roi : -9};
 function testedTable(){
   const f = tKey[tSort.k];
   const T = DATA.backtest.tested.filter(t => t.live).sort((a, b) => { const x = f(a), y = f(b); return (x < y ? -1 : x > y ? 1 : 0) * tSort.d || b.roi - a.roi; });
   const th = (k, lab, n = true) => `<th class="${n ? 'n ' : ''}tsort" data-tsort="${k}">${lab}${tSort.k === k ? (tSort.d > 0 ? ' ▴' : ' ▾') : ''}</th>`;
   let h = `<h2>All tested leagues</h2><p class="note">Every league the backtest was run on, with the same rule (lines ${DATA.min_line}.5 to ${DATA.low - 1}.5, model chance at least ${DATA.min_chance * 100}%, edge at least ${DATA.edge * 100}%) and only the seasons the settings never saw. Only the leagues with live picks are shown: backing every over without the model (No model) did −3.0% or better, with 100+ low-line matches and a market line from two or more sources. ${DATA.backtest.tested.length - T.length} of the ${DATA.backtest.tested.length} tested leagues are left out. Click a column to sort by it.</p>`;
-  h += `<div class="scroll"><table style="max-width:900px"><thead><tr>${th('league', 'League', false)}${th('seasons', 'Seasons')}${th('n', 'Bets')}${th('hit', 'Hit')}${th('roi', 'ROI')}${th('blind', 'No model')}</tr></thead><tbody>`;
+  h += `<div class="scroll"><table style="max-width:900px"><thead><tr>${th('league', 'League', false)}${th('seasons', 'Seasons')}${th('n', 'Bets')}${th('hit', 'Hit')}${th('pl', 'Profit')}${th('roi', 'ROI')}${th('blind', 'No model')}</tr></thead><tbody>`;
   for (const t of T)
-    h += `<tr><td>${t.country} <span class="muted">${t.name}</span> <b>${sexAb(t)}</b>${t.live ? ' <span class="muted">· live</span>' : ''}</td><td class="n">${t.seasons}</td><td class="n">${t.n}</td><td class="n">${t.n ? pct(t.w / t.n) : '–'}</td><td class="n ${t.n ? cls(t.roi) : ''}">${t.n ? sgn(t.roi * 100, 1) + '%' : '–'}</td><td class="n ${cls(t.blind_roi)}">${t.blind_n ? sgn(t.blind_roi * 100, 1) + '%' : '–'}</td></tr>`;
+    h += `<tr><td>${t.country} <span class="muted">${t.name}</span> <b>${sexAb(t)}</b>${t.live ? ' <span class="muted">· live</span>' : ''}</td><td class="n">${t.seasons}</td><td class="n">${t.n}</td><td class="n">${t.n ? pct(t.w / t.n) : '–'}</td><td class="n ${t.n ? cls(t.roi) : ''}">${t.n ? sgn(t.roi * t.n, 2) : '–'}</td><td class="n ${t.n ? cls(t.roi) : ''}">${t.n ? sgn(t.roi * 100, 1) + '%' : '–'}</td><td class="n ${cls(t.blind_roi)}">${t.blind_n ? sgn(t.blind_roi * 100, 1) + '%' : '–'}</td></tr>`;
   return h + '</tbody></table></div>';
 }
 document.addEventListener('click', e => {
@@ -519,12 +519,12 @@ function calibration(){
   const mean = (g, f) => g.reduce((s, b) => s + f(b), 0) / g.length;
   const long = b => b.sets.split('-').reduce((s, x) => s + +x, 0) >= 4;   // went past 3 sets (user, 14 Nov 2026)
   const table = (title, bands, val) => {
-    let t = `<h3 style="margin-top:18px">${title}</h3><div class="scroll"><table style="max-width:1140px"><thead><tr><th>Band</th><th class="n">Bets</th><th class="n">Market<br>no-vig</th><th class="n">Model said</th><th class="n">Actual</th><th class="n">Gap</th><th class="n">4+ sets</th><th class="n">Market line</th><th class="n">Model line</th><th class="n">Actual total</th><th class="n">ROI</th></tr></thead><tbody>`;
+    let t = `<h3 style="margin-top:18px">${title}</h3><div class="scroll"><table style="max-width:1180px"><thead><tr><th>Band</th><th class="n">Bets</th><th class="n">Market<br>no-vig</th><th class="n">Model said</th><th class="n">Actual</th><th class="n">Gap</th><th class="n">4+ sets</th><th class="n">Market line</th><th class="n">Model line</th><th class="n">Actual total</th><th class="n">Profit</th><th class="n">ROI</th></tr></thead><tbody>`;
     for (const [lab, lo, hi] of bands){
       const g = Array.isArray(lo) ? lo : bets.filter(b => val(b) >= lo && val(b) < hi);
       if (!g.length) continue;
       const said = mean(g, b => b.p), hit = mean(g, b => +b.won), roi = mean(g, b => b.ret);
-      t += `<tr><td>${lab}</td><td class="n">${g.length}</td><td class="n">${(mean(g, b => noVigP(b.px, b.under_px)) * 100).toFixed(1)}%</td><td class="n">${(said * 100).toFixed(1)}%</td><td class="n">${(hit * 100).toFixed(1)}%</td><td class="n ${cls(hit - said)}">${sgn((hit - said) * 100, 1)}</td><td class="n">${(mean(g, b => +long(b)) * 100).toFixed(1)}%</td><td class="n">${avgLine(g, 'line')}</td><td class="n">${avgLine(g, 'fair')}</td><td class="n">${avgLine(g, 'total')}</td><td class="n ${cls(roi)}">${sgn(roi * 100, 1)}%</td></tr>`;
+      t += `<tr><td>${lab}</td><td class="n">${g.length}</td><td class="n">${(mean(g, b => noVigP(b.px, b.under_px)) * 100).toFixed(1)}%</td><td class="n">${(said * 100).toFixed(1)}%</td><td class="n">${(hit * 100).toFixed(1)}%</td><td class="n ${cls(hit - said)}">${sgn((hit - said) * 100, 1)}</td><td class="n">${(mean(g, b => +long(b)) * 100).toFixed(1)}%</td><td class="n">${avgLine(g, 'line')}</td><td class="n">${avgLine(g, 'fair')}</td><td class="n">${avgLine(g, 'total')}</td><td class="n ${cls(roi)}">${sgn(roi * g.length, 2)}</td><td class="n ${cls(roi)}">${sgn(roi * 100, 1)}%</td></tr>`;
     }
     return t + '</tbody></table></div>';
   };
@@ -546,14 +546,14 @@ function byLine(){
   const by = {}, long = g => g.filter(b => b.sets.split('-').reduce((s, x) => s + +x, 0) >= 4).length;   // went past 3 sets (user, 14 Nov 2026)
   bets.forEach(b => (by[band(b)] ||= []).push(b));
   let h = `<h2>By line</h2><p class="note">The same bets grouped by the market's total-points line, in steps of 5 points. 4+ sets: the part of the matches that went past 3 sets. Equal stakes.</p>`;
-  h += `<div class="scroll"><table style="max-width:860px"><thead><tr><th>Line</th><th class="n">Bets</th><th class="n">Won</th><th class="n">Hit</th><th class="n">4+ sets</th><th class="n">Market line</th><th class="n">Model line</th><th class="n">Actual total</th><th class="n">ROI</th></tr></thead><tbody>`;
+  h += `<div class="scroll"><table style="max-width:940px"><thead><tr><th>Line</th><th class="n">Bets</th><th class="n">Won</th><th class="n">Hit</th><th class="n">4+ sets</th><th class="n">Market line</th><th class="n">Model line</th><th class="n">Actual total</th><th class="n">Profit</th><th class="n">ROI</th></tr></thead><tbody>`;
   let n = 0, w = 0, pl = 0;
   for (const k of Object.keys(by).map(Number).sort((a, b) => a - b)){
     const g = by[k], gw = g.filter(b => b.won).length, gp = g.reduce((s, b) => s + b.ret, 0);
     n += g.length; w += gw; pl += gp;
-    h += `<tr><td>${k - 4}.5–${k}.5</td><td class="n">${g.length}</td><td class="n">${gw}</td><td class="n">${pct(gw / g.length)}</td><td class="n">${pct(long(g) / g.length)}</td><td class="n">${avgLine(g, 'line')}</td><td class="n">${avgLine(g, 'fair')}</td><td class="n">${avgLine(g, 'total')}</td><td class="n ${cls(gp)}">${sgn(gp / g.length * 100, 1)}%</td></tr>`;
+    h += `<tr><td>${k - 4}.5–${k}.5</td><td class="n">${g.length}</td><td class="n">${gw}</td><td class="n">${pct(gw / g.length)}</td><td class="n">${pct(long(g) / g.length)}</td><td class="n">${avgLine(g, 'line')}</td><td class="n">${avgLine(g, 'fair')}</td><td class="n">${avgLine(g, 'total')}</td><td class="n ${cls(gp)}">${sgn(gp, 2)}</td><td class="n ${cls(gp)}">${sgn(gp / g.length * 100, 1)}%</td></tr>`;
   }
-  if (n) h += `<tr><td><b>All</b></td><td class="n"><b>${n}</b></td><td class="n"><b>${w}</b></td><td class="n"><b>${pct(w / n)}</b></td><td class="n"><b>${pct(long(bets) / n)}</b></td><td class="n"><b>${avgLine(bets, 'line')}</b></td><td class="n"><b>${avgLine(bets, 'fair')}</b></td><td class="n"><b>${avgLine(bets, 'total')}</b></td><td class="n ${cls(pl)}"><b>${sgn(pl / n * 100, 1)}%</b></td></tr>`;
+  if (n) h += `<tr><td><b>All</b></td><td class="n"><b>${n}</b></td><td class="n"><b>${w}</b></td><td class="n"><b>${pct(w / n)}</b></td><td class="n"><b>${pct(long(bets) / n)}</b></td><td class="n"><b>${avgLine(bets, 'line')}</b></td><td class="n"><b>${avgLine(bets, 'fair')}</b></td><td class="n"><b>${avgLine(bets, 'total')}</b></td><td class="n ${cls(pl)}"><b>${sgn(pl, 2)}</b></td><td class="n ${cls(pl)}"><b>${sgn(pl / n * 100, 1)}%</b></td></tr>`;
   h += '</tbody></table></div>';
   return h;
 }
@@ -566,10 +566,10 @@ function byMonth(){
   const MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'], by = {};
   for (const b of bets){ const m = +b.dt.slice(5, 7); const t = by[m] ||= {n: 0, w: 0, pl: 0}; t.n++; t.w += b.won; t.pl += b.ret; }
   let h = `<h2>By month</h2><p class="note">The same bets by calendar month, every season together.</p>`;
-  h += `<div class="scroll"><table style="max-width:620px"><thead><tr><th>Month</th><th class="n">Bets</th><th class="n">Won</th><th class="n">Hit</th><th class="n">ROI</th></tr></thead><tbody>`;
+  h += `<div class="scroll"><table style="max-width:700px"><thead><tr><th>Month</th><th class="n">Bets</th><th class="n">Won</th><th class="n">Hit</th><th class="n">Profit</th><th class="n">ROI</th></tr></thead><tbody>`;
   for (const m of [8, 9, 10, 11, 12, 1, 2, 3, 4, 5, 6, 7]){
     const t = by[m]; if (!t) continue;
-    h += `<tr><td>${MON[m - 1]}</td><td class="n">${t.n}</td><td class="n">${t.w}</td><td class="n">${pct(t.w / t.n)}</td><td class="n ${cls(t.pl)}">${sgn(t.pl / t.n * 100, 1)}%</td></tr>`;
+    h += `<tr><td>${MON[m - 1]}</td><td class="n">${t.n}</td><td class="n">${t.w}</td><td class="n">${pct(t.w / t.n)}</td><td class="n ${cls(t.pl)}">${sgn(t.pl, 2)}</td><td class="n ${cls(t.pl)}">${sgn(t.pl / t.n * 100, 1)}%</td></tr>`;
   }
   return h + '</tbody></table></div>';
 }
