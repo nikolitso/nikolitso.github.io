@@ -243,7 +243,7 @@ a.tile:hover{border-color:var(--gold)}
 <p>Projections shows the next 7 days, and Live test records the picks, taken at the opening line; the First half tab covers first halves. Backtest covers 2021–22 to 2025–26, and Leagues shows each league's record. A game's line is the median of the main market lines.</p>
 </section>
 </main>
-<script src="data.js?v=w78"></script>
+<script src="data.js?v=w79"></script>
 <script src="live.js"></script>
 <script>
 const $ = id => document.getElementById(id);
@@ -530,19 +530,9 @@ function qbands(list, key, k, fmt){
 }
 const NB = 4;   // four bands: of 2 to 8, the one whose band results repeated best between 2021–23 and 2024–26 (11 Nov 2026)
 
-// calibration: the model's chance of the pick against how often it won, in four bands with a quarter of the picks each
-function calTable(list, note){
-  const d = list.filter(b => b.p != null && b.ret != null && b.ret !== 0).sort((a, b) => a.p - b.p);
-  if (!d.length) return '';
-  const rows = qbands(d, 'p', NB, x => pct(x, 1));
-  rows.push(['<b>All</b>', d]);
-  const tr = ([label, r]) => { const p = r.reduce((a, b) => a + b.p, 0) / r.length, w = r.filter(b => b.ret > 0).length / r.length, df = (w - p) * 100;
-    return `<tr><td>${label}</td><td class="n">${r.length}</td><td class="n">${pct(p, 1)}</td><td class="n">${pct(w, 1)}</td><td class="n ${cls(df)}">${sgn(df, 1)} pts</td></tr>`; };
-  return `<h2>Calibration</h2><p class="note">${note}</p><div class="scroll"><table style="max-width:640px"><thead><tr><th>Model's chance</th><th class="n">Picks</th><th class="n">Model said</th><th class="n">Won</th><th class="n">Difference</th></tr></thead><tbody>${rows.map(tr).join('')}</tbody></table></div>`;
-}
 
 function btBody(BT, S, pool, leagues){
-  let h = calTable(BT, "How often the picks won against the chance the model gave them, at the opening line. A well-calibrated model wins about as often as it says. Won above the chance means the model was too cautious on these picks; below it, too confident. The picks are split by the model's chance into four bands with a quarter of the picks each. Pushes are left out.");
+  let h = '';                                                 // no Calibration since 21 Nov 2026 (user): the chance does not rank the picks; the points gap leads
   // the 4-point rule (21 Nov 2026, on request): projected total minus the opening line, the picks and the games the rule skips
   const SG = skipped('skipped_gap'), gb = (L, lo, hi) => L.filter(x => x.g0 != null && x.g0 >= lo && x.g0 < hi);
   h += `<h2>By points over the line</h2>` + btTable('Projected total − line', [
@@ -610,10 +600,10 @@ function renderProjections(){
 function liveTables(L){
   // the Backtest tab's tables for the settled live picks
   const band = (list, bands, key) => bands.map(([label, lo, hi]) => [label, list.filter(x => x[key] != null && x[key] >= lo && x[key] < hi)]);
-  let h = calTable(L, 'Settled live picks: the chance the model gave them against how often they won, in four bands with a quarter of the picks each once there are four. With few picks this says little yet.');
+  let h = '';                                                 // no Calibration since 21 Nov 2026 (user)
+  h += `<h2>By points over the line</h2>` + btTable('Projected total − line', band(L.map(b => ({...b, gp_: GAP(b)})), [['4 to 6', 4, 6], ['6 or more', 6, 999]], 'gp_'));
   h += `<h2>By line</h2>` + btTable('Line band', band(L, [['Under 130', 0, 130], ['130–139.5', 130, 140], ['140 and over', 140, 999]], 'line'),
     'Settled live picks, the same bands as the Backtest tab. With few picks these tables say little; they show whether the live picks behave like the backtest.');
-  h += `<h2>By points over the line</h2>` + btTable('Projected total − line', band(L.map(b => ({...b, gp_: GAP(b)})), [['4 to 6', 4, 6], ['6 or more', 6, 999]], 'gp_'));
   const lgs = [...new Set(L.map(b => b.lg))].sort((a, b) => lgShort(a) < lgShort(b) ? -1 : 1);
   h += `<h2>By league</h2>` + btTable('League', lgs.map(k => [lgShort(k), L.filter(b => b.lg === k)]));
   h += `<h2>By month</h2>` + btTable('Month', [9, 10, 11, 12, 1, 2, 3, 4, 5, 6].map(mm => [MON[mm - 1], L.filter(b => +b.dt.slice(5, 7) === mm)]));
