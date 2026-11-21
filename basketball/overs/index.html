@@ -620,10 +620,10 @@ function liveTables(L){
   let h = T('By line', 'Line band', band(L, [['Under 170', 0, 170], ['170 to 179.5', 170, 180], ['180 or more', 180, 999]], 'line', 2),
     `Settled live picks, the same bands as the Backtest tab. With few picks these tables say little; they show whether the live picks behave like the backtest. Profit: units won with one unit on every pick.`, 2);
   h += T('By edge', "Model's edge", band(L, [['8% to 12%', 0.08, 0.12], ['12% to 16%', 0.12, 0.16], ['16% or more', 0.16, 99]], 'edge', 2), '', 2);
-  h += T('By pace', 'Pace', band(L, [['Under +1', -99, 1], ['+1 to +2', 1, 2], ['+2 to +3', 2, 3], ['+3 or more', 3, 99]], 'pace'),
-    'Pace when the pick was logged: possessions a game the two teams are expected to play above the league average (16 Nov 2026).');
+  h += T('By pace', 'Pace', band(L, [['Under +1', -99, 1], ['+1 to +2', 1, 2], ['+2 to +3', 2, 3], ['+3 or more', 3, 99]], 'pace', 2),
+    'Pace when the pick was logged: possessions a game the two teams are expected to play above the league average (16 Nov 2026).', 2);
   const lgs = [...new Set(L.map(b => b.lg))].sort((a, b) => lgShort(a) < lgShort(b) ? -1 : 1);
-  h += T('By league', 'League', lgs.map(k => bandRow(lgShort(k), L.filter(b => b.lg === k), false)).join(''));
+  h += T('By league', 'League', lgs.map(k => bandRow(lgShort(k), L.filter(b => b.lg === k), false, 2)).join(''), '', 2);
   // Picks against the blind over (21 Nov 2026, on request): backing the over in every game the rule could look at, by league
   const BL = LIVE.blind || [];
   if (BL.length) {
