@@ -225,6 +225,8 @@ a.gm{color:inherit;text-decoration:none} a.gm:hover{color:var(--gold);text-decor
 <a href="/basketball/">Basketball</a>
 <a href="/basketball/overs/">Basketball Totals</a>
 <a href="/basketball/women/">Women's Totals</a>
+<a href="/eurocup/">EuroCup</a>
+<a href="/fibaeuropecup/">FIBA Europe Cup</a>
 <a href="/paok-hub/">PAOK FC</a>
 <a href="/paok-basketball/">PAOK Basketball</a>
 <a href="/volleyball/" aria-current="page">Volleyball</a>
@@ -260,7 +262,7 @@ a.gm{color:inherit;text-decoration:none} a.gm:hover{color:var(--gold);text-decor
 <p>Projections shows the next 7 days against the market line, and Live test records the picks, logged before the first serve. Season, Backtest and Leagues show the ratings, past seasons since 2020 and each league's market. <a href="/volleyball/games/">Every game</a> has its own page.</p>
 </section>
 </main>
-<script src="data.js?v=fb7db288"></script>
+<script src="data.js?v=c8c2385f"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -462,14 +464,14 @@ function renderBacktest(){
     h += `<h2>By season</h2><p class="note">Profit is in equal-stake units (1 unit per bet). Click a season to see its bets one by one.</p>`;
     h += `<table class="seasons" style="max-width:720px"><thead><tr><th>Season</th><th class="n">Bets</th><th class="n">Won</th><th class="n">Hit</th><th class="n">Profit</th><th class="n">ROI</th></tr></thead><tbody>`;
     for (const [season, t] of Object.entries(by).sort()) h += `<tr class="srow${season === btSeason ? ' on' : ''}" data-season="${season}"><td><span class="caret">${season === btSeason ? '▾' : '▸'}</span> ${season.replace('-','–')}</td><td class="n">${t.n}</td><td class="n">${t.w}</td><td class="n">${pct(t.w / t.n)}</td><td class="n ${cls(t.pl)}">${sgn(t.pl, 2)}</td><td class="n ${cls(t.pl)}">${sgn(t.pl / t.n * 100, 1)}%</td></tr>`;
-    h += '</tbody></table>' + byMonth() + byLine() + calibration();
+    h += '</tbody></table>' + byMonth() + byLine() + byGames() + calibration();
     if (btSeason) h += seasonBets(btSeason);
     return h + intro;
   }
   h += `<p class="note">Profit is in equal-stake units (1 unit per bet). Click a season to see its bets one by one.</p>`;
   h += `<table class="seasons" style="max-width:660px"><thead><tr><th>Season</th><th class="n">Bets</th><th class="n">Won</th><th class="n">Hit</th><th class="n">Profit</th><th class="n">ROI</th></tr></thead><tbody>`;
   for (const s of B.seasons.filter(inLg)) h += `<tr class="srow${s.season === btSeason ? ' on' : ''}" data-season="${s.season}"><td><span class="caret">${s.season === btSeason ? '▾' : '▸'}</span> ${s.season.replace('-','–')}${s.tuned ? ' <span class="muted">(tuned on)</span>' : ''}</td><td class="n">${s.n}</td><td class="n">${s.w}</td><td class="n">${pct(s.w/s.n)}</td><td class="n ${cls(s.pl)}">${sgn(s.pl, 2)}</td><td class="n ${cls(s.roi)}">${sgn(s.roi*100, 1)}%</td></tr>`;
-  h += '</tbody></table>' + byMonth() + byLine() + calibration();
+  h += '</tbody></table>' + byMonth() + byLine() + byGames() + calibration();
   h += btSeason ? seasonBets(btSeason) : leagueBets();   // a league's page lists all its bets (user, 16 Nov 2026)
   return h + intro;
 }
@@ -554,6 +556,25 @@ function byLine(){
   if (n) h += `<tr><td><b>All</b></td><td class="n"><b>${n}</b></td><td class="n"><b>${w}</b></td><td class="n"><b>${pct(w / n)}</b></td><td class="n"><b>${pct(long(bets) / n)}</b></td><td class="n"><b>${avgLine(bets, 'line')}</b></td><td class="n"><b>${avgLine(bets, 'fair')}</b></td><td class="n"><b>${avgLine(bets, 'total')}</b></td><td class="n ${cls(pl)}"><b>${sgn(pl, 2)}</b></td><td class="n ${cls(pl)}"><b>${sgn(pl / n * 100, 1)}%</b></td></tr>`;
   h += '</tbody></table></div>';
   return h;
+}
+
+// the same bets by how many games the less-played team had played that season (user, 22 Nov 2026)
+function byGames(){
+  const tuned = new Set(DATA.backtest.seasons.filter(s => s.tuned).map(s => s.lg + '|' + s.season));
+  const bets = DATA.backtest.bets.filter(b => inLg(b) && !tuned.has(b.lg + '|' + b.season) && b.mg != null);
+  if (!bets.length) return '';
+  const lo = DATA.min_games, bands = [];
+  for (let a = lo; a < 25; a += 4) bands.push([a, a + 3]);
+  bands.push([25, 999]);
+  let h = `<h2>By games played</h2><p class="note">How many games each team had played that season before the game: the fewer of the two teams. Every game of the season counts, a second phase carrying on from the first. Both teams need ${lo} games before a pick, so the first band starts at ${lo}. Lines and totals are averages for the band.</p>`;
+  h += `<div class="scroll"><table style="max-width:1100px"><thead><tr><th>Games played</th><th class="n">Bets</th><th class="n">Hit</th><th class="n">Avg price</th><th class="n">Profit</th><th class="n">ROI</th><th class="n">Opening line</th><th class="n">Closing line</th><th class="n">Model line</th><th class="n">Actual total</th></tr></thead><tbody>`;
+  for (const [a, z] of bands){
+    const g = bets.filter(b => b.mg >= a && b.mg <= z);
+    if (!g.length) continue;
+    const gw = g.filter(b => b.won).length, gp = g.reduce((s, b) => s + b.ret, 0), px = g.reduce((s, b) => s + b.px, 0) / g.length;
+    h += `<tr><td>${z === 999 ? `${a} or more games` : `${a}–${z} games`}</td><td class="n">${g.length}</td><td class="n">${pct(gw / g.length)}</td><td class="n">${px.toFixed(2)}</td><td class="n ${cls(gp)}">${sgn(gp, 2)}</td><td class="n ${cls(gp)}">${sgn(gp / g.length * 100, 1)}%</td><td class="n">${avgLine(g, 'line_open')}</td><td class="n">${avgLine(g, 'line')}</td><td class="n">${avgLine(g, 'fair')}</td><td class="n">${avgLine(g, 'total')}</td></tr>`;
+  }
+  return h + '</tbody></table></div>';
 }
 
 // the same bets by calendar month, every season together: does the rule do better early or late in the season?
