@@ -500,7 +500,8 @@ function analysis(k, notes = true){
   h += T('By month', 'Month', mo);
   // By games played (21 Nov 2026): how many games each team had played before the game (the fewer of the two), the whole season counted, in bands of four
   const RB = BT.filter(b => b.gp != null), top = RB.length ? Math.max(...RB.map(b => b.gp)) : 0, rr = [];
-  for (let lo = 1; lo <= top; lo += 4) { const g = RB.filter(b => b.gp >= lo && b.gp < lo + 4); if (g.length) rr.push(bandRow(`${Math.max(lo, Math.min(...g.map(b => b.gp)))}–${lo + 3} games`, g)); }
+  for (let lo = 1; lo <= Math.min(top, 28); lo += 4) { const g = RB.filter(b => b.gp >= lo && b.gp < lo + 4); if (g.length) rr.push(bandRow(`${Math.max(lo, Math.min(...g.map(b => b.gp)))}–${lo + 3} games`, g)); }
+  { const g = RB.filter(b => b.gp >= 29); if (g.length) rr.push(bandRow('29 or more games', g)); }   // the last band (21 Nov 2026)
   if (rr.length) h += T('By games played', 'Games played', rr.join(''), `How many games each team had played that season before the game: the fewer of the two teams. Every game of the season counts, a second phase carrying on from the first. Both teams need ${LIVE.min_gp ?? 3} games before a pick, so the first band starts at ${LIVE.min_gp ?? 3}.`);
   return h;
 }
@@ -625,7 +626,8 @@ function liveTables(L){
   h += T('By month', 'Month', mo);
   // By games played (21 Nov 2026), the same bands as the Backtest tab
   const RB = L.filter(b => b.gp != null), top = RB.length ? Math.max(...RB.map(b => b.gp)) : 0, rr = [];
-  for (let lo = 1; lo <= top; lo += 4) { const g = RB.filter(b => b.gp >= lo && b.gp < lo + 4); if (g.length) rr.push(bandRow(`${Math.max(lo, Math.min(...g.map(b => b.gp)))}–${lo + 3} games`, g, false)); }
+  for (let lo = 1; lo <= Math.min(top, 28); lo += 4) { const g = RB.filter(b => b.gp >= lo && b.gp < lo + 4); if (g.length) rr.push(bandRow(`${Math.max(lo, Math.min(...g.map(b => b.gp)))}–${lo + 3} games`, g, false)); }
+  { const g = RB.filter(b => b.gp >= 29); if (g.length) rr.push(bandRow('29 or more games', g, false)); }   // the last band (21 Nov 2026)
   if (rr.length) h += T('By games played', 'Games played', rr.join(''), `How many games each team had played that season before the game: the fewer of the two teams, as on the Backtest tab.`);
   return h;
 }
