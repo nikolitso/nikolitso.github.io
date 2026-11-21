@@ -242,7 +242,7 @@ a.tile:hover{border-color:var(--gold)}
 <p>Projections shows the next 7 days, and Live test records the picks, taken at the opening line; 1H live test and 1H backtest cover first halves. Backtest covers 2021–22 to 2025–26, and Leagues shows each league's record. A game's line is the median of the main market lines.</p>
 </section>
 </main>
-<script src="data.js?v=w87"></script>
+<script src="data.js?v=w88"></script>
 <script src="live.js"></script>
 <script>
 const $ = id => document.getElementById(id);
@@ -311,7 +311,7 @@ const TOP_H1 = (() => {
 
 // the 1H live test: open 1H picks, the note, settled 1H picks (14 Nov 2026, as the men's page)
 const H1GP = () => (DATA.h1bt && DATA.h1bt.gp) || [5, 24];   // 1H picks: both teams 5 to 24 games in (22 Nov 2026, user)
-const H1NOTE = H => `<p class="note" id="h1">A separate live test, started ${H.start}, not part of the main record on the Live test tab. <b>Model 1H</b>: built only from earlier first halves, the way the projected total is built from earlier totals: the league's first-half average and each team's first halves this season, starting from 30% of last season's, plus ${sgn(H.bias, 1)} (first halves came in that much above this projection over 2021–22 to 2025–26, more in every season). Its chance of the over comes from how widely first halves spread around the projection in each league (about 10.7 points). It never sees the full-game line or the model total. <b>The pick</b>: the over, the first time Model 1H is at least ${H.gap ?? 3} points above the first-half line (overs only; an edge bar until 21 Nov 2026), on a .5 line, regular season but not October, both teams ${H1GP()[0]} to ${H1GP()[1]} games in, in the same ${LIVE.leagues.length} leagues. Settled on first-half points (no overtime). <b>Backtest</b>: at the market's closing first-half lines and prices, 2022–23 to 2025–26, the old 1% edge bar gave 1,655 picks, won 58.2% and made +6.8%, a profit in every season (+7.3%, +11.4%, +3.8%, +6.7%); backing every first-half over made +1.5%. In the ${LIVE.leagues.length} leagues without October games, the 3-point gap gave ${DATA.h1bt ? DATA.h1bt.picks.length : '–'} picks; the 1H backtest tab has the details.</p>`;
+const H1NOTE = H => `<p class="note" id="h1">A separate live test, started ${H.start}, not part of the main record on the Live test tab. <b>Model 1H</b>: built only from earlier first halves, the way the projected total is built from earlier totals: the league's first-half average and each team's first halves this season, starting from 30% of last season's, plus ${sgn(H.bias, 1)} (first halves came in that much above this projection over 2021–22 to 2025–26, more in every season). Its chance of the over comes from how widely first halves spread around the projection in each league (about 10.7 points). It never sees the full-game line or the model total. <b>The pick</b>: the over, the first time Model 1H is at least ${H.gap ?? 3} points above the first-half line (overs only; an edge bar until 21 Nov 2026), on a .5 line, regular season but not October, both teams ${H1GP()[0]} to ${H1GP()[1]} games in, in the same ${LIVE.leagues.length} leagues. Settled on first-half points (no overtime). <b>Backtest</b>: at the market's closing first-half lines and prices, 2022–23 to 2025–26, the old 1% edge bar gave 1,655 picks, won 58.2% and made +6.8%, a profit in every season (+7.3%, +11.4%, +3.8%, +6.7%). In the ${LIVE.leagues.length} leagues without October games, the 3-point gap gave ${DATA.h1bt ? DATA.h1bt.picks.length : '–'} picks; the 1H backtest tab has the details.</p>`;
 function renderH1Live(){
   const H = LIVE.h1;
   if (!H) return '<p class="empty">No first-half data yet.</p>';
@@ -345,11 +345,11 @@ function renderH1Bt(){
 }
 function h1BtTiles(){
   const D = DATA.h1bt; if (!D || !D.picks.length) return '';
-  const P = D.picks, S = stat(P), W = P.filter(b => b.ret > 0).length, Lo = P.filter(b => b.ret < 0).length, BL = D.blind.all.roi;
+  const P = D.picks, S = stat(P), W = P.filter(b => b.ret > 0).length, Lo = P.filter(b => b.ret < 0).length;
   const f1 = v => v.toFixed(1), av = k => f1(P.reduce((a, b) => a + b[k], 0) / P.length), C = (v, k) => `<b class="${k}" style="font-weight:inherit">${v}</b>`;
   const seasons = [2022, 2023, 2024, 2025], inP = seasons.filter(s => { const L = P.filter(b => b.sy === s); return L.length && stat(L).roi > 0; }).length;
   return TL([['Settled picks', `${W}–${Lo}`, `${pct(W / (W + Lo), 1)} hit rate · ${P.length.toLocaleString('en')} settled`],
-    ['ROI at the closing line', TWO('1H rule', C(roi(S.roi), cls(S.roi)), 'Every 1H over', C(roi(BL), cls(BL))), ''],
+    ['ROI at the closing line', C(roi(S.roi), cls(S.roi)), ''],   // no Every 1H over since 22 Nov 2026 (user)
     ['Average 1H line', av('line'), `average price ${S.px.toFixed(2)}`],
     ['Average 1H total', TWO('Model 1H', av('m1'), 'Actual', av('res')), ''],
     ['Seasons in profit', `${inP} of ${seasons.length}`, '2022–23 to 2025–26']]);
@@ -366,18 +366,18 @@ function h1GapBt(){
 function h1Backtest(){
   const D = DATA.h1bt;
   if (!D || !D.picks.length) return '';
-  const P = D.picks, S = stat(P), BL = D.blind, f1 = v => v.toFixed(1);
+  const P = D.picks, S = stat(P), f1 = v => v.toFixed(1);
   const av = (L, k) => L.reduce((a, b) => a + b[k], 0) / L.length;
-  const HEAD = '<th class="n">Every 1H over</th><th class="n">1H line</th><th class="n">Model 1H</th><th class="n">1H pts</th>';
-  const row = (label, L, bl) => L.length ? grp(label, stat(L), '', `<td class="n ${bl == null ? 'muted' : cls(bl)}">${bl == null ? '–' : roi(bl)}</td><td class="n">${f1(av(L, 'line'))}</td><td class="n">${f1(av(L, 'm1'))}</td><td class="n">${f1(av(L, 'res'))}</td>`) : '';
+  const HEAD = '<th class="n">1H line</th><th class="n">Model 1H</th><th class="n">1H pts</th>';
+  const row = (label, L) => L.length ? grp(label, stat(L), '', `<td class="n">${f1(av(L, 'line'))}</td><td class="n">${f1(av(L, 'm1'))}</td><td class="n">${f1(av(L, 'res'))}</td>`) : '';
   const T = (title, first, body, note='') => `<h2>${title}</h2>${note ? `<p class="note">${note}</p>` : ''}<div class="scroll"><table style="max-width:1100px">${GHEAD(first, HEAD)}<tbody>${body}</tbody></table></div>`;
   const sy = s => `${s}–${String(s + 1).slice(2)}`;
   const seasons = [2022, 2023, 2024, 2025], inProfit = seasons.filter(s => { const L = P.filter(b => b.sy === s); return L.length && stat(L).roi > 0; }).length;
-  let h = `<p class="note">Every over the 1H rule would have taken, 2022–23 to 2025–26, in the ${LIVE.leagues.length} leagues: Model 1H at least ${D.gap} points above the first-half line, regular season but not October, .5 lines, both teams ${H1GP()[0]} to ${H1GP()[1]} games in. Model 1H is rebuilt before each game from earlier first halves only. First-half lines are kept only from just before tip-off, so this backtest is at the <b>closing</b> first-half line and price; there is no opening-line test. Settled on first-half points. <b>Every 1H over</b>: backing the over in every first half the rule looked at, for comparison.</p>`;
+  let h = `<p class="note">Every over the 1H rule would have taken, 2022–23 to 2025–26, in the ${LIVE.leagues.length} leagues: Model 1H at least ${D.gap} points above the first-half line, regular season but not October, .5 lines, both teams ${H1GP()[0]} to ${H1GP()[1]} games in. Model 1H is rebuilt before each game from earlier first halves only. First-half lines are kept only from just before tip-off, so this backtest is at the <b>closing</b> first-half line and price; there is no opening-line test. Settled on first-half points.</p>`;
   h += h1GapBt();
-  h += T('By season', 'Season', seasons.map(s => row(sy(s), P.filter(b => b.sy === s), BL[s] ? BL[s].roi : null)).join('') + row('<b>All</b>', P, BL.all.roi));
+  h += T('By season', 'Season', seasons.map(s => row(sy(s), P.filter(b => b.sy === s))).join('') + row('<b>All</b>', P));
   const lgs = [...new Set(P.map(b => b.lg))].sort((x, y) => lgShort(x) < lgShort(y) ? -1 : 1);
-  h += T('By league', 'League', lgs.map(k => row(lgShort(k), P.filter(b => b.lg === k), D.blind_lg[k])).join(''), 'Leagues with few picks say little on their own.');
+  h += T('By league', 'League', lgs.map(k => row(lgShort(k), P.filter(b => b.lg === k))).join(''), 'Leagues with few picks say little on their own.');
   const v = P.map(b => b.line).sort((a, b) => a - b), c1 = v[Math.floor(v.length / 3)], c2 = v[Math.floor(2 * v.length / 3)];
   h += T('By line', '1H line', [[`Under ${c1}`, 0, c1], [`${c1} to ${c2 - 1}`, c1, c2], [`${c2} and over`, c2, 999]].map(([l, a, z]) => row(l, P.filter(b => b.line >= a && b.line < z))).join(''), 'The first-half line in three bands with about a third of the picks each.');
   const MON = [9, 10, 11, 12, 1, 2, 3, 4, 5], mn = m => new Date(2000, m - 1, 15).toLocaleDateString('en-GB', {month: 'long'});
