@@ -245,7 +245,7 @@ details.picks>summary .muted{font-size:14px;font-weight:400}
 <p>Projections shows the next 7 days, and FT live test records each pick at the line and price when it was logged. Backtest covers 2022–23 to 2025–26, and Leagues shows each league's record. A game's line is the median of the main market lines.</p>
 </section>
 </main>
-<script src="data.js?v=eu27"></script>
+<script src="data.js?v=po27"></script>
 <script src="live.js"></script>
 <script>
 const $ = id => document.getElementById(id);
@@ -255,6 +255,8 @@ const short = s => { const d = new Date(s.slice(0,10)+'T12:00'); return `${d.get
 const pct = (x, d=0) => x == null ? '–' : (x*100).toFixed(d) + '%';
 const sgn = (x, d=1) => x == null ? '–' : (x > 0 ? '+' : x < 0 ? '−' : '') + Math.abs(x).toFixed(d);
 const roi = x => x == null ? '–' : sgn(x*100, 1) + '%';
+const units1 = u => `${sgn(u, Math.abs(u) < 10 ? 2 : 1)} units`;   // profit in equal-stake units on the ROI tiles (user, 21 Nov 2026)
+const UNITS = (uo, uc) => uo == null ? '' : `Profit: ${units1(uo)} opening${uc == null ? '' : ' · ' + units1(uc) + ' closing'}`;
 const cls = x => x > 0 ? 'pos' : x < 0 ? 'neg' : '';
 const sn = s => s.replace('-', '–');
 let view = 'home', lg = 'all', sub = 'picks';
@@ -294,7 +296,7 @@ $('sub').innerHTML = (AGE > 3 ? `<span class="stale">Not updated for ${Math.floo
   const mu = set.filter(b => (b.ma ?? b.mu) != null), nS = `${set.length} settled picks`;
   $('top').innerHTML = [['Open picks', nOpen, nOpen ? 'to play' : 'none right now'], ['Settled picks', won + lost ? `${won}–${lost}` : '–', won + lost ? `${pct(won / (won + lost), 1)} hit rate · ${set.length} settled` : `${set.length} settled`],
     ['ROI', TWO('Opening', won + lost ? `<b class="${cls(units)}" style="font-weight:inherit">${roi(units / (won + lost))}</b>` : '–', 'Closing', cc.length ? `<b class="${cls(uc)}" style="font-weight:inherit">${roi(uc / cc.length)}</b>` : '–'),
-     ''],
+     won + lost ? UNITS(units, cc.length ? uc : null) : ''],
     ['Average line', TWO('Opening', avg(cl, b => b.line), 'Closing', avg(cl, b => b.close)), ''],
     ['Average total', TWO('Model', avg(mu, b => b.ma ?? b.mu), 'Actual', avg(cl, b => b.total)), ''],
     ...mvTiles(cl)]
@@ -443,7 +445,8 @@ function btTiles(k){
   const c = BT.filter(b => b.close != null), W = BT.filter(b => b.ret > 0).length, Lo = BT.filter(b => b.ret < 0).length, RK = riskTiles(BT);
   const C = (v, k) => k ? `<b class="${k}" style="font-weight:inherit">${v}</b>` : v;
   return TL([['Settled picks', `${W}–${Lo}`, `${pct(W / (W + Lo), 1)} hit rate · ${BT.length.toLocaleString('en')} settled`],
-              ['ROI', TWO('Opening', C(roi(S.rule.roi), cls(S.rule.roi)), 'Closing', S.rule.roic != null ? C(roi(S.rule.roic), cls(S.rule.roic)) : '–'), ''],
+              ['ROI', TWO('Opening', C(roi(S.rule.roi), cls(S.rule.roi)), 'Closing', S.rule.roic != null ? C(roi(S.rule.roic), cls(S.rule.roic)) : '–'),
+               (() => { const cc = c.filter(b => b.cpx != null && b.total !== b.close); return UNITS(BT.reduce((a, b) => a + b.ret, 0), cc.length ? cc.reduce((a, b) => a + (b.total > b.close ? b.cpx - 1 : -1), 0) : null); })()],
               ['Average line', TWO('Opening', lineAvg(c, 'line'), 'Closing', lineAvg(c, 'close')), ''],
               ['Average total', TWO('Model', lineAvg(c, 'mu'), 'Actual', lineAvg(c, 'total')), ''],
               ...(c.length ? mvTiles(c).slice(0, -1) : []),
