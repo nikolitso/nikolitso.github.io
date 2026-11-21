@@ -389,16 +389,16 @@ function settled(){
       return {l, g, w, u, league: l.country + ' ' + l.name, n: g.length, hit: w / g.length, line: avg(g, 'line'), fair: avg(g, 'fair'), total: avg(g, 'total'), roi: u / g.length}; }).filter(r => r.n);
     rows.sort((a, b) => { const x = a[lSort.k], y = b[lSort.k]; return (x < y ? -1 : x > y ? 1 : 0) * lSort.d || b.roi - a.roi; });
     const th = (k, lab, n = true) => `<th class="${n ? 'n ' : ''}tsort" data-lsort="${k}">${lab}${lSort.k === k ? (lSort.d > 0 ? ' ▴' : ' ▾') : ''}</th>`;
-    h += `<h2>By league</h2><p class="note">Click a column to sort by it.</p><div class="scroll"><table style="max-width:940px"><thead><tr>${th('league', 'League', false)}${th('n', 'Picks')}${th('w', 'Won')}${th('hit', 'Hit')}${th('line', 'Avg market line')}${th('fair', 'Avg model line')}${th('total', 'Avg actual total')}${th('roi', 'ROI')}</tr></thead><tbody>`;
+    h += `<h2>By league</h2><p class="note">Click a column to sort by it.</p><div class="scroll"><table style="max-width:1020px"><thead><tr>${th('league', 'League', false)}${th('n', 'Picks')}${th('w', 'Won')}${th('hit', 'Hit')}${th('line', 'Avg market line')}${th('fair', 'Avg model line')}${th('total', 'Avg actual total')}${th('u', 'Profit')}${th('roi', 'ROI')}</tr></thead><tbody>`;
     for (const {l, g, w: gw, u: gu} of rows)
-      h += `<tr><td>${l.country} <span class="muted">${l.name} ${sexAb(l)}</span></td><td class="n">${g.length}</td><td class="n">${gw}</td><td class="n">${pct(gw / g.length)}</td><td class="n">${avgLine(g, 'line')}</td><td class="n">${avgLine(g, 'fair')}</td><td class="n">${avgLine(g, 'total')}</td><td class="n ${cls(gu)}">${sgn(gu / g.length * 100, 1)}%</td></tr>`;
+      h += `<tr><td>${l.country} <span class="muted">${l.name} ${sexAb(l)}</span></td><td class="n">${g.length}</td><td class="n">${gw}</td><td class="n">${pct(gw / g.length)}</td><td class="n">${avgLine(g, 'line')}</td><td class="n">${avgLine(g, 'fair')}</td><td class="n">${avgLine(g, 'total')}</td><td class="n ${cls(gu)}">${sgn(gu, 2)}</td><td class="n ${cls(gu)}">${sgn(gu / g.length * 100, 1)}%</td></tr>`;
     h += '</tbody></table></div>';
   }
-  h += `<h2 id="settled">Settled picks, latest first</h2><div class="scroll"><table><thead><tr><th>Date</th>${lg === 'all' ? '<th>League</th>' : ''}<th>Match</th><th class="n">Opening line</th><th class="n">Pick line</th><th class="n">Closing line</th><th class="n">Price</th><th class="n">Model line</th><th class="n">Over chance</th><th class="n">Edge</th><th class="n">Sets</th><th class="n">Total</th></tr></thead><tbody>`;
+  h += `<h2 id="settled">Settled picks, latest first</h2><div class="scroll"><table><thead><tr><th>Date</th>${lg === 'all' ? '<th>League</th>' : ''}<th>Match</th><th class="n">Opening line</th><th class="n">Pick line</th><th class="n">Closing line</th><th class="n">Price</th><th class="n">Model line</th><th class="n">Over chance</th><th class="n">Edge</th><th class="n">Sets</th><th class="n">Total</th><th class="n">Profit</th></tr></thead><tbody>`;
   let run = 0;
   const rows = done.map(p => { run += p.profit;
     return `<tr><td>${short(p.dt)}</td>${lg === 'all' ? `<td>${LG[p.lg].country} ${sexAb(LG[p.lg])}</td>` : ''}<td class="wr">${gameLink(p)}</td><td class="n">${p.line_open ?? "–"}</td><td class="n">Over ${p.line}</td><td class="n">${p.line_close ?? "–"}</td><td class="n">${p.px.toFixed(2)}</td>
-      ${fairCell(p)}<td class="n">${pct(realP(p.p, p.px, p.under_px))}</td><td class="n">${sgn(realEdge(p.p, p.px, p.under_px)*100, 0)}%</td><td class="n">${p.sets}</td><td class="n ${p.won ? 'w' : 'l'}">${p.total}</td></tr>`; });
+      ${fairCell(p)}<td class="n">${pct(realP(p.p, p.px, p.under_px))}</td><td class="n">${sgn(realEdge(p.p, p.px, p.under_px)*100, 0)}%</td><td class="n">${p.sets}</td><td class="n ${p.won ? 'w' : 'l'}">${p.total}</td><td class="n ${cls(p.profit)}">${sgn(p.profit, 2)}</td></tr>`; });
   return h + rows.reverse().join('') + '</tbody></table></div>';
 }
 
