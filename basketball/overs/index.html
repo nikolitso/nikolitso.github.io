@@ -600,8 +600,9 @@ function riskTiles(list){
 // calibration: the model's chance against how often the picks won, in bands of the model's chance
 function calib(list, note){
   const P = b => b.p ?? (1 + b.edge) / b.px, L = list.filter(b => b.ret != null && b.ret !== 0);
+  const PD = Math.abs(L.reduce((a, b) => a + b.ret, 0)) < 100 ? 2 : 1;   // one decimal format per table
   const PR = (g, bold) => { const u = g.reduce((a, b) => a + b.ret, 0), B = x => bold ? `<b>${x}</b>` : x;   // ROI and profit in equal-stake units per band (21 Nov 2026)
-    return `<td class="n ${cls(u)}">${B(roi(u / g.length))}</td><td class="n ${cls(u)}">${B(sgn(u, Math.abs(u) < 100 ? 2 : 1))}</td>`; };
+    return `<td class="n ${cls(u)}">${B(roi(u / g.length))}</td><td class="n ${cls(u)}">${B(sgn(u, PD))}</td>`; };
   if (!L.length) return '';
   const rows = [['Under 60%', 0, .6], ['60% to 65%', .6, .65], ['65% to 70%', .65, .7], ['70% or more', .7, 2]].map(([label, lo, hi]) => {
     const g = L.filter(b => P(b) >= lo && P(b) < hi); if (!g.length) return '';
