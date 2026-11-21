@@ -462,8 +462,8 @@ function analysis(k, notes = true){
   if (k === 'all') h += calib(BT, `How often the picks won against the chance the model gave them, at the opening line. A well-calibrated model wins about as often as it says in every band.`);
   const T = (title, first, body, note='', pd=0) => `<h2>${title}</h2>${nt(note)}<div class="scroll"><table style="max-width:1140px">${GHEAD(first, BHEAD, pd)}<tbody>${body}</tbody></table></div>`;
   const EP = Math.round(DATA.rule.edge * 100);
-  h += T('By edge', 'Edge', [[0, EP / 2], [EP / 2, EP]].map(([lo, hi]) => bandRow(`${lo}% to ${hi}% <span class="muted">(skipped)</span>`, (DATA.skipped_edge || []).filter(f).filter(x => (lo === 0 || x.edge > lo / 100) && (hi === EP || x.edge <= hi / 100)))).join('') + bandRow(`${EP}% to ${EP + 4}%`, BT.filter(x => x.edge < (EP + 4) / 100)) + bandRow(`${EP + 4}% or more`, BT.filter(x => x.edge >= (EP + 4) / 100)),   // every pick is above the bar; stored edges are rounded
-    `Edge: the model's chance of the over × the price − 1, at the opening line. The first two rows are the games the rule skips: every other rule met, with an edge above 0 but not above ${EP}%. They are not in any other figure on this page.`);
+  h += T('By edge', 'Edge', [[0, EP / 2], [EP / 2, EP]].map(([lo, hi]) => bandRow(`${lo}% to ${hi}% <span class="muted">(skipped)</span>`, (DATA.skipped_edge || []).filter(f).filter(x => (lo === 0 || x.edge > lo / 100) && (hi === EP || x.edge <= hi / 100)), false, 1)).join('') + bandRow(`${EP}% to ${EP + 4}%`, BT.filter(x => x.edge < (EP + 4) / 100), false, 1) + bandRow(`${EP + 4}% or more`, BT.filter(x => x.edge >= (EP + 4) / 100), false, 1),   // every pick is above the bar; stored edges are rounded
+    `Edge: the model's chance of the over × the price − 1, at the opening line. The first two rows are the games the rule skips: every other rule met, with an edge above 0 but not above ${EP}%. They are not in any other figure on this page. Profit: units won with one unit on every pick.`, 1);
   h += T('By line', 'Line band', [['Under 170', 0, 170], ['170 to 179.5', 170, 180], ['180 or more', 180, 999]].map(([label, lo, hi]) => bandRow(label, BT.filter(x => x.line >= lo && x.line < hi), false, 1)).join(''),
     `The opening line. There is no line cap since 9 Nov 2026: games at 180 or more were skipped before, but they made a profit in every season and at the closing line. Profit: units won with one unit on every pick.`, 1);
   if (k === 'all') {                                   // By tier, with ROI at the closing line too (15 Nov 2026)
@@ -619,7 +619,7 @@ function liveTables(L){
   const band = (list, bands, key, pd = 0) => bands.map(([label, lo, hi]) => bandRow(label, list.filter(x => x[key] != null && x[key] >= lo && x[key] < hi), false, pd)).join('');
   let h = T('By line', 'Line band', band(L, [['Under 170', 0, 170], ['170 to 179.5', 170, 180], ['180 or more', 180, 999]], 'line', 2),
     `Settled live picks, the same bands as the Backtest tab. With few picks these tables say little; they show whether the live picks behave like the backtest. Profit: units won with one unit on every pick.`, 2);
-  h += T('By edge', "Model's edge", band(L, [['8% to 12%', 0.08, 0.12], ['12% to 16%', 0.12, 0.16], ['16% or more', 0.16, 99]], 'edge'));
+  h += T('By edge', "Model's edge", band(L, [['8% to 12%', 0.08, 0.12], ['12% to 16%', 0.12, 0.16], ['16% or more', 0.16, 99]], 'edge', 2), '', 2);
   h += T('By pace', 'Pace', band(L, [['Under +1', -99, 1], ['+1 to +2', 1, 2], ['+2 to +3', 2, 3], ['+3 or more', 3, 99]], 'pace'),
     'Pace when the pick was logged: possessions a game the two teams are expected to play above the league average (16 Nov 2026).');
   const lgs = [...new Set(L.map(b => b.lg))].sort((a, b) => lgShort(a) < lgShort(b) ? -1 : 1);
