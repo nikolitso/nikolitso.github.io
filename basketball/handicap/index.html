@@ -163,7 +163,7 @@ tr.sub td:first-child{padding-left:28px;color:var(--muted)}
 .chips a{font:400 14.5px var(--mono);color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:4px 11px;text-decoration:none}
 .chips a.on{color:var(--an-on-accent);background:var(--gold);border-color:var(--gold)}
 td.wr{white-space:normal}.lglist{list-style:none;margin:8px 0 0;padding:0;columns:3 220px;column-gap:28px}.lglist li{padding:4px 0;font-size:14.5px;break-inside:avoid}a.gm{color:inherit;text-decoration:underline;text-decoration-color:var(--an-rule);text-underline-offset:3px}a.gm:hover{color:var(--gold);text-decoration-color:currentColor}
-table.proj tr.pk td{background:var(--an-accent-soft)}table.proj tr.pk td:first-child{box-shadow:inset 3px 0 var(--gold)}
+table.proj tr.pk td{background:var(--an-accent-soft)}table.op td{white-space:nowrap}table.op th,table.op td{padding-left:6px;padding-right:6px}table.op th{white-space:normal;vertical-align:bottom}table.op td.bn{text-align:center}table.op td.bn .badge{margin:0}   /* open picks: one line a pick, Bet now its own column (21 Nov 2026) */table.proj tr.pk td:first-child{box-shadow:inset 3px 0 var(--gold)}
 /* seven tiles in one row at desktop width */
 .metrics{grid-template-columns:repeat(auto-fit,minmax(min(140px,40vw),1fr))}
 .badge{display:inline-block;font:500 14px var(--mono);letter-spacing:.06em;text-transform:uppercase;background:var(--gold);color:var(--an-on-accent);border-radius:4px;padding:2px 7px;margin-left:8px;vertical-align:2px}
@@ -248,7 +248,7 @@ details.picks>summary .muted{font-size:14px;font-weight:400}
 </section>
 </main>
 
-<script src="live.js?v=202611211204"></script>
+<script src="live.js?v=202611211206"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
