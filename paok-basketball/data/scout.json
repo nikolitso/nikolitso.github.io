@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-21T02:01:10Z",
+ "updated": "2026-11-21T15:09:17Z",
  "reports": [
   {
    "comp": "EuroCup",
@@ -1893,7 +1893,7 @@
    ],
    "projection": {
     "paok": {
-     "score": 79.0,
+     "score": 79.7,
      "players": [
       {
        "name": "Kyle Alexander",
@@ -2010,7 +2010,7 @@
      "pace": 72.9
     },
     "opp": {
-     "score": 80.0,
+     "score": 79.4,
      "players": [
       {
        "name": "Jeremiah Robinson-Earl",
@@ -2127,14 +2127,14 @@
      ],
      "pace": 72.9
     },
-    "winProb": 46,
+    "winProb": 51,
     "pace": 72.9,
     "lineupSource": "manual",
     "note": "PAOK without Osman, who is out until the spring. Foster (ankle) is doubtful. Aris without Jovic (calf), Charalampopoulos (calf) and Tanoulis.",
     "modelTotal": 154.5,
     "line": 159.5,
     "modelMargin": 1.7,
-    "hcp": -1.5,
+    "hcp": 0.0,
     "learned": {
      "games": 976,
      "lineGames": 946,
@@ -2150,38 +2150,38 @@
     },
     "teamStats": {
      "pts": {
-      "paok": 79.0,
-      "opp": 80.0,
-      "total": 159.0
+      "paok": 79.7,
+      "opp": 79.4,
+      "total": 159.1
      },
      "fg2m": {
-      "paok": 17.6,
-      "opp": 18.9,
+      "paok": 17.7,
+      "opp": 18.7,
       "total": 36.4
      },
      "fg3m": {
-      "paok": 8.2,
+      "paok": 8.3,
       "opp": 8.6,
       "total": 16.9
      },
      "ftm": {
-      "paok": 19.2,
-      "opp": 16.4,
-      "total": 35.5
+      "paok": 19.4,
+      "opp": 16.2,
+      "total": 35.6
      },
      "ast": {
-      "paok": 15.9,
-      "opp": 17.3,
+      "paok": 16.0,
+      "opp": 17.2,
       "total": 33.2
      },
      "oreb": {
-      "paok": 11.1,
+      "paok": 11.0,
       "opp": 10.4,
       "total": 21.4
      },
      "dreb": {
-      "paok": 24.7,
-      "opp": 24.0,
+      "paok": 24.9,
+      "opp": 23.8,
       "total": 48.7
      },
      "tov": {
@@ -2190,8 +2190,8 @@
       "total": 27.6
      },
      "reb": {
-      "paok": 35.8,
-      "opp": 34.4,
+      "paok": 35.9,
+      "opp": 34.2,
       "total": 70.1
      }
     }
