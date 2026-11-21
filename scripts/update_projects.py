@@ -182,8 +182,12 @@ def handball():
     d = page_data("handball", "/handball/live-test/overs/")
     sig = d["sig"]["signals"]
     done = [x for x in sig if x.get("status") in ("won", "lost")]
-    return record(sum(x["status"] == "won" for x in done), sum(x["status"] == "lost" for x in done),
-                  sum(x.get("profit") or 0 for x in done), sum(x.get("status") == "open" for x in sig))
+    pl = sum(x.get("profit") or 0 for x in done)
+    pills = record(sum(x["status"] == "won" for x in done), sum(x["status"] == "lost" for x in done),
+                   pl, sum(x.get("status") == "open" for x in sig))
+    # profit in 1-unit stakes next to the ROI, worded as on the volleyball card (21 Nov 2026)
+    return [f"{p} · {pl:+.{2 if abs(pl) < 10 else 1}f} units" if p.startswith("ROI ") and "units" not in p else p
+            for p in pills]
 
 
 def basketball():
