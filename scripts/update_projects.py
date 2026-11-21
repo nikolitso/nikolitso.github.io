@@ -195,7 +195,7 @@ def basketball():
     rec = d.get("record") or {}
     won, lost, open_, units = (sum(r.get(k, 0) for r in rec.values()) for k in ("won", "lost", "open", "units"))
     if won or lost or open_:
-        return record(won, lost, units, open_)
+        return record(won, lost, units, open_, show_units=True)
     games = sum(L.get("nResults") or 0 for L in d.get("leagues", []))
     return [f"{games} games this season"] if games else []
 
@@ -206,7 +206,7 @@ def basketball_totals(folder):
     season = js_object(f"/basketball/{folder}/data.js", r"(?:const|window\.)\s*DATA\s*=").get("cur", {}).get("bets", [])    # the page's 2026-27 record
     done = season + [p for p in picks if p.get("done") and p.get("ret") is not None]
     pills = record(sum(p["ret"] > 0 for p in done), sum(p["ret"] < 0 for p in done),
-                   sum(p["ret"] for p in done), sum(not p.get("done") for p in picks))
+                   sum(p["ret"] for p in done), sum(not p.get("done") for p in picks), show_units=True)
     h1 = d.get("h1") or {}                                      # the 1H test (14 Nov 2026), totals page only
     if h1.get("rows") is not None:
         n1 = sum(not p.get("done") for p in h1.get("picks") or [])
