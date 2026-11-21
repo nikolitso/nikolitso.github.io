@@ -528,6 +528,9 @@ function qbands(list, key, k, fmt){
   if (d.length < k) return [];
   return [...Array(k).keys()].map(i => d.slice(Math.round(d.length * i / k), Math.round(d.length * (i + 1) / k))).map(r => [`${fmt(r[0][key])} to ${fmt(r[r.length - 1][key])}`, r]);
 }
+// By line in three bands with about a third of the picks each (21 Nov 2026, user): cut at the lines a third and two thirds of the way up
+const thirds = L => { const v = L.map(b => b.line).sort((a, b) => a - b); return [v[Math.floor(v.length / 3)], v[Math.floor(2 * v.length / 3)]]; };
+const LBANDS = ([c1, c2]) => [[`Under ${c1}`, 0, c1], [`${c1} to ${c2 - 1}`, c1, c2], [`${c2} and over`, c2, 999]];
 const NB = 4;   // four bands: of 2 to 8, the one whose band results repeated best between 2021–23 and 2024–26 (11 Nov 2026)
 
 
@@ -538,7 +541,7 @@ function btBody(BT, S, pool, leagues){
   h += `<h2>By points over the line</h2>` + btTable('Projected total − line', [
       [`Under 2${SKIPPED}`, gb(SG, -99, 2)], [`2 to 4${SKIPPED}`, gb(SG, 2, 4)], ['4 to 6', gb(BT, 4, 6)], ['6 or more', gb(BT, 6, 999)]],
     'The rule: the projected total, before the starting point and pace, minus the opening line. Picks need 4 points or more. The rows marked skipped are the games that met every other rule but sat closer to the line.');
-  h += `<h2>By line</h2>` + btTable('Line band', [['Under 130', 0, 130], ['130–139.5', 130, 140], ['140 and over', 140, 999]].map(([label, lo, hi]) => [label, BT.filter(x => x.line >= lo && x.line < hi)]), 'The opening line in three bands.');
+  h += `<h2>By line</h2>` + btTable('Opening line', LBANDS(thirds(BT)).map(([label, lo, hi]) => [label, BT.filter(x => x.line >= lo && x.line < hi)]), 'The opening line in three bands with about a third of the picks each.');
   h += `<h2>By stage</h2>` + btTable('Stage', [['Regular season', BT], [`Play-offs${SKIPPED}`, skipped('skipped_po')]],
     'The second row is the play-off games the rule skips: every other rule met, with the chance worked out as for a regular-season game.');
   h += `<h2>By season</h2>` + btTable('Season', S.seasons.map(s => [sn(s.season), BT.filter(x => seasonOf(x) === s.season)]));
@@ -602,7 +605,7 @@ function liveTables(L){
   const band = (list, bands, key) => bands.map(([label, lo, hi]) => [label, list.filter(x => x[key] != null && x[key] >= lo && x[key] < hi)]);
   let h = '';                                                 // no Calibration since 21 Nov 2026 (user)
   h += `<h2>By points over the line</h2>` + btTable('Projected total − line', band(L.map(b => ({...b, gp_: GAP(b)})), [['4 to 6', 4, 6], ['6 or more', 6, 999]], 'gp_'));
-  h += `<h2>By line</h2>` + btTable('Line band', band(L, [['Under 130', 0, 130], ['130–139.5', 130, 140], ['140 and over', 140, 999]], 'line'),
+  h += `<h2>By line</h2>` + btTable('Opening line', band(L, LBANDS(thirds(DATA.bets)), 'line'),
     'Settled live picks, the same bands as the Backtest tab. With few picks these tables say little; they show whether the live picks behave like the backtest.');
   const lgs = [...new Set(L.map(b => b.lg))].sort((a, b) => lgShort(a) < lgShort(b) ? -1 : 1);
   h += `<h2>By league</h2>` + btTable('League', lgs.map(k => [lgShort(k), L.filter(b => b.lg === k)]));
