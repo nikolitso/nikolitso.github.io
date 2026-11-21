@@ -217,8 +217,10 @@ def basketball_totals(folder):
 CARDS = {                    # slug -> (card href on the homepage, reader)
     "superleague": ("/superleague/", superleague),
     "greek-cup": ("/football/greek-cup/", greek_cup),
-    "eurocup": ("/eurocup/", lambda: basketball_cup("eurocup")),
-    "fibaeuropecup": ("/fibaeuropecup/", lambda: basketball_cup("fibaeuropecup")),
+    # EuroCup and FIBA Europe Cup: cards taken off the homepage on 22 Nov 2026 (sections hidden, still online).
+    # To bring them back, restore the cards in index.html and these two lines:
+    # "eurocup": ("/eurocup/", lambda: basketball_cup("eurocup")),
+    # "fibaeuropecup": ("/fibaeuropecup/", lambda: basketball_cup("fibaeuropecup")),
     "handball": ("/handball/live-test/overs/", handball),
     "basketball": ("/basketball/", basketball),
     "basketball-overs": ("/basketball/overs/", lambda: basketball_totals("overs")),

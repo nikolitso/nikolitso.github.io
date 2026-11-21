@@ -7,9 +7,10 @@ name: Site · FIBA Europe Cup
 # scripts/fiba_runner.py starts them: Flashscore shows a runner outside Greece other bookmakers than the Greek ones
 # the pipeline looks for, so the runner lets it take the line from those (Stake.com, 1xBet ...) when no Greek book is listed.
 on:
-  schedule:
-    - cron: "35 5 * * *"      # full update (UTC; 07:35 Athens in winter, 08:35 in summer)
-    - cron: "5 7-18 * * *"    # matchday lines, 10:05-21:05 Athens in winter
+  # schedule paused 22 Nov 2026: FIBA Europe Cup is hidden from the site. Remove the # marks to resume.
+  # schedule:
+  #   - cron: "35 5 * * *"      # full update (UTC; 07:35 Athens in winter, 08:35 in summer)
+  #   - cron: "5 7-18 * * *"    # matchday lines, 10:05-21:05 Athens in winter
   workflow_dispatch:
     inputs:
       job:

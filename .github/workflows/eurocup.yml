@@ -3,9 +3,10 @@ name: Site · EuroCup
 # /eurocup/: results, groups, lines and rosters from Flashscore and the Euroleague API, projections, publish.
 # Scripts and data in nikolitso/BettingSignal (eurocup/). Mon-Thu mornings, on its own schedule.
 on:
-  schedule:
-    - cron: "30 7 * * 1-4"   # 09:30 Athens in winter (10:30 in summer), Monday to Thursday
-    - cron: "40 15-19 * * 2-4"   # game days: hourly 17:40-21:40 Athens in winter, so the last line read is close to tip-off
+  # schedule paused 22 Nov 2026: EuroCup is hidden from the site. Remove the # marks to resume.
+  # schedule:
+  #   - cron: "30 7 * * 1-4"   # 09:30 Athens in winter (10:30 in summer), Monday to Thursday
+  #   - cron: "40 15-19 * * 2-4"   # game days: hourly 17:40-21:40 Athens in winter, so the last line read is close to tip-off
   workflow_dispatch:          # Run workflow button: Actions tab, or the GitHub mobile app
 
 permissions:

@@ -8,7 +8,6 @@
 - [Basketball, Greece and Cyprus](https://antonisnikolitsopoulos.com/basketball/): team strength, game projections and handicap margins
 - [Basketball totals](https://antonisnikolitsopoulos.com/basketball/overs/): a totals model for 45 domestic leagues in Europe and Latin America
 - [Women's basketball totals](https://antonisnikolitsopoulos.com/basketball/women/): a totals model for 20 European leagues
-- [EuroCup](https://antonisnikolitsopoulos.com/eurocup/) and [FIBA Europe Cup](https://antonisnikolitsopoulos.com/fibaeuropecup/): club ratings, projections and market lines
 - [Volleyball](https://antonisnikolitsopoulos.com/volleyball/): sets and total points projections
 - [Handball](https://antonisnikolitsopoulos.com/handball/): total goals projections, live tests and backtests
 - [PAOK Hub](https://antonisnikolitsopoulos.com/paok-hub/) and [PAOK Basketball](https://antonisnikolitsopoulos.com/paok-basketball/): PAOK's seasons in numbers

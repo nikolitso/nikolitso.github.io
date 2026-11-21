@@ -13,8 +13,6 @@ schedule of its own. There is no combined update: each site runs alone.
 | [Thought Bank](https://antonisnikolitsopoulos.com/thought-bank/) | `thought-bank/` | — | — | static |
 | [Basketball](https://antonisnikolitsopoulos.com/basketball/) | `basketball/` | Site · Basketball | 09:00, 16:00 | BettingSignal `basketball/projector` |
 | [Basketball totals](https://antonisnikolitsopoulos.com/basketball/overs/) | `basketball/overs/` | Feed · Basketball totals live test | hourly | BettingSignal `basketball-overs` |
-| [EuroCup](https://antonisnikolitsopoulos.com/eurocup/) | `eurocup/` | Site · EuroCup | 09:30 Mon–Thu | BettingSignal `eurocup` |
-| [FIBA Europe Cup](https://antonisnikolitsopoulos.com/fibaeuropecup/) | `fibaeuropecup/` | Site · FIBA Europe Cup | 07:35, then hourly to 20:05 | BettingSignal `fibaeuropecup` |
 | [Super League](https://antonisnikolitsopoulos.com/superleague/) | `superleague/` | Site · Super League, Feed · Super League closing odds | 09:00, 14:00, 18:00; odds every 30 min 12:00–23:30 | BettingSignal `superleague`; `odds` branch |
 | [Greek Cup](https://antonisnikolitsopoulos.com/football/greek-cup/) | `football/greek-cup/` | Site · Greek Cup | 10:00, 23:45 | BettingSignal `greek-cup` |
 | [Handball](https://antonisnikolitsopoulos.com/handball/live-test/overs/) | `handball/` | Site · Handball | 03:00, 09:00, 15:00, 21:00 | BettingSignal `handball/projector` |

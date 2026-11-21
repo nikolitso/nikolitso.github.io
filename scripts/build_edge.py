@@ -655,7 +655,7 @@ def page_404(by_date):
 
 def sitemap(books):
     """Pages linked from the site. Unlinked or unfinished sections stay out."""
-    paths = ["/", "/about/", BASE, BASE + "authors/"] + [b["url"] for b in books] + ["/thought-bank/", "/paok-hub/", "/paok-basketball/", "/fibaeuropecup/", "/eurocup/", "/superleague/", "/football/greek-cup/", "/volleyball/", "/wine/"]
+    paths = ["/", "/about/", BASE, BASE + "authors/"] + [b["url"] for b in books] + ["/thought-bank/", "/paok-hub/", "/paok-basketball/", "/superleague/", "/football/greek-cup/", "/volleyball/", "/wine/"]
     for section in ("basketball", "handball"):        # model sections built elsewhere: every real page in them (redirects excluded)
         base = ROOT / section
         if base.exists():
@@ -685,7 +685,7 @@ def sitemap(books):
     (ROOT / "sitemap.xml").write_text(
         f'<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">{urls}</urlset>\n',
         encoding="utf-8")
-    (ROOT / "robots.txt").write_text(f"User-agent: *\nAllow: /\n\nSitemap: {SITE}/sitemap.xml\nSitemap: {SITE}/superleague/sitemap.xml\nSitemap: {SITE}/eurocup/sitemap.xml\nSitemap: {SITE}/basketball/sitemap.xml\nSitemap: {SITE}/basketball/overs/sitemap.xml\nSitemap: {SITE}/basketball/women/sitemap.xml\nSitemap: {SITE}/fibaeuropecup/sitemap.xml\nSitemap: {SITE}/handball/sitemap.xml\nSitemap: {SITE}/volleyball/sitemap.xml\n", encoding="utf-8")
+    (ROOT / "robots.txt").write_text(f"User-agent: *\nAllow: /\n\nSitemap: {SITE}/sitemap.xml\nSitemap: {SITE}/superleague/sitemap.xml\nSitemap: {SITE}/basketball/sitemap.xml\nSitemap: {SITE}/basketball/overs/sitemap.xml\nSitemap: {SITE}/basketball/women/sitemap.xml\nSitemap: {SITE}/handball/sitemap.xml\nSitemap: {SITE}/volleyball/sitemap.xml\n", encoding="utf-8")
 
 
 def forward_old(books):

@@ -22,8 +22,11 @@ from urllib.parse import urlparse, unquote
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SITE = "https://antonisnikolitsopoulos.com"
 CSS_VERSION = "5"
-MENU = ["/superleague/", "/football/greek-cup/", "/basketball/", "/basketball/overs/", "/basketball/women/", "/eurocup/",
-        "/fibaeuropecup/", "/paok-hub/", "/paok-basketball/", "/volleyball/", "/handball/"]
+MENU = ["/superleague/", "/football/greek-cup/", "/basketball/", "/basketball/overs/", "/basketball/women/",
+        "/paok-hub/", "/paok-basketball/", "/volleyball/", "/handball/"]
+# EuroCup and FIBA Europe Cup left the menu on 22 Nov 2026; their own (paused) pages keep the menu they were built with
+HIDDEN = ("eurocup/", "fibaeuropecup/")
+MENU_HIDDEN = MENU[:5] + ["/eurocup/", "/fibaeuropecup/"] + MENU[5:]
 SKIP_PREFIXES = ("scripts/", "paok-basketball/data/")
 SKIP_DIRS = {".git", ".claude", ".superpowers", "_bs", "node_modules", "__pycache__"}
 WORDING = [
@@ -107,7 +110,7 @@ def check_page(path, problems):
         say("menu", f"{len(navs)} projects menus")
     elif r != "404.html":
         hrefs = re.findall(r'<a href="([^"]+)"', navs[0])
-        if hrefs != MENU:
+        if hrefs != (MENU_HIDDEN if r.replace("\\", "/").startswith(HIDDEN) else MENU):
             say("menu", f"entries differ: {hrefs}")
         cur = re.findall(r'aria-current="page"', navs[0])
         if len(cur) != 1:

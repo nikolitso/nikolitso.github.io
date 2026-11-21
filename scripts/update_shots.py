@@ -31,8 +31,7 @@ SHOTS = [
     ("/wine/", "wine"),
     ("/superleague/", "superleague"),
     ("/football/greek-cup/", "greek-cup"),
-    ("/eurocup/", "eurocup"),
-    ("/fibaeuropecup/", "fibaeuropecup"),
+    # ("/eurocup/", "eurocup"), ("/fibaeuropecup/", "fibaeuropecup"): hidden since 22 Nov 2026, no homepage card
     ("/volleyball/", "volleyball"),
     ("/handball/", "handball"),
     ("/basketball/", "basketball"),
