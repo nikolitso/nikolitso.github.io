@@ -739,21 +739,19 @@
    "away": false,
    "days": 3
   },
-  "h": -0.9,
-  "a": -0.2,
+  "h": -0.2,
+  "a": 0.3,
   "oh": [
    "Osman",
-   "Foster",
-   "Bazinas"
+   "Motiejunas"
   ],
   "oa": [
    "Jovic",
    "Charalampopoulos",
-   "Antetokounmpo",
    "Tanoulis"
   ],
-  "nh": 3.6,
-  "na": 1.2,
+  "nh": 2.9,
+  "na": 0.7,
   "uh": 2.7,
   "ua": 1.0,
   "ph": [
@@ -762,11 +760,7 @@
     2.4
    ],
    [
-    "Foster",
-    0.7
-   ],
-   [
-    "Bazinas",
+    "Motiejunas",
     0.4
    ]
   ],
@@ -778,10 +772,6 @@
    [
     "Charalampopoulos",
     0.4
-   ],
-   [
-    "Antetokounmpo",
-    0.3
    ],
    [
     "Tanoulis",
