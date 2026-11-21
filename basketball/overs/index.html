@@ -489,8 +489,8 @@ function analysis(k, notes = true){
        + fr('<b>Fast Moving Leagues</b>', BT.filter(b => FASTMV.has(b.lg))) + fl.map(k => fr(`<span style="padding-left:18px" class="muted">${lgShort(k)}</span>`, BT.filter(b => b.lg === k))).join('')
        + fr('<b>Other leagues</b>', BT.filter(b => !FASTMV.has(b.lg))) + '</tbody></table></div>';
   }
-  h += T('By stage', 'Stage', bandRow('Regular season', BT) + bandRow('Play-offs <span class="muted">(skipped)</span>', (DATA.skipped_po || []).filter(f)),
-    `The second row is the play-off games the rule skips: every other rule met, with the model's chance worked out as for a regular-season game. The model has a play-off signal of its own that on its own keeps it off play-off overs, so this row shows what would happen without it. They are not in any other figure on this page.`);
+  h += T('By stage', 'Stage', bandRow('Regular season', BT, false, 1) + bandRow('Play-offs <span class="muted">(skipped)</span>', (DATA.skipped_po || []).filter(f), false, 1),
+    `The second row is the play-off games the rule skips: every other rule met, with the model's chance worked out as for a regular-season game. The model has a play-off signal of its own that on its own keeps it off play-off overs, so this row shows what would happen without it. They are not in any other figure on this page.`, 1);
   h += T('By season', 'Season', S.seasons.map(s => grp(sn(s.season) + (s.season === DATA.tuned ? ' <span class="muted">(tuned on)</span>' : '') + (s.season === DATA.season ? ' <span class="muted">(so far)</span>' : ''), {...s, pd: 1}, '', btCells(BT.filter(b => seasonOf(b) === s.season)))).join(''), '', 1);
   let mo = '';
   for (const mm of [9, 10, 11, 12, 1, 2, 3, 4, 5, 6]) {
