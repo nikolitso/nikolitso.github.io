@@ -262,7 +262,7 @@ a.gm{color:inherit;text-decoration:none} a.gm:hover{color:var(--gold);text-decor
 <p>Projections shows the next 7 days against the market line, and Live test records the picks, logged before the first serve. Season, Backtest and Leagues show the ratings, past seasons since 2020 and each league's market. <a href="/volleyball/games/">Every game</a> has its own page.</p>
 </section>
 </main>
-<script src="data.js?v=4aee6ae3"></script>
+<script src="data.js?v=d6e0fa2d"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -273,6 +273,7 @@ const slugify = s => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/
 const gameLink = g => `<a class="gm" href="/volleyball/games/${g.dt.slice(0,10)}-${slugify(g.home)}-${slugify(g.away)}/">${g.home} – ${g.away}</a>`;
 const pct = x => Math.round(x*100) + '%';
 const sgn = (x, d=1) => (x > 0 ? '+' : x < 0 ? '−' : '') + Math.abs(x).toFixed(d);
+const units1 = u => `${sgn(u, Math.abs(u) < 10 ? 2 : 1)} units`;   // profit in equal-stake units on the ROI pills (user, 21 Nov 2026)
 const cls = x => x > 0 ? 'pos' : x < 0 ? 'neg' : '';
 // the model runs too confident (Calibration in Backtest): shown chances keep 80% of its advantage over the no-vig market,
 // edge = 80% of the model's. Picks are still chosen on the model's own figures (user, 7 Nov 2026). 60% until 14 Nov 2026:
@@ -322,7 +323,7 @@ function pickTiles(){
   const avg = `avg of ${n} settled pick${n === 1 ? '' : 's'}`;
   const t = [['Open picks', nOpen, nOpen ? 'to play →' : 'none right now', '#view=picks'], ['Record', `${w}–${n - w}`, `${n ? (w / n * 100).toFixed(1) + '% won · ' : ''}${n} picks →`, `#view=picks${lg !== 'all' ? '&lg=' + lg : ''}&to=settled`],
              
-             ['ROI', n ? `<span class="${cls(units)}">${sgn(units / n * 100, 1)}%</span>` : '–', `${n} settled pick${n === 1 ? '' : 's'}`],
+             ['ROI', n ? `<span class="${cls(units)}">${sgn(units / n * 100, 1)}%</span>` : '–', `${n ? units1(units) + ' · ' : ''}${n} settled pick${n === 1 ? '' : 's'}`],
              ['Market line', avgLine(done, 'line'), avg], ['Model line', avgLine(done, 'fair'), avg], ['Actual total', avgLine(done, 'total'), avg]];
   return `<div class="metrics">${t.map(([l, v, n, href]) => { const inner = `<div class="lbl">${l}</div><div class="big">${v}</div><div class="sm">${n}</div>`;
     return href ? `<a class="metric" href="${href}">${inner}</a>` : `<div class="metric">${inner}</div>`; }).join('')}</div>`;
@@ -426,7 +427,7 @@ function btTiles(S, pick = inLg){
   const tuned = new Set(DATA.backtest.seasons.filter(s => s.tuned).map(s => s.lg + '|' + s.season));
   const g = DATA.backtest.bets.filter(b => pick(b) && !tuned.has(b.lg + '|' + b.season)), avg = `avg of ${g.length} bets`;
   const t = [['Record', `${S.w}–${S.n - S.w}`, `${S.n} bets`], ['Hit rate', S.n ? pct(S.w / S.n) : '–', `${S.n} bets`],
-             ['ROI', S.n ? `<span class="${cls(S.roi)}">${sgn(S.roi * 100, 1)}%</span>` : '–', `${S.n} bets`],
+             ['ROI', S.n ? `<span class="${cls(S.roi)}">${sgn(S.roi * 100, 1)}%</span>` : '–', `${S.n ? units1(S.roi * S.n) + ' · ' : ''}${S.n} bets`],
              ['Market line', avgLine(g, 'line'), avg], ['Model line', avgLine(g, 'fair'), avg], ['Actual total', avgLine(g, 'total'), avg]];
   return `<div class="metrics">${t.map(([l, v, n]) => `<div class="metric"><div class="lbl">${l}</div><div class="big">${v}</div><div class="sm">${n}</div></div>`).join('')}</div>`;
 }
@@ -627,8 +628,8 @@ function renderLeagues(){
   h = `<p class="note"><a href="#view=leagues">← All leagues</a></p><h2 style="margin-top:6px">${name}</h2>`;
   if (P.n){
     const t = [['Record', `${P.w}–${P.n - P.w}`, `${pct(P.w / P.n)} hit rate`],
-               ['ROI', `<span class="${cls(P.roi)}">${sgn(P.roi * 100, 1)}%</span>`, `closing line · ${P.n} picks`],
-               ['ROI at open', P.roi_open == null ? '–' : `<span class="${cls(P.roi_open)}">${sgn(P.roi_open * 100, 1)}%</span>`, `opening line · ${P.n_open} picks`],
+               ['ROI', `<span class="${cls(P.roi)}">${sgn(P.roi * 100, 1)}%</span>`, `${units1(P.roi * P.n)} · closing line · ${P.n} picks`],
+               ['ROI at open', P.roi_open == null ? '–' : `<span class="${cls(P.roi_open)}">${sgn(P.roi_open * 100, 1)}%</span>`, `${P.roi_open == null ? '' : units1(P.roi_open * P.n_open) + ' · '}opening line · ${P.n_open} picks`],
                ['Market line', r1(P.line), 'avg of the picks'], ['Model line', r1(P.fair), 'avg of the picks'], ['Actual total', r1(P.total), 'avg of the picks']];
     h += `<h3 style="margin-top:14px">The model's picks</h3><div class="metrics">${t.map(([l, v, n]) => `<div class="metric"><div class="lbl">${l}</div><div class="big">${v}</div><div class="sm">${n}</div></div>`).join('')}</div>`
        + `<p class="note"><a href="#view=backtest&lg=${lg}&to=bets">Every pick in this league, one by one →</a></p>`;
