@@ -527,7 +527,7 @@
    "days": 3
   },
   "h": -1.0,
-  "a": -1.6,
+  "a": -2.3,
   "oh": [
    "Diarra",
    "Hutson",
@@ -536,11 +536,12 @@
   "oa": [
    "Pinckney",
    "Williams",
+   "Katsivelis",
    "Lekavicius",
    "Brown Iii"
   ],
   "nh": 3.3,
-  "na": 5.9,
+  "na": 6.6,
   "uh": 2.3,
   "ua": 4.3,
   "ph": [
@@ -565,6 +566,10 @@
    [
     "Williams",
     2.4
+   ],
+   [
+    "Katsivelis",
+    0.7
    ],
    [
     "Lekavicius",
@@ -735,7 +740,7 @@
    "days": 3
   },
   "h": -0.9,
-  "a": -0.1,
+  "a": -0.2,
   "oh": [
    "Osman",
    "Foster",
@@ -748,7 +753,7 @@
    "Tanoulis"
   ],
   "nh": 3.6,
-  "na": 1.1,
+  "na": 1.2,
   "uh": 2.7,
   "ua": 1.0,
   "ph": [
