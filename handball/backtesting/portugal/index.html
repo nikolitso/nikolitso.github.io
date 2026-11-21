@@ -355,7 +355,7 @@ html{scroll-behavior:smooth;font-size:17.5px}   /* one step larger: the page siz
 </footer>
 </main>
 
-<script src="/handball/data.js?v=e87ae055"></script>
+<script src="/handball/data.js?v=35d94aad"></script>
 <script>
 const $=s=>document.querySelector(s);
 const f=(v,d=2)=>v==null||isNaN(v)?'–':(+v).toFixed(d);
@@ -451,7 +451,7 @@ const day=d=>{if(!d)return '–';const [y,m,dd]=d.split('-');return new Date(+y,
     const pc=(n,d)=>d?Math.round(n/d*100)+'%':'–', dd=ddOf(D);
     const T=(k,v,n)=>`<div class="tile"><span class="klabel">${k}</span>${v}${n?`<span class="small muted">${n}</span>`:''}</div>`, st=v=>`<span class="sp">&nbsp;</span><span class="stat">${v}</span>`;
     const two=(a,av,b,bv,c1='h-a',c2='h-b')=>`<div class="dual"><div class="${c1}"><i>${a}</i><b>${av}</b></div><div class="${c2}"><i>${b}</i><b>${bv}</b></div></div>`;
-    const ro=v=>v==null?'–':`${sg(v,1)}%`, nOpen=A.filter(x=>x.status==='open').length;
+    const ro=v=>v==null?'–':`${sg(v,1)}%`, nOpen=liveOpen(A).length;
     const [wU,aU,bU]=wr(up),[wD,aD,bD]=wr(dn),[wN,aN,bN]=wr(no),roN=(()=>{const d=no.filter(x=>x.status!=='push');return d.length?no.reduce((a,x)=>a+(x.profit||0),0)/d.length*100:null})();
     if(!D.length)return '<p class="small muted">No settled picks yet.</p>';
     return `<div class="tiles lt">${[
