@@ -243,7 +243,7 @@ a.tile:hover{border-color:var(--gold)}
 <p>Projections shows the next 7 days, and Live test records the picks, taken at the opening line; the First half tab covers first halves. Backtest covers 2021–22 to 2025–26, and Leagues shows each league's record. A game's line is the median of the main market lines.</p>
 </section>
 </main>
-<script src="data.js?v=w80"></script>
+<script src="data.js?v=w81"></script>
 <script src="live.js"></script>
 <script>
 const $ = id => document.getElementById(id);
@@ -322,7 +322,7 @@ function renderH1Live(){
     open.map(b => `<tr><td data-s="${b.dt}">${dayName(b.dt)} ${b.dt.slice(11)}</td><td>${lgShort(b.lg)}</td><td>${mlink(b)}</td><td class="n"><b>${side(b)}</b></td><td class="n">${b.px.toFixed(2)}</td><td class="n">${b.m1 != null ? b.m1.toFixed(1) : '–'}</td><td class="n">${b.m1 != null ? sgn(b.m1 - b.line, 1) : '–'}</td><td class="n">${b.now ?? '–'}</td>${b.now != null && b.m1 != null ? gapCell(Math.round((b.m1 - b.now) * 10) / 10, e) : '<td class="n muted">–</td>'}</tr>`).join('') + '</tbody></table></div>'
     : '<p class="empty">No open 1H picks right now. New ones appear here as first-half lines open.</p>';
   h += h1GapTable(H, e);
-  h += h1Proj() + H1NOTE(H);
+  h += h1Proj() + H1NOTE(H) + h1Backtest();
   const done = H.picks.filter(b => b.done);
   if (done.length) {
     let run = 0;
@@ -336,6 +336,31 @@ function renderH1Live(){
     h += `<h2 id="h1settled">Settled 1H picks <span class="pill">Test</span></h2><p class="note">Latest first. Settled on first-half points. Closing 1H line: ▲ moved toward the pick, ▼ against it.</p><div class="scroll"><table class="proj settled"><thead><tr><th>Date</th><th>League</th><th>Match</th><th class="n">Pick</th><th class="n">Price</th><th class="n">Model 1H</th><th class="n">Gap</th><th class="n">Closing</th><th class="n">1H pts</th><th class="n">Result</th></tr></thead><tbody>${rows.reverse().join('')}</tbody></table></div>`;
   }
   return h;
+}
+
+// the 1H backtest (21 Nov 2026, user): every pick the 3-point rule would have made at the closing first-half lines, 2022-23 to 2025-26, broken down as the Backtest tab
+function h1Backtest(){
+  const D = DATA.h1bt;
+  if (!D || !D.picks.length) return '';
+  const P = D.picks, S = stat(P), BL = D.blind, f1 = v => v.toFixed(1);
+  const av = (L, k) => L.reduce((a, b) => a + b[k], 0) / L.length;
+  const HEAD = '<th class="n">Every 1H over</th><th class="n">1H line</th><th class="n">Model 1H</th><th class="n">1H pts</th>';
+  const row = (label, L, bl) => L.length ? grp(label, stat(L), '', `<td class="n ${bl == null ? 'muted' : cls(bl)}">${bl == null ? '–' : roi(bl)}</td><td class="n">${f1(av(L, 'line'))}</td><td class="n">${f1(av(L, 'm1'))}</td><td class="n">${f1(av(L, 'res'))}</td>`) : '';
+  const T = (title, first, body, note='') => `<h2>${title}</h2>${note ? `<p class="note">${note}</p>` : ''}<div class="scroll"><table style="max-width:1100px">${GHEAD(first, HEAD)}<tbody>${body}</tbody></table></div>`;
+  const sy = s => `${s}–${String(s + 1).slice(2)}`;
+  const seasons = [2022, 2023, 2024, 2025], inProfit = seasons.filter(s => { const L = P.filter(b => b.sy === s); return L.length && stat(L).roi > 0; }).length;
+  let h = `<h2 id="h1bt">1H backtest</h2><p class="note">Every over the 1H rule would have taken, 2022–23 to 2025–26, in the ${LIVE.leagues.length} leagues: Model 1H at least ${D.gap} points above the first-half line, regular season, .5 lines, both teams ${LIVE.min_gp ?? 4}+ games in. Model 1H is rebuilt before each game from earlier first halves only. First-half lines are kept only from just before tip-off, so this backtest is at the <b>closing</b> first-half line and price; there is no opening-line test. Settled on first-half points. <b>Every 1H over</b>: backing the over in every first half the rule looked at, for comparison.</p>`;
+  h += tiles([['Picks', P.length.toLocaleString('en')], ['Hit rate', pct(S.w / S.n, 1)], ['ROI (closing)', roi(S.roi), cls(S.roi)], ['Every 1H over', roi(BL.all.roi), cls(BL.all.roi)], ['Avg price', S.px.toFixed(2)], ['Seasons in profit', `${inProfit} of ${seasons.length}`]]);
+  h += T('By season', 'Season', seasons.map(s => row(sy(s), P.filter(b => b.sy === s), BL[s] ? BL[s].roi : null)).join('') + row('<b>All</b>', P, BL.all.roi));
+  const lgs = [...new Set(P.map(b => b.lg))].sort((x, y) => lgShort(x) < lgShort(y) ? -1 : 1);
+  h += T('By league', 'League', lgs.map(k => row(lgShort(k), P.filter(b => b.lg === k), D.blind_lg[k])).join(''), 'Leagues with few picks say little on their own.');
+  const v = P.map(b => b.line).sort((a, b) => a - b), c1 = v[Math.floor(v.length / 3)], c2 = v[Math.floor(2 * v.length / 3)];
+  h += T('By line', '1H line', [[`Under ${c1}`, 0, c1], [`${c1} to ${c2 - 1}`, c1, c2], [`${c2} and over`, c2, 999]].map(([l, a, z]) => row(l, P.filter(b => b.line >= a && b.line < z))).join(''), 'The first-half line in three bands with about a third of the picks each.');
+  const MON = [9, 10, 11, 12, 1, 2, 3, 4, 5], mn = m => new Date(2000, m - 1, 15).toLocaleDateString('en-GB', {month: 'long'});
+  h += T('By month', 'Month', MON.map(m => row(mn(m), P.filter(b => +b.dt.slice(5, 7) === m))).join(''), 'All four seasons together.');
+  const rows = P.slice().reverse().slice(0, 400).map(b => `<tr><td data-s="${b.dt}">${short(b.dt)} ${b.dt.slice(0, 4)}</td><td>${lgShort(b.lg)}</td><td class="wr">${b.home} – ${b.away}</td><td class="n ${wl(b)}"><b>Over ${b.line}</b></td><td class="n">${b.px.toFixed(2)}</td><td class="n">${f1(b.m1)}</td><td class="n">${sgn(b.m1 - b.line, 1)}</td><td class="n ${wl(b)}">${b.res}</td><td class="n">${b.ret > 0 ? '<span class="pill pos">Won</span>' : b.ret < 0 ? '<span class="pill neg">Lost</span>' : '<span class="pill">Push</span>'}</td></tr>`).join('');
+  h += `<h2>Every 1H backtest pick, latest first</h2><p class="note">${P.length} picks${P.length > 400 ? ', the latest 400 shown' : ''}. Line and price are the closing first-half ones.</p><div class="scroll"><table class="proj settled"><thead><tr><th>Date</th><th>League</th><th>Match</th><th class="n">Pick</th><th class="n">Price</th><th class="n">Model 1H</th><th class="n">Gap</th><th class="n">1H pts</th><th class="n">Result</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+  return h + (LIVE.h1.picks.some(b => b.done) ? '<h2 style="margin-top:36px">1H live test, settled picks</h2><p class="note">The tables below are the live test only, at the line and price logged.</p>' : '');
 }
 
 // By gap (21 Nov 2026, user): the 1H backtest by Model 1H minus the line, the skipped bands too, with the live test's picks in the same bands
