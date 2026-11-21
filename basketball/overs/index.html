@@ -246,7 +246,7 @@ details.picks>summary .muted{font-size:14px;font-weight:400}
 </section>
 </main>
 <script src="data.js?v=gp27"></script>
-<script src="live.js"></script>
+<script>document.write('<script src="live.js?t=' + Math.floor(Date.now() / 60000) + '"><\/script>')</script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
