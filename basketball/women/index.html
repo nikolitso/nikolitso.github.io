@@ -242,7 +242,7 @@ a.tile:hover{border-color:var(--gold)}
 <p>Projections shows the next 7 days, and Live test records the picks, taken at the opening line; 1H live test and 1H backtest cover first halves. Backtest covers 2021–22 to 2025–26, and Leagues shows each league's record. A game's line is the median of the main market lines.</p>
 </section>
 </main>
-<script src="data.js?v=w85"></script>
+<script src="data.js?v=w86"></script>
 <script src="live.js"></script>
 <script>
 const $ = id => document.getElementById(id);
@@ -381,6 +381,7 @@ function h1Backtest(){
   h += T('By line', '1H line', [[`Under ${c1}`, 0, c1], [`${c1} to ${c2 - 1}`, c1, c2], [`${c2} and over`, c2, 999]].map(([l, a, z]) => row(l, P.filter(b => b.line >= a && b.line < z))).join(''), 'The first-half line in three bands with about a third of the picks each.');
   const MON = [9, 10, 11, 12, 1, 2, 3, 4, 5], mn = m => new Date(2000, m - 1, 15).toLocaleDateString('en-GB', {month: 'long'});
   h += T('By month', 'Month', MON.map(m => row(mn(m), P.filter(b => +b.dt.slice(5, 7) === m))).join(''), 'All four seasons together.');
+  h += T('By games played', 'Games played', gpRows(P).map(([l, L]) => row(l, L)).join(''), GPNOTE);   // as on the Backtest tab (22 Nov 2026, user)
   return h;
 }
 
