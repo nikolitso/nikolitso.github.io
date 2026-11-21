@@ -764,7 +764,9 @@ document.addEventListener('click', e => {
     if (!num) return t.toLowerCase(); const m = t.match(/-?\d+(\.\d+)?/); return m ? parseFloat(m[0]) : null; };
   groups.sort((a, b) => { const x = key(a[0]), y = key(b[0]); if (x === y) return 0; if (x == null) return 1; if (y == null) return -1;
     return (x < y ? -1 : 1) * (dir === 'asc' ? 1 : -1); });
-  groups.flat().forEach(r => tb.appendChild(r));
+  // total rows (All, All leagues) stay at the bottom whatever the sort (21 Nov 2026)
+  const isAll = g => /^All( leagues)?$/.test((g[0].cells[0]?.textContent || '').trim());
+  [...groups.filter(g => !isAll(g)), ...groups.filter(isAll)].flat().forEach(r => tb.appendChild(r));
 });
 
 // How it works (20 Nov 2026): what each page shows, then the method
