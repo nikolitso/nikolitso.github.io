@@ -623,6 +623,10 @@ function liveTables(L){
   let mo = '';
   for (const mm of [9, 10, 11, 12, 1, 2, 3, 4, 5, 6]) { const g = L.filter(b => +b.dt.slice(5, 7) === mm); if (g.length) mo += bandRow(MON[mm - 1], g, false); }
   h += T('By month', 'Month', mo);
+  // By games played (21 Nov 2026), the same bands as the Backtest tab
+  const RB = L.filter(b => b.gp != null), top = RB.length ? Math.max(...RB.map(b => b.gp)) : 0, rr = [];
+  for (let lo = 1; lo <= top; lo += 4) { const g = RB.filter(b => b.gp >= lo && b.gp < lo + 4); if (g.length) rr.push(bandRow(`${Math.max(lo, Math.min(...g.map(b => b.gp)))}–${lo + 3} games`, g, false)); }
+  if (rr.length) h += T('By games played', 'Games played', rr.join(''), `How many games each team had played that season before the game: the fewer of the two teams, as on the Backtest tab.`);
   return h;
 }
 
