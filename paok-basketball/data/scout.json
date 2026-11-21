@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-21T15:09:17Z",
+ "updated": "2026-11-21T15:18:42Z",
  "reports": [
   {
    "comp": "EuroCup",
@@ -1980,7 +1980,7 @@
        "name": "Nikos Chougkaz",
        "no": "9",
        "min": 15,
-       "pts": 4.0,
+       "pts": 3.9,
        "reb": 2.3,
        "ast": 0.4,
        "pir": 3.8
@@ -2005,7 +2005,9 @@
       }
      ],
      "missing": [
-      "Cedi Osman"
+      "Cedi Osman",
+      "Donatas Motiejunas",
+      "Giorgos Fillios"
      ],
      "pace": 72.9
     },
@@ -2015,101 +2017,92 @@
       {
        "name": "Jeremiah Robinson-Earl",
        "no": "3",
-       "min": 28,
-       "pts": 11.8,
-       "reb": 6.6,
+       "min": 29,
+       "pts": 12.0,
+       "reb": 6.7,
        "ast": 1.7,
-       "pir": 16.6
+       "pir": 16.9
       },
       {
        "name": "E.J. Liddell",
        "no": "32",
        "min": 22,
-       "pts": 9.9,
-       "reb": 5.2,
-       "ast": 1.6,
-       "pir": 14.4
+       "pts": 10.0,
+       "reb": 5.3,
+       "ast": 1.7,
+       "pir": 14.6
       },
       {
        "name": "Nenad Dimitrijevic",
        "no": "7",
-       "min": 22,
-       "pts": 10.2,
+       "min": 23,
+       "pts": 10.3,
        "reb": 3.2,
-       "ast": 4.8,
-       "pir": 14.1
+       "ast": 4.9,
+       "pir": 14.3
       },
       {
        "name": "Matt Morgan",
        "no": "30",
        "min": 22,
-       "pts": 13.0,
+       "pts": 13.2,
        "reb": 1.8,
-       "ast": 2.2,
-       "pir": 13.4
+       "ast": 2.3,
+       "pir": 13.7
       },
       {
        "name": "Khem Birch",
        "no": "92",
        "min": 18,
-       "pts": 6.0,
+       "pts": 6.1,
        "reb": 3.5,
        "ast": 1.0,
-       "pir": 9.7
+       "pir": 9.8
       },
       {
        "name": "Vasilis Toliopoulos",
        "no": "4",
-       "min": 20,
-       "pts": 7.4,
+       "min": 21,
+       "pts": 7.5,
        "reb": 1.9,
        "ast": 3.1,
-       "pir": 8.3
+       "pir": 8.4
       },
       {
        "name": "Elijah Long",
        "no": "0",
        "min": 20,
        "pts": 6.1,
-       "reb": 3.2,
+       "reb": 3.3,
        "ast": 2.3,
-       "pir": 8.2
+       "pir": 8.3
       },
       {
        "name": "Kostas Antetokounmpo",
        "no": "37",
        "min": 14,
-       "pts": 3.8,
+       "pts": 3.9,
        "reb": 3.1,
        "ast": 0.9,
-       "pir": 6.5
+       "pir": 6.6
       },
       {
        "name": "Adam Mokoka",
        "no": "95",
-       "min": 23,
+       "min": 24,
        "pts": 5.1,
        "reb": 2.8,
        "ast": 2.0,
-       "pir": 6.3
+       "pir": 6.4
       },
       {
        "name": "Eleftherios Bochoridis",
        "no": "13",
        "min": 4,
-       "pts": 1.1,
+       "pts": 1.2,
        "reb": 0.6,
        "ast": 0.5,
        "pir": 1.7
-      },
-      {
-       "name": "Chrysostomos Chatzilamprou",
-       "no": "10",
-       "min": 3,
-       "pts": 1.0,
-       "reb": 0.6,
-       "ast": 0.3,
-       "pir": 1.5
       },
       {
        "name": "Stelios Poulianitis",
@@ -2123,15 +2116,16 @@
      ],
      "missing": [
       "Vasilis Charalampopoulos",
-      "Stefan Jovic"
+      "Stefan Jovic",
+      "Chrysostomos Chatzilamprou"
      ],
      "pace": 72.9
     },
     "winProb": 51,
     "pace": 72.9,
     "lineupSource": "manual",
-    "note": "PAOK without Osman, who is out until the spring. Foster (ankle) is doubtful. Aris without Jovic (calf), Charalampopoulos (calf) and Tanoulis.",
-    "modelTotal": 154.5,
+    "note": "Official 12s. PAOK without Osman (out until the spring), Motiejunas and Fillios; Foster plays through his ankle sprain, and Alexander and Moore are in after flu-like symptoms. Aris without Jovic, Charalampopoulos and Tanoulis (injured) and young Chatzilamprou, with Poulianitis in his place.",
+    "modelTotal": 154.3,
     "line": 159.5,
     "modelMargin": 1.7,
     "hcp": 0.0,

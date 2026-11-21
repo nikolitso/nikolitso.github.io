@@ -2851,7 +2851,7 @@
   "date": "2026-11-21T15:30:00Z",
   "opp": "Aris",
   "home": true,
-  "saved": "2026-11-21T15:09:17Z",
+  "saved": "2026-11-21T15:18:42Z",
   "paok": 79.7,
   "oppScore": 79.4,
   "winProb": 51,
@@ -2903,7 +2903,7 @@
     "total": 70.1
    }
   },
-  "modelTotal": 154.5,
+  "modelTotal": 154.3,
   "line": 159.5,
   "modelMargin": 1.7,
   "hcp": 0.0,
@@ -2994,7 +2994,7 @@
      "name": "Nikos Chougkaz",
      "no": "9",
      "min": 15,
-     "pts": 4.0,
+     "pts": 3.9,
      "reb": 2.3,
      "ast": 0.4,
      "pir": 3.8
@@ -3022,101 +3022,92 @@
     {
      "name": "Jeremiah Robinson-Earl",
      "no": "3",
-     "min": 28,
-     "pts": 11.8,
-     "reb": 6.6,
+     "min": 29,
+     "pts": 12.0,
+     "reb": 6.7,
      "ast": 1.7,
-     "pir": 16.6
+     "pir": 16.9
     },
     {
      "name": "E.J. Liddell",
      "no": "32",
      "min": 22,
-     "pts": 9.9,
-     "reb": 5.2,
-     "ast": 1.6,
-     "pir": 14.4
+     "pts": 10.0,
+     "reb": 5.3,
+     "ast": 1.7,
+     "pir": 14.6
     },
     {
      "name": "Nenad Dimitrijevic",
      "no": "7",
-     "min": 22,
-     "pts": 10.2,
+     "min": 23,
+     "pts": 10.3,
      "reb": 3.2,
-     "ast": 4.8,
-     "pir": 14.1
+     "ast": 4.9,
+     "pir": 14.3
     },
     {
      "name": "Matt Morgan",
      "no": "30",
      "min": 22,
-     "pts": 13.0,
+     "pts": 13.2,
      "reb": 1.8,
-     "ast": 2.2,
-     "pir": 13.4
+     "ast": 2.3,
+     "pir": 13.7
     },
     {
      "name": "Khem Birch",
      "no": "92",
      "min": 18,
-     "pts": 6.0,
+     "pts": 6.1,
      "reb": 3.5,
      "ast": 1.0,
-     "pir": 9.7
+     "pir": 9.8
     },
     {
      "name": "Vasilis Toliopoulos",
      "no": "4",
-     "min": 20,
-     "pts": 7.4,
+     "min": 21,
+     "pts": 7.5,
      "reb": 1.9,
      "ast": 3.1,
-     "pir": 8.3
+     "pir": 8.4
     },
     {
      "name": "Elijah Long",
      "no": "0",
      "min": 20,
      "pts": 6.1,
-     "reb": 3.2,
+     "reb": 3.3,
      "ast": 2.3,
-     "pir": 8.2
+     "pir": 8.3
     },
     {
      "name": "Kostas Antetokounmpo",
      "no": "37",
      "min": 14,
-     "pts": 3.8,
+     "pts": 3.9,
      "reb": 3.1,
      "ast": 0.9,
-     "pir": 6.5
+     "pir": 6.6
     },
     {
      "name": "Adam Mokoka",
      "no": "95",
-     "min": 23,
+     "min": 24,
      "pts": 5.1,
      "reb": 2.8,
      "ast": 2.0,
-     "pir": 6.3
+     "pir": 6.4
     },
     {
      "name": "Eleftherios Bochoridis",
      "no": "13",
      "min": 4,
-     "pts": 1.1,
+     "pts": 1.2,
      "reb": 0.6,
      "ast": 0.5,
      "pir": 1.7
-    },
-    {
-     "name": "Chrysostomos Chatzilamprou",
-     "no": "10",
-     "min": 3,
-     "pts": 1.0,
-     "reb": 0.6,
-     "ast": 0.3,
-     "pir": 1.5
     },
     {
      "name": "Stelios Poulianitis",
@@ -3136,7 +3127,7 @@
   "date": "2026-12-08T18:00:00Z",
   "opp": "Bosna",
   "home": true,
-  "saved": "2026-11-21T15:09:17Z",
+  "saved": "2026-11-21T15:18:42Z",
   "paok": 85.6,
   "oppScore": 80.7,
   "winProb": 66,
