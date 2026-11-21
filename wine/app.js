@@ -702,15 +702,17 @@ function render() {
   document.getElementById('kicker').textContent = t('kicker');
   const home = view === 'home';
   // the active tab already says where we are: the Wine list and Estates have no title or intro (Antonis)
-  // The title is only hidden from view there: it stays the page's <h1> for screen readers and search engines.
-  const bare = home || view === 'list' || view === 'wineries';
-  document.getElementById('lede').hidden = bare;
-  document.getElementById('title').classList.toggle('vh', bare);
-  document.getElementById('title').textContent = t({home: 'docTitle', list: 'listTitle', wineries: 'estatesTitle', finder: 'title'}[view]);
-  if (!home) document.getElementById('lede').textContent = t({list: 'listLede', wineries: 'estatesLede', finder: 'lede'}[view]);
+  ['title', 'lede'].forEach(id => { document.getElementById(id).hidden = home || view === 'list' || view === 'wineries'; });
+  if (!home) {
+    document.getElementById('title').textContent = t({list: 'listTitle', wineries: 'estatesTitle', finder: 'title'}[view]);
+    document.getElementById('lede').textContent = t({list: 'listLede', wineries: 'estatesLede', finder: 'lede'}[view]);
+  }
   document.querySelectorAll('.views button').forEach(b => { b.textContent = t({list: 'viewList', wineries: 'viewEstates', finder: 'viewFinder'}[b.dataset.view]); b.classList.toggle('on', b.dataset.view === view); });
   document.getElementById('hero').innerHTML = heroSvg(home ? 'list' : view);
-  document.querySelector('.search').hidden = false;  // search box back on every page (Antonis, 2026-11-19); typing on the home page opens the Pairing Finder
+  const sb = document.querySelector('.search');
+  // home: the search sits right under the picture, above Tonight and the month (Antonis, 2026-11-21); other pages: under the title
+  if (home) document.getElementById('season').before(sb); else document.getElementById('finderChips').before(sb);
+  sb.hidden = false;  // search box back on every page (Antonis, 2026-11-19); typing on the home page opens the Pairing Finder
   ['tagsLabel', 'tags', 'grapesLabel', 'grapes'].forEach(id => { document.getElementById(id).hidden = view === 'finder'; });
   document.getElementById('season').innerHTML = home ? seasonHtml() : '';
   document.getElementById('musicKick').textContent = t('music');
@@ -765,7 +767,7 @@ function render() {
 }
 
 document.addEventListener('toggle', e => { const d = e.target.closest && e.target.closest('details.pill'); if (d) { d.open ? openEstates.add(d.dataset.w) : openEstates.delete(d.dataset.w); } }, true);
-document.getElementById('q').addEventListener('input', e => { state.q = e.target.value; state.grape = ''; if (view === 'home' && state.q.trim()) { view = 'finder'; try { history.replaceState(null, '', HASH[view]); } catch (x) {} } render(); });
+document.getElementById('q').addEventListener('input', e => { state.q = e.target.value; state.grape = ''; if (view === 'home' && state.q.trim()) { view = 'finder'; try { history.replaceState(null, '', HASH[view]); } catch (x) {} } render(); if (document.activeElement !== e.target) e.target.focus(); });
 function openModal(html) {
   const m = document.getElementById('modal');
   document.getElementById('modalBody').innerHTML = html;
