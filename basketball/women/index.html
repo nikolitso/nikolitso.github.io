@@ -441,6 +441,7 @@ function h1Tables(list){
   h += T('By league', 'League', lgs.map(k => row(lgShort(k), L.filter(b => b.lg === k))).join(''));
   const mos = [...new Set(L.map(b => b.dt.slice(0, 7)))].sort();
   h += T('By month', 'Month', mos.map(m => row(new Date(m + '-15T12:00:00').toLocaleDateString('en-GB', {month: 'long', year: 'numeric'}), L.filter(b => b.dt.slice(0, 7) === m))).join(''));
+  h += T('By games played', 'Games played', gpRows(L).map(([l, g]) => row(l, g)).join(''), GPNOTE + ' Picks logged before 22 Nov 2026 counted from the results.');   // as on the 1H backtest tab (22 Nov 2026, user)
   h += T('By hours before tip-off', 'Logged', band([['24 hours or more', 24, 999], ['12 to 24 hours', 12, 24], ['Under 12 hours', 0, 12]], 'hours'),
     'How long before tip-off the pick was logged: whether the first-half lines that open early are the softer ones.');
   const fg = new Set(LIVE.picks.flatMap(b => [b.dt.slice(0, 10) + b.home + '|' + b.away, b.dt.slice(0, 10) + b.away + '|' + b.home])), both = b => fg.has(b.dt.slice(0, 10) + b.home + '|' + b.away);
