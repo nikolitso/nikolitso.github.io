@@ -470,12 +470,12 @@ function analysis(k, notes = true){
     const cRoi = g => { const c = g.filter(b => b.cpx != null && b.close != null && b.total !== b.close); if (!c.length) return '<td class="n muted">–</td>';
       const r = c.reduce((a, b) => a + (b.total > b.close ? b.cpx - 1 : -1), 0) / c.length; return `<td class="n ${cls(r)}">${roi(r)}</td>`; };
     const row = (label, g) => { const n = g.length, sum = f => g.reduce((a, x) => a + f(x), 0);
-      return grp(label, {n, w: g.filter(x => x.ret > 0).length, px: n ? sum(x => x.px) / n : 0, roi: n ? sum(x => x.ret) / n : 0}, '', cRoi(g) + btCells(g)); };
+      return grp(label, {n, w: g.filter(x => x.ret > 0).length, px: n ? sum(x => x.px) / n : 0, roi: n ? sum(x => x.ret) / n : 0, pd: 1}, '', cRoi(g) + btCells(g)); };
     const body = TIER_NAMES.map(t => {
       const g = BT.filter(b => tierOf(b.lg) === t), lgs = [...new Set(g.map(b => b.lg))].sort((x, y) => g.filter(b => b.lg === y).length - g.filter(b => b.lg === x).length);
       return g.length ? row(`<b>${t}</b>`, g) + lgs.map(L_ => row(`<span style="padding-left:18px" class="muted">${lgShort(L_)}</span>`, g.filter(b => b.lg === L_))).join('') : ''; }).join('');
     h += `<h2>By tier</h2>${nt(`The leagues in four tiers by how deep their betting market is. Tier 1: the deepest markets (Spain, Germany, France). Tier 2: Poland, Turkey, Italy, Greece. Tier 3: Czechia, Lithuania, Austria. Tier 4: the other European leagues. Then the second divisions from the Tier 1–3 countries (2). Each tier's leagues are listed under it, most picks first. ROI at the closing line: the same picks taken at the closing line and price.`)}`
-       + `<div class="scroll"><table style="max-width:1040px"><thead><tr><th>Tier and league</th><th class="n">Picks</th><th class="n">Hit</th><th class="n">Avg price</th><th class="n">ROI at<br>opening line</th><th class="n">ROI at<br>closing line</th><th class="n">Opening<br>line</th><th class="n">Closing<br>line</th><th class="n">Model<br>line</th><th class="n">Actual<br>total</th></tr></thead><tbody>${body}</tbody></table></div>`;
+       + `<div class="scroll"><table style="max-width:1040px"><thead><tr><th>Tier and league</th><th class="n">Picks</th><th class="n">Hit</th><th class="n">Avg price</th><th class="n">ROI at<br>opening line</th><th class="n">Profit<br>(units)</th><th class="n">ROI at<br>closing line</th><th class="n">Opening<br>line</th><th class="n">Closing<br>line</th><th class="n">Model<br>line</th><th class="n">Actual<br>total</th></tr></thead><tbody>${body}</tbody></table></div>`;
     // Fast Moving Leagues: where the line moves toward the picks, so they are taken at once (20 Nov 2026)
     const fm = g => { const c = g.filter(b => b.close != null), n = c.length, mv = c.map(b => b.close - b.line);
       const cc = g.filter(b => b.cpx != null && b.close != null && b.total !== b.close), ro = g.reduce((a, b) => a + b.ret, 0) / g.length;
@@ -491,7 +491,7 @@ function analysis(k, notes = true){
   }
   h += T('By stage', 'Stage', bandRow('Regular season', BT) + bandRow('Play-offs <span class="muted">(skipped)</span>', (DATA.skipped_po || []).filter(f)),
     `The second row is the play-off games the rule skips: every other rule met, with the model's chance worked out as for a regular-season game. The model has a play-off signal of its own that on its own keeps it off play-off overs, so this row shows what would happen without it. They are not in any other figure on this page.`);
-  h += T('By season', 'Season', S.seasons.map(s => grp(sn(s.season) + (s.season === DATA.tuned ? ' <span class="muted">(tuned on)</span>' : '') + (s.season === DATA.season ? ' <span class="muted">(so far)</span>' : ''), s, '', btCells(BT.filter(b => seasonOf(b) === s.season)))).join(''));
+  h += T('By season', 'Season', S.seasons.map(s => grp(sn(s.season) + (s.season === DATA.tuned ? ' <span class="muted">(tuned on)</span>' : '') + (s.season === DATA.season ? ' <span class="muted">(so far)</span>' : ''), {...s, pd: 1}, '', btCells(BT.filter(b => seasonOf(b) === s.season)))).join(''), '', 1);
   let mo = '';
   for (const mm of [9, 10, 11, 12, 1, 2, 3, 4, 5, 6]) {
     const m = S.months.find(x => x.m === mm);
