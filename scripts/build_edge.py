@@ -274,7 +274,7 @@ def layout(title, body, path, desc, image=None, active="books", full=None, ld=No
     size = (f'<meta property="og:image:width" content="{dims[0]}">\n<meta property="og:image:height" content="{dims[1]}">\n'
             if dims else "")
     sub = lambda key, href, label: f'<a href="{href}"{" class=on" if active == key else ""}>{label}</a>'
-    subnav = (f'<nav class="subnav" aria-label="Books"><div class="wrap"><a class="an-home" href="/" aria-label="Back to the homepage">← Home</a>{sub("books", BASE, "All books")}'
+    subnav = (f'<nav class="subnav" aria-label="Books"><div class="wrap"><a class="an-home" href="/books/">Books</a>{sub("books", BASE, "All books")}'
               f'{sub("authors", BASE + "authors/", "Authors")}</div></nav>') if active else ""
     return f"""<!doctype html>
 <html lang="en" data-site="books">
