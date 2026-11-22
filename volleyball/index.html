@@ -261,7 +261,7 @@ a.gm{color:inherit;text-decoration:none} a.gm:hover{color:var(--gold);text-decor
 <p>Projections shows the next 7 days against the market line, and Live test records the picks, logged before the first serve. Season, Backtest and Leagues show the ratings, past seasons since 2020 and each league's market. <a href="/volleyball/games/">Every game</a> has its own page.</p>
 </section>
 </main>
-<script src="data.js?v=7efe7e63"></script>
+<script src="data.js?v=24002c3c"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -725,7 +725,7 @@ function worked(){
 function renderWtest(){
   const T = DATA.test, TL = Object.fromEntries(T.leagues.map(l => [l.key, l]));
   const lname = k => `${TL[k].country} <span class="muted">${TL[k].name}</span>`;
-  const match = p => `${p.home} – ${p.away}`;
+  const match = gameLink;                        // every test game has its own page (user, 22 Nov 2026)
   const picks = T.games.filter(p => p.pick), done = picks.filter(p => 'profit' in p), open = picks.filter(p => !('total' in p));
   const n = done.length, w = done.filter(p => p.won).length, units = done.reduce((s, p) => s + p.profit, 0);
   const played = T.games.filter(p => 'total' in p), lined = played.filter(p => p.line != null);
