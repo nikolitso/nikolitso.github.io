@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-22T01:00:30Z",
+ "updated": "2026-11-22T15:08:57Z",
  "comps": {
   "EuroCup": {
    "games": 1125,
@@ -15,10 +15,10 @@
    "marginSd": 11.4
   },
   "GBL": {
-   "games": 981,
+   "games": 982,
    "lineGames": 947,
-   "homeEdge": 2.19,
-   "totalBias": 1.57,
+   "homeEdge": 2.2,
+   "totalBias": 1.59,
    "spreadSd": 9.1,
    "lineWeight": 0.88,
    "lineWeightRaw": 0.88,

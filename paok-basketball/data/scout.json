@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-22T01:00:31Z",
+ "updated": "2026-11-22T15:08:57Z",
  "reports": [
   {
    "comp": "EuroCup",
@@ -1158,49 +1158,49 @@
     "drebPct": 69.0
    },
    "league": {
-    "pts": 79.7,
-    "fg2m": 18.4,
-    "fg2a": 35.5,
-    "fg3m": 8.9,
+    "pts": 79.8,
+    "fg2m": 18.3,
+    "fg2a": 35.4,
+    "fg3m": 9.0,
     "fg3a": 26.3,
-    "ftm": 16.2,
-    "fta": 22.4,
+    "ftm": 16.3,
+    "fta": 22.5,
     "oreb": 10.6,
     "dreb": 25.7,
-    "reb": 36.4,
+    "reb": 36.3,
     "ast": 16.9,
-    "stl": 7.3,
+    "stl": 7.2,
     "tov": 13.4,
     "blk": 2.9,
     "pf": 22.4,
-    "pir": 85.6,
-    "gp": 108,
-    "w": 54,
-    "allowed": 79.7,
-    "fgp": 44.1,
+    "pir": 85.7,
+    "gp": 110,
+    "w": 55,
+    "allowed": 79.8,
+    "fgp": 44.2,
     "fg2p": 51.7,
-    "fg3p": 33.9,
-    "ftp": 72.3,
-    "opp_fgp": 44.1,
-    "poss": 74.5,
+    "fg3p": 34.1,
+    "ftp": 72.4,
+    "opp_fgp": 44.2,
+    "poss": 74.4,
     "pace": 73.8,
-    "ortg": 107.0,
-    "drtg": 107.0,
-    "efg": 51.3,
-    "ts": 55.6,
+    "ortg": 107.3,
+    "drtg": 107.3,
+    "efg": 51.4,
+    "ts": 55.7,
     "tovPct": 18.0,
     "orebPct": 29.2,
-    "ftr": 26.2,
+    "ftr": 26.4,
     "astPct": 62.0,
-    "par3": 42.5,
+    "par3": 42.6,
     "fgm": 27.3,
     "fga": 61.8,
-    "opp_efg": 51.3,
+    "opp_efg": 51.4,
     "forcedTov": 18.0,
     "drebPct": 70.8,
-    "opp_ftr": 26.2,
+    "opp_ftr": 26.4,
     "rebPct": 50.0,
-    "l": 54,
+    "l": 55,
     "net": 0.0
    },
    "impact": [
@@ -1916,7 +1916,7 @@
    ],
    "projection": {
     "paok": {
-     "score": 88.2,
+     "score": 88.3,
      "players": [
       {
        "name": "Kyle Alexander",
@@ -1940,7 +1940,7 @@
        "name": "Nick Calathes",
        "no": "33",
        "min": 23,
-       "pts": 7.6,
+       "pts": 7.7,
        "reb": 4.2,
        "ast": 4.5,
        "pir": 10.3
@@ -2120,7 +2120,7 @@
        "name": "Giorgos Kalaitzakis",
        "no": "16",
        "min": 17,
-       "pts": 3.9,
+       "pts": 4.0,
        "reb": 2.2,
        "ast": 1.0,
        "pir": 3.0
@@ -2151,15 +2151,15 @@
     "pace": 72.3,
     "lineupSource": "manual",
     "note": "PAOK without Osman, who is out until the spring.",
-    "modelTotal": 157.5,
+    "modelTotal": 157.6,
     "line": null,
-    "modelMargin": 17.3,
+    "modelMargin": 17.4,
     "hcp": null,
     "learned": {
-     "games": 981,
+     "games": 982,
      "lineGames": 947,
-     "homeEdge": 2.19,
-     "totalBias": 1.57,
+     "homeEdge": 2.2,
+     "totalBias": 1.59,
      "spreadSd": 9.1,
      "lineWeight": 0.88,
      "lineWeightRaw": 0.88,
@@ -2170,9 +2170,9 @@
     },
     "teamStats": {
      "pts": {
-      "paok": 88.2,
+      "paok": 88.3,
       "opp": 70.9,
-      "total": 159.1
+      "total": 159.2
      },
      "fg2m": {
       "paok": 19.9,
@@ -2180,7 +2180,7 @@
       "total": 35.9
      },
      "fg3m": {
-      "paok": 10.3,
+      "paok": 10.4,
       "opp": 7.6,
       "total": 18.0
      },
@@ -2201,7 +2201,7 @@
      },
      "dreb": {
       "paok": 25.7,
-      "opp": 22.8,
+      "opp": 22.7,
       "total": 48.5
      },
      "tov": {
@@ -2211,7 +2211,7 @@
      },
      "reb": {
       "paok": 36.5,
-      "opp": 32.6,
+      "opp": 32.5,
       "total": 69.2
      }
     }

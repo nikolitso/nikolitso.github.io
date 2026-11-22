@@ -3127,7 +3127,7 @@
   "date": "2026-12-08T18:00:00Z",
   "opp": "Bosna",
   "home": true,
-  "saved": "2026-11-22T01:00:31Z",
+  "saved": "2026-11-22T15:08:57Z",
   "paok": 85.6,
   "oppScore": 80.7,
   "winProb": 66,
@@ -3412,16 +3412,16 @@
   "date": "2026-12-05T14:00:00Z",
   "opp": "Promitheas",
   "home": true,
-  "saved": "2026-11-22T01:00:31Z",
-  "paok": 88.2,
+  "saved": "2026-11-22T15:08:57Z",
+  "paok": 88.3,
   "oppScore": 70.9,
   "winProb": 97,
   "lineupSource": "manual",
   "teamStats": {
    "pts": {
-    "paok": 88.2,
+    "paok": 88.3,
     "opp": 70.9,
-    "total": 159.1
+    "total": 159.2
    },
    "fg2m": {
     "paok": 19.9,
@@ -3429,7 +3429,7 @@
     "total": 35.9
    },
    "fg3m": {
-    "paok": 10.3,
+    "paok": 10.4,
     "opp": 7.6,
     "total": 18.0
    },
@@ -3450,7 +3450,7 @@
    },
    "dreb": {
     "paok": 25.7,
-    "opp": 22.8,
+    "opp": 22.7,
     "total": 48.5
    },
    "tov": {
@@ -3460,13 +3460,13 @@
    },
    "reb": {
     "paok": 36.5,
-    "opp": 32.6,
+    "opp": 32.5,
     "total": 69.2
    }
   },
-  "modelTotal": 157.5,
+  "modelTotal": 157.6,
   "line": null,
-  "modelMargin": 17.3,
+  "modelMargin": 17.4,
   "hcp": null,
   "players": {
    "paok": [
@@ -3492,7 +3492,7 @@
      "name": "Nick Calathes",
      "no": "33",
      "min": 23,
-     "pts": 7.6,
+     "pts": 7.7,
      "reb": 4.2,
      "ast": 4.5,
      "pir": 10.3
@@ -3665,7 +3665,7 @@
      "name": "Giorgos Kalaitzakis",
      "no": "16",
      "min": 17,
-     "pts": 3.9,
+     "pts": 4.0,
      "reb": 2.2,
      "ast": 1.0,
      "pir": 3.0
