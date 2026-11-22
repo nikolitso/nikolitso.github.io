@@ -27,6 +27,9 @@ MENU = ["/superleague/", "/football/greek-cup/", "/basketball/", "/basketball/ov
 # EuroCup and FIBA Europe Cup left the menu on 22 Nov 2026; their own (paused) pages keep the menu they were built with
 HIDDEN = ("eurocup/", "fibaeuropecup/")
 MENU_HIDDEN = MENU[:5] + ["/eurocup/", "/fibaeuropecup/"] + MENU[5:]
+MENU_TOP = ["/superleague/", "/basketball/", "/volleyball/", "/handball/"]
+MENU_SUB = [["/superleague/", "/football/greek-cup/", "/paok-hub/"],
+            ["/basketball/", "/basketball/overs/", "/basketball/women/", "/paok-basketball/"]]
 SKIP_PREFIXES = ("scripts/", "paok-basketball/data/")
 SKIP_DIRS = {".git", ".claude", ".superpowers", "_bs", "node_modules", "__pycache__"}
 WORDING = [
@@ -109,9 +112,19 @@ def check_page(path, problems):
     if len(navs) != 1:
         say("menu", f"{len(navs)} projects menus")
     elif r != "404.html":
-        hrefs = re.findall(r'<a href="([^"]+)"', navs[0])
-        if hrefs != (MENU_HIDDEN if r.replace("\\", "/").startswith(HIDDEN) else MENU):
-            say("menu", f"entries differ: {hrefs}")
+        hidden = r.replace("\\", "/").startswith(HIDDEN)
+        if hidden:
+            hrefs = re.findall(r'<a href="([^"]+)"', navs[0])
+            if hrefs != MENU_HIDDEN:
+                say("menu", f"entries differ: {hrefs}")
+        else:   # by sport (22 Nov 2026): four sports on top, a sport's own pages in a second row
+            top, _, sub = navs[0].partition('<div class="an-subnav">')
+            hrefs = re.findall(r'<a href="([^"]+)"', top)
+            if hrefs != MENU_TOP:
+                say("menu", f"sports differ: {hrefs}")
+            subs = re.findall(r'<a href="([^"]+)"', sub)
+            if subs and subs not in MENU_SUB:
+                say("menu", f"second row differs: {subs}")
         if '<a class="an-navhome" href="/">Home</a>' not in navs[0]:
             say("menu", "no Home pill first in the menu")
         cur = re.findall(r'aria-current="page"', navs[0])

@@ -22,6 +22,74 @@ CURRENT = re.compile(r'<a href="([^"]+)" aria-current="page">([^<]+)</a>')
 OLD_PILL = re.compile(r'<a class="an-home" href="/"(?: aria-label="Back to the homepage")?>← Home</a>')
 BRAND_H1 = re.compile(r'(<a class="an-brand"[^>]*>.*?)<h1>(.*?)</h1>(.*?</a>)', re.S)
 TAGS = re.compile(r"<[^>]+>")
+WHOLE_NAV = re.compile(r'<nav class="an-project-nav"[^>]*>.*?</nav>', re.S)
+NAV_CURRENT = re.compile(r'<a href="([^"]+)" aria-current="page">')
+
+# The projects menu by sport (user, 22 Nov 2026): Home and four sports on top; on a Football or Basketball page a
+# second row lists that sport's pages. Volleyball and Handball are one page each.
+SPORTS = [
+    ("Football", [("/superleague/", "Greek Superleague"), ("/football/greek-cup/", "Greek Cup"), ("/paok-hub/", "PAOK FC")]),
+    ("Basketball", [("/basketball/", "Greek League"), ("/basketball/overs/", "European"),
+                    ("/basketball/women/", "European Women"), ("/paok-basketball/", "PAOK Basketball")]),
+    ("Volleyball", [("/volleyball/", "Volleyball")]),
+    ("Handball", [("/handball/", "Handball")]),
+]
+# the header pill's name for each project: the title on the project's own home page, so a renamed project renames
+# its pills on every page (user, 22 Nov 2026); these are only the fallback
+NAMES = {"/superleague/": "Greek Superleague", "/football/greek-cup/": "Greek Cup", "/paok-hub/": "PAOK Hub",
+         "/basketball/": "Greek Basketball League", "/basketball/overs/": "European Basketball",
+         "/basketball/women/": "European Women Basketball", "/paok-basketball/": "PAOK Basketball",
+         "/volleyball/": "European Volleyball", "/handball/": "Handball"}
+_names = {}
+
+
+def name_of(href):
+    if href not in _names:
+        name = NAMES.get(href)
+        home = ROOT / href.strip("/") / "index.html"
+        if home.is_file():
+            m = re.search(r'<a class="an-home" href="' + re.escape(href) + r'"><h1>(.*?)</h1></a>',
+                          home.read_bytes().decode("utf-8"), re.S)
+            if m and "<" not in m.group(1):
+                name = m.group(1).strip()
+        _names[href] = name
+    return _names[href]
+
+
+def menu(current):
+    """The whole projects menu with `current` (a project's href) marked."""
+    top, sub = [], ""
+    for sport, pages in SPORTS:
+        mine = any(h == current for h, _ in pages)
+        if len(pages) == 1:
+            mark = ' aria-current="page"' if mine else ""
+        else:
+            mark = ' aria-current="true"' if mine else ""
+            if mine:
+                here = ' aria-current="page"'
+                sub = '<div class="an-subnav">' + "\n".join(
+                    f'<a href="{h}"{here if h == current else ""}>{l}</a>' for h, l in pages) + "</div>"
+        top.append(f'<a href="{pages[0][0]}"{mark}>{sport}</a>')
+    return ('<nav class="an-project-nav" aria-label="Sports analytics projects"><div>' + NAVHOME + "\n"
+            + "\n".join(top) + "</div>" + sub + "</nav>")
+
+
+def fix_menu(text):
+    """Rewrite the menu by sport; pages of a project outside the menu (the hidden cups) keep theirs."""
+    nav = WHOLE_NAV.search(text)
+    cur = nav and NAV_CURRENT.search(nav.group(0))
+    if not cur or cur.group(1) not in NAMES:
+        return text
+    new = menu(cur.group(1))
+    if new != nav.group(0):
+        text = text[:nav.start()] + new + text[nav.end():]
+    href = cur.group(1)
+    head = text.find('<header class="an-head">')
+    pill = re.compile(r'<a class="an-home" href="' + re.escape(href) + r'">([^<]*)</a>').search(text, head) if head >= 0 else None
+    name = name_of(href)
+    if pill and name and pill.group(1) != name:
+        text = text[:pill.start(1)] + name + text[pill.end(1):]
+    return text
 
 
 def url_of(path):
@@ -46,8 +114,9 @@ def fix(text, path=None, url=None):
     cur = CURRENT.search(nav.group(2))
     old = OLD_PILL.search(text)
     if not cur or not old:
-        return dedupe_kicker(text)
+        return dedupe_kicker(fix_menu(text))
     href, label = cur.groups()
+    label = name_of(href) or label
     if url is None and path is not None:
         try:
             url = url_of(path)
@@ -61,7 +130,7 @@ def fix(text, path=None, url=None):
     else:
         pill = f'<a class="an-home" href="{href}">{label}</a>'
     old = OLD_PILL.search(text)
-    return dedupe_kicker(text[:old.start()] + pill + text[old.end():])
+    return dedupe_kicker(fix_menu(text[:old.start()] + pill + text[old.end():]))
 
 
 PILL = re.compile(r'<a class="an-home" href="[^"]*">(.*?)</a>', re.S)

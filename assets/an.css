@@ -254,3 +254,12 @@ html .an-head a.an-home:has(h1){font:400 30px/1.05 var(--an-display);padding:10p
 .an-head a.an-home h1{font:inherit;margin:0;color:inherit;letter-spacing:inherit}
 @media (max-width:600px){html .an-head a.an-home{font-size:15px;padding:8px 14px}html .an-head a.an-home:has(h1){font-size:22px;padding:8px 16px 10px;border-radius:22px}.an-head>div:has(>a.an-home h1){grid-template-columns:minmax(0,auto) minmax(0,1fr)}
   .an-project-nav a.an-navhome,html[data-site] .an-project-nav a.an-navhome{font-size:14px;padding:8px 16px}}
+/* the projects menu by sport (22 Nov 2026): Home and the four sports on top, left-aligned; on a Football or Basketball
+   page a second, lighter row lists that sport's pages */
+.an-project-nav>div:first-child{justify-content:flex-start;column-gap:clamp(18px,3vw,36px)}
+.an-project-nav a[aria-current="true"]{color:var(--an-ink);border-color:var(--an-accent)}
+.an-project-nav>div.an-subnav{border-top:1px solid var(--an-rule);justify-content:flex-start;column-gap:clamp(16px,2.4vw,28px)}
+.an-project-nav .an-subnav a,html[data-site] .an-project-nav .an-subnav a{font:500 14px/1.3 var(--an-body);letter-spacing:0;min-height:40px}
+.an-project-nav .an-subnav a[aria-current="page"]{font-weight:700}
+@media(min-width:761px){html[data-site] .an-project-nav>div:first-child>a:not(.an-navhome){font-size:16px}}
+@media(max-width:760px){.an-project-nav>div:first-child{column-gap:18px}}
