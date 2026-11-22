@@ -262,7 +262,7 @@ a.gm{color:inherit;text-decoration:none} a.gm:hover{color:var(--gold);text-decor
 <p>Projections shows the next 7 days against the market line, and Live test records the picks, logged before the first serve. Season, Backtest and Leagues show the ratings, past seasons since 2020 and each league's market. <a href="/volleyball/games/">Every game</a> has its own page.</p>
 </section>
 </main>
-<script src="data.js?v=fa1ab811"></script>
+<script src="data.js?v=fbcd112f"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -1023,7 +1023,7 @@ RENDER.picks = () => market === 'hcap' ? renderHcap('live') + (lg === 'all' ? hc
 const _wt = RENDER.wtest;
 RENDER.wtest = () => market === 'hcap' ? wtestHcap() : market === 'ml' ? wtestML() : _wt();
 const _lgs = RENDER.leagues;
-RENDER.leagues = () => market === 'hcap' ? _lgs() : renderRatings();   // Team ratings first, then Games and picks   // Totals | Points handicap pills (22 Nov 2026)
+RENDER.leagues = _lgs;   // team ratings moved to Season Rating (user, 22 Nov 2026): Leagues = games and picks only
 RENDER.backtest = () => market === 'hcap' && DATA.hcap && DATA.hcap.backtest ? hcapBacktest() : _bt();
 // the handicap backtest on its own: the two backtest pills, then the tables (leagues are compared in By league)
 function hcapBacktest(){
@@ -1034,9 +1034,9 @@ function hcapBacktest(){
 }
 function render(){
   document.querySelectorAll('#tabs a').forEach(a => { a.classList.toggle('on', a.dataset.view === view); a.href = `#view=${a.dataset.view}${lg === 'all' ? '' : '&lg=' + lg}`; });
-  const hb = (view === 'backtest' && DATA.hcap && DATA.hcap.backtest) || view === 'picks' || view === 'wtest' || view === 'leagues';   // the pills: Backtest, Live test, Women Leagues test, Leagues
+  const hb = (view === 'backtest' && DATA.hcap && DATA.hcap.backtest) || view === 'picks' || view === 'wtest';   // the pills: Backtest, Live test, Women Leagues test
   const chips = view === 'method' || view === 'home' || view === 'wtest' || view === 'season' || (view === 'backtest' && market === 'hcap') ? [] : [['all', 'All leagues'], ...DATA.leagues.map(l => [l.key, `${l.country} ${sexAb(l)}`])];
-  const sw = hb ? (view === 'leagues' ? [['totals', 'Team ratings'], ['hcap', 'Games and picks']] : [['totals', 'Totals: overs on low lines'], ['hcap', 'Points handicap'], ...(view === 'wtest' ? [['ml', 'Match winner']] : [])]).map(([k, t]) =>
+  const sw = hb ? ([['totals', 'Totals: overs on low lines'], ['hcap', 'Points handicap'], ...(view === 'wtest' ? [['ml', 'Match winner']] : [])]).map(([k, t]) =>
       `<a href="#view=${view}${k === 'hcap' ? '&m=hcap' : k === 'ml' ? '&m=ml' : ''}${lg !== 'all' && (k === 'totals' || view === 'picks') && LG[lg] ? '&lg=' + lg : ''}" class="${k === market ? 'on' : ''}" style="font-size:15.5px;padding:6px 14px">${t}</a>`).join('')
       + (chips.length ? '<span style="flex-basis:100%;height:2px"></span>' : '') : '';
   $('chips').innerHTML = sw + chips.map(([k, t]) => `<a href="#view=${view}${(view === 'picks' || view === 'leagues') && market === 'hcap' ? '&m=hcap' : ''}${k === 'all' ? '' : '&lg=' + k}" class="${k === lg ? 'on' : ''}">${t}</a>`).join('');
@@ -1046,7 +1046,7 @@ function fromHash(){
   const m = location.hash.match(/view=(\w+)/), l = location.hash.match(/lg=([\w-]+)/);
   view = m && m[1] === 'results' ? 'picks' : m && m[1] === 'hcap' ? 'picks' : m && RENDER[m[1]] ? m[1] : 'home';   // Handicap test merged into Live test (22 Nov 2026)   // Results merged into Picks (8 Nov 2026)
   const TLK = new Set([...((DATA.test || {}).leagues || []), ...((DATA.hcapx || {}).leagues || [])].map(x => x.key));   // test and handicap-only leagues: Leagues tab only
-  const nlg = l && (LG[l[1]] || (/view=(leagues|season)/.test(location.hash) && TLK.has(l[1]))) ? l[1] : 'all';
+  const nlg = l && (LG[l[1]] || (/view=season/.test(location.hash) && TLK.has(l[1]))) ? l[1] : 'all';
   market = /[&#]m=hcap/.test(location.hash) || (m && m[1] === 'hcap') ? 'hcap' : /[&#]m=ml/.test(location.hash) ? 'ml' : 'totals';
   const moved = nlg !== lg;
   if (moved) btSeason = null;
