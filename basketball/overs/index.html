@@ -225,7 +225,6 @@ details.picks>summary .muted{font-size:14px;font-weight:400}
     <a href="#view=livetest" data-view="livetest">FT live test</a>
     <a href="#view=backtest" data-view="backtest">Backtest</a>
     <a href="#view=projections" data-view="projections">Projections</a>
-    <a href="#view=leagues" data-view="leagues">Leagues</a>
     <a href="#view=how-it-works" data-view="how-it-works">How it works</a>
   </nav>
 </div></header>
@@ -242,7 +241,7 @@ details.picks>summary .muted{font-size:14px;font-weight:400}
 <section class="an-page-about" aria-label="About this page">
 <p class="an-page-about__label">About this page</p>
 <p>This page projects totals in domestic basketball leagues: top divisions and a set of second divisions. Each team gets one number from this season's games: how many points above or below its league's average its games produce. With pace, 3-point luck and other signals, it gives the chance a game goes over the opening line. A pick is the over only, when the edge clears the page's bar, in the regular season and on half-point lines.</p>
-<p>Projections shows the next 7 days, and FT live test records each pick at the line and price when it was logged. Backtest covers 2022–23 to 2025–26, and Leagues shows each league's record. A game's line is the median of the main market lines.</p>
+<p>Projections shows the next 7 days, and FT live test records each pick at the line and price when it was logged. Backtest covers 2022–23 to 2025–26, with a page for each league. A game's line is the median of the main market lines.</p>
 </section>
 </main>
 <script src="data.js?v=rs20"></script>
@@ -384,37 +383,10 @@ const TIER_NAMES = [...TIERS.map(t => t[0]), 'Tier 4 · Low European', 'Second d
 const bandRow = (label, g, pl = false, pd = 0) => { const n = g.length, sum = f => g.reduce((a, x) => a + f(x), 0);
   return grp(label, {n, w: g.filter(x => x.ret > 0).length, px: n ? sum(x => x.px) / n : 0, roi: n ? sum(x => x.ret) / n : 0, pd}, '', btCells(g, pl)); };
 
-function renderLeagues(){
-  let h = `<p class="note">Regular-season games from ${sn(DATA.first)} on (2020–21 only warms the ratings up; play-offs are left out, as in the rule). <b>All games</b> describes the league and its market. <b>Over %</b>: how often the final score (overtime included) went over the closing line. Blind over: backing the over in every game at the average price. <b>Model's picks</b>: the picks under the current rule, 2022–23 to 2025–26. <b>Model total</b>: the average of the model's total with every signal in it, <b>Line</b>: the average opening line taken, and <b>Result</b>: the average final score (overtime included), all over the picks only. Then how often the picks went over (hit), and their ROI at the opening line and price (open, where picks are taken) and at the closing line and price (close, the same picks). ROI at closing is the harder test: the market has had its say. Click a league to open its own page: an analysis of its picks and of all its games.</p>`;
-  h += `<div class="scroll"><table class="lgt"><thead><tr><th style="border-bottom:0"></th><th colspan="3" style="text-align:center;color:var(--gold)">All games</th><th colspan="8" style="text-align:center;color:var(--gold);border-left:1px solid var(--line)">Model's picks</th></tr><tr><th>League</th><th class="n">Games</th><th class="n">Over %</th><th class="n">Blind over</th><th class="n" style="border-left:1px solid var(--line)">Picks</th><th class="n">Model total</th><th class="n">Line</th><th class="n">Result</th><th class="n">Hit</th><th class="n">P/L</th><th class="n">ROI open</th><th class="n">ROI close</th></tr></thead><tbody>`;
-  const mod = g => g.n ? `${g.n} <span class="${cls(g.roi)}">${roi(g.roi)}</span>` : '<span class="muted">–</span>';
-  const row = (label, s, attrs='', list=[]) => `<tr${attrs}><td>${label}</td><td class="n">${s.games}</td><td class="n">${pct(s.over, 1)}</td>
-    <td class="n ${cls(s.blind_over)}">${roi(s.blind_over)}</td>${pk(list)}
-    </tr>`;
-  function pk(list){
-    const d = list.filter(b => b.done !== false && b.ret !== 0);
-    if (!d.length) return '<td class="n muted" style="border-left:1px solid var(--line)">–</td>' + '<td class="n muted">–</td>'.repeat(7);
-    const av = (L, f) => L.length ? (L.reduce((a, b) => a + f(b), 0) / L.length).toFixed(1) : '–', m = d.filter(b => b.ma != null);
-    const u = d.reduce((a, b) => a + b.ret, 0), w = d.filter(b => b.ret > 0).length;
-    const c = list.filter(b => b.cpx != null && b.close != null && b.total !== b.close), uc = c.reduce((a, b) => a + (b.total > b.close ? b.cpx - 1 : -1), 0);
-    return `<td class="n" style="border-left:1px solid var(--line)">${d.length}</td><td class="n">${av(m, b => b.ma)}</td><td class="n">${av(m, b => b.line)}</td><td class="n">${av(d.filter(b => b.total != null), b => b.total)}</td><td class="n">${pct(w / d.length, 1)}</td><td class="n ${cls(u)}">${u >= 0 ? '+' : '−'}${Math.abs(u).toFixed(1)}</td>` +
-      `<td class="n ${cls(u)}">${roi(u / d.length)}</td><td class="n ${c.length ? cls(uc) : 'muted'}">${c.length ? roi(uc / c.length) : '–'}</td>`;
-  }
-  const tierName = {europe: 'European competitions', top: 'Europe', second: 'Second divisions'};
-  for (const tier of ['europe', 'top', 'second']){
-    if (!DATA.leagues.some(l => l.tier === tier)) continue;
-    h += `<tr><td colspan="12" class="tier" style="padding-top:18px">${tierName[tier]}</td></tr>`;
-    for (const l of DATA.leagues.filter(l => l.tier === tier)){
-      h += row(`<a class="lglink" href="#view=league&lg=${l.key}"><span class="caret">▸</span> ${lgFull(l)}</a>`, l.all, ` class="srow" data-open="${l.key}"`, DATA.bets.filter(b => b.lg === l.key));   // each league has its own page (20 Nov 2026)
-    }
-  }
-  return h + '</tbody></table></div>';
-}
-
 // one league's own page, #view=league&lg=<key>: Picks (default) or All games (20 Nov 2026)
 function renderLeague(){
   const k = lg, L_ = LG[k], games = sub === 'games';
-  let h = `<p class="note"><a href="#view=leagues">← All leagues</a></p><h2 style="margin-top:8px">${lgFull(L_)}</h2>`;
+  let h = `<p class="note"><a href="#view=backtest">← Backtest</a></p><h2 style="margin-top:8px">${lgFull(L_)}</h2>`;
   h += `<div class="chips"><a href="#view=league&lg=${k}" class="${games ? '' : 'on'}">Picks</a><a href="#view=league&lg=${k}&a=games" class="${games ? 'on' : ''}">All games</a></div>`;
   if (!games) {
     const A = analysis(k);
@@ -437,7 +409,7 @@ function lgGames(k){
 // pace bands, 1 possession wide
 const PACEB = [['Below −2', -99, -2], ['−2 to −1.1', -2, -1], ['−1 to −0.1', -1, 0], ['0 to +0.9', 0, 1], ['+1 to +1.9', 1, 2], ['+2 to +2.9', 2, 3], ['+3 to +3.9', 3, 4], ['+4 or more', 4, 99]];
 
-// the Backtest tiles for one league or all (14 Nov 2026): used on the Backtest tab and for an opened league on the Leagues tab
+// the Backtest tiles for one league or all (14 Nov 2026): used on the Backtest tab and on each league's page
 function btTiles(k){
   const B = DATA.backtest, S = k === 'all' ? B.all : B.leagues[k], BT = DATA.bets.filter(x => k === 'all' || x.lg === k);
   if (!S || !S.rule || !S.rule.n || !BT.length) return '';
@@ -473,8 +445,8 @@ function analysis(k, notes = true){
       return grp(label, {n, w: g.filter(x => x.ret > 0).length, px: n ? sum(x => x.px) / n : 0, roi: n ? sum(x => x.ret) / n : 0, pd: 1}, '', cRoi(g) + btCells(g)); };
     const body = TIER_NAMES.map(t => {
       const g = BT.filter(b => tierOf(b.lg) === t), lgs = [...new Set(g.map(b => b.lg))].sort((x, y) => g.filter(b => b.lg === y).length - g.filter(b => b.lg === x).length);
-      return g.length ? row(`<b>${t}</b>`, g) + lgs.map(L_ => row(`<span style="padding-left:18px" class="muted">${lgShort(L_)}</span>`, g.filter(b => b.lg === L_))).join('') : ''; }).join('');
-    h += `<h2>By tier</h2>${nt(`The leagues in four tiers by how deep their betting market is. Tier 1: the deepest markets (Spain, Germany, France). Tier 2: Poland, Turkey, Italy, Greece. Tier 3: Czechia, Lithuania, Austria. Tier 4: the other European leagues. Then the second divisions from the Tier 1–3 countries (2). Each tier's leagues are listed under it, most picks first. ROI at the closing line: the same picks taken at the closing line and price.`)}`
+      return g.length ? row(`<b>${t}</b>`, g) + lgs.map(L_ => row(`<a class="lglink" style="padding-left:18px" href="#view=league&lg=${L_}"><span class="caret">▸</span>${lgShort(L_)}</a>`, g.filter(b => b.lg === L_))).join('') : ''; }).join('');
+    h += `<h2>By tier</h2>${nt(`The leagues in four tiers by how deep their betting market is. Tier 1: the deepest markets (Spain, Germany, France). Tier 2: Poland, Turkey, Italy, Greece. Tier 3: Czechia, Lithuania, Austria. Tier 4: the other European leagues. Then the second divisions from the Tier 1–3 countries (2). Each tier's leagues are listed under it, most picks first: click one for its own page. ROI at the closing line: the same picks taken at the closing line and price.`)}`
        + `<div class="scroll"><table style="max-width:1040px"><thead><tr><th>Tier and league</th><th class="n">Picks</th><th class="n">Hit</th><th class="n">Avg price</th><th class="n">ROI at<br>opening line</th><th class="n">Profit<br>(units)</th><th class="n">ROI at<br>closing line</th><th class="n">Opening<br>line</th><th class="n">Closing<br>line</th><th class="n">Model<br>line</th><th class="n">Actual<br>total</th></tr></thead><tbody>${body}</tbody></table></div>`;
     // Fast Moving Leagues: where the line moves toward the picks, so they are taken at once (20 Nov 2026)
     const fm = g => { const c = g.filter(b => b.close != null), n = c.length, mv = c.map(b => b.close - b.line);
@@ -791,22 +763,15 @@ function renderMethod(){
   const P = [
     ['Home', 'home', 'The answer in short: do the model’s overs make a profit? The backtest in a few numbers, then the main findings: every season, every league, out-of-sample weights, the line moving toward the picks, calibration and the worst run.'],
     ['FT live test', 'livetest', `The full-game picks logged live since ${LIVE.start || '8 Nov 2026'}. The tiles give the record, ROI at the opening and closing line and how the line moved. <b>Open picks</b> are the games still to play, with the line, price and edge when logged and now (Line now, Price now, Edge now: the main book’s line and price, or the market’s middle line when it has none); <span class="badge">Bet now</span> marks the Fast Moving Leagues, where the line moves toward the picks. Then the rule, every settled pick, and the record broken down by line, edge, pace, league and month, with the picks against the blind over (the over in every game) by league.`],
-    ['Backtest', 'backtest', 'The same rule on every game from 2022–23 to 2025–26, with each projection frozen 4 days before the game. Tiles, then Calibration (chance given v how often the picks won), By edge, By line, By tier, Fast Moving Leagues, By stage, By season, By month, By day of the week, By games played, By pace, By 3-point luck and By rest days. Every figure is shown at the opening line, where picks are taken, and at the closing line.'],
+    ['Backtest', 'backtest', 'The same rule on every game from 2022–23 to 2025–26, with each projection frozen 4 days before the game. Tiles, then Calibration (chance given v how often the picks won), By edge, By line, By tier, Fast Moving Leagues, By stage, By season, By month, By day of the week, By games played, By pace, By 3-point luck and By rest days. Every figure is shown at the opening line, where picks are taken, and at the closing line. Click a league in By tier for its own page: <b>Picks</b> (the default) breaks its picks down like this tab, <b>All games</b> describes every game in it.'],
     ['Projections', 'projections', 'Every game in the next 7 days: the model total next to the line and price on offer, and the edge of the over. Highlighted games are picks. The league buttons filter the list; each game links to its own match page, which shows how its total is built.'],
-    ['Leagues', 'leagues', 'One row a league: its market (games, how often games went over the closing line, backing every over) and the model’s picks (model total, line, result, hit rate, profit, ROI at the opening and closing line). Click a league for its own page: <b>Picks</b> (the default) breaks its picks down like the Backtest tab, <b>All games</b> describes every game in it.'],
     ['How it works', 'how-it-works', 'This page: the pages, then how the model and the rules work.']];
   return `<div class="doc"><h3>The pages</h3><ul>${P.map(([t, v, s]) => `<li><b><a href="#view=${v}">${t}</a></b>: ${s}</li>`).join('')}</ul>${DATA.method.replace(/#view=method/g, '#view=how-it-works')}</div>`;
 }
 
-document.addEventListener('click', e => {
-  const r = e.target.closest('tr.srow');
-  if (!r || !r.dataset.open || e.target.closest('a')) return;
-  location.hash = `view=league&lg=${r.dataset.open}`;
-});
-
 // Edge now for a pick: orange above the bar, yellow at the bar or under, red below 0
 const edgeNow = v => v == null ? '<td class="n muted">–</td>' : `<td class="n ${v > LE() ? 'pos' : v > 0 ? 'elow' : 'eneg'}">${sgn(v*100, 0)}%</td>`;
-const RENDER = {home: renderFindings, livetest: renderPicks, leagues: renderLeagues, league: renderLeague, backtest: renderBacktest, projections: renderProjections, 'how-it-works': renderMethod};
+const RENDER = {home: renderFindings, livetest: renderPicks, league: renderLeague, backtest: renderBacktest, projections: renderProjections, 'how-it-works': renderMethod};
 const CHIPS = {projections: 1};
 // the scope line and the number key follow the tab: the 1H live test is about first halves only (20 Nov 2026)
 const SCOPE = {ft: ['The model estimates full-game totals. Historical backtests, prospective live records and upcoming projections are separate; opening-line and closing-line comparisons are shown independently.', 'expected game total', 'opening / closing total and price', 'settled game total'],
@@ -814,8 +779,7 @@ const SCOPE = {ft: ['The model estimates full-game totals. Historical backtests,
 function render(){
   { const s = SCOPE[view === 'h1' ? 'h1' : 'ft'], el = id => document.getElementById(id);
     if (el('scopeTxt')) { el('scopeTxt').textContent = s[0]; el('keyM').textContent = s[1]; el('keyK').textContent = s[2]; el('keyA').textContent = s[3]; } }
-  document.querySelector('.wrap').classList.toggle('wide', view === 'leagues');   // the Leagues table needs the room
-  document.querySelectorAll('#tabs a').forEach(a => { a.classList.toggle('on', a.dataset.view === (view === 'league' ? 'leagues' : view)); a.href = `#view=${a.dataset.view}${lg === 'all' || !CHIPS[a.dataset.view] ? '' : '&lg=' + lg}`; });
+  document.querySelectorAll('#tabs a').forEach(a => { a.classList.toggle('on', a.dataset.view === (view === 'league' ? 'backtest' : view)); a.href = `#view=${a.dataset.view}${lg === 'all' || !CHIPS[a.dataset.view] ? '' : '&lg=' + lg}`; });
   let keys = DATA.leagues.map(l => l.key);
   if (view === 'backtest') keys = keys.filter(k => DATA.backtest.leagues[k] && DATA.backtest.leagues[k].rule.n);
   if (view === 'projections') keys = keys.filter(k => LIVE.fixtures.some(g => g.lg === k));
@@ -823,17 +787,17 @@ function render(){
   const chips = CHIPS[view] ? [['all', 'All leagues'], ...keys.map(k => [k, lgShort(k)])] : [];
   $('chips').innerHTML = chips.map(([k, t]) => `<a href="#view=${view}${k === 'all' ? '' : '&lg=' + k}" class="${k === lg ? 'on' : ''}">${t}</a>`).join('');
   $('top').style.display = $('sub').style.display = view === 'backtest' ? 'none' : '';
-  if (view === 'leagues' || view === 'league') $('top').style.display = 'none';      // the live record stays off the Leagues tab (15 Nov 2026)
+  if (view === 'league') $('top').style.display = 'none';      // the live record stays off a league's page (15 Nov 2026)
   $('top').innerHTML = view === 'h1' ? TOP_H1 : TOP_MAIN;     // 1H tabs show the 1H record                  // the 1H Live test tab has its own record tiles   // the main live record stays off the Backtest and 1H Live test tabs     // the live record stays off the Backtest tab
   $('out').innerHTML = RENDER[view]();
 }
 function fromHash(){
   const m = location.hash.match(/view=([\w-]+)/), l = location.hash.match(/lg=([\w-]+)/);
-  const old = {live: 'livetest', picks: 'livetest', findings: 'home', h1live: 'livetest', h1: 'livetest', method: 'how-it-works'}, v = m && (old[m[1]] || m[1]);   // old links: Picks is now Live test, Findings is Home
+  const old = {live: 'livetest', picks: 'livetest', findings: 'home', h1live: 'livetest', h1: 'livetest', method: 'how-it-works', leagues: 'backtest'}, v = m && (old[m[1]] || m[1]);   // old links: Picks is now Live test, Findings is Home
   const was = view;
   view = RENDER[v] ? v : 'home';
   lg = l && LG[l[1]] ? l[1] : 'all';
-  if (view === 'league' && lg === 'all') view = 'leagues';
+  if (view === 'league' && lg === 'all') view = 'backtest';   // the Leagues tab is gone (23 Nov 2026)
   sub = /[&#]a=games/.test(location.hash) ? 'games' : 'picks';
   render();
   if (view === 'league' && was !== 'league') window.scrollTo(0, 0);
