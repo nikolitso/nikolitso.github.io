@@ -133,13 +133,13 @@ html{scroll-behavior:smooth;font-size:17.5px}   /* one step larger: the page siz
 <a href="/volleyball/">Volleyball</a>
 <a href="/handball/">Handball</a>
 </div></nav>
-<header class="an-head"><div><a class="an-home" href="/basketball/"><h1>Basketball</h1></a>
+<header class="an-head"><div><a class="an-home" href="/basketball/"><h1>Greek Basketball League</h1></a>
   <a class="an-brand" href="/basketball/"><svg class="an-mark" aria-hidden="true"><use href="/assets/marks.svg#basketball"/></svg><span><small class="an-kicker">Projections</small></span></a>
 </div></header>
 
 <main class="wrap" data-page="greece" data-base="/basketball/">
 <div style="margin-bottom:-26px">
-<div class="an-project-context"><span class="an-project-context__label">Scope</span><span>Greek Basket League and Cyprus team-strength projections use team ratings, player availability and rest/fatigue context after European games. Forecasts, market comparisons and historical results are separate views.</span></div>
+<div class="an-project-context"><span class="an-project-context__label">Scope</span><span>Greek Basket League team-strength projections use team ratings, player availability and rest/fatigue context after European games. Forecasts, market comparisons and historical results are separate views.</span></div>
 <div class="an-data-key" role="group" aria-label="How to read basketball projections">
 <span class="an-data-key__title">Reading the numbers</span>
 <span class="an-data-key__item"><i class="an-data-key__dot an-data-key__dot--expected" aria-hidden="true"></i><b>Model</b> projected margin / total and team power</span>
@@ -327,11 +327,11 @@ html{scroll-behavior:smooth;font-size:17.5px}   /* one step larger: the page siz
 </section>
 
 <footer id="foot"></footer>
-<nav class="an-related" aria-label="More pages">By league: <a href="/basketball/greece/">Greece · Basket League</a> · <a href="/basketball/cyprus/">Cyprus · Division A</a><br>Game by game: <a href="/basketball/games/">every Basket League and Cyprus Division A game</a></nav>
+<nav class="an-related" aria-label="More pages">By league: <a href="/basketball/greece/">Greece · Basket League</a><br>Game by game: <a href="/basketball/games/">every Basket League game</a></nav>
 </main>
 
 <script>/* the handicap estimates refresh hourly: a new address every 10 minutes so browsers do not keep an old copy */document.write('<script src="/basketball/handicap/live.js?t='+Math.floor(Date.now()/6e5)+'"><\/script>')</script>
-<script src="/basketball/data.js?v=c969dd5c"></script>
+<script src="/basketball/data.js?v=ac3d94fd"></script>
 <script>
 const $=s=>document.querySelector(s);
 if(D.showProjections===false)document.body.classList.add('noproj');   /* projections hidden until the season is far enough in */
@@ -345,7 +345,7 @@ const day=d=>{if(!d)return '–';const [y,m,dd]=d.split('-');return dmy(new Date
 /* kick-off times are stored in UTC; show them in the visitor's local time */
 const when=(d,tm)=>{if(!d)return '–';if(!tm)return day(d);const x=new Date(d+'T'+tm+':00Z');return dmy(x)+' '+x.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'})};
 const W=$('.wrap'), PAGE=W.dataset.page, BASE=W.dataset.base||'/basketball/';
-const LG=D.leagues, byPage=Object.fromEntries(LG.map(l=>[l.page,l])), byLeague=Object.fromEntries(LG.map(l=>[l.key,l]));
+const LG=D.leagues.filter(l=>!l.hidden), byPage=Object.fromEntries(LG.map(l=>[l.page,l])), byLeague=Object.fromEntries(LG.map(l=>[l.key,l]));
 const href=l=>`${BASE}${l.page}/`;
 const up=LG.flatMap(l=>l.upcoming.map(u=>({...u,lg:l}))).sort((a,b)=>(a.date+(a.time||'')).localeCompare(b.date+(b.time||'')));
 const lname=l=>l.name.split(' · ')[0];
