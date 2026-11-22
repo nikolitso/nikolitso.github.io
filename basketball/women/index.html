@@ -243,7 +243,7 @@ a.tile:hover{border-color:var(--gold)}
 <p>Projections shows the next 7 days, and Live test records the picks, taken at the opening line; 1H live test and 1H backtest cover first halves. Backtest covers 2021–22 to 2025–26. A game's line is the median of the main market lines.</p>
 </section>
 </main>
-<script src="data.js?v=w105"></script>
+<script src="data.js?v=w106"></script>
 <script src="live.js"></script>
 <script>
 const $ = id => document.getElementById(id);
@@ -258,13 +258,14 @@ const sn = s => s.replace('-', '–');
 let view = 'home', lg = 'all', open = null;
 const ALLG = [...DATA.leagues, ...(DATA.past || [])];   // past: on the list in an earlier season, not now
 const LG = Object.fromEntries(ALLG.map(l => [l.key, l]));
-const lgName = k => !LG[k] ? k : `${LG[k].country} · ${LG[k].name}`;
+const OLDLG = DATA.oldlg || {};   // names only, for logged picks from leagues no longer on the page
+const lgName = k => { const l = LG[k] || OLDLG[k]; return !l ? k : `${l.country} · ${l.name}`; };
 const lgFull = l => !l ? '' : l.country === 'Europe' ? l.name : `${l.country} <span class="muted">${l.name}</span>`;
 const H1XL = DATA.h1x || [];   // first-half-only leagues (22 Nov 2026, user: the strong four from the 1H league scan): on the 1H tabs only
 H1XL.forEach(l => { if (!LG[l.key]) LG[l.key] = l; });
 const isH1X = k => H1XL.some(l => l.key === k);
 const H1LGS = () => H1XL.length ? ` and the ${H1XL.length} first-half-only leagues (${H1XL.map(l => l.short).join(', ')})` : '';
-const lgShort = k => (LG[k] || {short: k}).short;
+const lgShort = k => (LG[k] || OLDLG[k] || {short: k}).short;
 const wl = b => b.ret > 0 ? 'w' : b.ret < 0 ? 'l' : '';   // settled winners green, losers red
 const sd = b => b.side === 'u' ? 'Under' : 'Over';
 const inLg = x => lg === 'all' || x.lg === lg;
