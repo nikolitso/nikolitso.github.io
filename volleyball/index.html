@@ -885,6 +885,16 @@ function wtestHcap(){
   if (!open.length) h += '<p class="empty">No open handicap picks in the test leagues. New ones appear once the market posts a points handicap for a match that qualifies.</p>';
   else h += `<div class="scroll"><table class="sortable"><thead><tr><th>Date</th><th>Match</th><th>Pick</th><th class="n">Opening line</th><th class="n">Price</th><th class="n">Model handicap</th><th class="n">Model chance</th><th class="n">Edge</th></tr></thead><tbody>`
     + open.map(p => `<tr><td>${short(p.dt)} ${p.dt.slice(11)}</td><td class="wr">${gameLink(p)}${lgLine(p)}</td><td><b>${hLabel(p.team, p.line)}</b></td><td class="n">${p.line_open != null ? hLabel('', p.line_open).trim() : '–'}</td><td class="n">${p.px.toFixed(2)}</td><td class="n">${p.hcap != null ? hLabel('', p.side === 'home' ? p.hcap : -p.hcap).trim() : '–'}</td><td class="n">${pct(hP(p))}</td><td class="n ${cls(hE(p))}">${sgn(hE(p) * 100, 0)}%</td></tr>`).join('') + '</tbody></table></div>';
+  // the next 7 days on the handicap (user, 22 Nov 2026): model handicap for every game, the market's once posted
+  const fx = T.fixtures || [];
+  h += '<h2>Next 7 days</h2>';
+  if (!fx.length) h += `<p class="empty">No test-league matches in the next 7 days between teams that have both played ${DATA.min_games} this season.</p>`;
+  else h += `<div class="scroll"><table class="proj"><thead><tr><th>Date</th><th>Match</th><th class="n">Points</th><th class="n">Model handicap</th><th class="n">Market handicap</th><th>Model side</th><th class="n">Price</th><th class="n">Model chance</th><th class="n">Edge</th></tr></thead><tbody>`
+    + fx.map(g => { const a = g.ah, s = a && a.side, q = a && {p: s === 'home' ? a.p : 1 - a.p, px: a[s], other_px: a[s === 'home' ? 'away' : 'home']};
+      return `<tr${g.hpick ? ' class="pk"' : ''}><td>${short(g.dt)} ${g.dt.slice(11)}</td><td class="wr">${gameLink(g)}${g.hpick && a ? `<span class="badge">${hLabel(g[s], s === 'home' ? a.line : -a.line)}</span>` : ''}${lgLine(g)}</td>`
+        + `<td class="n">${g.pts_h != null ? g.pts_h.toFixed(1) + '–' + g.pts_a.toFixed(1) : '–'}</td><td class="n">${g.hcap != null ? hLabel(g.home, g.hcap) : '–'}</td>`
+        + (a ? `<td class="n">${hLabel(g.home, a.line)}</td><td>${hLabel(g[s], s === 'home' ? a.line : -a.line)}</td><td class="n">${q.px.toFixed(2)}</td><td class="n">${pct(hP(q))}</td><td class="n ${cls(hE(q))}">${sgn(hE(q) * 100, 0)}%</td>`
+             : '<td class="n muted" colspan="5">no handicap yet</td>') + '</tr>'; }).join('') + '</tbody></table></div>';
   h += '<h2>Settled picks, latest first</h2>';
   if (!n) h += '<p class="empty">No settled handicap picks yet. Each pick is added here once its match is played.</p>';
   else h += `<div class="scroll"><table><thead><tr><th>Date</th><th>Match</th><th>Pick</th><th class="n">Closing line</th><th class="n">Price</th><th class="n">Points</th><th class="n">Margin</th><th class="n">Profit</th></tr></thead><tbody>`
@@ -1001,6 +1011,14 @@ function wtestML(){
   if (!open.length) h += '<p class="empty">No open favourites. Each handicap pick that gives points shows up here.</p>';
   else h += `<div class="scroll"><table class="sortable"><thead><tr><th>Date</th><th>Match</th><th>Favourite</th><th class="n">Market price</th><th class="n">Model price</th><th class="n">Market chance</th><th class="n">Model chance</th><th class="n">Edge</th></tr></thead><tbody>`
     + open.map(p => `<tr><td>${short(p.dt)} ${p.dt.slice(11)}</td><td class="wr">${gameLink(p)}${lgLine(p)}</td><td><b>${p.team}</b></td><td class="n">${p.ml_px ? p.ml_px.toFixed(2) : '–'}</td><td class="n">${p.ml_p ? (1 / p.ml_p).toFixed(2) : '–'}</td><td class="n">${pc(p.ml_mkt)}</td><td class="n">${pc(p.ml_p)}</td><td class="n ${p.ml_px ? cls(p.ml_p * p.ml_px - 1) : ''}">${p.ml_px ? sgn((p.ml_p * p.ml_px - 1) * 100, 0) + '%' : '–'}</td></tr>`).join('') + '</tbody></table></div>';
+  // the next 7 days on the match winner (user, 22 Nov 2026): the model's win chance for every game, the market's once posted
+  const fx = T.fixtures || [];
+  h += '<h2>Next 7 days</h2>';
+  if (!fx.length) h += `<p class="empty">No test-league matches in the next 7 days between teams that have both played ${DATA.min_games} this season.</p>`;
+  else h += `<div class="scroll"><table class="proj"><thead><tr><th>Date</th><th>Match</th><th>Model favourite</th><th class="n">Model chance</th><th class="n">Model price</th><th class="n">Market price</th><th class="n">Market chance</th><th class="n">Edge</th></tr></thead><tbody>`
+    + fx.map(g => { const s = g.ph >= 0.5 ? 'home' : 'away', p = s === 'home' ? g.ph : 1 - g.ph, m = g.ml, px = m && m[s], mk = m && m.p_mkt != null ? (s === 'home' ? m.p_mkt : 1 - m.p_mkt) : null;
+      return `<tr><td>${short(g.dt)} ${g.dt.slice(11)}</td><td class="wr">${gameLink(g)}${lgLine(g)}</td><td><b>${g[s]}</b></td><td class="n">${pct(p)}</td><td class="n">${(1 / p).toFixed(2)}</td>`
+        + (px ? `<td class="n">${px.toFixed(2)}</td><td class="n">${pc(mk)}</td><td class="n ${cls(p * px - 1)}">${sgn((p * px - 1) * 100, 0)}%</td>` : '<td class="n muted" colspan="3">no price yet</td>') + '</tr>'; }).join('') + '</tbody></table></div>';
   h += '<h2>Settled, latest first</h2>';
   if (!n) h += '<p class="empty">No settled games yet. Each is added here once its match is played.</p>';
   else h += `<div class="scroll"><table><thead><tr><th>Date</th><th>Match</th><th>Favourite</th><th class="n">Market price</th><th class="n">Model price</th><th class="n">Market chance</th><th class="n">Model chance</th><th class="n">Sets</th><th class="n">Profit</th></tr></thead><tbody>`
