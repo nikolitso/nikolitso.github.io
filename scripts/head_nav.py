@@ -40,10 +40,14 @@ NAMES = {"/superleague/": "Greek Superleague", "/football/greek-cup/": "Greek Cu
          "/basketball/": "Greek Basketball League", "/basketball/overs/": "European Basketball",
          "/basketball/women/": "European Women Basketball", "/paok-basketball/": "PAOK Basketball",
          "/volleyball/": "European Volleyball", "/handball/": "Handball"}
+# pills that keep their own name whatever the section's title says (user, 22 Nov 2026: PAOK Hub's pages say PAOK FC)
+FIXED = {"/paok-hub/": "PAOK FC"}
 _names = {}
 
 
 def name_of(href):
+    if href in FIXED:
+        return FIXED[href]
     if href not in _names:
         name = NAMES.get(href)
         home = ROOT / href.strip("/") / "index.html"
