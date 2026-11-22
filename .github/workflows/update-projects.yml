@@ -2,7 +2,8 @@ name: Homepage · Project pills and screenshots
 
 # Every two hours (user, 22 Nov 2026; at 23 past the hour): read the live project sites, refresh the pills on the
 # homepage's project cards (scripts/update_projects.py) and retake their screenshots
-# (scripts/update_shots.py). Commits only when something changed.
+# (scripts/update_shots.py); also the closing-line value figures (BettingSignal record.py -> assets/clv.json).
+# Commits only when something changed.
 on:
   schedule:
     - cron: "23 */2 * * *"
@@ -20,22 +21,29 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
+      - uses: actions/checkout@v5           # the live-test ledgers, for the 'Beat the close' figures
+        with:
+          repository: nikolitso/BettingSignal
+          token: ${{ secrets.SITES_TOKEN }}
+          path: _bs
       - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
       - name: Refresh the pills
         run: python scripts/update_projects.py
+      - name: Closing-line value for the 'Beat the close' tiles (assets/clv.json)
+        run: python _bs/record.py --site . > /dev/null || echo "CLV figures not refreshed"
       - name: Retake the screenshots
         run: |
           pip install --quiet pillow
           python scripts/update_shots.py
       - name: Save
         run: |
-          if git diff --quiet -- index.html '*.jpg'; then exit 0; fi
+          if git diff --quiet -- index.html '*.jpg' assets/clv.json; then exit 0; fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -u -- index.html '*.jpg'   # tracked files only (some local .jpg files are gitignored)
-          git commit -m "Homepage: refresh project pills and screenshots"
+          git add -u -- index.html '*.jpg' assets/clv.json   # tracked files only (some local .jpg files are gitignored)
+          git commit -m "Homepage: refresh project pills, screenshots and CLV figures"
           # Another workflow may push in the same seconds. Try up to four times; if the rebase clashes on index.html,
           # start again from the newest main and redo the refresh on top of it.
           for i in 1 2 3 4; do
@@ -44,10 +52,11 @@ jobs:
             git rebase --abort 2>/dev/null || true
             git fetch origin main && git reset --hard origin/main
             python scripts/update_projects.py
+            python _bs/record.py --site . > /dev/null || echo "CLV figures not refreshed"
             python scripts/update_shots.py
-            if git diff --quiet -- index.html '*.jpg'; then exit 0; fi
-            git add -u -- index.html '*.jpg'
-            git commit -m "Homepage: refresh project pills and screenshots"
+            if git diff --quiet -- index.html '*.jpg' assets/clv.json; then exit 0; fi
+            git add -u -- index.html '*.jpg' assets/clv.json
+            git commit -m "Homepage: refresh project pills, screenshots and CLV figures"
             sleep $((i * 15))
           done
           exit 1
