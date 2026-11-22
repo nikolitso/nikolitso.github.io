@@ -262,6 +262,6 @@ html .an-head a.an-home:has(h1){font:400 30px/1.05 var(--an-display);padding:10p
   border-radius:999px;padding:7px 14px}
 .an-project-nav .an-navgroup,.an-project-nav a.an-navchip{margin-left:6px}
 .an-project-nav a.an-navchip:hover{border-color:var(--an-accent);color:var(--an-ink)}
-.an-project-nav a.an-navchip[aria-current="page"],html[data-site] .an-project-nav a.an-navchip[aria-current="page"]{border-color:var(--an-accent)}  /* same colours as the Football and Basketball buttons (user); only the outline marks the page */
+.an-project-nav a.an-navchip[aria-current="page"],html[data-site] .an-project-nav a.an-navchip[aria-current="page"]{border-color:var(--an-rule)}  /* exactly like the Football and Basketball buttons, also on its own page (user) */
 @media(min-width:761px){html[data-site] .an-project-nav a:not(.an-navhome):not(.an-navchip){font-size:14px}}
 @media(min-width:761px) and (max-width:1320px){.an-project-nav>div{flex-wrap:nowrap;overflow-x:auto}}
