@@ -304,7 +304,7 @@ body { overflow-x: clip; }  /* safety net */
   .project-group-note { text-align: left; }
   .project-cards { gap: .9rem; }
 }
-/* project filter (15 Nov 2026): All · Football · Basketball · PAOK · Other sports, as on Books */
+/* project filter (15 Nov 2026): All · Football · Basketball · PAOK · Volleyball · Handball (split 22 Nov 2026), as on Books */
 .proj-chips { display: flex; flex-wrap: wrap; gap: .5rem; margin: 1.75rem 0 0; }
 .proj-chip { font: 500 15px/1.2 var(--body); color: var(--ink); background: var(--paper); border: 1px solid var(--rule); border-radius: 999px; padding: .55rem 1rem; cursor: pointer; display: inline-flex; align-items: center; gap: .45rem; transition: border-color .2s, background .2s, color .2s; }
 .proj-chip b { font-weight: 600; color: var(--muted); }
@@ -441,7 +441,7 @@ body { overflow-x: clip; }  /* safety net */
       <p class="kicker">Projects</p>
       <h2 id="h-projects">Data &amp; models</h2>
       <p class="sec-intro">Independent sports projects across Greek and European football, European basketball, volleyball and handball, alongside two PAOK statistics hubs. The Greek Cup is a data and presentation project; the other forecasting projects are in their 2026-27 test season. Treat live records as early results.</p>
-      <div class="proj-chips" role="group" aria-label="Show projects by sport"><button type="button" class="proj-chip on" data-g="" aria-pressed="true">All <b>11</b></button><button type="button" class="proj-chip" data-g="football" aria-pressed="false">Football <b>2</b></button><button type="button" class="proj-chip" data-g="basketball" aria-pressed="false">Basketball <b>5</b></button><button type="button" class="proj-chip" data-g="paok" aria-pressed="false">PAOK <b>2</b></button><button type="button" class="proj-chip" data-g="other" aria-pressed="false">Other sports <b>2</b></button></div>
+      <div class="proj-chips" role="group" aria-label="Show projects by sport"><button type="button" class="proj-chip on" data-g="" aria-pressed="true">All <b>9</b></button><button type="button" class="proj-chip" data-g="football" aria-pressed="false">Football <b>2</b></button><button type="button" class="proj-chip" data-g="basketball" aria-pressed="false">Basketball <b>3</b></button><button type="button" class="proj-chip" data-g="paok" aria-pressed="false">PAOK <b>2</b></button><button type="button" class="proj-chip" data-g="volleyball" aria-pressed="false">Volleyball <b>1</b></button><button type="button" class="proj-chip" data-g="handball" aria-pressed="false">Handball <b>1</b></button></div>
       <div class="cards project-cards">
         <h3 class="project-group" data-g="football"><span>Football</span><span class="project-group-note">Greek competitions and match projections</span></h3>
         <a class="card" href="/superleague/" data-g="football">
@@ -495,15 +495,16 @@ body { overflow-x: clip; }  /* safety net */
           <!-- live:basketball-women:start --><div class="meta"><span>Record 1–3 · n=4</span><span class="roi neg">ROI -54.5% · -2.18 units</span><span>3 open picks</span><span>16 open 1H picks</span><span>62 first halves projected</span></div><!-- live:basketball-women:end -->
           <span class="go">Open <i aria-hidden="true">→</i></span>
         </a>
-        <h3 class="project-group" data-g="other"><span>Other sports</span><span class="project-group-note">Volleyball and handball projections</span></h3>
-        <a class="card" href="/volleyball/" data-g="other">
+        <h3 class="project-group" data-g="volleyball"><span>Volleyball</span><span class="project-group-note">Volleyball projections</span></h3>
+        <a class="card" href="/volleyball/" data-g="volleyball">
           <span class="tag"><svg class="an-mark-sm" aria-hidden="true"><use href="/assets/marks.svg#volleyball"/></svg>Modelling · Volleyball · Test season</span>
           <h3>European Volleyball</h3>
           <p>Eight European women's and men's leagues with a fair market for low-line overs, plus a points handicap test and 17 more women's leagues in a forward test. The chance of 3, 4 or 5 sets, total points and the live record.</p>
           <!-- live:volleyball:start --><div class="meta"><span>Record 9–3</span><span class="roi">ROI +38.2% · +4.58 units</span><span>No open picks</span></div><div class="meta"><span>Women Leagues test</span><span>Record 2–0 · ROI +81.5%</span></div><div class="meta"><span>Handicap test</span><span>Record 1–0 · ROI +83.5%</span></div><!-- live:volleyball:end -->
           <span class="go">Open <i aria-hidden="true">→</i></span>
         </a>
-        <a class="card" href="/handball/" data-g="other">
+        <h3 class="project-group" data-g="handball"><span>Handball</span><span class="project-group-note">Handball projections</span></h3>
+        <a class="card" href="/handball/" data-g="handball">
           <span class="tag"><svg class="an-mark-sm" aria-hidden="true"><use href="/assets/marks.svg#handball"/></svg>Modelling · Handball · Test season</span>
           <h3>Handball</h3>
           <p>Goal projections for eight leagues, tested game by game, plus Magdeburg's first-half pattern as a heavy home favourite.</p>

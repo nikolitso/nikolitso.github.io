@@ -254,11 +254,14 @@ html .an-head a.an-home:has(h1){font:400 30px/1.05 var(--an-display);padding:10p
 .an-head a.an-home h1{font:inherit;margin:0;color:inherit;letter-spacing:inherit}
 @media (max-width:600px){html .an-head a.an-home{font-size:15px;padding:8px 14px}html .an-head a.an-home:has(h1){font-size:22px;padding:8px 16px 10px;border-radius:22px}.an-head>div:has(>a.an-home h1){grid-template-columns:minmax(0,auto) minmax(0,1fr)}
   .an-project-nav a.an-navhome,html[data-site] .an-project-nav a.an-navhome{font-size:14px;padding:8px 16px}}
-/* the projects menu (22 Nov 2026): Home, then every project in one row grouped by sport; a small label opens a group
-   of several pages and a thin rule separates the groups */
-.an-project-nav>div{justify-content:flex-start;column-gap:clamp(10px,.9vw,12px)}
-.an-project-nav .an-navgroup{flex:none;color:var(--an-accent);font:700 14px/1 var(--an-body);letter-spacing:.06em;text-transform:uppercase;margin-right:-2px}
-.an-project-nav .an-navsep{flex:none;align-self:center;width:1px;height:18px;margin:0 -3px;background:var(--an-rule)}
-@media(min-width:761px){html[data-site] .an-project-nav a:not(.an-navhome){font-size:14px}}
-.an-project-nav>div{max-width:1320px}
+/* the projects menu (22 Nov 2026): Home, then every project in one row; each sport is a button like the homepage filter
+   (Football, Basketball, PAOK), followed by its pages; Volleyball and Handball are buttons that link straight to their page */
+.an-project-nav>div{justify-content:flex-start;column-gap:clamp(10px,.9vw,12px);max-width:1320px}
+.an-project-nav .an-navgroup,.an-project-nav a.an-navchip,html[data-site] .an-project-nav a.an-navchip{flex:none;align-self:center;min-height:0;
+  font:600 14px/1.2 var(--an-body);letter-spacing:0;color:var(--an-ink);background:var(--an-paper);border:1px solid var(--an-rule);
+  border-radius:999px;padding:7px 14px}
+.an-project-nav .an-navgroup,.an-project-nav a.an-navchip{margin-left:6px}
+.an-project-nav a.an-navchip:hover{border-color:var(--an-accent);color:var(--an-ink)}
+.an-project-nav a.an-navchip[aria-current="page"],html[data-site] .an-project-nav a.an-navchip[aria-current="page"]{background:var(--an-accent);border-color:var(--an-accent);color:#fff}
+@media(min-width:761px){html[data-site] .an-project-nav a:not(.an-navhome):not(.an-navchip){font-size:14px}}
 @media(min-width:761px) and (max-width:1320px){.an-project-nav>div{flex-wrap:nowrap;overflow-x:auto}}

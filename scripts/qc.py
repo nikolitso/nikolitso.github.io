@@ -22,8 +22,8 @@ from urllib.parse import urlparse, unquote
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SITE = "https://antonisnikolitsopoulos.com"
 CSS_VERSION = "5"
-MENU = ["/superleague/", "/football/greek-cup/", "/paok-hub/", "/paok-basketball/", "/basketball/", "/basketball/overs/",
-        "/basketball/women/", "/volleyball/", "/handball/"]
+MENU = ["/superleague/", "/football/greek-cup/", "/basketball/", "/basketball/overs/", "/basketball/women/",
+        "/volleyball/", "/handball/", "/paok-hub/", "/paok-basketball/"]
 # EuroCup and FIBA Europe Cup left the menu on 22 Nov 2026; their own (paused) pages keep the menu they were built with
 HIDDEN = ("eurocup/", "fibaeuropecup/")
 MENU_HIDDEN = ["/superleague/", "/football/greek-cup/", "/basketball/", "/basketball/overs/", "/basketball/women/",
@@ -112,11 +112,11 @@ def check_page(path, problems):
     elif r != "404.html":
         hidden = r.replace("\\", "/").startswith(HIDDEN)
         if hidden:
-            hrefs = re.findall(r'<a href="([^"]+)"', navs[0])
+            hrefs = re.findall(r'<a (?:class="an-navchip" )?href="([^"]+)"', navs[0])
             if hrefs != MENU_HIDDEN:
                 say("menu", f"entries differ: {hrefs}")
         else:   # every project in one row, grouped by sport (22 Nov 2026)
-            hrefs = re.findall(r'<a href="([^"]+)"', navs[0])
+            hrefs = re.findall(r'<a (?:class="an-navchip" )?href="([^"]+)"', navs[0])
             if hrefs != MENU:
                 say("menu", f"entries differ: {hrefs}")
         if '<a class="an-navhome" href="/">Home</a>' not in navs[0]:

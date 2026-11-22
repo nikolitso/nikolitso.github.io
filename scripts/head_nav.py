@@ -23,16 +23,16 @@ OLD_PILL = re.compile(r'<a class="an-home" href="/"(?: aria-label="Back to the h
 BRAND_H1 = re.compile(r'(<a class="an-brand"[^>]*>.*?)<h1>(.*?)</h1>(.*?</a>)', re.S)
 TAGS = re.compile(r"<[^>]+>")
 WHOLE_NAV = re.compile(r'<nav class="an-project-nav"[^>]*>.*?</nav>', re.S)
-NAV_CURRENT = re.compile(r'<a href="([^"]+)" aria-current="page">')
+NAV_CURRENT = re.compile(r'<a (?:class="an-navchip" )?href="([^"]+)" aria-current="page">')
 
 # The projects menu (user, 22 Nov 2026): Home, then every project in one row, grouped by sport; PAOK is its own group.
 SPORTS = [
     ("Football", [("/superleague/", "Greek Superleague"), ("/football/greek-cup/", "Greek Cup")]),
-    ("PAOK", [("/paok-hub/", "PAOK Hub"), ("/paok-basketball/", "PAOK Basketball")]),   # its own project, after Football (user, 22 Nov 2026)
     ("Basketball", [("/basketball/", "Greek League"), ("/basketball/overs/", "European"),
                     ("/basketball/women/", "European Women")]),
     ("Volleyball", [("/volleyball/", "Volleyball")]),
     ("Handball", [("/handball/", "Handball")]),
+    ("PAOK", [("/paok-hub/", "Hub"), ("/paok-basketball/", "Basketball")]),   # its own project, last (user, 22 Nov 2026)
 ]
 # the header pill's name for each project: the title on the project's own home page, so a renamed project renames
 # its pills on every page (user, 22 Nov 2026); these are only the fallback
@@ -65,14 +65,15 @@ CURRENT_ATTR = ' aria-current="page"'
 
 def menu(current):
     """The whole projects menu with `current` (a project's href) marked: one row with every project, grouped by sport
-    (user, 22 Nov 2026). A group of several pages opens with a small sport label, unless its pages already carry it."""
+    (user, 22 Nov 2026): each sport is a button like the homepage filter, followed by its pages; PAOK comes last."""
     parts = []
-    for i, (sport, pages) in enumerate(SPORTS):
-        if i:
-            parts.append('<span class="an-navsep" aria-hidden="true"></span>')
-        if len(pages) > 1 and not all(l.startswith(sport) for _, l in pages):
+    for sport, pages in SPORTS:
+        if len(pages) == 1:     # a sport with one page is a button itself
+            h, l = pages[0]
+            parts.append(f'<a class="an-navchip" href="{h}"{CURRENT_ATTR if h == current else ""}>{l}</a>')
+        else:                   # a sport button, then its pages
             parts.append(f'<span class="an-navgroup">{sport}</span>')
-        parts += [f'<a href="{h}"{CURRENT_ATTR if h == current else ""}>{l}</a>' for h, l in pages]
+            parts += [f'<a href="{h}"{CURRENT_ATTR if h == current else ""}>{l}</a>' for h, l in pages]
     return ('<nav class="an-project-nav" aria-label="Sports analytics projects"><div>' + NAVHOME + "\n"
             + "\n".join(parts) + "</div></nav>")
 
