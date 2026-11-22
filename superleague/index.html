@@ -185,6 +185,7 @@ th{font-size:14px}
 <!-- sitebar:end -->
 
 
+<script defer src="/assets/openpicks.js"></script>
 <nav class="an-project-nav" aria-label="Sports analytics projects"><div><a class="an-navhome" href="/">Home</a>
 <span class="an-navgroup">Football</span>
 <a href="/superleague/" aria-current="page">Greek Superleague</a>
@@ -568,8 +569,9 @@ function renderValue(){
     <div class="metric"><div class="lbl">Started, waiting for result</div><div class="big">${started.length}</div></div></div>`;
   if (!bets.length) h += `<p class="empty">No picks at EV ${label(valMin)} or more for the coming games.</p>`;
   else {
-    h += `<h2>Coming games</h2><div class="scroll"><table class="mk"><thead><tr><th>Kick-off</th><th>Match</th><th>Pick</th><th class="n">Market odds</th><th class="n">Model odds</th><th class="n">Market %</th><th class="n">Model %</th><th class="n">EV</th></tr></thead><tbody>`;
-    for (const b of bets) h += `<tr><td class="muted">${dayName(b.kickoff)} ${b.kickoff.slice(11)}</td><td>${b.home} – ${b.away}</td><td><b>${betName(b)}</b></td><td class="n">${b.odds.toFixed(2)}</td><td class="n tot">${modelOdds(b.ours)}</td><td class="n">${pct(b.fair)}</td><td class="n tot">${pct(b.ours)}</td><td class="n ${b.ev >= .15 ? 'w' : ''}">${evPct(b.ev)}</td></tr>`;
+    h += `<h2>Open picks</h2><div class="scroll"><table class="mk"><thead><tr><th>Kick-off</th><th>Match</th><th>Pick</th><th class="n">Market odds</th><th class="n">Model odds</th><th class="n">Market %</th><th class="n">Model %</th><th class="n">EV</th></tr></thead><tbody>`;
+    // data-g: the stat, for the filter buttons above the table (assets/openpicks.js, 23 Nov 2026)
+    for (const b of bets) h += `<tr data-g="${b.stat === 'result' ? 'Result' : lc(b.stat).replace(/^./, c => c.toUpperCase())}"><td class="muted">${dayName(b.kickoff)} ${b.kickoff.slice(11)}</td><td>${b.home} – ${b.away}</td><td><b>${betName(b)}</b></td><td class="n">${b.odds.toFixed(2)}</td><td class="n tot">${modelOdds(b.ours)}</td><td class="n">${pct(b.fair)}</td><td class="n tot">${pct(b.ours)}</td><td class="n ${b.ev >= .15 ? 'w' : ''}">${evPct(b.ev)}</td></tr>`;
     h += '</tbody></table></div>';
   }
   // kicked off, result not in the data yet (settled on the next update after the stats arrive)

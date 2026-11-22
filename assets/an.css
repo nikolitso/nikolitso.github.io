@@ -265,3 +265,19 @@ html .an-head a.an-home:has(h1){font:400 30px/1.05 var(--an-display);padding:10p
 .an-project-nav a.an-navchip[aria-current="page"],html[data-site] .an-project-nav a.an-navchip[aria-current="page"]{border-color:var(--an-rule)}  /* exactly like the Football and Basketball buttons, also on its own page (user) */
 @media(min-width:761px){html[data-site] .an-project-nav a:not(.an-navhome):not(.an-navchip){font-size:14px}}
 @media(min-width:761px) and (max-width:1320px){.an-project-nav>div{flex-wrap:nowrap;overflow-x:auto}}
+/* open picks (23 Nov 2026, assets/openpicks.js): Handball's card on every open-picks table, and filter buttons in the
+   projects menu's style above it (All, then one per league) */
+.an-opbox{border:2px solid var(--an-positive,#3fb27f);border-radius:12px;padding:14px 16px;margin:18px 0;background:color-mix(in srgb,var(--an-positive,#3fb27f) 6%,var(--an-paper));display:flex;flex-direction:column;gap:10px}
+.an-opbox>h2,.an-opbox>h3{margin:0;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.an-opbox>.note{margin:0}
+.an-opbox .scroll{margin:0}
+.an-opbox table{background:var(--an-paper)}
+.an-opn{display:inline-block;min-width:1.6em;text-align:center;font:700 15px/1.4 var(--an-body);padding:1px 9px;border-radius:99px;background:var(--an-positive,#3fb27f);color:#fff}
+.an-opf{display:flex;flex-wrap:wrap;gap:8px;margin:4px 0 2px}
+.an-opchip{font:600 14px/1.2 var(--an-body);color:var(--an-ink);background:var(--an-paper);border:1px solid var(--an-rule);border-radius:999px;padding:7px 14px;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.an-opchip b{font-weight:600;color:var(--an-muted)}
+.an-opchip:hover{border-color:var(--an-accent)}
+.an-opchip.on{background:var(--an-accent);border-color:var(--an-accent);color:#fff}
+.an-opchip.on b{color:rgba(255,255,255,.85)}
+td.an-opcall{font-size:1.05rem;font-weight:700;white-space:nowrap}
+.an-optime{color:var(--an-muted)}
