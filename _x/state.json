@@ -173,7 +173,8 @@
       "weighing-the-odds-in-sports-betting",
       "range-how-generalists-triumph-in",
       "statistical-sports-models-in-excel",
-      "statistical-sports-models-in-excel-volume-1"
+      "statistical-sports-models-in-excel-volume-1",
+      "hbr-guide-to-generative-ai-for-managers"
     ],
     "log": [
       {
@@ -529,9 +530,15 @@
         "slot": "2026-11-20 14",
         "slug": "statistical-sports-models-in-excel-volume-1",
         "id": "2123748272665927757"
+      },
+      {
+        "day": "2026-11-22",
+        "slot": "2026-11-22 14",
+        "slug": "hbr-guide-to-generative-ai-for-managers",
+        "id": "2124473035759800748"
       }
     ],
-    "last_day": "2026-11-20"
+    "last_day": "2026-11-22"
   },
   "film": {
     "seen": [
@@ -1117,7 +1124,7 @@
     ],
     "last_day": "2026-11-16"
   },
-  "last_slot": "2026-11-21 14",
+  "last_slot": "2026-11-22 14",
   "quote": {
     "seen": [
       "1",
