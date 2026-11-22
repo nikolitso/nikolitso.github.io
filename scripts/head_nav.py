@@ -29,7 +29,7 @@ NAV_CURRENT = re.compile(r'<a (?:class="an-navchip" )?href="([^"]+)" aria-curren
 SPORTS = [
     ("Football", [("/superleague/", "Greek Superleague"), ("/football/greek-cup/", "Greek Cup")]),
     ("Basketball", [("/basketball/", "Greek League"), ("/basketball/overs/", "European"),
-                    ("/basketball/women/", "European Women")]),
+                    ("/basketball/women/", "Women")]),
     ("Volleyball", [("/volleyball/", "Volleyball")]),
     ("Handball", [("/handball/", "Handball")]),
     ("PAOK", [("/paok-hub/", "Hub"), ("/paok-basketball/", "Basketball")]),   # its own project, last (user, 22 Nov 2026)
