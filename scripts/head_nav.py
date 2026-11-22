@@ -25,8 +25,7 @@ TAGS = re.compile(r"<[^>]+>")
 WHOLE_NAV = re.compile(r'<nav class="an-project-nav"[^>]*>.*?</nav>', re.S)
 NAV_CURRENT = re.compile(r'<a href="([^"]+)" aria-current="page">')
 
-# The projects menu by sport (user, 22 Nov 2026): Home and four sports on top; on a Football or Basketball page a
-# second row lists that sport's pages. Volleyball and Handball are one page each; PAOK (Hub and Basketball) is its own entry.
+# The projects menu (user, 22 Nov 2026): Home, then every project in one row, grouped by sport; PAOK is its own group.
 SPORTS = [
     ("Football", [("/superleague/", "Greek Superleague"), ("/football/greek-cup/", "Greek Cup")]),
     ("PAOK", [("/paok-hub/", "PAOK Hub"), ("/paok-basketball/", "PAOK Basketball")]),   # its own project, after Football (user, 22 Nov 2026)
@@ -61,22 +60,21 @@ def name_of(href):
     return _names[href]
 
 
+CURRENT_ATTR = ' aria-current="page"'
+
+
 def menu(current):
-    """The whole projects menu with `current` (a project's href) marked."""
-    top, sub = [], ""
-    for sport, pages in SPORTS:
-        mine = any(h == current for h, _ in pages)
-        if len(pages) == 1:
-            mark = ' aria-current="page"' if mine else ""
-        else:
-            mark = ' aria-current="true"' if mine else ""
-            if mine:
-                here = ' aria-current="page"'
-                sub = '<div class="an-subnav">' + "\n".join(
-                    f'<a href="{h}"{here if h == current else ""}>{l}</a>' for h, l in pages) + "</div>"
-        top.append(f'<a href="{pages[0][0]}"{mark}>{sport}</a>')
+    """The whole projects menu with `current` (a project's href) marked: one row with every project, grouped by sport
+    (user, 22 Nov 2026). A group of several pages opens with a small sport label, unless its pages already carry it."""
+    parts = []
+    for i, (sport, pages) in enumerate(SPORTS):
+        if i:
+            parts.append('<span class="an-navsep" aria-hidden="true"></span>')
+        if len(pages) > 1 and not all(l.startswith(sport) for _, l in pages):
+            parts.append(f'<span class="an-navgroup">{sport}</span>')
+        parts += [f'<a href="{h}"{CURRENT_ATTR if h == current else ""}>{l}</a>' for h, l in pages]
     return ('<nav class="an-project-nav" aria-label="Sports analytics projects"><div>' + NAVHOME + "\n"
-            + "\n".join(top) + "</div>" + sub + "</nav>")
+            + "\n".join(parts) + "</div></nav>")
 
 
 def fix_menu(text):

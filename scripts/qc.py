@@ -22,14 +22,12 @@ from urllib.parse import urlparse, unquote
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SITE = "https://antonisnikolitsopoulos.com"
 CSS_VERSION = "5"
-MENU = ["/superleague/", "/football/greek-cup/", "/basketball/", "/basketball/overs/", "/basketball/women/",
-        "/paok-hub/", "/paok-basketball/", "/volleyball/", "/handball/"]
+MENU = ["/superleague/", "/football/greek-cup/", "/paok-hub/", "/paok-basketball/", "/basketball/", "/basketball/overs/",
+        "/basketball/women/", "/volleyball/", "/handball/"]
 # EuroCup and FIBA Europe Cup left the menu on 22 Nov 2026; their own (paused) pages keep the menu they were built with
 HIDDEN = ("eurocup/", "fibaeuropecup/")
-MENU_HIDDEN = MENU[:5] + ["/eurocup/", "/fibaeuropecup/"] + MENU[5:]
-MENU_TOP = ["/superleague/", "/paok-hub/", "/basketball/", "/volleyball/", "/handball/"]
-MENU_SUB = [["/superleague/", "/football/greek-cup/"], ["/basketball/", "/basketball/overs/", "/basketball/women/"],
-            ["/paok-hub/", "/paok-basketball/"]]
+MENU_HIDDEN = ["/superleague/", "/football/greek-cup/", "/basketball/", "/basketball/overs/", "/basketball/women/",
+               "/eurocup/", "/fibaeuropecup/", "/paok-hub/", "/paok-basketball/", "/volleyball/", "/handball/"]
 SKIP_PREFIXES = ("scripts/", "paok-basketball/data/")
 SKIP_DIRS = {".git", ".claude", ".superpowers", "_bs", "node_modules", "__pycache__"}
 WORDING = [
@@ -117,14 +115,10 @@ def check_page(path, problems):
             hrefs = re.findall(r'<a href="([^"]+)"', navs[0])
             if hrefs != MENU_HIDDEN:
                 say("menu", f"entries differ: {hrefs}")
-        else:   # by sport (22 Nov 2026): four sports on top, a sport's own pages in a second row
-            top, _, sub = navs[0].partition('<div class="an-subnav">')
-            hrefs = re.findall(r'<a href="([^"]+)"', top)
-            if hrefs != MENU_TOP:
-                say("menu", f"sports differ: {hrefs}")
-            subs = re.findall(r'<a href="([^"]+)"', sub)
-            if subs and subs not in MENU_SUB:
-                say("menu", f"second row differs: {subs}")
+        else:   # every project in one row, grouped by sport (22 Nov 2026)
+            hrefs = re.findall(r'<a href="([^"]+)"', navs[0])
+            if hrefs != MENU:
+                say("menu", f"entries differ: {hrefs}")
         if '<a class="an-navhome" href="/">Home</a>' not in navs[0]:
             say("menu", "no Home pill first in the menu")
         cur = re.findall(r'aria-current="page"', navs[0])
