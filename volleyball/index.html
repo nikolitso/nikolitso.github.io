@@ -243,7 +243,7 @@ a.gm{color:inherit;text-decoration:none} a.gm:hover{color:var(--gold);text-decor
     <a href="#view=method" data-view="method">How it works</a>
   </nav>
 </div></header>
-<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebPage","@id":"https://antonisnikolitsopoulos.com/volleyball/#webpage","url":"https://antonisnikolitsopoulos.com/volleyball/","name":"Volleyball projections: sets and total points","inLanguage":"en","isPartOf":{"@id":"https://antonisnikolitsopoulos.com/#website"},"author":{"@id":"https://antonisnikolitsopoulos.com/#person"}},{"@type":"Person","@id":"https://antonisnikolitsopoulos.com/#person","name":"Antonis Nikolitsopoulos","url":"https://antonisnikolitsopoulos.com/","image":"https://antonisnikolitsopoulos.com/photo.jpg","homeLocation":{"@type":"Place","name":"Thessaloniki, Greece"},"knowsAbout":["Sports analytics","Football","Basketball","Probability modelling","Books","World cinema","Greek wine"],"sameAs":["https://www.linkedin.com/in/antonis-nikolitsopoulos/","https://x.com/nikolitso","https://letterboxd.com/nikolitso/","https://whatalgomissed.com/"]},{"@type":"WebSite","@id":"https://antonisnikolitsopoulos.com/#website","url":"https://antonisnikolitsopoulos.com/","name":"Antonis Nikolitsopoulos","inLanguage":"en","publisher":{"@id":"https://antonisnikolitsopoulos.com/#person"}}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebPage", "@id": "https://antonisnikolitsopoulos.com/volleyball/#webpage", "url": "https://antonisnikolitsopoulos.com/volleyball/", "name": "Volleyball projections: sets and total points", "inLanguage": "en", "isPartOf": {"@id": "https://antonisnikolitsopoulos.com/#website"}, "author": {"@id": "https://antonisnikolitsopoulos.com/#person"}}</script>
 <main class="wrap">
 <div class="an-project-context"><span class="an-project-context__label">Scope</span><span>Men's and women's league projections cover set count and total points. The live test, historical backtest and upcoming projections remain separate; league coverage and sample sizes matter when comparing records.</span></div>
 <div class="an-data-key" role="group" aria-label="How to read volleyball projections">
@@ -730,12 +730,23 @@ function renderWtest(){
   const picks = T.games.filter(p => p.pick), done = picks.filter(p => 'profit' in p), open = picks.filter(p => !('total' in p));
   const n = done.length, w = done.filter(p => p.won).length, units = done.reduce((s, p) => s + p.profit, 0);
   const played = T.games.filter(p => 'total' in p), lined = played.filter(p => p.line != null);
-  const tiles = [['Open picks', open.length, open.length ? 'to play' : 'none right now'],
+  const tiles = [['Open picks', open.length, open.length ? 'to play →' : 'none right now', '#view=wtest&to=wopen'],
                  ['Record', `${w}–${n - w}`, n ? (w / n * 100).toFixed(1) + '% won' : '0 picks'],
                  ['ROI', n ? `<span class="${cls(units)}">${sgn(units / n * 100, 1)}%</span>` : '–', n ? units1(units) : 'no settled picks'],
                  ['Games logged', T.games.length, `${played.length} played`],
                  ['With a line', played.length ? pct(lined.length / played.length) : '–', 'of played games']];
-  let h = `<div class="metrics">${tiles.map(([l, v, x]) => `<div class="metric"><div class="lbl">${l}</div><div class="big">${v}</div><div class="sm">${x}</div></div>`).join('')}</div>`;
+  let h = `<div class="metrics">${tiles.map(([l, v, x, href]) => { const inner = `<div class="lbl">${l}</div><div class="big">${v}</div><div class="sm">${x}</div>`;
+    return href ? `<a class="metric" href="${href}">${inner}</a>` : `<div class="metric">${inner}</div>`; }).join('')}</div>`;
+
+  // open picks first, as on Live test
+  h += '<h2 id="wopen">Open picks</h2>';
+  if (!open.length) h += '<p class="empty">No open picks. New ones appear once a test-league match with a line qualifies.</p>';
+  else {
+    h += `<div class="scroll"><table><thead><tr><th>Date</th><th>Match</th><th class="n">Opening line</th><th class="n">Pick line</th><th class="n">Price</th><th class="n">Model line</th><th class="n">Over chance</th><th class="n">Edge</th></tr></thead><tbody>`;
+    for (const p of open.slice().sort((a, b) => a.dt.localeCompare(b.dt)))
+      h += `<tr><td>${short(p.dt)} ${p.dt.slice(11)}</td><td class="wr">${match(p)}<div class="muted" style="font-size:14px">${TL[p.lg].country} · ${TL[p.lg].name}${p.manual ? ' · line added by hand' : ''}</div></td><td class="n">${p.line_open ?? '–'}</td><td class="n">Over ${p.line}</td><td class="n">${p.px.toFixed(2)}</td><td class="n">${p.fair}</td><td class="n">${pct(realP(p.p, p.px, p.under_px))}</td><td class="n ${cls(p.edge)}">${sgn(realEdge(p.p, p.px, p.under_px)*100, 0)}%</td></tr>`;
+    h += '</tbody></table></div>';
+  }
 
   // by league: what the test has collected so far
   h += `<h2>By league</h2><div class="scroll"><table style="max-width:1100px"><thead><tr><th>League</th><th class="n">Games logged</th><th class="n">Played</th><th class="n">With a line</th><th class="n">Low lines</th><th class="n">Over hit</th><th class="n">Picks</th><th class="n">Won</th><th class="n">Profit</th><th class="n">ROI</th></tr></thead><tbody>`;
@@ -787,6 +798,7 @@ function fromHash(){
   render();
   if (moved && view === 'leagues') window.scrollTo(0, 0);   // a league's own page opens at its top
   if (/to=settled/.test(location.hash)) toSettled();   // the Record pill opens the settled picks (user, 15 Nov 2026)
+  if (/to=wopen/.test(location.hash)){ const el = document.getElementById('wopen'); if (el) el.scrollIntoView({behavior: 'smooth', block: 'start'}); }
   if (/to=bets/.test(location.hash)){ const el = document.getElementById('btbets'); if (el) el.scrollIntoView({behavior: 'smooth', block: 'start'}); }
 }
 function toSettled(){ const el = document.getElementById('settled'); if (el) el.scrollIntoView({behavior: 'smooth', block: 'start'}); }
