@@ -1,11 +1,11 @@
 name: Homepage · Project pills and screenshots
 
-# Four times a day (about 06:30, 12:30, 17:30 and 23:30 Athens in winter): read the live project sites, refresh the pills on the
+# Every two hours (user, 22 Nov 2026; at 23 past the hour): read the live project sites, refresh the pills on the
 # homepage's project cards (scripts/update_projects.py) and retake their screenshots
 # (scripts/update_shots.py). Commits only when something changed.
 on:
   schedule:
-    - cron: "23 4,10,15,21 * * *"
+    - cron: "23 */2 * * *"
   workflow_dispatch:
 
 permissions:

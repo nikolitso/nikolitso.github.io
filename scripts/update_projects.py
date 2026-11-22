@@ -3,7 +3,7 @@
 Each card gets up to three short pills (when the data was last updated, what's next, a running
 record), read from the data the project pages themselves use. Everything between
 <!-- live:SLUG:start --> and <!-- live:SLUG:end --> in index.html is rewritten. A site that can't
-be read keeps its current pills. Runs every morning (.github/workflows/update-projects.yml).
+be read keeps its current pills. Runs every two hours (.github/workflows/update-projects.yml).
 
 Usage:  python scripts/update_projects.py [--dry-run]
 """
