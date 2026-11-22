@@ -244,7 +244,7 @@ a.tile:hover{border-color:var(--gold)}
 <p>Projections shows the next 7 days, and Live test records the picks, taken at the opening line; 1H live test and 1H backtest cover first halves. Backtest covers 2021–22 to 2025–26. A game's line is the median of the main market lines.</p>
 </section>
 </main>
-<script src="data.js?v=w108"></script>
+<script src="data.js?v=w109"></script>
 <script src="live.js"></script>
 <script>
 const $ = id => document.getElementById(id);
@@ -276,7 +276,7 @@ const GAP = b => b.g0 ?? (b.mu == null || b.line == null ? null : Math.round((b.
 const RL = k => !LIVE.leagues || LIVE.leagues.includes(k);
 const LIVE = window.LIVE || {updated: DATA.updated, fixtures: DATA.fixtures, picks: [], tracked: 0, start: '8 Nov 2026', taken: {n: 0}, over: {n: 0}, under: {n: 0}, rule: {n: 0}};
 LIVE.fixtures = LIVE.fixtures.filter(g => LG[g.lg] && (!g.gp || Math.min(...g.gp) >= (LIVE.min_gp ?? 4)));   // leagues no longer on the page; games only once both teams have the minimum games
-LIVE.picks = LIVE.picks || [];   // every logged pick stays in the record, even from a league no longer on the page, except Czechia ZBL's, taken out on request (23 Nov 2026)
+LIVE.picks = LIVE.picks || [];   // every logged pick stays in the record, even from a league no longer on the page, except Czechia ZBL's and Belgium's, taken out on request (23 Nov 2026)
 if (LIVE.leagues) LIVE.leagues = LIVE.leagues.filter(k => LG[k]);
 
 $('sub').textContent = `${DATA.leagues.length} Leagues · backtest 2021–22 to 2025–26 · 2026–27 record since ${LIVE.start} · updated ${LIVE.updated} (Athens)`;
