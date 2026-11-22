@@ -245,7 +245,7 @@ a.gm{color:inherit;text-decoration:none} a.gm:hover{color:var(--gold);text-decor
     <a href="#view=method" data-view="method">How it works</a>
   </nav>
 </div></header>
-<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebPage","@id":"https://antonisnikolitsopoulos.com/volleyball/#webpage","url":"https://antonisnikolitsopoulos.com/volleyball/","name":"European Volleyball projections: sets and total points","inLanguage":"en","isPartOf":{"@id":"https://antonisnikolitsopoulos.com/#website"},"author":{"@id":"https://antonisnikolitsopoulos.com/#person"}},{"@type":"Person","@id":"https://antonisnikolitsopoulos.com/#person","name":"Antonis Nikolitsopoulos","url":"https://antonisnikolitsopoulos.com/","image":"https://antonisnikolitsopoulos.com/photo.jpg","homeLocation":{"@type":"Place","name":"Thessaloniki, Greece"},"knowsAbout":["Sports analytics","Football","Basketball","Probability modelling","Books","World cinema","Greek wine"],"sameAs":["https://www.linkedin.com/in/antonis-nikolitsopoulos/","https://x.com/nikolitso","https://letterboxd.com/nikolitso/","https://whatalgomissed.com/"]},{"@type":"WebSite","@id":"https://antonisnikolitsopoulos.com/#website","url":"https://antonisnikolitsopoulos.com/","name":"Antonis Nikolitsopoulos","inLanguage":"en","publisher":{"@id":"https://antonisnikolitsopoulos.com/#person"}}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebPage", "@id": "https://antonisnikolitsopoulos.com/volleyball/#webpage", "url": "https://antonisnikolitsopoulos.com/volleyball/", "name": "European Volleyball projections: sets and total points", "inLanguage": "en", "isPartOf": {"@id": "https://antonisnikolitsopoulos.com/#website"}, "author": {"@id": "https://antonisnikolitsopoulos.com/#person"}}</script>
 <main class="wrap">
 <div class="an-project-context"><span class="an-project-context__label">Scope</span><span>Men's and women's league projections cover set count and total points. The live test, historical backtest and upcoming projections remain separate; league coverage and sample sizes matter when comparing records.</span></div>
 <div class="an-data-key" role="group" aria-label="How to read volleyball projections">
@@ -773,15 +773,6 @@ function renderWtest(){
     h += '</tbody></table></div>';
   }
 
-  // by league: what the test has collected so far
-  h += `<h2>By league</h2><div class="scroll"><table style="max-width:1100px"><thead><tr><th>League</th><th class="n">Games logged</th><th class="n">Played</th><th class="n">With a line</th><th class="n">Low lines</th><th class="n">Over hit</th><th class="n">Picks</th><th class="n">Won</th><th class="n">Profit</th><th class="n">ROI</th></tr></thead><tbody>`;
-  for (const l of T.leagues){
-    const g = T.games.filter(p => p.lg === l.key), pl = g.filter(p => 'total' in p), ln = pl.filter(p => p.line != null);
-    const low = ln.filter(p => p.line < DATA.low), d = g.filter(p => 'profit' in p), dw = d.filter(p => p.won).length, du = d.reduce((s, p) => s + p.profit, 0);
-    h += `<tr><td>${lname(l.key)}</td><td class="n">${g.length}</td><td class="n">${pl.length}</td><td class="n">${ln.length}</td><td class="n">${low.length}</td><td class="n">${ln.length ? pct(ln.filter(p => p.won).length / ln.length) : '–'}</td><td class="n">${d.length}</td><td class="n">${dw}</td><td class="n ${cls(du)}">${d.length ? sgn(du, 2) : '–'}</td><td class="n ${cls(du)}">${d.length ? sgn(du / d.length * 100, 1) + '%' : '–'}</td></tr>`;
-  }
-  h += '</tbody></table></div>';
-
   // the next 7 days, projected the same way as the live leagues
   const fx = T.fixtures;
   h += '<h2>Next 7 days</h2>';
@@ -793,6 +784,15 @@ function renderWtest(){
         ${g.mk ? `<td class="n">${g.mk.line}</td><td class="n">${g.mk.over.toFixed(2)}</td><td class="n">${pct(realP(g.p_over, g.mk.over, g.mk.under))}</td>${g.edge > 0 ? `<td class="n ${cls(g.edge)}">${sgn(realEdge(g.p_over, g.mk.over, g.mk.under)*100, 0)}%</td>` : '<td class="n muted">–</td>'}` : '<td class="n muted" colspan="4">no line yet</td>'}</tr>`;
     h += '</tbody></table></div>';
   }
+
+  // by league: what the test has collected so far
+  h += `<h2>By league</h2><div class="scroll"><table style="max-width:1100px"><thead><tr><th>League</th><th class="n">Games logged</th><th class="n">Played</th><th class="n">With a line</th><th class="n">Low lines</th><th class="n">Over hit</th><th class="n">Picks</th><th class="n">Won</th><th class="n">Profit</th><th class="n">ROI</th></tr></thead><tbody>`;
+  for (const l of T.leagues){
+    const g = T.games.filter(p => p.lg === l.key), pl = g.filter(p => 'total' in p), ln = pl.filter(p => p.line != null);
+    const low = ln.filter(p => p.line < DATA.low), d = g.filter(p => 'profit' in p), dw = d.filter(p => p.won).length, du = d.reduce((s, p) => s + p.profit, 0);
+    h += `<tr><td>${lname(l.key)}</td><td class="n">${g.length}</td><td class="n">${pl.length}</td><td class="n">${ln.length}</td><td class="n">${low.length}</td><td class="n">${ln.length ? pct(ln.filter(p => p.won).length / ln.length) : '–'}</td><td class="n">${d.length}</td><td class="n">${dw}</td><td class="n ${cls(du)}">${d.length ? sgn(du, 2) : '–'}</td><td class="n ${cls(du)}">${d.length ? sgn(du / d.length * 100, 1) + '%' : '–'}</td></tr>`;
+  }
+  h += '</tbody></table></div>';
 
   // settled picks, latest first
   h += '<h2>Settled picks, latest first</h2>';
