@@ -27,7 +27,7 @@ MENU = ["/superleague/", "/football/greek-cup/", "/basketball/", "/basketball/ov
 # EuroCup and FIBA Europe Cup left the menu on 22 Nov 2026; their own (paused) pages keep the menu they were built with
 HIDDEN = ("eurocup/", "fibaeuropecup/")
 MENU_HIDDEN = MENU[:5] + ["/eurocup/", "/fibaeuropecup/"] + MENU[5:]
-MENU_TOP = ["/superleague/", "/basketball/", "/volleyball/", "/handball/", "/paok-hub/"]
+MENU_TOP = ["/superleague/", "/paok-hub/", "/basketball/", "/volleyball/", "/handball/"]
 MENU_SUB = [["/superleague/", "/football/greek-cup/"], ["/basketball/", "/basketball/overs/", "/basketball/women/"],
             ["/paok-hub/", "/paok-basketball/"]]
 SKIP_PREFIXES = ("scripts/", "paok-basketball/data/")

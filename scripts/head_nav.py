@@ -29,11 +29,11 @@ NAV_CURRENT = re.compile(r'<a href="([^"]+)" aria-current="page">')
 # second row lists that sport's pages. Volleyball and Handball are one page each; PAOK (Hub and Basketball) is its own entry.
 SPORTS = [
     ("Football", [("/superleague/", "Greek Superleague"), ("/football/greek-cup/", "Greek Cup")]),
+    ("PAOK", [("/paok-hub/", "PAOK Hub"), ("/paok-basketball/", "PAOK Basketball")]),   # its own project, after Football (user, 22 Nov 2026)
     ("Basketball", [("/basketball/", "Greek League"), ("/basketball/overs/", "European"),
                     ("/basketball/women/", "European Women")]),
     ("Volleyball", [("/volleyball/", "Volleyball")]),
     ("Handball", [("/handball/", "Handball")]),
-    ("PAOK", [("/paok-hub/", "PAOK Hub"), ("/paok-basketball/", "PAOK Basketball")]),   # its own project (user, 22 Nov 2026)
 ]
 # the header pill's name for each project: the title on the project's own home page, so a renamed project renames
 # its pills on every page (user, 22 Nov 2026); these are only the fallback
