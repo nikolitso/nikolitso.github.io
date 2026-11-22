@@ -3,11 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Projected margins: Greek and Cyprus basketball</title>
-<meta name="description" content="Greek Basket League and Cyprus Division A handicaps, match by match: the model's margin for every game next to the market's handicap, and how each estimate ended.">
+<title>Greek Basketball League: projected margins</title>
+<meta name="description" content="Greek Basket League handicaps, match by match: the model's margin for every game next to the market's handicap, and how each estimate ended.">
 <link rel="canonical" href="https://antonisnikolitsopoulos.com/basketball/handicap/">
-<meta property="og:title" content="Projected margins: Greek and Cyprus basketball">
-<meta property="og:description" content="Greek Basket League and Cyprus Division A handicaps, match by match: the model's margin for every game next to the market's handicap, and how each estimate ended.">
+<meta property="og:title" content="Greek Basketball League: projected margins">
+<meta property="og:description" content="Greek Basket League handicaps, match by match: the model's margin for every game next to the market's handicap, and how each estimate ended.">
 <meta property="og:url" content="https://antonisnikolitsopoulos.com/basketball/handicap/">
 <meta property="og:image" content="https://antonisnikolitsopoulos.com/basketball-overs.jpg">
 <meta name="twitter:card" content="summary_large_image">
@@ -217,14 +217,14 @@ details.picks>summary .muted{font-size:14px;font-weight:400}
 <a href="/handball/">Handball</a>
 </div></nav>
 <header class="an-head"><div><a class="an-home" href="/basketball/">Basketball</a>
-  <a class="an-brand" href="/basketball/handicap/"><svg class="an-mark" aria-hidden="true"><use href="/assets/marks.svg#basketball"/></svg><span><small class="an-kicker">Greece and Cyprus</small><h1>Projected margins</h1></span></a>
+  <a class="an-brand" href="/basketball/handicap/"><svg class="an-mark" aria-hidden="true"><use href="/assets/marks.svg#basketball"/></svg><span><small class="an-kicker">Projected margins</small><h1>Greek Basketball League</h1></span></a>
   <nav class="tabs an-tabs" id="tabs" aria-label="Sections">
     <a href="#view=matches" data-view="matches" class="on">Matches</a>
     <a href="#view=teams" data-view="teams">Teams</a>
     <a href="#view=method" data-view="method">How it works</a>
   </nav>
 </div></header>
-<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebPage","@id":"https://antonisnikolitsopoulos.com/basketball/handicap/#webpage","url":"https://antonisnikolitsopoulos.com/basketball/handicap/","name":"Projected margins: Greek and Cyprus basketball","inLanguage":"en","isPartOf":{"@id":"https://antonisnikolitsopoulos.com/#website"},"author":{"@id":"https://antonisnikolitsopoulos.com/#person"}},{"@type":"Person","@id":"https://antonisnikolitsopoulos.com/#person","name":"Antonis Nikolitsopoulos","url":"https://antonisnikolitsopoulos.com/","image":"https://antonisnikolitsopoulos.com/photo.jpg","homeLocation":{"@type":"Place","name":"Thessaloniki, Greece"},"knowsAbout":["Sports analytics","Football","Basketball","Probability modelling","Books","World cinema","Greek wine"],"sameAs":["https://www.linkedin.com/in/antonis-nikolitsopoulos/","https://x.com/nikolitso","https://letterboxd.com/nikolitso/","https://whatalgomissed.com/"]},{"@type":"WebSite","@id":"https://antonisnikolitsopoulos.com/#website","url":"https://antonisnikolitsopoulos.com/","name":"Antonis Nikolitsopoulos","inLanguage":"en","publisher":{"@id":"https://antonisnikolitsopoulos.com/#person"}}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebPage", "@id": "https://antonisnikolitsopoulos.com/basketball/handicap/#webpage", "url": "https://antonisnikolitsopoulos.com/basketball/handicap/", "name": "Greek Basketball League: projected margins", "inLanguage": "en", "isPartOf": {"@id": "https://antonisnikolitsopoulos.com/#website"}, "author": {"@id": "https://antonisnikolitsopoulos.com/#person"}}</script>
 <main class="wrap">
 <div class="an-project-context"><span class="an-project-context__label">Scope</span><span>Team and player results estimate each team's expected margin. This page compares the projected home margin with the market's handicap and final score margin; it is a projection study, not a picks ledger.</span></div>
 <div class="an-data-key" role="group" aria-label="How to read projected margins">
@@ -241,12 +241,12 @@ details.picks>summary .muted{font-size:14px;font-weight:400}
   <div id="out"></div>
 <section class="an-page-about" aria-label="About this page">
 <p class="an-page-about__label">About this page</p>
-<p>This page sets a projected home margin for every game in the Greek Basket League and Cyprus Division A against the books' handicap. A team's strength is how many points better or worse than its league's average team it is, from this season's games only. The margin is the home edge plus home strength minus away strength, with absences and fatigue added, shown once both teams have played enough games.</p>
+<p>This page sets a projected home margin for every game in the Greek Basket League against the books' handicap. A team's strength is how many points better or worse than its league's average team it is, from this season's games only. The margin is the home edge plus home strength minus away strength, with absences and fatigue added, shown once both teams have played enough games.</p>
 <p>Matches lists the next games with the model's side and its chance of covering, then every game this season, judged at the opening and the closing handicap. Teams lists each team's strength. It is a projection study, with no picks and no betting record.</p>
 </section>
 </main>
 
-<script src="live.js?v=202611222135"></script>
+<script src="live.js?v=202611222156"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
@@ -256,6 +256,9 @@ const pct = (x, d=0) => x == null ? '–' : (x*100).toFixed(d) + '%';
 const sgn = (x, d=1) => x == null ? '–' : (x > 0 ? '+' : x < 0 ? '−' : '') + Math.abs(x).toFixed(d);
 const hc = x => x == null ? '–' : x === 0 ? '0' : sgn(x);    // the home margin: home favourite by 5.5 = +5.5 (user's choice, 14 Nov 2026)
 const f1 = x => x == null ? '–' : x.toFixed(1);
+/* Cyprus hidden for now (22 Nov 2026, on request): its estimates are still built, just not shown */
+const HIDDEN = ['cyprus-division-a'], shown = g => !HIDDEN.includes(g.lg || g.key);
+LIVE.leagues = LIVE.leagues.filter(shown); LIVE.fixtures = LIVE.fixtures.filter(shown); LIVE.played = LIVE.played.filter(shown);
 const LG = Object.fromEntries(LIVE.leagues.map(l => [l.key, l]));
 const lgName = k => LG[k] ? `${LG[k].country} · ${LG[k].name}` : k;
 const lgShort = k => LG[k] ? LG[k].country : k;
@@ -280,7 +283,7 @@ function renderMatches(){
   const F = LIVE.fixtures.filter(g => inLg(g) && !(g.ts && g.ts * 1000 < Date.now() - 5400e3) && !LIVE.played.some(x => x.id === g.id)), P = LIVE.played.filter(inLg);
   let h = '';
   h += `<h2>Next games</h2>`;
-  if (!F.length) h += '<p class="empty">No games in the next 7 days (Cyprus: its next round, up to 3 weeks ahead).</p>';
+  if (!F.length) h += '<p class="empty">No games in the next 7 days.</p>';
   const byDay = {};
   F.forEach(g => (byDay[g.when.slice(0, 10)] ||= []).push(g));
   for (const [d, list] of Object.entries(byDay)) {
@@ -341,7 +344,7 @@ function gamesTable(team, list, r){
 function renderGame(){
   const id = (location.hash.match(/id=([^&]+)/) || [])[1], gid = id && decodeURIComponent(id);
   const g = LIVE.fixtures.find(x => x.id === gid) || LIVE.played.find(x => x.id === gid);
-  if (!g || !g.wk) return '<p class="empty">This game is no longer on the page: estimates cover the next 7 days (Cyprus: its next round, up to 3 weeks ahead) and this season\'s played games.</p>';
+  if (!g || !g.wk) return '<p class="empty">This game is no longer on the page: estimates cover the next 7 days and this season\'s played games.</p>';
   const W = g.wk, done = g.hp != null, line = g.line, sd = g.sd, est = g.ok !== false, AB0 = g.ab || {}, AB = AB0.h != null ? AB0 : null, FT = (AB0.fh || 0) - (AB0.fa || 0), A = W.hca + W.rh - W.ra, MK = W.mk, BL = MK ? MK.w[0] * A + MK.w[1] * MK.mu + MK.w[2] : A, mu = BL + (AB ? AB.h - AB.a : 0) + FT, MP = g.mp != null ? g.mp : g.mu;
   const pm = (x, d = 1) => `${x < 0 ? '−' : '+'} ${Math.abs(x).toFixed(d)}`;
   const step = (n, t) => `<h3><span class="num">${n}</span>${t}</h3>`, calc = x => `<div class="calc">${x}</div>`;
