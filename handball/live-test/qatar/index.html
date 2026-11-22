@@ -241,7 +241,7 @@ html{scroll-behavior:smooth;font-size:17.5px}   /* one step larger: the page siz
     <li>Each team gets attack and defence ratings from this season's results only.</li>
     <li>Bundesliga (M) and 2. Bundesliga (M) add a shooting and pace correction (from 19 Nov 2026), from the leagues' official box scores: totals come back towards normal when opponents have been shooting unusually well or badly against the two teams (hot or cold goalkeepers even out), and go up when the two teams play more possessions a game (shots plus technical faults) than the league average. Its weights are fitted on earlier seasons only; tested season by season from 2018-19, it cut the average miss of the total in 8 of 9 seasons, and in the backtest its picks beat the line by more.</li>
     <li>A match is flagged when the model total is 2+ goals beyond the market's line, once both teams have played 6 games. Each league has one side: Over or Under.</li>
-    <li>A pick is graded at the market's opening line and its price, at equal stakes (from 21 Nov 2026): a single book's early line does not set the call. A match that is flagged but is not 2+ goals past the opening line is not a pick. ROI = profit ÷ total staked on won and lost picks; pushes are left out.</li>
+    <li>A pick is graded at the market's opening line and its price, at equal stakes (from 21 Nov 2026): a single book's early line does not set the call. The opening line is the first line two or more books offer, fixed once it is recorded (from 22 Nov 2026): a book that joins later does not move it. A match that is flagged but is not 2+ goals past the opening line is not a pick. ROI = profit ÷ total staked on won and lost picks; pushes are left out.</li>
     <li>Line movement: every pick also stores the market's opening and closing line. The record is graded at the opening line; the Line movement table grades the same picks at the opening and at the closing line too, so the edge can be checked against both.</li>
     <li>Longest losing run is the most picks lost in a row, with the picks in date order.</li>
     <li>Every league the model follows is in the main record (from 20 Nov 2026). Qatar (M) has no past market lines, so it has no backtest; Greece (M) lost in its backtest and is followed live to see whether that holds.</li>
@@ -353,7 +353,7 @@ html{scroll-behavior:smooth;font-size:17.5px}   /* one step larger: the page siz
 </footer>
 </main>
 
-<script src="/handball/data.js?v=294d2413"></script>
+<script src="/handball/data.js?v=a54c9a3a"></script>
 <script>
 const $=s=>document.querySelector(s);
 const f=(v,d=2)=>v==null||isNaN(v)?'–':(+v).toFixed(d);
