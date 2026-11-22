@@ -242,3 +242,15 @@ html[data-site="books"] .book-hero-text .sub{font-size:clamp(1.2rem,2.2vw,1.55re
 /* links to sister projects at the foot of a dashboard (18 Nov 2026) */
 .an-related{max-width:1200px;margin:48px auto 36px;padding:18px 24px 0;border-top:1px solid var(--an-rule);font:400 15px/1.6 var(--an-body);color:var(--an-muted)}
 .an-related a{color:var(--an-ink);text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1px}.an-related a:hover{color:var(--an-accent)}
+/* the two ways home (22 Nov 2026): a big Home pill first in the projects menu (the main site), and the header pill
+   carrying the project's name to its own home; on the project's home page the title itself sits in that pill */
+.an-project-nav a.an-navhome,html[data-site] .an-project-nav a.an-navhome{align-self:center;min-height:0;padding:9px 20px;border:0;border-radius:999px;
+  background:var(--an-ink);color:var(--an-paper);font:700 15px/1 var(--an-body);letter-spacing:.02em;margin-right:4px}
+.an-project-nav a.an-navhome:hover,.an-project-nav a.an-navhome:focus-visible{background:var(--an-accent);color:var(--an-paper)}
+html .an-head a.an-home{font:600 16px/1.1 var(--an-body);letter-spacing:.01em;color:var(--an-ink);border:1px solid var(--an-accent-line);
+  background:var(--an-accent-soft);padding:10px 18px}
+html .an-head a.an-home:hover,html .an-head a.an-home:focus-visible{border-color:var(--an-accent);color:var(--an-ink)}
+html .an-head a.an-home:has(h1){font:400 30px/1.05 var(--an-display);padding:10px 22px 12px;white-space:normal;max-width:100%}
+.an-head a.an-home h1{font:inherit;margin:0;color:inherit;letter-spacing:inherit}
+@media (max-width:600px){html .an-head a.an-home{font-size:15px;padding:8px 14px}html .an-head a.an-home:has(h1){font-size:22px;padding:8px 16px 10px;border-radius:22px}.an-head>div:has(>a.an-home h1){grid-template-columns:minmax(0,auto) minmax(0,1fr)}
+  .an-project-nav a.an-navhome,html[data-site] .an-project-nav a.an-navhome{font-size:14px;padding:8px 16px}}

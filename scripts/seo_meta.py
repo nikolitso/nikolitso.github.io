@@ -29,6 +29,8 @@ SITE = "https://antonisnikolitsopoulos.com"
 NAME = "Antonis Nikolitsopoulos"
 HANDLE = "@nikolitso"
 
+import head_nav   # noqa: E402  (scripts/head_nav.py, next to this file)
+
 
 def image_size(path):
     """(width, height) of a PNG or JPEG file, or None."""
@@ -248,7 +250,7 @@ def main(args):
             text = p.read_text(encoding="utf-8")
         except (OSError, UnicodeDecodeError):
             continue
-        new = with_owner(fix_outline(fix(text)))
+        new = head_nav.fix(with_owner(fix_outline(fix(text))), p)   # the two ways home, see head_nav.py
         if new != text:
             p.write_text(new, encoding="utf-8")
             changed += 1

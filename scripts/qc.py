@@ -112,6 +112,8 @@ def check_page(path, problems):
         hrefs = re.findall(r'<a href="([^"]+)"', navs[0])
         if hrefs != (MENU_HIDDEN if r.replace("\\", "/").startswith(HIDDEN) else MENU):
             say("menu", f"entries differ: {hrefs}")
+        if '<a class="an-navhome" href="/">Home</a>' not in navs[0]:
+            say("menu", "no Home pill first in the menu")
         cur = re.findall(r'aria-current="page"', navs[0])
         if len(cur) != 1:
             say("menu", f"{len(cur)} entries marked current")
