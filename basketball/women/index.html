@@ -200,18 +200,16 @@ a.tile:hover{border-color:var(--gold)}
 
 
 <nav class="an-project-nav" aria-label="Sports analytics projects"><div><a class="an-navhome" href="/">Home</a>
-<span class="an-navgroup">Football</span>
-<a href="/superleague/">Greek Superleague</a>
+<a href="/superleague/">Super League</a>
 <a href="/football/greek-cup/">Greek Cup</a>
-<span class="an-navgroup">Basketball</span>
-<a href="/basketball/">Greek League</a>
-<a href="/basketball/overs/">European</a>
-<a href="/basketball/women/" aria-current="page">Women</a>
-<a class="an-navchip" href="/volleyball/">Volleyball</a>
-<a class="an-navchip" href="/handball/">Handball</a>
-<span class="an-navgroup">PAOK</span>
-<a href="/paok-hub/">Hub</a>
-<a href="/paok-basketball/">Basketball</a></div></nav>
+<a href="/basketball/">Basketball</a>
+<a href="/basketball/overs/">European Basketball</a>
+<a href="/basketball/women/" aria-current="page">Women's Totals</a>
+<a href="/paok-hub/">PAOK FC</a>
+<a href="/paok-basketball/">PAOK Basketball</a>
+<a href="/volleyball/">Volleyball</a>
+<a href="/handball/">Handball</a>
+</div></nav>
 <header class="an-head"><div><a class="an-home" href="/basketball/women/"><h1>European Women Basketball</h1></a>
   <a class="an-brand" href="/basketball/women/"><svg class="an-mark" aria-hidden="true"><use href="/assets/marks.svg#basketball"/></svg><span><small class="an-kicker">Projections</small></span></a>
   <nav class="tabs an-tabs" id="tabs" aria-label="Sections">
@@ -243,7 +241,7 @@ a.tile:hover{border-color:var(--gold)}
 <p>Projections shows the next 7 days, and Live test records the picks, taken at the opening line; 1H live test and 1H backtest cover first halves. Backtest covers 2021–22 to 2025–26. A game's line is the median of the main market lines.</p>
 </section>
 </main>
-<script src="data.js?v=w106"></script>
+<script src="data.js?v=w107"></script>
 <script src="live.js"></script>
 <script>
 const $ = id => document.getElementById(id);
@@ -275,7 +273,7 @@ const GAP = b => b.g0 ?? (b.mu == null || b.line == null ? null : Math.round((b.
 const RL = k => !LIVE.leagues || LIVE.leagues.includes(k);
 const LIVE = window.LIVE || {updated: DATA.updated, fixtures: DATA.fixtures, picks: [], tracked: 0, start: '8 Nov 2026', taken: {n: 0}, over: {n: 0}, under: {n: 0}, rule: {n: 0}};
 LIVE.fixtures = LIVE.fixtures.filter(g => LG[g.lg] && (!g.gp || Math.min(...g.gp) >= (LIVE.min_gp ?? 4)));   // leagues no longer on the page; games only once both teams have the minimum games
-LIVE.picks = LIVE.picks || [];   // every logged pick stays in the record, even from a league no longer on the page
+LIVE.picks = LIVE.picks || [];   // every logged pick stays in the record, even from a league no longer on the page, except Czechia ZBL's, taken out on request (23 Nov 2026)
 if (LIVE.leagues) LIVE.leagues = LIVE.leagues.filter(k => LG[k]);
 
 $('sub').textContent = `${DATA.leagues.length} Leagues · backtest 2021–22 to 2025–26 · 2026–27 record since ${LIVE.start} · updated ${LIVE.updated} (Athens)`;
@@ -417,7 +415,7 @@ function h1Books(mode){
 
 // First half v second half (22 Nov 2026, user). Past seasons on the 1H backtest tab (mode 'bt', leagues open to their seasons);
 // this season on the 1H live test tab (mode 'live', from live.js every hour), with the check against the past seasons in the note.
-// Points per game, both teams, regulation quarters, regular season, the page's leagues.
+// Points per game, both teams, regulation quarters, regular season: past seasons in the page leagues; 2026-27 in every league on the 1H tabs (23 Nov 2026).
 function h1Halves(mode){
   const P = DATA.halves, C = (LIVE.h1 || {}).halves;
   if (!P) return '';
@@ -436,10 +434,13 @@ function h1Halves(mode){
       + `<tr class="sub"><td><b>All</b></td>${cells(past)}</tr>`) + '<p class="note">Click a league for its seasons.</p>';
     return h;
   }
-  const now = C && C.all && C.all.n ? C.all : null;
+  const sum = L => { const t = {n: 0, s1: 0, s2: 0}; L.forEach(k => { const x = C && C.lg && C.lg[k]; if (x) { t.n += x.n; t.s1 += x.s1; t.s2 += x.s2; } }); return t.n ? t : null; };
+  const kx = Object.keys((C && C.lg) || {}).filter(k => isH1X(k)).sort((a, b) => lgShort(a) < lgShort(b) ? -1 : 1);   // first-half-only leagues too (23 Nov 2026, user: all leagues we test)
+  const now = sum(ks), allT = sum([...ks, ...kx]);   // the comparison with past seasons stays on the page leagues, the same leagues as the backtest figures
   const say = now ? `This season, first halves score <b>${f1((now.s1 - now.s2) / now.n)}</b> points more than second halves (${pct(now.s1 / (now.s1 + now.s2), 1)} of the points) over ${now.n} games, against ${f1((past.s1 - past.s2) / past.n)} (${pct(past.s1 / (past.s1 + past.s2), 1)}) in 2021–22 to 2025–26, on the 1H backtest tab${now.s1 > now.s2 ? ': first halves still score more.' : ': <b>first halves no longer score more</b>, the reason for the 1H test is gone for now.'}` : 'No games this season yet.';
-  let h = `<h2 id="h1halves">First half v second half, 2026–27</h2><p class="note">A check that the market has not changed: first halves scored more than second halves in every backtest season, which is why first-half overs are tested. ${base} Updates every hour (${LIVE.updated}, Athens). ${say}</p>`;
-  h += T('League', ks.map(k => `<tr><td>${lgShort(k)}</td>${cells(C && C.lg && C.lg[k])}</tr>`).join('') + `<tr class="sub"><td><b>All</b></td>${cells(now)}</tr>`);
+  let h = `<h2 id="h1halves">First half v second half, 2026–27</h2><p class="note">A check that the market has not changed: first halves scored more than second halves in every backtest season, which is why first-half overs are tested. Points per game, both teams, regulation quarters, regular season, in every league on the 1H tabs: the ${LIVE.leagues.length} page leagues, then the first-half-only ones. The comparison with 2021–22 to 2025–26 uses the page leagues, the same leagues as the backtest figures. Updates every hour (${LIVE.updated}, Athens). ${say}</p>`;
+  h += T('League', ks.map(k => `<tr><td>${lgShort(k)}</td>${cells(C && C.lg && C.lg[k])}</tr>`).join('') + `<tr class="sub"><td><b>Page leagues</b></td>${cells(now)}</tr>`
+    + kx.map(k => `<tr><td>${lgShort(k)} <span class="muted">(1H only)</span></td>${cells(C.lg[k])}</tr>`).join('') + (kx.length ? `<tr class="sub"><td><b>All leagues</b></td>${cells(allT)}</tr>` : ''));
   return h;
 }
 
