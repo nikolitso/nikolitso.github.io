@@ -46,7 +46,7 @@ def fix(text, path=None, url=None):
     cur = CURRENT.search(nav.group(2))
     old = OLD_PILL.search(text)
     if not cur or not old:
-        return text
+        return dedupe_kicker(text)
     href, label = cur.groups()
     if url is None and path is not None:
         try:
@@ -61,7 +61,35 @@ def fix(text, path=None, url=None):
     else:
         pill = f'<a class="an-home" href="{href}">{label}</a>'
     old = OLD_PILL.search(text)
-    return text[:old.start()] + pill + text[old.end():]
+    return dedupe_kicker(text[:old.start()] + pill + text[old.end():])
+
+
+PILL = re.compile(r'<a class="an-home" href="[^"]*">(.*?)</a>', re.S)
+KICKER = re.compile(r'<small class="an-kicker">([^<]*)</small>')
+KICKER_JS = re.compile(r"""(\.an-kicker'\)\.textContent=)'([^']*?) · '\+""")
+
+
+def words(s):
+    s = TAGS.sub(" ", s).replace("&#x27;", "'").replace("&#39;", "'").replace("&amp;", "&").lower()
+    return {w[:-2] if w.endswith("'s") else w for w in re.findall(r"[\w'.()&-]+", s)}
+
+
+def dedupe_kicker(text):
+    """Drop the parts of the small kicker line that only repeat the pill beside it (user, 22 Nov 2026):
+    'Handball · Home' next to the Handball pill reads 'Home'; 'Basketball · Totals' next to 'Basketball totals' goes."""
+    head = text.find('<header class="an-head">')
+    pill = PILL.search(text, head) if head >= 0 else None
+    if not pill:
+        return text
+    have = words(pill.group(1))
+    dup = lambda seg: bool(words(seg)) and words(seg) <= have
+    k = KICKER.search(text, pill.end())
+    if k and k.start() < text.find("</header>", head):
+        keep = [s for s in k.group(1).split(" · ") if not dup(s)]
+        if keep != k.group(1).split(" · "):
+            new = f'<small class="an-kicker">{" · ".join(keep)}</small>' if keep else ""
+            text = text[:k.start()] + new + text[k.end():]
+    return KICKER_JS.sub(lambda m: m.group(1) if dup(m.group(2)) else m.group(0), text)
 
 
 def files(args):
