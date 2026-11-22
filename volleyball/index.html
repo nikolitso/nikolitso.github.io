@@ -243,7 +243,7 @@ a.gm{color:inherit;text-decoration:none} a.gm:hover{color:var(--gold);text-decor
     <a href="#view=method" data-view="method">How it works</a>
   </nav>
 </div></header>
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebPage", "@id": "https://antonisnikolitsopoulos.com/volleyball/#webpage", "url": "https://antonisnikolitsopoulos.com/volleyball/", "name": "Volleyball projections: sets and total points", "inLanguage": "en", "isPartOf": {"@id": "https://antonisnikolitsopoulos.com/#website"}, "author": {"@id": "https://antonisnikolitsopoulos.com/#person"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebPage","@id":"https://antonisnikolitsopoulos.com/volleyball/#webpage","url":"https://antonisnikolitsopoulos.com/volleyball/","name":"Volleyball projections: sets and total points","inLanguage":"en","isPartOf":{"@id":"https://antonisnikolitsopoulos.com/#website"},"author":{"@id":"https://antonisnikolitsopoulos.com/#person"}},{"@type":"Person","@id":"https://antonisnikolitsopoulos.com/#person","name":"Antonis Nikolitsopoulos","url":"https://antonisnikolitsopoulos.com/","image":"https://antonisnikolitsopoulos.com/photo.jpg","homeLocation":{"@type":"Place","name":"Thessaloniki, Greece"},"knowsAbout":["Sports analytics","Football","Basketball","Probability modelling","Books","World cinema","Greek wine"],"sameAs":["https://www.linkedin.com/in/antonis-nikolitsopoulos/","https://x.com/nikolitso","https://letterboxd.com/nikolitso/","https://whatalgomissed.com/"]},{"@type":"WebSite","@id":"https://antonisnikolitsopoulos.com/#website","url":"https://antonisnikolitsopoulos.com/","name":"Antonis Nikolitsopoulos","inLanguage":"en","publisher":{"@id":"https://antonisnikolitsopoulos.com/#person"}}]}</script>
 <main class="wrap">
 <div class="an-project-context"><span class="an-project-context__label">Scope</span><span>Men's and women's league projections cover set count and total points. The live test, historical backtest and upcoming projections remain separate; league coverage and sample sizes matter when comparing records.</span></div>
 <div class="an-data-key" role="group" aria-label="How to read volleyball projections">
@@ -261,7 +261,7 @@ a.gm{color:inherit;text-decoration:none} a.gm:hover{color:var(--gold);text-decor
 <p>Projections shows the next 7 days against the market line, and Live test records the picks, logged before the first serve. Season, Backtest and Leagues show the ratings, past seasons since 2020 and each league's market. <a href="/volleyball/games/">Every game</a> has its own page.</p>
 </section>
 </main>
-<script src="data.js?v=928bdf4f"></script>
+<script src="data.js?v=0a3da5e3"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -778,7 +778,7 @@ function renderWtest(){
   else {
     h += `<div class="scroll"><table class="proj"><thead><tr><th>Date</th><th>Match</th><th class="n">3 sets</th><th class="n">Model</th><th class="n">Points</th><th class="n">Handicap</th><th class="n">Market line</th><th class="n">Over</th><th class="n">Over chance</th><th class="n">Edge</th></tr></thead><tbody>`;
     for (const g of fx)
-      h += `<tr${g.pick ? ' class="pk"' : ''}><td>${short(g.dt)} ${g.dt.slice(11)}</td><td class="wr">${match(g)}${g.pick ? `<span class="badge">Over ${g.mk.line}</span>` : ''}<div class="muted" style="font-size:14px">${TL[g.lg].country} · ${TL[g.lg].name}</div></td><td class="n">${pct(g.p3)}</td><td class="n"><b>${g.fair}</b></td>${ptsCell(g)}
+      h += `<tr${g.pick || g.hpick ? ' class="pk"' : ''}><td>${short(g.dt)} ${g.dt.slice(11)}</td><td class="wr">${match(g)}${g.pick ? `<span class="badge">Over ${g.mk.line}</span>` : ''}${g.hpick && g.ah ? `<span class="badge">${hLabel(g[g.ah.side], g.ah.side === 'home' ? g.ah.line : -g.ah.line)}</span>` : ''}<div class="muted" style="font-size:14px">${TL[g.lg].country} · ${TL[g.lg].name}</div></td><td class="n">${pct(g.p3)}</td><td class="n"><b>${g.fair}</b></td>${ptsCell(g)}
         ${g.mk ? `<td class="n">${g.mk.line}</td><td class="n">${g.mk.over.toFixed(2)}</td><td class="n">${pct(realP(g.p_over, g.mk.over, g.mk.under))}</td>${g.edge > 0 ? `<td class="n ${cls(g.edge)}">${sgn(realEdge(g.p_over, g.mk.over, g.mk.under)*100, 0)}%</td>` : '<td class="n muted">–</td>'}` : '<td class="n muted" colspan="4">no line yet</td>'}</tr>`;
     h += '</tbody></table></div>';
   }
@@ -858,11 +858,37 @@ function renderHcap(part){   // 'live': on Live test; 'bt': on Backtest (merged 
   return h + `<p class="note">A live test, started on 22 Nov 2026, kept apart from the totals record. The model plays out every set rally by rally, so it knows each match's points margin as well as its total; its handicap is the margin line where each side covers about half the time. A pick backs the side whose model chance × the average price is at least ${H.edge * 100}% above 1 (smaller edges barely broke even in the backtest, see By edge), when the market handicap is ${H.min_line} points or more (but not a favourite giving ${H.fav_max} or more), in the same games as the totals rule. Until the start a pick follows the latest line; once played it is settled on the points margin. Model chance and Edge are shown as the model gives them (it runs too confident, see Calibration). Equal stakes; lines end in .5, so there are no pushes.</p>`;
 }
 
+// Women Leagues test, Points handicap pill: the live handicap rule in the test leagues, no backtest (22 Nov 2026)
+function wtestHcap(){
+  const T = DATA.test, TL = Object.fromEntries(T.leagues.map(l => [l.key, l])), H = DATA.hcap || {edge: 0.2, min_line: 5.5, fav_max: 15.5};
+  const P = T.hpicks || [], done = P.filter(p => 'won' in p), open = P.filter(p => !('won' in p)).sort((a, b) => a.dt.localeCompare(b.dt));
+  const n = done.length, w = done.filter(p => p.won).length, units = done.reduce((s, p) => s + p.profit, 0);
+  const lined = T.games.filter(g => g.ah_line != null).length;
+  const lgLine = p => `<div class="muted" style="font-size:14px">${TL[p.lg] ? TL[p.lg].country + ' · ' + TL[p.lg].name : ''}</div>`;
+  const tiles = [['Open picks', open.length, open.length ? 'to play' : 'none right now'],
+                 ['Record', `${w}–${n - w}`, n ? (w / n * 100).toFixed(1) + '% won' : '0 picks'],
+                 ['ROI', n ? `<span class="${cls(units)}">${sgn(units / n * 100, 1)}%</span>` : '–', n ? units1(units) : 'no settled picks'],
+                 ['With a handicap line', `${lined}`, `of ${T.games.length} games logged`]];
+  let h = `<div class="metrics">${tiles.map(([l, v, x]) => `<div class="metric"><div class="lbl">${l}</div><div class="big">${v}</div><div class="sm">${x}</div></div>`).join('')}</div>`;
+  h += '<h2>Open picks</h2>';
+  if (!open.length) h += '<p class="empty">No open handicap picks in the test leagues. New ones appear once the market posts a points handicap for a match that qualifies.</p>';
+  else h += `<div class="scroll"><table><thead><tr><th>Date</th><th>Match</th><th>Pick</th><th class="n">Opening line</th><th class="n">Price</th><th class="n">Model handicap</th><th class="n">Model chance</th><th class="n">Edge</th></tr></thead><tbody>`
+    + open.map(p => `<tr><td>${short(p.dt)} ${p.dt.slice(11)}</td><td class="wr">${gameLink(p)}${lgLine(p)}</td><td><b>${hLabel(p.team, p.line)}</b></td><td class="n">${p.line_open != null ? hLabel('', p.line_open).trim() : '–'}</td><td class="n">${p.px.toFixed(2)}</td><td class="n">${p.hcap != null ? hLabel('', p.side === 'home' ? p.hcap : -p.hcap).trim() : '–'}</td><td class="n">${pct(p.p)}</td><td class="n ${cls(p.edge)}">${sgn(p.edge * 100, 0)}%</td></tr>`).join('') + '</tbody></table></div>';
+  h += '<h2>Settled picks, latest first</h2>';
+  if (!n) h += '<p class="empty">No settled handicap picks yet. Each pick is added here once its match is played.</p>';
+  else h += `<div class="scroll"><table><thead><tr><th>Date</th><th>Match</th><th>Pick</th><th class="n">Closing line</th><th class="n">Price</th><th class="n">Points</th><th class="n">Margin</th><th class="n">Profit</th></tr></thead><tbody>`
+    + done.slice().sort((a, b) => b.dt.localeCompare(a.dt)).map(p => { const mg = (p.home_pts - p.away_pts) * (p.side === 'home' ? 1 : -1);
+      return `<tr><td>${short(p.dt)}</td><td class="wr">${gameLink(p)}${lgLine(p)}</td><td>${hLabel(p.team, p.line)}</td><td class="n">${p.line_close != null ? hLabel('', p.line_close).trim() : '–'}</td><td class="n">${p.px.toFixed(2)}</td><td class="n">${p.home_pts}–${p.away_pts}</td><td class="n ${p.won ? 'w' : 'l'}">${hLabel('', mg).trim()}</td><td class="n ${cls(p.profit)}">${sgn(p.profit, 2)}</td></tr>`; }).join('') + '</tbody></table></div>';
+  return h + `<p class="note">The points handicap in the ${T.leagues.length} test leagues, with the live rule: the side whose model chance × the average price is at least ${H.edge * 100}% above 1, on a handicap of ${H.min_line} points or more and never a favourite giving ${H.fav_max} or more, both teams ${DATA.min_games}+ games, no March, April, October or playoff games. No backtest stands behind these leagues, and the picks are kept apart from every other record. Every test game also keeps its handicap line, when there is one, for the season-end review.</p>`;
+}
+
 const RENDER = {home: renderHome, projections: renderProjections, picks: renderPicks, season: renderSeason, backtest: renderBacktest, leagues: renderLeagues, wtest: renderWtest, method: renderMethod};
 // Live test and Backtest each carry the totals first, then the points handicap, with separate records (user, 22 Nov 2026)
 const SEC = (id, t) => `<h2 id="${id}" style="margin-top:56px;font-size:34px;border-top:1px solid var(--line);padding-top:28px">${t}</h2>`;
 const _picks = RENDER.picks, _bt = RENDER.backtest;
-RENDER.picks = () => market === 'hcap' ? renderHcap('live') : _picks();   // Totals | Points handicap pills (22 Nov 2026)
+RENDER.picks = () => market === 'hcap' ? renderHcap('live') : _picks();
+const _wt = RENDER.wtest;
+RENDER.wtest = () => market === 'hcap' ? wtestHcap() : _wt();   // Totals | Points handicap pills (22 Nov 2026)
 RENDER.backtest = () => market === 'hcap' && DATA.hcap && DATA.hcap.backtest ? hcapBacktest() : _bt();
 // the handicap backtest on its own: the two backtest pills, then the tables (leagues are compared in By league)
 function hcapBacktest(){
@@ -873,7 +899,7 @@ function hcapBacktest(){
 }
 function render(){
   document.querySelectorAll('#tabs a').forEach(a => { a.classList.toggle('on', a.dataset.view === view); a.href = `#view=${a.dataset.view}${lg === 'all' ? '' : '&lg=' + lg}`; });
-  const hb = (view === 'backtest' && DATA.hcap && DATA.hcap.backtest) || view === 'picks';   // the market pills: Backtest and Live test
+  const hb = (view === 'backtest' && DATA.hcap && DATA.hcap.backtest) || view === 'picks' || view === 'wtest';   // the market pills: Backtest, Live test and Women Leagues test
   const chips = view === 'method' || view === 'home' || view === 'wtest' || (view === 'backtest' && market === 'hcap') ? [] : [['all', 'All leagues'], ...DATA.leagues.map(l => [l.key, `${l.country} ${sexAb(l)}`])];
   const sw = hb ? [['totals', 'Totals: overs on low lines'], ['hcap', 'Points handicap']].map(([k, t]) =>
       `<a href="#view=${view}${k === 'hcap' ? '&m=hcap' : ''}${lg !== 'all' && (k === 'totals' || view === 'picks') ? '&lg=' + lg : ''}" class="${k === market ? 'on' : ''}" style="font-size:15.5px;padding:6px 14px">${t}</a>`).join('')
