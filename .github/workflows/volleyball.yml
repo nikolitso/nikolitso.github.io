@@ -51,3 +51,20 @@ jobs:
                   print(s['home'], 'not sent', e)
               time.sleep(2)
           print(len(new), 'new picks', '' if topic else '(no NTFY_TOPIC secret: nothing sent)')
+          # handicap test picks (22 Nov 2026): the NEWHCAP line, one push each
+          sg = lambda x: ('+' if x > 0 else '−' if x < 0 else '') + f"{abs(x):.1f}"
+          line = next((l for l in open('/tmp/vb.log', encoding='utf-8') if l.startswith('NEWHCAP ')), None)
+          hnew = json.loads(line[8:]) if line and topic else []
+          for s in hnew:
+              model = f" · model {sg(s['model'])}" if s.get('model') is not None else ''
+              body = (f"{s['home']} – {s['away']}\n{s['league']} · {s['when']}\n"
+                      f"Price {s['px']:.2f} · edge {s['edge']*100:+.0f}%{model} ({s['p']*100:.0f}% to cover)").encode('utf-8')
+              req = urllib.request.Request('https://ntfy.sh/' + topic, data=body, method='POST', headers={
+                  'Title': f"Volleyball handicap: {s['team']} {sg(s['line']).replace('−', '-')}".encode('latin-1', 'replace').decode('latin-1'), 'Tags': 'volleyball',
+                  'Click': 'https://antonisnikolitsopoulos.com/volleyball/#view=hcap'})
+              try:
+                  print(s['team'], urllib.request.urlopen(req, timeout=30).status)
+              except Exception as e:
+                  print(s['team'], 'not sent', e)
+              time.sleep(2)
+          print(len(hnew), 'new handicap picks')
