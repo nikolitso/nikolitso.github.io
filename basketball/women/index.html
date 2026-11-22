@@ -339,17 +339,18 @@ function renderH1Live(){
 
 // the 1H backtest tab (22 Nov 2026, user: identical to the Backtest tab): the same tiles, the same tables in the same order, skipped rows included.
 // First-half lines are kept only from just before tip-off, so every figure is at the closing first-half line and price.
-const H1BHEAD = '<th class="n">Opening line</th><th class="n">Closing line</th><th class="n">Model 1H</th><th class="n">Actual 1H</th>';
+// no opening first-half lines exist, so no opening column, pill or wording on this tab (22 Nov 2026, user)
+const H1BHEAD = '<th class="n">Closing line</th><th class="n">Model 1H</th><th class="n">Actual 1H</th>';
 const h1Avg = (L, k) => (L.reduce((a, b) => a + b[k], 0) / L.length).toFixed(1);
-const h1Cells = L => `<td class="n muted">–</td><td class="n">${h1Avg(L, 'line')}</td><td class="n">${h1Avg(L, 'm1')}</td><td class="n">${h1Avg(L, 'res')}</td>`;
+const h1Cells = L => `<td class="n">${h1Avg(L, 'line')}</td><td class="n">${h1Avg(L, 'm1')}</td><td class="n">${h1Avg(L, 'res')}</td>`;
 const h1Table = (first, rows, note='') => `${note ? `<p class="note">${note}</p>` : ''}<div class="scroll"><table style="max-width:1040px">${GHEAD(first, H1BHEAD)}<tbody>${rows.filter(r => r[1].length).map(([label, r]) => grp(label, stat(r), '', h1Cells(r))).join('')}</tbody></table></div>`;
 function h1BtTiles(){
   const D = DATA.h1bt; if (!D || !D.picks.length) return '';
   const P = D.picks, S = stat(P), W = P.filter(b => b.ret > 0).length, Lo = P.filter(b => b.ret < 0).length;
   const C = (v, k) => `<b class="${k}" style="font-weight:inherit">${v}</b>`;
   return TL([['Settled picks', `${W}–${Lo}`, `${pct(W / (W + Lo), 1)} hit rate · ${P.length.toLocaleString('en')} settled`],
-    ['ROI', TWO('Opening', '–', 'Closing', C(roi(S.roi), cls(S.roi))), ''],
-    ['Average line', TWO('Opening', '–', 'Closing', h1Avg(P, 'line')), ''],
+    ['ROI', C(roi(S.roi), cls(S.roi)), 'at the closing first-half price'],
+    ['Average line', h1Avg(P, 'line'), 'closing first-half line'],
     ['Average total', TWO('Model', h1Avg(P, 'm1'), 'Actual', h1Avg(P, 'res')), '']]);
 }
 function renderH1Bt(){
@@ -359,7 +360,7 @@ function renderH1Bt(){
   const gb = (L, lo, hi) => L.filter(x => x.m1 - x.line >= lo && x.m1 - x.line < hi);
   let h = `<h2>By points over the line</h2>` + h1Table('Model 1H − line', [
       [`Under 2${SKIPPED}`, gb(sk('skipped_gap'), -99, 2)], [`2 to 3${SKIPPED}`, gb(sk('skipped_gap'), 2, 3)], ['3 to 4', gb(P, 3, 4)], ['4 to 5', gb(P, 4, 5)], ['5 or more', gb(P, 5, 999)]],
-    `The rule: Model 1H, rebuilt before each game from earlier first halves only, minus the first-half line. Picks need ${D.gap} points or more, on .5 lines, regular season but not October, both teams ${g0} to ${g1} games in, in the ${LIVE.leagues.length} leagues, 2022–23 to 2025–26. First-half lines are kept only from just before tip-off, so every figure on this tab is at the <b>closing</b> first-half line and price; there is no opening line. Settled on first-half points. The rows marked skipped are the first halves that met every other rule but sat closer to the line.`);
+    `The rule: Model 1H, rebuilt before each game from earlier first halves only, minus the first-half line. Picks need ${D.gap} points or more, on .5 lines, regular season but not October, both teams ${g0} to ${g1} games in, in the ${LIVE.leagues.length} leagues, 2022–23 to 2025–26. First-half lines are kept only from just before tip-off, so every figure on this tab is at the <b>closing</b> first-half line and price. Settled on first-half points. The rows marked skipped are the first halves that met every other rule but sat closer to the line.`);
   h += `<h2>By line</h2>` + h1Table('Closing line', LBANDS(thirds(P)).map(([label, lo, hi]) => [label, P.filter(x => x.line >= lo && x.line < hi)]), 'The closing first-half line in three bands with about a third of the picks each.');
   h += `<h2>By stage</h2>` + h1Table('Stage', [['Regular season', P], [`Play-offs${SKIPPED}`, sk('skipped_po')]],
     'The second row is the play-off games the rule skips: every other rule met.');
