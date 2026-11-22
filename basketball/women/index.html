@@ -241,7 +241,7 @@ a.tile:hover{border-color:var(--gold)}
 <p>Projections shows the next 7 days, and Live test records the picks, taken at the opening line; 1H live test and 1H backtest cover first halves. Backtest covers 2021–22 to 2025–26. A game's line is the median of the main market lines.</p>
 </section>
 </main>
-<script src="data.js?v=w97"></script>
+<script src="data.js?v=w98"></script>
 <script src="live.js"></script>
 <script>
 const $ = id => document.getElementById(id);
@@ -396,10 +396,14 @@ function h1Halves(){
     + P.seasons.map(r => `<tr><td>${sy(r.sy)}</td>${cells(r)}</tr>`).join('')
     + `<tr class="sub"><td><b>2021–22 to 2025–26</b></td>${cells(past)}</tr><tr><td><b>2026–27 so far</b></td>${cells(now)}</tr></tbody></table></div>`;
   const ks = Object.keys(P.lg).sort((a, b) => lgShort(a) < lgShort(b) ? -1 : 1);
+  const BL_ = c => c.replace('<td class="n', '<td style="border-left:1px solid var(--line)" class="n');
   const lc = t => t && t.n ? `<td class="n">${t.n.toLocaleString('en')}</td><td class="n ${cls(t.s1 - t.s2)}">${sgn((t.s1 - t.s2) / t.n, 1)}</td><td class="n">${pct(t.s1 / (t.s1 + t.s2), 1)}</td>` : '<td class="n muted">–</td>'.repeat(3);
   h += `<h2>First half v second half by league</h2><div class="scroll"><table style="max-width:900px"><thead><tr><th rowspan="2" style="vertical-align:bottom">League</th><th colspan="3" style="text-align:center">2021–22 to 2025–26</th><th colspan="3" style="text-align:center;border-left:1px solid var(--line)">2026–27 so far</th></tr><tr><th class="n">Games</th><th class="n">1H − 2H</th><th class="n">1H share</th><th class="n" style="border-left:1px solid var(--line)">Games</th><th class="n">1H − 2H</th><th class="n">1H share</th></tr></thead><tbody>`
-    + ks.map(k => `<tr><td>${lgShort(k)}</td>${lc(P.lg[k])}${lc(C && C.lg && C.lg[k]).replace('<td class="n">', '<td class="n" style="border-left:1px solid var(--line)">')}</tr>`).join('')
-    + `<tr class="sub"><td><b>All</b></td>${lc(past)}${lc(now).replace('<td class="n">', '<td class="n" style="border-left:1px solid var(--line)">')}</tr></tbody></table></div>`;
+    + ks.map(k => { const on = open === k, cur = C && C.lg && C.lg[k], R = (P.lgs || {})[k] || [];   // click a league for its seasons (22 Nov 2026, user)
+        let r = `<tr class="srow${on ? ' on' : ''}" data-open="${k}"><td><span class="caret">${on ? '▾' : '▸'}</span> ${lgShort(k)}</td>${lc(P.lg[k])}${BL_(lc(cur))}</tr>`;
+        if (on) r += R.map(x => `<tr class="sub"><td style="padding-left:28px">${sy(x.sy)}</td>${lc(x)}${BL_(lc(null))}</tr>`).join('') + `<tr class="sub"><td style="padding-left:28px">2026–27 so far</td>${lc(null)}${BL_(lc(cur))}</tr>`;
+        return r; }).join('')
+    + `<tr class="sub"><td><b>All</b></td>${lc(past)}${BL_(lc(now))}</tr></tbody></table></div><p class="note">Click a league for its seasons.</p>`;
   return h;
 }
 
