@@ -244,7 +244,7 @@ a.gm{color:inherit;text-decoration:none} a.gm:hover{color:var(--gold);text-decor
     <a href="#view=method" data-view="method">How it works</a>
   </nav>
 </div></header>
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebPage", "@id": "https://antonisnikolitsopoulos.com/volleyball/#webpage", "url": "https://antonisnikolitsopoulos.com/volleyball/", "name": "Volleyball projections: sets and total points", "inLanguage": "en", "isPartOf": {"@id": "https://antonisnikolitsopoulos.com/#website"}, "author": {"@id": "https://antonisnikolitsopoulos.com/#person"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebPage","@id":"https://antonisnikolitsopoulos.com/volleyball/#webpage","url":"https://antonisnikolitsopoulos.com/volleyball/","name":"Volleyball projections: sets and total points","inLanguage":"en","isPartOf":{"@id":"https://antonisnikolitsopoulos.com/#website"},"author":{"@id":"https://antonisnikolitsopoulos.com/#person"}},{"@type":"Person","@id":"https://antonisnikolitsopoulos.com/#person","name":"Antonis Nikolitsopoulos","url":"https://antonisnikolitsopoulos.com/","image":"https://antonisnikolitsopoulos.com/photo.jpg","homeLocation":{"@type":"Place","name":"Thessaloniki, Greece"},"knowsAbout":["Sports analytics","Football","Basketball","Probability modelling","Books","World cinema","Greek wine"],"sameAs":["https://www.linkedin.com/in/antonis-nikolitsopoulos/","https://x.com/nikolitso","https://letterboxd.com/nikolitso/","https://whatalgomissed.com/"]},{"@type":"WebSite","@id":"https://antonisnikolitsopoulos.com/#website","url":"https://antonisnikolitsopoulos.com/","name":"Antonis Nikolitsopoulos","inLanguage":"en","publisher":{"@id":"https://antonisnikolitsopoulos.com/#person"}}]}</script>
 <main class="wrap">
 <div class="an-project-context"><span class="an-project-context__label">Scope</span><span>Men's and women's league projections cover set count and total points. The live test, historical backtest and upcoming projections remain separate; league coverage and sample sizes matter when comparing records.</span></div>
 <div class="an-data-key" role="group" aria-label="How to read volleyball projections">
@@ -262,7 +262,7 @@ a.gm{color:inherit;text-decoration:none} a.gm:hover{color:var(--gold);text-decor
 <p>Projections shows the next 7 days against the market line, and Live test records the picks, logged before the first serve. Season, Backtest and Leagues show the ratings, past seasons since 2020 and each league's market. <a href="/volleyball/games/">Every game</a> has its own page.</p>
 </section>
 </main>
-<script src="data.js?v=344e3070"></script>
+<script src="data.js?v=1dbb53ce"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -809,6 +809,14 @@ function renderHcap(){
       h += `<tr><td>${short(p.dt)} ${p.dt.slice(11)}</td><td class="wr">${gameLink(p)}${lgCell(p)}</td><td><b>${pickTxt(p)}</b></td><td class="n">${p.line_open != null ? hc(p.line_open) : '–'}</td><td class="n">${p.px.toFixed(2)}</td><td class="n">${p.hcap != null ? hc(p.side === 'home' ? p.hcap : -p.hcap) : '–'}</td><td class="n">${pct(p.p)}</td><td class="n ${cls(p.edge)}">${sgn(p.edge * 100, 0)}%</td></tr>`;
     h += '</tbody></table></div>';
   }
+  if (B && B.calibration_all){
+      const A = B.calibration_all, L = B.luck;
+      const row = (c, b) => `<tr><td>${b ? '<b>' + c.band + '</b>' : c.band}</td><td class="n">${c.n}</td><td class="n">${pct(c.model)}</td><td class="n">${pct(c.market)}</td><td class="n">${pct(c.need)}</td><td class="n ${c.covered > c.need ? 'pos' : 'neg'}">${b ? '<b>' + pct(c.covered) + '</b>' : pct(c.covered)}</td><td class="n ${cls(c.roi)}">${sgn(c.roi * 100, 1)}%</td></tr>`;
+      h += `<h2>Calibration: did the picks beat the price?</h2><p class="note">Only the bets the rule makes, at the closing line. <b>Model</b> is the chance the model gave the side, <b>Market</b> the chance in the two prices with the margin taken out, <b>Needed</b> the cover rate the price needs to break even, <b>Covered</b> how often the side covered. Covered above Needed is a profit; above Market, the model saw something the price did not.</p>`
+        + `<div class="scroll"><table style="max-width:900px"><thead><tr><th>Model chance</th><th class="n">Bets</th><th class="n">Model</th><th class="n">Market</th><th class="n">Needed</th><th class="n">Covered</th><th class="n">ROI</th></tr></thead><tbody>`
+        + B.calibration.map(c => row(c)).join('') + row(A, true) + '</tbody></table></div>'
+        + (L ? `<p class="note"><b>Could it be luck?</b> The ${L.n} picks covered ${L.won} times; their prices needed ${Math.round(L.need_wins)}. Replaying the same ${L.n} bets ${L.sims.toLocaleString('en-US')} times as if each only covered as often as its price needs, ${L.p > 0 ? `${(L.p * 100).toFixed(2)}% of replays` : 'not one replay'} reached ${L.won}. The model is too confident (it said ${pct(A.model)}, the sides covered ${pct(A.covered)}), so its chance is a ranking, not a promise; but the sides it picks cover far more often than the market's ${pct(A.market)}.</p>` : '');
+    }
   h += '<h2>Settled picks, latest first</h2>';
   if (!n) h += '<p class="empty">No settled handicap picks yet. Each pick is added here once its match is played.</p>';
   else {
@@ -830,8 +838,7 @@ function renderHcap(){
     h += T('By the size of the handicap', `Bets with an edge of ${H.edge * 100}% or more, by the market handicap. Handicaps under ${H.min_line} points are skipped, and so is a favourite giving ${H.fav_max} or more.`, sz.map(([c, o]) => [Object.assign({}, c, {label: c.label + (parseFloat(c.label) < H.min_line || (/favourite/.test(c.label) && parseFloat(c.label) >= H.fav_max) ? ' <span class="muted">(skipped)</span>' : '')}), o]), 'Market handicap');
     h += T('By league', '', B.close.leagues.map(c => [c, B.open.leagues.find(o => o.lg === c.lg)]), 'League');
     h += T('By season', '', pair('seasons'), 'Season');
-    h += `<h2>Calibration</h2><p class="note">Both sides of every game at the closing line: the model's chance that a side covers against how often it did. The model runs too confident, as with the totals, but it ranks the sides; the market prices almost every handicap near 50%.</p><div class="scroll"><table style="max-width:720px"><thead><tr><th>Model chance</th><th class="n">Sides</th><th class="n">Model</th><th class="n">Covered</th><th class="n">Market no-vig</th></tr></thead><tbody>`
-      + B.calibration.map(c => `<tr><td>${c.band}</td><td class="n">${c.n}</td><td class="n">${pct(c.model)}</td><td class="n">${pct(c.covered)}</td><td class="n">${pct(c.market)}</td></tr>`).join('') + '</tbody></table></div>';
+
   }
   return h + `<p class="note">A live test, started on 22 Nov 2026, kept apart from the totals record. The model plays out every set rally by rally, so it knows each match's points margin as well as its total; its handicap is the margin line where each side covers about half the time. A pick backs the side whose model chance × the average price is at least ${H.edge * 100}% above 1 (smaller edges barely broke even in the backtest, see By edge), when the market handicap is ${H.min_line} points or more (but not a favourite giving ${H.fav_max} or more), in the same games as the totals rule. Until the start a pick follows the latest line; once played it is settled on the points margin. Model chance and Edge are shown as the model gives them (it runs too confident, see Calibration). Equal stakes; lines end in .5, so there are no pushes.</p>`;
 }
