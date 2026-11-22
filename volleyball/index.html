@@ -208,6 +208,7 @@ tr.sub td{color:var(--muted);font-size:max(14px,.94em)} td.tier{font:500 14px va
 tr.srow{cursor:pointer} tr.srow:hover td,tr.srow.on td{background:color-mix(in srgb,var(--gold) 10%,transparent)}
 .caret{color:var(--gold);display:inline-block;width:1em}
 th.tsort{cursor:pointer;user-select:none} th.tsort:hover{color:var(--gold)}
+table.sortable thead th{cursor:pointer;user-select:none} table.sortable thead th:hover{color:var(--gold)}
 .chips{display:flex;flex-wrap:wrap;gap:6px;margin:14px 0 4px}
 .chips a{font:400 14.5px var(--mono);color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:4px 11px;text-decoration:none}
 .chips a.on{color:var(--an-on-accent);background:var(--gold);border-color:var(--gold)}
@@ -243,7 +244,7 @@ a.gm{color:inherit;text-decoration:none} a.gm:hover{color:var(--gold);text-decor
     <a href="#view=method" data-view="method">How it works</a>
   </nav>
 </div></header>
-<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebPage","@id":"https://antonisnikolitsopoulos.com/volleyball/#webpage","url":"https://antonisnikolitsopoulos.com/volleyball/","name":"Volleyball projections: sets and total points","inLanguage":"en","isPartOf":{"@id":"https://antonisnikolitsopoulos.com/#website"},"author":{"@id":"https://antonisnikolitsopoulos.com/#person"}},{"@type":"Person","@id":"https://antonisnikolitsopoulos.com/#person","name":"Antonis Nikolitsopoulos","url":"https://antonisnikolitsopoulos.com/","image":"https://antonisnikolitsopoulos.com/photo.jpg","homeLocation":{"@type":"Place","name":"Thessaloniki, Greece"},"knowsAbout":["Sports analytics","Football","Basketball","Probability modelling","Books","World cinema","Greek wine"],"sameAs":["https://www.linkedin.com/in/antonis-nikolitsopoulos/","https://x.com/nikolitso","https://letterboxd.com/nikolitso/","https://whatalgomissed.com/"]},{"@type":"WebSite","@id":"https://antonisnikolitsopoulos.com/#website","url":"https://antonisnikolitsopoulos.com/","name":"Antonis Nikolitsopoulos","inLanguage":"en","publisher":{"@id":"https://antonisnikolitsopoulos.com/#person"}}]}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebPage", "@id": "https://antonisnikolitsopoulos.com/volleyball/#webpage", "url": "https://antonisnikolitsopoulos.com/volleyball/", "name": "Volleyball projections: sets and total points", "inLanguage": "en", "isPartOf": {"@id": "https://antonisnikolitsopoulos.com/#website"}, "author": {"@id": "https://antonisnikolitsopoulos.com/#person"}}</script>
 <main class="wrap">
 <div class="an-project-context"><span class="an-project-context__label">Scope</span><span>Men's and women's league projections cover set count and total points. The live test, historical backtest and upcoming projections remain separate; league coverage and sample sizes matter when comparing records.</span></div>
 <div class="an-data-key" role="group" aria-label="How to read volleyball projections">
@@ -261,7 +262,7 @@ a.gm{color:inherit;text-decoration:none} a.gm:hover{color:var(--gold);text-decor
 <p>Projections shows the next 7 days against the market line, and Live test records the picks, logged before the first serve. Season, Backtest and Leagues show the ratings, past seasons since 2020 and each league's market. <a href="/volleyball/games/">Every game</a> has its own page.</p>
 </section>
 </main>
-<script src="data.js?v=44c3d3ef"></script>
+<script src="data.js?v=34cd901f"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -375,7 +376,7 @@ const fairCell = p => p.fair == null ? '<td class="n muted">–</td>' : `<td cla
 function hOpenTop(){
   const o = hOpen();
   if (!o.length) return '';
-  return `<h2>Open handicap picks</h2><div class="scroll"><table style="max-width:900px"><thead><tr><th>Date</th>${lg === 'all' ? '<th>League</th>' : ''}<th>Match</th><th>Pick</th><th class="n">Price</th><th class="n">Model handicap</th><th class="n">Edge</th></tr></thead><tbody>`
+  return `<h2>Open handicap picks</h2><div class="scroll"><table class="sortable" style="max-width:900px"><thead><tr><th>Date</th>${lg === 'all' ? '<th>League</th>' : ''}<th>Match</th><th>Pick</th><th class="n">Price</th><th class="n">Model handicap</th><th class="n">Edge</th></tr></thead><tbody>`
     + o.map(p => `<tr><td>${short(p.dt)} ${p.dt.slice(11)}</td>${lg === 'all' ? `<td>${LG[p.lg].country} ${sexAb(LG[p.lg])}</td>` : ''}<td class="wr">${gameLink(p)}</td><td><b>${hLabel(p.team, p.line)}</b></td><td class="n">${p.px.toFixed(2)}</td><td class="n">${p.hcap != null ? hLabel('', p.side === 'home' ? p.hcap : -p.hcap).trim() : '–'}</td><td class="n ${cls(hE(p))}">${sgn(hE(p) * 100, 0)}%</td></tr>`).join('')
     + `</tbody></table></div><p class="note"><a href="#view=picks&m=hcap&to=hopen">The handicap record and its settled picks →</a></p>`;
 }
@@ -385,7 +386,7 @@ function renderPicks(){
   const note = `<p class="note">Picks logged before the first serve: an over on a line from ${DATA.min_line}.5 to ${DATA.low - 0.5}, when model chance is at least ${DATA.min_chance*100}% and model chance × the average price is at least ${DATA.edge*100}% above 1. Leagues: ${liveNames()}. March, April, October, playoffs, play-outs and placement games are excluded. Equal stakes. Until the start a pick follows the latest line. Once played it moves to Settled picks, at the price logged before the first serve. ROI = profit ÷ total staked (lines end in .5, so there are no pushes). The page judges itself at <b>100 settled picks</b>; before that, the record is mostly noise. Over chance and Edge are corrected: they keep ${REAL * 100}% of the model's advantage over the no-vig market chance, as the model runs too confident, so a pick can show an edge under ${DATA.edge*100}%.</p>`;
   let h = pickTiles();                            // the note goes below the picks (user, 14 Nov 2026)
   if (!open.length) return h + '<h2>Open picks</h2><p class="empty">No open totals picks. New ones appear once the market posts lines for a match that qualifies.</p>' + hOpenTop() + settled() + note;
-  h += `<h2>Open picks</h2><div class="scroll"><table><thead><tr><th>Date</th>${lg === 'all' ? '<th>League</th>' : ''}<th>Match</th><th class="n">Opening line</th><th class="n">Pick line</th><th class="n">Closing line</th><th class="n">Price</th><th class="n">Model line</th><th class="n">Over chance</th><th class="n">Edge</th></tr></thead><tbody>`;
+  h += `<h2>Open picks</h2><div class="scroll"><table class="sortable"><thead><tr><th>Date</th>${lg === 'all' ? '<th>League</th>' : ''}<th>Match</th><th class="n">Opening line</th><th class="n">Pick line</th><th class="n">Closing line</th><th class="n">Price</th><th class="n">Model line</th><th class="n">Over chance</th><th class="n">Edge</th></tr></thead><tbody>`;
   for (const p of open)
     h += `<tr><td>${short(p.dt)} ${p.dt.slice(11)}</td>${lg === 'all' ? `<td>${LG[p.lg].country} ${sexAb(LG[p.lg])}</td>` : ''}<td class="wr">${gameLink(p)}</td><td class="n">${p.line_open ?? "–"}</td><td class="n">Over ${p.line}</td><td class="n">${p.line_close ?? "–"}</td><td class="n">${p.px.toFixed(2)}</td>
       ${fairCell(p)}<td class="n">${pct(realP(p.p, p.px, p.under_px))}</td><td class="n ${cls(p.edge)}">${sgn(realEdge(p.p, p.px, p.under_px)*100, 0)}%</td></tr>`;
@@ -761,7 +762,7 @@ function renderWtest(){
   h += '<h2 id="wopen">Open picks</h2>';
   if (!open.length) h += '<p class="empty">No open picks. New ones appear once a test-league match with a line qualifies.</p>';
   else {
-    h += `<div class="scroll"><table><thead><tr><th>Date</th><th>Match</th><th class="n">Opening line</th><th class="n">Pick line</th><th class="n">Price</th><th class="n">Model line</th><th class="n">Over chance</th><th class="n">Edge</th></tr></thead><tbody>`;
+    h += `<div class="scroll"><table class="sortable"><thead><tr><th>Date</th><th>Match</th><th class="n">Opening line</th><th class="n">Pick line</th><th class="n">Price</th><th class="n">Model line</th><th class="n">Over chance</th><th class="n">Edge</th></tr></thead><tbody>`;
     for (const p of open.slice().sort((a, b) => a.dt.localeCompare(b.dt)))
       h += `<tr><td>${short(p.dt)} ${p.dt.slice(11)}</td><td class="wr">${match(p)}<div class="muted" style="font-size:14px">${TL[p.lg].country} · ${TL[p.lg].name}${p.manual ? ' · line added by hand' : ''}</div></td><td class="n">${p.line_open ?? '–'}</td><td class="n">Over ${p.line}</td><td class="n">${p.px.toFixed(2)}</td><td class="n">${p.fair}</td><td class="n">${pct(realP(p.p, p.px, p.under_px))}</td><td class="n ${cls(p.edge)}">${sgn(realEdge(p.p, p.px, p.under_px)*100, 0)}%</td></tr>`;
     h += '</tbody></table></div>';
@@ -845,7 +846,7 @@ function renderHcap(part){   // 'live': on Live test; 'bt': on Backtest (merged 
   h += '<h2 id="hopen">Open picks</h2>';
   if (!open.length) h += '<p class="empty">No open handicap picks. New ones appear once the market posts a points handicap for a match that qualifies.</p>';
   else {
-    h += `<div class="scroll"><table><thead><tr><th>Date</th><th>Match</th><th>Pick</th><th class="n">Opening line</th><th class="n">Price</th><th class="n">Model handicap</th><th class="n">Model chance</th><th class="n">Edge</th></tr></thead><tbody>`;
+    h += `<div class="scroll"><table class="sortable"><thead><tr><th>Date</th><th>Match</th><th>Pick</th><th class="n">Opening line</th><th class="n">Price</th><th class="n">Model handicap</th><th class="n">Model chance</th><th class="n">Edge</th></tr></thead><tbody>`;
     for (const p of open)
       h += `<tr><td>${short(p.dt)} ${p.dt.slice(11)}</td><td class="wr">${gameLink(p)}${lgCell(p)}</td><td><b>${pickTxt(p)}</b></td><td class="n">${p.line_open != null ? hc(p.line_open) : '–'}</td><td class="n">${p.px.toFixed(2)}</td><td class="n">${p.hcap != null ? hc(p.side === 'home' ? p.hcap : -p.hcap) : '–'}</td><td class="n">${pct(hP(p))}</td><td class="n ${cls(hE(p))}">${sgn(hE(p) * 100, 0)}%</td></tr>`;
     h += '</tbody></table></div>';
@@ -877,7 +878,7 @@ function wtestHcap(){
   let h = `<div class="metrics">${tiles.map(([l, v, x]) => `<div class="metric"><div class="lbl">${l}</div><div class="big">${v}</div><div class="sm">${x}</div></div>`).join('')}</div>`;
   h += '<h2>Open picks</h2>';
   if (!open.length) h += '<p class="empty">No open handicap picks in the test leagues. New ones appear once the market posts a points handicap for a match that qualifies.</p>';
-  else h += `<div class="scroll"><table><thead><tr><th>Date</th><th>Match</th><th>Pick</th><th class="n">Opening line</th><th class="n">Price</th><th class="n">Model handicap</th><th class="n">Model chance</th><th class="n">Edge</th></tr></thead><tbody>`
+  else h += `<div class="scroll"><table class="sortable"><thead><tr><th>Date</th><th>Match</th><th>Pick</th><th class="n">Opening line</th><th class="n">Price</th><th class="n">Model handicap</th><th class="n">Model chance</th><th class="n">Edge</th></tr></thead><tbody>`
     + open.map(p => `<tr><td>${short(p.dt)} ${p.dt.slice(11)}</td><td class="wr">${gameLink(p)}${lgLine(p)}</td><td><b>${hLabel(p.team, p.line)}</b></td><td class="n">${p.line_open != null ? hLabel('', p.line_open).trim() : '–'}</td><td class="n">${p.px.toFixed(2)}</td><td class="n">${p.hcap != null ? hLabel('', p.side === 'home' ? p.hcap : -p.hcap).trim() : '–'}</td><td class="n">${pct(hP(p))}</td><td class="n ${cls(hE(p))}">${sgn(hE(p) * 100, 0)}%</td></tr>`).join('') + '</tbody></table></div>';
   h += '<h2>Settled picks, latest first</h2>';
   if (!n) h += '<p class="empty">No settled handicap picks yet. Each pick is added here once its match is played.</p>';
@@ -917,6 +918,31 @@ function renderRatings(){
     + '</tbody></table></div>';
   return h + note;
 }
+
+// click a column of an open-picks table to sort by it, again to reverse (user, 22 Nov 2026); dates, lines, prices,
+// percentages and signed numbers sort as numbers, the rest as text
+const MONTHS = {Jan: 0, Feb: 1, Mar: 2, Apr: 3, May: 4, Jun: 5, Jul: 6, Aug: 7, Sep: 8, Oct: 9, Nov: 10, Dec: 11};
+function sortKey(td){
+  const t = td.innerText.split('\n')[0].trim();
+  const d = t.match(/^(\d{1,2}) (\w{3})(?: (\d\d):(\d\d))?$/);
+  if (d && d[2] in MONTHS) return (MONTHS[d[2]] < 7 ? 12 : 0) * 1e6 + MONTHS[d[2]] * 1e5 + +d[1] * 1e3 + (d[3] ? +d[3] * 60 + +d[4] : 0);
+  const n = t.replace(/^Over /, '').replace(/−/g, '-').replace(/[%+,]/g, '');
+  const m = n.match(/^-?\d+(\.\d+)?$/) || n.match(/ (-?\d+(\.\d+)?)$/);
+  if (m) return parseFloat(m[0].trim().split(' ').pop());
+  return t.toLowerCase();
+}
+document.addEventListener('click', e => {
+  const th = e.target.closest('table.sortable thead th');
+  if (!th) return;
+  const table = th.closest('table'), i = [...th.parentNode.children].indexOf(th), tb = table.tBodies[0];
+  const dir = th.dataset.dir === 'asc' ? 'desc' : 'asc';
+  table.querySelectorAll('thead th').forEach(x => { delete x.dataset.dir; x.textContent = x.textContent.replace(/ [▴▾]$/, ''); });
+  th.dataset.dir = dir; th.textContent += dir === 'asc' ? ' ▴' : ' ▾';
+  const rows = [...tb.rows];
+  rows.sort((a, b) => { const x = sortKey(a.cells[i]), y = sortKey(b.cells[i]);
+    return (typeof x === 'number' && typeof y === 'number' ? x - y : String(x).localeCompare(String(y))) * (dir === 'asc' ? 1 : -1); });
+  rows.forEach(r => tb.appendChild(r));
+});
 
 const RENDER = {home: renderHome, projections: renderProjections, picks: renderPicks, season: renderSeason, backtest: renderBacktest, leagues: renderLeagues, wtest: renderWtest, method: renderMethod};
 // Live test and Backtest each carry the totals first, then the points handicap, with separate records (user, 22 Nov 2026)
