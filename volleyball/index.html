@@ -912,10 +912,10 @@ function renderRatings(base = 'leagues'){
         + r.map((t, i) => `<tr><td class="n muted">${i + 1}</td><td>${t.team}${t.new ? ' <span class="muted">(new)</span>' : ''}</td><td class="n">${(t.rally * 100).toFixed(1)}%</td><td class="n">${t.w}–${t.l}</td></tr>`).join('')
         + '</tbody></table></div>'; };
     const grid = keys => `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:28px 32px;margin-top:14px">${keys.map(card).join('')}</div>`;
-    // every league in one list: men A-Z, then women A-Z, the tier after the name (user, 22 Nov 2026)
+    // every league in one list: men, then women; tier 1 before tier 2 and 3, A-Z within each (user, 22 Nov 2026)
     const all = [...DATA.leagues.map(l => l.key), ...Object.keys(TL), ...Object.keys(XL)];
     const women = k => LG[k] ? !!LG[k].women : TL[k] ? true : !!XL[k].women;
-    const az = keys => keys.sort((a, b) => meta(a).name.localeCompare(meta(b).name));
+    const az = keys => keys.sort((a, b) => tierOf(a) - tierOf(b) || meta(a).name.localeCompare(meta(b).name));   // tier 1 first, then A-Z
     return `<h2>Team ratings</h2>` + note + `<h2 style="margin-top:44px">Men</h2>` + grid(az(all.filter(k => !women(k))))
       + `<h2 style="margin-top:44px">Women</h2>` + grid(az(all.filter(women)))
       + '<p class="note" style="margin-top:20px">Click a league for its full table: sets, points won and the home advantage.</p>';
