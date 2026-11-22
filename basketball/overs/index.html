@@ -243,7 +243,7 @@ details.picks>summary .muted{font-size:14px;font-weight:400}
 <p>Projections shows the next 7 days, and FT live test records each pick at the line and price when it was logged. Backtest covers 2022–23 to 2025–26, and Leagues shows each league's record. A game's line is the median of the main market lines.</p>
 </section>
 </main>
-<script src="data.js?v=gp27"></script>
+<script src="data.js?v=rest1"></script>
 <script>document.write('<script src="live.js?t=' + Math.floor(Date.now() / 60000) + '"><\/script>')</script>
 <script>
 const $ = id => document.getElementById(id);
@@ -505,6 +505,14 @@ function analysis(k, notes = true){
   for (let lo = 1; lo <= Math.min(top, 28); lo += 4) { const g = RB.filter(b => b.gp >= lo && b.gp < lo + 4); if (g.length) rr.push(bandRow(`${Math.max(lo, Math.min(...g.map(b => b.gp)))}–${lo + 3} games`, g, false, 1)); }
   { const g = RB.filter(b => b.gp >= 29); if (g.length) rr.push(bandRow('29 or more games', g, false, 1)); }   // the last band (21 Nov 2026)
   if (rr.length) h += T('By games played', 'Games played', rr.join(''), `How many games each team had played that season before the game: the fewer of the two teams. Every game of the season counts, a second phase carrying on from the first. Both teams need ${LIVE.min_gp ?? 3} games before a pick, so the first band starts at ${LIVE.min_gp ?? 3}.`, 1);
+  // By pace, By 3-point luck, By rest days (22 Nov 2026, on request)
+  const bnd = (bands, key) => bands.map(([label, lo, hi]) => bandRow(label, BT.filter(b => b[key] != null && b[key] >= lo && b[key] < hi), false, 1)).join('');
+  h += T('By pace', 'Pace', bnd([['Under 0', -99, 0], ['0 to +1', 0, 1], ['+1 to +2', 1, 2], ['+2 to +3', 2, 3], ['+3 or more', 3, 99]], 'pace'),
+    'Pace: possessions a game the two teams are expected to play above the league average, before the game.', 1);
+  h += T('By 3-point luck', '3-point luck', bnd([['Under −2', -99, -2], ['−2 to −1', -2, -1], ['−1 to 0', -1, 0], ['0 to +1.5', 0, 1.5]], 'luck'),
+    '3-point luck: points a game the two teams have scored from threes above (+) or below (−) the 3-point rate of the league so far. Hot shooting rarely lasts. The rule skips games at +1.5 or more.', 1);
+  if (BT.some(b => b.rest != null)) h += T('By rest days', 'Rest days', bnd([['1–2 days', 1, 3], ['3–4 days', 3, 5], ['5–6 days', 5, 7], ['7 days', 7, 8], ['8 or more', 8, 999]], 'rest'),
+    'Days since the last league game: the fewer of the two teams. Only league games are counted, so a midweek European cup game is not seen.', 1);
   return h;
 }
 
@@ -779,7 +787,7 @@ function renderMethod(){
   const P = [
     ['Home', 'home', 'The answer in short: do the model’s overs make a profit? The backtest in a few numbers, then the main findings: every season, every league, out-of-sample weights, the line moving toward the picks, calibration and the worst run.'],
     ['FT live test', 'livetest', `The full-game picks logged live since ${LIVE.start || '8 Nov 2026'}. The tiles give the record, ROI at the opening and closing line and how the line moved. <b>Open picks</b> are the games still to play, with the line, price and edge when logged and now (Line now, Price now, Edge now: the main book’s line and price, or the market’s middle line when it has none); <span class="badge">Bet now</span> marks the Fast Moving Leagues, where the line moves toward the picks. Then the rule, every settled pick, and the record broken down by line, edge, pace, league and month, with the picks against the blind over (the over in every game) by league.`],
-    ['Backtest', 'backtest', 'The same rule on every game from 2022–23 to 2025–26, with each projection frozen 4 days before the game. Tiles, then Calibration (chance given v how often the picks won), By edge, By line, By tier, Fast Moving Leagues, By stage, By season, By month, By day of the week, By games played and By quarter. Every figure is shown at the opening line, where picks are taken, and at the closing line.'],
+    ['Backtest', 'backtest', 'The same rule on every game from 2022–23 to 2025–26, with each projection frozen 4 days before the game. Tiles, then Calibration (chance given v how often the picks won), By edge, By line, By tier, Fast Moving Leagues, By stage, By season, By month, By day of the week, By games played, By pace, By 3-point luck, By rest days and By quarter. Every figure is shown at the opening line, where picks are taken, and at the closing line.'],
     ['Projections', 'projections', 'Every game in the next 7 days: the model total next to the line and price on offer, and the edge of the over. Highlighted games are picks. The league buttons filter the list; each game links to its own match page, which shows how its total is built.'],
     ['Leagues', 'leagues', 'One row a league: its market (games, how often games went over the closing line, backing every over) and the model’s picks (model total, line, result, hit rate, profit, ROI at the opening and closing line). Click a league for its own page: <b>Picks</b> (the default) breaks its picks down like the Backtest tab, <b>All games</b> describes every game in it.'],
     ['How it works', 'how-it-works', 'This page: the pages, then how the model and the rules work.']];
