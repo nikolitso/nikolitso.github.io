@@ -253,7 +253,7 @@ a.gm{color:inherit;text-decoration:none} a.gm:hover{color:var(--gold);text-decor
 <section class="an-page-about" aria-label="About this page">
 <p class="an-page-about__label">About this page</p>
 <p>This page projects women's and men's volleyball league matches: the chance each one ends in three sets or goes to four or five, and its total points. Every team gets one rating, its chance of winning a rally against an average team in its own league, from this season's matches only. A pick is an over on a low line, where the market expects a 3-0, when the model's edge clears the page's bar.</p>
-<p>Projections shows the next 7 days against the market line, and Live test records the picks, logged before the first serve. Season, Backtest and Leagues show the ratings, past seasons since 2020 and each league's market. <a href="/volleyball/games/">Every game</a> has its own page.</p>
+<p>Projections shows the next 7 days against the market line, and Live test records the picks, logged before the first serve, and Women Leagues test follows more women's leagues apart from that record. Season Ratings, Backtest and Leagues show every league's team ratings, past seasons since 2020 and each league's market. <a href="/volleyball/games/">Every game</a> has its own page.</p>
 </section>
 </main>
 <script src="data.js?v=3a159728"></script>
@@ -699,9 +699,9 @@ function renderMethod(){
   <h3><span class="num">4</span>The bet</h3>
   <p>Only overs on low lines, below ${DATA.low}: across the backtest, unders and high-line overs did not beat the price. The model's job is to pick out the low-line matches most likely to go to a fourth set.</p>
   <h3><span class="num">5</span>Handicap test</h3>
-  <p>The same rally model gives each match's points margin, so it also prices the points handicap. Since 22 November 2026 the side whose model chance × price is at least ${(DATA.hcap ? DATA.hcap.edge : 0.2) * 100}% above 1 is backed in the live leagues when the market handicap is ${DATA.hcap ? DATA.hcap.min_line : 5.5} points or more (but not a favourite giving ${DATA.hcap ? DATA.hcap.fav_max : 15.5} or more), in the same games as the totals rule, and kept apart from the totals record. In the backtest from 2020–21 smaller edges barely broke even, so only the big disagreements with the market are bet; they made a profit at both the closing and the opening line, in both halves of the backtest.</p>
+  <p>The same rally model gives each match's points margin, so it also prices the points handicap. The side whose model chance × price is at least ${(DATA.hcap ? DATA.hcap.edge : 0.2) * 100}% above 1 is backed in the live leagues when the market handicap is ${DATA.hcap ? DATA.hcap.min_line : 5.5} points or more (but not a favourite giving ${DATA.hcap ? DATA.hcap.fav_max : 15.5} or more), in the same games as the totals rule, and kept apart from the totals record. In the backtest from 2020–21 smaller edges barely broke even, so only the big disagreements with the market are bet; they made a profit at both the closing and the opening line, in both halves of the backtest.</p>
   <h3><span class="num">6</span>Women Leagues test</h3>
-  <p>Since 22 November 2026, ${DATA.test.leagues.length} more women's leagues are tracked forward with the same rule, without a backtest, because most have lines from one source or on few games. Their picks are kept apart from the Live test record; each league is judged on its own results after the season.</p>
+  <p>${DATA.test.leagues.length} more women's leagues are tracked forward with the same rule, without a backtest, because most have lines from one source or on few games. Their picks are kept apart from the Live test record; each league is judged on its own results after the season.</p>
   <h3><span class="num">7</span>What it cannot see</h3>
   <p>No news: injuries, transfers and rested players are invisible to it. Top teams rotate in Champions League and cup weeks, so those matches can be flagged by hand and the pick held back.</p>
   ${worked()}</div>`;
