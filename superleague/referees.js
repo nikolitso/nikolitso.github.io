@@ -93,6 +93,12 @@ window.SLREF = {
   "foreign": ["Hernández", "Colombo", "Zwayer", "Jablonski", "Martínez"],
   // 2026-27 match reports, newest first: [date, match, score, referee, rating (null: no report), favoured, comment]
   "report": [
+    ["2026-11-22", "Olympiakos - Iraklis", "6-2", "Tsimenteridis", 7.8, null, "Saved by VAR (Vergetis): a penalty he gave was taken back after review, and VAR also stepped in on a handball penalty and on a penalty that had to be retaken."],
+    ["2026-11-22", "PAOK - Kifisia", "4-0", "Tzilos", 7.8, null, "Missed a red card and the penalty for a hold on Zivkovic; VAR (Polychronis) had to give both."],
+    ["2026-11-22", "Panathinaikos - OFI", "2-0", "Papapetrou (UEFA A)", 8.7, null, "Didn't hesitate to give a penalty against Panathinaikos for van Drongelen's outstretched arm, showing he does no favours to anyone. Good assistants."],
+    ["2026-11-22", "Panaitolikos - Volos", "1-0", "Tsakalidis (UEFA B)", 8.5, null, "Went unnoticed in Agrinio, which is a compliment, with support from VAR (Fotias)."],
+    ["2026-11-22", "Levadiakos - Atromitos", "1-1", "Koukoulas", 8.5, null, "Rose to the occasion in Livadeia and rightly ruled out an Atromitos goal for offside, backed by VAR (Katoikos)."],
+    ["2026-11-21", "Kalamata - AEK", "0-1", "Matsoukas (UEFA B)", 8.6, null, "Another convincing game: rightly sent off AEK's Nikolić for his behaviour towards Strakosha, on the fourth official's (Ntaoulas) tip. No disputed incidents; rightly allowed the goal (VAR Papadopoulos)."],
     ["2026-11-08", "Olympiakos - PAOK", "1-1", "Martínez", 8.5, null, "The Spanish referee had a good derby: kept discipline in a tense game, with no disputed incident."],
     ["2026-11-08", "OFI - Atromitos", "0-0", "Polychronis (UEFA B)", 8.5, null, "Very good at Pankritio; an OFI goal was rightly disallowed through VAR."],
     ["2026-11-08", "Iraklis - Panathinaikos", "1-2", "Evangelou", 7.9, "Panathinaikos", "His one error was not sending off Panathinaikos' Antino with a second yellow (the referees' committee agreed). The penalty was impossible for him to see; VAR (Tzilos) helped, as it was a clear handball. Correct assistants."],
