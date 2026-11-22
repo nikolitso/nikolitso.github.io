@@ -239,6 +239,7 @@ a.gm{color:inherit;text-decoration:none} a.gm:hover{color:var(--gold);text-decor
     <a href="#view=season" data-view="season">Season</a>
     <a href="#view=backtest" data-view="backtest">Backtest</a>
     <a href="#view=leagues" data-view="leagues">Leagues</a>
+    <a href="#view=wtest" data-view="wtest">Women Leagues test</a>
     <a href="#view=method" data-view="method">How it works</a>
   </nav>
 </div></header>
@@ -260,7 +261,7 @@ a.gm{color:inherit;text-decoration:none} a.gm:hover{color:var(--gold);text-decor
 <p>Projections shows the next 7 days against the market line, and Live test records the picks, logged before the first serve. Season, Backtest and Leagues show the ratings, past seasons since 2020 and each league's market. <a href="/volleyball/games/">Every game</a> has its own page.</p>
 </section>
 </main>
-<script src="data.js?v=8afa6bd1"></script>
+<script src="data.js?v=7efe7e63"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -680,7 +681,9 @@ function renderMethod(){
   <p>A 3-0 ends around 131 points, a four-setter around 180 and a five-setter around 207. Few matches finish in between. The market sets its line either low (they expect a 3-0) or high (a long match), so the over/under is mostly a bet on whether the match ends in straight sets.</p>
   <h3><span class="num">4</span>The bet</h3>
   <p>Only overs on low lines, below ${DATA.low}: across the backtest, unders and high-line overs did not beat the price. The model's job is to pick out the low-line matches most likely to go to a fourth set.</p>
-  <h3><span class="num">5</span>What it cannot see</h3>
+  <h3><span class="num">5</span>Women Leagues test</h3>
+  <p>Since 22 November 2026, ${DATA.test.leagues.length} more women's leagues are tracked forward with the same rule, without a backtest, because most have lines from one source or on few games. Their picks are kept apart from the Live test record; each league is judged on its own results after the season.</p>
+  <h3><span class="num">6</span>What it cannot see</h3>
   <p>No news: injuries, transfers and rested players are invisible to it. Top teams rotate in Champions League and cup weeks, so those matches can be flagged by hand and the pick held back.</p>
   ${worked()}</div>`;
 }
@@ -718,10 +721,58 @@ function worked(){
   <p>${e.won ? 'A' : 'Even a'} ${p1(e.p_over)} bet ${e.won ? 'still loses' : 'loses'} ${p1(1 - e.p_over)} of the time. The edge only shows over many bets, which is why the page judges itself at 100 picks. This example always shows the latest bet, win or loss.</p>`;
 }
 
-const RENDER = {home: renderHome, projections: renderProjections, picks: renderPicks, season: renderSeason, backtest: renderBacktest, leagues: renderLeagues, method: renderMethod};
+// Women Leagues test (user, 22 Nov 2026): more women's leagues under the live rule, forward only, no backtest, apart from the live record
+function renderWtest(){
+  const T = DATA.test, TL = Object.fromEntries(T.leagues.map(l => [l.key, l]));
+  const lname = k => `${TL[k].country} <span class="muted">${TL[k].name}</span>`;
+  const match = p => `${p.home} – ${p.away}`;
+  const picks = T.games.filter(p => p.pick), done = picks.filter(p => 'profit' in p), open = picks.filter(p => !('total' in p));
+  const n = done.length, w = done.filter(p => p.won).length, units = done.reduce((s, p) => s + p.profit, 0);
+  const played = T.games.filter(p => 'total' in p), lined = played.filter(p => p.line != null);
+  const tiles = [['Open picks', open.length, open.length ? 'to play' : 'none right now'],
+                 ['Record', `${w}–${n - w}`, n ? (w / n * 100).toFixed(1) + '% won' : '0 picks'],
+                 ['ROI', n ? `<span class="${cls(units)}">${sgn(units / n * 100, 1)}%</span>` : '–', n ? units1(units) : 'no settled picks'],
+                 ['Games logged', T.games.length, `${played.length} played`],
+                 ['With a line', played.length ? pct(lined.length / played.length) : '–', 'of played games']];
+  let h = `<div class="metrics">${tiles.map(([l, v, x]) => `<div class="metric"><div class="lbl">${l}</div><div class="big">${v}</div><div class="sm">${x}</div></div>`).join('')}</div>`;
+
+  // by league: what the test has collected so far
+  h += `<h2>By league</h2><div class="scroll"><table style="max-width:1100px"><thead><tr><th>League</th><th class="n">Games logged</th><th class="n">Played</th><th class="n">With a line</th><th class="n">Low lines</th><th class="n">Over hit</th><th class="n">Picks</th><th class="n">Won</th><th class="n">Profit</th><th class="n">ROI</th></tr></thead><tbody>`;
+  for (const l of T.leagues){
+    const g = T.games.filter(p => p.lg === l.key), pl = g.filter(p => 'total' in p), ln = pl.filter(p => p.line != null);
+    const low = ln.filter(p => p.line < DATA.low), d = g.filter(p => 'profit' in p), dw = d.filter(p => p.won).length, du = d.reduce((s, p) => s + p.profit, 0);
+    h += `<tr><td>${lname(l.key)}</td><td class="n">${g.length}</td><td class="n">${pl.length}</td><td class="n">${ln.length}</td><td class="n">${low.length}</td><td class="n">${ln.length ? pct(ln.filter(p => p.won).length / ln.length) : '–'}</td><td class="n">${d.length}</td><td class="n">${dw}</td><td class="n ${cls(du)}">${d.length ? sgn(du, 2) : '–'}</td><td class="n ${cls(du)}">${d.length ? sgn(du / d.length * 100, 1) + '%' : '–'}</td></tr>`;
+  }
+  h += '</tbody></table></div>';
+
+  // the next 7 days, projected the same way as the live leagues
+  const fx = T.fixtures;
+  h += '<h2>Next 7 days</h2>';
+  if (!fx.length) h += `<p class="empty">No test-league matches in the next 7 days between teams that have both played ${DATA.min_games} this season.</p>`;
+  else {
+    h += `<div class="scroll"><table class="proj"><thead><tr><th>Date</th><th>League</th><th>Match</th><th class="n">3 sets</th><th class="n">Model</th><th class="n">Market line</th><th class="n">Over</th><th class="n">Over chance</th><th class="n">Edge</th></tr></thead><tbody>`;
+    for (const g of fx)
+      h += `<tr${g.pick ? ' class="pk"' : ''}><td>${short(g.dt)} ${g.dt.slice(11)}</td><td>${lname(g.lg)}</td><td class="wr">${match(g)}${g.pick ? `<span class="badge">Over ${g.mk.line}</span>` : ''}</td><td class="n">${pct(g.p3)}</td><td class="n"><b>${g.fair}</b></td>
+        ${g.mk ? `<td class="n">${g.mk.line}</td><td class="n">${g.mk.over.toFixed(2)}</td><td class="n">${pct(realP(g.p_over, g.mk.over, g.mk.under))}</td>${g.edge > 0 ? `<td class="n ${cls(g.edge)}">${sgn(realEdge(g.p_over, g.mk.over, g.mk.under)*100, 0)}%</td>` : '<td class="n muted">–</td>'}` : '<td class="n muted" colspan="4">no line yet</td>'}</tr>`;
+    h += '</tbody></table></div>';
+  }
+
+  // settled picks, latest first
+  h += '<h2>Settled picks, latest first</h2>';
+  if (!n) h += '<p class="empty">No settled picks yet. Each pick is added here once its match is played.</p>';
+  else {
+    h += `<div class="scroll"><table><thead><tr><th>Date</th><th>League</th><th>Match</th><th class="n">Opening line</th><th class="n">Pick line</th><th class="n">Closing line</th><th class="n">Price</th><th class="n">Model line</th><th class="n">Sets</th><th class="n">Total</th><th class="n">Profit</th></tr></thead><tbody>`;
+    for (const p of done.slice().sort((a, b) => b.dt.localeCompare(a.dt)))
+      h += `<tr><td>${short(p.dt)}</td><td>${lname(p.lg)}</td><td class="wr">${match(p)}</td><td class="n">${p.line_open ?? '–'}</td><td class="n">Over ${p.line}</td><td class="n">${p.line_close ?? '–'}</td><td class="n">${p.px.toFixed(2)}</td><td class="n">${p.fair}</td><td class="n">${p.sets}</td><td class="n ${p.won ? 'w' : 'l'}">${p.total}</td><td class="n ${cls(p.profit)}">${sgn(p.profit, 2)}</td></tr>`;
+    h += '</tbody></table></div>';
+  }
+  return h + `<p class="note">A forward test, started on 22 Nov 2026: ${T.leagues.length} more women's leagues, projected and bet with the same rule as the live picks (overs on lines ${DATA.min_line}.5 to ${DATA.low - 0.5}, model chance at least ${DATA.min_chance*100}%, edge at least ${DATA.edge*100}%, both teams ${DATA.min_games}+ games, no March, April, October or playoff games). There is no backtest behind these leagues: most have lines from one source only, or on few games. Their picks are kept apart from the Live test record. Every projected game is stored with its line (when there is one), so each league can be judged on its own results after the season. <b>Over hit</b>: the share of played games with a line that went over it. Equal stakes.</p>`;
+}
+
+const RENDER = {home: renderHome, projections: renderProjections, picks: renderPicks, season: renderSeason, backtest: renderBacktest, leagues: renderLeagues, wtest: renderWtest, method: renderMethod};
 function render(){
   document.querySelectorAll('#tabs a').forEach(a => { a.classList.toggle('on', a.dataset.view === view); a.href = `#view=${a.dataset.view}${lg === 'all' ? '' : '&lg=' + lg}`; });
-  const chips = view === 'method' || view === 'home' ? [] : [['all', 'All leagues'], ...DATA.leagues.map(l => [l.key, `${l.country} ${sexAb(l)}`])];
+  const chips = view === 'method' || view === 'home' || view === 'wtest' ? [] : [['all', 'All leagues'], ...DATA.leagues.map(l => [l.key, `${l.country} ${sexAb(l)}`])];
   $('chips').innerHTML = chips.map(([k, t]) => `<a href="#view=${view}${k === 'all' ? '' : '&lg=' + k}" class="${k === lg ? 'on' : ''}">${t}</a>`).join('');
   $('out').innerHTML = RENDER[view]();
 }
