@@ -261,7 +261,7 @@ a.gm{color:inherit;text-decoration:none} a.gm:hover{color:var(--gold);text-decor
 <p>Projections shows the next 7 days against the market line, and Live test records the picks, logged before the first serve. Season, Backtest and Leagues show the ratings, past seasons since 2020 and each league's market. <a href="/volleyball/games/">Every game</a> has its own page.</p>
 </section>
 </main>
-<script src="data.js?v=9ffa77ce"></script>
+<script src="data.js?v=44c3d3ef"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -655,13 +655,13 @@ function renderLeagues(){
       h += `<tr><td colspan="14" class="tier" style="padding-top:18px">${women ? "Women's leagues" : "Men's leagues"}</td></tr>`;
       for (const l of DATA.leagues.filter(l => l.women === women)){
         const s = T[l.key]; if (!s) continue;
-        h += row(`<span class="caret">▸</span> <a class="gm" href="#view=leagues&lg=${l.key}">${l.country} <span class="muted">${l.name} ${sexAb(l)}</span></a>`, s, ` class="srow" data-open="${l.key}"`);
+        h += row(`<span class="caret">▸</span> <a class="gm" href="#view=leagues&m=hcap&lg=${l.key}">${l.country} <span class="muted">${l.name} ${sexAb(l)}</span></a>`, s, ` class="srow" data-open="${l.key}"`);
       }
     }
     return h + '</tbody></table></div><p class="note">Click a league to open its own page: its seasons and an analysis of every game.</p>' + intro;
   }
   const head = h, P = A.picks, name = `${L_.country} ${L_.name} ${sexAb(L_)}`;
-  h = `<p class="note"><a href="#view=leagues">← All leagues</a></p><h2 style="margin-top:6px">${name}</h2>`;
+  h = `<p class="note"><a href="#view=leagues&m=hcap">← All leagues</a></p><h2 style="margin-top:6px">${name}</h2>`;
   if (P.n){
     const t = [['Record', `${P.w}–${P.n - P.w}`, `${pct(P.w / P.n)} hit rate`],
                ['ROI at close', `<span class="${cls(P.roi)}">${sgn(P.roi * 100, 1)}%</span>`, units1(P.roi * P.n)],
@@ -685,7 +685,7 @@ function renderLeagues(){
 document.addEventListener('click', e => {
   const r = e.target.closest('tr.srow[data-open]');
   if (!r || e.target.closest('a')) return;
-  location.hash = `view=leagues&lg=${r.dataset.open}`;
+  location.hash = `view=leagues&m=hcap&lg=${r.dataset.open}`;
 });
 
 function renderMethod(){
@@ -887,13 +887,46 @@ function wtestHcap(){
   return h + `<p class="note">The points handicap in the ${T.leagues.length} test leagues, with the live rule: the side whose model chance × the average price is at least ${H.edge * 100}% above 1, on a handicap of ${H.min_line} points or more and never a favourite giving ${H.fav_max} or more, both teams ${DATA.min_games}+ games, no March, April, October or playoff games. No backtest stands behind these leagues, and the picks are kept apart from every other record. Every test game also keeps its handicap line, when there is one, for the season-end review.</p>`;
 }
 
+// Leagues tab, Team ratings pill (user, 22 Nov 2026): every team of every league, live and Women Leagues test, ranked by the
+// share of rallies it would win against an average team of its own league (this season's matches only)
+function renderRatings(){
+  const TL = Object.fromEntries(((DATA.test || {}).leagues || []).map(l => [l.key, l]));
+  const meta = k => LG[k] ? {name: `${LG[k].country} · ${LG[k].name} ${sexAb(LG[k])}`, home: LG[k].home_adv, season: LG[k].season}
+                          : {name: `${TL[k].country} · ${TL[k].name} (W)`, home: TL[k].home_adv, season: TL[k].season};
+  const rows = k => (LG[k] ? DATA.ratings : (DATA.test.ratings || [])).filter(r => r.lg === k);
+  const bar = x => `<span style="display:inline-block;width:70px;height:7px;border-radius:4px;background:var(--line);vertical-align:1px;margin-left:8px;overflow:hidden"><i style="display:block;height:100%;width:${Math.max(0, Math.min(100, (x - 0.35) / 0.3 * 100))}%;background:var(--gold)"></i></span>`;
+  const note = `<p class="note">Each team's share of rallies it would win against an <b>average team of its own league</b>, from this season's matches only, adjusted for the opponents it has played (a 3-0 over a strong side counts for more). 50% is the league average; the table ranks the teams on it. Ratings are not comparable between leagues. Teams with no match yet start just below average (new).</p>`;
+  if (lg === 'all' || (!LG[lg] && !TL[lg])){
+    const card = k => { const r = rows(k), M = meta(k); if (!r.length) return '';
+      return `<div><h3 style="margin:0 0 6px"><a class="gm" href="#view=leagues&lg=${k}">${M.name}</a></h3><table><thead><tr><th class="n">#</th><th>Team</th><th class="n">Rally %</th><th class="n">W–L</th></tr></thead><tbody>`
+        + r.map((t, i) => `<tr><td class="n muted">${i + 1}</td><td>${t.team}${t.new ? ' <span class="muted">(new)</span>' : ''}</td><td class="n">${(t.rally * 100).toFixed(1)}%</td><td class="n">${t.w}–${t.l}</td></tr>`).join('')
+        + '</tbody></table></div>'; };
+    const grid = keys => `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:28px 32px;margin-top:14px">${keys.map(card).join('')}</div>`;
+    return `<h2>Team ratings</h2>` + note + grid(DATA.leagues.map(l => l.key))
+      + (Object.keys(TL).length ? `<h2 style="margin-top:44px">Women Leagues test</h2>` + grid(Object.keys(TL)) : '')
+      + '<p class="note" style="margin-top:20px">Click a league for its full table: sets, points won and the home advantage.</p>';
+  }
+  const r = rows(lg), M = meta(lg);
+  let h = `<p class="note"><a href="#view=leagues">← All leagues</a></p><h2 style="margin-top:6px">${M.name}</h2>`;
+  h += `<div class="metrics"><div class="metric"><div class="lbl">Teams</div><div class="big">${r.length}</div><div class="sm">${M.season ? M.season.replace('-', '–') + ' season' : ''}</div></div>`
+    + `<div class="metric"><div class="lbl">Best team</div><div class="big">${r.length ? (r[0].rally * 100).toFixed(1) + '%' : '–'}</div><div class="sm">${r.length ? r[0].team : ''}</div></div>`
+    + `<div class="metric"><div class="lbl">Spread</div><div class="big">${r.length ? ((r[0].rally - r[r.length - 1].rally) * 100).toFixed(1) + ' pts' : '–'}</div><div class="sm">best v worst rally share</div></div>`
+    + `<div class="metric"><div class="lbl">Home side</div><div class="big">${M.home != null ? (M.home * 100).toFixed(1) + '%' : '–'}</div><div class="sm">of rallies between equal teams</div></div></div>`;
+  h += `<div class="scroll"><table style="max-width:900px"><thead><tr><th class="n">#</th><th>Team</th><th class="n">Rally % v average</th><th class="n">Played</th><th class="n">W–L</th><th class="n">Sets</th><th class="n">Points won</th></tr></thead><tbody>`
+    + r.map((t, i) => `<tr><td class="n muted">${i + 1}</td><td>${t.team}${t.new ? ' <span class="muted">(new)</span>' : ''}</td><td class="n">${(t.rally * 100).toFixed(1)}%${bar(t.rally)}</td><td class="n">${t.p}</td><td class="n">${t.w}–${t.l}</td><td class="n">${t.sw != null ? t.sw + '–' + t.sl : '–'}</td><td class="n">${t.pts != null ? pct(t.pts) : '–'}</td></tr>`).join('')
+    + '</tbody></table></div>';
+  return h + note;
+}
+
 const RENDER = {home: renderHome, projections: renderProjections, picks: renderPicks, season: renderSeason, backtest: renderBacktest, leagues: renderLeagues, wtest: renderWtest, method: renderMethod};
 // Live test and Backtest each carry the totals first, then the points handicap, with separate records (user, 22 Nov 2026)
 const SEC = (id, t) => `<h2 id="${id}" style="margin-top:56px;font-size:34px;border-top:1px solid var(--line);padding-top:28px">${t}</h2>`;
 const _picks = RENDER.picks, _bt = RENDER.backtest;
 RENDER.picks = () => market === 'hcap' ? renderHcap('live') : _picks();
 const _wt = RENDER.wtest;
-RENDER.wtest = () => market === 'hcap' ? wtestHcap() : _wt();   // Totals | Points handicap pills (22 Nov 2026)
+RENDER.wtest = () => market === 'hcap' ? wtestHcap() : _wt();
+const _lgs = RENDER.leagues;
+RENDER.leagues = () => market === 'hcap' ? _lgs() : renderRatings();   // Team ratings first, then Games and picks   // Totals | Points handicap pills (22 Nov 2026)
 RENDER.backtest = () => market === 'hcap' && DATA.hcap && DATA.hcap.backtest ? hcapBacktest() : _bt();
 // the handicap backtest on its own: the two backtest pills, then the tables (leagues are compared in By league)
 function hcapBacktest(){
@@ -904,18 +937,19 @@ function hcapBacktest(){
 }
 function render(){
   document.querySelectorAll('#tabs a').forEach(a => { a.classList.toggle('on', a.dataset.view === view); a.href = `#view=${a.dataset.view}${lg === 'all' ? '' : '&lg=' + lg}`; });
-  const hb = (view === 'backtest' && DATA.hcap && DATA.hcap.backtest) || view === 'picks' || view === 'wtest';   // the market pills: Backtest, Live test and Women Leagues test
+  const hb = (view === 'backtest' && DATA.hcap && DATA.hcap.backtest) || view === 'picks' || view === 'wtest' || view === 'leagues';   // the pills: Backtest, Live test, Women Leagues test, Leagues
   const chips = view === 'method' || view === 'home' || view === 'wtest' || (view === 'backtest' && market === 'hcap') ? [] : [['all', 'All leagues'], ...DATA.leagues.map(l => [l.key, `${l.country} ${sexAb(l)}`])];
-  const sw = hb ? [['totals', 'Totals: overs on low lines'], ['hcap', 'Points handicap']].map(([k, t]) =>
-      `<a href="#view=${view}${k === 'hcap' ? '&m=hcap' : ''}${lg !== 'all' && (k === 'totals' || view === 'picks') ? '&lg=' + lg : ''}" class="${k === market ? 'on' : ''}" style="font-size:15.5px;padding:6px 14px">${t}</a>`).join('')
+  const sw = hb ? (view === 'leagues' ? [['totals', 'Team ratings'], ['hcap', 'Games and picks']] : [['totals', 'Totals: overs on low lines'], ['hcap', 'Points handicap']]).map(([k, t]) =>
+      `<a href="#view=${view}${k === 'hcap' ? '&m=hcap' : ''}${lg !== 'all' && (k === 'totals' || view === 'picks') && LG[lg] ? '&lg=' + lg : ''}" class="${k === market ? 'on' : ''}" style="font-size:15.5px;padding:6px 14px">${t}</a>`).join('')
       + (chips.length ? '<span style="flex-basis:100%;height:2px"></span>' : '') : '';
-  $('chips').innerHTML = sw + chips.map(([k, t]) => `<a href="#view=${view}${view === 'picks' && market === 'hcap' ? '&m=hcap' : ''}${k === 'all' ? '' : '&lg=' + k}" class="${k === lg ? 'on' : ''}">${t}</a>`).join('');
+  $('chips').innerHTML = sw + chips.map(([k, t]) => `<a href="#view=${view}${(view === 'picks' || view === 'leagues') && market === 'hcap' ? '&m=hcap' : ''}${k === 'all' ? '' : '&lg=' + k}" class="${k === lg ? 'on' : ''}">${t}</a>`).join('');
   $('out').innerHTML = RENDER[view]();
 }
 function fromHash(){
   const m = location.hash.match(/view=(\w+)/), l = location.hash.match(/lg=([\w-]+)/);
   view = m && m[1] === 'results' ? 'picks' : m && m[1] === 'hcap' ? 'picks' : m && RENDER[m[1]] ? m[1] : 'home';   // Handicap test merged into Live test (22 Nov 2026)   // Results merged into Picks (8 Nov 2026)
-  const nlg = l && LG[l[1]] ? l[1] : 'all';
+  const TLK = new Set(((DATA.test || {}).leagues || []).map(x => x.key));     // test leagues: Leagues tab only
+  const nlg = l && (LG[l[1]] || (/view=leagues/.test(location.hash) && TLK.has(l[1]))) ? l[1] : 'all';
   market = /[&#]m=hcap/.test(location.hash) || (m && m[1] === 'hcap') ? 'hcap' : 'totals';
   const moved = nlg !== lg;
   if (moved) btSeason = null;
