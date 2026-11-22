@@ -69,8 +69,6 @@ img { max-width: 100%; display: block; }
 .chips { display: flex; flex-wrap: wrap; gap: .5rem; min-width: 0; max-width: 100%; }
 .chip { --t: var(--ink); font: inherit; font-size: max(14px,.82rem); font-weight: 500; color: var(--ink); background: var(--paper); border: 1px solid var(--rule); border-radius: 999px; padding: .45rem .95rem; cursor: pointer; display: inline-flex; gap: .45rem; align-items: center; transition: border-color .2s, background .2s, color .2s; }
 .chip b { font-weight: 600; color: var(--muted); font-size: max(14px,.75rem); }
-.chip::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--t); }
-.chip[data-t=""]::before { display: none; }
 .chip:hover { border-color: var(--t); }
 .chip.on { background: var(--night); border-color: var(--night); color: #fff; }
 .chip.on b { color: #9aa1b2; }
