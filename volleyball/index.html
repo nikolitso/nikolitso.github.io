@@ -262,7 +262,7 @@ a.gm{color:inherit;text-decoration:none} a.gm:hover{color:var(--gold);text-decor
 <p>Projections shows the next 7 days against the market line, and Live test records the picks, logged before the first serve. Season, Backtest and Leagues show the ratings, past seasons since 2020 and each league's market. <a href="/volleyball/games/">Every game</a> has its own page.</p>
 </section>
 </main>
-<script src="data.js?v=f1a74f15"></script>
+<script src="data.js?v=7b82601d"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -352,7 +352,7 @@ function renderHome(){
     .map(({l, s}) => `${l.country} ${sexAb(l)} ${sgn(s.roi * 100, 1)}%`).join(', ');
   const said = bets.reduce((s, b) => s + b.p, 0) / bets.length, hit = bets.filter(b => b.won).length / bets.length;
   const over = ` The model is too confident: its bets said ${pct(said)} and won ${pct(hit)}. So the over chance and edge shown on Projections and Live test keep only ${REAL * 100}% of its advantage over the no-vig market chance; picks are still chosen on the model's own figure (see Calibration in <b>Backtest</b>).`;
-  return pickTiles() + `<div class="doc">
+  return pickTiles() + wOpenTop() + `<div class="doc">
   <h2>Do the model's overs make a profit?</h2>
   <p>Modestly, on the fair test. With each season's leagues chosen in advance from earlier seasons only, the bets returned <b>${sgn(B.fair.roi * 100, 1)}%</b> over ${B.fair.n} bets (${B.fair.first}–${(B.fair.first + 1) % 100} to ${B.fair.last}–${(B.fair.last + 1) % 100}), against ${sgn(B.fair.left_roi * 100, 1)}% in the leagues left out. Across the leagues as they stand now, ${A.n} bets over ${seasons.length} past seasons returned ${sgn(A.roi * 100, 1)}%, but that figure knows which leagues were kept, so it runs high. Backing every low-line over in these leagues without the model returned ${sgn(A.blind_roi * 100, 1)}%. The ${DATA.season.replace('-', '–')} record above is the real test.</p>
   <h3><span class="num">1</span>The bet</h3>
@@ -385,12 +385,13 @@ function renderPicks(){
   const open = DATA.picks.filter(inLg).filter(p => !('won' in p)).sort((a, b) => a.dt.localeCompare(b.dt));
   const note = `<p class="note">Picks logged before the first serve: an over on a line from ${DATA.min_line}.5 to ${DATA.low - 0.5}, when model chance is at least ${DATA.min_chance*100}% and model chance × the average price is at least ${DATA.edge*100}% above 1. Leagues: ${liveNames()}. March, April, October, playoffs, play-outs and placement games are excluded. Equal stakes. Until the start a pick follows the latest line. Once played it moves to Settled picks, at the price logged before the first serve. ROI = profit ÷ total staked (lines end in .5, so there are no pushes). The page judges itself at <b>100 settled picks</b>; before that, the record is mostly noise. Over chance and Edge are corrected: they keep ${REAL * 100}% of the model's advantage over the no-vig market chance, as the model runs too confident, so a pick can show an edge under ${DATA.edge*100}%.</p>`;
   let h = pickTiles();                            // the note goes below the picks (user, 14 Nov 2026)
-  if (!open.length) return h + '<h2>Open picks</h2><p class="empty">No open totals picks. New ones appear once the market posts lines for a match that qualifies.</p>' + hOpenTop() + settled() + note;
+  const wt = lg === 'all' ? wOpenTop() : '';
+  if (!open.length) return h + '<h2>Open picks</h2><p class="empty">No open totals picks. New ones appear once the market posts lines for a match that qualifies.</p>' + hOpenTop() + wt + settled() + note;
   h += `<h2>Open picks</h2><div class="scroll"><table class="sortable"><thead><tr><th>Date</th>${lg === 'all' ? '<th>League</th>' : ''}<th>Match</th><th class="n">Opening line</th><th class="n">Pick line</th><th class="n">Closing line</th><th class="n">Price</th><th class="n">Model line</th><th class="n">Over chance</th><th class="n">Edge</th></tr></thead><tbody>`;
   for (const p of open)
     h += `<tr><td>${short(p.dt)} ${p.dt.slice(11)}</td>${lg === 'all' ? `<td>${LG[p.lg].country} ${sexAb(LG[p.lg])}</td>` : ''}<td class="wr">${gameLink(p)}</td><td class="n">${p.line_open ?? "–"}</td><td class="n">Over ${p.line}</td><td class="n">${p.line_close ?? "–"}</td><td class="n">${p.px.toFixed(2)}</td>
       ${fairCell(p)}<td class="n">${pct(realP(p.p, p.px, p.under_px))}</td><td class="n ${cls(p.edge)}">${sgn(realEdge(p.p, p.px, p.under_px)*100, 0)}%</td></tr>`;
-  return h + '</tbody></table></div>' + hOpenTop() + settled() + note;
+  return h + '</tbody></table></div>' + hOpenTop() + wt + settled() + note;
 }
 
 const avgLine = (g, k) => { const v = g.map(p => p[k]).filter(x => x != null); return v.length ? (v.reduce((s, x) => s + x, 0) / v.length).toFixed(1) : '–'; };
@@ -995,6 +996,20 @@ function wtestML(){
     + done.slice().sort((a, b) => b.dt.localeCompare(a.dt)).map(p => { const wn = won(p), pr = wn ? p.ml_px - 1 : -1;
       return `<tr><td>${short(p.dt)}</td><td class="wr">${gameLink(p)}${lgLine(p)}</td><td>${p.team}</td><td class="n">${p.ml_px.toFixed(2)}</td><td class="n">${p.ml_p ? (1 / p.ml_p).toFixed(2) : '–'}</td><td class="n">${pc(p.ml_mkt)}</td><td class="n">${pc(p.ml_p)}</td><td class="n ${wn ? 'w' : 'l'}">${p.sets.replace('-', '–')}</td><td class="n ${cls(pr)}">${sgn(pr, 2)}</td></tr>`; }).join('') + '</tbody></table></div>';
   return h + `<p class="note">The handicap picks above that back the favourite (giving points), followed on the match winner instead: the average match-winner price (Market price), the model's fair price (Model price = 1 ÷ its win chance), the market's chance with the margin taken out, and the model's win chance as shown on the game pages (league-corrected). Tracked for comparison only, not a separate bet rule; 1 unit a game at the price logged before the start. Underdog handicap picks are left out.</p>`;
+}
+
+// Women Leagues test open picks (totals and handicap) on the front page and Live test, kept apart from the live record
+// (user, 22 Nov 2026: "keep it separate but I want the picks to be easily visible")
+function wOpenTop(){
+  const T = DATA.test; if (!T) return '';
+  const TL = Object.fromEntries(T.leagues.map(l => [l.key, l]));
+  const tot = T.games.filter(g => g.pick && !('total' in g)).map(g => ({...g, kind: 'Totals', pk: `Over ${g.line}`, ch: realP(g.p, g.px, g.under_px), ed: realEdge(g.p, g.px, g.under_px)}));
+  const hc = (T.hpicks || []).filter(x => !('won' in x)).map(x => ({...x, kind: 'Handicap', pk: hLabel(x.team, x.line), ch: hP(x), ed: hE(x)}));
+  const o = [...tot, ...hc].sort((a, b) => a.dt.localeCompare(b.dt));
+  if (!o.length) return '';
+  return `<h2 id="wtop">Women Leagues test: open picks</h2><p class="note" style="margin-top:-6px">A forward test with no backtest, on its own record and not counted in the record above.</p><div class="scroll"><table class="sortable" style="max-width:1000px"><thead><tr><th>Date</th><th>Match</th><th>Market</th><th>Pick</th><th class="n">Price</th><th class="n">Model chance</th><th class="n">Edge</th></tr></thead><tbody>`
+    + o.map(x => `<tr><td>${short(x.dt)} ${x.dt.slice(11)}</td><td class="wr">${gameLink(x)}<div class="muted" style="font-size:14px">${TL[x.lg] ? TL[x.lg].country + ' · ' + TL[x.lg].name : ''}</div></td><td>${x.kind}</td><td><b>${x.pk}</b></td><td class="n">${x.px.toFixed(2)}</td><td class="n">${pct(x.ch)}</td><td class="n ${cls(x.ed)}">${sgn(x.ed * 100, 0)}%</td></tr>`).join('')
+    + `</tbody></table></div><p class="note"><a href="#view=wtest">The Women Leagues test record →</a></p>`;
 }
 
 const RENDER = {home: renderHome, projections: renderProjections, picks: renderPicks, season: renderSeason, backtest: renderBacktest, leagues: renderLeagues, wtest: renderWtest, method: renderMethod};
