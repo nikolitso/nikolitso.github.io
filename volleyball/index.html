@@ -238,7 +238,7 @@ a.gm{color:inherit;text-decoration:none} a.gm:hover{color:var(--gold);text-decor
     <a href="#view=projections" data-view="projections">Projections</a>
     <a href="#view=picks" data-view="picks">Live test</a>
     <a href="#view=wtest" data-view="wtest">Women Leagues test</a>
-    <a href="#view=season" data-view="season">Season</a>
+    <a href="#view=season" data-view="season">Season Rating</a>
     <a href="#view=backtest" data-view="backtest">Backtest</a>
     <a href="#view=leagues" data-view="leagues">Leagues</a>
     <a href="#view=method" data-view="method">How it works</a>
@@ -421,24 +421,27 @@ function settled(){
   return h + rows.reverse().join('') + '</tbody></table></div>';
 }
 
+// Season Rating (user, 22 Nov 2026): the team ratings of every league, live, Women Leagues test and handicap-only;
+// a league's own view adds its results this season
 function renderSeason(){
-  const k = one(), res = DATA.results.filter(r => r.lg === k);
-  const intro = `<p class="note" style="margin-top:28px"><b>${lgName(k)}</b>${lg === 'all' ? ' (pick a league above for the others)' : ''}, ${LG[k].season.replace('-','–')} season${LG[k].season !== DATA.season ? ' (its latest: the next one has not started)' : ''}. The matches with the projection each one had before it was played (fitted on earlier matches only), next to the closing line. No projection until both teams have played ${DATA.min_games}. Ratings: the chance of winning a rally against an average team, from points won, recent matches weighted more.</p>`;   // below the tables (user, 16 Nov 2026)
-  let h = '';
-  h += '<div class="cols"><div><h2>Results</h2>';
-  if (!res.length) h += '<p class="empty">No matches played yet.</p>';
-  else {
-    h += `<div class="scroll"><table><thead><tr><th>Date</th><th>Match</th><th class="n">Sets</th><th class="n">Total</th><th class="n">Model median</th><th class="n">Line</th><th class="n">Over %</th></tr></thead><tbody>`;
-    for (const r of res){
-      const o = r.line == null ? '' : r.total > r.line ? 'w' : 'l';
-      h += `<tr><td>${short(r.dt)}</td><td class="wr">${gameLink(r)}</td><td class="n">${r.sets}</td><td class="n ${o}">${r.total}</td>
-        <td class="n${r.early ? ' muted' : ''}">${r.med ?? '–'}</td><td class="n">${r.line ?? '–'}</td><td class="n">${r.p_over == null ? '–' : pct(r.p_over)}</td></tr>`;
-    }
-    h += '</tbody></table></div>';
+  const T = DATA.test || {}, X = DATA.hcapx || {};
+  const isT = (T.leagues || []).some(l => l.key === lg), isX = (X.leagues || []).some(l => l.key === lg);
+  if (lg === 'all' || (!LG[lg] && !isT && !isX)) return renderRatings('season');
+  let h = renderRatings('season');
+  const live = !!LG[lg], res = (live ? DATA.results : isT ? (T.results || []) : (X.results || [])).filter(r => r.lg === lg);
+  const paged = new Set((T.games || []).map(g => g.id));            // test games that were projected have a page
+  const match = r => live || paged.has(r.id) ? gameLink(r) : `${r.home} – ${r.away}`;
+  h += '<h2>Results</h2>';
+  if (!res.length) return h + '<p class="empty">No matches played yet.</p>';
+  h += `<div class="scroll"><table style="max-width:1000px"><thead><tr><th>Date</th><th>Match</th><th class="n">Sets</th><th class="n">Total</th>${live ? '<th class="n">Model median</th>' : ''}<th class="n">Line</th>${live ? '<th class="n">Over %</th>' : ''}</tr></thead><tbody>`;
+  for (const r of res){
+    const o = r.line == null ? '' : r.total > r.line ? 'w' : 'l';
+    h += `<tr><td>${short(r.dt)}</td><td class="wr">${match(r)}</td><td class="n">${r.sets.replace('-', '–')}</td><td class="n ${o}">${r.total}</td>`
+      + (live ? `<td class="n${r.early ? ' muted' : ''}">${r.med ?? '–'}</td>` : '') + `<td class="n">${r.line ?? '–'}</td>`
+      + (live ? `<td class="n">${r.p_over == null ? '–' : pct(r.p_over)}</td>` : '') + '</tr>';
   }
-  h += `</div><div><h2>Ratings</h2><table><thead><tr><th>Team</th><th class="n">Rally</th><th class="n">W–L</th></tr></thead><tbody>`;
-  for (const r of DATA.ratings.filter(r => r.lg === k)) h += `<tr><td>${r.team}${r.new ? ' <span class="muted">(new)</span>' : ''}</td><td class="n">${(r.rally*100).toFixed(1)}%</td><td class="n">${r.w}–${r.l}</td></tr>`;
-  return h + `</tbody></table><p class="note" style="margin-top:12px">Home side: ${(LG[k].home_adv*100).toFixed(1)}% of rallies between equal teams.</p></div></div>` + intro;
+  h += '</tbody></table></div>';
+  return h + `<p class="note">${live ? `The matches with the projection each one had before it was played (fitted on earlier matches only), next to the closing line. No projection until both teams have played ${DATA.min_games}.` : 'The matches played this season, with the closing line where the market had one.'}</p>`;
 }
 
 // the record tiles of Home and Projections, for the backtest bets of the view (the tuned-on season left out, as in the totals)
@@ -891,7 +894,7 @@ function wtestHcap(){
 
 // Leagues tab, Team ratings pill (user, 22 Nov 2026): every team of every league, live and Women Leagues test, ranked by the
 // share of rallies it would win against an average team of its own league (this season's matches only)
-function renderRatings(){
+function renderRatings(base = 'leagues'){
   const TL = Object.fromEntries(((DATA.test || {}).leagues || []).map(l => [l.key, l]));
   const XL = Object.fromEntries(((DATA.hcapx || {}).leagues || []).map(l => [l.key, l]));
   const meta = k => XL[k] ? {name: `${XL[k].country} · ${XL[k].name} ${XL[k].women ? '(W)' : '(M)'}`, home: XL[k].home_adv, season: XL[k].season} : LG[k] ? {name: `${LG[k].country} · ${LG[k].name} ${sexAb(LG[k])}`, home: LG[k].home_adv, season: LG[k].season}
@@ -901,7 +904,7 @@ function renderRatings(){
   const note = `<p class="note">Each team's share of rallies it would win against an <b>average team of its own league</b>, from this season's matches only, adjusted for the opponents it has played (a 3-0 over a strong side counts for more). 50% is the league average; the table ranks the teams on it. Ratings are not comparable between leagues. Teams with no match yet start just below average (new).</p>`;
   if (lg === 'all' || (!LG[lg] && !TL[lg] && !XL[lg])){
     const card = k => { const r = rows(k), M = meta(k); if (!r.length) return '';
-      return `<div><h3 style="margin:0 0 6px"><a class="gm" href="#view=leagues&lg=${k}">${M.name}</a></h3><table><thead><tr><th class="n">#</th><th>Team</th><th class="n">Rally %</th><th class="n">W–L</th></tr></thead><tbody>`
+      return `<div><h3 style="margin:0 0 6px"><a class="gm" href="#view=${base}&lg=${k}">${M.name}</a></h3><table><thead><tr><th class="n">#</th><th>Team</th><th class="n">Rally %</th><th class="n">W–L</th></tr></thead><tbody>`
         + r.map((t, i) => `<tr><td class="n muted">${i + 1}</td><td>${t.team}${t.new ? ' <span class="muted">(new)</span>' : ''}</td><td class="n">${(t.rally * 100).toFixed(1)}%</td><td class="n">${t.w}–${t.l}</td></tr>`).join('')
         + '</tbody></table></div>'; };
     const grid = keys => `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:28px 32px;margin-top:14px">${keys.map(card).join('')}</div>`;
@@ -911,7 +914,7 @@ function renderRatings(){
       + '<p class="note" style="margin-top:20px">Click a league for its full table: sets, points won and the home advantage.</p>';
   }
   const r = rows(lg), M = meta(lg);
-  let h = `<p class="note"><a href="#view=leagues">← All leagues</a></p><h2 style="margin-top:6px">${M.name}</h2>`;
+  let h = `<p class="note"><a href="#view=${base}">← All leagues</a></p><h2 style="margin-top:6px">${M.name}</h2>`;
   h += `<div class="metrics"><div class="metric"><div class="lbl">Teams</div><div class="big">${r.length}</div><div class="sm">${M.season ? M.season.replace('-', '–') + ' season' : ''}</div></div>`
     + `<div class="metric"><div class="lbl">Best team</div><div class="big">${r.length ? (r[0].rally * 100).toFixed(1) + '%' : '–'}</div><div class="sm">${r.length ? r[0].team : ''}</div></div>`
     + `<div class="metric"><div class="lbl">Spread</div><div class="big">${r.length ? ((r[0].rally - r[r.length - 1].rally) * 100).toFixed(1) + ' pts' : '–'}</div><div class="sm">best v worst rally share</div></div>`
@@ -1032,7 +1035,7 @@ function hcapBacktest(){
 function render(){
   document.querySelectorAll('#tabs a').forEach(a => { a.classList.toggle('on', a.dataset.view === view); a.href = `#view=${a.dataset.view}${lg === 'all' ? '' : '&lg=' + lg}`; });
   const hb = (view === 'backtest' && DATA.hcap && DATA.hcap.backtest) || view === 'picks' || view === 'wtest' || view === 'leagues';   // the pills: Backtest, Live test, Women Leagues test, Leagues
-  const chips = view === 'method' || view === 'home' || view === 'wtest' || (view === 'backtest' && market === 'hcap') ? [] : [['all', 'All leagues'], ...DATA.leagues.map(l => [l.key, `${l.country} ${sexAb(l)}`])];
+  const chips = view === 'method' || view === 'home' || view === 'wtest' || view === 'season' || (view === 'backtest' && market === 'hcap') ? [] : [['all', 'All leagues'], ...DATA.leagues.map(l => [l.key, `${l.country} ${sexAb(l)}`])];
   const sw = hb ? (view === 'leagues' ? [['totals', 'Team ratings'], ['hcap', 'Games and picks']] : [['totals', 'Totals: overs on low lines'], ['hcap', 'Points handicap'], ...(view === 'wtest' ? [['ml', 'Match winner']] : [])]).map(([k, t]) =>
       `<a href="#view=${view}${k === 'hcap' ? '&m=hcap' : k === 'ml' ? '&m=ml' : ''}${lg !== 'all' && (k === 'totals' || view === 'picks') && LG[lg] ? '&lg=' + lg : ''}" class="${k === market ? 'on' : ''}" style="font-size:15.5px;padding:6px 14px">${t}</a>`).join('')
       + (chips.length ? '<span style="flex-basis:100%;height:2px"></span>' : '') : '';
@@ -1043,13 +1046,13 @@ function fromHash(){
   const m = location.hash.match(/view=(\w+)/), l = location.hash.match(/lg=([\w-]+)/);
   view = m && m[1] === 'results' ? 'picks' : m && m[1] === 'hcap' ? 'picks' : m && RENDER[m[1]] ? m[1] : 'home';   // Handicap test merged into Live test (22 Nov 2026)   // Results merged into Picks (8 Nov 2026)
   const TLK = new Set([...((DATA.test || {}).leagues || []), ...((DATA.hcapx || {}).leagues || [])].map(x => x.key));   // test and handicap-only leagues: Leagues tab only
-  const nlg = l && (LG[l[1]] || (/view=leagues/.test(location.hash) && TLK.has(l[1]))) ? l[1] : 'all';
+  const nlg = l && (LG[l[1]] || (/view=(leagues|season)/.test(location.hash) && TLK.has(l[1]))) ? l[1] : 'all';
   market = /[&#]m=hcap/.test(location.hash) || (m && m[1] === 'hcap') ? 'hcap' : /[&#]m=ml/.test(location.hash) ? 'ml' : 'totals';
   const moved = nlg !== lg;
   if (moved) btSeason = null;
   lg = nlg;
   render();
-  if (moved && view === 'leagues') window.scrollTo(0, 0);   // a league's own page opens at its top
+  if (moved && (view === 'leagues' || view === 'season')) window.scrollTo(0, 0);   // a league's own page opens at its top
   if (/to=settled/.test(location.hash)) toSettled();   // the Record pill opens the settled picks (user, 15 Nov 2026)
   if (m && m[1] === 'hcap'){ const el = document.getElementById('hcap'); if (el) el.scrollIntoView({block: 'start'}); }
   if (/to=hopen/.test(location.hash)){ const el = document.getElementById('hopen'); if (el) el.scrollIntoView({behavior: 'smooth', block: 'start'}); }
