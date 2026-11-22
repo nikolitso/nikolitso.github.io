@@ -241,7 +241,7 @@ a.tile:hover{border-color:var(--gold)}
 <p>Projections shows the next 7 days, and Live test records the picks, taken at the opening line; 1H live test and 1H backtest cover first halves. Backtest covers 2021–22 to 2025–26. A game's line is the median of the main market lines.</p>
 </section>
 </main>
-<script src="data.js?v=w100"></script>
+<script src="data.js?v=w101"></script>
 <script src="live.js"></script>
 <script>
 const $ = id => document.getElementById(id);
@@ -396,7 +396,9 @@ function h1Books(mode){
   if (mode === 'bt') {
     let h = `<h2 id="h1books">Books v actual</h2><p class="note">Whether the market prices first halves right: in every season the books put about half the total in the first half, but first halves scored more, so first-half lines sat low. ${base} The 1H live test tab checks this season against these figures every hour.</p>`;
     h += T('Season', P.seasons.map(r => `<tr><td>${sy(r.sy)}</td>${cells(r)}</tr>`).join('') + `<tr class="sub"><td><b>2021–22 to 2025–26</b></td>${cells(P.all)}</tr>`);
-    h += `<h2>Books v actual by league</h2>` + T('League', ks.map(k => `<tr><td>${lgShort(k)}</td>${cells((P.leagues || []).find(r => r.lg === k))}</tr>`).join('') + `<tr class="sub"><td><b>All</b></td>${cells(P.all)}</tr>`);
+    h += `<h2>Books v actual by league</h2>` + T('League', ks.map(k => { const on = open === 'bk:' + k, R = (P.lgs || {})[k] || [];   // click a league for its seasons (22 Nov 2026, user)
+        return `<tr class="srow${on ? ' on' : ''}" data-open="bk:${k}"><td><span class="caret">${on ? '▾' : '▸'}</span> ${lgShort(k)}</td>${cells((P.leagues || []).find(r => r.lg === k))}</tr>` + (on ? R.map(x => `<tr class="sub"><td style="padding-left:28px">${sy(x.sy)}</td>${cells(x)}</tr>`).join('') : ''); }).join('')
+      + `<tr class="sub"><td><b>All</b></td>${cells(P.all)}</tr>`) + '<p class="note">Click a league for its seasons. Earlier seasons have fewer games because fewer first-half lines were kept.</p>';
     return h;
   }
   const now = norm(C && C.all), past = P.all;
