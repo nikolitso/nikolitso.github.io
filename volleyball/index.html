@@ -324,7 +324,7 @@ function pickTiles(){
   const w = done.filter(p => p.won).length, units = done.reduce((s, p) => s + p.profit, 0);
   const avg = `avg of ${n} pick${n === 1 ? '' : 's'}`;
   const nh = hOpen().length;
-  const t = [['Open picks', nOpen + nh, nOpen + nh ? `${nOpen} totals · ${nh} handicap →` : 'none right now', nh && !nOpen ? '#view=picks&to=hopen' : '#view=picks'], ['Record', `${w}–${n - w}`, `${n ? (w / n * 100).toFixed(1) + '% won →' : '0 picks →'}`, `#view=picks${lg !== 'all' ? '&lg=' + lg : ''}&to=settled`],
+  const t = [['Open picks', nOpen + nh, nOpen + nh ? `${nOpen} totals · ${nh} handicap →` : 'none right now', nh && !nOpen ? '#view=picks&m=hcap&to=hopen' : '#view=picks'], ['Record', `${w}–${n - w}`, `${n ? (w / n * 100).toFixed(1) + '% won →' : '0 picks →'}`, `#view=picks${lg !== 'all' ? '&lg=' + lg : ''}&to=settled`],
              
              ['ROI', n ? `<span class="${cls(units)}">${sgn(units / n * 100, 1)}%</span>` : '–', n ? units1(units) : 'no settled picks'],
              ['Market line', avgLine(done, 'line'), avg], ['Model line', avgLine(done, 'fair'), avg], ['Actual total', avgLine(done, 'total'), avg]];
@@ -372,7 +372,7 @@ function hOpenTop(){
   if (!o.length) return '';
   return `<h2>Open handicap picks</h2><div class="scroll"><table style="max-width:900px"><thead><tr><th>Date</th>${lg === 'all' ? '<th>League</th>' : ''}<th>Match</th><th>Pick</th><th class="n">Price</th><th class="n">Model handicap</th><th class="n">Edge</th></tr></thead><tbody>`
     + o.map(p => `<tr><td>${short(p.dt)} ${p.dt.slice(11)}</td>${lg === 'all' ? `<td>${LG[p.lg].country} ${sexAb(LG[p.lg])}</td>` : ''}<td class="wr">${gameLink(p)}</td><td><b>${hLabel(p.team, p.line)}</b></td><td class="n">${p.px.toFixed(2)}</td><td class="n">${p.hcap != null ? hLabel('', p.side === 'home' ? p.hcap : -p.hcap).trim() : '–'}</td><td class="n ${cls(p.edge)}">${sgn(p.edge * 100, 0)}%</td></tr>`).join('')
-    + `</tbody></table></div><p class="note"><a href="#view=picks&to=hopen">The handicap record and its settled picks →</a></p>`;
+    + `</tbody></table></div><p class="note"><a href="#view=picks&m=hcap&to=hopen">The handicap record and its settled picks →</a></p>`;
 }
 
 function renderPicks(){
@@ -862,7 +862,7 @@ const RENDER = {home: renderHome, projections: renderProjections, picks: renderP
 // Live test and Backtest each carry the totals first, then the points handicap, with separate records (user, 22 Nov 2026)
 const SEC = (id, t) => `<h2 id="${id}" style="margin-top:56px;font-size:34px;border-top:1px solid var(--line);padding-top:28px">${t}</h2>`;
 const _picks = RENDER.picks, _bt = RENDER.backtest;
-RENDER.picks = () => `<h2 style="font-size:34px">Totals: overs on low lines</h2>` + _picks() + SEC('hcap', 'Points handicap') + renderHcap('live');
+RENDER.picks = () => market === 'hcap' ? renderHcap('live') : _picks();   // Totals | Points handicap pills (22 Nov 2026)
 RENDER.backtest = () => market === 'hcap' && DATA.hcap && DATA.hcap.backtest ? hcapBacktest() : _bt();
 // the handicap backtest on its own: the two backtest pills, then the tables (leagues are compared in By league)
 function hcapBacktest(){
@@ -873,19 +873,19 @@ function hcapBacktest(){
 }
 function render(){
   document.querySelectorAll('#tabs a').forEach(a => { a.classList.toggle('on', a.dataset.view === view); a.href = `#view=${a.dataset.view}${lg === 'all' ? '' : '&lg=' + lg}`; });
-  const hb = view === 'backtest' && DATA.hcap && DATA.hcap.backtest;     // the market switch, Backtest only
-  const chips = view === 'method' || view === 'home' || view === 'wtest' || (hb && market === 'hcap') ? [] : [['all', 'All leagues'], ...DATA.leagues.map(l => [l.key, `${l.country} ${sexAb(l)}`])];
+  const hb = (view === 'backtest' && DATA.hcap && DATA.hcap.backtest) || view === 'picks';   // the market pills: Backtest and Live test
+  const chips = view === 'method' || view === 'home' || view === 'wtest' || (view === 'backtest' && market === 'hcap') ? [] : [['all', 'All leagues'], ...DATA.leagues.map(l => [l.key, `${l.country} ${sexAb(l)}`])];
   const sw = hb ? [['totals', 'Totals: overs on low lines'], ['hcap', 'Points handicap']].map(([k, t]) =>
-      `<a href="#view=backtest${k === 'hcap' ? '&m=hcap' : ''}${k === 'totals' && lg !== 'all' ? '&lg=' + lg : ''}" class="${k === market ? 'on' : ''}" style="font-size:15.5px;padding:6px 14px">${t}</a>`).join('')
+      `<a href="#view=${view}${k === 'hcap' ? '&m=hcap' : ''}${lg !== 'all' && (k === 'totals' || view === 'picks') ? '&lg=' + lg : ''}" class="${k === market ? 'on' : ''}" style="font-size:15.5px;padding:6px 14px">${t}</a>`).join('')
       + (chips.length ? '<span style="flex-basis:100%;height:2px"></span>' : '') : '';
-  $('chips').innerHTML = sw + chips.map(([k, t]) => `<a href="#view=${view}${k === 'all' ? '' : '&lg=' + k}" class="${k === lg ? 'on' : ''}">${t}</a>`).join('');
+  $('chips').innerHTML = sw + chips.map(([k, t]) => `<a href="#view=${view}${view === 'picks' && market === 'hcap' ? '&m=hcap' : ''}${k === 'all' ? '' : '&lg=' + k}" class="${k === lg ? 'on' : ''}">${t}</a>`).join('');
   $('out').innerHTML = RENDER[view]();
 }
 function fromHash(){
   const m = location.hash.match(/view=(\w+)/), l = location.hash.match(/lg=([\w-]+)/);
   view = m && m[1] === 'results' ? 'picks' : m && m[1] === 'hcap' ? 'picks' : m && RENDER[m[1]] ? m[1] : 'home';   // Handicap test merged into Live test (22 Nov 2026)   // Results merged into Picks (8 Nov 2026)
   const nlg = l && LG[l[1]] ? l[1] : 'all';
-  market = /[&#]m=hcap/.test(location.hash) ? 'hcap' : 'totals';
+  market = /[&#]m=hcap/.test(location.hash) || (m && m[1] === 'hcap') ? 'hcap' : 'totals';
   const moved = nlg !== lg;
   if (moved) btSeason = null;
   lg = nlg;
