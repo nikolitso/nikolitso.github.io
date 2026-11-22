@@ -262,7 +262,7 @@ a.gm{color:inherit;text-decoration:none} a.gm:hover{color:var(--gold);text-decor
 <p>Projections shows the next 7 days against the market line, and Live test records the picks, logged before the first serve. Season, Backtest and Leagues show the ratings, past seasons since 2020 and each league's market. <a href="/volleyball/games/">Every game</a> has its own page.</p>
 </section>
 </main>
-<script src="data.js?v=6399779a"></script>
+<script src="data.js?v=938004a1"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -970,13 +970,40 @@ function hcapExtra(){
   return h;
 }
 
+// Women Leagues test, Match winner pill (user, 22 Nov 2026): the handicap picks that back the favourite (giving points),
+// followed on the match winner instead, for comparison; not a separate rule
+function wtestML(){
+  const T = DATA.test, TL = Object.fromEntries(T.leagues.map(l => [l.key, l]));
+  const P = (T.hpicks || []).filter(p => p.line < 0);
+  const won = p => { const [a, b] = p.sets.split('-').map(Number); return (a > b) === (p.side === 'home'); };
+  const done = P.filter(p => 'won' in p && p.ml_px), open = P.filter(p => !('won' in p)).sort((a, b) => a.dt.localeCompare(b.dt));
+  const n = done.length, w = done.filter(won).length, units = done.reduce((s, p) => s + (won(p) ? p.ml_px - 1 : -1), 0);
+  const lgLine = p => `<div class="muted" style="font-size:14px">${TL[p.lg] ? TL[p.lg].country + ' · ' + TL[p.lg].name : ''}</div>`;
+  const avgPx = done.length ? done.reduce((s, p) => s + p.ml_px, 0) / done.length : null;
+  const tiles = [['Open', open.length, open.length ? 'favourites to play' : 'none right now'], ['Record', `${w}–${n - w}`, n ? (w / n * 100).toFixed(1) + '% won' : '0 settled'],
+                 ['ROI', n ? `<span class="${cls(units)}">${sgn(units / n * 100, 1)}%</span>` : '–', n ? units1(units) : 'no settled games'],
+                 ['Avg price', avgPx ? avgPx.toFixed(2) : '–', 'match winner']];
+  let h = `<div class="metrics">${tiles.map(([l, v, x]) => `<div class="metric"><div class="lbl">${l}</div><div class="big">${v}</div><div class="sm">${x}</div></div>`).join('')}</div>`;
+  const pc = x => x == null ? '–' : pct(x);
+  h += '<h2>Open</h2>';
+  if (!open.length) h += '<p class="empty">No open favourites. Each handicap pick that gives points shows up here.</p>';
+  else h += `<div class="scroll"><table class="sortable"><thead><tr><th>Date</th><th>Match</th><th>Favourite</th><th class="n">Handicap pick</th><th class="n">Price</th><th class="n">Market chance</th><th class="n">Model chance</th><th class="n">Edge</th></tr></thead><tbody>`
+    + open.map(p => `<tr><td>${short(p.dt)} ${p.dt.slice(11)}</td><td class="wr">${gameLink(p)}${lgLine(p)}</td><td><b>${p.team}</b></td><td class="n">${hLabel('', p.line).trim()}</td><td class="n">${p.ml_px ? p.ml_px.toFixed(2) : '–'}</td><td class="n">${pc(p.ml_mkt)}</td><td class="n">${pc(p.ml_p)}</td><td class="n ${p.ml_px ? cls(p.ml_p * p.ml_px - 1) : ''}">${p.ml_px ? sgn((p.ml_p * p.ml_px - 1) * 100, 0) + '%' : '–'}</td></tr>`).join('') + '</tbody></table></div>';
+  h += '<h2>Settled, latest first</h2>';
+  if (!n) h += '<p class="empty">No settled games yet. Each is added here once its match is played.</p>';
+  else h += `<div class="scroll"><table><thead><tr><th>Date</th><th>Match</th><th>Favourite</th><th class="n">Price</th><th class="n">Market chance</th><th class="n">Model chance</th><th class="n">Sets</th><th class="n">Profit</th></tr></thead><tbody>`
+    + done.slice().sort((a, b) => b.dt.localeCompare(a.dt)).map(p => { const wn = won(p), pr = wn ? p.ml_px - 1 : -1;
+      return `<tr><td>${short(p.dt)}</td><td class="wr">${gameLink(p)}${lgLine(p)}</td><td>${p.team}</td><td class="n">${p.ml_px.toFixed(2)}</td><td class="n">${pc(p.ml_mkt)}</td><td class="n">${pc(p.ml_p)}</td><td class="n ${wn ? 'w' : 'l'}">${p.sets.replace('-', '–')}</td><td class="n ${cls(pr)}">${sgn(pr, 2)}</td></tr>`; }).join('') + '</tbody></table></div>';
+  return h + `<p class="note">The handicap picks above that back the favourite (giving points), followed on the match winner instead: the average match-winner price, the market's chance with the margin taken out, and the model's win chance as shown on the game pages (league-corrected). Tracked for comparison only, not a separate bet rule; 1 unit a game at the price logged before the start. Underdog handicap picks are left out.</p>`;
+}
+
 const RENDER = {home: renderHome, projections: renderProjections, picks: renderPicks, season: renderSeason, backtest: renderBacktest, leagues: renderLeagues, wtest: renderWtest, method: renderMethod};
 // Live test and Backtest each carry the totals first, then the points handicap, with separate records (user, 22 Nov 2026)
 const SEC = (id, t) => `<h2 id="${id}" style="margin-top:56px;font-size:34px;border-top:1px solid var(--line);padding-top:28px">${t}</h2>`;
 const _picks = RENDER.picks, _bt = RENDER.backtest;
 RENDER.picks = () => market === 'hcap' ? renderHcap('live') + (lg === 'all' ? hcapExtra() : '') : _picks();
 const _wt = RENDER.wtest;
-RENDER.wtest = () => market === 'hcap' ? wtestHcap() : _wt();
+RENDER.wtest = () => market === 'hcap' ? wtestHcap() : market === 'ml' ? wtestML() : _wt();
 const _lgs = RENDER.leagues;
 RENDER.leagues = () => market === 'hcap' ? _lgs() : renderRatings();   // Team ratings first, then Games and picks   // Totals | Points handicap pills (22 Nov 2026)
 RENDER.backtest = () => market === 'hcap' && DATA.hcap && DATA.hcap.backtest ? hcapBacktest() : _bt();
@@ -991,8 +1018,8 @@ function render(){
   document.querySelectorAll('#tabs a').forEach(a => { a.classList.toggle('on', a.dataset.view === view); a.href = `#view=${a.dataset.view}${lg === 'all' ? '' : '&lg=' + lg}`; });
   const hb = (view === 'backtest' && DATA.hcap && DATA.hcap.backtest) || view === 'picks' || view === 'wtest' || view === 'leagues';   // the pills: Backtest, Live test, Women Leagues test, Leagues
   const chips = view === 'method' || view === 'home' || view === 'wtest' || (view === 'backtest' && market === 'hcap') ? [] : [['all', 'All leagues'], ...DATA.leagues.map(l => [l.key, `${l.country} ${sexAb(l)}`])];
-  const sw = hb ? (view === 'leagues' ? [['totals', 'Team ratings'], ['hcap', 'Games and picks']] : [['totals', 'Totals: overs on low lines'], ['hcap', 'Points handicap']]).map(([k, t]) =>
-      `<a href="#view=${view}${k === 'hcap' ? '&m=hcap' : ''}${lg !== 'all' && (k === 'totals' || view === 'picks') && LG[lg] ? '&lg=' + lg : ''}" class="${k === market ? 'on' : ''}" style="font-size:15.5px;padding:6px 14px">${t}</a>`).join('')
+  const sw = hb ? (view === 'leagues' ? [['totals', 'Team ratings'], ['hcap', 'Games and picks']] : [['totals', 'Totals: overs on low lines'], ['hcap', 'Points handicap'], ...(view === 'wtest' ? [['ml', 'Match winner']] : [])]).map(([k, t]) =>
+      `<a href="#view=${view}${k === 'hcap' ? '&m=hcap' : k === 'ml' ? '&m=ml' : ''}${lg !== 'all' && (k === 'totals' || view === 'picks') && LG[lg] ? '&lg=' + lg : ''}" class="${k === market ? 'on' : ''}" style="font-size:15.5px;padding:6px 14px">${t}</a>`).join('')
       + (chips.length ? '<span style="flex-basis:100%;height:2px"></span>' : '') : '';
   $('chips').innerHTML = sw + chips.map(([k, t]) => `<a href="#view=${view}${(view === 'picks' || view === 'leagues') && market === 'hcap' ? '&m=hcap' : ''}${k === 'all' ? '' : '&lg=' + k}" class="${k === lg ? 'on' : ''}">${t}</a>`).join('');
   $('out').innerHTML = RENDER[view]();
@@ -1002,7 +1029,7 @@ function fromHash(){
   view = m && m[1] === 'results' ? 'picks' : m && m[1] === 'hcap' ? 'picks' : m && RENDER[m[1]] ? m[1] : 'home';   // Handicap test merged into Live test (22 Nov 2026)   // Results merged into Picks (8 Nov 2026)
   const TLK = new Set([...((DATA.test || {}).leagues || []), ...((DATA.hcapx || {}).leagues || [])].map(x => x.key));   // test and handicap-only leagues: Leagues tab only
   const nlg = l && (LG[l[1]] || (/view=leagues/.test(location.hash) && TLK.has(l[1]))) ? l[1] : 'all';
-  market = /[&#]m=hcap/.test(location.hash) || (m && m[1] === 'hcap') ? 'hcap' : 'totals';
+  market = /[&#]m=hcap/.test(location.hash) || (m && m[1] === 'hcap') ? 'hcap' : /[&#]m=ml/.test(location.hash) ? 'ml' : 'totals';
   const moved = nlg !== lg;
   if (moved) btSeason = null;
   lg = nlg;
