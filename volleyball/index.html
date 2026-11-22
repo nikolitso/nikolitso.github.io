@@ -234,7 +234,6 @@ a.gm{color:inherit;text-decoration:none} a.gm:hover{color:var(--gold);text-decor
     <a href="#view=wtest" data-view="wtest">Women Leagues test</a>
     <a href="#view=season" data-view="season">Season Ratings</a>
     <a href="#view=backtest" data-view="backtest">Backtest</a>
-    <a href="#view=leagues" data-view="leagues">Leagues</a>
     <a href="#view=method" data-view="method">How it works</a>
   </nav>
 </div></header>
@@ -253,7 +252,7 @@ a.gm{color:inherit;text-decoration:none} a.gm:hover{color:var(--gold);text-decor
 <section class="an-page-about" aria-label="About this page">
 <p class="an-page-about__label">About this page</p>
 <p>This page projects women's and men's volleyball league matches: the chance each one ends in three sets or goes to four or five, and its total points. Every team gets one rating, its chance of winning a rally against an average team in its own league, from this season's matches only. A pick is an over on a low line, where the market expects a 3-0, when the model's edge clears the page's bar.</p>
-<p>Projections shows the next 7 days against the market line, and Live test records the picks, logged before the first serve, and Women Leagues test follows more women's leagues apart from that record. Season Ratings, Backtest and Leagues show every league's team ratings, past seasons since 2020 and each league's market. <a href="/volleyball/games/">Every game</a> has its own page.</p>
+<p>Projections shows the next 7 days against the market line, and Live test records the picks, logged before the first serve, and Women Leagues test follows more women's leagues apart from that record. Season Ratings and Backtest show every league's team ratings and past seasons since 2020. <a href="/volleyball/games/">Every game</a> has its own page.</p>
 </section>
 </main>
 <script src="data.js?v=3a159728"></script>
@@ -1045,7 +1044,7 @@ function render(){
 }
 function fromHash(){
   const m = location.hash.match(/view=(\w+)/), l = location.hash.match(/lg=([\w-]+)/);
-  view = m && m[1] === 'results' ? 'picks' : m && m[1] === 'hcap' ? 'picks' : m && RENDER[m[1]] ? m[1] : 'home';   // Handicap test merged into Live test (22 Nov 2026)   // Results merged into Picks (8 Nov 2026)
+  view = m && m[1] === 'leagues' ? 'season' : m && m[1] === 'results' ? 'picks' : m && m[1] === 'hcap' ? 'picks' : m && RENDER[m[1]] ? m[1] : 'home';   // Handicap test merged into Live test (22 Nov 2026)   // Results merged into Picks (8 Nov 2026)
   const TLK = new Set([...((DATA.test || {}).leagues || []), ...((DATA.hcapx || {}).leagues || [])].map(x => x.key));   // test and handicap-only leagues: Leagues tab only
   const nlg = l && (LG[l[1]] || (/view=season/.test(location.hash) && TLK.has(l[1]))) ? l[1] : 'all';
   market = /[&#]m=hcap/.test(location.hash) || (m && m[1] === 'hcap') ? 'hcap' : /[&#]m=ml/.test(location.hash) ? 'ml' : 'totals';
