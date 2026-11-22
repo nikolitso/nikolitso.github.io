@@ -261,7 +261,7 @@ a.gm{color:inherit;text-decoration:none} a.gm:hover{color:var(--gold);text-decor
 <p>Projections shows the next 7 days against the market line, and Live test records the picks, logged before the first serve. Season, Backtest and Leagues show the ratings, past seasons since 2020 and each league's market. <a href="/volleyball/games/">Every game</a> has its own page.</p>
 </section>
 </main>
-<script src="data.js?v=0a3da5e3"></script>
+<script src="data.js?v=621d1520"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -271,6 +271,11 @@ const short = s => { const d = new Date(s.slice(0,10)+'T12:00'); return `${d.get
 const slugify = s => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 const gameLink = g => `<a class="gm" href="/volleyball/games/${g.dt.slice(0,10)}-${slugify(g.home)}-${slugify(g.away)}/">${g.home} – ${g.away}</a>`;
 const pct = x => Math.round(x*100) + '%';
+// handicap pick shown corrected: the market's no-vig chance + HREAL x (model - market); HREAL from the backtest picks (0.65,
+// walk-forward 2020-23 -> 2023-26 matched the cover rate in every band). Picks are still chosen on the model's raw edge.
+const HREAL = () => (DATA.hcap && DATA.hcap.backtest && DATA.hcap.backtest.real) || 0.65;
+const hP = p => { const mk = (1 / p.px) / (1 / p.px + 1 / p.other_px); return mk + HREAL() * (p.p - mk); };
+const hE = p => hP(p) * p.px - 1;
 const hOpen = () => ((DATA.hcap || {}).picks || []).filter(p => !('won' in p) && (view === 'home' || inLg(p))).sort((a, b) => a.dt.localeCompare(b.dt));
 const hLabel = (team, line) => `${team} ${(line > 0 ? '+' : line < 0 ? '−' : '') + Math.abs(line).toFixed(1)}`;   // e.g. Consolini −6.5
 const ptsCell = g => g.pts_h != null ? `<td class="n">${g.pts_h.toFixed(1)}–${g.pts_a.toFixed(1)}</td><td class="n">${(g.hcap > 0 ? '+' : g.hcap < 0 ? '−' : '') + Math.abs(g.hcap).toFixed(1)}</td>` : '<td class="n muted">–</td><td class="n muted">–</td>';   // each team's points, home handicap (user, 22 Nov 2026)
@@ -371,7 +376,7 @@ function hOpenTop(){
   const o = hOpen();
   if (!o.length) return '';
   return `<h2>Open handicap picks</h2><div class="scroll"><table style="max-width:900px"><thead><tr><th>Date</th>${lg === 'all' ? '<th>League</th>' : ''}<th>Match</th><th>Pick</th><th class="n">Price</th><th class="n">Model handicap</th><th class="n">Edge</th></tr></thead><tbody>`
-    + o.map(p => `<tr><td>${short(p.dt)} ${p.dt.slice(11)}</td>${lg === 'all' ? `<td>${LG[p.lg].country} ${sexAb(LG[p.lg])}</td>` : ''}<td class="wr">${gameLink(p)}</td><td><b>${hLabel(p.team, p.line)}</b></td><td class="n">${p.px.toFixed(2)}</td><td class="n">${p.hcap != null ? hLabel('', p.side === 'home' ? p.hcap : -p.hcap).trim() : '–'}</td><td class="n ${cls(p.edge)}">${sgn(p.edge * 100, 0)}%</td></tr>`).join('')
+    + o.map(p => `<tr><td>${short(p.dt)} ${p.dt.slice(11)}</td>${lg === 'all' ? `<td>${LG[p.lg].country} ${sexAb(LG[p.lg])}</td>` : ''}<td class="wr">${gameLink(p)}</td><td><b>${hLabel(p.team, p.line)}</b></td><td class="n">${p.px.toFixed(2)}</td><td class="n">${p.hcap != null ? hLabel('', p.side === 'home' ? p.hcap : -p.hcap).trim() : '–'}</td><td class="n ${cls(hE(p))}">${sgn(hE(p) * 100, 0)}%</td></tr>`).join('')
     + `</tbody></table></div><p class="note"><a href="#view=picks&m=hcap&to=hopen">The handicap record and its settled picks →</a></p>`;
 }
 
@@ -842,7 +847,7 @@ function renderHcap(part){   // 'live': on Live test; 'bt': on Backtest (merged 
   else {
     h += `<div class="scroll"><table><thead><tr><th>Date</th><th>Match</th><th>Pick</th><th class="n">Opening line</th><th class="n">Price</th><th class="n">Model handicap</th><th class="n">Model chance</th><th class="n">Edge</th></tr></thead><tbody>`;
     for (const p of open)
-      h += `<tr><td>${short(p.dt)} ${p.dt.slice(11)}</td><td class="wr">${gameLink(p)}${lgCell(p)}</td><td><b>${pickTxt(p)}</b></td><td class="n">${p.line_open != null ? hc(p.line_open) : '–'}</td><td class="n">${p.px.toFixed(2)}</td><td class="n">${p.hcap != null ? hc(p.side === 'home' ? p.hcap : -p.hcap) : '–'}</td><td class="n">${pct(p.p)}</td><td class="n ${cls(p.edge)}">${sgn(p.edge * 100, 0)}%</td></tr>`;
+      h += `<tr><td>${short(p.dt)} ${p.dt.slice(11)}</td><td class="wr">${gameLink(p)}${lgCell(p)}</td><td><b>${pickTxt(p)}</b></td><td class="n">${p.line_open != null ? hc(p.line_open) : '–'}</td><td class="n">${p.px.toFixed(2)}</td><td class="n">${p.hcap != null ? hc(p.side === 'home' ? p.hcap : -p.hcap) : '–'}</td><td class="n">${pct(hP(p))}</td><td class="n ${cls(hE(p))}">${sgn(hE(p) * 100, 0)}%</td></tr>`;
     h += '</tbody></table></div>';
   }
   h += '<h2>Settled picks, latest first</h2>';
@@ -855,7 +860,7 @@ function renderHcap(part){   // 'live': on Live test; 'bt': on Backtest (merged 
     }
     h += '</tbody></table></div>';
   }
-  return h + `<p class="note">A live test, started on 22 Nov 2026, kept apart from the totals record. The model plays out every set rally by rally, so it knows each match's points margin as well as its total; its handicap is the margin line where each side covers about half the time. A pick backs the side whose model chance × the average price is at least ${H.edge * 100}% above 1 (smaller edges barely broke even in the backtest, see By edge), when the market handicap is ${H.min_line} points or more (but not a favourite giving ${H.fav_max} or more), in the same games as the totals rule. Until the start a pick follows the latest line; once played it is settled on the points margin. Model chance and Edge are shown as the model gives them (it runs too confident, see Calibration). Equal stakes; lines end in .5, so there are no pushes.</p>`;
+  return h + `<p class="note">A live test, started on 22 Nov 2026, kept apart from the totals record. The model plays out every set rally by rally, so it knows each match's points margin as well as its total; its handicap is the margin line where each side covers about half the time. A pick backs the side whose model chance × the average price is at least ${H.edge * 100}% above 1 (smaller edges barely broke even in the backtest, see By edge), when the market handicap is ${H.min_line} points or more (but not a favourite giving ${H.fav_max} or more), in the same games as the totals rule. Until the start a pick follows the latest line; once played it is settled on the points margin. Model chance and Edge are shown corrected: the model runs too confident on the handicap, so they keep ${Math.round(HREAL() * 100)}% of its advantage over the market's no-vig chance, the share the backtest picks actually achieved (see Calibration); a pick can therefore show less than ${H.edge * 100}%. Equal stakes; lines end in .5, so there are no pushes.</p>`;
 }
 
 // Women Leagues test, Points handicap pill: the live handicap rule in the test leagues, no backtest (22 Nov 2026)
@@ -873,7 +878,7 @@ function wtestHcap(){
   h += '<h2>Open picks</h2>';
   if (!open.length) h += '<p class="empty">No open handicap picks in the test leagues. New ones appear once the market posts a points handicap for a match that qualifies.</p>';
   else h += `<div class="scroll"><table><thead><tr><th>Date</th><th>Match</th><th>Pick</th><th class="n">Opening line</th><th class="n">Price</th><th class="n">Model handicap</th><th class="n">Model chance</th><th class="n">Edge</th></tr></thead><tbody>`
-    + open.map(p => `<tr><td>${short(p.dt)} ${p.dt.slice(11)}</td><td class="wr">${gameLink(p)}${lgLine(p)}</td><td><b>${hLabel(p.team, p.line)}</b></td><td class="n">${p.line_open != null ? hLabel('', p.line_open).trim() : '–'}</td><td class="n">${p.px.toFixed(2)}</td><td class="n">${p.hcap != null ? hLabel('', p.side === 'home' ? p.hcap : -p.hcap).trim() : '–'}</td><td class="n">${pct(p.p)}</td><td class="n ${cls(p.edge)}">${sgn(p.edge * 100, 0)}%</td></tr>`).join('') + '</tbody></table></div>';
+    + open.map(p => `<tr><td>${short(p.dt)} ${p.dt.slice(11)}</td><td class="wr">${gameLink(p)}${lgLine(p)}</td><td><b>${hLabel(p.team, p.line)}</b></td><td class="n">${p.line_open != null ? hLabel('', p.line_open).trim() : '–'}</td><td class="n">${p.px.toFixed(2)}</td><td class="n">${p.hcap != null ? hLabel('', p.side === 'home' ? p.hcap : -p.hcap).trim() : '–'}</td><td class="n">${pct(hP(p))}</td><td class="n ${cls(hE(p))}">${sgn(hE(p) * 100, 0)}%</td></tr>`).join('') + '</tbody></table></div>';
   h += '<h2>Settled picks, latest first</h2>';
   if (!n) h += '<p class="empty">No settled handicap picks yet. Each pick is added here once its match is played.</p>';
   else h += `<div class="scroll"><table><thead><tr><th>Date</th><th>Match</th><th>Pick</th><th class="n">Closing line</th><th class="n">Price</th><th class="n">Points</th><th class="n">Margin</th><th class="n">Profit</th></tr></thead><tbody>`
