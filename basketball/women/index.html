@@ -244,7 +244,7 @@ a.tile:hover{border-color:var(--gold)}
 <p>Projections shows the next 7 days, and Live test records the picks, taken at the opening line; 1H live test and 1H backtest cover first halves. Backtest covers 2021–22 to 2025–26. A game's line is the median of the main market lines.</p>
 </section>
 </main>
-<script src="data.js?v=w109"></script>
+<script src="data.js?v=w110"></script>
 <script src="live.js"></script>
 <script>
 const $ = id => document.getElementById(id);
@@ -427,14 +427,15 @@ function h1Halves(mode){
     : '<td class="n muted">–</td>'.repeat(5);
   const HEAD = '<th class="n">Games</th><th class="n">1H pts</th><th class="n">2H pts</th><th class="n">1H − 2H</th><th class="n">1H share</th>';
   const T = (first, body, w = 900) => `<div class="scroll"><table style="max-width:${w}px"><thead><tr><th>${first}</th>${HEAD}</tr></thead><tbody>${body}</tbody></table></div>`;
-  const past = P.all, ks = Object.keys(P.lg).sort((a, b) => lgShort(a) < lgShort(b) ? -1 : 1);
+  const past = P.all, ksAll = Object.keys(P.lg).sort((a, b) => lgShort(a) < lgShort(b) ? -1 : 1), ks = ksAll.filter(k => !isH1X(k));   // P.lg has the first-half-only leagues too (23 Nov 2026, user)
+  const X1 = k => isH1X(k) ? ' <span class="muted">(1H only)</span>' : '';
   const base = `Points per game, both teams, regulation quarters, regular season, in the ${LIVE.leagues.length} page leagues (not the first-half-only ones).`;
   if (mode === 'bt') {
     let h = `<h2 id="h1halves">First half v second half</h2><p class="note">Why first-half overs are tested: first halves scored more than second halves in every season, 2021–22 to 2025–26. ${base} The 1H live test tab checks this season against these figures every hour.</p>`;
     h += T('Season', P.seasons.map(r => `<tr><td>${sy(r.sy)}</td>${cells(r)}</tr>`).join('') + `<tr class="sub"><td><b>2021–22 to 2025–26</b></td>${cells(past)}</tr>`);
-    h += `<h2>First half v second half by league</h2>` + T('League', ks.map(k => { const on = open === k, R = (P.lgs || {})[k] || [];   // click a league for its seasons (22 Nov 2026, user)
-        return `<tr class="srow${on ? ' on' : ''}" data-open="${k}"><td><span class="caret">${on ? '▾' : '▸'}</span> ${lgShort(k)}</td>${cells(P.lg[k])}</tr>` + (on ? R.map(x => `<tr class="sub"><td style="padding-left:28px">${sy(x.sy)}</td>${cells(x)}</tr>`).join('') : ''); }).join('')
-      + `<tr class="sub"><td><b>All</b></td>${cells(past)}</tr>`) + '<p class="note">Click a league for its seasons.</p>';
+    h += `<h2>First half v second half by league</h2><p class="note">Every league on the 1H tabs, the first-half-only ones marked (1H only).</p>` + T('League', ksAll.map(k => { const on = open === k, R = (P.lgs || {})[k] || [];   // click a league for its seasons (22 Nov 2026, user)
+        return `<tr class="srow${on ? ' on' : ''}" data-open="${k}"><td><span class="caret">${on ? '▾' : '▸'}</span> ${lgShort(k)}${X1(k)}</td>${cells(P.lg[k])}</tr>` + (on ? R.map(x => `<tr class="sub"><td style="padding-left:28px">${sy(x.sy)}</td>${cells(x)}</tr>`).join('') : ''); }).join('')
+      + `<tr class="sub"><td><b>Page leagues</b></td>${cells(past)}</tr>` + (P.allx && ksAll.length > ks.length ? `<tr class="sub"><td><b>All leagues</b></td>${cells(P.allx)}</tr>` : '')) + '<p class="note">Click a league for its seasons.</p>';
     return h;
   }
   const sum = L => { const t = {n: 0, s1: 0, s2: 0}; L.forEach(k => { const x = C && C.lg && C.lg[k]; if (x) { t.n += x.n; t.s1 += x.s1; t.s2 += x.s2; } }); return t.n ? t : null; };
