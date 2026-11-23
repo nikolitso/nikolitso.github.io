@@ -185,6 +185,8 @@ th{font-size:14px}
 <!-- sitebar:end -->
 
 
+<script defer src="/assets/openpicks.js"></script>
+<script defer src="/assets/clv-tile.js"></script>
 <style>
 .sets{display:flex;height:8px;border-radius:4px;overflow:hidden;margin:12px 0 6px;background:var(--line)}
 .sets i{display:block} .sets i:nth-child(1){background:var(--an-bar)} .sets i:nth-child(2){background:var(--an-muted)} .sets i:nth-child(3){background:var(--gold)}
@@ -265,7 +267,7 @@ a.gm{color:inherit;text-decoration:none} a.gm:hover{color:var(--gold);text-decor
 <p>Projections shows the next 7 days against the market line, and Live test records the picks, logged before the first serve, and Women Leagues test follows more women's leagues apart from that record. Season Ratings and Backtest show every league's team ratings and past seasons since 2020. <a href="/volleyball/games/">Every game</a> has its own page.</p>
 </section>
 </main>
-<script src="data.js?v=3bed3946"></script>
+<script src="data.js?v=3c3c65d6"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -700,7 +702,7 @@ function renderMethod(){
   return `<div class="doc">
   <h3><span class="num">1</span>One number per team</h3>
   <p>Every team gets one rating: its chance of winning a rally against an average team in its league. The rating comes from the points of this season's matches only, as rosters change from year to year, and recent matches count more.</p>
-  <p>Leagues are never mixed: a team is only compared with the teams in its own league, and each league has its own home advantage, measured from past seasons. The model's settings, such as how fast old matches lose weight, are the same in every league. They were set once, on one season of Turkey's women's league, and never adjusted to fit the others.</p>
+  <p>Leagues are never mixed: a team is only compared with the teams in its own league, and each league has its own home advantage, measured from past seasons. The model's settings, such as how fast old matches lose weight, are the same in every league. They were first set on one season of Turkey's women's league. In November 2026 that choice was tested against two others, each tuned on 2024–25 and judged on 2025–26 and 2026–27, which none of them had seen, across all 35 leagues on the page: one set tuned on every league together (a slightly better fit to the over/under, but a worse one to set scores; 179 bets, +10.9%) and each league tuned on its own (119 bets, +9.7%, and the worst fit of the three). The Turkey settings did best (122 bets, +17.5%, and the best fit to the final set scores), so they stay. Tuning each league on its own mostly fits noise: one league's season is too few matches.</p>
   <h3><span class="num">2</span>From rallies to the whole match</h3>
   <p>A set runs to 25 points (the fifth to 15) and must be won by two, and the match is best of five. From the two ratings the model works out the exact chance of every set score and every points total, allowing for some day-to-day variation in form.</p>
   <h3><span class="num">3</span>Why totals have two humps</h3>
