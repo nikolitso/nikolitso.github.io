@@ -991,7 +991,7 @@ function bindRefs(){
 }
 
 // Expert view: ratings out of 10, built from a Greek football analyst's round-by-round match reviews
-const XV = {updated: '9 Nov 2026', rounds: 10, rows: [
+const XV = {updated: '9 Nov 2026', rounds: 10, last: {date: '9 Nov 2026', title: 'Λάθη, πάθη και ανατροπές', en: 'Mistakes, passions and upsets', round: 10}, rows: [
   ['Panathinaikos', 8, 'flat', 'The team of the season so far and the clear title favourite since round 3, when it brushed PAOK aside. Nine wins in ten; the only defeat was the derby at Olympiakos, where it looked predictable and short of ideas. Deep squad, many scorers and near-perfect at home (14 goals in its first four home games, 5–1 v Asteras, 2–0 v AEK). Less fluent away, and the coach rotates so much that a settled side is slow to form. Ounahi’s long injury is the main worry.'],
   ['AEK', 7, 'down', 'The most convincing side in August and the best attacking team at home all season: 4–0 Iraklis, 5–0 Aris, 3–0 OFI, 5–0 Panetolikos, with Varga, Jovic, Majer and Vitalis. Away it has been a different team from the start: draws at Kifisia and Asteras, a late win at Volos, beaten at Panathinaikos. No midfield screen since Pineda left, and it concedes after taking the lead. The Champions League load adds to it.'],
   ['Olympiakos', 6.5, 'up', 'Two seasons in one. Under Mendilibar it won 1–0 twice without convincing, drew at Volos and lost El Kaabi to injury; Imanol then started with a home defeat to OFI. Since then it has improved clearly: won the derby with a plan, scored five against Kalamata, and Ortega has been excellent. Goals remain the main problem, the midfield changes too often and it relaxes when ahead. The five points dropped early weigh heavily.'],
@@ -1020,6 +1020,7 @@ const XV = {updated: '9 Nov 2026', rounds: 10, rows: [
 function renderExperts(){
   const ch = c => ({up: '<span class="w">\u25b2 rising</span>', down: '<span class="l">\u25bc falling</span>', mixed: '<span class="muted">\u2195 up and down</span>'})[c] || '<span class="muted">\u2192 steady</span>';
   let h = `<p class="rs-lede">How the teams look to an experienced Greek football analyst, from his match reviews of every round of the season so far, read together (rounds 1\u2013${XV.rounds}). The ratings out of 10 are a summary of his views, not his own scores, and are not used by the model. Updated ${XV.updated}.</p>
+  <p class="note"><b>Last article read:</b> “${XV.last.title}” (${XV.last.en}), his review of round ${XV.last.round}, published ${XV.last.date}.</p>
   <div class="scroll"><table class="xv"><thead><tr><th class="n">#</th><th>Team</th><th class="n">Rating</th><th>Season trend</th><th>Expert view</th></tr></thead><tbody>`;
   XV.rows.forEach(([t, r, c, txt], i) => h += `<tr><td class="n muted">${i + 1}</td><td><b>${t}</b></td><td class="n tot">${r}</td><td>${ch(c)}</td><td class="xvc">${txt}</td></tr>`);
   h += `</tbody></table></div>`;
