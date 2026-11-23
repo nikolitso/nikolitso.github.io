@@ -153,8 +153,11 @@ def superleague():
     d = js_object("/superleague/data.js", r"window\.SL\s*=")
     fx = upcoming(d.get("fixtures", []), lambda f: f["kickoff"])
     v = d.get("value") or {}
-    rec = (v.get("record") or {}).get("all") or {}
-    pills = record(rec.get("won", 0), rec.get("bets", 0) - rec.get("won", 0), rec.get("profit", 0), len(v.get("bets") or []), show_units=True)
+    # the page's rule: only picks at EV 10% or more (user, 23 Nov 2026); the pipeline logs from 5%
+    st = [b for b in (v.get("record") or {}).get("settled", []) if b.get("ev", 0) >= 0.10 - 1e-9]
+    won = sum(b.get("result") == "won" for b in st)
+    pills = record(won, len(st) - won, sum(b.get("profit", 0) for b in st),
+                   sum(b.get("ev", 0) >= 0.10 - 1e-9 for b in v.get("bets") or []), show_units=True)
     if fx:
         pills.append(nxt(fx[0]["home"], fx[0]["away"], parse(fx[0]["kickoff"])))
     return pills
