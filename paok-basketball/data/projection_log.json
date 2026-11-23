@@ -3127,7 +3127,7 @@
   "date": "2026-12-08T18:00:00Z",
   "opp": "Bosna",
   "home": true,
-  "saved": "2026-11-23T19:01:28Z",
+  "saved": "2026-11-23T21:32:47Z",
   "paok": 85.6,
   "oppScore": 80.7,
   "winProb": 66,
@@ -3192,7 +3192,8 @@
      "pts": 17.2,
      "reb": 2.3,
      "ast": 1.9,
-     "pir": 15.0
+     "pir": 15.0,
+     "fg3m": 2.2
     },
     {
      "name": "Kyle Alexander",
@@ -3201,7 +3202,8 @@
      "pts": 8.4,
      "reb": 5.7,
      "ast": 0.8,
-     "pir": 13.7
+     "pir": 13.7,
+     "fg3m": 0.2
     },
     {
      "name": "Marcus Foster",
@@ -3210,7 +3212,8 @@
      "pts": 14.8,
      "reb": 3.6,
      "ast": 2.0,
-     "pir": 13.1
+     "pir": 13.1,
+     "fg3m": 1.4
     },
     {
      "name": "Nick Calathes",
@@ -3219,7 +3222,8 @@
      "pts": 7.7,
      "reb": 4.1,
      "ast": 5.8,
-     "pir": 10.5
+     "pir": 10.5,
+     "fg3m": 0.8
     },
     {
      "name": "Trevor Hudgins",
@@ -3228,7 +3232,8 @@
      "pts": 7.8,
      "reb": 2.3,
      "ast": 1.6,
-     "pir": 7.0
+     "pir": 7.0,
+     "fg3m": 1.4
     },
     {
      "name": "Raiquan Gray",
@@ -3237,7 +3242,8 @@
      "pts": 4.6,
      "reb": 2.2,
      "ast": 1.7,
-     "pir": 5.4
+     "pir": 5.4,
+     "fg3m": 0.4
     },
     {
      "name": "Naz Mitrou Long",
@@ -3246,7 +3252,8 @@
      "pts": 7.1,
      "reb": 1.4,
      "ast": 0.9,
-     "pir": 4.9
+     "pir": 4.9,
+     "fg3m": 1.2
     },
     {
      "name": "Ben Moore",
@@ -3255,7 +3262,8 @@
      "pts": 4.8,
      "reb": 3.3,
      "ast": 0.6,
-     "pir": 4.5
+     "pir": 4.5,
+     "fg3m": 0.2
     },
     {
      "name": "Nikos Chougkaz",
@@ -3264,7 +3272,8 @@
      "pts": 4.8,
      "reb": 2.0,
      "ast": 0.4,
-     "pir": 3.8
+     "pir": 3.8,
+     "fg3m": 0.7
     },
     {
      "name": "Athanasios Bazinas",
@@ -3273,7 +3282,8 @@
      "pts": 3.0,
      "reb": 0.9,
      "ast": 0.7,
-     "pir": 2.5
+     "pir": 2.5,
+     "fg3m": 0.3
     },
     {
      "name": "Dimitrios Kaklamanakis",
@@ -3282,7 +3292,8 @@
      "pts": 2.1,
      "reb": 0.8,
      "ast": 0.4,
-     "pir": 2.1
+     "pir": 2.1,
+     "fg3m": 0.2
     },
     {
      "name": "Nikolaos Persidis",
@@ -3291,7 +3302,8 @@
      "pts": 2.6,
      "reb": 1.4,
      "ast": 0.6,
-     "pir": 1.6
+     "pir": 1.6,
+     "fg3m": 0.3
     }
    ],
    "opp": [
@@ -3302,7 +3314,8 @@
      "pts": 14.3,
      "reb": 5.9,
      "ast": 1.3,
-     "pir": 15.2
+     "pir": 15.2,
+     "fg3m": 0.4
     },
     {
      "name": "Shawn Pipes Jr",
@@ -3311,7 +3324,8 @@
      "pts": 12.1,
      "reb": 1.9,
      "ast": 3.0,
-     "pir": 13.6
+     "pir": 13.6,
+     "fg3m": 1.7
     },
     {
      "name": "Edin Atic",
@@ -3320,7 +3334,8 @@
      "pts": 6.9,
      "reb": 3.9,
      "ast": 2.8,
-     "pir": 8.9
+     "pir": 8.9,
+     "fg3m": 0.7
     },
     {
      "name": "Nikola Popovic",
@@ -3329,7 +3344,8 @@
      "pts": 7.2,
      "reb": 2.8,
      "ast": 1.1,
-     "pir": 8.2
+     "pir": 8.2,
+     "fg3m": 0.1
     },
     {
      "name": "Darko Talic",
@@ -3338,7 +3354,8 @@
      "pts": 5.8,
      "reb": 2.4,
      "ast": 3.0,
-     "pir": 8.0
+     "pir": 8.0,
+     "fg3m": 0.3
     },
     {
      "name": "Marcus Domask",
@@ -3347,7 +3364,8 @@
      "pts": 6.2,
      "reb": 2.3,
      "ast": 1.4,
-     "pir": 7.5
+     "pir": 7.5,
+     "fg3m": 0.5
     },
     {
      "name": "Deandre Gholston",
@@ -3356,7 +3374,8 @@
      "pts": 8.2,
      "reb": 2.5,
      "ast": 1.1,
-     "pir": 7.1
+     "pir": 7.1,
+     "fg3m": 0.7
     },
     {
      "name": "Ryan Hawkins",
@@ -3365,7 +3384,8 @@
      "pts": 5.8,
      "reb": 2.7,
      "ast": 0.8,
-     "pir": 5.7
+     "pir": 5.7,
+     "fg3m": 0.9
     },
     {
      "name": "Adin Vrabac",
@@ -3374,7 +3394,8 @@
      "pts": 3.9,
      "reb": 2.5,
      "ast": 1.1,
-     "pir": 5.0
+     "pir": 5.0,
+     "fg3m": 0.2
     },
     {
      "name": "Gary Browne",
@@ -3383,7 +3404,8 @@
      "pts": 5.2,
      "reb": 1.5,
      "ast": 1.6,
-     "pir": 4.0
+     "pir": 4.0,
+     "fg3m": 0.6
     },
     {
      "name": "James Banks",
@@ -3392,7 +3414,8 @@
      "pts": 2.6,
      "reb": 1.2,
      "ast": 0.3,
-     "pir": 2.4
+     "pir": 2.4,
+     "fg3m": 0.1
     },
     {
      "name": "Alija Islamovic",
@@ -3401,7 +3424,8 @@
      "pts": 1.8,
      "reb": 0.6,
      "ast": 0.4,
-     "pir": 2.1
+     "pir": 2.1,
+     "fg3m": 0.1
     }
    ]
   }
@@ -3412,7 +3436,7 @@
   "date": "2026-12-05T14:00:00Z",
   "opp": "Promitheas",
   "home": true,
-  "saved": "2026-11-23T19:01:28Z",
+  "saved": "2026-11-23T21:32:47Z",
   "paok": 88.1,
   "oppScore": 70.8,
   "winProb": 97,
@@ -3477,7 +3501,8 @@
      "pts": 7.7,
      "reb": 6.2,
      "ast": 0.9,
-     "pir": 11.2
+     "pir": 11.2,
+     "fg3m": 0.2
     },
     {
      "name": "Ben Moore",
@@ -3486,7 +3511,8 @@
      "pts": 6.6,
      "reb": 5.4,
      "ast": 1.1,
-     "pir": 10.4
+     "pir": 10.4,
+     "fg3m": 0.4
     },
     {
      "name": "Nick Calathes",
@@ -3495,7 +3521,8 @@
      "pts": 7.6,
      "reb": 4.2,
      "ast": 4.5,
-     "pir": 10.3
+     "pir": 10.3,
+     "fg3m": 1.1
     },
     {
      "name": "Breein Tyree",
@@ -3504,7 +3531,8 @@
      "pts": 14.1,
      "reb": 1.5,
      "ast": 1.4,
-     "pir": 9.1
+     "pir": 9.1,
+     "fg3m": 1.0
     },
     {
      "name": "Marcus Foster",
@@ -3513,7 +3541,8 @@
      "pts": 12.7,
      "reb": 2.5,
      "ast": 2.2,
-     "pir": 8.7
+     "pir": 8.7,
+     "fg3m": 1.8
     },
     {
      "name": "Trevor Hudgins",
@@ -3522,7 +3551,8 @@
      "pts": 8.8,
      "reb": 2.1,
      "ast": 2.2,
-     "pir": 8.4
+     "pir": 8.4,
+     "fg3m": 1.4
     },
     {
      "name": "Naz Mitrou-Long",
@@ -3531,7 +3561,8 @@
      "pts": 8.5,
      "reb": 2.5,
      "ast": 1.8,
-     "pir": 8.3
+     "pir": 8.3,
+     "fg3m": 1.2
     },
     {
      "name": "Raiquan Gray",
@@ -3540,7 +3571,8 @@
      "pts": 8.1,
      "reb": 3.7,
      "ast": 0.7,
-     "pir": 7.1
+     "pir": 7.1,
+     "fg3m": 0.7
     },
     {
      "name": "Nikos Chougkaz",
@@ -3549,7 +3581,8 @@
      "pts": 4.9,
      "reb": 2.2,
      "ast": 0.4,
-     "pir": 4.4
+     "pir": 4.4,
+     "fg3m": 0.8
     },
     {
      "name": "Nikos Persidis",
@@ -3558,7 +3591,8 @@
      "pts": 3.5,
      "reb": 2.0,
      "ast": 0.5,
-     "pir": 3.9
+     "pir": 3.9,
+     "fg3m": 0.4
     },
     {
      "name": "Thanasis Bazinas",
@@ -3567,7 +3601,8 @@
      "pts": 3.0,
      "reb": 1.2,
      "ast": 0.7,
-     "pir": 3.4
+     "pir": 3.4,
+     "fg3m": 0.3
     },
     {
      "name": "Dimitris Kaklamanakis",
@@ -3576,7 +3611,8 @@
      "pts": 1.9,
      "reb": 1.7,
      "ast": 0.4,
-     "pir": 2.9
+     "pir": 2.9,
+     "fg3m": 0.1
     }
    ],
    "opp": [
@@ -3587,7 +3623,8 @@
      "pts": 9.8,
      "reb": 5.8,
      "ast": 0.9,
-     "pir": 12.8
+     "pir": 12.8,
+     "fg3m": 0.6
     },
     {
      "name": "Arnoldas Kulboka",
@@ -3596,7 +3633,8 @@
      "pts": 9.2,
      "reb": 3.6,
      "ast": 0.9,
-     "pir": 9.1
+     "pir": 9.1,
+     "fg3m": 1.7
     },
     {
      "name": "New Williams",
@@ -3605,7 +3643,8 @@
      "pts": 9.3,
      "reb": 1.9,
      "ast": 2.4,
-     "pir": 8.0
+     "pir": 8.0,
+     "fg3m": 1.9
     },
     {
      "name": "Shannon Evans",
@@ -3614,7 +3653,8 @@
      "pts": 7.7,
      "reb": 2.1,
      "ast": 2.7,
-     "pir": 6.2
+     "pir": 6.2,
+     "fg3m": 1.3
     },
     {
      "name": "Zachary Cuthbertson",
@@ -3623,7 +3663,8 @@
      "pts": 5.6,
      "reb": 2.1,
      "ast": 1.0,
-     "pir": 6.1
+     "pir": 6.1,
+     "fg3m": 0.7
     },
     {
      "name": "Nikos Diplaros",
@@ -3632,7 +3673,8 @@
      "pts": 5.4,
      "reb": 1.6,
      "ast": 5.9,
-     "pir": 5.8
+     "pir": 5.8,
+     "fg3m": 0.9
     },
     {
      "name": "Periklis Kouroupakis",
@@ -3641,7 +3683,8 @@
      "pts": 4.5,
      "reb": 2.1,
      "ast": 0.6,
-     "pir": 5.5
+     "pir": 5.5,
+     "fg3m": 0.2
     },
     {
      "name": "Adonis Arms",
@@ -3650,7 +3693,8 @@
      "pts": 5.2,
      "reb": 2.0,
      "ast": 1.3,
-     "pir": 5.2
+     "pir": 5.2,
+     "fg3m": 0.5
     },
     {
      "name": "Jakob Forrester",
@@ -3659,7 +3703,8 @@
      "pts": 4.4,
      "reb": 3.0,
      "ast": 0.6,
-     "pir": 4.9
+     "pir": 4.9,
+     "fg3m": 0.2
     },
     {
      "name": "Giorgos Kalaitzakis",
@@ -3668,7 +3713,8 @@
      "pts": 3.9,
      "reb": 2.2,
      "ast": 1.0,
-     "pir": 3.0
+     "pir": 3.0,
+     "fg3m": 0.2
     },
     {
      "name": "Alex Antetokounmpo",
@@ -3677,7 +3723,8 @@
      "pts": 3.2,
      "reb": 0.9,
      "ast": 0.3,
-     "pir": 2.4
+     "pir": 2.4,
+     "fg3m": 0.7
     },
     {
      "name": "Charis Paraskevopoulos",
@@ -3686,7 +3733,8 @@
      "pts": 2.1,
      "reb": 0.9,
      "ast": 0.8,
-     "pir": 2.2
+     "pir": 2.2,
+     "fg3m": 0.2
     }
    ]
   }
