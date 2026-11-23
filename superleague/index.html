@@ -343,7 +343,7 @@ function matchCard(g){
     return `<tr><td>${L[s]}</td><td class="n">${f(x.home, s)}</td><td class="n">${f(x.away, s)}</td>`+
       `<td class="n tot">${x.total == null ? '' : f(x.total, s)}</td></tr>`;
   }).join('');
-  return `<div class="card mcard"><div class="top"><div class="ko">${t}</div><h3><a href="${gameHref(g)}" title="This game's own page: the projection, the lines, and after the game what happened">${g.home} <span class="muted">–</span> ${g.away}</a></h3>${refHtml(g.ref)}${coachHtml(g.coaches, g.home, g.away)}${sampleHtml(g)}</div>
+  return `<div class="card mcard"><div class="top"><div class="ko">${t}</div><h3><a href="${gameHref(g)}" title="This game's own page: the projection, the lines, and after the game what happened">${g.home} <span class="muted">–</span> ${g.away}</a></h3>${refHtml(g.ref)}${(x => x ? `<div class="ref">${insightText(x, true)}</div>` : '')(refInsight(g))}${coachHtml(g.coaches, g.home, g.away)}${sampleHtml(g)}</div>
     <div><div class="wdl"><i style="width:${r.home*100}%"></i><i style="width:${r.draw*100}%"></i><i style="width:${r.away*100}%"></i></div>
     <div class="wdlt"><span>Home <b>${pct(r.home)}</b><br><i>${modelOdds(r.home)}</i></span><span>Draw <b>${pct(r.draw)}</b><br><i>${modelOdds(r.draw)}</i></span><span>Away <b>${pct(r.away)}</b><br><i>${modelOdds(r.away)}</i></span></div></div>
     <table><thead><tr><th>Stat</th><th class="n"><span class="full">${g.home}</span><span class="abbr">Home</span></th><th class="n"><span class="full">${g.away}</span><span class="abbr">Away</span></th><th class="n">Total</th></tr></thead><tbody>${rows}</tbody></table>${contextHtml(g) || '<div></div>'}</div>`;
@@ -356,12 +356,39 @@ function chipsHtml(id, cur, list){
 // kick-offs are Athens time; a game leaves Projections 2 hours after it starts
 const athensAgo = ms => new Date(Date.now() - ms).toLocaleString('sv-SE', {timeZone: 'Europe/Athens'}).replace(' ', 'T').slice(0, 16);
 
+// Referee insight (user, 23 Nov 2026): a Greek referee whose card record in games with exactly one Big-4 side
+// (since 2024-25) leans hard one way is flagged on the Projections tab when he takes such a game again.
+// Rule: 8 or more such games, and the opponent got more cards in 80%+ of them or the Big-4 side in 50%+
+// (league-wide: opponent more 57%, Big-4 side more 19%). Shown as context only; the model does not use it.
+const INS_BIG4 = ['Olympiakos', 'Panathinaikos', 'AEK', 'PAOK'];
+function refInsight(g){
+  if (!g.ref || !g.ref.name) return null;
+  const one = x => (INS_BIG4.includes(x.home) + INS_BIG4.includes(x.away)) === 1;
+  if (!one(g)) return null;
+  const all = refRows().filter(x => x.hc != null && x.ref && !x.foreign && x.season >= '2024-25' && one(x));
+  const gs = all.filter(x => x.ref === g.ref.name);
+  if (gs.length < 8) return null;
+  const sides = x => INS_BIG4.includes(x.home) ? [x.hc, x.ac] : [x.ac, x.hc];
+  const rec = xs => { let m = 0, l = 0, o = 0, b = 0, op = 0; xs.forEach(x => { const [p, q] = sides(x); b += p; op += q; p > q ? m++ : p === q ? l++ : o++; }); return {n: xs.length, m, l, o, b: b / xs.length, op: op / xs.length}; };
+  const r = rec(gs), lg = rec(all);
+  if (r.o / r.n < .8 && r.m / r.n < .5) return null;
+  const big = INS_BIG4.includes(g.home) ? g.home : g.away, opp = big === g.home ? g.away : g.home;
+  return {ref: g.ref.name, big, opp, match: `${g.home} – ${g.away}`, r, lg, way: r.o / r.n >= .8 ? 'opp' : 'big'};
+}
+function insightText(x, short){
+  const {r, lg} = x, rec = `${r.m}–${r.l}–${r.o}`;
+  const who = x.way === 'opp' ? `the Big-4 side's opponent got more cards in ${r.o} of them` : `the Big-4 side got more cards in ${r.m} of them`;
+  if (short) return `<b>Insight:</b> in ${r.n} games with one Big-4 side since 2024–25, ${who} (cards record ${rec}); league-wide ${Math.round(100 * (x.way === 'opp' ? lg.o : lg.m) / lg.n)}%.`;
+  return `<b>${x.ref}</b> referees <b>${x.match}</b>. In his ${r.n} league games with one Big-4 side since 2024–25, ${who} (cards record ${rec}: Big-4 more – level – opponent more). The Big-4 side got <b>${r.b.toFixed(2)}</b> cards a game, the opponent <b>${r.op.toFixed(2)}</b>; with every Greek referee it is ${lg.b.toFixed(2)} and ${lg.op.toFixed(2)}, and the opponent gets more in ${Math.round(100 * lg.o / lg.n)}% of games.`;
+}
 function renderProjections(){
   const cut = athensAgo(2 * 3600e3), fixtures = D.fixtures.filter(g => g.kickoff > cut);
   if (!fixtures.length) return '<p class="empty">No fixtures scheduled in the next two weeks.</p>';
   let h = `<div class="bar"><div class="seg" id="pjmode"><button data-m="match" class="${pjMode==='match'?'on':''}">By match</button><button data-m="stat" class="${pjMode==='stat'?'on':''}">By stat</button></div>`;
   if (pjMode === 'stat') h += chipsHtml('pjstat', pjStat, ORDER);
   h += '</div>';
+  const ins = fixtures.map(g => refInsight(g)).filter(Boolean);
+  if (ins.length) h += `<div class="note"><b>Referee insight</b> · context only, not in the model.${ins.map(x => `<p style="margin:6px 0 0">${insightText(x)}</p>`).join('')}</div>`;
   if (fixtures.some(g => g.ref && g.ref.est)) h += `<p class="note">This round's referees were appointed after the last model update, so their effect on cards and fouls is estimated here: each referee's cards per game since 2024–25 (fouls: this season's games against the model's projection) next to the league's, pulled hard toward ×1.00, because in testing a referee's past said little about his next game's cards. The model's own referee factors replace these at its next update. Market comparisons and value picks use the adjusted numbers.</p>`;
   const byDay = {};
   fixtures.forEach(g => (byDay[g.kickoff.slice(0,10)] ||= []).push(g));
@@ -522,6 +549,8 @@ function renderMethod(){
   <h2>Value picks</h2>
   <p>A pick is listed on the Picks tab when the model's chance times the market's odds is at least 1.10, that is <b>EV 10% or more</b>. That is the one rule: there is no switch for 20% or 30%. Every pick is fixed at the line and odds it had when it first reached 10%, and the Picks tab shows its record and a <b>calibration</b> table: picks grouped by the model's chance, against how often they actually won and what the market gave them at the odds taken. There are no closing-line figures: the picks are on match stats, where the closing line says little.</p>
 
+  <h2>Referee insights</h2>
+  <p>When a Greek referee takes a game with exactly one Big-4 side (Olympiakos, Panathinaikos, AEK or PAOK), the Projections tab flags him if his card record in such games since 2024–25 leans hard one way: <b>8 or more games</b>, and the opponent got more cards in <b>80% or more</b> of them, or the Big-4 side in <b>50% or more</b>. Across all Greek referees the opponent gets more cards in about 57% of these games and the Big-4 side in about 19%. The insight is context only: the model does not use it.</p>
   <h2>What it doesn't know</h2>
   <p>The model only sees past match stats. It doesn't know about injuries, suspensions, rotation, a new coach, the weather, or how much a game matters (derbies, cup weeks, the end of the season). Factor those in yourself, especially for cards and fouls, where the model barely beats the league average.</p>
   <p>Research: <a href="/superleague/research/europe/">the Big 4 after a European game</a>, ten seasons of league games played three or four days after a European match, against small clubs and in derbies.</p>
