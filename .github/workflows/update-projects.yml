@@ -36,7 +36,7 @@ jobs:
       - name: Refresh the pills
         run: python scripts/update_projects.py
       - name: Closing-line value for the 'Beat the close' tiles (assets/clv.json)
-        run: python _bs/record.py --site . > /tmp/record.log || echo "CLV figures not refreshed"; grep -i "not read" /tmp/record.log || true
+        run: python _bs/record.py --site . > /tmp/record.log || echo "CLV figures not refreshed"; grep -i -E "not read|not written" /tmp/record.log || true
       - name: Retake the screenshots
         run: |
           pip install --quiet pillow
@@ -56,7 +56,7 @@ jobs:
             git rebase --abort 2>/dev/null || true
             git fetch origin main && git reset --hard origin/main
             python scripts/update_projects.py
-            python _bs/record.py --site . > /tmp/record.log || echo "CLV figures not refreshed"; grep -i "not read" /tmp/record.log || true
+            python _bs/record.py --site . > /tmp/record.log || echo "CLV figures not refreshed"; grep -i -E "not read|not written" /tmp/record.log || true
             python scripts/update_shots.py
             if git diff --quiet -- index.html '*.jpg' assets/clv.json track-record/index.html track-record/picks.csv track-record/picks-first.json; then exit 0; fi
             git add -u -- index.html '*.jpg' assets/clv.json track-record/index.html track-record/picks.csv track-record/picks-first.json
