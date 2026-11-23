@@ -245,7 +245,7 @@ a.tile:hover{border-color:var(--gold)}
 <p>Projections shows the next 7 days, and Live test records the picks, taken at the opening line; 1H live test and 1H backtest cover first halves. Backtest covers 2021–22 to 2025–26. A game's line is the median of the main market lines.</p>
 </section>
 </main>
-<script src="data.js?v=w110"></script>
+<script src="data.js?v=w111"></script>
 <script src="live.js"></script>
 <script>
 const $ = id => document.getElementById(id);
@@ -413,8 +413,12 @@ function h1Books(mode){
   }
   const now = norm(C && C.all), past = P.all;
   const say = now ? `This season the books put <b>${pct(now.lr, 1)}</b> of the full-game line in the first half and first halves scored <b>${pct(now.ar, 1)}</b> of the points, with first-half overs winning ${pct(now.ho, 1)}, against ${pct(past.lr, 1)}, ${pct(past.ar, 1)} and ${pct(past.ho, 1)} in 2021–22 to 2025–26, on the 1H backtest tab${now.lr < now.ar ? ': the market has not caught up, first-half lines still sit low.' : ': <b>the books now give first halves their share</b>, the edge the 1H test looks for may be gone.'}` : 'No games with both closing lines this season yet.';
-  return `<h2 id="h1books">Books v actual, 2026–27</h2><p class="note">A check that the market has not caught up with first halves. ${base} Updates every hour (${LIVE.updated}, Athens). ${say}</p>`
-    + T('League', ks.map(k => `<tr><td>${lgShort(k)}</td>${cells(C && C.lg && C.lg[k])}</tr>`).join('') + `<tr class="sub"><td><b>All</b></td>${cells(C && C.all)}</tr>`);
+  // the first-half-only leagues too (23 Nov 2026, user), A to Z with the page leagues; the past-season comparison stays on the page leagues (C.all)
+  const X1 = k => isH1X(k) ? ' <span class="muted">(1H only)</span>' : '';
+  const kx = Object.keys((C && C.lg) || {}).filter(k => isH1X(k)), every = [...new Set([...ks, ...kx])].sort((a, b) => lgShort(a) < lgShort(b) ? -1 : 1);
+  const baseL = base.replace(`in the ${LIVE.leagues.length} page leagues (not the first-half-only ones, so this season compares with the same leagues' past)`, `in the ${LIVE.leagues.length} page leagues and the first-half-only ones, marked (1H only); the sentence below and the Page leagues row are the page leagues only, so this season compares with the same leagues' past`);
+  return `<h2 id="h1books">Books v actual, 2026–27</h2><p class="note">A check that the market has not caught up with first halves. ${baseL} Updates every hour (${LIVE.updated}, Athens). ${say}</p>`
+    + T('League', every.map(k => `<tr><td>${lgShort(k)}${X1(k)}</td>${cells(C && C.lg && C.lg[k])}</tr>`).join('') + `<tr class="sub"><td><b>Page leagues</b></td>${cells(C && C.all)}</tr>` + (C && C.allx && kx.length ? `<tr class="sub"><td><b>All leagues</b></td>${cells(C.allx)}</tr>` : ''));
 }
 
 // First half v second half (22 Nov 2026, user). Past seasons on the 1H backtest tab (mode 'bt', leagues open to their seasons);
