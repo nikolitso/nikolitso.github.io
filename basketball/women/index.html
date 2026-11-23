@@ -245,7 +245,7 @@ a.tile:hover{border-color:var(--gold)}
 <p>Projections shows the next 7 days, and Live test records the picks, taken at the opening line; 1H live test and 1H backtest cover first halves. Backtest covers 2021–22 to 2025–26. A game's line is the median of the main market lines.</p>
 </section>
 </main>
-<script src="data.js?v=w111"></script>
+<script src="data.js?v=w112"></script>
 <script src="live.js"></script>
 <script>
 const $ = id => document.getElementById(id);
@@ -319,7 +319,7 @@ const TOP_H1 = (() => {
 
 // the 1H live test: open 1H picks, the note, settled 1H picks (14 Nov 2026, as the men's page)
 const H1GP = () => (DATA.h1bt && DATA.h1bt.gp) || [5, 24];   // 1H picks: both teams 5 to 24 games in (22 Nov 2026, user)
-const H1NOTE = H => `<p class="note" id="h1">A separate live test, started ${H.start}, not part of the main record on the Live test tab. <b>Model 1H</b>: built only from earlier first halves, the way the projected total is built from earlier totals: the league's first-half average and each team's first halves this season, starting from 30% of last season's, plus ${sgn(H.bias, 1)} (first halves came in that much above this projection over 2021–22 to 2025–26, more in every season). Its chance of the over comes from how widely first halves spread around the projection in each league (about 10.7 points). It never sees the full-game line or the model total. <b>The pick</b>: the over, the first time Model 1H is at least ${H.gap ?? 3} points above the first-half line (overs only; an edge bar until 21 Nov 2026), on a .5 line, regular season but not April, both teams ${H1GP()[0]} to ${H1GP()[1]} games in, in the same ${LIVE.leagues.length} leagues${H1LGS()}. The first-half-only leagues are in the 1H test only, not on the full-game record, and have no match pages (added 22 Nov 2026 from the 1H league scan; How it works has it). Settled on first-half points (no overtime). <b>Backtest</b>: at the opening first-half lines and prices, 2022–23 to 2025–26, in the same leagues, the rule gave ${DATA.h1bt ? DATA.h1bt.picks.length : '–'} picks; the 1H backtest tab has the details.</p>`;
+const H1NOTE = H => `<p class="note" id="h1">A separate live test, started ${H.start}, not part of the main record on the Live test tab. <b>Model 1H</b>: built only from earlier first halves, the way the projected total is built from earlier totals: the league's first-half average and each team's first halves this season, starting from 30% of last season's, plus ${sgn(H.bias, 1)} (first halves came in that much above this projection over 2021–22 to 2025–26, more in every season). Its chance of the over comes from how widely first halves spread around the projection in each league (about 10.7 points). It never sees the full-game line or the model total. <b>The pick</b>: the over, the first time Model 1H is at least ${H.gap ?? 3} points above the first-half line (overs only; an edge bar until 21 Nov 2026), on a .5 line, regular season, both teams ${H1GP()[0]} to ${H1GP()[1]} games in, in the same ${LIVE.leagues.length} leagues${H1LGS()}. The first-half-only leagues are in the 1H test only, not on the full-game record, and have no match pages (added 22 Nov 2026 from the 1H league scan; How it works has it). Settled on first-half points (no overtime). <b>Backtest</b>: at the opening first-half lines and prices, 2022–23 to 2025–26, in the same leagues, the rule gave ${DATA.h1bt ? DATA.h1bt.picks.length : '–'} picks; the 1H backtest tab has the details.</p>`;
 function renderH1Live(){
   const H = LIVE.h1;
   if (!H) return '<p class="empty">No first-half data yet.</p>';
@@ -363,15 +363,15 @@ function renderH1Bt(){
   const gb = (L, lo, hi) => L.filter(x => x.g0 >= lo && x.g0 < hi);
   let h = `<h2>By points over the line</h2>` + h1Table('Model 1H − line', [
       [`Under 2${SKIPPED}`, gb(sk('skipped_gap'), -99, 2)], [`2 to 3${SKIPPED}`, gb(sk('skipped_gap'), 2, 3)], ['3 to 4', gb(P, 3, 4)], ['4 to 5', gb(P, 4, 5)], ['5 or more', gb(P, 5, 999)]],
-    `The rule: Model 1H, rebuilt before each game from earlier first halves only, minus the opening first-half line. Picks need ${D.gap} points or more, on .5 lines, regular season but not April, both teams ${g0} to ${g1} games in, in the ${LIVE.leagues.length} page leagues${H1LGS()}, 2022–23 to 2025–26. Settled on first-half points. The rows marked skipped are the first halves that met every other rule but sat closer to the line.`);
+    `The rule: Model 1H, rebuilt before each game from earlier first halves only, minus the opening first-half line. Picks need ${D.gap} points or more, on .5 lines, regular season, both teams ${g0} to ${g1} games in, in the ${LIVE.leagues.length} page leagues${H1LGS()}, 2022–23 to 2025–26. Settled on first-half points. The rows marked skipped are the first halves that met every other rule but sat closer to the line.`);
   h += `<h2>By line</h2>` + h1Table('Opening line', LBANDS(thirds(P)).map(([label, lo, hi]) => [label, P.filter(x => x.line >= lo && x.line < hi)]), 'The opening first-half line in three bands with about a third of the picks each.');
   h += `<h2>By stage</h2>` + h1Table('Stage', [['Regular season', P], [`Play-offs${SKIPPED}`, sk('skipped_po')]],
     'The second row is the play-off games the rule skips: every other rule met.');
   const sy = s => `${s}–${String(s + 1).slice(2)}`;
   h += `<h2>By season</h2>` + h1Table('Season', [2022, 2023, 2024, 2025].map(s => [sy(s), P.filter(b => b.sy === s)]));
   h += `<h2>By league</h2>` + h1Table('League', lgRows(P), LGNOTE);
-  const mrows = [9, 10, 11, 12, 1, 2, 3, 4, 5].map(m => m === 4 ? [`Apr${SKIPPED}`, sk('skipped_apr')] : [MON[m - 1], P.filter(b => +b.dt.slice(5, 7) === m)]);   // April skipped since 22 Nov 2026 (user; October 21-22 Nov)
-  h += `<h2>By month</h2>` + h1Table('Month', mrows, 'No April games since 22 Nov 2026: the April row is what the rule would have taken, kept out of every other figure. October games are in (left out 21–22 Nov).');
+  const mrows = [9, 10, 11, 12, 1, 2, 3, 4, 5].map(m => [MON[m - 1], P.filter(b => +b.dt.slice(5, 7) === m)]);   // every month since 23 Nov 2026 (user: April back; October left out 21-22 Nov, April 22-23 Nov)
+  h += `<h2>By month</h2>` + h1Table('Month', mrows, 'Every month counts: October games were left out 21–22 Nov 2026 and April games 22–23 Nov 2026, both brought back on request.');
   h += `<h2>By games played</h2>` + h1Table('Games played', gpRows([...P, ...sk('skipped_gp')]).map(([l, L]) => [L.length && L.every(b => b.gp < g0 || b.gp > g1) ? l + SKIPPED : l, L]),
     GPNOTE + ` Picks need both teams ${g0} to ${g1} games in (since 22 Nov 2026); the rows marked skipped are the picks the rule would have taken otherwise, kept out of every other figure.`);
   { const FG = new Set(DATA.bets.map(gkey));
@@ -465,7 +465,7 @@ function h1GapTable(H, e){
     const w = g.filter(b => b.ret > 0).length, l = g.filter(b => b.ret < 0).length, u = g.reduce((x, b) => x + b.ret, 0);
     return `<td class="n">${g.length}</td><td class="n">${w + l ? `${w}–${l}` : '–'}</td><td class="n ${w + l ? cls(u) : 'muted'}">${w + l ? roi(u / (w + l)) : '–'}</td>`; };
   const rows = B.map(r => `<tr${r.all ? ' class="sub"' : ''}><td>${r.all ? '<b>' + r.label + '</b>' : r.label}${r.skip ? ' <span class="muted">(skipped)</span>' : ''}</td><td class="n">${r.n.toLocaleString('en')}</td><td class="n">${pct(r.won, 1)}</td><td class="n ${cls(r.roi)}"><b>${roi(r.roi)}</b></td><td class="n">${r.line.toFixed(1)}</td><td class="n">${r.m1.toFixed(1)}</td><td class="n">${r.pts.toFixed(1)}</td>${live(r)}</tr>`).join('');
-  return `<h2 id="h1gap">By gap</h2><p class="note">Gap: Model 1H minus the first-half line. The rule takes the over when the gap is ${e} points or more. <b>Backtest</b>: 2022–23 to 2025–26 in the ${LIVE.leagues.length} page leagues${H1LGS()}, at the opening first-half lines and prices, regular season but not April, .5 lines, both teams ${H1GP()[0]} to ${H1GP()[1]} games in; the skipped bands are every other first half. <b>Live test</b>: the settled 1H picks since ${H.start}, at the line and price logged. Pushes don't count.</p>
+  return `<h2 id="h1gap">By gap</h2><p class="note">Gap: Model 1H minus the first-half line. The rule takes the over when the gap is ${e} points or more. <b>Backtest</b>: 2022–23 to 2025–26 in the ${LIVE.leagues.length} page leagues${H1LGS()}, at the opening first-half lines and prices, regular season, .5 lines, both teams ${H1GP()[0]} to ${H1GP()[1]} games in; the skipped bands are every other first half. <b>Live test</b>: the settled 1H picks since ${H.start}, at the line and price logged. Pushes don't count.</p>
 <div class="scroll"><table style="max-width:1100px"><thead><tr><th rowspan="2" style="vertical-align:bottom">Gap</th><th colspan="6" style="text-align:center">Backtest</th><th colspan="3" style="text-align:center">Live test</th></tr><tr><th class="n">Picks</th><th class="n">Won</th><th class="n">ROI</th><th class="n">1H line</th><th class="n">Model 1H</th><th class="n">1H pts</th><th class="n">Picks</th><th class="n">W–L</th><th class="n">ROI</th></tr></thead><tbody>${rows}</tbody></table></div>`;
 }
 
@@ -497,7 +497,7 @@ function h1Proj(){
   const H = LIVE.h1;
   if (!H) return '';
   let h = '<h2 id="h1proj">Next 7 days</h2>';
-  const note = `<p class="note">Games in the next 7 days with <b>Model 1H</b>, the first-half projection built only from earlier first halves (the league's first-half average and each team's first halves this season, plus ${sgn(H.bias, 1)}), next to the first-half line across the books. It never sees the full-game line or the model total. Over chance from how widely first halves spread around the projection in each league. Gap: Model 1H minus the first-half line; the 1H picks are the overs with a gap of ${H.gap ?? 3} points or more. Highlighted games have a 1H test pick, listed under Open 1H picks above, at the line and price shown when it was taken, on a .5 line. Regular season only, no April games. Greyed: no pick possible (whole-number line, or a team under ${H1GP()[0]} or over ${H1GP()[1]} games). Each match page shows the projection part by part.</p>`;
+  const note = `<p class="note">Games in the next 7 days with <b>Model 1H</b>, the first-half projection built only from earlier first halves (the league's first-half average and each team's first halves this season, plus ${sgn(H.bias, 1)}), next to the first-half line across the books. It never sees the full-game line or the model total. Over chance from how widely first halves spread around the projection in each league. Gap: Model 1H minus the first-half line; the 1H picks are the overs with a gap of ${H.gap ?? 3} points or more. Highlighted games have a 1H test pick, listed under Open 1H picks above, at the line and price shown when it was taken, on a .5 line. Regular season only. Greyed: no pick possible (whole-number line, or a team under ${H1GP()[0]} or over ${H1GP()[1]} games). Each match page shows the projection part by part.</p>`;
   const fx = H.rows.filter(inLg);
   if (!fx.length) return h + '<p class="empty">No games in the next 7 days.</p>' + note;
   const byDay = {};
@@ -644,7 +644,7 @@ function btBody(BT, S, pool, leagues){
   h += `<h2>By league</h2>` + btTable('League', lgRows(BT), LGNOTE);   // 22 Nov 2026 (user), as the 1H backtest tab
   { const oc = skipped('skipped_apr'), mrows = S.months.map(m => [MON[m.m - 1], BT.filter(x => +x.dt.slice(5, 7) === m.m)]);   // April picks are skipped since 22 Nov 2026 (user; October 21-22 Nov)
     if (oc.length) { const i = mrows.findIndex(r => r[0] === MON[4]); mrows.splice(i < 0 ? mrows.length : i, 0, [`Apr${SKIPPED}`, oc]); }
-    h += `<h2>By month</h2>` + btTable('Month', mrows, 'No April games since 22 Nov 2026: the April row is what the rule would have taken, kept out of every other figure. October games are in (left out 21–22 Nov).'); }
+    h += `<h2>By month</h2>` + btTable('Month', mrows, 'Every month counts: October games were left out 21–22 Nov 2026 and April games 22–23 Nov 2026, both brought back on request.'); }
   h += `<h2>By games played</h2>` + btTable('Games played', gpRows(BT), GPNOTE);
   { const H1 = new Set(((DATA.h1bt || {}).picks || []).map(gkey)), B2 = BT.filter(b => b.dt >= '2022-07');
     if (H1.size) h += `<h2>With or without a 1H pick</h2>` + btTable('Same game', [['1H over also a pick', B2.filter(b => H1.has(gkey(b)))], ['No 1H pick', B2.filter(b => !H1.has(gkey(b)))]],
@@ -731,7 +731,7 @@ function renderPicks(){
   // open picks first, then this season's record: October bets (same rules, worked out from results) + bets logged live
     const open = LIVE.picks.filter(b => !b.done).sort((a, b) => a.dt < b.dt ? -1 : 1);
   const fx = Object.fromEntries(LIVE.fixtures.map(g => [g.home + '|' + g.away, g]));
-  const howNote = `<p class="note"><b>The pick.</b> The over, when the projected total is at least ${GB()} points above the line: regular season but not April, both teams ${LIVE.min_gp ?? 4}+ games in, pace not taking more than 1 point off the model total, and a line ending in .5. There is no edge bar (since 21 Nov 2026).<br><b>When.</b> Every hour the model checks the next 7 days. A pick is logged the first time it meets the rule, at that line and the average price, and never changed. Women's lines rarely move, so there is no rush to take it. <b>Gap now</b> is the projected total minus the line on offer now: yellow when it has fallen under ${GB()} points, red when it is gone.<br><b>Scoring.</b> Equal stakes. ROI is profit ÷ amount staked; pushes don't count. Updated ${LIVE.updated} (Athens).</p>`;
+  const howNote = `<p class="note"><b>The pick.</b> The over, when the projected total is at least ${GB()} points above the line: regular season, both teams ${LIVE.min_gp ?? 4}+ games in, pace not taking more than 1 point off the model total, and a line ending in .5. There is no edge bar (since 21 Nov 2026).<br><b>When.</b> Every hour the model checks the next 7 days. A pick is logged the first time it meets the rule, at that line and the average price, and never changed. Women's lines rarely move, so there is no rush to take it. <b>Gap now</b> is the projected total minus the line on offer now: yellow when it has fallen under ${GB()} points, red when it is gone.<br><b>Scoring.</b> Equal stakes. ROI is profit ÷ amount staked; pushes don't count. Updated ${LIVE.updated} (Athens).</p>`;
   let h = '';
   if (!open.length) h += '<p class="empty">No open picks right now. New ones appear here as lines open.</p>';
   else {
