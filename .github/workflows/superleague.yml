@@ -7,7 +7,7 @@ name: Site · Super League
 # there (opta_manual.json fills stats ESPN lacks: throw-ins, goal kicks, woodwork). Every hour, on its own schedule. 
 on:
   schedule:
-    - cron: "0 * * * *"         # every hour, on the hour (user, 22 Nov 2026)
+    - cron: "0 * * * *"         # backup only: GitHub drops most scheduled runs, so the hourly runs come from cron-job.org (job "Greek Superleague", id 8927127, workflow_dispatch, 23 Nov 2026)
   workflow_dispatch:            # Run workflow button: Actions tab, or the GitHub mobile app
   push:                         # a change to this file runs it once
     branches: [main]
