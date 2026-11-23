@@ -39,10 +39,10 @@ jobs:
           python scripts/update_shots.py
       - name: Save
         run: |
-          if git diff --quiet -- index.html '*.jpg' assets/clv.json; then exit 0; fi
+          if git diff --quiet -- index.html '*.jpg' assets/clv.json track-record/index.html; then exit 0; fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -u -- index.html '*.jpg' assets/clv.json   # tracked files only (some local .jpg files are gitignored)
+          git add -u -- index.html '*.jpg' assets/clv.json track-record/index.html   # tracked files only (some local .jpg files are gitignored)
           git commit -m "Homepage: refresh project pills, screenshots and CLV figures"
           # Another workflow may push in the same seconds. Try up to four times; if the rebase clashes on index.html,
           # start again from the newest main and redo the refresh on top of it.
@@ -54,8 +54,8 @@ jobs:
             python scripts/update_projects.py
             python _bs/record.py --site . > /dev/null || echo "CLV figures not refreshed"
             python scripts/update_shots.py
-            if git diff --quiet -- index.html '*.jpg' assets/clv.json; then exit 0; fi
-            git add -u -- index.html '*.jpg' assets/clv.json
+            if git diff --quiet -- index.html '*.jpg' assets/clv.json track-record/index.html; then exit 0; fi
+            git add -u -- index.html '*.jpg' assets/clv.json track-record/index.html
             git commit -m "Homepage: refresh project pills, screenshots and CLV figures"
             sleep $((i * 15))
           done

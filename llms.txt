@@ -10,6 +10,7 @@
 - [Women's basketball totals](https://antonisnikolitsopoulos.com/basketball/women/): a totals model for 20 European leagues
 - [Volleyball](https://antonisnikolitsopoulos.com/volleyball/): sets and total points projections
 - [Handball](https://antonisnikolitsopoulos.com/handball/): total goals projections, live tests and backtests
+- [Track record](https://antonisnikolitsopoulos.com/track-record/): every live test in one table, with won-lost, ROI and closing-line value, refreshed every two hours
 - [PAOK Hub](https://antonisnikolitsopoulos.com/paok-hub/) and [PAOK Basketball](https://antonisnikolitsopoulos.com/paok-basketball/): PAOK's seasons in numbers
 
 ## Writing and collections

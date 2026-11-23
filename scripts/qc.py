@@ -26,6 +26,7 @@ MENU = ["/superleague/", "/football/greek-cup/", "/basketball/", "/basketball/ov
         "/volleyball/", "/handball/", "/paok-hub/", "/paok-basketball/"]
 # EuroCup and FIBA Europe Cup left the menu on 22 Nov 2026; their own (paused) pages keep the menu they were built with
 HIDDEN = ("eurocup/", "fibaeuropecup/")
+NO_CURRENT = ("track-record/",)   # site-wide pages: no project is current
 MENU_HIDDEN = ["/superleague/", "/football/greek-cup/", "/basketball/", "/basketball/overs/", "/basketball/women/",
                "/eurocup/", "/fibaeuropecup/", "/paok-hub/", "/paok-basketball/", "/volleyball/", "/handball/"]
 SKIP_PREFIXES = ("scripts/", "paok-basketball/data/")
@@ -122,7 +123,7 @@ def check_page(path, problems):
         if '<a class="an-navhome" href="/">Home</a>' not in navs[0]:
             say("menu", "no Home pill first in the menu")
         cur = re.findall(r'aria-current="page"', navs[0])
-        if len(cur) != 1:
+        if len(cur) != 1 and not r.replace("\\", "/").startswith(NO_CURRENT):
             say("menu", f"{len(cur)} entries marked current")
     if 'class="an-home"' not in html and r != "404.html":
         say("home", "no ← Home link")

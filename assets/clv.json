@@ -1,33 +1,81 @@
 {
- "updated": "2026-11-22 23:09 UTC",
+ "updated": "2026-11-23 06:05 UTC",
  "basketball_overs": {
   "n": 34,
   "avg": 0.0232,
-  "beat": 17
+  "beat": 17,
+  "picks": 34,
+  "won": 25,
+  "lost": 9,
+  "push": 0,
+  "roi": 0.358,
+  "lo": -0.0276,
+  "hi": 0.074,
+  "verdict": "level"
  },
  "women": {
   "n": 5,
   "avg": -0.0453,
-  "beat": 2
+  "beat": 2,
+  "picks": 5,
+  "won": 2,
+  "lost": 3,
+  "push": 0,
+  "roi": -0.26,
+  "lo": -0.1273,
+  "hi": 0.0367,
+  "verdict": "few"
  },
  "handball": {
   "n": 29,
   "avg": -0.021,
-  "beat": 11
+  "beat": 11,
+  "picks": 29,
+  "won": 22,
+  "lost": 7,
+  "push": 0,
+  "roi": 0.3869,
+  "lo": -0.0667,
+  "hi": 0.0246,
+  "verdict": "few"
  },
  "handball_tracking": {
   "n": 0,
   "avg": null,
-  "beat": 0
+  "beat": 0,
+  "picks": 0,
+  "won": 0,
+  "lost": 0,
+  "push": 0,
+  "roi": null,
+  "lo": null,
+  "hi": null,
+  "verdict": "few"
  },
  "volleyball": {
   "n": 0,
   "avg": null,
-  "beat": 0
+  "beat": 0,
+  "picks": 15,
+  "won": 11,
+  "lost": 4,
+  "push": 0,
+  "roi": 0.3505,
+  "lo": null,
+  "hi": null,
+  "verdict": "few"
  },
  "superleague": {
   "n": 37,
   "avg": -0.0658,
-  "beat": 5
+  "beat": 5,
+  "picks": 51,
+  "won": 34,
+  "lost": 17,
+  "push": 0,
+  "roi": 0.2745,
+  "lo": -0.0817,
+  "hi": -0.05,
+  "verdict": "behind"
  }
 }
