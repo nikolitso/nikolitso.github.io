@@ -186,7 +186,6 @@ th{font-size:14px}
 
 
 <script defer src="/assets/openpicks.js"></script>
-<script defer src="/assets/clv-tile.js"></script>
 <nav class="an-project-nav" aria-label="Sports analytics projects"><div><a class="an-navhome" href="/">Home</a>
 <span class="an-navgroup">Football</span>
 <a href="/superleague/" aria-current="page">Greek Superleague</a>
@@ -521,7 +520,7 @@ function renderMethod(){
   <p>Over chances have held up: when the page said 60%, it happened about 60% of the time. Cards went over a few points more often than shown.</p>
 
   <h2>Value picks</h2>
-  <p>A pick is listed on the Picks tab when the model's chance times the market's odds is at least 1.10, that is <b>EV 10% or more</b>. That is the one rule: there is no switch for 20% or 30%. Every pick is fixed at the line and odds it had when it first reached 10%, and the Picks tab shows its record and a <b>calibration</b> table: picks grouped by the model's chance, against how often they actually won and what the market gave them at the odds taken and at the close.</p>
+  <p>A pick is listed on the Picks tab when the model's chance times the market's odds is at least 1.10, that is <b>EV 10% or more</b>. That is the one rule: there is no switch for 20% or 30%. Every pick is fixed at the line and odds it had when it first reached 10%, and the Picks tab shows its record and a <b>calibration</b> table: picks grouped by the model's chance, against how often they actually won and what the market gave them at the odds taken. There are no closing-line figures: the picks are on match stats, where the closing line says little.</p>
 
   <h2>What it doesn't know</h2>
   <p>The model only sees past match stats. It doesn't know about injuries, suspensions, rotation, a new coach, the weather, or how much a game matters (derbies, cup weeks, the end of the season). Factor those in yourself, especially for cards and fouls, where the model barely beats the league average.</p>
@@ -583,16 +582,16 @@ function renderValue(){
   return h + renderSettled(settled, all);
 }
 // Calibration: settled picks grouped by the model's chance; does the model's % match how often the picks won?
-// The market's chance is shown at the odds taken (opening) and at the close, for comparison.
+// The market's chance is shown at the odds taken. No closing lines on this page: the picks are on stats (user, 23 Nov 2026).
 function calibTable(bs){
   const bins = [[0, .45, 'Under 45%'], [.45, .55, '45–55%'], [.55, .65, '55–65%'], [.65, .75, '65–75%'], [.75, 2, '75%+']];
   const mean = xs => xs.length ? xs.reduce((a, b) => a + b, 0) / xs.length : null;
   const row = (name, g, cls = '') => {
     const m = mean(g.map(b => b.ours)), hit = g.filter(b => b.result === 'won').length / g.length;
-    const op = mean(g.map(b => b.fair)), cg = g.filter(b => b.close_fair != null), cl = mean(cg.map(b => b.close_fair)), d = hit - m;
-    return `<tr class="${cls}"><td>${name}</td><td class="n">${g.length}</td><td class="n tot">${pct(m)}</td><td class="n">${pct(op)}</td><td class="n">${cl == null ? '–' : pct(cl)}</td><td class="n"><b>${pct(hit)}</b></td><td class="n ${d >= 0 ? 'w' : 'l'}">${d >= 0 ? '+' : '−'}${Math.abs(d * 100).toFixed(0)} pts</td></tr>`;
+    const op = mean(g.map(b => b.fair)), d = hit - m;
+    return `<tr class="${cls}"><td>${name}</td><td class="n">${g.length}</td><td class="n tot">${pct(m)}</td><td class="n">${pct(op)}</td><td class="n"><b>${pct(hit)}</b></td><td class="n ${d >= 0 ? 'w' : 'l'}">${d >= 0 ? '+' : '−'}${Math.abs(d * 100).toFixed(0)} pts</td></tr>`;
   };
-  let h = `<h2>Calibration</h2><p class="muted" style="margin:-4px 0 10px;font-size:15.5px">Settled picks grouped by the model's chance. If the model is right, picks it gave 60% should win about 60% of the time. The market's chance is shown at the odds taken (opening) and at the close. Under about 30 picks in a row, the hit rate is still mostly luck.</p><div class="scroll"><table class="mk" style="max-width:820px"><thead><tr><th>Model chance</th><th class="n">Picks</th><th class="n">Model %</th><th class="n">Market % open</th><th class="n">Market % close</th><th class="n">Won</th><th class="n">Won − model</th></tr></thead><tbody>`;
+  let h = `<h2>Calibration</h2><p class="muted" style="margin:-4px 0 10px;font-size:15.5px">Settled picks grouped by the model's chance. If the model is right, picks it gave 60% should win about 60% of the time. The market's chance is shown at the odds taken. Under about 30 picks in a row, the hit rate is still mostly luck.</p><div class="scroll"><table class="mk" style="max-width:820px"><thead><tr><th>Model chance</th><th class="n">Picks</th><th class="n">Model %</th><th class="n">Market %</th><th class="n">Won</th><th class="n">Won − model</th></tr></thead><tbody>`;
   for (const [lo, hi, name] of bins){ const g = bs.filter(b => b.ours >= lo && b.ours < hi); if (g.length) h += row(name, g); }
   return h + row('All', bs, 'sum') + '</tbody></table></div>';
 }
@@ -605,19 +604,17 @@ function renderSettled(settled, all){
   const mkts = Object.keys(counts).sort((a, b) => counts[b] - counts[a] || mktName(a).localeCompare(mktName(b)));
   if (stMkt !== 'all' && !counts[stMkt]) stMkt = 'all';
   if (stMkt !== 'all'){ settled = settled.filter(b => b.stat === stMkt); all = summary(settled); }
-  const closed = settled.filter(b => b.clv != null);
   let h = `<h2>Settled</h2><p class="note">Every value pick that has been settled, with what happened, and the running record (equal stakes). ROI = profit ÷ total staked. Only picks at EV 10% or more; the market you pick filters everything below.</p>
   <div class="chips" id="stmk" style="margin:0 0 18px">${[['all', `All ${Object.values(counts).reduce((a, b) => a + b, 0)}`], ...mkts.map(m => [m, `${mktName(m)} ${counts[m]}`])]
     .map(([m, t]) => `<button class="chip${m === stMkt ? ' on' : ''}" data-s="${m}">${t}</button>`).join('')}</div>`;
   h += `<div class="metrics">
     <div class="metric"><div class="lbl">Settled so far</div><div class="big">${all.n}</div></div>
     <div class="metric"><div class="lbl">Hit rate</div><div class="big">${all.n ? pct(all.hit) : '–'}</div></div>
-    <div class="metric"><div class="lbl">ROI</div><div class="big">${all.n ? evPct(all.roi) : '–'}</div></div>
-    <div class="metric"><div class="lbl">Odds v close</div><div class="big" style="font-size:18px">${closed.length ? `${closed.filter(b => b.odds > b.close).length} better · ${closed.filter(b => b.odds === b.close).length} same · ${closed.filter(b => b.odds < b.close).length} worse` : '–'}</div></div></div>`;
+    <div class="metric"><div class="lbl">ROI</div><div class="big">${all.n ? evPct(all.roi) : '–'}</div></div></div>`;
   if (settled.length) h += calibTable(settled);
   if (!settled.length) return h + `<p class="muted" style="margin-top:18px">No settled picks yet: the record starts once results for logged picks are in the data.</p>`;
-  h += `<h2>${stMkt === 'all' ? 'All settled picks' : `Settled ${mktName(stMkt).toLowerCase()} picks`}</h2><p class="muted" style="margin:-4px 0 10px;font-size:15.5px">Every pick from EV +${Math.round(valMin * 100)}% with its result, newest first; the record by market, side and EV follows below.</p><div class="scroll"><table class="mk"><thead><tr><th>Date</th><th>Match</th><th>Pick</th><th class="n">Odds</th><th class="n" title="The market's last odds before kick-off for the same line and side">Close</th><th class="n" title="Closing-line value: these odds × the closing chance with the margin taken out − 1">CLV</th><th class="n">EV</th><th class="n" title="What happened: the final score for 1X2 picks, the match total for the rest">Actual</th><th class="n">Result</th></tr></thead><tbody>`;
-  for (const b of settled) h += `<tr><td class="muted">${dayName(b.date)}</td><td>${b.home} – ${b.away}</td><td>${betName(b)}</td><td class="n">${b.odds.toFixed(2)}</td><td class="n muted">${b.clv == null ? '–' : b.close.toFixed(2)}</td><td class="n ${b.clv == null ? 'muted' : b.clv >= 0 ? 'w' : ''}">${b.clv == null ? '–' : clvPct(b.clv)}</td><td class="n">${evPct(b.ev)}</td><td class="n"><b>${b.actual ?? '–'}</b></td><td class="n ${b.result === 'won' ? 'w' : 'l'}">${b.result === 'won' ? 'Won +' + (b.odds - 1).toFixed(2) : 'Lost −1'}</td></tr>`;
+  h += `<h2>${stMkt === 'all' ? 'All settled picks' : `Settled ${mktName(stMkt).toLowerCase()} picks`}</h2><p class="muted" style="margin:-4px 0 10px;font-size:15.5px">Every pick from EV +${Math.round(valMin * 100)}% with its result, newest first; the record by market, side and EV follows below.</p><div class="scroll"><table class="mk"><thead><tr><th>Date</th><th>Match</th><th>Pick</th><th class="n">Odds</th><th class="n">EV</th><th class="n" title="What happened: the final score for 1X2 picks, the match total for the rest">Actual</th><th class="n">Result</th></tr></thead><tbody>`;
+  for (const b of settled) h += `<tr><td class="muted">${dayName(b.date)}</td><td>${b.home} – ${b.away}</td><td>${betName(b)}</td><td class="n">${b.odds.toFixed(2)}</td><td class="n">${evPct(b.ev)}</td><td class="n"><b>${b.actual ?? '–'}</b></td><td class="n ${b.result === 'won' ? 'w' : 'l'}">${b.result === 'won' ? 'Won +' + (b.odds - 1).toFixed(2) : 'Lost −1'}</td></tr>`;
   h += '</tbody></table></div>';
   const group = key => settled.reduce((g, b) => ((g[key(b)] ||= []).push(b), g), {});
   const band = b => b.ev >= .3 ? '30%+' : `${Math.floor(b.ev * 10) * 10}–${Math.floor(b.ev * 10) * 10 + 10}%`;
