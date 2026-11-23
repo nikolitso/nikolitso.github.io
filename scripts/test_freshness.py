@@ -54,6 +54,15 @@ class Freshness(unittest.TestCase):
         self.assertEqual(ld(out)["dateModified"], "2026-11-23")
         self.assertIn('"@type": "CollectionPage"', out)                 # keeps the block's spaced style
 
+    def test_page_without_a_visible_date_still_gets_date_modified(self):   # Books: the user wants no visible date
+        page = ('<p>Books</p><script type="application/ld+json">{"@context": "https://schema.org", '
+                '"@type": "CollectionPage", "name": "Books"}</script>')
+        out, e = F.stamp(page, "CollectionPage", {}, "books/index.html", "2026-11-23")
+        self.assertEqual(ld(out)["dateModified"], "2026-11-23")
+        self.assertNotIn("data-fresh", out)
+        _, e2 = F.stamp(out, "CollectionPage", {"books/index.html": e}, "books/index.html", "2026-11-30")
+        self.assertEqual(e2["date"], "2026-11-23")
+
 
 if __name__ == "__main__":
     unittest.main()

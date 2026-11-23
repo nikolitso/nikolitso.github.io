@@ -398,7 +398,7 @@ def page_index(books, n_authors):
     <p class="kicker">Books</p>
     <h1>Book takeaways and key ideas</h1>
     <p class="lede">Every good book leaves a few ideas worth keeping. These are the ones worth keeping from books on sports analytics, betting, decision-making and personal development: what each book argues, the key ideas, and who it is for.</p>
-    <div class="stats"><span><b>{len(books)}</b> books</span><span><b>{n_authors}</b> authors</span><span><b>{len([1 for s,_,_ in TOPICS if counts[s]])}</b> topics</span><span><b><span data-fresh></span></b> updated</span></div>
+    <div class="stats"><span><b>{len(books)}</b> books</span><span><b>{n_authors}</b> authors</span><span><b>{len([1 for s,_,_ in TOPICS if counts[s]])}</b> topics</span></div>
   </div>
 </section>
 <section class="shelf">

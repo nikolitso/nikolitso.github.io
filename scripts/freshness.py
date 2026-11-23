@@ -2,8 +2,8 @@
 
     python scripts/freshness.py          # after the pages are built: update-projects.yml and build-edge.yml run it
 
-Each page shows "Updated <date>" (a <span data-fresh> the page carries) and its main JSON-LD object gets the same date
-as dateModified. The date moves only when the page's content changes, never on a rebuild that changes nothing:
+The homepage shows "Updated <date>" (a <span data-fresh> it carries); both pages' main JSON-LD object gets the date as
+dateModified. Books shows no visible date (user, 24 Nov 2026), only dateModified. The date moves only when the page's content changes, never on a rebuild that changes nothing:
 a fingerprint of the content (with the date itself left out) is kept in assets/freshness.json with the date it was
 first seen. Faked freshness works against a page, so a run that changes nothing leaves the date alone.
 """
@@ -85,9 +85,6 @@ def main():
         if not p.exists():
             continue
         html = p.read_text(encoding="utf-8")
-        if not SPAN.search(html):
-            print(f"{rel}: no <span data-fresh>, left as is")
-            continue
         out, state[rel] = stamp(html, ld_type, state, rel, today)
         if out != html:
             p.write_text(out, encoding="utf-8", newline="\n")
