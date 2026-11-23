@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-22T15:08:57Z",
+ "updated": "2026-11-23T01:36:09Z",
  "reports": [
   {
    "comp": "EuroCup",
@@ -1164,43 +1164,43 @@
     "fg3m": 9.0,
     "fg3a": 26.3,
     "ftm": 16.3,
-    "fta": 22.5,
+    "fta": 22.4,
     "oreb": 10.6,
-    "dreb": 25.7,
-    "reb": 36.3,
+    "dreb": 25.6,
+    "reb": 36.2,
     "ast": 16.9,
     "stl": 7.2,
     "tov": 13.4,
     "blk": 2.9,
     "pf": 22.4,
-    "pir": 85.7,
-    "gp": 110,
-    "w": 55,
+    "pir": 85.8,
+    "gp": 112,
+    "w": 56,
     "allowed": 79.8,
     "fgp": 44.2,
     "fg2p": 51.7,
     "fg3p": 34.1,
-    "ftp": 72.4,
+    "ftp": 72.5,
     "opp_fgp": 44.2,
-    "poss": 74.4,
-    "pace": 73.8,
-    "ortg": 107.3,
-    "drtg": 107.3,
-    "efg": 51.4,
-    "ts": 55.7,
+    "poss": 74.3,
+    "pace": 73.6,
+    "ortg": 107.4,
+    "drtg": 107.4,
+    "efg": 51.5,
+    "ts": 55.8,
     "tovPct": 18.0,
-    "orebPct": 29.2,
+    "orebPct": 29.4,
     "ftr": 26.4,
-    "astPct": 62.0,
+    "astPct": 62.1,
     "par3": 42.6,
     "fgm": 27.3,
-    "fga": 61.8,
-    "opp_efg": 51.4,
+    "fga": 61.7,
+    "opp_efg": 51.5,
     "forcedTov": 18.0,
-    "drebPct": 70.8,
+    "drebPct": 70.6,
     "opp_ftr": 26.4,
     "rebPct": 50.0,
-    "l": 55,
+    "l": 56,
     "net": 0.0
    },
    "impact": [
@@ -1916,7 +1916,7 @@
    ],
    "projection": {
     "paok": {
-     "score": 88.3,
+     "score": 88.1,
      "players": [
       {
        "name": "Kyle Alexander",
@@ -1940,7 +1940,7 @@
        "name": "Nick Calathes",
        "no": "33",
        "min": 23,
-       "pts": 7.7,
+       "pts": 7.6,
        "reb": 4.2,
        "ast": 4.5,
        "pir": 10.3
@@ -2030,10 +2030,10 @@
      "missing": [
       "Cedi Osman"
      ],
-     "pace": 72.3
+     "pace": 72.4
     },
     "opp": {
-     "score": 70.9,
+     "score": 70.8,
      "players": [
       {
        "name": "Kendal Coleman",
@@ -2120,7 +2120,7 @@
        "name": "Giorgos Kalaitzakis",
        "no": "16",
        "min": 17,
-       "pts": 4.0,
+       "pts": 3.9,
        "reb": 2.2,
        "ast": 1.0,
        "pir": 3.0
@@ -2145,18 +2145,18 @@
       }
      ],
      "missing": [],
-     "pace": 72.3
+     "pace": 72.4
     },
     "winProb": 97,
-    "pace": 72.3,
+    "pace": 72.4,
     "lineupSource": "manual",
     "note": "PAOK without Osman, who is out until the spring.",
-    "modelTotal": 157.6,
+    "modelTotal": 157.3,
     "line": null,
-    "modelMargin": 17.4,
+    "modelMargin": 17.3,
     "hcp": null,
     "learned": {
-     "games": 982,
+     "games": 983,
      "lineGames": 947,
      "homeEdge": 2.2,
      "totalBias": 1.59,
@@ -2170,49 +2170,49 @@
     },
     "teamStats": {
      "pts": {
-      "paok": 88.3,
-      "opp": 70.9,
-      "total": 159.2
+      "paok": 88.1,
+      "opp": 70.8,
+      "total": 158.9
      },
      "fg2m": {
       "paok": 19.9,
-      "opp": 16.0,
-      "total": 35.9
+      "opp": 15.9,
+      "total": 35.8
      },
      "fg3m": {
-      "paok": 10.4,
+      "paok": 10.3,
       "opp": 7.6,
       "total": 18.0
      },
      "ftm": {
       "paok": 17.4,
       "opp": 16.1,
-      "total": 33.5
+      "total": 33.4
      },
      "ast": {
-      "paok": 19.4,
+      "paok": 19.3,
       "opp": 15.7,
-      "total": 35.1
+      "total": 35.0
      },
      "oreb": {
-      "paok": 10.8,
-      "opp": 9.8,
+      "paok": 10.9,
+      "opp": 9.9,
       "total": 20.7
      },
      "dreb": {
-      "paok": 25.7,
-      "opp": 22.7,
-      "total": 48.5
+      "paok": 25.8,
+      "opp": 22.9,
+      "total": 48.7
      },
      "tov": {
       "paok": 11.9,
       "opp": 14.4,
-      "total": 26.3
+      "total": 26.4
      },
      "reb": {
-      "paok": 36.5,
-      "opp": 32.5,
-      "total": 69.2
+      "paok": 36.7,
+      "opp": 32.8,
+      "total": 69.4
      }
     }
    }
