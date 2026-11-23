@@ -27,7 +27,9 @@
      "projWo": 6.0,
      "projWoGames": 4,
      "actual": 9,
-     "min": 18
+     "min": 18,
+     "pOver": 0.495,
+     "pOverBook": 0.439
     },
     {
      "player": "alexander",
@@ -49,7 +51,9 @@
      "projWo": 5.0,
      "projWoGames": 4,
      "actual": 6,
-     "min": 18
+     "min": 18,
+     "pOver": 0.415,
+     "pOverBook": 0.439
     },
     {
      "player": "calathes",
@@ -71,7 +75,9 @@
      "projWo": 6.7,
      "projWoGames": 3,
      "actual": 5,
-     "min": 26
+     "min": 26,
+     "pOver": 0.438,
+     "pOverBook": 0.543
     },
     {
      "player": "calathes",
@@ -93,7 +99,9 @@
      "projWo": 0.3,
      "projWoGames": 3,
      "actual": 0,
-     "min": 26
+     "min": 26,
+     "pOver": null,
+     "pOverBook": 0.565
     },
     {
      "player": "calathes",
@@ -115,7 +123,9 @@
      "projWo": 5.0,
      "projWoGames": 3,
      "actual": 6,
-     "min": 26
+     "min": 26,
+     "pOver": 0.617,
+     "pOverBook": 0.474
     },
     {
      "player": "calathes",
@@ -137,7 +147,9 @@
      "projWo": 3.0,
      "projWoGames": 3,
      "actual": 5,
-     "min": 26
+     "min": 26,
+     "pOver": 0.606,
+     "pOverBook": 0.518
     },
     {
      "player": "chougkaz",
@@ -159,7 +171,9 @@
      "projWo": 0.8,
      "projWoGames": 4,
      "actual": 2,
-     "min": 22
+     "min": 22,
+     "pOver": null,
+     "pOverBook": 0.601
     },
     {
      "player": "chougkaz",
@@ -181,7 +195,9 @@
      "projWo": 4.2,
      "projWoGames": 4,
      "actual": 8,
-     "min": 22
+     "min": 22,
+     "pOver": 0.566,
+     "pOverBook": 0.594
     },
     {
      "player": "gray",
@@ -203,7 +219,9 @@
      "projWo": 0.5,
      "projWoGames": 2,
      "actual": 1,
-     "min": 26
+     "min": 26,
+     "pOver": 0.559,
+     "pOverBook": 0.575
     },
     {
      "player": "gray",
@@ -225,7 +243,9 @@
      "projWo": 10.5,
      "projWoGames": 2,
      "actual": 3,
-     "min": 26
+     "min": 26,
+     "pOver": 0.495,
+     "pOverBook": 0.43
     },
     {
      "player": "hudgins",
@@ -247,7 +267,9 @@
      "projWo": 2.2,
      "projWoGames": 4,
      "actual": 4,
-     "min": 27
+     "min": 27,
+     "pOver": null,
+     "pOverBook": 0.573
     },
     {
      "player": "hudgins",
@@ -269,7 +291,9 @@
      "projWo": 10.0,
      "projWoGames": 4,
      "actual": 18,
-     "min": 27
+     "min": 27,
+     "pOver": 0.295,
+     "pOverBook": 0.476
     },
     {
      "player": "moore",
@@ -291,7 +315,9 @@
      "projWo": 4.0,
      "projWoGames": 4,
      "actual": 2,
-     "min": 18
+     "min": 18,
+     "pOver": 0.607,
+     "pOverBook": 0.484
     },
     {
      "player": "moore",
@@ -313,7 +339,9 @@
      "projWo": 4.8,
      "projWoGames": 4,
      "actual": 3,
-     "min": 18
+     "min": 18,
+     "pOver": 0.324,
+     "pOverBook": 0.416
     },
     {
      "player": "tyree",
@@ -335,7 +363,9 @@
      "projWo": 1.5,
      "projWoGames": 4,
      "actual": 5,
-     "min": 30
+     "min": 30,
+     "pOver": 0.46,
+     "pOverBook": 0.582
     },
     {
      "player": "tyree",
@@ -357,7 +387,9 @@
      "projWo": 1.2,
      "projWoGames": 4,
      "actual": 0,
-     "min": 30
+     "min": 30,
+     "pOver": null,
+     "pOverBook": 0.425
     },
     {
      "player": "tyree",
@@ -379,7 +411,9 @@
      "projWo": 16.8,
      "projWoGames": 4,
      "actual": 25,
-     "min": 30
+     "min": 30,
+     "pOver": 0.321,
+     "pOverBook": 0.473
     }
    ],
    "paokOut": [
@@ -417,7 +451,9 @@
      "projWo": 0.6,
      "projWoGames": 5,
      "actual": 1,
-     "min": 15
+     "min": 15,
+     "pOver": 0.51,
+     "pOverBook": 0.53
     },
     {
      "player": "alexander",
@@ -439,7 +475,9 @@
      "projWo": 6.6,
      "projWoGames": 5,
      "actual": 7,
-     "min": 15
+     "min": 15,
+     "pOver": 0.429,
+     "pOverBook": 0.523
     },
     {
      "player": "alexander",
@@ -461,7 +499,9 @@
      "projWo": 5.2,
      "projWoGames": 5,
      "actual": 9,
-     "min": 15
+     "min": 15,
+     "pOver": 0.307,
+     "pOverBook": 0.481
     },
     {
      "player": "calathes",
@@ -483,7 +523,9 @@
      "projWo": 6.2,
      "projWoGames": 4,
      "actual": 8,
-     "min": 33
+     "min": 33,
+     "pOver": 0.166,
+     "pOverBook": 0.503
     },
     {
      "player": "calathes",
@@ -505,7 +547,9 @@
      "projWo": 0.2,
      "projWoGames": 4,
      "actual": 4,
-     "min": 33
+     "min": 33,
+     "pOver": null,
+     "pOverBook": 0.609
     },
     {
      "player": "calathes",
@@ -527,7 +571,9 @@
      "projWo": 5.2,
      "projWoGames": 4,
      "actual": 12,
-     "min": 33
+     "min": 33,
+     "pOver": 0.498,
+     "pOverBook": 0.512
     },
     {
      "player": "calathes",
@@ -549,7 +595,9 @@
      "projWo": 3.5,
      "projWoGames": 4,
      "actual": 8,
-     "min": 33
+     "min": 33,
+     "pOver": 0.471,
+     "pOverBook": 0.499
     },
     {
      "player": "chougkaz",
@@ -571,7 +619,9 @@
      "projWo": 1.0,
      "projWoGames": 5,
      "actual": 2,
-     "min": 20
+     "min": 20,
+     "pOver": null,
+     "pOverBook": 0.597
     },
     {
      "player": "chougkaz",
@@ -593,7 +643,9 @@
      "projWo": 5.0,
      "projWoGames": 5,
      "actual": 10,
-     "min": 20
+     "min": 20,
+     "pOver": 0.471,
+     "pOverBook": 0.566
     },
     {
      "player": "chougkaz",
@@ -615,7 +667,9 @@
      "projWo": 2.4,
      "projWoGames": 5,
      "actual": 2,
-     "min": 20
+     "min": 20,
+     "pOver": 0.418,
+     "pOverBook": 0.509
     },
     {
      "player": "gray",
@@ -637,7 +691,9 @@
      "projWo": 0.7,
      "projWoGames": 3,
      "actual": 0,
-     "min": 20
+     "min": 20,
+     "pOver": 0.202,
+     "pOverBook": 0.572
     },
     {
      "player": "gray",
@@ -659,7 +715,9 @@
      "projWo": 8.0,
      "projWoGames": 3,
      "actual": 10,
-     "min": 20
+     "min": 20,
+     "pOver": 0.627,
+     "pOverBook": 0.576
     },
     {
      "player": "gray",
@@ -681,7 +739,9 @@
      "projWo": 2.3,
      "projWoGames": 3,
      "actual": 3,
-     "min": 20
+     "min": 20,
+     "pOver": 0.471,
+     "pOverBook": 0.522
     },
     {
      "player": "hudgins",
@@ -703,7 +763,9 @@
      "projWo": 1.2,
      "projWoGames": 5,
      "actual": 1,
-     "min": 10
+     "min": 10,
+     "pOver": 0.632,
+     "pOverBook": 0.474
     },
     {
      "player": "hudgins",
@@ -725,7 +787,9 @@
      "projWo": 2.6,
      "projWoGames": 5,
      "actual": 0,
-     "min": 10
+     "min": 10,
+     "pOver": null,
+     "pOverBook": 0.623
     },
     {
      "player": "hudgins",
@@ -747,7 +811,9 @@
      "projWo": 11.6,
      "projWoGames": 5,
      "actual": 0,
-     "min": 10
+     "min": 10,
+     "pOver": 0.485,
+     "pOverBook": 0.52
     },
     {
      "player": "long",
@@ -769,7 +835,9 @@
      "projWo": 1.4,
      "projWoGames": 5,
      "actual": 4,
-     "min": 22
+     "min": 22,
+     "pOver": null,
+     "pOverBook": 0.682
     },
     {
      "player": "long",
@@ -791,7 +859,9 @@
      "projWo": 9.2,
      "projWoGames": 5,
      "actual": 14,
-     "min": 22
+     "min": 22,
+     "pOver": 0.476,
+     "pOverBook": 0.521
     },
     {
      "player": "moore",
@@ -813,7 +883,9 @@
      "projWo": 3.6,
      "projWoGames": 5,
      "actual": 7,
-     "min": 24
+     "min": 24,
+     "pOver": 0.74,
+     "pOverBook": 0.583
     },
     {
      "player": "moore",
@@ -835,7 +907,9 @@
      "projWo": 4.4,
      "projWoGames": 5,
      "actual": 7,
-     "min": 24
+     "min": 24,
+     "pOver": 0.724,
+     "pOverBook": 0.596
     },
     {
      "player": "tyree",
@@ -857,7 +931,9 @@
      "projWo": 2.2,
      "projWoGames": 5,
      "actual": 3,
-     "min": 30
+     "min": 30,
+     "pOver": 0.402,
+     "pOverBook": 0.659
     },
     {
      "player": "tyree",
@@ -879,7 +955,9 @@
      "projWo": 1.0,
      "projWoGames": 5,
      "actual": 2,
-     "min": 30
+     "min": 30,
+     "pOver": null,
+     "pOverBook": 0.44
     },
     {
      "player": "tyree",
@@ -901,7 +979,9 @@
      "projWo": 18.4,
      "projWoGames": 5,
      "actual": 19,
-     "min": 30
+     "min": 30,
+     "pOver": 0.124,
+     "pOverBook": 0.485
     },
     {
      "player": "tyree",
@@ -923,7 +1003,9 @@
      "projWo": 1.4,
      "projWoGames": 5,
      "actual": 1,
-     "min": 30
+     "min": 30,
+     "pOver": 0.44,
+     "pOverBook": 0.55
     }
    ],
    "paokOut": [
@@ -934,5 +1016,5 @@
    ]
   }
  },
- "updated": "2026-11-21T18:43:56Z"
+ "updated": "2026-11-23T21:24:01Z"
 }
