@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-23 06:56 UTC",
+ "updated": "2026-11-23 10:57 UTC",
  "basketball_overs": {
   "n": 34,
   "avg": 0.0232,
@@ -40,17 +40,17 @@
   "verdict": "few"
  },
  "handball": {
-  "n": 29,
-  "avg": -0.021,
-  "beat": 11,
-  "picks": 29,
-  "won": 22,
-  "lost": 7,
+  "n": 46,
+  "avg": -0.0277,
+  "beat": 15,
+  "picks": 46,
+  "won": 30,
+  "lost": 16,
   "push": 0,
-  "roi": 0.3869,
-  "lo": -0.0667,
-  "hi": 0.0246,
-  "verdict": "few"
+  "roi": 0.1952,
+  "lo": -0.0603,
+  "hi": 0.0049,
+  "verdict": "level"
  },
  "handball_tracking": {
   "n": 0,
