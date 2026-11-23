@@ -93,6 +93,7 @@ window.SLREF = {
   "foreign": ["Hernández", "Colombo", "Zwayer", "Jablonski", "Martínez"],
   // 2026-27 match reports, newest first: [date, match, score, referee, rating (null: no report), favoured, comment]
   "report": [
+    ["2026-11-23", "Asteras - Aris", "0-1", "Tsetsilas", 8.5, null, "Steady and convincing in Tripoli; his form has no ups and downs, and he has earned the confidence to get the games he handles well. Assistants Mousiadis and Oikonomou, VAR Matsoukas."],
     ["2026-11-22", "Olympiakos - Iraklis", "6-2", "Tsimenteridis", 7.8, null, "Saved by VAR (Vergetis): a penalty he gave was taken back after review, and VAR also stepped in on a handball penalty and on a penalty that had to be retaken."],
     ["2026-11-22", "PAOK - Kifisia", "4-0", "Tzilos", 7.8, null, "Missed a red card and the penalty for a hold on Zivkovic; VAR (Polychronis) had to give both."],
     ["2026-11-22", "Panathinaikos - OFI", "2-0", "Papapetrou (UEFA A)", 8.7, null, "Didn't hesitate to give a penalty against Panathinaikos for van Drongelen's outstretched arm, showing he does no favours to anyone. Good assistants."],
