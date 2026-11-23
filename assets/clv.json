@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-23 21:52 UTC",
+ "updated": "2026-11-23 23:08 UTC",
  "basketball_overs": {
   "n": 34,
   "avg": 0.0236,
@@ -37,21 +37,21 @@
   }
  },
  "women_h1": {
-  "n": 18,
-  "avg": -0.0785,
+  "n": 19,
+  "avg": -0.0775,
   "beat": 2,
-  "picks": 18,
+  "picks": 19,
   "won": 12,
-  "lost": 6,
+  "lost": 7,
   "push": 0,
-  "roi": 0.21,
-  "lo": -0.12,
-  "hi": -0.0369,
+  "roi": 0.1463,
+  "lo": -0.1168,
+  "hi": -0.0381,
   "verdict": "few",
   "proof": {
-   "n": 18,
-   "found": 18,
-   "before": 18
+   "n": 19,
+   "found": 19,
+   "before": 19
   }
  },
  "handball": {
