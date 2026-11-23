@@ -1029,7 +1029,9 @@ function renderExperts(){
   <div class="scroll"><table class="xv"><thead><tr><th class="n">#</th><th>Team</th><th class="n">Rating</th><th>Season trend</th><th>Expert view</th></tr></thead><tbody>`;
   XV.rows.forEach(([t, r, c, txt], i) => h += `<tr><td class="n muted">${i + 1}</td><td><b>${t}</b></td><td class="n tot">${r}</td><td>${ch(c)}</td><td class="xvc">${txt}</td></tr>`);
   h += `</tbody></table></div>`;
-  if (XV.news.length) h += `<h2>Team news</h2><p class="note">Injuries, suspensions and coach changes since the ratings, checked daily. Not used by the model.</p><div class="scroll"><table class="xv xn"><thead><tr><th>Date</th><th>Team</th><th>News</th></tr></thead><tbody>${XV.news.map(([d, t, k, x]) => `<tr><td class="muted">${dayName(d)}</td><td><b>${t}</b></td><td class="xvc"><span class="muted">${k}:</span> ${x}</td></tr>`).join('')}</tbody></table></div>`;
+  // only the last week's news is shown (user, 23 Nov 2026)
+  const news = XV.news.filter(([d]) => Date.now() - Date.parse(d) <= 7 * 864e5).sort((a, b) => b[0].localeCompare(a[0]));
+  if (news.length) h += `<h2>Team news</h2><p class="note">Injuries, suspensions and coach changes from the last seven days, checked daily. Not used by the model.</p><div class="scroll"><table class="xv xn"><thead><tr><th>Date</th><th>Team</th><th>News</th></tr></thead><tbody>${news.map(([d, t, k, x]) => `<tr><td class="muted">${dayName(d)}</td><td><b>${t}</b></td><td class="xvc"><span class="muted">${k}:</span> ${x}</td></tr>`).join('')}</tbody></table></div>`;
   h += `<h2>What stands out</h2><ul class="xvl">${XV.themes.map(t => `<li>${t}</li>`).join('')}</ul>`;
   return h;
 }
