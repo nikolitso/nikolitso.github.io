@@ -116,3 +116,11 @@ jobs:
                   print(k['h'], 'not sent', e)
               time.sleep(2)
           print(len(new), 'new picks', '' if topic else '(no NTFY_TOPIC secret: nothing sent)')
+      # after publishing: fail the run (GitHub e-mails it) when a line near tip-off is missing, a result is missing
+      # or the fixtures step has stopped (BettingSignal fibaeuropecup/fresh_check.py, as on the EuroCup workflow)
+      - name: Stale-data check
+        if: ${{ inputs.job != 'probe' }}
+        env:
+          TZ: Europe/Athens
+          PYTHONIOENCODING: utf-8
+        run: python -u _bs/fibaeuropecup/fresh_check.py fibaeuropecup
