@@ -3127,7 +3127,7 @@
   "date": "2026-12-08T18:00:00Z",
   "opp": "Bosna",
   "home": true,
-  "saved": "2026-11-24T05:12:04Z",
+  "saved": "2026-11-24T20:26:01Z",
   "paok": 85.6,
   "oppScore": 80.7,
   "winProb": 66,
@@ -3436,7 +3436,7 @@
   "date": "2026-12-05T14:00:00Z",
   "opp": "Promitheas",
   "home": true,
-  "saved": "2026-11-24T05:12:04Z",
+  "saved": "2026-11-24T20:26:01Z",
   "paok": 88.1,
   "oppScore": 70.8,
   "winProb": 97,
@@ -3505,13 +3505,23 @@
      "fg3m": 0.2
     },
     {
+     "name": "Breein Tyree",
+     "no": "5",
+     "min": 21,
+     "pts": 14.1,
+     "reb": 1.5,
+     "ast": 1.4,
+     "pir": 10.2,
+     "fg3m": 1.0
+    },
+    {
      "name": "Ben Moore",
      "no": "26",
      "min": 18,
      "pts": 6.6,
      "reb": 5.4,
      "ast": 1.1,
-     "pir": 10.4,
+     "pir": 9.9,
      "fg3m": 0.4
     },
     {
@@ -3521,18 +3531,8 @@
      "pts": 7.6,
      "reb": 4.2,
      "ast": 4.5,
-     "pir": 10.3,
+     "pir": 9.3,
      "fg3m": 1.1
-    },
-    {
-     "name": "Breein Tyree",
-     "no": "5",
-     "min": 21,
-     "pts": 14.1,
-     "reb": 1.5,
-     "ast": 1.4,
-     "pir": 9.1,
-     "fg3m": 1.0
     },
     {
      "name": "Marcus Foster",
@@ -3541,18 +3541,8 @@
      "pts": 12.7,
      "reb": 2.5,
      "ast": 2.2,
-     "pir": 8.7,
+     "pir": 9.2,
      "fg3m": 1.8
-    },
-    {
-     "name": "Trevor Hudgins",
-     "no": "12",
-     "min": 18,
-     "pts": 8.8,
-     "reb": 2.1,
-     "ast": 2.2,
-     "pir": 8.4,
-     "fg3m": 1.4
     },
     {
      "name": "Naz Mitrou-Long",
@@ -3561,8 +3551,18 @@
      "pts": 8.5,
      "reb": 2.5,
      "ast": 1.8,
-     "pir": 8.3,
+     "pir": 8.1,
      "fg3m": 1.2
+    },
+    {
+     "name": "Trevor Hudgins",
+     "no": "12",
+     "min": 18,
+     "pts": 8.8,
+     "reb": 2.1,
+     "ast": 2.2,
+     "pir": 7.7,
+     "fg3m": 1.4
     },
     {
      "name": "Raiquan Gray",
@@ -3571,7 +3571,7 @@
      "pts": 8.1,
      "reb": 3.7,
      "ast": 0.7,
-     "pir": 7.1,
+     "pir": 7.0,
      "fg3m": 0.7
     },
     {
@@ -3581,18 +3581,8 @@
      "pts": 4.9,
      "reb": 2.2,
      "ast": 0.4,
-     "pir": 4.4,
+     "pir": 4.1,
      "fg3m": 0.8
-    },
-    {
-     "name": "Nikos Persidis",
-     "no": "18",
-     "min": 10,
-     "pts": 3.5,
-     "reb": 2.0,
-     "ast": 0.5,
-     "pir": 3.9,
-     "fg3m": 0.4
     },
     {
      "name": "Thanasis Bazinas",
@@ -3601,8 +3591,18 @@
      "pts": 3.0,
      "reb": 1.2,
      "ast": 0.7,
-     "pir": 3.4,
+     "pir": 3.5,
      "fg3m": 0.3
+    },
+    {
+     "name": "Nikos Persidis",
+     "no": "18",
+     "min": 10,
+     "pts": 3.5,
+     "reb": 2.0,
+     "ast": 0.5,
+     "pir": 3.5,
+     "fg3m": 0.4
     },
     {
      "name": "Dimitris Kaklamanakis",
@@ -3611,7 +3611,7 @@
      "pts": 1.9,
      "reb": 1.7,
      "ast": 0.4,
-     "pir": 2.9,
+     "pir": 2.8,
      "fg3m": 0.1
     }
    ],
