@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en" data-site="volleyball">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Volleyball total points: why the over/under is really about sets · Antonis Nikolitsopoulos</title>
+<meta name="description" content="Across 64,184 volleyball matches, totals form three humps: 3 sets average 131 points, 4 sets 181, 5 sets 210. The overall average, 163, is a total almost no match ends on.">
+<link rel="canonical" href="https://antonisnikolitsopoulos.com/volleyball/research/how-totals-work/">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Article","@id":"https://antonisnikolitsopoulos.com/volleyball/research/how-totals-work/#article","headline":"Volleyball total points: why the over/under is really about sets","description":"Across 64,184 volleyball matches, totals form three humps: 3 sets average 131 points, 4 sets 181, 5 sets 210. The overall average, 163, is a total almost no match ends on.","url":"https://antonisnikolitsopoulos.com/volleyball/research/how-totals-work/","datePublished":"2026-11-24","dateModified":"2026-11-24","inLanguage":"en","author":{"@id":"https://antonisnikolitsopoulos.com/#person"},"isPartOf":{"@id":"https://antonisnikolitsopoulos.com/#website"},"about":["Volleyball","Total points","Over/under"]},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://antonisnikolitsopoulos.com/"},{"@type":"ListItem","position":2,"name":"Volleyball","item":"https://antonisnikolitsopoulos.com/volleyball/"},{"@type":"ListItem","position":3,"name":"How volleyball totals work","item":"https://antonisnikolitsopoulos.com/volleyball/research/how-totals-work/"}]},{"@type":"Person","@id":"https://antonisnikolitsopoulos.com/#person","name":"Antonis Nikolitsopoulos","url":"https://antonisnikolitsopoulos.com/","image":"https://antonisnikolitsopoulos.com/photo.jpg","homeLocation":{"@type":"Place","name":"Thessaloniki, Greece"},"knowsAbout":["Sports analytics","Football","Basketball","Probability modelling","Books","World cinema","Greek wine"],"sameAs":["https://www.linkedin.com/in/antonis-nikolitsopoulos/","https://x.com/nikolitso","https://letterboxd.com/nikolitso/","https://whatalgomissed.com/"]},{"@type":"WebSite","@id":"https://antonisnikolitsopoulos.com/#website","url":"https://antonisnikolitsopoulos.com/","name":"Antonis Nikolitsopoulos","inLanguage":"en","publisher":{"@id":"https://antonisnikolitsopoulos.com/#person"}}]}</script>
+<meta property="og:title" content="Volleyball total points: why the over/under is really about sets">
+<meta property="og:description" content="Across 64,184 volleyball matches, totals form three humps: 3 sets average 131 points, 4 sets 181, 5 sets 210. The overall average, 163, is a total almost no match ends on.">
+<meta property="og:url" content="https://antonisnikolitsopoulos.com/volleyball/research/how-totals-work/">
+<meta property="og:type" content="article">
+<meta property="og:image" content="https://antonisnikolitsopoulos.com/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.png" type="image/png" sizes="64x64">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Hanken+Grotesk:ital,wght@0,300..700;1,400&display=swap">
+<style>:root{--an-wrap:860px}
+.wrap{max-width:860px;margin:0 auto;padding:22px 16px 80px;font-family:var(--an-body);color:var(--an-ink)}
+.wrap p,.wrap li{font-size:17px;line-height:1.65;max-width:70ch}
+.wrap p.lede{font-size:18.5px;margin:6px 0 18px}
+.wrap p.date{color:var(--an-muted);font-size:14px;letter-spacing:.06em;text-transform:uppercase;margin:4px 0 0}
+h2{font:400 26px/1.2 var(--an-display);margin:38px 0 10px}
+.wrap ul{padding-left:20px}.wrap li{margin:6px 0}
+figure{margin:18px 0 6px}figcaption{font-size:14px;color:var(--an-muted);line-height:1.5;margin-top:6px;max-width:70ch}
+.chart{width:100%;height:auto;display:block}
+.chart .grid{stroke:var(--an-rule);stroke-width:1}.chart .zero{stroke:var(--an-muted);stroke-width:1.5}
+.chart .ax{fill:var(--an-muted);font-size:14px;font-family:var(--an-body)}
+.chart .val{fill:var(--an-ink);font-size:15px;font-weight:600;font-family:var(--an-body)}
+.chart .bar{fill:var(--an-muted);opacity:.55}.chart .bar.hi{fill:var(--an-accent);opacity:1}.chart .bar.neg{opacity:.35}
+.chart .err{stroke:var(--an-ink);stroke-width:2}.chart .tgt{fill:transparent}.chart .hit:hover .tgt{fill:var(--an-soft)}
+.scroll{overflow-x:auto}
+table.res{border-collapse:collapse;width:100%;font-size:15px;margin-top:8px}
+.res th{text-align:right;font-weight:600;color:var(--an-muted);font-size:14px;letter-spacing:.04em;text-transform:uppercase;border-bottom:1px solid var(--an-rule);padding:9px 8px}
+.res th:first-child{text-align:left}
+.res td{padding:10px 8px;border-bottom:1px solid var(--an-rule);font-variant-numeric:tabular-nums}.res td.n{text-align:right}
+.res .sub{display:block;color:var(--an-muted);font-size:14px}
+.box{border:1px solid var(--an-rule);border-radius:12px;padding:6px 18px;background:var(--an-soft);margin-top:30px}
+@media (max-width:640px){.scroll{overflow:visible}table.res,.res tbody,.res tr,.res td{display:block;width:auto}.res thead{display:none}
+.res tr{border:1px solid var(--an-rule);border-radius:12px;padding:10px 14px;margin:0 0 10px;background:var(--an-soft)}
+.res td{border:0;padding:4px 0;display:flex;justify-content:space-between;gap:14px}
+.res td.t{display:block;padding-bottom:6px;border-bottom:1px solid var(--an-rule);margin-bottom:4px}
+.res td[data-l]::before{content:attr(data-l);color:var(--an-muted);font-size:14px}}
+.chart .s3{fill:var(--an-accent)}.chart .s4{fill:var(--an-ink);opacity:.55}.chart .s5{fill:var(--an-muted);opacity:.55}
+.chart .lab{fill:var(--an-ink);font-size:14px;font-weight:600;font-family:var(--an-body)}
+</style>
+<link rel="stylesheet" href="/assets/an.css?v=5">
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "b67bbb76d0e24af196b24ded3ab71ad0"}'></script>
+<meta property="og:site_name" content="Antonis Nikolitsopoulos">
+<meta property="og:locale" content="en_US">
+<meta property="og:image:alt" content="Volleyball total points: why the over/under is really about sets">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:site" content="@nikolitso">
+<meta name="twitter:creator" content="@nikolitso">
+<meta name="twitter:title" content="Volleyball total points: why the over/under is really about sets">
+<meta name="twitter:description" content="Across 64,184 volleyball matches, totals form three humps: 3 sets average 131 points, 4 sets 181, 5 sets 210. The overall average, 163, is a total almost no match ends on.">
+<meta name="twitter:image" content="https://antonisnikolitsopoulos.com/og.png">
+<meta name="twitter:image:alt" content="Volleyball total points: why the over/under is really about sets">
+</head>
+<body>
+<nav class="an-sitebar" aria-label="Main site"><div><a href="/books/">Books</a><a href="/#projects">Projects</a><a href="/about/">About</a><a href="/" title="Main site: antonisnikolitsopoulos.com" aria-label="Main site"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 2 11.5h3V21h5.5v-6h3v6H19v-9.5h3z"/></svg></a></div></nav>
+<nav class="an-project-nav" aria-label="Sports analytics projects"><div><a class="an-navhome" href="/">Home</a>
+<span class="an-navgroup">Football</span>
+<a href="/superleague/">Greek Superleague</a>
+<a href="/football/greek-cup/">Greek Cup</a>
+<span class="an-navgroup">Basketball</span>
+<a href="/basketball/">Greek League</a>
+<a href="/basketball/overs/">European</a>
+<a href="/basketball/women/">Women Basketball</a>
+<a class="an-navchip" href="/volleyball/" aria-current="page">Volleyball</a>
+<a class="an-navchip" href="/handball/">Handball</a>
+<span class="an-navgroup">PAOK</span>
+<a href="/paok-hub/">Hub</a>
+<a href="/paok-basketball/">Basketball</a></div></nav>
+<header class="an-head"><div><a class="an-home" href="/volleyball/">Volleyball</a>
+  <a class="an-brand" href="/volleyball/research/how-totals-work/"><svg class="an-mark" aria-hidden="true"><use href="/assets/marks.svg#volleyball"/></svg><span><small class="an-kicker">Explainer</small><h1>Why a volleyball total is really about sets</h1></span></a>
+</div></header>
+<main class="wrap">
+<p class="date">24 November 2026 · 64,184 matches · 64 leagues</p>
+<p class="lede">A volleyball total does not cluster around one number. It forms three humps, one for each length of match: <b>3 sets</b> average 131 points, <b>4 sets</b> 181 and <b>5 sets</b> 210. The overall average, 163, falls in the gap between them: only 2.5% of matches end within five points of it. So an over/under line is mostly a question about how many sets will be played.</p>
+
+<h2>Three humps, not one</h2>
+<figure><svg class="chart" viewBox="0 0 640 300" role="img" aria-labelledby="ht hd"><title id="ht">Volleyball total points, by number of sets</title><desc id="hd">Across 64,184 volleyball matches, totals form three humps: 3 sets average 131 points, 4 sets 181, 5 sets 210. The overall average, 163, is a total almost no match ends on.</desc><line class="grid" x1="44" x2="628" y1="260.0" y2="260.0"/><text class="ax" x="38" y="265.0" text-anchor="end">0k</text><line class="grid" x1="44" x2="628" y1="198.5" y2="198.5"/><text class="ax" x="38" y="203.5" text-anchor="end">2k</text><line class="grid" x1="44" x2="628" y1="137.0" y2="137.0"/><text class="ax" x="38" y="142.0" text-anchor="end">4k</text><line class="grid" x1="44" x2="628" y1="75.5" y2="75.5"/><text class="ax" x="38" y="80.5" text-anchor="end">6k</text><line class="grid" x1="44" x2="628" y1="14.0" y2="14.0"/><text class="ax" x="38" y="19.0" text-anchor="end">8k</text><rect class="s3" x="45.0" y="259.4" width="17.5" height="0.6"><title>95–99 points, 3 sets: 21 matches</title></rect><rect class="s3" x="64.5" y="258.0" width="17.5" height="2.0"><title>100–104 points, 3 sets: 66 matches</title></rect><rect class="s3" x="83.9" y="253.6" width="17.5" height="6.4"><title>105–109 points, 3 sets: 208 matches</title></rect><rect class="s3" x="103.4" y="238.9" width="17.5" height="21.1"><title>110–114 points, 3 sets: 685 matches</title></rect><rect class="s3" x="122.9" y="209.3" width="17.5" height="50.7"><title>115–119 points, 3 sets: 1,649 matches</title></rect><rect class="s3" x="142.3" y="156.2" width="17.5" height="103.8"><title>120–124 points, 3 sets: 3,375 matches</title></rect><rect class="s3" x="161.8" y="76.0" width="17.5" height="184.0"><title>125–129 points, 3 sets: 5,984 matches</title></rect><rect class="s5" x="161.8" y="76.0" width="17.5" height="0.0"><title>125–129 points, 5 sets: 1 matches</title></rect><rect class="s3" x="181.3" y="36.0" width="17.5" height="224.0"><title>130–134 points, 3 sets: 7,284 matches</title></rect><rect class="s3" x="200.7" y="73.6" width="17.5" height="186.4"><title>135–139 points, 3 sets: 6,062 matches</title></rect><rect class="s3" x="220.2" y="164.6" width="17.5" height="95.4"><title>140–144 points, 3 sets: 3,101 matches</title></rect><rect class="s4" x="220.2" y="164.6" width="17.5" height="0.0"><title>140–144 points, 4 sets: 1 matches</title></rect><rect class="s3" x="239.7" y="221.8" width="17.5" height="38.2"><title>145–149 points, 3 sets: 1,241 matches</title></rect><rect class="s4" x="239.7" y="221.7" width="17.5" height="0.1"><title>145–149 points, 4 sets: 4 matches</title></rect><rect class="s3" x="259.1" y="244.6" width="17.5" height="15.4"><title>150–154 points, 3 sets: 501 matches</title></rect><rect class="s4" x="259.1" y="243.8" width="17.5" height="0.8"><title>150–154 points, 4 sets: 26 matches</title></rect><rect class="s3" x="278.6" y="253.9" width="17.5" height="6.1"><title>155–159 points, 3 sets: 198 matches</title></rect><rect class="s4" x="278.6" y="250.2" width="17.5" height="3.7"><title>155–159 points, 4 sets: 120 matches</title></rect><rect class="s3" x="298.1" y="257.6" width="17.5" height="2.4"><title>160–164 points, 3 sets: 78 matches</title></rect><rect class="s4" x="298.1" y="243.5" width="17.5" height="14.1"><title>160–164 points, 4 sets: 458 matches</title></rect><rect class="s3" x="317.5" y="259.0" width="17.5" height="1.0"><title>165–169 points, 3 sets: 31 matches</title></rect><rect class="s4" x="317.5" y="219.1" width="17.5" height="40.0"><title>165–169 points, 4 sets: 1,300 matches</title></rect><rect class="s3" x="337.0" y="259.8" width="17.5" height="0.2"><title>170–174 points, 3 sets: 7 matches</title></rect><rect class="s4" x="337.0" y="170.9" width="17.5" height="88.9"><title>170–174 points, 4 sets: 2,892 matches</title></rect><rect class="s3" x="356.5" y="259.8" width="17.5" height="0.2"><title>175–179 points, 3 sets: 6 matches</title></rect><rect class="s4" x="356.5" y="125.9" width="17.5" height="133.9"><title>175–179 points, 4 sets: 4,354 matches</title></rect><rect class="s5" x="356.5" y="125.8" width="17.5" height="0.1"><title>175–179 points, 5 sets: 4 matches</title></rect><rect class="s3" x="375.9" y="260.0" width="17.5" height="0.0"><title>180–184 points, 3 sets: 1 matches</title></rect><rect class="s4" x="375.9" y="112.3" width="17.5" height="147.7"><title>180–184 points, 4 sets: 4,803 matches</title></rect><rect class="s5" x="375.9" y="111.5" width="17.5" height="0.7"><title>180–184 points, 5 sets: 24 matches</title></rect><rect class="s4" x="395.4" y="159.7" width="17.5" height="100.3"><title>185–189 points, 4 sets: 3,262 matches</title></rect><rect class="s5" x="395.4" y="155.4" width="17.5" height="4.3"><title>185–189 points, 5 sets: 140 matches</title></rect><rect class="s4" x="414.9" y="210.1" width="17.5" height="49.9"><title>190–194 points, 4 sets: 1,623 matches</title></rect><rect class="s5" x="414.9" y="197.1" width="17.5" height="13.0"><title>190–194 points, 5 sets: 422 matches</title></rect><rect class="s4" x="434.3" y="235.7" width="17.5" height="24.3"><title>195–199 points, 4 sets: 789 matches</title></rect><rect class="s5" x="434.3" y="198.9" width="17.5" height="36.8"><title>195–199 points, 5 sets: 1,197 matches</title></rect><rect class="s4" x="453.8" y="247.9" width="17.5" height="12.1"><title>200–204 points, 4 sets: 395 matches</title></rect><rect class="s5" x="453.8" y="179.8" width="17.5" height="68.0"><title>200–204 points, 5 sets: 2,212 matches</title></rect><rect class="s4" x="473.3" y="255.3" width="17.5" height="4.7"><title>205–209 points, 4 sets: 152 matches</title></rect><rect class="s5" x="473.3" y="167.1" width="17.5" height="88.2"><title>205–209 points, 5 sets: 2,868 matches</title></rect><rect class="s4" x="492.7" y="257.9" width="17.5" height="2.1"><title>210–214 points, 4 sets: 69 matches</title></rect><rect class="s5" x="492.7" y="178.6" width="17.5" height="79.3"><title>210–214 points, 5 sets: 2,578 matches</title></rect><rect class="s4" x="512.2" y="259.0" width="17.5" height="1.0"><title>215–219 points, 4 sets: 33 matches</title></rect><rect class="s5" x="512.2" y="205.0" width="17.5" height="54.0"><title>215–219 points, 5 sets: 1,755 matches</title></rect><rect class="s4" x="531.7" y="259.5" width="17.5" height="0.5"><title>220–224 points, 4 sets: 15 matches</title></rect><rect class="s5" x="531.7" y="228.6" width="17.5" height="30.9"><title>220–224 points, 5 sets: 1,005 matches</title></rect><rect class="s4" x="551.1" y="259.9" width="17.5" height="0.1"><title>225–229 points, 4 sets: 3 matches</title></rect><rect class="s5" x="551.1" y="245.3" width="17.5" height="14.6"><title>225–229 points, 5 sets: 476 matches</title></rect><rect class="s4" x="570.6" y="259.9" width="17.5" height="0.1"><title>230–234 points, 4 sets: 2 matches</title></rect><rect class="s5" x="570.6" y="252.3" width="17.5" height="7.7"><title>230–234 points, 5 sets: 249 matches</title></rect><rect class="s4" x="590.1" y="259.9" width="17.5" height="0.1"><title>235–239 points, 4 sets: 2 matches</title></rect><rect class="s5" x="590.1" y="255.8" width="17.5" height="4.2"><title>235–239 points, 5 sets: 136 matches</title></rect><rect class="s4" x="609.5" y="260.0" width="17.5" height="0.0"><title>240–244 points, 4 sets: 1 matches</title></rect><rect class="s5" x="609.5" y="258.2" width="17.5" height="1.8"><title>240–244 points, 5 sets: 57 matches</title></rect><text class="ax" x="63.5" y="280" text-anchor="middle">100</text><text class="ax" x="141.3" y="280" text-anchor="middle">120</text><text class="ax" x="219.2" y="280" text-anchor="middle">140</text><text class="ax" x="297.1" y="280" text-anchor="middle">160</text><text class="ax" x="374.9" y="280" text-anchor="middle">180</text><text class="ax" x="452.8" y="280" text-anchor="middle">200</text><text class="ax" x="530.7" y="280" text-anchor="middle">220</text><text class="ax" x="608.5" y="280" text-anchor="middle">240</text><text class="ax" x="336" y="296" text-anchor="middle">Total points in the match</text><line class="zero" x1="308.7" x2="308.7" y1="14" y2="260" stroke-dasharray="5 4"/><text class="val" x="314.7" y="30">Average 163</text><text class="lab" x="188.1" y="28.0" text-anchor="middle">3 sets</text><text class="lab" x="378.8" y="103.5" text-anchor="middle">4 sets</text><text class="lab" x="487.8" y="159.1" text-anchor="middle">5 sets</text></svg>
+<figcaption>Total points in 64,184 league matches, in 5-point bins, coloured by the number of sets, each hump labelled. The dashed line is the overall average.</figcaption></figure>
+<div class="scroll"><table class="res"><thead><tr><th>Match length</th><th>Share of matches</th><th>Average total</th><th>Middle 80% of totals</th><th>Points per set</th></tr></thead><tbody>
+<tr><td class="t">3 sets</td><td class="n" data-l="Share of matches">47.9%</td><td class="n" data-l="Average total">131</td><td class="n" data-l="Middle 80% of totals">120–142</td><td class="n" data-l="Points per set">43.7</td></tr><tr><td class="t">4 sets</td><td class="n" data-l="Share of matches">31.6%</td><td class="n" data-l="Average total">181</td><td class="n" data-l="Middle 80% of totals">170–192</td><td class="n" data-l="Points per set">45.2</td></tr><tr><td class="t">5 sets</td><td class="n" data-l="Share of matches">20.5%</td><td class="n" data-l="Average total">210</td><td class="n" data-l="Middle 80% of totals">198–222</td><td class="n" data-l="Points per set">41.9</td></tr>
+</tbody></table></div>
+<p>Nearly half of all matches end in three sets, and those finish between 120 and 142 points eight times in ten. A fourth set adds about 50 points, and a fifth about 29 more, because a deciding set is played to 15 instead of 25. Between the 3-set and 4-set humps there is a gap: only 1.3% of matches end between 150 and 159 points.</p>
+
+<h2>Sets do the work, not rallies</h2>
+<p>Points per set barely change with the length of the match: 43.7 in 3-set matches, 45.2 in 4-set matches and 41.9 in 5-set matches, where the short fifth set pulls the average down. Two teams that trade long sets add a few points to the total. One extra set adds around 50. That is why the main thing to estimate for a volleyball total is the chance of each match length, and that chance depends on how evenly matched the two teams are.</p>
+
+<h2>Two matches, two different questions</h2>
+<p>Two matches from the volleyball page in November 2026 show how far the set chances move the total. The percentages are the model's chances for each match length before the start.</p>
+<div class="scroll"><table class="res"><thead><tr><th>Match</th><th>3 sets</th><th>4 sets</th><th>5 sets</th><th>Model median</th><th>Market line</th><th>Result</th></tr></thead><tbody><tr><td class="t">Conegliano – Macerata<span class="sub">Serie A1 women, Italy, 8 Nov 2026</span></td><td class="n" data-l="3 sets">81%</td><td class="n" data-l="4 sets">16%</td><td class="n" data-l="5 sets">3%</td><td class="n" data-l="Model median">123</td><td class="n" data-l="Market line">130.5</td><td class="n" data-l="Result">3–0, 138 points<span class="sub">over</span></td></tr><tr><td class="t">GKS Katowice – Norwid Częstochowa<span class="sub">PlusLiga, Poland, 13 Nov 2026</span></td><td class="n" data-l="3 sets">30%</td><td class="n" data-l="4 sets">37%</td><td class="n" data-l="5 sets">33%</td><td class="n" data-l="Model median">179</td><td class="n" data-l="Market line">182.5</td><td class="n" data-l="Result">3–0, 132 points<span class="sub">under</span></td></tr></tbody></table></div>
+<p>Conegliano were heavy favourites, so the model expected three sets four times in five. Its median, 123 points, sits inside the 3-set hump, and so did the market's line of 130.5. For that line the question was how long the three sets would run: in the data, 56% of 3-set matches go over 130.5. The match ended 3–0 with 138 points, over the line.</p>
+<p>Katowice against Częstochowa looked even, so every length had about a one-in-three chance. The line of 182.5 sat in the 4-set hump, and in practice the over needed a fourth set. The match ended 3–0 with 132 points, 50 under the line. The points per set were normal; the fourth set never came.</p>
+
+<h2>What this means for a line</h2>
+<ul>
+<li><b>A line near the average is a line in the gap.</b> A total of about 160 is rarely the score. It works as a question: will this match go beyond three sets?</li>
+<li><b>The median is a better guide than the average.</b> In a match with mixed chances the average lands between the humps; the median lands on a total that actually happens.</li>
+<li><b>Even matches are the uncertain ones.</b> When each length is about equally likely, the total can end anywhere from 120 to 220, and a small change in the set chances moves the fair line a long way.</li>
+</ul>
+
+<div class="box">
+<h2>On this site</h2>
+<ul>
+<li>The <a href="/volleyball/">volleyball page</a> shows each match's median total and the chance of 3, 4 and 5 sets, for the reasons above.</li>
+<li>The research note <a href="/volleyball/research/close-matches/">Close matches go under more often than the market expects</a> tests how the market prices the total in even matches.</li>
+<li>Data: 64,184 completed league matches from 64 domestic leagues, women's and men's, seasons 2017-18 to 2026-27. Cups and international games are not included.</li>
+</ul>
+</div>
+</main>
+</body>
+</html>
