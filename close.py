@@ -11,9 +11,14 @@ import sys
 
 import superbet
 
-if __name__ == "__main__":
+def main():
     within = int(sys.argv[1]) if len(sys.argv) > 1 else 45
     games = superbet.fetch(days=8, within=within)
     print(f"{len(games)} game(s) kicking off within {within} min")
     for g in games:
         print("closing odds:", g["home"], "-", g["away"], g["kickoff"])
+
+
+if __name__ == "__main__":
+    import quiet
+    quiet.run(main)
