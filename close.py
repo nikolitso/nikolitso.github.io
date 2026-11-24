@@ -4,17 +4,17 @@
 Pulls the book's odds for the games kicking off within the next MINUTES (45 by default) into
 data/odds/odds-*.json on this branch. The Super League pipeline copies them into its own data/odds
 before each update, where they are each game's closing odds. The odds module (feed) and the log
-filter (quiet) come from the private pipeline repo, checked out by the workflow at _bs.
+filter (logredact) come from the private pipeline repo, checked out by the workflow at _bs.
 python close.py [MINUTES]
 """
 import os
 import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, os.path.join(HERE, "_bs", "superleague"))
+sys.path[:0] = [os.path.join(HERE, "_bs", "superleague"), os.path.join(HERE, "_bs")]
 
 import feed   # noqa: E402
-import quiet  # noqa: E402
+import logredact  # noqa: E402
 
 
 def main():
@@ -27,4 +27,4 @@ def main():
 
 
 if __name__ == "__main__":
-    quiet.run(main)
+    logredact.run(main)
