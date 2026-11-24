@@ -93,6 +93,8 @@ jobs:
           # several pipelines push at once: on a rejected push, rebase and try again
           for i in 1 2 3 4 5; do git pull -q --rebase && git push -q && exit 0; sleep $((RANDOM % 10 + 5)); done
           exit 1
+      - name: Data check (every shown competition fetched, every played game complete)
+        run: python $S/check.py
       - name: Report any step that failed (its data was kept from the last good run)
         if: steps.eurocup.outcome == 'failure' || steps.gbl.outcome == 'failure' || steps.league.outcome == 'failure' || steps.power.outcome == 'failure' || steps.scout.outcome == 'failure' || steps.ratings.outcome == 'failure'
         run: |

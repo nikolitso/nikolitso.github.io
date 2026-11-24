@@ -1,7 +1,7 @@
 {
  "competition": "Stoiximan GBL",
  "season": "2026-27",
- "updated": "2026-11-24T05:10:29Z",
+ "updated": "2026-11-24T18:42:14Z",
  "source": "https://www.esake.gr/",
  "roster": [
   {
@@ -2678,7 +2678,7 @@
    "played": true,
    "us": 93,
    "them": 67,
-   "url": "https://www.esake.gr/el/action/EsakegameView?idgame=9B455F5D&mode=3",
+   "url": "https://fibalivestats.dcd.shared.geniussports.com/u/ESAKE/2902713/bs.html",
    "box": {
     "players": [
      {
@@ -2697,12 +2697,12 @@
       "pf": 3,
       "stl": 1,
       "tov": 0,
-      "sec": 1092,
       "pir": 12,
       "no": "0",
       "name": "Raiquan Gray",
       "start": false,
-      "pm": null
+      "sec": 1092,
+      "pm": 9
      },
      {
       "pts": 11,
@@ -2720,12 +2720,12 @@
       "pf": 2,
       "stl": 0,
       "tov": 0,
-      "sec": 1337,
-      "pir": 8,
+      "pir": 9,
       "no": "1",
       "name": "Naz Mitrou-Long",
       "start": false,
-      "pm": null
+      "sec": 1337,
+      "pm": 8
      },
      {
       "pts": 9,
@@ -2743,12 +2743,12 @@
       "pf": 1,
       "stl": 0,
       "tov": 1,
-      "sec": 1056,
-      "pir": 6,
+      "pir": 7,
       "no": "5",
       "name": "Breein Tyree",
-      "start": false,
-      "pm": null
+      "start": true,
+      "sec": 1056,
+      "pm": 15
      },
      {
       "pts": 4,
@@ -2766,12 +2766,12 @@
       "pf": 1,
       "stl": 0,
       "tov": 1,
-      "sec": 997,
-      "pir": 7,
+      "pir": 8,
       "no": "8",
       "name": "Kyle Alexander",
-      "start": false,
-      "pm": null
+      "start": true,
+      "sec": 997,
+      "pm": 19
      },
      {
       "pts": 5,
@@ -2789,12 +2789,12 @@
       "pf": 3,
       "stl": 0,
       "tov": 0,
-      "sec": 946,
-      "pir": 3,
+      "pir": 2,
       "no": "9",
       "name": "Nikos Chougkaz",
-      "start": false,
-      "pm": null
+      "start": true,
+      "sec": 946,
+      "pm": 7
      },
      {
       "pts": 14,
@@ -2812,12 +2812,12 @@
       "pf": 2,
       "stl": 1,
       "tov": 1,
-      "sec": 1264,
-      "pir": 13,
+      "pir": 11,
       "no": "12",
       "name": "Trevor Hudgins",
-      "start": false,
-      "pm": null
+      "start": true,
+      "sec": 1264,
+      "pm": 15
      },
      {
       "pts": 7,
@@ -2835,12 +2835,12 @@
       "pf": 4,
       "stl": 0,
       "tov": 2,
-      "sec": 838,
-      "pir": 12,
+      "pir": 11,
       "no": "14",
       "name": "Dimitris Kaklamanakis",
       "start": false,
-      "pm": null
+      "sec": 838,
+      "pm": 2
      },
      {
       "pts": 11,
@@ -2858,12 +2858,12 @@
       "pf": 0,
       "stl": 1,
       "tov": 0,
-      "sec": 1010,
-      "pir": 10,
+      "pir": 13,
       "no": "17",
       "name": "Marcus Foster",
       "start": false,
-      "pm": null
+      "sec": 1010,
+      "pm": 20
      },
      {
       "pts": 8,
@@ -2881,12 +2881,12 @@
       "pf": 4,
       "stl": 0,
       "tov": 0,
-      "sec": 1122,
-      "pir": 13,
+      "pir": 10,
       "no": "18",
       "name": "Nikos Persidis",
-      "start": false,
-      "pm": null
+      "start": true,
+      "sec": 1122,
+      "pm": 6
      },
      {
       "pts": 0,
@@ -2904,12 +2904,12 @@
       "pf": 1,
       "stl": 1,
       "tov": 0,
-      "sec": 617,
-      "pir": 1,
+      "pir": 0,
       "no": "25",
       "name": "Giorgos Fillios",
       "start": false,
-      "pm": null
+      "sec": 617,
+      "pm": -3
      },
      {
       "pts": 8,
@@ -2927,12 +2927,12 @@
       "pf": 2,
       "stl": 1,
       "tov": 2,
-      "sec": 927,
-      "pir": 13,
+      "pir": 12,
       "no": "26",
       "name": "Ben Moore",
       "start": false,
-      "pm": null
+      "sec": 927,
+      "pm": 15
      },
      {
       "pts": 7,
@@ -2950,12 +2950,12 @@
       "pf": 3,
       "stl": 1,
       "tov": 2,
-      "sec": 794,
-      "pir": 10,
+      "pir": 7,
       "no": "33",
       "name": "Nick Calathes",
       "start": false,
-      "pm": null
+      "sec": 794,
+      "pm": 17
      }
     ],
     "team": {
@@ -2974,7 +2974,7 @@
      "pf": 26,
      "stl": 6,
      "tov": 11,
-     "pir": 108
+     "pir": 101
     },
     "opp": {
      "pts": 67,
@@ -2992,7 +2992,27 @@
      "pf": 22,
      "stl": 5,
      "tov": 15,
-     "pir": 59
+     "pir": 65
+    },
+    "extra": {
+     "us": {
+      "tovPts": 27,
+      "paint": 38,
+      "second": 21,
+      "fastbreak": 11,
+      "bench": 53,
+      "lead": 36,
+      "run": 9
+     },
+     "them": {
+      "tovPts": 4,
+      "paint": 28,
+      "second": 10,
+      "fastbreak": 5,
+      "bench": 32,
+      "lead": 0,
+      "run": 8
+     }
     }
    },
    "quarters": {
@@ -3024,7 +3044,7 @@
    "played": true,
    "us": 74,
    "them": 69,
-   "url": "https://www.esake.gr/el/action/EsakegameView?idgame=81DA1041&mode=3",
+   "url": "https://fibalivestats.dcd.shared.geniussports.com/u/ESAKE/2902721/bs.html",
    "box": {
     "players": [
      {
@@ -3043,12 +3063,12 @@
       "pf": 1,
       "stl": 0,
       "tov": 0,
-      "sec": 211,
-      "pir": 0,
+      "pir": -1,
       "no": "1",
       "name": "Naz Mitrou-Long",
       "start": false,
-      "pm": null
+      "sec": 211,
+      "pm": -2
      },
      {
       "pts": 17,
@@ -3066,12 +3086,12 @@
       "pf": 2,
       "stl": 0,
       "tov": 1,
-      "sec": 1700,
-      "pir": 11,
+      "pir": 12,
       "no": "5",
       "name": "Breein Tyree",
-      "start": false,
-      "pm": null
+      "start": true,
+      "sec": 1700,
+      "pm": 1
      },
      {
       "pts": 10,
@@ -3089,12 +3109,12 @@
       "pf": 4,
       "stl": 1,
       "tov": 2,
-      "sec": 1267,
       "pir": 17,
       "no": "8",
       "name": "Kyle Alexander",
-      "start": false,
-      "pm": null
+      "start": true,
+      "sec": 1267,
+      "pm": 0
      },
      {
       "pts": 5,
@@ -3112,12 +3132,12 @@
       "pf": 2,
       "stl": 0,
       "tov": 1,
-      "sec": 1273,
-      "pir": 6,
+      "pir": 5,
       "no": "9",
       "name": "Nikos Chougkaz",
-      "start": false,
-      "pm": null
+      "start": true,
+      "sec": 1273,
+      "pm": -1
      },
      {
       "pts": 12,
@@ -3135,12 +3155,12 @@
       "pf": 3,
       "stl": 0,
       "tov": 1,
-      "sec": 1232,
-      "pir": 8,
+      "pir": 7,
       "no": "12",
       "name": "Trevor Hudgins",
-      "start": false,
-      "pm": null
+      "start": true,
+      "sec": 1232,
+      "pm": 5
      },
      {
       "pts": 1,
@@ -3158,12 +3178,12 @@
       "pf": 1,
       "stl": 0,
       "tov": 1,
-      "sec": 160,
       "pir": 1,
       "no": "14",
       "name": "Dimitris Kaklamanakis",
       "start": false,
-      "pm": null
+      "sec": 160,
+      "pm": 4
      },
      {
       "pts": 10,
@@ -3181,12 +3201,12 @@
       "pf": 1,
       "stl": 2,
       "tov": 3,
-      "sec": 1444,
-      "pir": 10,
+      "pir": 12,
       "no": "17",
       "name": "Marcus Foster",
       "start": false,
-      "pm": null
+      "sec": 1444,
+      "pm": -5
      },
      {
       "pts": 4,
@@ -3204,12 +3224,12 @@
       "pf": 4,
       "stl": 1,
       "tov": 0,
-      "sec": 1342,
-      "pir": 7,
+      "pir": 6,
       "no": "18",
       "name": "Nikos Persidis",
-      "start": false,
-      "pm": null
+      "start": true,
+      "sec": 1342,
+      "pm": 9
      },
      {
       "pts": 7,
@@ -3227,12 +3247,12 @@
       "pf": 1,
       "stl": 0,
       "tov": 1,
-      "sec": 886,
-      "pir": 9,
+      "pir": 12,
       "no": "20",
       "name": "Donatas Motiejunas",
       "start": false,
-      "pm": null
+      "sec": 886,
+      "pm": 4
      },
      {
       "pts": 2,
@@ -3250,12 +3270,12 @@
       "pf": 3,
       "stl": 1,
       "tov": 1,
-      "sec": 1043,
-      "pir": 5,
+      "pir": 3,
       "no": "26",
       "name": "Ben Moore",
       "start": false,
-      "pm": null
+      "sec": 1043,
+      "pm": 0
      },
      {
       "pts": 6,
@@ -3273,12 +3293,12 @@
       "pf": 2,
       "stl": 1,
       "tov": 3,
-      "sec": 1442,
-      "pir": 13,
+      "pir": 12,
       "no": "33",
       "name": "Nick Calathes",
       "start": false,
-      "pm": null
+      "sec": 1442,
+      "pm": 10
      },
      {
       "pts": 0,
@@ -3296,12 +3316,12 @@
       "pf": 0,
       "stl": 0,
       "tov": 0,
-      "sec": 0,
       "pir": 0,
       "no": "77",
       "name": "Thanasis Bazinas",
       "start": false,
-      "pm": null
+      "sec": 0,
+      "pm": 0
      }
     ],
     "team": {
@@ -3320,7 +3340,7 @@
      "pf": 24,
      "stl": 6,
      "tov": 14,
-     "pir": 87
+     "pir": 90
     },
     "opp": {
      "pts": 69,
@@ -3338,7 +3358,27 @@
      "pf": 23,
      "stl": 5,
      "tov": 11,
-     "pir": 66
+     "pir": 62
+    },
+    "extra": {
+     "us": {
+      "tovPts": 13,
+      "paint": 38,
+      "second": 10,
+      "fastbreak": 23,
+      "bench": 26,
+      "lead": 9,
+      "run": 8
+     },
+     "them": {
+      "tovPts": 22,
+      "paint": 32,
+      "second": 9,
+      "fastbreak": 8,
+      "bench": 35,
+      "lead": 6,
+      "run": 9
+     }
     }
    },
    "quarters": {
@@ -3370,7 +3410,7 @@
    "played": true,
    "us": 99,
    "them": 77,
-   "url": "https://www.esake.gr/el/action/EsakegameView?idgame=95F2FDAA&mode=3",
+   "url": "https://fibalivestats.dcd.shared.geniussports.com/u/ESAKE/2902733/bs.html",
    "box": {
     "players": [
      {
@@ -3389,12 +3429,12 @@
       "pf": 2,
       "stl": 1,
       "tov": 3,
-      "sec": 1201,
       "pir": 8,
       "no": "0",
       "name": "Raiquan Gray",
-      "start": false,
-      "pm": null
+      "start": true,
+      "sec": 1201,
+      "pm": 6
      },
      {
       "pts": 14,
@@ -3412,12 +3452,12 @@
       "pf": 1,
       "stl": 0,
       "tov": 0,
-      "sec": 1303,
-      "pir": 17,
+      "pir": 16,
       "no": "1",
       "name": "Naz Mitrou-Long",
       "start": false,
-      "pm": null
+      "sec": 1303,
+      "pm": 2
      },
      {
       "pts": 19,
@@ -3435,12 +3475,12 @@
       "pf": 2,
       "stl": 0,
       "tov": 2,
-      "sec": 1776,
-      "pir": 7,
+      "pir": 15,
       "no": "5",
       "name": "Breein Tyree",
-      "start": false,
-      "pm": null
+      "start": true,
+      "sec": 1776,
+      "pm": 18
      },
      {
       "pts": 7,
@@ -3458,12 +3498,12 @@
       "pf": 4,
       "stl": 0,
       "tov": 1,
-      "sec": 921,
-      "pir": 15,
+      "pir": 14,
       "no": "8",
       "name": "Kyle Alexander",
-      "start": false,
-      "pm": null
+      "start": true,
+      "sec": 920,
+      "pm": 15
      },
      {
       "pts": 10,
@@ -3481,12 +3521,12 @@
       "pf": 4,
       "stl": 0,
       "tov": 0,
-      "sec": 1199,
-      "pir": 10,
+      "pir": 9,
       "no": "9",
       "name": "Nikos Chougkaz",
       "start": false,
-      "pm": null
+      "sec": 1199,
+      "pm": 16
      },
      {
       "pts": 0,
@@ -3504,12 +3544,12 @@
       "pf": 4,
       "stl": 0,
       "tov": 0,
-      "sec": 612,
-      "pir": -1,
+      "pir": -5,
       "no": "12",
       "name": "Trevor Hudgins",
       "start": false,
-      "pm": null
+      "sec": 612,
+      "pm": 2
      },
      {
       "pts": 0,
@@ -3527,12 +3567,12 @@
       "pf": 0,
       "stl": 0,
       "tov": 0,
-      "sec": 2,
       "pir": 0,
       "no": "14",
       "name": "Dimitris Kaklamanakis",
       "start": false,
-      "pm": null
+      "sec": 3,
+      "pm": 2
      },
      {
       "pts": 18,
@@ -3550,12 +3590,12 @@
       "pf": 3,
       "stl": 1,
       "tov": 2,
-      "sec": 1537,
       "pir": 11,
       "no": "17",
       "name": "Marcus Foster",
-      "start": false,
-      "pm": null
+      "start": true,
+      "sec": 1537,
+      "pm": 20
      },
      {
       "pts": 0,
@@ -3573,12 +3613,12 @@
       "pf": 0,
       "stl": 0,
       "tov": 0,
-      "sec": 0,
       "pir": 0,
       "no": "18",
       "name": "Nikos Persidis",
       "start": false,
-      "pm": null
+      "sec": 0,
+      "pm": 0
      },
      {
       "pts": 7,
@@ -3596,12 +3636,12 @@
       "pf": 3,
       "stl": 2,
       "tov": 0,
-      "sec": 1457,
-      "pir": 16,
+      "pir": 15,
       "no": "26",
       "name": "Ben Moore",
       "start": false,
-      "pm": null
+      "sec": 1457,
+      "pm": 5
      },
      {
       "pts": 12,
@@ -3619,12 +3659,12 @@
       "pf": 3,
       "stl": 1,
       "tov": 1,
-      "sec": 1970,
-      "pir": 23,
+      "pir": 20,
       "no": "33",
       "name": "Nick Calathes",
-      "start": false,
-      "pm": null
+      "start": true,
+      "sec": 1969,
+      "pm": 22
      },
      {
       "pts": 2,
@@ -3642,12 +3682,12 @@
       "pf": 0,
       "stl": 0,
       "tov": 0,
-      "sec": 22,
-      "pir": 3,
+      "pir": 4,
       "no": "77",
       "name": "Thanasis Bazinas",
       "start": false,
-      "pm": null
+      "sec": 23,
+      "pm": 2
      }
     ],
     "team": {
@@ -3666,7 +3706,7 @@
      "pf": 26,
      "stl": 5,
      "tov": 9,
-     "pir": 109
+     "pir": 114
     },
     "opp": {
      "pts": 77,
@@ -3684,7 +3724,27 @@
      "pf": 26,
      "stl": 4,
      "tov": 9,
-     "pir": 72
+     "pir": 76
+    },
+    "extra": {
+     "us": {
+      "tovPts": 12,
+      "paint": 18,
+      "second": 23,
+      "fastbreak": 8,
+      "bench": 33,
+      "lead": 22,
+      "run": 9
+     },
+     "them": {
+      "tovPts": 6,
+      "paint": 30,
+      "second": 14,
+      "fastbreak": 23,
+      "bench": 40,
+      "lead": 2,
+      "run": 5
+     }
     }
    },
    "quarters": {
@@ -4006,6 +4066,18 @@
   },
   {
    "pos": 2,
+   "team": "Panathinaikos",
+   "paok": false,
+   "pts": 15,
+   "gp": 8,
+   "w": 7,
+   "l": 1,
+   "pf": 697,
+   "pa": 592,
+   "diff": 105
+  },
+  {
+   "pos": 3,
    "team": "Aris",
    "paok": false,
    "pts": 14,
@@ -4017,7 +4089,7 @@
    "diff": 78
   },
   {
-   "pos": 3,
+   "pos": 4,
    "team": "Olympiacos",
    "paok": false,
    "pts": 13,
@@ -4027,18 +4099,6 @@
    "pf": 674,
    "pa": 582,
    "diff": 92
-  },
-  {
-   "pos": 4,
-   "team": "Panathinaikos",
-   "paok": false,
-   "pts": 13,
-   "gp": 8,
-   "w": 7,
-   "l": 1,
-   "pf": 697,
-   "pa": 592,
-   "diff": 105
   },
   {
    "pos": 5,
