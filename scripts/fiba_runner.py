@@ -67,7 +67,7 @@ def probe(m):
             for mk in ("asian-handicap", "over-under", "home-away"):
                 rows = m.rows(pg, f"https://www.flashscore.com/match/basketball/{base}/odds/{mk}/ft-including-ot/?mid={mid}")
                 books = sorted({r[0] for r in rows})
-                print(f"{f[0]} {f[2]} - {f[3]} {mk}: {len(rows)} rows, books {books}, pick {m.pick(rows, mk != 'home-away')}")
+                print(f"{f[0]} {f[2]} - {f[3]} {mk}: {len(rows)} rows, {len(books)} books, line {(m.pick(rows, mk != 'home-away') or (None,))[1:]}")
         br.close()
 
 
@@ -87,4 +87,6 @@ def main():
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    sys.path.insert(0, str(PIPELINE.parent))             # logredact.py: names out of the public run log
+    import logredact
+    sys.exit(logredact.run(main))
