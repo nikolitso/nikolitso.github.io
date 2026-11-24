@@ -79,9 +79,9 @@ jobs:
       - name: Highlight videos
         if: steps.plan.outputs.comps != ''
         run: python $S/highlights.py ${{ steps.plan.outputs.comps }} || echo "highlights unavailable, keeping previous links"
-      - name: Player photos and profiles (paokbc.gr)
+      - name: Player photos and profiles (club site)
         if: steps.plan.outputs.full == 'true'
-        run: python $S/update_paokbc.py || echo "paokbc.gr unavailable, keeping previous data"
+        run: python $S/update_paokbc.py || echo "club site unavailable, keeping previous data"
       - name: Commit if anything changed
         run: |
           git add -A data
