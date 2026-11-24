@@ -218,11 +218,11 @@ a.tile:hover{border-color:var(--gold)}
   <a class="an-brand" href="/basketball/women/"><svg class="an-mark" aria-hidden="true"><use href="/assets/marks.svg#basketball"/></svg><span><small class="an-kicker">Projections</small></span></a>
   <nav class="tabs an-tabs" id="tabs" aria-label="Sections">
     <a href="#view=home" data-view="home" class="on">Home</a>
+    <a href="#view=h1" data-view="h1">1H live test</a>
+    <a href="#view=h1bt" data-view="h1bt">1H backtest</a>
     <a href="#view=livetest" data-view="livetest">Live test</a>
     <a href="#view=backtest" data-view="backtest">Backtest</a>
     <a href="#view=projections" data-view="projections">Projections</a>
-    <a href="#view=h1" data-view="h1">1H live test</a>
-    <a href="#view=h1bt" data-view="h1bt">1H backtest</a>
     <a href="#view=method" data-view="method">How it works</a>
   </nav>
 </div></header>
@@ -242,10 +242,10 @@ a.tile:hover{border-color:var(--gold)}
 <section class="an-page-about" aria-label="About this page">
 <p class="an-page-about__label">About this page</p>
 <p>This page projects totals in women's domestic basketball leagues. Each team gets one number from this season's games: how many points above or below its league's average its games produce. With pace added, the gap between the model total and the line gives the chance a game goes over. A pick is the over only, when the projected total is at least 4 points above the line, in the regular season and on half-point lines.</p>
-<p>Projections shows the next 7 days, and Live test records the picks, taken at the opening line; 1H live test and 1H backtest cover first halves. Backtest covers 2021–22 to 2025–26. A game's line is the median of the main market lines.</p>
+<p>The first-half test leads: 1H live test records the first-half picks and 1H backtest covers past seasons. Live test records the full-game picks, taken at the opening line, Backtest covers 2021–22 to 2025–26, and Projections shows the next 7 days. A game's line is the median of the main market lines.</p>
 </section>
 </main>
-<script src="data.js?v=w113"></script>
+<script src="data.js?v=w114"></script>
 <script src="live.js"></script>
 <script>
 const $ = id => document.getElementById(id);
@@ -804,7 +804,7 @@ function render(){
   const chips = CHIPS[view] ? [['all', 'All leagues'], ...keys.map(k => [k, lgShort(k)])] : [];
   $('chips').innerHTML = chips.map(([k, t]) => `<a href="#view=${view}${k === 'all' ? '' : '&lg=' + k}" class="${k === lg ? 'on' : ''}">${t}</a>`).join('');
   $('top').style.display = $('sub').style.display = view === 'backtest' || view === 'h1bt' ? 'none' : '';
-  $('top').innerHTML = view === 'h1' ? TOP_H1 : TOP_MAIN;     // the 1H tabs show the 1H record   // the live record tiles are not shown on the backtest
+  $('top').innerHTML = view === 'h1' || (view === 'home' && TOP_H1) ? TOP_H1 : TOP_MAIN;   // Home shows the 1H record since 24 Nov 2026 (user: the first-half test leads)     // the 1H tabs show the 1H record   // the live record tiles are not shown on the backtest
   const BTb = view === 'backtest' ? DATA.bets.filter(inLg) : [];   // the backtest tiles sit on top of the Backtest tab, where the record tiles are on the other tabs
   $('btop').innerHTML = view === 'h1bt' ? h1BtTiles() : btTiles(BTb);   // the same tiles as the Live test tab
   $('out').innerHTML = RENDER[view]();
