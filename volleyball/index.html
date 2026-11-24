@@ -268,7 +268,7 @@ a.gm{color:inherit;text-decoration:none} a.gm:hover{color:var(--gold);text-decor
 <p>Research note: <a href="/volleyball/research/close-matches/">close matches go under more often than the market expects</a>.</p>
 </section>
 </main>
-<script src="data.js?v=2886ddbf"></script>
+<script src="data.js?v=5e02165f"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -283,7 +283,9 @@ const pct = x => Math.round(x*100) + '%';
 const HREAL = () => (DATA.hcap && DATA.hcap.backtest && DATA.hcap.backtest.real) || 0.65;
 const hP = p => { const mk = (1 / p.px) / (1 / p.px + 1 / p.other_px); return mk + HREAL() * (p.p - mk); };
 const hE = p => hP(p) * p.px - 1;
-const hOpen = () => ((DATA.hcap || {}).picks || []).filter(p => !('won' in p) && (view === 'home' || inLg(p))).sort((a, b) => a.dt.localeCompare(b.dt));
+const hxOpen = () => (view === 'home' || lg === 'all') ? (((DATA.hcapx || {}).picks) || []).filter(p => !('won' in p)) : [];   // handicap-only leagues' open picks sit at the top too (user, 24 Nov 2026)
+const hOpen = () => ((DATA.hcap || {}).picks || []).filter(p => !('won' in p) && (view === 'home' || inLg(p))).concat(hxOpen()).sort((a, b) => a.dt.localeCompare(b.dt));
+const hLgName = p => { const x = LG[p.lg] || (((DATA.hcapx || {}).leagues) || []).find(l => l.key === p.lg); return x ? `${x.country} ${sexAb(x)}` : ''; };
 const hLabel = (team, line) => `${team} ${(line > 0 ? '+' : line < 0 ? '−' : '') + Math.abs(line).toFixed(1)}`;   // e.g. Consolini −6.5
 const ptsCell = g => g.pts_h != null ? `<td class="n">${g.pts_h.toFixed(1)}–${g.pts_a.toFixed(1)}</td><td class="n">${(g.hcap > 0 ? '+' : g.hcap < 0 ? '−' : '') + Math.abs(g.hcap).toFixed(1)}</td>` : '<td class="n muted">–</td><td class="n muted">–</td>';   // each team's points, home handicap (user, 22 Nov 2026)
 const sgn = (x, d=1) => (x > 0 ? '+' : x < 0 ? '−' : '') + Math.abs(x).toFixed(d);
@@ -383,7 +385,7 @@ function hOpenTop(){
   const o = hOpen();
   if (!o.length) return '';
   return `<h2>Open handicap picks</h2><div class="scroll"><table class="sortable" style="max-width:900px"><thead><tr><th>Date</th>${lg === 'all' ? '<th>League</th>' : ''}<th>Match</th><th>Pick</th><th class="n">Price</th><th class="n">Model handicap</th><th class="n">Edge</th></tr></thead><tbody>`
-    + o.map(p => `<tr><td>${short(p.dt)} ${p.dt.slice(11)}</td>${lg === 'all' ? `<td>${LG[p.lg].country} ${sexAb(LG[p.lg])}</td>` : ''}<td class="wr">${gameLink(p)}</td><td><b>${hLabel(p.team, p.line)}</b></td><td class="n">${p.px.toFixed(2)}</td><td class="n">${p.hcap != null ? hLabel('', p.side === 'home' ? p.hcap : -p.hcap).trim() : '–'}</td><td class="n ${cls(hE(p))}">${sgn(hE(p) * 100, 0)}%</td></tr>`).join('')
+    + o.map(p => `<tr><td>${short(p.dt)} ${p.dt.slice(11)}</td>${lg === 'all' ? `<td>${hLgName(p)}</td>` : ''}<td class="wr">${gameLink(p)}</td><td><b>${hLabel(p.team, p.line)}</b></td><td class="n">${p.px.toFixed(2)}</td><td class="n">${p.hcap != null ? hLabel('', p.side === 'home' ? p.hcap : -p.hcap).trim() : '–'}</td><td class="n ${cls(hE(p))}">${sgn(hE(p) * 100, 0)}%</td></tr>`).join('')
     + `</tbody></table></div><p class="note"><a href="#view=picks&m=hcap&to=hopen">The handicap record and its settled picks →</a></p>`;
 }
 
@@ -816,8 +818,8 @@ function renderHcap(part){   // 'live': on Live test; 'bt': on Backtest (merged 
   const H = DATA.hcap || {picks: [], backtest: null}, B = H.backtest;
   const hc = x => (x > 0 ? '+' : x < 0 ? '−' : '') + Math.abs(x).toFixed(1);
   const pickTxt = p => `${p.team} ${hc(p.line)}`;
-  const lgCell = p => `<div class="muted" style="font-size:14px">${LG[p.lg] ? LG[p.lg].country + ' ' + sexAb(LG[p.lg]) : ''}</div>`;
-  const done = H.picks.filter(inLg).filter(p => 'won' in p), open = H.picks.filter(inLg).filter(p => !('won' in p)).sort((a, b) => a.dt.localeCompare(b.dt));
+  const lgCell = p => `<div class="muted" style="font-size:14px">${hLgName(p)}${LG[p.lg] ? '' : ' · handicap-only league'}</div>`;
+  const done = H.picks.filter(inLg).filter(p => 'won' in p), open = hOpen();   // includes the handicap-only leagues' open picks (user, 24 Nov 2026)
   const n = done.length, w = done.filter(p => p.won).length, units = done.reduce((s, p) => s + p.profit, 0);
   const bt = k => B ? `<span class="${cls(B[k].all.roi)}">${sgn(B[k].all.roi * 100, 1)}%</span>` : '–';
   const tiles = [['Open picks', open.length, open.length ? 'to play →' : 'none right now', '#view=hcap&to=hopen'],
@@ -980,15 +982,11 @@ function hcapExtra(){
   const P = X.picks || [], done = P.filter(p => 'won' in p), open = P.filter(p => !('won' in p)).sort((a, b) => a.dt.localeCompare(b.dt));
   const n = done.length, w = done.filter(p => p.won).length, units = done.reduce((s, p) => s + p.profit, 0);
   const lgLine = p => `<div class="muted" style="font-size:14px">${XL[p.lg] ? `${XL[p.lg].country} · ${XL[p.lg].name} ${XL[p.lg].women ? '(W)' : '(M)'}` : ''}</div>`;
-  const tiles = [['Open picks', open.length, open.length ? 'to play' : 'none right now'], ['Record', `${w}–${n - w}`, n ? (w / n * 100).toFixed(1) + '% won' : '0 picks'],
+  const tiles = [['Open picks', open.length, open.length ? 'listed at the top' : 'none right now'], ['Record', `${w}–${n - w}`, n ? (w / n * 100).toFixed(1) + '% won' : '0 picks'],
                  ['ROI', n ? `<span class="${cls(units)}">${sgn(units / n * 100, 1)}%</span>` : '–', n ? units1(units) : 'no settled picks'],
                  ['Leagues', X.leagues.length, 'handicap only']];
   let h = `<h2 id="hx" style="margin-top:56px;font-size:34px;border-top:1px solid var(--line);padding-top:28px">More leagues: handicap only</h2><p class="note">${X.leagues.length} more leagues where the same handicap rule made a profit on 2020–26, at the close and the opening and in both halves of the seasons, when tested after the rule was set. Handicap picks only, on their own record, apart from the ${DATA.leagues.length} live leagues above.</p>`;
   h += `<div class="metrics">${tiles.map(([l, v, x]) => `<div class="metric"><div class="lbl">${l}</div><div class="big">${v}</div><div class="sm">${x}</div></div>`).join('')}</div>`;
-  h += '<h2>Open picks</h2>';
-  if (!open.length) h += '<p class="empty">No open handicap picks in these leagues. New ones appear once the market posts a points handicap for a match that qualifies.</p>';
-  else h += `<div class="scroll"><table class="sortable"><thead><tr><th>Date</th><th>Match</th><th>Pick</th><th class="n">Opening line</th><th class="n">Price</th><th class="n">Model handicap</th><th class="n">Model chance</th><th class="n">Edge</th></tr></thead><tbody>`
-    + open.map(p => `<tr><td>${short(p.dt)} ${p.dt.slice(11)}</td><td class="wr">${gameLink(p)}${lgLine(p)}</td><td><b>${hLabel(p.team, p.line)}</b></td><td class="n">${p.line_open != null ? hLabel('', p.line_open).trim() : '–'}</td><td class="n">${p.px.toFixed(2)}</td><td class="n">${p.hcap != null ? hLabel('', p.side === 'home' ? p.hcap : -p.hcap).trim() : '–'}</td><td class="n">${pct(hP(p))}</td><td class="n ${cls(hE(p))}">${sgn(hE(p) * 100, 0)}%</td></tr>`).join('') + '</tbody></table></div>';
   h += '<h2>Settled picks, latest first</h2>';
   if (!n) h += '<p class="empty">No settled picks yet. Each pick is added here once its match is played.</p>';
   else h += `<div class="scroll"><table><thead><tr><th>Date</th><th>Match</th><th>Pick</th><th class="n">Closing line</th><th class="n">Price</th><th class="n">Points</th><th class="n">Margin</th><th class="n">Profit</th></tr></thead><tbody>`
