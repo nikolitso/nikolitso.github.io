@@ -35,7 +35,7 @@ jobs:
           # the pipelines push often: each try starts from the latest main, so a rejected push just tries again
           for i in 1 2 3 4 5; do
             git fetch -q origin main && git reset -q --hard origin/main
-            python3 scripts/seo_meta.py about thought-bank wine paok-hub paok-basketball football \
+            python3 scripts/seo_meta.py index.html about thought-bank wine paok-hub paok-basketball football \
               superleague basketball eurocup fibaeuropecup volleyball handball
             git add -A -- '*.html'
             if git diff --cached --quiet; then echo "pages already in step"; exit 0; fi

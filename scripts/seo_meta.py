@@ -14,6 +14,7 @@ says (og:title, og:description, og:image, <title>, meta description, canonical, 
   no structured data of its own
 - the heading-level repairs listed in OUTLINE, for templates kept in other repos
 - the full Person and WebSite records (read from the homepage) in the page's schema.org block
+- on the homepage, the card list in its WebPage kept in step with the cards on the page
 
 It never changes a tag that is there, so running it twice changes nothing. A page it cannot read is skipped.
 """
@@ -160,6 +161,34 @@ WINE_H1 = ('<style id="keep-h1">h1#title[hidden]{display:block!important;positio
            'margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}</style>')
 
 
+def sync_home_cards(text):
+    """The homepage's schema.org WebPage lists the page's cards (hasPart ItemList); rebuild that list from the cards
+    themselves, so a renamed, added or removed card is reflected the next time this runs (Site · Person sync runs on
+    every homepage change). Other pages, and a homepage without the block, are left alone."""
+    if ('<link rel="canonical" href="' + SITE + '/">') not in text:
+        return text
+    b = LD.search(text)
+    if not b:
+        return text
+    try:
+        data = json.loads(b.group(2).replace("<\\/", "</"))
+    except ValueError:
+        return text
+    page = next((n for n in data.get("@graph", []) if isinstance(n, dict) and n.get("@type") == "WebPage"), None)
+    cards = [(html.unescape(re.sub(r"<[^>]+>", "", t)).strip(), h if h.startswith("http") else SITE + h)
+             for h, t in re.findall(r'<a class="card" href="([^"]+)"[^>]*>.*?<h3>(.*?)</h3>', text, re.S)]
+    if page is None or not cards:
+        return text
+    part = page.get("hasPart") if isinstance(page.get("hasPart"), dict) else {"@type": "ItemList", "name": "Projects and collections"}
+    items = [{"@type": "ListItem", "position": i, "name": n, "url": u} for i, (n, u) in enumerate(cards, 1)]
+    if part.get("itemListElement") == items and part.get("numberOfItems") == len(items):
+        return text
+    part.update({"numberOfItems": len(items), "itemListElement": items})
+    page["hasPart"] = part
+    body = json.dumps(data, ensure_ascii=False, separators=(",", ":")).replace("</", "<\\/")
+    return text[:b.start(2)] + body + text[b.end(2):]
+
+
 def fix_outline(text):
     for old, new in OUTLINE:
         if old in text and new not in text:
@@ -262,7 +291,7 @@ def main(args):
             text = p.read_text(encoding="utf-8")
         except (OSError, UnicodeDecodeError):
             continue
-        new = head_nav.fix(with_owner(fix_outline(fix(text))), p)   # the two ways home, see head_nav.py
+        new = head_nav.fix(sync_home_cards(with_owner(fix_outline(fix(text)))), p)   # the two ways home, see head_nav.py
         if new != text:
             p.write_text(new, encoding="utf-8")
             changed += 1
