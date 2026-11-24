@@ -28,13 +28,18 @@ jobs:
       - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
-      - run: python scripts/build_thought_bank.py
-      - name: Commit if changed
+      - name: Build the page and publish it
         run: |
-          git add thought-bank/index.html
-          if git diff --cached --quiet; then exit 0; fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git commit -m "Thought Bank: the quotes in the page itself"
-          git pull --rebase
-          git push
+          # the project pipelines push often: each try starts from the latest main, so a rejected push just tries again
+          for i in 1 2 3 4 5; do
+            git fetch -q origin main && git reset -q --hard origin/main
+            python scripts/build_thought_bank.py
+            git add thought-bank/index.html
+            if git diff --cached --quiet; then echo "page already up to date"; exit 0; fi
+            git commit -q -m "Thought Bank: the quotes in the page itself"
+            git push -q origin HEAD:main && exit 0
+            sleep $((RANDOM % 10 + 5))
+          done
+          exit 1
