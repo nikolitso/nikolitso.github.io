@@ -11,6 +11,7 @@ on:
     branches: [main]
     paths:
       - "index.html"
+      - "wine/**"            # Wine edits: the fixer keeps the page title for screen readers (seo_meta.WINE_H1)
       - "scripts/seo_meta.py"
       - ".github/workflows/person-sync.yml"
   workflow_dispatch:        # "Run workflow" button in the Actions tab

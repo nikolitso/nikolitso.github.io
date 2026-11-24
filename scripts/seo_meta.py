@@ -152,10 +152,22 @@ def with_owner(text):
     return out
 
 
+# /wine/: the app hides the page title (<h1 id="title">) with `hidden` on the opening view, the Wine list and Estates
+# (the tab says where you are), which also hides the page's only <h1> from screen readers and crawlers. This rule keeps
+# a hidden title in the page, visually hidden, so the page looks the same. It goes in the page's <head> whenever it is
+# missing (wine/ edits made from older copies have dropped it twice), and Site · Person sync runs on every wine/ change.
+WINE_H1 = ('<style id="keep-h1">h1#title[hidden]{display:block!important;position:absolute!important;width:1px;height:1px;'
+           'margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}</style>')
+
+
 def fix_outline(text):
     for old, new in OUTLINE:
         if old in text and new not in text:
             text = text.replace(old, new, 1)
+    if ('<link rel="canonical" href="' + SITE + '/wine/">') in text and 'id="title"' in text and 'id="keep-h1"' not in text:
+        end = text.find("</head>")
+        if end > 0:
+            text = text[:end] + WINE_H1 + "\n" + text[end:]
     return text
 
 
