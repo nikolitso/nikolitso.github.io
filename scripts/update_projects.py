@@ -211,6 +211,15 @@ def basketball_totals(folder):
     pills = record(sum(p["ret"] > 0 for p in done), sum(p["ret"] < 0 for p in done),
                    sum(p["ret"] for p in done), sum(not p.get("done") for p in picks), show_units=True)
     h1 = d.get("h1") or {}                                      # the 1H test (14 Nov 2026), totals page only
+    if folder == "women" and h1.get("picks") is not None:      # Women Basketball: the first-half record first (user, 24 Nov 2026)
+        h1d = [p for p in h1["picks"] if p.get("done") and p.get("ret") is not None]
+        p1 = record(sum(p["ret"] > 0 for p in h1d), sum(p["ret"] < 0 for p in h1d),
+                    sum(p["ret"] for p in h1d), sum(not p.get("done") for p in h1["picks"]), word="1H pick", show_units=True)
+        p1[0] = p1[0].replace("Record ", "1H record ", 1)
+        w, l = sum(p["ret"] > 0 for p in done), sum(p["ret"] < 0 for p in done)
+        fg = f"Full game {w}–{l} · ROI {sum(p['ret'] for p in done) / (w + l) * 100:+.1f}%" if w + l else "No settled full-game picks yet"
+        n0 = sum(not p.get("done") for p in picks)
+        return p1 + [fg, f"{n0} open full-game pick{'s' if n0 != 1 else ''}" if n0 else "No open full-game picks"]
     if h1.get("rows") is not None:
         n1 = sum(not p.get("done") for p in h1.get("picks") or [])
         pills.append(f"{n1} open 1H pick{'s' if n1 != 1 else ''}" if n1 else "No open 1H picks")
