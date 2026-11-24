@@ -1,21 +1,21 @@
 {
- "updated": "2026-11-24 10:10 UTC",
+ "updated": "2026-11-24 20:44 UTC",
  "basketball_overs": {
-  "n": 34,
-  "avg": 0.0236,
-  "beat": 17,
-  "picks": 34,
-  "won": 25,
+  "n": 36,
+  "avg": 0.0251,
+  "beat": 19,
+  "picks": 36,
+  "won": 27,
   "lost": 9,
   "push": 0,
-  "roi": 0.358,
-  "lo": -0.0274,
-  "hi": 0.0747,
+  "roi": 0.3826,
+  "lo": -0.0232,
+  "hi": 0.0733,
   "verdict": "level",
   "proof": {
-   "n": 34,
-   "found": 34,
-   "before": 34
+   "n": 36,
+   "found": 36,
+   "before": 36
   }
  },
  "women": {

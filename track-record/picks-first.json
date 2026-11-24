@@ -201,6 +201,10 @@
 "190f233e446d7262bf01cf5d8239cfe0c802ce90",
 "2026-11-23 20:02"
 ],
+"lithuania-nkl|Plunges Olimpas|Vytis VDU|2026-11-26": [
+"a4f761c10d508fd67c3a269238adb63e999537f3",
+"2026-11-24 20:02"
+],
 "lithuania-nkl|Rytas 2|Vytis VDU|2026-11-21": [
 "487daf3e7978ded2d732b131822c506f100096ed",
 "2026-11-20 01:03"
@@ -1660,12 +1664,12 @@
 }
 },
 "scanned": {
-"basketball/overs/live.js": "7dfca0971619aaba8df659535742578179356060",
-"basketball/women/live.js": "e2c4628994be2e9cb2e412fba24c6670c4b3ba5b",
-"handball/data.js": "21753ac0175fe6bdc47723238e35951efe5d37ed",
+"basketball/overs/live.js": "2505450910d859998778801bfe3f78595d302f60",
+"basketball/women/live.js": "891ee8570b5a66934c02e886e2e17b1328ec9e52",
+"handball/data.js": "06257c964e3a2f888dc328e87c82ee9ff6730095",
 "handball/index.html": "bc0dff9430172025ea5d9ba8dd58b67a2b91660e",
 "handball/projections/index.html": "bc0dff9430172025ea5d9ba8dd58b67a2b91660e",
-"superleague/data.js": "bb0b473a2b68f7a99ee615028d294851071e1d19",
-"volleyball/data.js": "37ca9bbbbc9cc6115fcdd445371758d1941663ba"
+"superleague/data.js": "cd795368462f8210a91770162a8fe4f96927e43f",
+"volleyball/data.js": "1dca0568dc27aae0bcc6a5b4d9d41bdefa1b9fdd"
 }
 }
