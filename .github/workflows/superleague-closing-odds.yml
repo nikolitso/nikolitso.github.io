@@ -1,6 +1,6 @@
 name: Feed · Super League closing odds
 
-# Every 30 minutes from 12:00 to 23:30 Athens (winter time): Superbet's odds for the Super League
+# Every 30 minutes from 12:00 to 23:30 Athens (winter time): the book's odds for the Super League
 # games kicking off within 45 minutes, saved on the "odds" branch (see close.py there). The site
 # pipeline (superleague.yml) copies them in as each game's closing odds, to score the value bets (CLV).
 # The 45-minute window and the 30-minute cadence together catch every kick-off. Run it by hand with minutes=10080 to pull the
@@ -31,6 +31,13 @@ jobs:
       - uses: actions/checkout@v5
         with:
           ref: odds
+      # the odds module and the log filter live in the private repo (superleague/feed.py, quiet.py); close.py imports them from _bs
+      - uses: actions/checkout@v5
+        with:
+          repository: nikolitso/BettingSignal
+          token: ${{ secrets.SITES_TOKEN }}
+          path: _bs
+          sparse-checkout: superleague
       - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
