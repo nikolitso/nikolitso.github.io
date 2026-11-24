@@ -174,7 +174,8 @@
       "range-how-generalists-triumph-in",
       "statistical-sports-models-in-excel",
       "statistical-sports-models-in-excel-volume-1",
-      "hbr-guide-to-generative-ai-for-managers"
+      "hbr-guide-to-generative-ai-for-managers",
+      "unsubscribe-how-to-kill-email-anxiety"
     ],
     "log": [
       {
@@ -536,9 +537,15 @@
         "slot": "2026-11-22 14",
         "slug": "hbr-guide-to-generative-ai-for-managers",
         "id": "2124473035759800748"
+      },
+      {
+        "day": "2026-11-24",
+        "slot": "2026-11-24 14",
+        "slug": "unsubscribe-how-to-kill-email-anxiety",
+        "id": "2125197811687792671"
       }
     ],
-    "last_day": "2026-11-22"
+    "last_day": "2026-11-24"
   },
   "film": {
     "seen": [
@@ -1124,7 +1131,7 @@
     ],
     "last_day": "2026-11-16"
   },
-  "last_slot": "2026-11-23 14",
+  "last_slot": "2026-11-24 14",
   "quote": {
     "seen": [
       "1",
