@@ -219,6 +219,8 @@ def basketball_totals(folder):
         w, l = sum(p["ret"] > 0 for p in done), sum(p["ret"] < 0 for p in done)
         fg = f"Full game {w}–{l} · ROI {sum(p['ret'] for p in done) / (w + l) * 100:+.1f}%" if w + l else "No settled full-game picks yet"
         n0 = sum(not p.get("done") for p in picks)
+        if h1.get("rows") is not None:                          # first halves projected, back on request (24 Nov 2026)
+            p1.append(f"{len(h1['rows'])} first halves projected")
         return p1 + [fg, f"{n0} open full-game pick{'s' if n0 != 1 else ''}" if n0 else "No open full-game picks"]
     if h1.get("rows") is not None:
         n1 = sum(not p.get("done") for p in h1.get("picks") or [])
@@ -246,7 +248,7 @@ def render(slug, pills):
     def span(p):                                        # the ROI pill stands out, in the accent (red when negative)
         cls = ' class="roi neg"' if p.startswith("ROI -") else ' class="roi"' if p.startswith("ROI ") else ""
         return f"<span{cls}>{html.escape(p)}</span>"
-    spans = "".join(span(p) for p in pills[:5])
+    spans = "".join(span(p) for p in pills[:6 if slug == "basketball-women" else 5])   # Women Basketball: six pills, 1H and full game (24 Nov 2026)
     return (f"<!-- live:{slug}:start --><div class=\"meta\">{spans}</div><!-- live:{slug}:end -->\n")
 
 
