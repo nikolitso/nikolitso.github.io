@@ -283,7 +283,7 @@ if (LIVE.leagues) LIVE.leagues = LIVE.leagues.filter(k => LG[k]);
 $('sub').textContent = `${DATA.leagues.length + H1XL.length} leagues (${H1XL.length} first-half only) · backtest 2021–22 to 2025–26 · 2026–27 record since ${LIVE.start} · updated ${LIVE.updated} (Athens)`;
 
 // the record tiles, laid out as on the Volleyball page (25 Nov 2026, user): Open picks, Record, ROI, Market line, Model line, Actual total;
-// one number each, the closing-price ROI in the ROI tile's small text. o: {open, openLabel, href, toOpen, toSet, mu, tot}
+// one number each; no closing-price ROI in the tiles since 25 Nov 2026 (user). o: {open, openLabel, href, toOpen, toSet, mu, tot}
 function vTiles(set, o){
   const won = set.filter(b => b.ret > 0).length, lost = set.filter(b => b.ret < 0).length, n = won + lost, units = set.reduce((a, b) => a + b.ret, 0);
   const cc = set.filter(b => b.close != null && b.cpx != null && b[o.tot] != null && b[o.tot] !== b.close), uc = cc.reduce((a, b) => a + (b[o.tot] > b.close ? b.cpx - 1 : -1), 0);
@@ -293,7 +293,7 @@ function vTiles(set, o){
   const t = [];
   if (o.open != null) t.push([o.openLabel || 'Open picks', o.open, o.open ? `to play${arrow}` : 'none right now', o.toOpen]);
   t.push(['Record', n ? `${won}–${lost}` : '–', n ? `${pct(won / n, 1)} won${arrow}` : 'no settled picks', o.toSet],
-    ['ROI', n ? `<span class="${cls(units)}">${roi(units / n)}</span>` : '–', n ? `${sgn(units, 2)} units${cc.length ? ` · ${roi(uc / cc.length)} at the close` : ''}` : 'no settled picks'],
+    ['ROI', n ? `<span class="${cls(units)}">${roi(units / n)}</span>` : '–', n ? `${sgn(units, 2)} units` : 'no settled picks'],
     ['Market line', av('line'), avgN('line')], ['Model line', av(o.mu), avgN(o.mu)], ['Actual total', av(o.tot), avgN(o.tot)]);
   return t.map(([k, v, sm, to]) => { const inner = `<span class="klabel">${k}</span><span class="stat">${v}</span><span class="small">${sm}</span>`;
     return o.href ? `<a class="tile" href="${o.href}"${to ? ` data-to="${to}"` : ''}>${inner}</a>` : `<div class="tile">${inner}</div>`; }).join('');
