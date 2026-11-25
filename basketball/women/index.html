@@ -200,7 +200,6 @@ a.tile:hover{border-color:var(--gold)}
 
 
 <script defer src="/assets/openpicks.js"></script>
-<script defer src="/assets/clv-tile.js"></script>
 <nav class="an-project-nav" aria-label="Sports analytics projects"><div><a class="an-navhome" href="/">Home</a>
 <span class="an-navgroup">Football</span>
 <a href="/superleague/">Greek Superleague</a>
@@ -534,10 +533,8 @@ function mvTiles(list){
   const hit = L => { const d = dec(L); return d.length ? pct(d.filter(b => b.ret > 0).length / d.length, 1) : '–'; };
   const ROIs = L => { const d = dec(L); if (!d.length) return ''; const r = d.reduce((x, b) => x + b.ret, 0) / d.length; return ` · ROI <b class="${cls(r)}" style="font-weight:inherit">${roi(r)}</b>`; };   // as on Won when no move
   const wl_ = L => { const d = dec(L), w = d.filter(b => b.ret > 0).length; return `${w}–${d.length - w}`; };
-  return [['Closing line moved', n ? TWO('Toward pick', pct(up.length / n), 'Against', pct(dn.length / n), 'h-up', 'h-dn') : '–', ''],
-          ['Avg line move', TWO('Toward pick', up.length ? a(up) : '–', 'Against', dn.length ? a(dn) : '–', 'h-up', 'h-dn'), `points · avg of ${up.length} and ${dn.length} pick${dn.length === 1 ? '' : 's'}`],   // one tile (19 Nov 2026, as the men's page)
-          ['Won: moved toward', hit(up), `${wl_(up)} win – loss${ROIs(up)}`, 'up'], ['Won: no move', hit(same), `${wl_(same)} win – loss${ROIs(same)}`, '0'],
-          ['Won: moved against', hit(dn), `${wl_(dn)} win – loss${ROIs(dn)}`, 'dn']];   // a 4th item: the tile opens those picks (16 Nov 2026)
+  // one tile since 25 Nov 2026 (user): women's lines rarely move, so Avg line move and the three Won-by-move tiles were dropped
+  return [['Closing line moved', n ? TWO('Toward pick', pct(up.length / n), 'Against', pct(dn.length / n), 'h-up', 'h-dn') : '–', n ? `${pct(same.length / n)} did not move · ${n} picks with a closing line` : '']];
 }
 
 // two numbers in one tile, each with its own label above it and in its own colour
