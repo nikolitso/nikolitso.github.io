@@ -267,7 +267,7 @@ a.gm{color:inherit;text-decoration:none} a.gm:hover{color:var(--gold);text-decor
 <p>Explainer: <a href="/volleyball/research/how-totals-work/">why a volleyball total is really about sets</a>.</p><p>Research note: <a href="/volleyball/research/close-matches/">close matches go under more often than the market expects</a>.</p>
 </section>
 </main>
-<script src="data.js?v=82d2c9b4"></script>
+<script src="data.js?v=f7ca04ec"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -320,7 +320,8 @@ const liveNames = () => [true, false].map(w => DATA.leagues.filter(l => l.live &
   .map(a => `${andList(a.map(l => l.country))} (${sexOf(a[0])})`).join(', ');
 const one = () => lg === 'all' ? DATA.leagues[0].key : lg;      // tabs that show one league at a time
 
-$('sub').textContent = `${Object.keys(PLG).length} leagues, women's and men's · ${DATA.season.replace('-','–')} · updated ${DATA.updated} (Athens)`;
+const setSub = () => { $('sub').textContent = `${view === 'backtest' ? DATA.leagues.length + ' backtested leagues' : Object.keys(PLG).length + ' leagues'}, women's and men's · ${DATA.season.replace('-','–')} · updated ${DATA.updated} (Athens)`; };   // Backtest counts its own leagues (25 Nov 2026)
+setSub();
 
 function renderProjections(){
   const note = `<p class="note">Every match in the next 7 days once both teams have played ${DATA.min_games} this season: the chance it ends in 3 sets or goes to 4 or 5, the model's line on total points (where over and under are even), each team's points (home first, adding up to the model's line) and the handicap on the home side (the points margin where each side covers about half the time). Once the market posts a line, the row shows the market line, the average over price and the model's over chance against it. Only <b>picks</b> are highlighted (gold), totals and points handicap alike, each with its badge; they are backed and recorded: overs on lines ${DATA.min_line}.5 to ${DATA.low - 0.5}, where model chance is at least ${DATA.min_chance*100}% and edge is at least ${DATA.edge*100}%. March, April, October, playoff, play-out and placement games are never picks. Over chance and Edge are shown corrected, keeping ${REAL * 100}% of the model's advantage over the price, so a pick can show less than ${DATA.edge*100}%.</p>`;
@@ -1081,6 +1082,7 @@ function render(){
       `<a href="#view=${view}${k === 'hcap' ? '&m=hcap' : k === 'ml' ? '&m=ml' : ''}${lg !== 'all' && (k === 'totals' || view === 'picks') && PLG[lg] ? '&lg=' + lg : ''}" class="${k === market ? 'on' : ''}" style="font-size:15.5px;padding:6px 14px">${t}</a>`).join('')
       + (chips.length ? '<span style="flex-basis:100%;height:2px"></span>' : '') : '';
   $('chips').innerHTML = sw + chips.map(([k, t]) => `<a href="#view=${view}${(view === 'picks' || view === 'leagues') && market === 'hcap' ? '&m=hcap' : ''}${k === 'all' ? '' : '&lg=' + k}" class="${k === lg ? 'on' : ''}">${t}</a>`).join('');
+  setSub();
   $('out').innerHTML = RENDER[view]();
 }
 function fromHash(){
