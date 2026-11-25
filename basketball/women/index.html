@@ -180,6 +180,7 @@ table.proj tr.pk td{background:var(--an-accent-soft)}table.proj tr.pk td:first-c
 .tiles{--up:#4cc47a;--dn:#ef7a70;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(140px,40vw),1fr));gap:10px;margin:16px 0 4px}
 .tile{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px;display:flex;flex-direction:column;gap:3px;min-width:0;color:inherit;text-decoration:none}
 a.tile:hover{border-color:var(--gold)}
+.tiles.vb,#top.tiles.vb{grid-template-columns:repeat(auto-fit,minmax(min(150px,40vw),1fr))!important}.tiles.vb .tile .stat,.tiles.vb .tile:nth-child(-n+3) .stat{font:500 24px var(--mono)!important;margin-top:4px;color:var(--gold)}.tiles.vb .tile .stat .pos{color:var(--up)}.tiles.vb .tile .stat .neg{color:var(--dn)}
 .tile .klabel{font:400 14px var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
 .tile .stat{font:500 26px var(--mono);line-height:1.15;font-variant-numeric:tabular-nums;display:flex;flex-wrap:wrap;align-items:center;gap:2px 6px}
 .tile .stat:not(:has(.two)){margin-top:17px}   /* a single number sits on the same line as the two-number tiles' numbers (19 Nov 2026, as the men's page) */
@@ -234,7 +235,7 @@ a.tile:hover{border-color:var(--gold)}
 <span class="an-data-key__item"><i class="an-data-key__dot an-data-key__dot--actual" aria-hidden="true"></i><b>Actual</b> final score and box score</span></div>
 
   <div class="sub an-meta-strip" id="sub" style="margin:0 0 12px"></div>
-  <div class="tiles" id="top"></div>
+  <div class="tiles vb" id="top"></div>
   <div id="btop"></div>
   <div class="chips" id="chips"></div>
   <div id="out"></div>
@@ -281,39 +282,33 @@ if (LIVE.leagues) LIVE.leagues = LIVE.leagues.filter(k => LG[k]);
 
 $('sub').textContent = `${DATA.leagues.length + H1XL.length} leagues (${H1XL.length} first-half only) · backtest 2021–22 to 2025–26 · 2026–27 record since ${LIVE.start} · updated ${LIVE.updated} (Athens)`;
 
-// top tiles: the whole 2026-27 record, as on the Live test tab (ROI = return over wins + losses)
-{
-  const set = [...((DATA.cur || {}).bets || []), ...LIVE.picks.filter(b => b.done && b.ret != null)], won = set.filter(b => b.ret > 0).length, lost = set.filter(b => b.ret < 0).length;
-  const units = set.reduce((a, b) => a + b.ret, 0), nOpen = LIVE.picks.filter(b => !b.done).length;
-  // average line bet and average closing line, over every settled 2026-27 bet that has a close
-  const cl = set.filter(b => b.close != null), avg = (L, f) => L.length ? (L.reduce((a, b) => a + f(b), 0) / L.length).toFixed(1) : '–';
-  // the same picks at the closing line and price (overs); pushes left out, as for the ROI at opening
-  const cc = cl.filter(b => b.cpx != null && b.total !== b.close), uc = cc.reduce((a, b) => a + (b.total > b.close ? b.cpx - 1 : -1), 0);
-  const mu = set.filter(b => b.mu != null), nS = `${set.length} settled picks`;
-  $('top').innerHTML = [['Open picks', nOpen, nOpen ? 'to play' : 'none right now'], ['Settled picks', won + lost ? `${won}–${lost}` : '–', won + lost ? `${pct(won / (won + lost), 1)} hit rate · ${set.length} settled` : `${set.length} settled`],
-    ['ROI', TWO('Opening', won + lost ? `<b class="${cls(units)}" style="font-weight:inherit">${roi(units / (won + lost))}</b>` : '–', 'Closing', cc.length ? `<b class="${cls(uc)}" style="font-weight:inherit">${roi(uc / cc.length)}</b>` : '–'), ''],
-    ['Average line', TWO('Opening', avg(cl, b => b.line), 'Closing', avg(cl, b => b.close)), ''],
-    ['Average total', TWO('Model', avg(mu, b => b.mu), 'Actual', avg(cl, b => b.total)), ''],
-    ...mvTiles(cl)]
-    .map(([k, v, n, mv]) => `<a class="tile" href="#view=livetest"${mv ? ` data-to="settled" data-mv="${mv}"` : k === 'Settled picks' ? ' data-to="settled"' : k === 'Open picks' ? ' data-to="openpicks"' : ''}><span class="klabel">${k}</span><span class="stat">${v}</span><span class="small">${n}</span></a>`).join('');
+// the record tiles, laid out as on the Volleyball page (25 Nov 2026, user): Open picks, Record, ROI, Market line, Model line, Actual total;
+// one number each, the closing-price ROI in the ROI tile's small text. o: {open, openLabel, href, toOpen, toSet, mu, tot}
+function vTiles(set, o){
+  const won = set.filter(b => b.ret > 0).length, lost = set.filter(b => b.ret < 0).length, n = won + lost, units = set.reduce((a, b) => a + b.ret, 0);
+  const cc = set.filter(b => b.close != null && b.cpx != null && b[o.tot] != null && b[o.tot] !== b.close), uc = cc.reduce((a, b) => a + (b[o.tot] > b.close ? b.cpx - 1 : -1), 0);
+  const has = k => set.filter(b => b[k] != null), av = k => { const q = has(k); return q.length ? (q.reduce((a, b) => a + b[k], 0) / q.length).toFixed(1) : '–'; };
+  const avgN = k => { const c = has(k).length; return `avg of ${c.toLocaleString('en')} pick${c === 1 ? '' : 's'}`; };
+  const arrow = o.href ? ' →' : '';
+  const t = [];
+  if (o.open != null) t.push([o.openLabel || 'Open picks', o.open, o.open ? `to play${arrow}` : 'none right now', o.toOpen]);
+  t.push(['Record', n ? `${won}–${lost}` : '–', n ? `${pct(won / n, 1)} won${arrow}` : 'no settled picks', o.toSet],
+    ['ROI', n ? `<span class="${cls(units)}">${roi(units / n)}</span>` : '–', n ? `${sgn(units, 2)} units${cc.length ? ` · ${roi(uc / cc.length)} at the close` : ''}` : 'no settled picks'],
+    ['Market line', av('line'), avgN('line')], ['Model line', av(o.mu), avgN(o.mu)], ['Actual total', av(o.tot), avgN(o.tot)]);
+  return t.map(([k, v, sm, to]) => { const inner = `<span class="klabel">${k}</span><span class="stat">${v}</span><span class="small">${sm}</span>`;
+    return o.href ? `<a class="tile" href="${o.href}"${to ? ` data-to="${to}"` : ''}>${inner}</a>` : `<div class="tile">${inner}</div>`; }).join('');
 }
 
+// top tiles: the whole 2026-27 full-game record (October backtest bets + live picks)
+$('top').innerHTML = vTiles([...((DATA.cur || {}).bets || []), ...LIVE.picks.filter(b => b.done && b.ret != null)],
+  {open: LIVE.picks.filter(b => !b.done).length, href: '#view=livetest', toOpen: 'openpicks', toSet: 'settled', mu: 'mu', tot: 'total'});
+
 const TOP_MAIN = $('top').innerHTML;
-// the 1H tabs' top tiles, the same layout as the Live test tab (14 Nov 2026, as the men's page)
+// the 1H tabs' top tiles, the same layout
 const TOP_H1 = (() => {
   const H = LIVE.h1;
   if (!H) return '';
-  const set = H.picks.filter(b => b.done && b.ret != null), won = set.filter(b => b.ret > 0).length, lost = set.filter(b => b.ret < 0).length;
-  const units = set.reduce((a, b) => a + b.ret, 0), nOpen = H.picks.filter(b => !b.done).length;
-  const cl = set.filter(b => b.close != null), avg = (L, f) => L.length ? (L.reduce((a, b) => a + f(b), 0) / L.length).toFixed(1) : '–';
-  const cc = cl.filter(b => b.cpx != null && b.res !== b.close), uc = cc.reduce((a, b) => a + (b.res > b.close ? b.cpx - 1 : -1), 0);
-  return [['Open 1H picks', nOpen, nOpen ? 'to play' : 'none right now'],
-    ['Settled 1H picks', won + lost ? `${won}–${lost}` : '–', won + lost ? `${pct(won / (won + lost), 1)} hit rate · ${set.length} settled` : `${set.length} settled`],
-    ['ROI', TWO('Opening', won + lost ? `<b class="${cls(units)}" style="font-weight:inherit">${roi(units / (won + lost))}</b>` : '–', 'Closing', cc.length ? `<b class="${cls(uc)}" style="font-weight:inherit">${roi(uc / cc.length)}</b>` : '–'), ''],
-    ['Average line', TWO('Opening', avg(cl, b => b.line), 'Closing', avg(cl, b => b.close)), ''],
-    ['Average total', TWO('Model', avg(set.filter(b => b.m1 != null), b => b.m1), 'Actual', avg(set.filter(b => b.res != null), b => b.res)), ''],
-    ...mvTiles(cl.map(b => ({...b, total: b.res}))).map(([k, v, n, mv]) => [k.replace('Closing line', 'Closing 1H line').replace('closing line', 'closing 1H line'), v, n, mv])]
-    .map(([k, v, n, mv]) => `<a class="tile" href="#view=h1"${mv ? ` data-to="h1settled" data-mv="${mv}"` : k === 'Settled 1H picks' ? ' data-to="h1settled"' : k === 'Open 1H picks' ? ' data-to="h1open"' : ''}><span class="klabel">${k}</span><span class="stat">${v}</span><span class="small">${n}</span></a>`).join('');
+  return vTiles(H.picks.filter(b => b.done && b.ret != null), {open: H.picks.filter(b => !b.done).length, openLabel: 'Open 1H picks', href: '#view=h1', toOpen: 'h1open', toSet: 'h1settled', mu: 'm1', tot: 'res'});
 })();
 
 // the 1H live test: open 1H picks, the note, settled 1H picks (14 Nov 2026, as the men's page)
@@ -547,16 +542,7 @@ function TL(list){
 
 // the Backtest tiles for a list of backtest picks (all leagues or one), as on the Live test tab; '' when there are none (14 Nov 2026, as the men's page)
 function btTiles(BT){
-  if (!BT.length) return '';
-  const T = stat(BT), c = BT.filter(b => b.close != null), W = BT.filter(b => b.ret > 0).length, Lo = BT.filter(b => b.ret < 0).length;
-  const cc = c.filter(b => b.cpx != null && b.total !== b.close), rc = cc.length ? cc.reduce((a, b) => a + (b.total > b.close ? b.cpx - 1 : -1), 0) / cc.length : null;
-  const C = (v, k) => k ? `<b class="${k}" style="font-weight:inherit">${v}</b>` : v;
-  return TL([['Settled picks', `${W}–${Lo}`, `${pct(W / (W + Lo), 1)} hit rate · ${BT.length.toLocaleString('en')} settled`],
-               ['ROI', TWO('Opening', C(roi(T.roi), cls(T.roi)), 'Closing', rc != null ? C(roi(rc), cls(rc)) : '–'), ''],
-               ['Average line', TWO('Opening', lineAvg(c, 'line'), 'Closing', lineAvg(c, 'close')), ''],
-               ['Average total', TWO('Model', lineAvg(c, 'mu'), 'Actual', lineAvg(c, 'total')), ''],
-               ...(c.length ? mvTiles(c).slice(0, -1) : []),
-               ...(c.length ? mvTiles(c).slice(-1) : [])]);
+  return BT.length ? `<div class="tiles vb">${vTiles(BT, {mu: 'mu', tot: 'total'})}</div>` : '';   // as on the Volleyball page (25 Nov 2026, user)
 }
 
 // profit in units, the deepest fall from a high point (units) and the longest run of losses, in date order; pushes change nothing
