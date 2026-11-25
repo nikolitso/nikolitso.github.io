@@ -280,7 +280,7 @@ LIVE.fixtures = LIVE.fixtures.filter(g => LG[g.lg] && (!g.gp || Math.min(...g.gp
 LIVE.picks = LIVE.picks || [];   // every logged pick stays in the record, even from a league no longer on the page, except Czechia ZBL's and Belgium's, taken out on request (23 Nov 2026)
 if (LIVE.leagues) LIVE.leagues = LIVE.leagues.filter(k => LG[k]);
 
-$('sub').textContent = `${DATA.leagues.length} Leagues · backtest 2021–22 to 2025–26 · 2026–27 record since ${LIVE.start} · updated ${LIVE.updated} (Athens)`;
+$('sub').textContent = `${DATA.leagues.length + H1XL.length} leagues (${H1XL.length} first-half only) · backtest 2021–22 to 2025–26 · 2026–27 record since ${LIVE.start} · updated ${LIVE.updated} (Athens)`;
 
 // top tiles: the whole 2026-27 record, as on the Live test tab (ROI = return over wins + losses)
 {
@@ -351,7 +351,14 @@ const H1BHEAD = '<th class="n">Opening line</th><th class="n">Model 1H</th><th c
 const h1Table = (first, rows, note='') => `${note ? `<p class="note">${note}</p>` : ''}<div class="scroll"><table style="max-width:1040px">${GHEAD(first, H1BHEAD)}<tbody>${rows.filter(r => r[1].length).map(([label, r]) => grp(label, stat(r), '', btCells(r))).join('')}</tbody></table></div>`;
 const h1BtTiles = () => (DATA.h1bt && DATA.h1bt.picks.length) ? btTiles(DATA.h1bt.picks) : '';
 // By league (22 Nov 2026, user): on the Backtest and 1H backtest tabs, after By season
-const lgRows = L => [...new Set(L.map(b => b.lg))].sort((x, y) => lgShort(x) < lgShort(y) ? -1 : 1).map(k => [lgShort(k), L.filter(b => b.lg === k)]);
+// all 10 leagues in every league table, the first-half-only ones marked (25 Nov 2026, user)
+const ALL10 = [...DATA.leagues.map(l => l.key), ...H1XL.map(l => l.key)];
+const X1M = k => isH1X(k) ? ' <span class="muted">(1H only)</span>' : '';
+const lgKeys = L => [...new Set([...ALL10, ...L.map(b => b.lg)])].sort((x, y) => lgShort(x) < lgShort(y) ? -1 : 1);
+const lgRows = L => lgKeys(L).map(k => [lgShort(k) + X1M(k), L.filter(b => b.lg === k)]);
+const noRow = (k, cols, live) => `<tr><td>${lgShort(k)}${X1M(k)}</td><td class="n muted" colspan="${cols}" style="text-align:left">${isH1X(k) ? 'First-half test only: no full-game picks' : live ? 'No settled picks yet' : 'No picks'}</td></tr>`;
+// full-game By league: every league, a note row where there are no picks
+const fgLgTable = (L, note='', live=false) => `${note ? `<p class="note">${note}</p>` : ''}<div class="scroll"><table style="max-width:1040px">${GHEAD('League', BHEAD)}<tbody>${lgKeys(L).map(k => { const r = L.filter(b => b.lg === k); return r.length ? grp(lgShort(k) + X1M(k), stat(r), '', btCells(r)) : noRow(k, 7, live); }).join('')}</tbody></table></div>`;
 const LGNOTE = 'Leagues with few picks say little on their own.';
 // With or without a pick on the other market in the same game (22 Nov 2026, user: as on the 1H live test), on both backtest tabs
 const gkey = b => `${b.dt.slice(0, 10)}|${b.lg}|${b.home}|${b.away}`;
@@ -480,8 +487,7 @@ function h1Tables(list){
   const T = (title, first, body, note='') => `<h2>${title}</h2>${note ? `<p class="note">${note}</p>` : ''}<div class="scroll"><table style="max-width:1100px">${GHEAD(first, HEAD)}<tbody>${body}</tbody></table></div>`;
   const band = (bands, key) => bands.map(([label, lo, hi]) => row(label, L.filter(x => x[key] != null && x[key] >= lo && x[key] < hi))).join('');
   let h = T('By line', '1H line', band([['Under 70', 0, 70], ['70 to 74.5', 70, 75], ['75 or more', 75, 999]], 'line'), 'Settled 1H picks. With few picks these tables say little. Line averages over the picks with a closing 1H line.');
-  const lgs = [...new Set(L.map(b => b.lg))].sort((x, y) => lgShort(x) < lgShort(y) ? -1 : 1);
-  h += T('By league', 'League', lgs.map(k => row(lgShort(k), L.filter(b => b.lg === k))).join(''));
+  h += T('By league', 'League', lgKeys(L).map(k => { const r = L.filter(b => b.lg === k); return r.length ? row(lgShort(k) + X1M(k), r) : `<tr><td>${lgShort(k)}${X1M(k)}</td><td class="n muted" colspan="7" style="text-align:left">No settled 1H picks yet</td></tr>`; }).join(''));
   const mos = [...new Set(L.map(b => b.dt.slice(0, 7)))].sort();
   h += T('By month', 'Month', mos.map(m => row(new Date(m + '-15T12:00:00').toLocaleDateString('en-GB', {month: 'long', year: 'numeric'}), L.filter(b => b.dt.slice(0, 7) === m))).join(''));
   h += T('By games played', 'Games played', gpRows(L).map(([l, g]) => row(l, g)).join(''), GPNOTE + ' Picks logged before 22 Nov 2026 counted from the results.');   // as on the 1H backtest tab (22 Nov 2026, user)
@@ -642,7 +648,7 @@ function btBody(BT, S, pool, leagues){
   h += `<h2>By stage</h2>` + btTable('Stage', [['Regular season', BT], [`Play-offs${SKIPPED}`, skipped('skipped_po')]],
     'The second row is the play-off games the rule skips: every other rule met, with the chance worked out as for a regular-season game.');
   h += `<h2>By season</h2>` + btTable('Season', S.seasons.map(s => [sn(s.season), BT.filter(x => seasonOf(x) === s.season)]));
-  h += `<h2>By league</h2>` + btTable('League', lgRows(BT), LGNOTE);   // 22 Nov 2026 (user), as the 1H backtest tab
+  h += `<h2>By league</h2>` + fgLgTable(BT, LGNOTE + ' The first-half-only leagues are listed for reference; their first halves are on the 1H backtest tab.');   // 22 Nov 2026 (user), as the 1H backtest tab
   { const oc = skipped('skipped_apr'), mrows = S.months.map(m => [MON[m.m - 1], BT.filter(x => +x.dt.slice(5, 7) === m.m)]);   // April picks are skipped since 22 Nov 2026 (user; October 21-22 Nov)
     if (oc.length) { const i = mrows.findIndex(r => r[0] === MON[4]); mrows.splice(i < 0 ? mrows.length : i, 0, [`Apr${SKIPPED}`, oc]); }
     h += `<h2>By month</h2>` + btTable('Month', mrows, 'Every month counts: October games were left out 21–22 Nov 2026 and April games 22–23 Nov 2026, both brought back on request.'); }
@@ -686,6 +692,7 @@ function bets(list){
 function renderProjections(){
   let h = `<p class="note">Games in the next 7 days where both teams have played ${LIVE.min_gp ?? 4}+ games, with the model's projected total (fitted on earlier games only) next to the market's consensus line. Model: the model total, every signal in; each match page builds it up from the projected total. <b>Gap</b>: the projected total minus the line, the number the rule reads: orange at ${GB()} points or more, yellow under it, red at 0 or below. A game becomes a pick when the gap is ${GB()}+ and it meets every other rule: both teams ${LIVE.min_gp ?? 4}+ games, pace −1 or more, regular season, a line ending in .5 (greyed when one of them fails). Highlighted games are logged in the Live test tab at the line and price shown when they were first seen, while the line and prices keep updating. Click a match for its page, with the projection and how it was produced. Click a column heading to sort.</p>`;
   h += '<p class="games-link"><a href="/basketball/women/games/">Game by game: the projection, the line and the result →</a></p>';
+  if (H1XL.length) h += `<p class="note">Full-game projections cover the ${DATA.leagues.length} full-game leagues. ${H1XL.map(l => l.short).join(', ')} are first-half only: their games are under First halves on the <a class="gm" href="#view=h1">1H live test</a> tab.</p>`;
   const fx = LIVE.fixtures.filter(inLg);
   if (!fx.length) return h + '<p class="empty">No games in the next 7 days where both teams have the minimum games.</p>';
     const byDay = {};
@@ -711,17 +718,16 @@ function liveTables(L){
   h += `<h2>By points over the line</h2>` + btTable('Projected total − line', band(L.map(b => ({...b, gp_: GAP(b)})), [['4 to 6', 4, 6], ['6 or more', 6, 999]], 'gp_'));
   h += `<h2>By line</h2>` + btTable('Opening line', band(L, LBANDS(thirds(DATA.bets)), 'line'),
     'Settled live picks, the same bands as the Backtest tab. With few picks these tables say little; they show whether the live picks behave like the backtest.');
-  const lgs = [...new Set(L.map(b => b.lg))].sort((a, b) => lgShort(a) < lgShort(b) ? -1 : 1);
-  h += `<h2>By league</h2>` + btTable('League', lgs.map(k => [lgShort(k), L.filter(b => b.lg === k)]));
+  h += `<h2>By league</h2>` + fgLgTable(L, 'The first-half-only leagues are listed for reference; their first halves are on the 1H live test tab.', true);
   // Picks against the blind over (21 Nov 2026, on request): backing the over in every game the rule could look at, by league
   const BL = LIVE.blind || [];
   if (BL.length) {
     const avg = v => v.length ? v.reduce((a, x) => a + x, 0) / v.length : null, cell = x => `<td class="n ${cls(x)}">${roi(x)}</td>`;
     const brow = (label, bl, pk, extra='') => `<tr${extra}><td>${label}</td><td class="n">${bl.length}</td>${cell(avg(bl.filter(x => x.ro != null).map(x => x.ro)))}<td class="n" style="border-left:1px solid var(--line)">${pk.length || '–'}</td>${pk.length ? cell(avg(pk.map(b => b.ret))) : '<td class="n muted">–</td>'}</tr>`;   // no ROI close since 22 Nov 2026 (user)
-    const ks = [...new Set([...BL.map(x => x.lg), ...L.map(b => b.lg)])].sort((a, b) => lgShort(a) < lgShort(b) ? -1 : 1);
+    const ks = lgKeys([...BL, ...L]);
     h += `<h2>Picks against the blind over</h2><p class="note"><b>Blind over</b>: backing the over in every regular-season game in these leagues since ${LIVE.start}, both teams ${LIVE.min_gp ?? 4}+ games, at the opening line and price, as the picks are taken. If the picks only match the blind over, the profit comes from overs winning, not from the model.</p>`
       + `<div class="scroll"><table style="max-width:1040px"><thead><tr><th style="border-bottom:0"></th><th colspan="2" style="text-align:center;color:var(--gold)">Blind over</th><th colspan="2" style="text-align:center;color:var(--gold);border-left:1px solid var(--line)">Model's picks</th></tr><tr><th>League</th><th class="n">Games</th><th class="n">ROI</th><th class="n" style="border-left:1px solid var(--line)">Picks</th><th class="n">ROI</th></tr></thead><tbody>`
-      + ks.map(k => brow(lgShort(k), BL.filter(x => x.lg === k), L.filter(b => b.lg === k))).join('') + brow('<b>All leagues</b>', BL, L, ' class="tot" style="border-top:1px solid var(--line)"') + '</tbody></table></div>';
+      + ks.map(k => isH1X(k) && !BL.some(x => x.lg === k) && !L.some(b => b.lg === k) ? noRow(k, 4) : brow(lgShort(k) + X1M(k), BL.filter(x => x.lg === k), L.filter(b => b.lg === k))).join('') + brow('<b>All leagues</b>', BL, L, ' class="tot" style="border-top:1px solid var(--line)"') + '</tbody></table></div>';
   }
   h += `<h2>By month</h2>` + btTable('Month', [9, 10, 11, 12, 1, 2, 3, 4, 5, 6].map(mm => [MON[mm - 1], L.filter(b => +b.dt.slice(5, 7) === mm)]));
   if (L.some(b => b.gp != null)) h += `<h2>By games played</h2>` + btTable('Games played', gpRows(L), GPNOTE);
