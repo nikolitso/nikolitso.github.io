@@ -408,7 +408,7 @@ function h1Books(mode){
     h += T('Season', P.seasons.map(r => `<tr><td>${sy(r.sy)}</td>${cells(r)}</tr>`).join('') + `<tr class="sub"><td><b>2021–22 to 2025–26</b></td>${cells(P.all)}</tr>`);
     h += `<h2>Books v actual by league</h2>` + T('League', ks.map(k => { const on = open === 'bk:' + k, R = (P.lgs || {})[k] || [];   // click a league for its seasons (22 Nov 2026, user)
         return `<tr class="srow${on ? ' on' : ''}" data-open="bk:${k}"><td><span class="caret">${on ? '▾' : '▸'}</span> ${lgShort(k)}${isH1X(k) ? ' <span class="muted">(1H only)</span>' : ''}</td>${cells((P.leagues || []).find(r => r.lg === k))}</tr>` + (on ? R.map(x => `<tr class="sub"><td style="padding-left:28px">${sy(x.sy)}</td>${cells(x)}</tr>`).join('') : ''); }).join('')
-      + `<tr class="sub"><td><b>Page leagues</b></td>${cells(P.all)}</tr>` + (P.allx ? `<tr class="sub"><td><b>All leagues</b></td>${cells(P.allx)}</tr>` : ''))   // the first-half-only leagues too (23 Nov 2026, user)
+      + `<tr class="sub tot"><td><b>Page leagues</b></td>${cells(P.all)}</tr>` + (P.allx ? `<tr class="sub tot"><td><b>All leagues</b></td>${cells(P.allx)}</tr>` : ''))   // the first-half-only leagues too (23 Nov 2026, user)
       + '<p class="note">Every league on the 1H tabs, the first-half-only ones marked (1H only); the season table above is the page leagues only. Click a league for its seasons. Earlier seasons have fewer games because fewer first-half lines were kept.</p>';
     return h;
   }
@@ -419,7 +419,7 @@ function h1Books(mode){
   const kx = Object.keys((C && C.lg) || {}).filter(k => isH1X(k)), every = [...new Set([...ks, ...kx])].sort((a, b) => lgShort(a) < lgShort(b) ? -1 : 1);
   const baseL = base.replace(`in the ${LIVE.leagues.length} page leagues (not the first-half-only ones, so this season compares with the same leagues' past)`, `in the ${LIVE.leagues.length} page leagues and the first-half-only ones, marked (1H only); the sentence below and the Page leagues row are the page leagues only, so this season compares with the same leagues' past`);
   return `<h2 id="h1books">Books v actual, 2026–27</h2><p class="note">A check that the market has not caught up with first halves. ${baseL} Updates every hour (${LIVE.updated}, Athens). ${say}</p>`
-    + T('League', every.map(k => `<tr><td>${lgShort(k)}${X1(k)}</td>${cells(C && C.lg && C.lg[k])}</tr>`).join('') + `<tr class="sub"><td><b>Page leagues</b></td>${cells(C && C.all)}</tr>` + (C && C.allx && kx.length ? `<tr class="sub"><td><b>All leagues</b></td>${cells(C.allx)}</tr>` : ''));
+    + T('League', every.map(k => `<tr><td>${lgShort(k)}${X1(k)}</td>${cells(C && C.lg && C.lg[k])}</tr>`).join('') + `<tr class="sub tot"><td><b>Page leagues</b></td>${cells(C && C.all)}</tr>` + (C && C.allx && kx.length ? `<tr class="sub tot"><td><b>All leagues</b></td>${cells(C.allx)}</tr>` : ''));
 }
 
 // First half v second half (22 Nov 2026, user). Past seasons on the 1H backtest tab (mode 'bt', leagues open to their seasons);
@@ -441,7 +441,7 @@ function h1Halves(mode){
     h += T('Season', P.seasons.map(r => `<tr><td>${sy(r.sy)}</td>${cells(r)}</tr>`).join('') + `<tr class="sub"><td><b>2021–22 to 2025–26</b></td>${cells(past)}</tr>`);
     h += `<h2>First half v second half by league</h2><p class="note">Every league on the 1H tabs, the first-half-only ones marked (1H only).</p>` + T('League', ksAll.map(k => { const on = open === k, R = (P.lgs || {})[k] || [];   // click a league for its seasons (22 Nov 2026, user)
         return `<tr class="srow${on ? ' on' : ''}" data-open="${k}"><td><span class="caret">${on ? '▾' : '▸'}</span> ${lgShort(k)}${X1(k)}</td>${cells(P.lg[k])}</tr>` + (on ? R.map(x => `<tr class="sub"><td style="padding-left:28px">${sy(x.sy)}</td>${cells(x)}</tr>`).join('') : ''); }).join('')
-      + `<tr class="sub"><td><b>Page leagues</b></td>${cells(past)}</tr>` + (P.allx && ksAll.length > ks.length ? `<tr class="sub"><td><b>All leagues</b></td>${cells(P.allx)}</tr>` : '')) + '<p class="note">Click a league for its seasons.</p>';
+      + `<tr class="sub tot"><td><b>Page leagues</b></td>${cells(past)}</tr>` + (P.allx && ksAll.length > ks.length ? `<tr class="sub tot"><td><b>All leagues</b></td>${cells(P.allx)}</tr>` : '')) + '<p class="note">Click a league for its seasons.</p>';
     return h;
   }
   const sum = L => { const t = {n: 0, s1: 0, s2: 0}; L.forEach(k => { const x = C && C.lg && C.lg[k]; if (x) { t.n += x.n; t.s1 += x.s1; t.s2 += x.s2; } }); return t.n ? t : null; };
@@ -451,7 +451,7 @@ function h1Halves(mode){
   let h = `<h2 id="h1halves">First half v second half, 2026–27</h2><p class="note">A check that the market has not changed: first halves scored more than second halves in every backtest season, which is why first-half overs are tested. Points per game, both teams, regulation quarters, regular season, in every league on the 1H tabs, the first-half-only ones marked (1H only). The comparison with 2021–22 to 2025–26 uses the page leagues, the same leagues as the backtest figures. Updates every hour (${LIVE.updated}, Athens). ${say}</p>`;
   const every = [...ks, ...kx].sort((a, b) => lgShort(a) < lgShort(b) ? -1 : 1);   // one list, A to Z (23 Nov 2026, user)
   h += T('League', every.map(k => `<tr><td>${lgShort(k)}${isH1X(k) ? ' <span class="muted">(1H only)</span>' : ''}</td>${cells(C && C.lg && C.lg[k])}</tr>`).join('')
-    + `<tr class="sub"><td><b>Page leagues</b></td>${cells(now)}</tr>` + (kx.length ? `<tr class="sub"><td><b>All leagues</b></td>${cells(allT)}</tr>` : ''));
+    + `<tr class="sub tot"><td><b>Page leagues</b></td>${cells(now)}</tr>` + (kx.length ? `<tr class="sub tot"><td><b>All leagues</b></td>${cells(allT)}</tr>` : ''));
   return h;
 }
 
@@ -721,7 +721,7 @@ function liveTables(L){
     const ks = [...new Set([...BL.map(x => x.lg), ...L.map(b => b.lg)])].sort((a, b) => lgShort(a) < lgShort(b) ? -1 : 1);
     h += `<h2>Picks against the blind over</h2><p class="note"><b>Blind over</b>: backing the over in every regular-season game in these leagues since ${LIVE.start}, both teams ${LIVE.min_gp ?? 4}+ games, at the opening line and price, as the picks are taken. If the picks only match the blind over, the profit comes from overs winning, not from the model.</p>`
       + `<div class="scroll"><table style="max-width:1040px"><thead><tr><th style="border-bottom:0"></th><th colspan="2" style="text-align:center;color:var(--gold)">Blind over</th><th colspan="2" style="text-align:center;color:var(--gold);border-left:1px solid var(--line)">Model's picks</th></tr><tr><th>League</th><th class="n">Games</th><th class="n">ROI</th><th class="n" style="border-left:1px solid var(--line)">Picks</th><th class="n">ROI</th></tr></thead><tbody>`
-      + ks.map(k => brow(lgShort(k), BL.filter(x => x.lg === k), L.filter(b => b.lg === k))).join('') + brow('<b>All leagues</b>', BL, L, ' style="border-top:1px solid var(--line)"') + '</tbody></table></div>';
+      + ks.map(k => brow(lgShort(k), BL.filter(x => x.lg === k), L.filter(b => b.lg === k))).join('') + brow('<b>All leagues</b>', BL, L, ' class="tot" style="border-top:1px solid var(--line)"') + '</tbody></table></div>';
   }
   h += `<h2>By month</h2>` + btTable('Month', [9, 10, 11, 12, 1, 2, 3, 4, 5, 6].map(mm => [MON[mm - 1], L.filter(b => +b.dt.slice(5, 7) === mm)]));
   if (L.some(b => b.gp != null)) h += `<h2>By games played</h2>` + btTable('Games played', gpRows(L), GPNOTE);
@@ -771,9 +771,10 @@ document.addEventListener('click', e => {
   const dir = th.classList.contains('sd') ? 'asc' : 'desc', num = th.classList.contains('n');
   table.querySelectorAll('th').forEach(x => x.classList.remove('sa', 'sd'));
   th.classList.add(dir === 'asc' ? 'sa' : 'sd');
-  const groups = [];
+  const groups = [], tots = [];   // Page leagues / All leagues rows stay at the bottom (25 Nov 2026, user)
   for (const r of [...tb.rows]){
     if (r.querySelector('td.tier')){ r.style.display = 'none'; continue; }
+    if (r.classList.contains('tot')){ tots.push(r); continue; }
     if (r.classList.contains('sub') && groups.length) groups[groups.length - 1].push(r); else groups.push([r]);
   }
   const key = r => { const c = cellAt(r, col); if (!c) return null; if (c.dataset.s) return c.dataset.s;
@@ -781,7 +782,7 @@ document.addEventListener('click', e => {
     if (!num) return t.toLowerCase(); const m = t.match(/-?\d+(\.\d+)?/); return m ? parseFloat(m[0]) : null; };
   groups.sort((a, b) => { const x = key(a[0]), y = key(b[0]); if (x === y) return 0; if (x == null) return 1; if (y == null) return -1;
     return (x < y ? -1 : 1) * (dir === 'asc' ? 1 : -1); });
-  groups.flat().forEach(r => tb.appendChild(r));
+  [...groups.flat(), ...tots].forEach(r => tb.appendChild(r));
 });
 
 function renderMethod(){ return `<div class="doc">${DATA.method}</div>`; }
