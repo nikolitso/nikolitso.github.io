@@ -267,7 +267,7 @@ a.gm{color:inherit;text-decoration:none} a.gm:hover{color:var(--gold);text-decor
 <p>Explainer: <a href="/volleyball/research/how-totals-work/">why a volleyball total is really about sets</a>.</p><p>Research note: <a href="/volleyball/research/close-matches/">close matches go under more often than the market expects</a>.</p>
 </section>
 </main>
-<script src="data.js?v=5ae3af16"></script>
+<script src="data.js?v=62bf0bf8"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -751,8 +751,32 @@ document.addEventListener('click', e => {
   location.hash = `view=leagues&m=hcap&lg=${r.dataset.open}`;
 });
 
+// the rules in one dated list (user, 25 Nov 2026), from the same settings the pipeline uses; frozen until about 100
+// settled live picks per market
+function rulesBox(){
+  const H = DATA.hcap || {edge: 0.2, min_line: 5.5, fav_max: 15.5}, ec = ((DATA.even_cut || 0.096) * 100).toFixed(1), uc = ((DATA.uneven_cut || 0.122) * 100).toFixed(1);
+  const li = (t, d) => `<li>${t} <span class="muted">(${d})</span></li>`;
+  return `<div style="border:1px solid var(--line);border-radius:12px;padding:16px 20px;margin:8px 0 28px">
+  <h3 style="margin-top:0">The rules</h3>
+  <p class="note" style="margin-top:-4px"><b>Frozen on 25 November 2026</b>: no changes until each market has about 100 settled live picks, unless something is broken. Every rule below was chosen on the same past seasons, so the backtests run high; only the live record can show whether they work.</p>
+  <p style="margin:10px 0 4px"><b>Every pick</b></p><ul style="margin:0 0 8px;padding-left:20px">
+  ${li(`Both teams have played ${DATA.min_games}+ league games this season; ratings use this season only`, '7–8 Nov')}
+  ${li('Regular season only: no playoffs, play-outs, placement games or finals', '7 Nov')}
+  ${li('No picks in March, April or October', '20 Nov')}
+  ${li('Logged before the first serve, equal stakes; a pick logged before a rule change stays', '22 Nov')}</ul>
+  <p style="margin:10px 0 4px"><b>Totals: the over on a low line</b></p><ul style="margin:0 0 8px;padding-left:20px">
+  ${li(`Line ${DATA.min_line}.5 to ${DATA.low - 0.5}, model chance ${DATA.min_chance * 100}%+, edge ${DATA.edge * 100}%+`, '20 Nov')}
+  ${li(`The ${Object.keys(PLG).length} Live test leagues; the original ${DATA.leagues.length} because backing every low-line over without the model lost 3% or less in past seasons`, '7 Nov, 25 Nov')}</ul>
+  <p style="margin:10px 0 4px"><b>Points handicap</b></p><ul style="margin:0 0 8px;padding-left:20px">
+  ${li(`Back the side with an edge of ${H.edge * 100}%+ when the market handicap is ${H.min_line}+ points`, '22 Nov')}
+  ${li(`Favourites by how even the league has been (average spread over its earlier seasons): <b>none</b> under ${ec} points, <b>up to ${H.fav_max - 1}</b> points from ${ec} to ${uc}, <b>any size</b> from ${uc}; a league with fewer than 2 earlier seasons counts as middle`, '22 Nov, 25 Nov')}
+  ${li(`The ${Object.keys(PLG).length} Live test leagues and ${((DATA.hcapx || {}).leagues || []).length} handicap-only leagues`, '22 Nov')}</ul>
+  <p style="margin:10px 0 4px"><b>Shown, not bet</b></p><ul style="margin:0;padding-left:20px">
+  ${li('The Match winner pill and any positive edge on a match page that is not a pick', '22–25 Nov')}</ul></div>`;
+}
+
 function renderMethod(){
-  return `<div class="doc">
+  return rulesBox() + `<div class="doc">
   <h3><span class="num">1</span>One number per team</h3>
   <p>Every team gets one rating: its chance of winning a rally against an average team in its league. The rating comes from the points of this season's matches only, as rosters change from year to year, and recent matches count more.</p>
   <p>Leagues are never mixed: a team is only compared with the teams in its own league, and each league has its own home advantage, measured from past seasons. The model's settings, such as how fast old matches lose weight, are the same in every league. They were first set on one season of Turkey's women's league. In November 2026 that choice was tested against two others, each tuned on 2024–25 and judged on 2025–26 and 2026–27, which none of them had seen, across all 35 leagues on the page: one set tuned on every league together (a slightly better fit to the over/under, but a worse one to set scores; 179 bets, +10.9%) and each league tuned on its own (119 bets, +9.7%, and the worst fit of the three). The Turkey settings did best (122 bets, +17.5%, and the best fit to the final set scores), so they stay. Tuning each league on its own mostly fits noise: one league's season is too few matches.</p>
