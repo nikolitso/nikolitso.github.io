@@ -267,7 +267,7 @@ a.gm{color:inherit;text-decoration:none} a.gm:hover{color:var(--gold);text-decor
 <p>Explainer: <a href="/volleyball/research/how-totals-work/">why a volleyball total is really about sets</a>.</p><p>Research note: <a href="/volleyball/research/close-matches/">close matches go under more often than the market expects</a>.</p>
 </section>
 </main>
-<script src="data.js?v=a253fb05"></script>
+<script src="data.js?v=6409d306"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -446,6 +446,24 @@ function settled(){
   return h + rows.reverse().join('') + '</tbody></table></div>';
 }
 
+// League accuracy (user, 25 Nov 2026): how close the market's closing total line comes to the actual total, this season,
+// against every league on the page
+function lineAccuracy(res){
+  const stats = rs => { const v = rs.filter(r => r.line != null && r.total != null), n = v.length;
+    return n ? {n, miss: v.reduce((s, r) => s + Math.abs(r.total - r.line), 0) / n, bias: v.reduce((s, r) => s + r.total - r.line, 0) / n,
+                over: v.filter(r => r.total > r.line).length / n} : {n: 0}; };
+  const a = stats(res);
+  if (!a.n) return '';
+  const all = stats([...DATA.results, ...((DATA.test || {}).results || []), ...((DATA.hcapx || {}).results || [])]);
+  const f1 = x => x.toFixed(1), sg1 = x => (x > 0 ? '+' : x < 0 ? '−' : '') + Math.abs(x).toFixed(1);
+  const t = [['Games with a line', a.n, 'this season'],
+             ['Average miss', `${f1(a.miss)} pts`, `all leagues ${f1(all.miss)}`],
+             ['Actual v line', `${sg1(a.bias)} pts`, a.bias > 0 ? 'totals ran higher' : a.bias < 0 ? 'totals ran lower' : 'on the line'],
+             ['Overs won', pct(a.over), `all leagues ${pct(all.over)}`]];
+  return `<h2>How accurate is the market's line?</h2><div class="metrics">${t.map(([l, v, x]) => `<div class="metric"><div class="lbl">${l}</div><div class="big">${v}</div><div class="sm">${x}</div></div>`).join('')}</div>`
+    + `<p class="note">The market's closing line on total points against the actual total, in this league's games this season. <b>Average miss</b> is how far the total landed from the line, either way; misses of 20 to 30 points are normal in volleyball, because one extra set adds about 45 points. <b>Actual v line</b> is the average of actual total − line: near 0, the line is fair on average; well above 0, totals have run higher than the market expected, so overs have done better. <b>Overs won</b> is how often the total went over the line (50% means a balanced line). ${a.n < 30 ? 'Under 30 games: read it as a rough guide only.' : ''}</p>`;
+}
+
 // Season Rating (user, 22 Nov 2026): the team ratings of every league, live, Women Leagues test and handicap-only;
 // a league's own view adds its results this season
 function renderSeason(){
@@ -456,6 +474,7 @@ function renderSeason(){
   const live = !!LG[lg], res = (live ? DATA.results : isT ? (T.results || []) : (X.results || [])).filter(r => r.lg === lg);
   const paged = new Set((T.games || []).map(g => g.id));            // test games that were projected have a page
   const match = r => live || paged.has(r.id) ? gameLink(r) : `${r.home} – ${r.away}`;
+  h += lineAccuracy(res);   // how close the market's total line comes (user, 25 Nov 2026)
   h += '<h2>Results</h2>';
   if (!res.length) return h + '<p class="empty">No matches played yet.</p>';
   h += `<div class="scroll"><table style="max-width:1000px"><thead><tr><th>Date</th><th>Match</th><th class="n">Sets</th><th class="n">Total</th>${live ? '<th class="n">Model median</th>' : ''}<th class="n">Line</th>${live ? '<th class="n">Over %</th>' : ''}</tr></thead><tbody>`;
