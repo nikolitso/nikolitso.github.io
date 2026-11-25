@@ -267,7 +267,7 @@ a.gm{color:inherit;text-decoration:none} a.gm:hover{color:var(--gold);text-decor
 <p>Explainer: <a href="/volleyball/research/how-totals-work/">why a volleyball total is really about sets</a>.</p><p>Research note: <a href="/volleyball/research/close-matches/">close matches go under more often than the market expects</a>.</p>
 </section>
 </main>
-<script src="data.js?v=e9e76723"></script>
+<script src="data.js?v=609cbcaa"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -426,7 +426,7 @@ function hOpenTop(){
   const o = hOpen();
   if (!o.length) return '';
   return `<h2>Open handicap picks</h2><div class="scroll"><table class="sortable" style="max-width:900px"><thead><tr><th>Date</th>${lg === 'all' ? '<th>League</th>' : ''}<th>Match</th><th>Pick</th><th class="n">Price</th><th class="n">Model handicap</th><th class="n">Edge</th></tr></thead><tbody>`
-    + o.map(p => `<tr><td>${short(p.dt)} ${p.dt.slice(11)}</td>${lg === 'all' ? `<td>${hLgName(p)}</td>` : ''}<td class="wr">${gameLink(p)}</td><td><b>${hLabel(p.team, p.line)}</b></td><td class="n">${p.px.toFixed(2)}</td><td class="n">${p.hcap != null ? hLabel('', p.side === 'home' ? p.hcap : -p.hcap).trim() : '–'}</td><td class="n ${cls(hE(p))}">${sgn(hE(p) * 100, 0)}%</td></tr>`).join('')
+    + o.map(p => `<tr><td>${short(p.dt)} ${p.dt.slice(11)}</td>${lg === 'all' ? `<td>${hLgName(p)}<div class="muted" style="font-size:13px">${compOf(p.lg)}</div></td>` : ''}<td class="wr">${gameLink(p)}</td><td><b>${hLabel(p.team, p.line)}</b></td><td class="n">${p.px.toFixed(2)}</td><td class="n">${p.hcap != null ? hLabel('', p.side === 'home' ? p.hcap : -p.hcap).trim() : '–'}</td><td class="n ${cls(hE(p))}">${sgn(hE(p) * 100, 0)}%</td></tr>`).join('')
     + `</tbody></table></div><p class="note"><a href="#view=picks&m=hcap&to=hopen">The handicap record and its settled picks →</a></p>`;
 }
 
@@ -473,6 +473,10 @@ function settled(){
 // League accuracy (user, 25 Nov 2026): how close the market's closing total line comes to the actual total, this season,
 // against every league on the page
 // past evenness (user, 25 Nov 2026): the league's average spread over earlier seasons; under the cut, no favourite handicap picks
+// competitiveness label (user, 25 Nov 2026): '' for the leagues in between, which follow the standard rules
+const compOf = k => { const E_ = (DATA.evenness || {})[k]; if (!E_ || E_.n < 2) return ''; return E_.avg < (DATA.even_cut || 0.096) ? 'competitive' : E_.avg >= (DATA.uneven_cut || 0.122) ? 'not competitive' : ''; };
+const compTag = k => compOf(k) ? ` · ${compOf(k)}` : '';
+
 function evenTile(k){
   const E_ = (DATA.evenness || {})[k], cut = DATA.even_cut || 0.096;
   if (!E_ || E_.n < 2) return `<div class="metric"><div class="lbl">Competitiveness</div><div class="big">–</div><div class="sm">under 2 earlier seasons</div></div>`;
@@ -913,7 +917,7 @@ function renderHcap(part){   // 'live': on Live test; 'bt': on Backtest (merged 
   const H = DATA.hcap || {picks: [], backtest: null}, B = sideBT(H);
   const hc = x => (x > 0 ? '+' : x < 0 ? '−' : '') + Math.abs(x).toFixed(1);
   const pickTxt = p => `${p.team} ${hc(p.line)}`;
-  const lgCell = p => `<div class="muted" style="font-size:14px">${hLgName(p)}${PLG[p.lg] ? '' : ' · handicap-only league'}</div>`;
+  const lgCell = p => `<div class="muted" style="font-size:14px">${hLgName(p)}${PLG[p.lg] ? '' : ' · handicap-only league'}${compTag(p.lg)}</div>`;
   const done = H.picks.filter(inLg).filter(sideOk).filter(p => 'won' in p), open = hOpen().filter(sideOk);   // includes the handicap-only leagues' open picks (user, 24 Nov 2026)
   const n = done.length, w = done.filter(p => p.won).length, units = done.reduce((s, p) => s + p.profit, 0);
   const bt = k => B ? `<span class="${cls(B[k].all.roi)}">${sgn(B[k].all.roi * 100, 1)}%</span>` : '–';
@@ -1021,7 +1025,7 @@ function renderRatings(base = 'leagues'){
   const note = `<p class="note">Each team's share of rallies it would win against an <b>average team of its own league</b>, from this season's matches only, adjusted for the opponents it has played (a 3-0 over a strong side counts for more). 50% is the league average; the table ranks the teams on it.</p><p class="note"><b>How to read it.</b> A team at 53% would win about 53 of every 100 rallies against an average side of its league. That looks close to 50%, but small edges add up: a set needs 25 points, so a team that wins a few more rallies than it loses wins most of its sets, and most of its matches. <b>Points won</b> is the share of rallies the team has actually won so far, before the adjustment: a team that has played the strongest sides can have fewer points won but a higher rating. The model uses the rating, so this is the number behind every projection.</p>`;   // reworded (user, 25 Nov 2026)
   if (lg === 'all' || (!LG[lg] && !TL[lg] && !XL[lg])){
     const card = k => { const r = rows(k), M = meta(k); if (!r.length) return '';
-      return `<div><h3 style="margin:0 0 6px"><a class="gm" href="#view=${base}&lg=${k}">${M.name}</a>${tierOf(k) > 1 ? ` <span class="muted" style="font-size:13px;font-weight:400">tier ${tierOf(k)}</span>` : ''}</h3><table><thead><tr><th class="n">#</th><th>Team</th><th class="n">Rally %</th><th class="n">W–L</th></tr></thead><tbody>`
+      return `<div><h3 style="margin:0 0 6px"><a class="gm" href="#view=${base}&lg=${k}">${M.name}</a>${tierOf(k) > 1 ? ` <span class="muted" style="font-size:13px;font-weight:400">tier ${tierOf(k)}</span>` : ''}${compOf(k) ? ` <span class="muted" style="font-size:13px;font-weight:400">· ${compOf(k)}</span>` : ''}</h3><table><thead><tr><th class="n">#</th><th>Team</th><th class="n">Rally %</th><th class="n">W–L</th></tr></thead><tbody>`
         + r.map((t, i) => `<tr><td class="n muted">${i + 1}</td><td>${t.team}${t.new ? ' <span class="muted">(new)</span>' : ''}</td><td class="n">${(t.rally * 100).toFixed(1)}%</td><td class="n">${t.w}–${t.l}</td></tr>`).join('')
         + '</tbody></table></div>'; };
     const grid = keys => `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:28px 32px;margin-top:14px">${keys.map(card).join('')}</div>`;
@@ -1031,7 +1035,7 @@ function renderRatings(base = 'leagues'){
     const az = keys => keys.sort((a, b) => tierOf(a) - tierOf(b) || meta(a).name.localeCompare(meta(b).name));   // tier 1 first, then A-Z
     return `<h2>Team ratings</h2>` + note + `<h2 style="margin-top:44px">Men</h2>` + grid(az(all.filter(k => !women(k))))
       + `<h2 style="margin-top:44px">Women</h2>` + grid(az(all.filter(women)))
-      + '<p class="note" style="margin-top:20px">Click a league for its full table: sets, points won and the home advantage.</p>';
+      + '<p class="note" style="margin-top:20px">Click a league for its full table: sets, points won and the home advantage. <b>Competitive</b> and <b>not competitive</b> next to a league: how even it has been in its earlier seasons, which decides its handicap favourites (see How it works); no label means the standard rules.</p>';
   }
   const r = rows(lg), M = meta(lg);
   let h = `<p class="note"><a href="#view=${base}">← All leagues</a></p><h2 style="margin-top:6px">${M.name}</h2>`;
@@ -1077,7 +1081,7 @@ function hcapExtra(){
   const XL = Object.fromEntries(X.leagues.map(l => [l.key, l])), H = DATA.hcap || {edge: 0.2, min_line: 5.5, fav_max: 15.5};
   const P = (X.picks || []).filter(sideOk), done = P.filter(p => 'won' in p), open = P.filter(p => !('won' in p)).sort((a, b) => a.dt.localeCompare(b.dt));
   const n = done.length, w = done.filter(p => p.won).length, units = done.reduce((s, p) => s + p.profit, 0);
-  const lgLine = p => `<div class="muted" style="font-size:14px">${XL[p.lg] ? `${XL[p.lg].country} · ${XL[p.lg].name} ${XL[p.lg].women ? '(W)' : '(M)'}` : ''}</div>`;
+  const lgLine = p => `<div class="muted" style="font-size:14px">${XL[p.lg] ? `${XL[p.lg].country} · ${XL[p.lg].name} ${XL[p.lg].women ? '(W)' : '(M)'}` : ''}${compTag(p.lg)}</div>`;
   const tiles = [['Open picks', open.length, open.length ? 'listed at the top' : 'none right now'], ['Record', `${w}–${n - w}`, n ? (w / n * 100).toFixed(1) + '% won' : '0 picks'],
                  ['ROI', n ? `<span class="${cls(units)}">${sgn(units / n * 100, 1)}%</span>` : '–', n ? units1(units) : 'no settled picks'],
                  ['Leagues', X.leagues.length, 'handicap only']];
