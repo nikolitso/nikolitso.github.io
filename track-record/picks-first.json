@@ -1664,12 +1664,12 @@
 }
 },
 "scanned": {
-"basketball/overs/live.js": "2505450910d859998778801bfe3f78595d302f60",
-"basketball/women/live.js": "891ee8570b5a66934c02e886e2e17b1328ec9e52",
-"handball/data.js": "06257c964e3a2f888dc328e87c82ee9ff6730095",
+"basketball/overs/live.js": "88b8218093b9edd78f38e29a11d36d4fc604e214",
+"basketball/women/live.js": "fd1ad3144edf15f88720c9cbb2171739c9f8be25",
+"handball/data.js": "f8c3d6cd89a2e315ba179e3709c51f7359a21508",
 "handball/index.html": "bc0dff9430172025ea5d9ba8dd58b67a2b91660e",
 "handball/projections/index.html": "bc0dff9430172025ea5d9ba8dd58b67a2b91660e",
-"superleague/data.js": "cd795368462f8210a91770162a8fe4f96927e43f",
-"volleyball/data.js": "1dca0568dc27aae0bcc6a5b4d9d41bdefa1b9fdd"
+"superleague/data.js": "0ef05bfccf330dc228841263da1e88019cd55c36",
+"volleyball/data.js": "3c8bd7c86c793b1366d710506407257ebd90cf84"
 }
 }
