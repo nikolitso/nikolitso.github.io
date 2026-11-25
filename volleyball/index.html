@@ -267,7 +267,7 @@ a.gm{color:inherit;text-decoration:none} a.gm:hover{color:var(--gold);text-decor
 <p>Explainer: <a href="/volleyball/research/how-totals-work/">why a volleyball total is really about sets</a>.</p><p>Research note: <a href="/volleyball/research/close-matches/">close matches go under more often than the market expects</a>.</p>
 </section>
 </main>
-<script src="data.js?v=58739ffb"></script>
+<script src="data.js?v=5ae3af16"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -312,6 +312,10 @@ if (DATA.test){
 const XLG = Object.fromEntries(((DATA.hcapx || {}).leagues || []).map(l => [l.key, l]));
 DATA.fixtures = DATA.fixtures.concat((DATA.hcapx || {}).fixtures || []).sort((a, b) => a.dt.localeCompare(b.dt));
 const PJLG = {...PLG, ...XLG};   // the leagues on Projections
+// Backtest covers the Live test leagues (user, 25 Nov 2026): the 8 backtested ones and the test leagues; a league with no
+// past odds is listed as such
+const BLG = Object.fromEntries(Object.entries(PLG).filter(([k]) => ((DATA.backtest || {}).leagues || {})[k]));
+const hasPast = k => { const x = ((DATA.backtest || {}).leagues || {})[k]; return !!x && (x.n > 0 || x.blind_n > 0); };
 // a chip names the league too when its country has more than one women's or men's league with picks (25 Nov 2026)
 const chipName = l => Object.values(PJLG).filter(x => x.country === l.country && !!x.women === !!l.women).length > 1 ? `${l.country} ${l.name} ${sexAb(l)}` : `${l.country} ${sexAb(l)}`;
 const lgShort = k => { const x = PLG[k] || (((DATA.hcapx || {}).leagues) || []).find(l => l.key === k); return x ? `${x.country} ${sexAb(x)}` : ''; };
@@ -324,7 +328,7 @@ const liveNames = () => [true, false].map(w => DATA.leagues.filter(l => l.live &
   .map(a => `${andList(a.map(l => l.country))} (${sexOf(a[0])})`).join(', ');
 const one = () => lg === 'all' ? DATA.leagues[0].key : lg;      // tabs that show one league at a time
 
-const setSub = () => { $('sub').textContent = `${view === 'backtest' ? DATA.leagues.length + ' backtested leagues' : (view === 'projections' ? Object.keys(PJLG).length : Object.keys(PLG).length) + ' leagues'}, women's and men's · ${DATA.season.replace('-','–')} · updated ${DATA.updated} (Athens)`; };   // Backtest counts its own leagues (25 Nov 2026)
+const setSub = () => { $('sub').textContent = `${view === 'backtest' ? Object.keys(BLG).filter(hasPast).length + ' backtested leagues' : (view === 'projections' ? Object.keys(PJLG).length : Object.keys(PLG).length) + ' leagues'}, women's and men's · ${DATA.season.replace('-','–')} · updated ${DATA.updated} (Athens)`; };   // Backtest counts its own leagues (25 Nov 2026)
 setSub();
 
 function renderProjections(){
@@ -365,7 +369,7 @@ function pickTiles(){
 
 // the front page: the live record, the bet, how the leagues were chosen and what the backtest found. The tables stay in their tabs
 function renderHome(){
-  const B = DATA.backtest, A = B.all, live = new Set(DATA.leagues.map(l => l.key));
+  const B = DATA.backtest, A = B.all, live = new Set(Object.values(BLG).map(l => l.key));
   const by = {};
   for (const x of B.seasons.filter(x => live.has(x.lg) && !x.tuned)){ const t = by[x.season] ||= 0; by[x.season] = t + x.roi * x.n; }
   const seasons = Object.keys(by).sort(), up = seasons.filter(k => by[k] > 0).length, lost = seasons.filter(k => by[k] <= 0).map(k => k.replace('-', '–'));
@@ -373,7 +377,7 @@ function renderHome(){
   let run = 0, top = 0, fall = 0, streak = 0, worst = 0;
   for (const b of bets){ run += b.ret; top = Math.max(top, run); fall = Math.max(fall, top - run); streak = b.won ? 0 : streak + 1; worst = Math.max(worst, streak); }
   const span = `${seasons[0].replace('-', '–')} to ${seasons.at(-1).replace('-', '–')}`;
-  const best = DATA.leagues.map(l => ({l, s: B.leagues[l.key]})).sort((a, b) => b.s.roi - a.s.roi)
+  const best = Object.values(BLG).map(l => ({l, s: B.leagues[l.key]})).sort((a, b) => b.s.roi - a.s.roi)
     .map(({l, s}) => `${l.country} ${sexAb(l)} ${sgn(s.roi * 100, 1)}%`).join(', ');
   const said = bets.reduce((s, b) => s + b.p, 0) / bets.length, hit = bets.filter(b => b.won).length / bets.length;
   const over = ` The model is too confident: its bets said ${pct(said)} and won ${pct(hit)}. So the over chance and edge shown on Projections and Live test keep only ${REAL * 100}% of its advantage over the no-vig market chance; picks are still chosen on the model's own figure (see Calibration in <b>Backtest</b>).`;
@@ -477,9 +481,9 @@ function lineAccuracy(res){
 function renderSeason(){
   const T = DATA.test || {}, X = DATA.hcapx || {};
   const isT = (T.leagues || []).some(l => l.key === lg), isX = (X.leagues || []).some(l => l.key === lg);
-  if (lg === 'all' || (!LG[lg] && !isT && !isX)) return renderRatings('season');
+  if (lg === 'all' || (!BLG[lg] && !isT && !isX)) return renderRatings('season');
   let h = renderRatings('season');
-  const live = !!LG[lg], res = (live ? DATA.results : isT ? (T.results || []) : (X.results || [])).filter(r => r.lg === lg);
+  const live = !!BLG[lg], res = (live ? DATA.results : isT ? (T.results || []) : (X.results || [])).filter(r => r.lg === lg);
   const paged = new Set((T.games || []).map(g => g.id));            // test games that were projected have a page
   const match = r => live || paged.has(r.id) ? gameLink(r) : `${r.home} – ${r.away}`;
   h += lineAccuracy(res);   // how close the market's total line comes (user, 25 Nov 2026)
@@ -508,7 +512,7 @@ function btTiles(S, pick = inLg){
 
 // the same tiles for the women's or the men's leagues alone (All leagues view of Backtest)
 function sexTiles(women){
-  const keys = new Set(DATA.leagues.filter(l => l.live && l.women === women).map(l => l.key));
+  const keys = new Set(Object.values(BLG).filter(l => l.live && l.women === women).map(l => l.key));
   const tuned = new Set(DATA.backtest.seasons.filter(s => s.tuned).map(s => s.lg + '|' + s.season));
   const pick = b => keys.has(b.lg), g = DATA.backtest.bets.filter(b => pick(b) && !tuned.has(b.lg + '|' + b.season));
   const w = g.filter(b => b.won).length, roi = g.length ? g.reduce((a, b) => a + b.ret, 0) / g.length : 0;
@@ -517,20 +521,21 @@ function sexTiles(women){
 
 function renderBacktest(){
   const B = DATA.backtest, S = lg === 'all' ? B.all : B.leagues[lg];
+  if (lg !== 'all' && !hasPast(lg)) return `<p class="empty">No past odds for this league, so it has no backtest: its picks are judged on the Live test record only.</p>`;
   const intro = `<p class="note" style="margin-top:28px">Past seasons since ${B.first.slice(0,4)}, regular-season games only, using the live rule at the closing line and average price. Each match is projected only from earlier matches that season, and no pick is made before both teams have played ${DATA.min_games}. These totals run high because they know which leagues were kept; Home gives the fair figure. ${S.blind_n ? `<b>Backing every low-line over without the model</b> returned ${sgn(S.blind_roi*100, 1)}% over ${S.blind_n.toLocaleString('en-US')} matches.` : `<b>This league never has a line below ${DATA.low}</b> (its totals run higher), so the rule has had nothing to bet on.`}</p>`;   // below the tables (user, 16 Nov 2026)
   let h = '';
   h += (lg === 'all' ? '<h2>All leagues</h2>' : '') + btTiles(S);
   if (lg === 'all'){
     h += sexTiles(true) + sexTiles(false);
-    h += `<p class="note">${lg === 'all' && DATA.leagues.some(l => !l.live) ? 'The totals above count the leagues with live picks only. ' : ''}Profit is in equal-stake units (1 unit per bet). Click a league to see its seasons and bets.</p>`;
+    h += `<p class="note">${lg === 'all' && Object.values(BLG).some(l => !l.live) ? 'The totals above count the leagues with live picks only. ' : ''}Profit is in equal-stake units (1 unit per bet). Click a league to see its seasons and bets.</p>`;
     h += `<div class="scroll"><table style="max-width:760px"><thead><tr><th>League</th><th class="n">Bets</th><th class="n">Hit</th><th class="n">Profit</th><th class="n">ROI</th><th class="n">No model</th></tr></thead><tbody>`;
-    for (const l of DATA.leagues){
+    for (const l of Object.values(BLG)){
       const s = B.leagues[l.key];
-      h += `<tr class="srow" data-lg="${l.key}"><td><span class="caret">▸</span> ${l.country} <span class="muted">${l.name} ${sexAb(l)}${l.live ? '' : ' · no picks'}</span></td><td class="n">${s.n}</td><td class="n">${s.n ? pct(s.w/s.n) : '–'}</td><td class="n ${cls(s.roi)}">${s.n ? sgn(s.roi * s.n, 2) : '–'}</td><td class="n ${cls(s.roi)}">${sgn(s.roi*100, 1)}%</td><td class="n ${cls(s.blind_roi)}">${sgn(s.blind_roi*100, 1)}%</td></tr>`;
+      h += `<tr class="srow" data-lg="${l.key}"><td><span class="caret">▸</span> ${l.country} <span class="muted">${l.name} ${sexAb(l)}${l.test ? ' · added 25 Nov' : ''}</span></td>${hasPast(l.key) ? `<td class="n">${s.n}</td><td class="n">${s.n ? pct(s.w/s.n) : '–'}</td><td class="n ${cls(s.roi)}">${s.n ? sgn(s.roi * s.n, 2) : '–'}</td><td class="n ${cls(s.roi)}">${s.n ? sgn(s.roi*100, 1) + '%' : '–'}</td><td class="n ${cls(s.blind_roi)}">${sgn(s.blind_roi*100, 1)}%</td>` : '<td class="n muted" colspan="5">no past odds</td>'}</tr>`;
     }
     h += '</tbody></table></div>' + testedTable();
     // the same bets by season, the live leagues together (the tuned-on season left out, as in the totals)
-    const live = new Set(DATA.leagues.filter(l => l.live).map(l => l.key)), by = {};
+    const live = new Set(Object.values(BLG).filter(l => l.live).map(l => l.key)), by = {};
     for (const x of B.seasons.filter(x => live.has(x.lg) && !x.tuned)){
       const t = by[x.season] ||= {n: 0, w: 0, pl: 0};
       t.n += x.n; t.w += x.w; t.pl += x.pl;
@@ -602,6 +607,7 @@ function calibration(){
     }
     return t + '</tbody></table></div>';
   };
+  if (bets.length < 8) return '';   // too few bets for calibration bands (leagues added 25 Nov 2026)
   const chance = [...bets].sort((a, b) => a.p - b.p);
   const chanceBands = [0, 1, 2, 3].map(i => {
     const g = chance.slice(Math.floor(i * chance.length / 4), Math.floor((i + 1) * chance.length / 4));
@@ -653,7 +659,7 @@ function byGames(){
 
 // the same bets by calendar month, every season together: does the rule do better early or late in the season?
 function byMonth(){
-  const live = new Set(DATA.leagues.filter(l => l.live).map(l => l.key));
+  const live = new Set(Object.values(BLG).filter(l => l.live).map(l => l.key));
   const tuned = new Set(DATA.backtest.seasons.filter(x => x.tuned).map(x => x.lg + '|' + x.season));
   const bets = DATA.backtest.bets.filter(b => (lg === 'all' ? live.has(b.lg) : b.lg === lg) && !tuned.has(b.lg + '|' + b.season));
   const MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'], by = {};
@@ -668,14 +674,14 @@ function byMonth(){
 }
 
 function seasonBets(season){
-  const live = new Set(DATA.leagues.filter(l => l.live).map(l => l.key));
+  const live = new Set(Object.values(BLG).filter(l => l.live).map(l => l.key));
   const tuned = new Set(DATA.backtest.seasons.filter(x => x.tuned).map(x => x.lg + '|' + x.season));
   const list = DATA.backtest.bets.filter(b => b.season === season && (lg === 'all' ? live.has(b.lg) && !tuned.has(b.lg + '|' + b.season) : b.lg === lg));
   let run = 0;
   let h = `<h2 id="btbets">${season.replace('-','–')}: ${list.length} bets</h2><div class="scroll"><table><thead><tr><th>Date</th>${lg === 'all' ? '<th>League</th>' : ''}<th>Match</th><th class="n">Opening line</th><th class="n">Closing line</th><th class="n">Price</th><th class="n">Model</th><th class="n">Edge</th><th class="n">Sets</th><th class="n">Total</th></tr></thead><tbody>`;
   for (const b of list){
     run += b.ret;
-    h += `<tr><td>${short(b.dt)} ${b.dt.slice(0,4)}</td>${lg === 'all' ? `<td>${LG[b.lg].country} ${sexAb(LG[b.lg])}</td>` : ''}<td class="wr">${b.home} – ${b.away}</td><td class="n">${b.line_open ?? "–"}</td><td class="n">Over ${b.line}</td><td class="n">${b.px.toFixed(2)}</td>
+    h += `<tr><td>${short(b.dt)} ${b.dt.slice(0,4)}</td>${lg === 'all' ? `<td>${BLG[b.lg].country} ${sexAb(BLG[b.lg])}</td>` : ''}<td class="wr">${b.home} – ${b.away}</td><td class="n">${b.line_open ?? "–"}</td><td class="n">Over ${b.line}</td><td class="n">${b.px.toFixed(2)}</td>
       <td class="n">${pct(b.p)}</td><td class="n">${sgn(b.edge*100, 0)}%</td><td class="n">${b.sets}</td><td class="n ${b.won ? 'w' : 'l'}">${b.total}</td>
       </tr>`;
   }
@@ -705,12 +711,12 @@ function renderLeagues(){
   const pk = p => !p || !p.n ? '<td class="n muted" style="border-left:1px solid var(--line)">–</td>' + '<td class="n muted">–</td>'.repeat(8)
     : `<td class="n" style="border-left:1px solid var(--line)">${p.n}</td><td class="n">${r1(p.fair)}</td><td class="n">${r1(p.line)}</td><td class="n">${r1(p.total)}</td><td class="n">${pct(p.w / p.n)}</td><td class="n ${cls(p.pl)}">${sgn(p.pl, 2)}</td>${rp(p.roi)}${p.roi_open == null ? '<td class="n muted">–</td>' : `<td class="n ${cls(p.roi_open)}">${sgn(p.roi_open * p.n_open, 2)}</td>`}${rp(p.roi_open)}`;
   const row = (label, s, attrs = '') => `<tr${attrs}><td>${label}</td><td class="n">${s.games.toLocaleString('en-US')}</td><td class="n">${s.over == null ? '–' : pct(s.over)}</td><td class="n">${s.low.toLocaleString('en-US')}</td>${rp(s.low_bo)}${pk(s.picks)}</tr>`;
-  const L_ = lg !== 'all' && LG[lg], A = L_ && T[lg];
+  const L_ = lg !== 'all' && BLG[lg], A = L_ && T[lg];
   if (!A){                                             // the overview: every league, each opens its own page (user, 16 Nov 2026)
     h += row('<b>All live leagues</b>', T.all);
     for (const women of [true, false]){
       h += `<tr><td colspan="14" class="tier" style="padding-top:18px">${women ? "Women's leagues" : "Men's leagues"}</td></tr>`;
-      for (const l of DATA.leagues.filter(l => l.women === women)){
+      for (const l of Object.values(BLG).filter(l => l.women === women)){
         const s = T[l.key]; if (!s) continue;
         h += row(`<span class="caret">▸</span> <a class="gm" href="#view=leagues&m=hcap&lg=${l.key}">${l.country} <span class="muted">${l.name} ${sexAb(l)}</span></a>`, s, ` class="srow" data-open="${l.key}"`);
       }
@@ -760,7 +766,7 @@ function renderMethod(){
   <p>The same rally model gives each match's points margin, so it also prices the points handicap. The side whose model chance × price is at least ${(DATA.hcap ? DATA.hcap.edge : 0.2) * 100}% above 1 is backed in the live leagues when the market handicap is ${DATA.hcap ? DATA.hcap.min_line : 5.5} points or more (but not a favourite giving ${DATA.hcap ? DATA.hcap.fav_max : 15.5} or more), in the same games as the totals rule, and kept apart from the totals record. In the backtest from 2020–21 smaller edges barely broke even, so only the big disagreements with the market are bet; they made a profit at both the closing and the opening line, in both halves of the backtest.</p>
   <p><b>Even leagues.</b> A league's spread is the gap between its best and worst team's share of points won. Averaged over a league's earlier seasons, it is partly a lasting trait: men's leagues such as Poland, Italy, Finland and the Czech Republic are usually even, several women's leagues are not. Tested on 2020–26 with only the seasons before each one: the totals picks did about the same in even and uneven leagues, so the totals rule ignores it. The handicap picks did better in uneven leagues (+22% at the close in the least even third against +11% in the most even), mostly through the favourites, which made only +4.6% in the most even leagues. So since 25 November 2026 there are <b>no favourite handicap picks in a league whose average spread over its earlier seasons is under ${((DATA.even_cut || 0.096) * 100).toFixed(1)} points</b> (2 or more earlier seasons needed); underdog picks stay. Checked before it went live: it raised the ROI in both halves of 2020–26, in all leagues (16.5% to 19.1%) and in the live leagues (17.6% to 18.7%). The other way round, in a league whose earlier seasons averaged ${((DATA.uneven_cut || 0.122) * 100).toFixed(1)} points or more, <b>favourites giving ${DATA.hcap ? DATA.hcap.fav_max : 15.5} points or more are backed too</b> (elsewhere they never are): on 2020–26 those extra picks made +19.9% on 218 bets, with a profit in both halves and in the live leagues. A lower edge in those leagues (10% instead of ${(DATA.hcap ? DATA.hcap.edge : 0.2) * 100}%) was tested too and failed: the extra bets only broke even. Each league's Past evenness is on its Season Ratings page. Picks logged before these rules stay.</p>
   <h3><span class="num">6</span>More women's leagues</h3>
-  <p>${DATA.test.leagues.length} more women's leagues are bet with the same rules, totals and points handicap, without a backtest, because most have lines from one source or on few games. Since 25 November 2026 their picks are part of Live test and its record, with the ${DATA.leagues.length} backtested leagues; the Backtest tab covers those ${DATA.leagues.length} only. The Match winner pill follows the handicap picks that back the favourite on the match winner instead, for comparison only.</p>
+  <p>${DATA.test.leagues.length} more women's leagues are bet with the same rules, totals and points handicap, without a backtest, because most have lines from one source or on few games. Since 25 November 2026 their picks are part of Live test and its record, with the ${DATA.leagues.length} backtested leagues. Since the same day the Backtest tab covers them too, where past odds exist (11 of them for totals; the other 6 are listed as having no past odds), so the backtest and the live record count the same leagues. Most of these leagues did worse in the past than the original ${DATA.leagues.length}, which lowers the totals backtest. The Match winner pill follows the handicap picks that back the favourite on the match winner instead, for comparison only.</p>
   <h3><span class="num">7</span>What it cannot see</h3>
   <p>No news: injuries, transfers and rested players are invisible to it. Top teams rotate in Champions League and cup weeks, so those matches can be flagged by hand and the pick held back.</p>
   ${worked()}</div>`;
@@ -878,7 +884,7 @@ function renderHcap(part){   // 'live': on Live test; 'bt': on Backtest (merged 
     const T = (title, note, rows, first) => `<h2>${title}</h2>${note ? `<p class="note">${note}</p>` : ''}<div class="scroll"><table style="max-width:900px"><thead><tr><th>${first}</th><th class="n">Bets</th><th class="n">Hit</th><th class="n">Avg price</th><th class="n">Profit</th><th class="n">ROI</th><th class="n">ROI at open</th></tr></thead><tbody>`
       + rows.map(([c, o]) => `<tr><td>${c.label}</td><td class="n">${c.n}</td><td class="n">${c.n ? pct(c.w / c.n) : '–'}</td><td class="n">${c.n ? c.px.toFixed(2) : '–'}</td><td class="n ${cls(c.pl)}">${c.n ? sgn(c.pl, 1) : '–'}</td><td class="n ${cls(c.roi)}">${c.n ? sgn(c.roi * 100, 1) + '%' : '–'}</td><td class="n ${o && cls(o.roi)}">${o && o.n ? sgn(o.roi * 100, 1) + '%' : '–'}</td></tr>`).join('') + '</tbody></table></div>';
     const pair = k => B.close[k].map((c, i) => [c, B.open[k][i]]);
-    h += `<h2>Backtest, ${B.first.slice(0, 4)}–${B.last.slice(-2)}</h2><p class="note">${B.games.toLocaleString('en-US')} games with a points handicap in the ${DATA.leagues.length} live leagues, regular season, both teams ${DATA.min_games}+ games, no March, April or October. Each match is projected from earlier matches only. The side whose model chance × price is at least ${H.edge * 100}% above 1 is backed at the average price, 1 unit a bet; profit in units at the closing line, ROI at both lines.</p>`;
+    h += `<h2>Backtest, ${B.first.slice(0, 4)}–${B.last.slice(-2)}</h2><p class="note">${B.games.toLocaleString('en-US')} games with a points handicap in the Live test leagues that have past odds (the 8 backtested leagues and, since 25 Nov 2026, the women's leagues added to Live test), regular season, both teams ${DATA.min_games}+ games, no March, April or October. Each match is projected from earlier matches only. The side whose model chance × price is at least ${H.edge * 100}% above 1 is backed at the average price, 1 unit a bet; profit in units at the closing line, ROI at both lines.</p>`;
     if (B.calibration_all){
         const A = B.calibration_all, L = B.luck;
         const row = (c, b) => `<tr><td>${b ? '<b>' + c.band + '</b>' : c.band}</td><td class="n">${c.n}</td><td class="n">${pct(c.model)}</td><td class="n">${pct(c.market)}</td><td class="n">${pct(c.need)}</td><td class="n ${c.covered > c.need ? 'pos' : 'neg'}">${b ? '<b>' + pct(c.covered) + '</b>' : pct(c.covered)}</td><td class="n ${cls(c.roi)}">${sgn(c.roi * 100, 1)}%</td></tr>`;
@@ -1105,12 +1111,12 @@ function hcapBacktest(){
   const H = DATA.hcap, B = H.backtest;
   const pill = (k, l) => `<div class="metric"><div class="lbl">${l}</div><div class="big"><span class="${cls(B[k].all.roi)}">${sgn(B[k].all.roi * 100, 1)}%</span></div><div class="sm">${B[k].all.n.toLocaleString('en-US')} bets · ${units1(B[k].all.pl)}</div></div>`;
   const hit = B.close.all.n ? (B.close.all.w / B.close.all.n * 100).toFixed(1) + '%' : '–';
-  return `<div class="metrics">${pill('close', 'ROI at close')}${pill('open', 'ROI at open')}<div class="metric"><div class="lbl">Covered</div><div class="big">${hit}</div><div class="sm">price needed ${B.calibration_all ? pct(B.calibration_all.need) : '–'}</div></div><div class="metric"><div class="lbl">Rule</div><div class="big">${H.edge * 100}%+ edge</div><div class="sm">handicap ${H.min_line}+, no favourite giving ${H.fav_max}+</div></div></div>` + renderHcap('bt');
+  return `<div class="metrics">${pill('close', 'ROI at close')}${pill('open', 'ROI at open')}<div class="metric"><div class="lbl">Covered</div><div class="big">${hit}</div><div class="sm">price needed ${B.calibration_all ? pct(B.calibration_all.need) : '–'}</div></div><div class="metric"><div class="lbl">Rule</div><div class="big">${H.edge * 100}%+ edge</div><div class="sm">handicap ${H.min_line}+; favourites by league evenness (How it works)</div></div></div>` + renderHcap('bt');
 }
 function render(){
   document.querySelectorAll('#tabs a').forEach(a => { a.classList.toggle('on', a.dataset.view === view); a.href = `#view=${a.dataset.view}${lg === 'all' ? '' : '&lg=' + lg}`; });
   const hb = (view === 'backtest' && DATA.hcap && DATA.hcap.backtest) || view === 'picks' || view === 'wtest';   // the pills: Backtest, Live test, Women Leagues test
-  const chips = view === 'method' || view === 'home' || view === 'wtest' || view === 'season' || (view === 'backtest' && market === 'hcap') ? [] : [['all', 'All leagues'], ...(view === 'projections' ? Object.values(PJLG) : view === 'picks' ? Object.values(PLG) : DATA.leagues).map(l => [l.key, chipName(l)])];
+  const chips = view === 'method' || view === 'home' || view === 'wtest' || view === 'season' || (view === 'backtest' && market === 'hcap') ? [] : [['all', 'All leagues'], ...(view === 'projections' ? Object.values(PJLG) : view === 'picks' ? Object.values(PLG) : view === 'backtest' || view === 'leagues' ? Object.values(BLG) : DATA.leagues).map(l => [l.key, chipName(l)])];
   const sw = hb ? ([['totals', 'Totals: overs on low lines'], ['hcap', 'Points handicap'], ...(view === 'picks' ? [['ml', 'Match winner']] : [])]).map(([k, t]) =>
       `<a href="#view=${view}${k === 'hcap' ? '&m=hcap' : k === 'ml' ? '&m=ml' : ''}${lg !== 'all' && (k === 'totals' || view === 'picks') && PLG[lg] ? '&lg=' + lg : ''}" class="${k === market ? 'on' : ''}" style="font-size:15.5px;padding:6px 14px">${t}</a>`).join('')
       + (chips.length ? '<span style="flex-basis:100%;height:2px"></span>' : '') : '';
@@ -1122,7 +1128,7 @@ function fromHash(){
   const m = location.hash.match(/view=(\w+)/), l = location.hash.match(/lg=([\w-]+)/);
   view = m && m[1] === 'wtest' ? 'picks' : m && m[1] === 'leagues' ? 'season' : m && m[1] === 'results' ? 'picks' : m && m[1] === 'hcap' ? 'picks' : m && RENDER[m[1]] ? m[1] : 'home';   // Handicap test merged into Live test (22 Nov 2026)   // Results merged into Picks (8 Nov 2026)
   const TLK = new Set([...((DATA.test || {}).leagues || []), ...((DATA.hcapx || {}).leagues || [])].map(x => x.key));   // test and handicap-only leagues: Leagues tab only
-  const nlg = l && (LG[l[1]] || (/view=season/.test(location.hash) && TLK.has(l[1])) || (/view=(picks|wtest)/.test(location.hash) && PLG[l[1]]) || (/view=projections/.test(location.hash) && PJLG[l[1]])) ? l[1] : 'all';
+  const nlg = l && (LG[l[1]] || (/view=season/.test(location.hash) && TLK.has(l[1])) || (/view=(picks|wtest)/.test(location.hash) && PLG[l[1]]) || (/view=projections/.test(location.hash) && PJLG[l[1]]) || (/view=(backtest|leagues)/.test(location.hash) && BLG[l[1]])) ? l[1] : 'all';
   market = /[&#]m=hcap/.test(location.hash) || (m && m[1] === 'hcap') ? 'hcap' : /[&#]m=ml/.test(location.hash) ? 'ml' : 'totals';
   const moved = nlg !== lg;
   if (moved) btSeason = null;
