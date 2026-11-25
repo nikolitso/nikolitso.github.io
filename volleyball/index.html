@@ -267,7 +267,7 @@ a.gm{color:inherit;text-decoration:none} a.gm:hover{color:var(--gold);text-decor
 <p>Explainer: <a href="/volleyball/research/how-totals-work/">why a volleyball total is really about sets</a>.</p><p>Research note: <a href="/volleyball/research/close-matches/">close matches go under more often than the market expects</a>.</p>
 </section>
 </main>
-<script src="data.js?v=f8663fc4"></script>
+<script src="data.js?v=b16472e5"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -359,19 +359,34 @@ function renderProjections(){
 // the pick record at a glance, the same tiles and wording as the other model pages; on Projections they follow the chosen league
 // Home and Projections (user, 25 Nov 2026): every pick, then the three kinds of bet; the handicap-only leagues' record stays apart, as on Live test
 function homeTiles(){
-  const T = DATA.picks, Hc = (DATA.hcap || {}).picks || [];   // records as on Live test: the handicap-only leagues keep their own
-  const rec = P => { const d = P.filter(p => 'won' in p), w = d.filter(p => p.won).length, u = d.reduce((s, p) => s + p.profit, 0); return {n: d.length, w, u}; };
-  const fav = Hc.filter(p => p.line < 0), dog = Hc.filter(p => p.line > 0);   // three kinds of bet (user, 25 Nov 2026)
-  const a = rec([...T, ...Hc]), t = rec(T), hf = rec(fav), hd = rec(dog), nOpen = T.filter(p => !('won' in p)).length, nh = hOpen().length;
-  const roi = r => r.n ? `<span class="${cls(r.u)}">${sgn(r.u / r.n * 100, 1)}%</span>` : '–';
-  const line = r => r.n ? `${r.w}–${r.n - r.w} · ${sgn(r.u / r.n * 100, 1)}%` : 'no settled picks';
-  const tl = [['Open picks', nOpen + nh, nOpen + nh ? `${nOpen} totals · ${nh} handicap →` : 'none right now', nh && !nOpen ? '#view=picks&m=hcap&to=hopen' : '#view=picks'],
-              ['Record', `${a.w}–${a.n - a.w}`, a.n ? `${(a.w / a.n * 100).toFixed(1)}% won, all picks` : '0 picks'],
-              ['ROI', roi(a), a.n ? units1(a.u) + ', all picks' : 'no settled picks'],
-              ...[['Over, low totals', t, '#view=picks&to=settled'], ['Favourite, giving points', hf, '#view=picks&m=hcap&s=fav'], ['Underdog, taking points', hd, '#view=picks&m=hcap&s=dog']]
-                .map(([l, r, href]) => [l, r.n ? `${r.w}–${r.n - r.w}` : '–', `${r.n ? 'ROI ' + sgn(r.u / r.n * 100, 1) + '% · ' + units1(r.u) : 'no settled picks'} →`, href])];
-  return `<div class="metrics">${tl.map(([l, v, n, href]) => { const inner = `<div class="lbl">${l}</div><div class="big">${v}</div><div class="sm">${n}</div>`;
-    return href ? `<a class="metric" href="${href}">${inner}</a>` : `<div class="metric">${inner}</div>`; }).join('')}</div>`;
+  // Home and Projections (user, 25 Nov 2026): all picks first, then one row per kind of bet - record, ROI, units and the
+  // averages behind them (model, market, actual); the handicap-only leagues' record stays apart, as on Live test
+  const T = DATA.picks, Hc = (DATA.hcap || {}).picks || [];
+  const rec = P => { const d = P.filter(p => 'won' in p), w = d.filter(p => p.won).length, u = d.reduce((s, p) => s + p.profit, 0); return {d, n: d.length, w, u}; };
+  const a = rec([...T, ...Hc]), nOpen = T.filter(p => !('won' in p)).length, nh = hOpen().length;
+  const tile = (l, v, x, href) => { const inner = `<div class="lbl">${l}</div><div class="big">${v}</div><div class="sm">${x}</div>`;
+    return href ? `<a class="metric" href="${href}">${inner}</a>` : `<div class="metric">${inner}</div>`; };
+  const hcF = x => (x > 0 ? '+' : x < 0 ? '−' : '') + Math.abs(x).toFixed(1);
+  const avg = (d, f, fmt) => { const v = d.map(f).filter(x => x != null && !isNaN(x)); return v.length ? fmt(v.reduce((s, x) => s + x, 0) / v.length) : '–'; };
+  const roiV = r => r.n ? `<span class="${cls(r.u)}">${sgn(r.u / r.n * 100, 1)}%</span>` : '–';
+  let h = `<div class="metrics">${tile('Open picks', nOpen + nh, nOpen + nh ? `${nOpen} totals · ${nh} handicap →` : 'none right now', nh && !nOpen ? '#view=picks&m=hcap&to=hopen' : '#view=picks')}`
+    + tile('Record', `${a.w}–${a.n - a.w}`, a.n ? `${(a.w / a.n * 100).toFixed(1)}% won, all picks` : '0 picks')
+    + tile('ROI', roiV(a), a.n ? units1(a.u) + ', all picks' : 'no settled picks') + '</div>';
+  const kinds = [
+    ['Over, low totals', rec(T), '#view=picks&to=settled', [['Model line', p => p.fair, x => x.toFixed(1)], ['Market line', p => p.line, x => x.toFixed(1)], ['Actual total', p => p.total, x => x.toFixed(1)]]],
+    ['Favourite', rec(Hc.filter(p => p.line < 0)), '#view=picks&m=hcap&s=fav', null],
+    ['Underdog', rec(Hc.filter(p => p.line > 0)), '#view=picks&m=hcap&s=dog', null]];
+  const hAvgs = [['Model handicap', p => p.hcap == null ? null : (p.side === 'home' ? p.hcap : -p.hcap), hcF], ['Market handicap', p => p.line, hcF],
+                 ['Actual handicap', p => p.home_pts == null ? null : -(p.home_pts - p.away_pts) * (p.side === 'home' ? 1 : -1), hcF]];
+  for (const [name, r, href, avgs] of kinds){
+    const of = `avg of ${r.n} pick${r.n === 1 ? '' : 's'}`;
+    h += `<h3 style="margin:22px 0 8px"><a class="gm" href="${href}">${name}</a></h3><div class="metrics">`
+      + tile('Record', r.n ? `${r.w}–${r.n - r.w}` : '–', r.n ? `${(r.w / r.n * 100).toFixed(1)}% won` : 'no settled picks')
+      + tile('ROI', roiV(r), r.n ? `${r.n} pick${r.n === 1 ? '' : 's'}` : '')
+      + tile('Units', r.n ? `<span class="${cls(r.u)}">${sgn(r.u, 2)}</span>` : '–', '1 unit a pick')
+      + (avgs || hAvgs).map(([l, f, fmt]) => tile(l, avg(r.d, f, fmt), avgs ? of : l === 'Actual handicap' ? `${of}: minus the margin` : of)).join('') + '</div>';
+  }
+  return h;
 }
 
 function pickTiles(){
@@ -426,7 +441,7 @@ function hOpenTop(){
   const o = hOpen();
   if (!o.length) return '';
   return `<h2>Open handicap picks</h2><div class="scroll"><table class="sortable" style="max-width:900px"><thead><tr><th>Date</th>${lg === 'all' ? '<th>League</th>' : ''}<th>Match</th><th>Pick</th><th class="n">Price</th><th class="n">Model handicap</th><th class="n">Edge</th></tr></thead><tbody>`
-    + o.map(p => `<tr><td>${short(p.dt)} ${p.dt.slice(11)}</td>${lg === 'all' ? `<td>${hLgName(p)}<div class="muted" style="font-size:13px">${compOf(p.lg)}</div></td>` : ''}<td class="wr">${gameLink(p)}</td><td><b>${hLabel(p.team, p.line)}</b></td><td class="n">${p.px.toFixed(2)}</td><td class="n">${p.hcap != null ? hLabel('', p.side === 'home' ? p.hcap : -p.hcap).trim() : '–'}</td><td class="n ${cls(hE(p))}">${sgn(hE(p) * 100, 0)}%</td></tr>`).join('')
+    + o.map(p => `<tr><td>${short(p.dt)} ${p.dt.slice(11)}</td>${lg === 'all' ? `<td>${hLgName(p)}${compOf(p.lg) ? `<div style="margin-top:3px">${compBadge(p.lg).replace('margin-left:8px', 'margin-left:0')}</div>` : ''}</td>` : ''}<td class="wr">${gameLink(p)}</td><td><b>${hLabel(p.team, p.line)}</b></td><td class="n">${p.px.toFixed(2)}</td><td class="n">${p.hcap != null ? hLabel('', p.side === 'home' ? p.hcap : -p.hcap).trim() : '–'}</td><td class="n ${cls(hE(p))}">${sgn(hE(p) * 100, 0)}%</td></tr>`).join('')
     + `</tbody></table></div><p class="note"><a href="#view=picks&m=hcap&to=hopen">The handicap record and its settled picks →</a></p>`;
 }
 
@@ -475,23 +490,30 @@ function settled(){
 // past evenness (user, 25 Nov 2026): the league's average spread over earlier seasons; under the cut, no favourite handicap picks
 // competitiveness label (user, 25 Nov 2026): '' for the leagues in between, which follow the standard rules
 const compOf = k => { const E_ = (DATA.evenness || {})[k]; if (!E_ || E_.n < 2) return ''; return E_.avg < (DATA.even_cut || 0.096) ? 'competitive' : E_.avg >= (DATA.uneven_cut || 0.122) ? 'not competitive' : ''; };
-const compTag = k => compOf(k) ? ` · ${compOf(k)}` : '';
+// the label as a small badge (user, 25 Nov 2026): accent for competitive, amber for not competitive
+const compBadge = k => { const c = compOf(k); if (!c) return '';
+  const col = c === 'competitive' ? 'var(--an-accent)' : 'var(--an-warning)';
+  return `<span style="display:inline-block;font:600 11px var(--an-body);letter-spacing:.06em;text-transform:uppercase;color:${col};border:1px solid ${col};border-radius:999px;padding:1px 8px;margin-left:8px;vertical-align:2px;white-space:nowrap">${c}</span>`; };
+const compTag = k => compBadge(k);
 
 // Backtest (user, 25 Nov 2026): the three kinds of bet by league competitiveness, past ROI, from data/comp_grid.json
 function compGrid(){
   const G = DATA.comp_grid; if (!G) return '';
-  const c = x => !x || !x.n ? '<td class="n muted">not bet</td>' : `<td class="n"><span class="${cls(x.roi)}">${sgn(x.roi * 100, 1)}%</span><div class="muted" style="font-size:13px">${x.n} bets<br>2020–23: ${x.h1 == null ? '–' : sgn(x.h1 * 100, 0) + '%'} · 2023–26: ${x.h2 == null ? '–' : sgn(x.h2 * 100, 0) + '%'}</div></td>`;
+  const c = x => !x || !x.n ? '<td class="n muted">not bet</td>' : `<td class="n"><span class="${cls(x.roi)}">${sgn(x.roi * 100, 1)}%</span><div class="muted" style="font-size:13px">${x.n} bets</div></td>`;
   const sk = (G.rows[0] || {}).fav_skipped;
-  return `<h2>By league competitiveness</h2><div class="scroll"><table style="max-width:900px"><thead><tr><th>League</th><th class="n">Over, low totals</th><th class="n">Favourite, giving points</th><th class="n">Underdog, taking points</th></tr></thead><tbody>`
+  return `<h2>By league competitiveness</h2><div class="scroll"><table style="max-width:900px"><thead><tr><th>League</th><th class="n">Over, low totals</th><th class="n">Favourite</th><th class="n">Underdog</th></tr></thead><tbody>`
     + G.rows.map(r => `<tr><td>${r.tier[0].toUpperCase() + r.tier.slice(1)}</td>${c(r.totals)}${c(r.fav)}${c(r.dog)}</tr>`).join('')
-    + `</tbody></table></div><p class="note">Past ROI at the closing line, ${G.first.slice(0, 4)}–${G.last.slice(-2)}, the Live test leagues, each bet under today's rules. A league's competitiveness comes from its earlier seasons only (see How it works). Under each ROI: the bets, and the ROI in the first three seasons (2020–23) and the last three (2023–26), to show whether it held up over time.${sk && sk.n ? ` Competitive leagues make no favourite picks; in these leagues those bets would have returned ${sgn(sk.roi * 100, 1)}% on ${sk.n} (2020–23: ${sgn(sk.h1 * 100, 0)}%, 2023–26: ${sgn(sk.h2 * 100, 0)}%), to be checked at the review.` : ''}</p>`;
+    + `</tbody></table></div><p class="note">Past ROI at the closing line, ${G.first.slice(0, 4)}–${G.last.slice(-2)}, the Live test leagues, each bet under today's rules. A league's competitiveness comes from its earlier seasons only (see How it works). Under each ROI: the number of bets.${sk && sk.n ? ` Competitive leagues make no favourite picks; in these leagues those bets would have returned ${sgn(sk.roi * 100, 1)}% on ${sk.n}, to be checked at the review.` : ''}</p>`;
 }
 
 function evenTile(k){
   const E_ = (DATA.evenness || {})[k], cut = DATA.even_cut || 0.096;
-  if (!E_ || E_.n < 2) return `<div class="metric"><div class="lbl">Competitiveness</div><div class="big">–</div><div class="sm">under 2 earlier seasons</div></div>`;
-  const band = E_.avg < cut ? 'competitive: no favourite handicap picks' : E_.avg < (DATA.uneven_cut || 0.122) ? 'standard rules' : 'not competitive: big favourites backed too';
-  return `<div class="metric"><div class="lbl">Competitiveness</div><div class="big">${(E_.avg * 100).toFixed(1)} pts</div><div class="sm">spread, ${E_.n} earlier seasons · ${band}</div></div>`;
+  const t = (big, sm) => `<div class="metric"><div class="lbl">Competitiveness</div><div class="big" style="font-size:22px">${big}</div><div class="sm">${sm}</div></div>`;
+  if (!E_ || E_.n < 2) return t('Standard', 'under 2 earlier seasons: standard rules');
+  const c = compOf(k), spread = `${(E_.avg * 100).toFixed(1)} pts spread over ${E_.n} earlier seasons`;
+  return c === 'competitive' ? t('<span style="color:var(--an-accent)">Competitive</span>', `${spread} · no favourite handicap picks`)
+       : c === 'not competitive' ? t('<span style="color:var(--an-warning)">Not competitive</span>', `${spread} · big favourites backed too`)
+       : t('Standard', `${spread} · standard rules`);
 }
 
 function lineAccuracy(res){
@@ -1054,7 +1076,7 @@ function renderRatings(base = 'leagues'){
   const note = `<p class="note">Each team's share of rallies it would win against an <b>average team of its own league</b>, from this season's matches only, adjusted for the opponents it has played (a 3-0 over a strong side counts for more). 50% is the league average; the table ranks the teams on it.</p><p class="note"><b>How to read it.</b> A team at 53% would win about 53 of every 100 rallies against an average side of its league. That looks close to 50%, but small edges add up: a set needs 25 points, so a team that wins a few more rallies than it loses wins most of its sets, and most of its matches. <b>Points won</b> is the share of rallies the team has actually won so far, before the adjustment: a team that has played the strongest sides can have fewer points won but a higher rating. The model uses the rating, so this is the number behind every projection.</p>`;   // reworded (user, 25 Nov 2026)
   if (lg === 'all' || (!LG[lg] && !TL[lg] && !XL[lg])){
     const card = k => { const r = rows(k), M = meta(k); if (!r.length) return '';
-      return `<div><h3 style="margin:0 0 6px"><a class="gm" href="#view=${base}&lg=${k}">${M.name}</a>${tierOf(k) > 1 ? ` <span class="muted" style="font-size:13px;font-weight:400">tier ${tierOf(k)}</span>` : ''}${compOf(k) ? ` <span class="muted" style="font-size:13px;font-weight:400">· ${compOf(k)}</span>` : ''}</h3><table><thead><tr><th class="n">#</th><th>Team</th><th class="n">Rally %</th><th class="n">W–L</th></tr></thead><tbody>`
+      return `<div><h3 style="margin:0 0 6px"><a class="gm" href="#view=${base}&lg=${k}">${M.name}</a>${tierOf(k) > 1 ? ` <span class="muted" style="font-size:13px;font-weight:400">tier ${tierOf(k)}</span>` : ''}${compBadge(k)}</h3><table><thead><tr><th class="n">#</th><th>Team</th><th class="n">Rally %</th><th class="n">W–L</th></tr></thead><tbody>`
         + r.map((t, i) => `<tr><td class="n muted">${i + 1}</td><td>${t.team}${t.new ? ' <span class="muted">(new)</span>' : ''}</td><td class="n">${(t.rally * 100).toFixed(1)}%</td><td class="n">${t.w}–${t.l}</td></tr>`).join('')
         + '</tbody></table></div>'; };
     const grid = keys => `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:28px 32px;margin-top:14px">${keys.map(card).join('')}</div>`;
@@ -1194,7 +1216,7 @@ function render(){
   document.querySelectorAll('#tabs a').forEach(a => { a.classList.toggle('on', a.dataset.view === view); a.href = `#view=${a.dataset.view}${lg === 'all' ? '' : '&lg=' + lg}`; });
   const hb = (view === 'backtest' && DATA.hcap && DATA.hcap.backtest) || view === 'picks' || view === 'wtest';   // the pills: Backtest, Live test, Women Leagues test
   const chips = view === 'method' || view === 'home' || view === 'wtest' || view === 'season' || (view === 'backtest' && market === 'hcap') ? [] : [['all', 'All leagues'], ...(view === 'projections' ? Object.values(PJLG) : view === 'picks' ? Object.values(PLG) : view === 'backtest' || view === 'leagues' ? Object.values(BLG) : DATA.leagues).map(l => [l.key, chipName(l)])];
-  const sw = hb ? ([['totals', 'Over, low totals'], ['hcap:fav', 'Favourite, giving points'], ['hcap:dog', 'Underdog, taking points'], ...(view === 'picks' ? [['ml', 'Match winner']] : [])]).map(([k, t]) =>
+  const sw = hb ? ([['totals', 'Over, low totals'], ['hcap:fav', 'Favourite'], ['hcap:dog', 'Underdog'], ...(view === 'picks' ? [['ml', 'Match winner']] : [])]).map(([k, t]) =>
       `<a href="#view=${view}${k.startsWith('hcap') ? '&m=hcap&s=' + k.slice(5) : k === 'ml' ? '&m=ml' : ''}${lg !== 'all' && (k === 'totals' || view === 'picks') && PLG[lg] ? '&lg=' + lg : ''}" class="${k === market || (market === 'hcap' && k.startsWith('hcap') && (!hside || k.slice(5) === hside)) ? 'on' : ''}" style="font-size:15.5px;padding:6px 14px">${t}</a>`).join('')
       + (chips.length ? '<span style="flex-basis:100%;height:2px"></span>' : '') : '';
   $('chips').innerHTML = sw + chips.map(([k, t]) => `<a href="#view=${view}${(view === 'picks' || view === 'leagues') && market === 'hcap' ? '&m=hcap' + (hside ? '&s=' + hside : '') : ''}${k === 'all' ? '' : '&lg=' + k}" class="${k === lg ? 'on' : ''}">${t}</a>`).join('');
