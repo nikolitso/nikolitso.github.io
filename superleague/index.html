@@ -366,14 +366,17 @@ function refInsight(g){
   const one = x => (INS_BIG4.includes(x.home) + INS_BIG4.includes(x.away)) === 1;
   if (!one(g)) return null;
   const all = refRows().filter(x => x.hc != null && x.ref && !x.foreign && x.season >= '2024-25' && one(x));
-  const gs = all.filter(x => x.ref === g.ref.name);
+  // fixtures carry the full name ('Konstantinos Tsetsilas'), the game records the surname ('Tsetsilas', 'Fotias (UEFA A)')
+  const sur = n => n.replace(/\s*\(.*\)/, '').trim().split(/\s+/).pop().normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
+    .replace(/mp/g, 'b').replace(/ou/g, 'u').replace(/ph/g, 'f').replace(/th/g, 't').replace(/ch|kh/g, 'h').replace(/y/g, 'i').replace(/(.)\1/g, '$1');
+  const gs = all.filter(x => sur(x.ref) === sur(g.ref.name));
   if (gs.length < 8) return null;
   const sides = x => INS_BIG4.includes(x.home) ? [x.hc, x.ac] : [x.ac, x.hc];
   const rec = xs => { let m = 0, l = 0, o = 0, b = 0, op = 0; xs.forEach(x => { const [p, q] = sides(x); b += p; op += q; p > q ? m++ : p === q ? l++ : o++; }); return {n: xs.length, m, l, o, b: b / xs.length, op: op / xs.length}; };
   const r = rec(gs), lg = rec(all);
   if (r.o / r.n < .8 && r.m / r.n < .5) return null;
   const big = INS_BIG4.includes(g.home) ? g.home : g.away, opp = big === g.home ? g.away : g.home;
-  return {ref: g.ref.name, big, opp, match: `${g.home} – ${g.away}`, r, lg, way: r.o / r.n >= .8 ? 'opp' : 'big'};
+  return {ref: gs[0].ref, big, opp, match: `${g.home} – ${g.away}`, r, lg, way: r.o / r.n >= .8 ? 'opp' : 'big'};
 }
 function insightText(x, short){
   const {r, lg} = x, rec = `${r.m}–${r.l}–${r.o}`;
