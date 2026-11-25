@@ -267,7 +267,7 @@ a.gm{color:inherit;text-decoration:none} a.gm:hover{color:var(--gold);text-decor
 <p>Explainer: <a href="/volleyball/research/how-totals-work/">why a volleyball total is really about sets</a>.</p><p>Research note: <a href="/volleyball/research/close-matches/">close matches go under more often than the market expects</a>.</p>
 </section>
 </main>
-<script src="data.js?v=3021819b"></script>
+<script src="data.js?v=f8663fc4"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -480,11 +480,11 @@ const compTag = k => compOf(k) ? ` · ${compOf(k)}` : '';
 // Backtest (user, 25 Nov 2026): the three kinds of bet by league competitiveness, past ROI, from data/comp_grid.json
 function compGrid(){
   const G = DATA.comp_grid; if (!G) return '';
-  const c = x => !x || !x.n ? '<td class="n muted">not bet</td>' : `<td class="n"><span class="${cls(x.roi)}">${sgn(x.roi * 100, 1)}%</span><div class="muted" style="font-size:13px">${x.n} bets · halves ${x.h1 == null ? '–' : sgn(x.h1 * 100, 0) + '%'} / ${x.h2 == null ? '–' : sgn(x.h2 * 100, 0) + '%'}</div></td>`;
+  const c = x => !x || !x.n ? '<td class="n muted">not bet</td>' : `<td class="n"><span class="${cls(x.roi)}">${sgn(x.roi * 100, 1)}%</span><div class="muted" style="font-size:13px">${x.n} bets<br>2020–23: ${x.h1 == null ? '–' : sgn(x.h1 * 100, 0) + '%'} · 2023–26: ${x.h2 == null ? '–' : sgn(x.h2 * 100, 0) + '%'}</div></td>`;
   const sk = (G.rows[0] || {}).fav_skipped;
   return `<h2>By league competitiveness</h2><div class="scroll"><table style="max-width:900px"><thead><tr><th>League</th><th class="n">Over, low totals</th><th class="n">Favourite, giving points</th><th class="n">Underdog, taking points</th></tr></thead><tbody>`
     + G.rows.map(r => `<tr><td>${r.tier[0].toUpperCase() + r.tier.slice(1)}</td>${c(r.totals)}${c(r.fav)}${c(r.dog)}</tr>`).join('')
-    + `</tbody></table></div><p class="note">Past ROI at the closing line, ${G.first.slice(0, 4)}–${G.last.slice(-2)}, the Live test leagues, each bet under today's rules. A league's competitiveness comes from its earlier seasons only (see How it works); halves are 2020–23 / 2023–26.${sk && sk.n ? ` Competitive leagues make no favourite picks; in these leagues those bets would have returned ${sgn(sk.roi * 100, 1)}% on ${sk.n} (${sgn(sk.h1 * 100, 0)}% / ${sgn(sk.h2 * 100, 0)}%), to be checked at the review.` : ''}</p>`;
+    + `</tbody></table></div><p class="note">Past ROI at the closing line, ${G.first.slice(0, 4)}–${G.last.slice(-2)}, the Live test leagues, each bet under today's rules. A league's competitiveness comes from its earlier seasons only (see How it works). Under each ROI: the bets, and the ROI in the first three seasons (2020–23) and the last three (2023–26), to show whether it held up over time.${sk && sk.n ? ` Competitive leagues make no favourite picks; in these leagues those bets would have returned ${sgn(sk.roi * 100, 1)}% on ${sk.n} (2020–23: ${sgn(sk.h1 * 100, 0)}%, 2023–26: ${sgn(sk.h2 * 100, 0)}%), to be checked at the review.` : ''}</p>`;
 }
 
 function evenTile(k){
@@ -544,6 +544,20 @@ function btTiles(S, pick = inLg){
   return `<div class="metrics">${t.map(([l, v, n]) => `<div class="metric"><div class="lbl">${l}</div><div class="big">${v}</div><div class="sm">${n}</div></div>`).join('')}</div>`;
 }
 
+// Backtest, All leagues (user, 25 Nov 2026): the headline in three tiles, then all / women / men in one table
+function btSummary(){
+  const tuned = new Set(DATA.backtest.seasons.filter(s => s.tuned).map(s => s.lg + '|' + s.season));
+  const bets = DATA.backtest.bets.filter(b => BLG[b.lg] && !tuned.has(b.lg + '|' + b.season));
+  const row = (label, g) => { const n = g.length, w = g.filter(b => b.won).length, u = g.reduce((a, b) => a + b.ret, 0);
+    return {label, n, w, u, roi: n ? u / n : 0, line: avgLine(g, 'line'), fair: avgLine(g, 'fair'), total: avgLine(g, 'total')}; };
+  const A = row('All leagues', bets), W = row("Women's leagues", bets.filter(b => BLG[b.lg].women)), M = row("Men's leagues", bets.filter(b => !BLG[b.lg].women));
+  const tl = [['ROI', `<span class="${cls(A.roi)}">${sgn(A.roi * 100, 1)}%</span>`, units1(A.u)], ['Record', `${A.w}–${A.n - A.w}`, `${A.n ? pct(A.w / A.n) : '–'} won`], ['Bets', A.n, `${DATA.backtest.first.slice(0, 4)}–26, past seasons`]];
+  return `<h2>Over, low totals: the backtest</h2><div class="metrics">${tl.map(([l, v, x]) => `<div class="metric"><div class="lbl">${l}</div><div class="big">${v}</div><div class="sm">${x}</div></div>`).join('')}</div>`
+    + `<div class="scroll"><table style="max-width:1000px"><thead><tr><th></th><th class="n">Bets</th><th class="n">Won–lost</th><th class="n">Hit</th><th class="n">Profit</th><th class="n">ROI</th><th class="n">Market line</th><th class="n">Model line</th><th class="n">Actual total</th></tr></thead><tbody>`
+    + [A, W, M].map((r, i) => `<tr${i ? '' : ' style="font-weight:600"'}><td>${r.label}</td><td class="n">${r.n}</td><td class="n">${r.w}–${r.n - r.w}</td><td class="n">${r.n ? pct(r.w / r.n) : '–'}</td><td class="n ${cls(r.u)}">${sgn(r.u, 1)}</td><td class="n ${cls(r.roi)}">${sgn(r.roi * 100, 1)}%</td><td class="n">${r.line}</td><td class="n">${r.fair}</td><td class="n">${r.total}</td></tr>`).join('')
+    + `</tbody></table></div><p class="note">Every bet the rule would have made in past seasons, at the closing line and average price, 1 unit each. The three lines are averages over those bets: the market's line, the model's line and the actual total points. The model's line sits far above the market's because the rule only bets when the two disagree most; the actual total landing between them, above the market's line, is what makes the over win.</p>`;
+}
+
 // the same tiles for the women's or the men's leagues alone (All leagues view of Backtest)
 function sexTiles(women){
   const keys = new Set(Object.values(BLG).filter(l => l.live && l.women === women).map(l => l.key));
@@ -558,9 +572,9 @@ function renderBacktest(){
   if (lg !== 'all' && !hasPast(lg)) return `<p class="empty">No past odds for this league, so it has no backtest: its picks are judged on the Live test record only.</p>`;
   const intro = `<p class="note" style="margin-top:28px">Past seasons since ${B.first.slice(0,4)}, regular-season games only, using the live rule at the closing line and average price. Each match is projected only from earlier matches that season, and no pick is made before both teams have played ${DATA.min_games}. These totals run high because they know which leagues were kept; Home gives the fair figure. ${S.blind_n ? `<b>Backing every low-line over without the model</b> returned ${sgn(S.blind_roi*100, 1)}% over ${S.blind_n.toLocaleString('en-US')} matches.` : `<b>This league never has a line below ${DATA.low}</b> (its totals run higher), so the rule has had nothing to bet on.`}</p>`;   // below the tables (user, 16 Nov 2026)
   let h = '';
-  h += (lg === 'all' ? '<h2>All leagues</h2>' : '') + btTiles(S);
+  h += lg === 'all' ? btSummary() : btTiles(S);   // All leagues: one table instead of 18 tiles (user, 25 Nov 2026)
   if (lg === 'all'){
-    h += sexTiles(true) + sexTiles(false) + compGrid();
+    h += compGrid();
     h += `<p class="note">${lg === 'all' && Object.values(BLG).some(l => !l.live) ? 'The totals above count the leagues with live picks only. ' : ''}Profit is in equal-stake units (1 unit per bet). Click a league to see its seasons and bets.</p>`;
     h += `<div class="scroll"><table style="max-width:760px"><thead><tr><th>League</th><th class="n">Bets</th><th class="n">Hit</th><th class="n">Profit</th><th class="n">ROI</th><th class="n">No model</th></tr></thead><tbody>`;
     for (const l of Object.values(BLG)){
