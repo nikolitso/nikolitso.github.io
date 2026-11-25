@@ -267,7 +267,7 @@ a.gm{color:inherit;text-decoration:none} a.gm:hover{color:var(--gold);text-decor
 <p>Explainer: <a href="/volleyball/research/how-totals-work/">why a volleyball total is really about sets</a>.</p><p>Research note: <a href="/volleyball/research/close-matches/">close matches go under more often than the market expects</a>.</p>
 </section>
 </main>
-<script src="data.js?v=6409d306"></script>
+<script src="data.js?v=f157a94f"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -448,6 +448,14 @@ function settled(){
 
 // League accuracy (user, 25 Nov 2026): how close the market's closing total line comes to the actual total, this season,
 // against every league on the page
+// past evenness (user, 25 Nov 2026): the league's average spread over earlier seasons; under the cut, no favourite handicap picks
+function evenTile(k){
+  const E_ = (DATA.evenness || {})[k], cut = DATA.even_cut || 0.096;
+  if (!E_ || E_.n < 2) return `<div class="metric"><div class="lbl">Past evenness</div><div class="big">–</div><div class="sm">under 2 earlier seasons</div></div>`;
+  const band = E_.avg < cut ? 'even: no favourite handicap picks' : E_.avg < 0.122 ? 'middle' : 'uneven';
+  return `<div class="metric"><div class="lbl">Past evenness</div><div class="big">${(E_.avg * 100).toFixed(1)} pts</div><div class="sm">spread, ${E_.n} earlier seasons · ${band}</div></div>`;
+}
+
 function lineAccuracy(res){
   const stats = rs => { const v = rs.filter(r => r.line != null && r.total != null), n = v.length;
     return n ? {n, miss: v.reduce((s, r) => s + Math.abs(r.total - r.line), 0) / n, bias: v.reduce((s, r) => s + r.total - r.line, 0) / n,
@@ -750,6 +758,7 @@ function renderMethod(){
   <p>Only overs on low lines, below ${DATA.low}: across the backtest, unders and high-line overs did not beat the price. The model's job is to pick out the low-line matches most likely to go to a fourth set.</p>
   <h3><span class="num">5</span>Handicap test</h3>
   <p>The same rally model gives each match's points margin, so it also prices the points handicap. The side whose model chance × price is at least ${(DATA.hcap ? DATA.hcap.edge : 0.2) * 100}% above 1 is backed in the live leagues when the market handicap is ${DATA.hcap ? DATA.hcap.min_line : 5.5} points or more (but not a favourite giving ${DATA.hcap ? DATA.hcap.fav_max : 15.5} or more), in the same games as the totals rule, and kept apart from the totals record. In the backtest from 2020–21 smaller edges barely broke even, so only the big disagreements with the market are bet; they made a profit at both the closing and the opening line, in both halves of the backtest.</p>
+  <p><b>Even leagues.</b> A league's spread is the gap between its best and worst team's share of points won. Averaged over a league's earlier seasons, it is partly a lasting trait: men's leagues such as Poland, Italy, Finland and the Czech Republic are usually even, several women's leagues are not. Tested on 2020–26 with only the seasons before each one: the totals picks did about the same in even and uneven leagues, so the totals rule ignores it. The handicap picks did better in uneven leagues (+22% at the close in the least even third against +11% in the most even), mostly through the favourites, which made only +4.6% in the most even leagues. So since 25 November 2026 there are <b>no favourite handicap picks in a league whose average spread over its earlier seasons is under ${((DATA.even_cut || 0.096) * 100).toFixed(1)} points</b> (2 or more earlier seasons needed); underdog picks stay. Checked before it went live: it raised the ROI in both halves of 2020–26, in all leagues (16.5% to 19.1%) and in the live leagues (17.6% to 18.7%). Each league's Past evenness is on its Season Ratings page. Picks logged before the rule stay.</p>
   <h3><span class="num">6</span>More women's leagues</h3>
   <p>${DATA.test.leagues.length} more women's leagues are bet with the same rules, totals and points handicap, without a backtest, because most have lines from one source or on few games. Since 25 November 2026 their picks are part of Live test and its record, with the ${DATA.leagues.length} backtested leagues; the Backtest tab covers those ${DATA.leagues.length} only. The Match winner pill follows the handicap picks that back the favourite on the match winner instead, for comparison only.</p>
   <h3><span class="num">7</span>What it cannot see</h3>
@@ -979,7 +988,8 @@ function renderRatings(base = 'leagues'){
   h += `<div class="metrics"><div class="metric"><div class="lbl">Teams</div><div class="big">${r.length}</div><div class="sm">${M.season ? M.season.replace('-', '–') + ' season' : ''}</div></div>`
     + `<div class="metric"><div class="lbl">Best team</div><div class="big">${r.length ? (r[0].rally * 100).toFixed(1) + '%' : '–'}</div><div class="sm">${r.length ? r[0].team : ''}</div></div>`
     + `<div class="metric"><div class="lbl">Spread</div><div class="big">${r.length ? ((r[0].rally - r[r.length - 1].rally) * 100).toFixed(1) + ' pts' : '–'}</div><div class="sm">best v worst rally share</div></div>`
-    + `<div class="metric"><div class="lbl">Home side</div><div class="big">${M.home != null ? (M.home * 100).toFixed(1) + '%' : '–'}</div><div class="sm">of rallies between equal teams</div></div></div>`;
+    + `<div class="metric"><div class="lbl">Home side</div><div class="big">${M.home != null ? (M.home * 100).toFixed(1) + '%' : '–'}</div><div class="sm">of rallies between equal teams</div></div>`
+    + evenTile(lg) + '</div>';
   h += `<div class="scroll"><table style="max-width:900px"><thead><tr><th class="n">#</th><th>Team</th><th class="n">Rally % v average</th><th class="n">Played</th><th class="n">W–L</th><th class="n">Sets</th><th class="n">Points won</th></tr></thead><tbody>`
     + r.map((t, i) => `<tr><td class="n muted">${i + 1}</td><td>${t.team}${t.new ? ' <span class="muted">(new)</span>' : ''}</td><td class="n">${(t.rally * 100).toFixed(1)}%${bar(t.rally)}</td><td class="n">${t.p}</td><td class="n">${t.w}–${t.l}</td><td class="n">${t.sw != null ? t.sw + '–' + t.sl : '–'}</td><td class="n">${t.pts != null ? pct(t.pts) : '–'}</td></tr>`).join('')
     + '</tbody></table></div>';
