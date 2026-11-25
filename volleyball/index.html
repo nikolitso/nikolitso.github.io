@@ -267,7 +267,7 @@ a.gm{color:inherit;text-decoration:none} a.gm:hover{color:var(--gold);text-decor
 <p>Explainer: <a href="/volleyball/research/how-totals-work/">why a volleyball total is really about sets</a>.</p><p>Research note: <a href="/volleyball/research/close-matches/">close matches go under more often than the market expects</a>.</p>
 </section>
 </main>
-<script src="data.js?v=4d561531"></script>
+<script src="data.js?v=dc959520"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -425,7 +425,7 @@ function renderHome(){
   <p><b>Favourite</b> and <b>Underdog</b>: the side of the points handicap whose edge is at least ${(H.edge || 0.2) * 100}%, when the market handicap is ${H.min_line || 5.5} points or more. The same rally model gives each match's points margin, so it prices the handicap as well as the total.</p>
   <p>All three: regular season only, no March, April or October, and no pick until both teams have played ${DATA.min_games} matches this season, as the ratings use the current season only. Equal stakes.</p>
   <h3><span class="num">2</span>Which league gets which bet</h3>
-  <p>It depends on how competitive the league has been: the gap between its best and worst team's share of points won, averaged over its earlier seasons. Every league gets the underdog. <b>Competitive</b> (under ${ec} points) and <b>standard</b> leagues also get the over. <b>Not competitive</b> leagues (${uc} points or more) get the favourite, of any size, instead of the over. The bets left out are still followed live as a shadow test, outside the record.</p>
+  <p>It depends on how competitive the league has been: the gap between its best and worst team's share of points won, averaged over its earlier seasons. Every league gets the underdog. <b>Competitive</b> leagues (under ${ec} points) also get the over. <b>Not competitive</b> leagues (${uc} points or more) get the favourite, of any size, instead of the over. A league with fewer than 2 earlier seasons gets the over and the underdog. The bets left out are still followed live as a shadow test, outside the record.</p>
   <p>The Live test has ${Object.keys(PLG).length} leagues: the ${DATA.leagues.length} where, on past seasons, backing every low-line over without the model lost 3% or less (a fair market to start from), and ${Object.keys(TLG).length} more women's leagues added on 25 November 2026. ${((DATA.hcapx || {}).leagues || []).length} more leagues make handicap picks only, on their own record.</p>
   <h3><span class="num">3</span>What the backtest found</h3>
   <p>Over, low totals: ${up} of ${seasons.length} seasons made a profit. By league: ${best || 'none'}. The model runs too confident, so the chance and edge shown on Projections and Live test keep only part of its advantage over the market (see Calibration in Backtest); picks are still chosen on its own figure.</p>
@@ -492,7 +492,7 @@ function settled(){
 // League accuracy (user, 25 Nov 2026): how close the market's closing total line comes to the actual total, this season,
 // against every league on the page
 // past evenness (user, 25 Nov 2026): the league's average spread over earlier seasons; under the cut, no favourite handicap picks
-// competitiveness label (user, 25 Nov 2026): '' for the leagues in between, which follow the standard rules
+// competitiveness label (user, 25 Nov 2026; two groups since 26 Nov): '' for leagues with fewer than 2 earlier seasons
 const compOf = k => { const E_ = (DATA.evenness || {})[k]; if (!E_ || E_.n < 2) return ''; return E_.avg < (DATA.even_cut || 0.096) ? 'competitive' : E_.avg >= (DATA.uneven_cut || 0.122) ? 'not competitive' : ''; };
 // the label as a small badge (user, 25 Nov 2026): accent for competitive, amber for not competitive
 const compBadge = k => { const c = compOf(k); if (!c) return '';
@@ -505,7 +505,7 @@ const compTag = k => compBadge(k);
 function shadowSection(kind){
   const S = (DATA.shadow || []).filter(p => p.kind === kind && inLg(p));
   if (kind !== 'over' && !S.length) return '';   // favourites and underdogs are bet in every league since 25 Nov 2026
-  const name = {over: 'overs in not competitive leagues', fav: 'favourites in competitive and standard leagues', dog: 'underdogs in competitive and standard leagues'}[kind];
+  const name = {over: 'overs in not competitive leagues', fav: 'favourites in competitive leagues', dog: 'underdogs in competitive and standard leagues'}[kind];
   const done = S.filter(p => 'won' in p), open = S.filter(p => !('won' in p)).sort((a, b) => a.dt.localeCompare(b.dt));
   const w = done.filter(p => p.won).length, u = done.reduce((a, p) => a + p.profit, 0);
   const pick = p => kind === 'over' ? `Over ${p.line}` : hLabel(p.team, p.line);
@@ -531,7 +531,7 @@ function compGrid(){
 function evenTile(k){
   const E_ = (DATA.evenness || {})[k], cut = DATA.even_cut || 0.096;
   const t = (big, sm) => `<div class="metric"><div class="lbl">Competitiveness</div><div class="big" style="font-size:22px">${big}</div><div class="sm">${sm}</div></div>`;
-  if (!E_ || E_.n < 2) return t('Standard', 'under 2 earlier seasons · overs and underdogs');
+  if (!E_ || E_.n < 2) return t('Too new', 'under 2 earlier seasons · overs and underdogs');
   const c = compOf(k), spread = `${(E_.avg * 100).toFixed(1)} pts spread over ${E_.n} earlier seasons`;
   return c === 'competitive' ? t('<span style="color:var(--an-accent)">Competitive</span>', `${spread} · overs and underdogs`)
        : c === 'not competitive' ? t('<span style="color:var(--an-warning)">Not competitive</span>', `${spread} · favourites and underdogs; no overs`)
@@ -849,7 +849,7 @@ function rulesBox(){
   const li = (t, d) => `<li>${t} <span class="muted">(${d})</span></li>`;
   return `<div style="border:1px solid var(--line);border-radius:12px;padding:16px 20px;margin:8px 0 28px">
   <h3 style="margin-top:0">The rules</h3>
-  <p class="note" style="margin-top:-4px"><b>Frozen on 25 November 2026</b>, after the last changes that day: no changes until each market has about 100 settled live picks, unless something is broken. Every rule below was chosen on the same past seasons, so the backtests run high; only the live record can show whether they work.</p>
+  <p class="note" style="margin-top:-4px"><b>Frozen on 26 November 2026</b>, after the switch to two league groups: no changes until each market has about 100 settled live picks, unless something is broken. Every rule below was chosen on the same past seasons, so the backtests run high; only the live record can show whether they work.</p>
   <p style="margin:10px 0 4px"><b>Every pick</b></p><ul style="margin:0 0 8px;padding-left:20px">
   ${li(`Both teams have played ${DATA.min_games}+ league games this season; ratings use this season only`, '7–8 Nov')}
   ${li('Regular season only: no playoffs, play-outs, placement games or finals', '7 Nov')}
@@ -865,7 +865,7 @@ function rulesBox(){
   ${li(`The ${Object.keys(PLG).length} Live test leagues and ${((DATA.hcapx || {}).leagues || []).length} handicap-only leagues`, '22 Nov')}</ul>
   <p style="margin:10px 0 4px"><b>Shown, not bet</b></p><ul style="margin:0;padding-left:20px">
   ${li('The Match winner pill and any positive edge on a match page that is not a pick', '22–25 Nov')}
-  ${li('The shadow test: overs in not competitive leagues and favourites in competitive and standard ones, logged and settled but outside the record', '25 Nov, 26 Nov')}</ul></div>`;
+  ${li('The shadow test: overs in not competitive leagues and favourites in competitive ones, logged and settled but outside the record', '25 Nov, 26 Nov')}</ul></div>`;
 }
 
 function renderMethod(){
@@ -881,7 +881,7 @@ function renderMethod(){
   <p>Only overs on low lines, below ${DATA.low}: across the backtest, unders and high-line overs did not beat the price. The model's job is to pick out the low-line matches most likely to go to a fourth set.</p>
   <h3><span class="num">5</span>Handicap test</h3>
   <p>The same rally model gives each match's points margin, so it also prices the points handicap. The side whose model chance × price is at least ${(DATA.hcap ? DATA.hcap.edge : 0.2) * 100}% above 1 is backed in the live leagues when the market handicap is ${DATA.hcap ? DATA.hcap.min_line : 5.5} points or more (but not a favourite giving ${DATA.hcap ? DATA.hcap.fav_max : 15.5} or more), in the same games as the totals rule, and kept apart from the totals record. In the backtest from 2020–21 smaller edges barely broke even, so only the big disagreements with the market are bet; they made a profit at both the closing and the opening line, in both halves of the backtest.</p>
-  <p><b>Competitive and not competitive leagues.</b> A league's spread is the gap between its best and worst team's share of points won. Averaged over a league's earlier seasons, it is partly a lasting trait: men's leagues such as Poland, Italy, Finland and the Czech Republic are usually competitive, several women's leagues are not. Tested on 2020–26 with only the seasons before each one: the totals picks did about the same in competitive and not competitive leagues (no clear effect), so the totals rule ignores it. The handicap picks did better in the least competitive leagues (+22% at the close in that third against +11% in the most competitive), mostly through the favourites, which made only +4.6% in the most competitive leagues. So since 25 November 2026 there are <b>no favourite handicap picks in a <i>competitive</i> league, one whose average spread over its earlier seasons is under ${((DATA.even_cut || 0.096) * 100).toFixed(1)} points</b> (2 or more earlier seasons needed); underdog picks stay. Checked before it went live: it raised the ROI in both halves of 2020–26, in all leagues (16.5% to 19.1%) and in the live leagues (17.6% to 18.7%). The other way round, in a <i>not competitive</i> league, one whose earlier seasons averaged ${((DATA.uneven_cut || 0.122) * 100).toFixed(1)} points or more, <b>favourites giving ${DATA.hcap ? DATA.hcap.fav_max : 15.5} points or more are backed too</b> (elsewhere they never are): on 2020–26 those extra picks made +19.9% on 218 bets, with a profit in both halves and in the live leagues. A lower edge in those leagues (10% instead of ${(DATA.hcap ? DATA.hcap.edge : 0.2) * 100}%) was tested too and failed: the extra bets only broke even. After several revisions on 25 and 26 November 2026, made from the past ROI of each kind of bet in each kind of league (opening line, 2020–26), the rule is: <b>underdogs in every league</b>, <b>overs in competitive and standard leagues</b> (not in not competitive ones: +4.9% on 162 past bets) and <b>favourites only in not competitive leagues</b> (+23.4% on 281 past bets, against +11.6% and +11.3% elsewhere). Bets logged earlier were moved in or out of the record to match. These choices were made on the same past seasons, so the skipped bets are followed live as a shadow test, at the bottom of each Live test pill. Leagues in between follow the standard rules. Each league's Competitiveness is on its Season Ratings page.</p>
+  <p><b>Competitive and not competitive leagues.</b> A league's spread is the gap between its best and worst team's share of points won (regular season, teams with 5+ games). Averaged over its earlier seasons only (2 or more needed), it is partly a lasting trait: men's leagues such as Poland, Italy, Finland and the Czech Republic tend to be competitive, several women's leagues do not. A league under ${((DATA.even_cut || 0.112) * 100).toFixed(1)} points is <b>competitive</b>, one at or above it <b>not competitive</b>; the cut is the median of all league seasons. On 2020–26, at the opening line: overs made +29.6% in competitive leagues against +9.9% in not competitive ones, favourites +10.7% against +21.5%, and underdogs a profit in both (+22.1% and +17.5%). So since 26 November 2026: <b>underdogs in every league</b>, <b>overs in competitive leagues</b> and <b>favourites in not competitive leagues</b>; a league with fewer than 2 earlier seasons gets overs and underdogs. Three and four groups were tried on 25–26 November and made no more; two groups are simpler. Bets logged earlier were moved in or out of the record to match. These choices were made on the same past seasons, so the skipped bets (overs in not competitive leagues, favourites in competitive ones) are followed live as a shadow test, at the bottom of each Live test pill. Each league's Competitiveness is on its Season Ratings page.</p>
   <h3><span class="num">6</span>More women's leagues</h3>
   <p>${DATA.test.leagues.length} more women's leagues are bet with the same rules, totals and points handicap, without a backtest, because most have lines from one source or on few games. Since 25 November 2026 their picks are part of Live test and its record, with the ${DATA.leagues.length} backtested leagues. Since the same day the Backtest tab covers them too, where past odds exist (11 of them for totals; the other 6 are listed as having no past odds), so the backtest and the live record count the same leagues. Most of these leagues did worse in the past than the original ${DATA.leagues.length}, which lowers the totals backtest. The Match winner pill follows the handicap picks that back the favourite on the match winner instead, for comparison only.</p>
   <h3><span class="num">7</span>What it cannot see</h3>
@@ -1108,7 +1108,7 @@ function renderRatings(base = 'leagues'){
     const az = keys => keys.sort((a, b) => tierOf(a) - tierOf(b) || meta(a).name.localeCompare(meta(b).name));   // tier 1 first, then A-Z
     return `<h2>Team ratings</h2>` + note + `<h2 style="margin-top:44px">Men</h2>` + grid(az(all.filter(k => !women(k))))
       + `<h2 style="margin-top:44px">Women</h2>` + grid(az(all.filter(women)))
-      + '<p class="note" style="margin-top:20px">Click a league for its full table: sets, points won and the home advantage. <b>Competitive</b> and <b>not competitive</b> next to a league: how even it has been in its earlier seasons, which decides which bets it gets (see How it works); no label means the standard rules.</p>';
+      + '<p class="note" style="margin-top:20px">Click a league for its full table: sets, points won and the home advantage. <b>Competitive</b> and <b>not competitive</b> next to a league: how even it has been in its earlier seasons, which decides which bets it gets (see How it works); no label means fewer than 2 earlier seasons (overs and underdogs).</p>';
   }
   const r = rows(lg), M = meta(lg);
   let h = `<p class="note"><a href="#view=${base}">← All leagues</a></p><h2 style="margin-top:6px">${M.name}</h2>`;
