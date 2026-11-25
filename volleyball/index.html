@@ -267,7 +267,7 @@ a.gm{color:inherit;text-decoration:none} a.gm:hover{color:var(--gold);text-decor
 <p>Explainer: <a href="/volleyball/research/how-totals-work/">why a volleyball total is really about sets</a>.</p><p>Research note: <a href="/volleyball/research/close-matches/">close matches go under more often than the market expects</a>.</p>
 </section>
 </main>
-<script src="data.js?v=162ace78"></script>
+<script src="data.js?v=66975395"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -308,8 +308,12 @@ if (DATA.test){
   if (DATA.hcap) DATA.hcap.picks = DATA.hcap.picks.concat(DATA.test.hpicks || []).sort((a, b) => b.dt.localeCompare(a.dt));
   DATA.fixtures = DATA.fixtures.concat(DATA.test.fixtures || []).sort((a, b) => a.dt.localeCompare(b.dt));
 }
+// Projections lists the handicap-only leagues' games too, their handicap picks marked (user, 25 Nov 2026)
+const XLG = Object.fromEntries(((DATA.hcapx || {}).leagues || []).map(l => [l.key, l]));
+DATA.fixtures = DATA.fixtures.concat((DATA.hcapx || {}).fixtures || []).sort((a, b) => a.dt.localeCompare(b.dt));
+const PJLG = {...PLG, ...XLG};   // the leagues on Projections
 // a chip names the league too when its country has more than one women's or men's league with picks (25 Nov 2026)
-const chipName = l => Object.values(PLG).filter(x => x.country === l.country && !!x.women === !!l.women).length > 1 ? `${l.country} ${l.name} ${sexAb(l)}` : `${l.country} ${sexAb(l)}`;
+const chipName = l => Object.values(PJLG).filter(x => x.country === l.country && !!x.women === !!l.women).length > 1 ? `${l.country} ${l.name} ${sexAb(l)}` : `${l.country} ${sexAb(l)}`;
 const lgShort = k => { const x = PLG[k] || (((DATA.hcapx || {}).leagues) || []).find(l => l.key === k); return x ? `${x.country} ${sexAb(x)}` : ''; };
 const sexOf = l => l.women ? 'women' : 'men';
 const sexAb = l => l.women ? '(W)' : '(M)';   // short label: chips, league cells
@@ -320,7 +324,7 @@ const liveNames = () => [true, false].map(w => DATA.leagues.filter(l => l.live &
   .map(a => `${andList(a.map(l => l.country))} (${sexOf(a[0])})`).join(', ');
 const one = () => lg === 'all' ? DATA.leagues[0].key : lg;      // tabs that show one league at a time
 
-const setSub = () => { $('sub').textContent = `${view === 'backtest' ? DATA.leagues.length + ' backtested leagues' : Object.keys(PLG).length + ' leagues'}, women's and men's · ${DATA.season.replace('-','–')} · updated ${DATA.updated} (Athens)`; };   // Backtest counts its own leagues (25 Nov 2026)
+const setSub = () => { $('sub').textContent = `${view === 'backtest' ? DATA.leagues.length + ' backtested leagues' : (view === 'projections' ? Object.keys(PJLG).length : Object.keys(PLG).length) + ' leagues'}, women's and men's · ${DATA.season.replace('-','–')} · updated ${DATA.updated} (Athens)`; };   // Backtest counts its own leagues (25 Nov 2026)
 setSub();
 
 function renderProjections(){
@@ -1077,7 +1081,7 @@ function hcapBacktest(){
 function render(){
   document.querySelectorAll('#tabs a').forEach(a => { a.classList.toggle('on', a.dataset.view === view); a.href = `#view=${a.dataset.view}${lg === 'all' ? '' : '&lg=' + lg}`; });
   const hb = (view === 'backtest' && DATA.hcap && DATA.hcap.backtest) || view === 'picks' || view === 'wtest';   // the pills: Backtest, Live test, Women Leagues test
-  const chips = view === 'method' || view === 'home' || view === 'wtest' || view === 'season' || (view === 'backtest' && market === 'hcap') ? [] : [['all', 'All leagues'], ...(view === 'picks' || view === 'projections' ? Object.values(PLG) : DATA.leagues).map(l => [l.key, chipName(l)])];
+  const chips = view === 'method' || view === 'home' || view === 'wtest' || view === 'season' || (view === 'backtest' && market === 'hcap') ? [] : [['all', 'All leagues'], ...(view === 'projections' ? Object.values(PJLG) : view === 'picks' ? Object.values(PLG) : DATA.leagues).map(l => [l.key, chipName(l)])];
   const sw = hb ? ([['totals', 'Totals: overs on low lines'], ['hcap', 'Points handicap'], ...(view === 'picks' ? [['ml', 'Match winner']] : [])]).map(([k, t]) =>
       `<a href="#view=${view}${k === 'hcap' ? '&m=hcap' : k === 'ml' ? '&m=ml' : ''}${lg !== 'all' && (k === 'totals' || view === 'picks') && PLG[lg] ? '&lg=' + lg : ''}" class="${k === market ? 'on' : ''}" style="font-size:15.5px;padding:6px 14px">${t}</a>`).join('')
       + (chips.length ? '<span style="flex-basis:100%;height:2px"></span>' : '') : '';
@@ -1089,7 +1093,7 @@ function fromHash(){
   const m = location.hash.match(/view=(\w+)/), l = location.hash.match(/lg=([\w-]+)/);
   view = m && m[1] === 'wtest' ? 'picks' : m && m[1] === 'leagues' ? 'season' : m && m[1] === 'results' ? 'picks' : m && m[1] === 'hcap' ? 'picks' : m && RENDER[m[1]] ? m[1] : 'home';   // Handicap test merged into Live test (22 Nov 2026)   // Results merged into Picks (8 Nov 2026)
   const TLK = new Set([...((DATA.test || {}).leagues || []), ...((DATA.hcapx || {}).leagues || [])].map(x => x.key));   // test and handicap-only leagues: Leagues tab only
-  const nlg = l && (LG[l[1]] || (/view=season/.test(location.hash) && TLK.has(l[1])) || (/view=(picks|projections|wtest)/.test(location.hash) && PLG[l[1]])) ? l[1] : 'all';
+  const nlg = l && (LG[l[1]] || (/view=season/.test(location.hash) && TLK.has(l[1])) || (/view=(picks|wtest)/.test(location.hash) && PLG[l[1]]) || (/view=projections/.test(location.hash) && PJLG[l[1]])) ? l[1] : 'all';
   market = /[&#]m=hcap/.test(location.hash) || (m && m[1] === 'hcap') ? 'hcap' : /[&#]m=ml/.test(location.hash) ? 'ml' : 'totals';
   const moved = nlg !== lg;
   if (moved) btSeason = null;
