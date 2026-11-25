@@ -267,7 +267,7 @@ a.gm{color:inherit;text-decoration:none} a.gm:hover{color:var(--gold);text-decor
 <p>Explainer: <a href="/volleyball/research/how-totals-work/">why a volleyball total is really about sets</a>.</p><p>Research note: <a href="/volleyball/research/close-matches/">close matches go under more often than the market expects</a>.</p>
 </section>
 </main>
-<script src="data.js?v=2046fd8d"></script>
+<script src="data.js?v=1c3abd06"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -298,7 +298,8 @@ const REAL = 0.8, realP = (p, over, under) => { const market = noVigP(over, unde
 const realEdge = (p, over, under) => realP(p, over, under) * over - 1;
 let view = 'home', lg = 'all', market = 'totals', hside = null;   // hside: the handicap bet kind, 'fav' or 'dog' (user, 25 Nov 2026); null = both
 const sideOk = p => !hside || (hside === 'fav' ? p.line < 0 : p.line > 0);
-const sideBT = H => H && H.backtest && hside && H.backtest.by_side ? Object.assign({}, H.backtest.by_side[hside], {games: H.backtest.games}) : (H || {}).backtest;
+const sideBT = H => { if (!(H && H.backtest && hside && H.backtest.by_side)) return (H || {}).backtest; const S = H.backtest.by_side[hside], L = lg !== 'all' && view === 'backtest' && (S.by_league || {})[lg]; return L ? Object.assign({}, L) : Object.assign({}, S, {games: H.backtest.games}); };   // one league's backtest when its pill is on (26 Nov 2026)
+const hLeagues = () => { const H = (DATA.hcap || {}).backtest || {}, bs = H.by_side || {}; const ks = new Set([...Object.keys((bs.fav || {}).by_league || {}), ...Object.keys((bs.dog || {}).by_league || {})]); return Object.values(PLG).filter(l => ks.has(l.key)); };
 const sideName = () => hside === 'fav' ? 'favourites giving points' : hside === 'dog' ? 'underdogs taking points' : '';   // market: the Backtest switch, totals or hcap (22 Nov 2026)
 const LG = Object.fromEntries(DATA.leagues.map(l => [l.key, l]));
 // the Women Leagues test merged into Live test, its record included (user, 25 Nov 2026): its totals picks, handicap picks
@@ -1230,19 +1231,21 @@ RENDER.leagues = _lgs;   // team ratings moved to Season Rating (user, 22 Nov 20
 RENDER.backtest = () => market === 'hcap' && DATA.hcap && DATA.hcap.backtest ? hcapBacktest() : _bt();
 // the handicap backtest on its own: the two backtest pills, then the tables (leagues are compared in By league)
 function hcapBacktest(){
-  const H = DATA.hcap, B = sideBT(H);
+  const H = DATA.hcap;
+  if (lg !== 'all' && hside && !((((H.backtest.by_side || {})[hside] || {}).by_league || {})[lg])) return `<p class="empty">No ${hside === 'fav' ? 'favourite' : 'underdog'} bets for this league in the backtest.</p>`;
+  const B = sideBT(H);
   const pill = (k, l) => `<div class="metric"><div class="lbl">${l}</div><div class="big"><span class="${cls(B[k].all.roi)}">${sgn(B[k].all.roi * 100, 1)}%</span></div><div class="sm">${B[k].all.n.toLocaleString('en-US')} bets · ${units1(B[k].all.pl)}</div></div>`;
   const hit = B.open.all.n ? (B.open.all.w / B.open.all.n * 100).toFixed(1) + '%' : '–';
-  return `<div class="metrics">${pill('open', 'ROI')}<div class="metric"><div class="lbl">Covered</div><div class="big">${hit}</div><div class="sm">price needed ${B.calibration_all ? pct(B.calibration_all.need) : '–'}</div></div><div class="metric"><div class="lbl">Rule</div><div class="big">${H.edge * 100}%+ edge</div><div class="sm">handicap ${H.min_line}+; favourites by competitiveness (How it works)</div></div></div>` + compGrid() + renderHcap('bt');
+  return `<div class="metrics">${pill('open', 'ROI')}<div class="metric"><div class="lbl">Covered</div><div class="big">${hit}</div><div class="sm">price needed ${B.calibration_all ? pct(B.calibration_all.need) : '–'}</div></div><div class="metric"><div class="lbl">Rule</div><div class="big">${H.edge * 100}%+ edge</div><div class="sm">handicap ${H.min_line}+ (10.5+ in competitive leagues) (How it works)</div></div></div>` + renderHcap('bt');
 }
 function render(){
   document.querySelectorAll('#tabs a').forEach(a => { a.classList.toggle('on', a.dataset.view === view); a.href = `#view=${a.dataset.view}${lg === 'all' ? '' : '&lg=' + lg}`; });
   const hb = (view === 'backtest' && DATA.hcap && DATA.hcap.backtest) || view === 'picks' || view === 'wtest';   // the pills: Backtest, Live test, Women Leagues test
-  const chips = view === 'method' || view === 'home' || view === 'wtest' || view === 'season' || (view === 'backtest' && market === 'hcap') ? [] : [['all', 'All leagues'], ...(view === 'projections' ? Object.values(PJLG) : view === 'picks' ? Object.values(PLG) : view === 'backtest' || view === 'leagues' ? Object.values(BLG) : DATA.leagues).map(l => [l.key, chipName(l)])];
+  const chips = view === 'method' || view === 'home' || view === 'wtest' || view === 'season' || (view === 'backtest' && market === 'ml') ? [] : [['all', 'All leagues'], ...(view === 'projections' ? Object.values(PJLG) : view === 'picks' ? Object.values(PLG) : view === 'backtest' && market === 'hcap' ? hLeagues() : view === 'backtest' || view === 'leagues' ? Object.values(BLG) : DATA.leagues).map(l => [l.key, chipName(l)])];
   const sw = hb ? ([['totals', 'Over, low totals'], ['hcap:fav', 'Favourite'], ['hcap:dog', 'Underdog'], ...(view === 'picks' ? [['ml', 'Match winner']] : [])]).map(([k, t]) =>
-      `<a href="#view=${view}${k.startsWith('hcap') ? '&m=hcap&s=' + k.slice(5) : k === 'ml' ? '&m=ml' : ''}${lg !== 'all' && (k === 'totals' || view === 'picks') && PLG[lg] ? '&lg=' + lg : ''}" class="${k === market || (market === 'hcap' && k.startsWith('hcap') && (!hside || k.slice(5) === hside)) ? 'on' : ''}" style="font-size:15.5px;padding:6px 14px">${t}</a>`).join('')
+      `<a href="#view=${view}${k.startsWith('hcap') ? '&m=hcap&s=' + k.slice(5) : k === 'ml' ? '&m=ml' : ''}${lg !== 'all' && (k === 'totals' || view === 'picks' || view === 'backtest') && (view === 'backtest' ? BLG[lg] || PLG[lg] : PLG[lg]) ? '&lg=' + lg : ''}" class="${k === market || (market === 'hcap' && k.startsWith('hcap') && (!hside || k.slice(5) === hside)) ? 'on' : ''}" style="font-size:15.5px;padding:6px 14px">${t}</a>`).join('')
       + (chips.length ? '<span style="flex-basis:100%;height:2px"></span>' : '') : '';
-  $('chips').innerHTML = sw + chips.map(([k, t]) => `<a href="#view=${view}${(view === 'picks' || view === 'leagues') && market === 'hcap' ? '&m=hcap' + (hside ? '&s=' + hside : '') : ''}${k === 'all' ? '' : '&lg=' + k}" class="${k === lg ? 'on' : ''}">${t}</a>`).join('');
+  $('chips').innerHTML = sw + chips.map(([k, t]) => `<a href="#view=${view}${(view === 'picks' || view === 'leagues' || view === 'backtest') && market === 'hcap' ? '&m=hcap' + (hside ? '&s=' + hside : '') : ''}${k === 'all' ? '' : '&lg=' + k}" class="${k === lg ? 'on' : ''}">${t}</a>`).join('');
   setSub();
   $('out').innerHTML = RENDER[view]();
 }
@@ -1250,7 +1253,7 @@ function fromHash(){
   const m = location.hash.match(/view=(\w+)/), l = location.hash.match(/lg=([\w-]+)/);
   view = m && m[1] === 'wtest' ? 'picks' : m && m[1] === 'leagues' ? 'season' : m && m[1] === 'results' ? 'picks' : m && m[1] === 'hcap' ? 'picks' : m && RENDER[m[1]] ? m[1] : 'home';   // Handicap test merged into Live test (22 Nov 2026)   // Results merged into Picks (8 Nov 2026)
   const TLK = new Set([...((DATA.test || {}).leagues || []), ...((DATA.hcapx || {}).leagues || [])].map(x => x.key));   // test and handicap-only leagues: Leagues tab only
-  const nlg = l && (LG[l[1]] || (/view=season/.test(location.hash) && TLK.has(l[1])) || (/view=(picks|wtest)/.test(location.hash) && PLG[l[1]]) || (/view=projections/.test(location.hash) && PJLG[l[1]]) || (/view=(backtest|leagues)/.test(location.hash) && BLG[l[1]])) ? l[1] : 'all';
+  const nlg = l && (LG[l[1]] || (/view=season/.test(location.hash) && TLK.has(l[1])) || (/view=(picks|wtest)/.test(location.hash) && PLG[l[1]]) || (/view=projections/.test(location.hash) && PJLG[l[1]]) || (/view=(backtest|leagues)/.test(location.hash) && (BLG[l[1]] || (/m=hcap/.test(location.hash) && PLG[l[1]])))) ? l[1] : 'all';
   market = /[&#]m=hcap/.test(location.hash) || (m && m[1] === 'hcap') ? 'hcap' : /[&#]m=ml/.test(location.hash) ? 'ml' : 'totals';
   hside = market === 'hcap' ? (/[&#]s=fav/.test(location.hash) ? 'fav' : /[&#]s=dog/.test(location.hash) ? 'dog' : null) : null;
   const moved = nlg !== lg;
