@@ -22,7 +22,10 @@ jobs:
   run:
     runs-on: ubuntu-latest
     steps:
+      # Latest main, not the commit that triggered the run: a queued run must build on the previous run's live.js
       - uses: actions/checkout@v5
+        with:
+          ref: main
       - uses: actions/checkout@v5
         with:
           repository: nikolitso/BettingSignal
