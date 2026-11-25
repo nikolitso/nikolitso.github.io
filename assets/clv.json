@@ -1,5 +1,5 @@
 {
- "updated": "2026-11-25 04:57 UTC",
+ "updated": "2026-11-25 17:28 UTC",
  "basketball_overs": {
   "n": 36,
   "avg": 0.0251,
@@ -94,18 +94,18 @@
   "n": 0,
   "avg": null,
   "beat": 0,
-  "picks": 15,
-  "won": 11,
-  "lost": 4,
+  "picks": 3,
+  "won": 3,
+  "lost": 0,
   "push": 0,
-  "roi": 0.3505,
+  "roi": 0.8403,
   "lo": null,
   "hi": null,
   "verdict": "few",
   "proof": {
-   "n": 15,
-   "found": 15,
-   "before": 15
+   "n": 3,
+   "found": 3,
+   "before": 3
   }
  },
  "superleague": {
