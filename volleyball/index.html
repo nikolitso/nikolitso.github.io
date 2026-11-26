@@ -267,7 +267,7 @@ a.gm{color:inherit;text-decoration:none} a.gm:hover{color:var(--gold);text-decor
 <p>Explainer: <a href="/volleyball/research/how-totals-work/">why a volleyball total is really about sets</a>.</p><p>Research note: <a href="/volleyball/research/close-matches/">close matches go under more often than the market expects</a>.</p>
 </section>
 </main>
-<script src="data.js?v=e0df3144"></script>
+<script src="data.js?v=0a004826"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -528,7 +528,7 @@ function compTable(k){                   // one bet type by league competitivene
       : `<tr><td>${lab}</td><td class="n">${x.n}</td><td class="n">${pct(x.w / x.n)}</td><td class="n ${cls(x.pl)}">${sgn(x.pl, 1)}</td><td class="n ${cls(x.roi)}">${sgn(x.roi * 100, 1)}%</td></tr>`; };
   const what = k === 'totals' ? 'Overs under the live rule, competitive leagues and the skipped not competitive ones' : `${k === 'fav' ? 'Favourites' : 'Underdogs'} under the live rule: ${k === 'fav' ? 'not competitive leagues only (competitive ones skipped)' : `from 10.5 points in competitive leagues, from ${(DATA.hcap || {}).min_line || 5.5} in not competitive ones`}`;
   return `<h2>By league competitiveness</h2><p class="note">${what}. Opening line, ${G.first.slice(0, 4)}–${G.last.slice(-2)}, the Live test leagues; a league's group comes from its earlier seasons only, and leagues with fewer than 2 earlier seasons count as competitive. Profit in units, 1 per bet.</p>`
-    + `<div class="scroll"><table style="max-width:720px"><thead><tr><th>League group</th><th class="n">Bets</th><th class="n">Hit</th><th class="n">Profit</th><th class="n">ROI</th></tr></thead><tbody>${G.rows.map(row).join('')}</tbody></table></div>`;
+    + `<div class="scroll"><table style="max-width:720px"><thead><tr><th>League group</th><th class="n">Bets</th><th class="n">Hit</th><th class="n">Profit</th><th class="n">ROI</th></tr></thead><tbody>${G.rows.filter(r => !(k === 'fav' && r.tier === 'competitive')).map(row).join('')}</tbody></table></div>`;
 }
 
 // every league's group and why (user, 26 Nov 2026): its spread over earlier seasons against the cut, and the bets that follow
@@ -1044,11 +1044,13 @@ function renderHcap(part){   // 'live': on Live test; 'bt': on Backtest (merged 
     // only the side whose pill is on (user, 26 Nov 2026); each band says where the rule skips it
     const sz = B.open.size.flatMap(c => [['dog', 'underdog'], ['fav', 'favourite']].filter(([k]) => !hside || hside === k).map(([k, w]) => [Object.assign({}, c[k], {label: `${c.label} pts${hside ? '' : ' · ' + w}`, side: k, lo: parseFloat(c.label)}), null]));
     if (hside && B.open.size_grp)                 // each size split by league group (user, 26 Nov 2026)
-      sz.splice(0, sz.length, ...[['comp', 'competitive'], ['nc', 'not competitive']].flatMap(([g, w]) => B.open.size_grp.map(c =>   // competitive first, then not competitive (user)
+      sz.splice(0, sz.length, ...[['comp', 'competitive'], ['nc', 'not competitive']].filter(([g]) => !(hside === 'fav' && g === 'comp')).flatMap(   // favourites: not competitive only (user, 26 Nov 2026)
+        ([g, w]) => B.open.size_grp.map(c =>   // competitive first, then not competitive (user)
         [Object.assign({}, c[g][hside], {label: `${w[0].toUpperCase() + w.slice(1)} · ${c.label} pts`, side: hside, lo: parseFloat(c.label), grp: g}), null])));
     const skip = c => c.grp ? ((c.grp === 'comp' && (c.lo < HCAP_COMP || c.side === 'fav')) || (c.grp === 'nc' && c.side === 'dog' && c.lo < H.min_line) ? ' <span class="muted">(skipped)</span>' : '')
       : c.lo < 0 ? '' : c.lo < H.min_line ? ' <span class="muted">(skipped)</span>' : c.lo < HCAP_COMP || (c.side === 'fav' && c.lo >= H.fav_max) ? ' <span class="muted">(skipped in competitive leagues)</span>' : '';
     h += T('By the size of the handicap', `${hside ? (hside === 'fav' ? 'Favourites' : 'Underdogs') + ' with' : 'Bets with'} an edge of ${sideEdge() * 100}% or more, by the market handicap, every league counted. In competitive leagues (and leagues with fewer than 2 earlier seasons) handicaps under ${HCAP_COMP} are skipped. Not competitive leagues bet ${hside === 'fav' ? 'favourites of every size' : hside === 'dog' ? `underdogs from ${H.min_line}` : `favourites of every size and underdogs from ${H.min_line}`}.`, sz.map(([c, o]) => [Object.assign({}, c, {label: c.label + skip(c)}), o]), 'Market handicap');
+    if (B.open.months) h += T('By month', 'The same bets by the calendar month of the match, every season together. March, April and October are never bet.', B.open.months.filter(c => c.n).map(c => [c, null]), 'Month');   // as on the over (user, 26 Nov 2026)
     if (B.open.games) h += T('By games played', `How many league games each team had played that season before the match: the fewer of the two teams. Both need ${DATA.min_games}+. Every band is bet.`, B.open.games.filter(c => c.n).map(c => [c, null]), 'Games played');   // as on the over (user, 26 Nov 2026)
     if (B.calibration_all){
         const A = B.calibration_all, L = B.luck;
