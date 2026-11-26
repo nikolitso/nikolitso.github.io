@@ -267,7 +267,7 @@ a.gm{color:inherit;text-decoration:none} a.gm:hover{color:var(--gold);text-decor
 <p>Explainer: <a href="/volleyball/research/how-totals-work/">why a volleyball total is really about sets</a>.</p><p>Research note: <a href="/volleyball/research/close-matches/">close matches go under more often than the market expects</a>.</p>
 </section>
 </main>
-<script src="data.js?v=de46be47"></script>
+<script src="data.js?v=7a103aae"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -708,12 +708,13 @@ function calibration(){
     let t = `<h3 style="margin-top:18px">${title}</h3><div class="scroll"><table style="max-width:1180px"><thead><tr><th>Band</th><th class="n">Bets</th><th class="n">Market<br>no-vig</th><th class="n">Model said</th><th class="n">Actual</th><th class="n">Gap</th><th class="n">4+ sets</th><th class="n">Market line</th><th class="n">Model line</th><th class="n">Actual total</th><th class="n">Profit</th><th class="n">ROI</th></tr></thead><tbody>`;
     for (const [lab, lo, hi] of bands){
       const g = Array.isArray(lo) ? lo : bets.filter(b => val(b) >= lo && val(b) < hi);
-      if (!g.length) continue;
+      if (!g.length){ if (Array.isArray(lo)) t += `<tr><td>${lab}</td><td class="n">0</td>${'<td class="n">–</td>'.repeat(10)}</tr>`; continue; }   // an empty band shown (user, 26 Nov 2026)
       const said = mean(g, b => b.p), hit = mean(g, b => +b.won), roi = mean(g, b => b.ret);
       t += `<tr><td>${lab}</td><td class="n">${g.length}</td><td class="n">${(mean(g, b => noVigP(b.px, b.under_px)) * 100).toFixed(1)}%</td><td class="n">${(said * 100).toFixed(1)}%</td><td class="n">${(hit * 100).toFixed(1)}%</td><td class="n ${cls(hit - said)}">${sgn((hit - said) * 100, 1)}</td><td class="n">${(mean(g, b => +long(b)) * 100).toFixed(1)}%</td><td class="n">${avgLine(g, 'line')}</td><td class="n">${avgLine(g, 'fair')}</td><td class="n">${avgLine(g, 'total')}</td><td class="n ${cls(roi)}">${sgn(roi * g.length, 2)}</td><td class="n ${cls(roi)}">${sgn(roi * 100, 1)}%</td></tr>`;
     }
     return t + '</tbody></table></div>';
   };
+  const skEdge = (DATA.backtest.skipped || []).filter(b => b.why === 'edge' && inLg(b) && !tuned.has(b.lg + '|' + b.season));
   if (bets.length < 8) return '';   // too few bets for calibration bands (leagues added 25 Nov 2026)
   const chance = [...bets].sort((a, b) => a.p - b.p);
   const chanceBands = [0, 1, 2, 3].map(i => {
@@ -721,7 +722,8 @@ function calibration(){
     return [`${(g[0].p * 100).toFixed(1)}–${(g[g.length - 1].p * 100).toFixed(1)}%`, g];
   });
   return `<h2>Calibration</h2><p class="note">Is the model's chance right? The same bets, comparing what the model said with how often the over actually won. Gap is actual minus model, in percentage points: near zero means the chance can be trusted, negative means the model was too confident. Market no-vig removes the bookmaker margin using the average over and under prices. The model-chance bands contain equal numbers of bets. 4+ sets is the part of the matches that went past 3 sets. Market line, Model line and Actual total are averages for the band. Small bands move a lot by chance.</p>`
-    + table('By edge', [...[5, 10, 15, 20, 25, 30, 35].map(x => [`${x}–${x + 5}%`, x / 100, (x + 5) / 100]), ['40%+', .40, 9]], b => b.edge)   // 5-point bands (user, 26 Nov 2026)
+    + table('By edge', [...[5, 10, 15, 20, 25, 30, 35].map(x => [x / 100, (x + 5) / 100]), [.40, 9]].map(([lo, hi]) => { const sk = hi <= DATA.edge;   // below the rule's edge: the skipped bets (26 Nov 2026)
+      return [`${Math.round(lo * 100)}${hi < 9 ? '–' + Math.round(hi * 100) : ''}%${hi < 9 ? '' : '+'}${sk ? ' <span class="muted">(skipped)</span>' : ''}`, (sk ? skEdge : bets).filter(b => b.edge >= lo && b.edge < hi)]; }), b => b.edge)   // 5-point bands (user, 26 Nov 2026)
     + table('By model chance', chanceBands, b => b.p);
 }
 
@@ -739,6 +741,12 @@ function byLine(){
     const g = by[k], gw = g.filter(b => b.won).length, gp = g.reduce((s, b) => s + b.ret, 0);
     n += g.length; w += gw; pl += gp;
     h += `<tr><td>${k - 4}.5–${k}.5</td><td class="n">${g.length}</td><td class="n">${gw}</td><td class="n">${pct(gw / g.length)}</td><td class="n">${pct(long(g) / g.length)}</td><td class="n">${avgLine(g, 'line')}</td><td class="n">${avgLine(g, 'fair')}</td><td class="n">${avgLine(g, 'total')}</td><td class="n ${cls(gp)}">${sgn(gp, 2)}</td><td class="n ${cls(gp)}">${sgn(gp / g.length * 100, 1)}%</td></tr>`;
+  }
+  const skL = (DATA.backtest.skipped || []).filter(b => b.why === 'line' && inLg(b) && !tuned.has(b.lg + '|' + b.season)), sby = {};
+  skL.forEach(b => (sby[band(b)] ||= []).push(b));   // lines above the rule's top: skipped since 26 Nov 2026, not in All
+  for (const k of Object.keys(sby).map(Number).sort((a, b) => a - b)){
+    const g = sby[k], gw = g.filter(b => b.won).length, gp = g.reduce((s, b) => s + b.ret, 0);
+    h += `<tr><td>${k - 4}.5–${k}.5 <span class="muted">(skipped)</span></td><td class="n">${g.length}</td><td class="n">${gw}</td><td class="n">${pct(gw / g.length)}</td><td class="n">${pct(long(g) / g.length)}</td><td class="n">${avgLine(g, 'line')}</td><td class="n">${avgLine(g, 'fair')}</td><td class="n">${avgLine(g, 'total')}</td><td class="n ${cls(gp)}">${sgn(gp, 2)}</td><td class="n ${cls(gp)}">${sgn(gp / g.length * 100, 1)}%</td></tr>`;
   }
   if (n) h += `<tr><td><b>All</b></td><td class="n"><b>${n}</b></td><td class="n"><b>${w}</b></td><td class="n"><b>${pct(w / n)}</b></td><td class="n"><b>${pct(long(bets) / n)}</b></td><td class="n"><b>${avgLine(bets, 'line')}</b></td><td class="n"><b>${avgLine(bets, 'fair')}</b></td><td class="n"><b>${avgLine(bets, 'total')}</b></td><td class="n ${cls(pl)}"><b>${sgn(pl, 2)}</b></td><td class="n ${cls(pl)}"><b>${sgn(pl / n * 100, 1)}%</b></td></tr>`;
   h += '</tbody></table></div>';
@@ -862,7 +870,7 @@ document.addEventListener('click', e => {
 // settled live picks per market
 function rulesBox(){
   const H = DATA.hcap || {edge: 0.2, min_line: 5.5, fav_max: 15.5}, ec = ((DATA.even_cut || 0.096) * 100).toFixed(1), uc = ((DATA.uneven_cut || 0.122) * 100).toFixed(1);
-  const li = (t, d) => `<li>${t} <span class="muted">(${d})</span></li>`;
+  const li = (t, d) => `<li>${t}</li>`;   // no dates in the rules (user, 26 Nov 2026); d kept in the source as a record
   return `<div style="border:1px solid var(--line);border-radius:12px;padding:16px 20px;margin:8px 0 28px">
   <h3 style="margin-top:0">The rules</h3>
   <p style="margin:10px 0 4px"><b>Every pick</b></p><ul style="margin:0 0 8px;padding-left:20px">
@@ -871,7 +879,7 @@ function rulesBox(){
   ${li('No picks in March, April or October', '20 Nov')}
   ${li('Logged before the first serve, equal stakes; a pick that no longer fits the rules is dropped before its start and moved to the shadow test', '22 Nov, 25 Nov')}</ul>
   <p style="margin:10px 0 4px"><b>Totals: the over on a low line</b></p><ul style="margin:0 0 8px;padding-left:20px">
-  ${li(`Line ${DATA.min_line}.5 to ${DATA.low - 0.5}, model chance ${DATA.min_chance * 100}%+, edge ${DATA.edge * 100}%+`, '20 Nov')}
+  ${li(`Line ${DATA.min_line}.5 to ${DATA.low - 0.5}, model chance ${DATA.min_chance * 100}%+, edge ${DATA.edge * 100}%+`, '20 Nov, 26 Nov')}
   ${li(`Not in <b>not competitive</b> leagues (average spread over earlier seasons ${uc}+ points)`, '25 Nov')}
   ${li(`The ${Object.keys(PLG).length} Live test leagues; the original ${DATA.leagues.length} because backing every low-line over without the model lost 3% or less in past seasons`, '7 Nov, 25 Nov')}</ul>
   <p style="margin:10px 0 4px"><b>Points handicap</b></p><ul style="margin:0 0 8px;padding-left:20px">
@@ -881,7 +889,7 @@ function rulesBox(){
   ${li(`The ${Object.keys(PLG).length} Live test leagues and ${((DATA.hcapx || {}).leagues || []).length} handicap-only leagues`, '22 Nov')}</ul>
   <p style="margin:10px 0 4px"><b>Shown, not bet</b></p><ul style="margin:0;padding-left:20px">
   ${li('The Match winner pill and any positive edge on a match page that is not a pick', '22–25 Nov')}
-  ${li('The shadow test: overs in not competitive leagues and handicap picks under 10.5 points in competitive ones, logged and settled but outside the record', '25 Nov, 26 Nov')}</ul></div>`;
+  ${li('The shadow test: overs in not competitive leagues and handicap picks under 10.5 points in competitive ones, logged and settled but outside the record; the earlier overs with an edge under 20% were moved there too', '25 Nov, 26 Nov')}</ul></div>`;
 }
 
 function renderMethod(){
@@ -1032,7 +1040,11 @@ function renderHcap(part){   // 'live': on Live test; 'bt': on Backtest (merged 
     if (!hside) h += T('Underdog or favourite', 'The side backed: taking the points or giving them.', pair('side'), 'Side');
     // only the side whose pill is on (user, 26 Nov 2026); each band says where the rule skips it
     const sz = B.open.size.flatMap(c => [['dog', 'underdog'], ['fav', 'favourite']].filter(([k]) => !hside || hside === k).map(([k, w]) => [Object.assign({}, c[k], {label: `${c.label} pts${hside ? '' : ' · ' + w}`, side: k, lo: parseFloat(c.label)}), null]));
-    const skip = c => c.lo < 0 ? '' : c.lo < H.min_line ? ' <span class="muted">(skipped)</span>' : c.lo < HCAP_COMP || (c.side === 'fav' && c.lo >= H.fav_max) ? ' <span class="muted">(skipped in competitive leagues)</span>' : '';
+    if (hside && B.open.size_grp)                 // each size split by league group (user, 26 Nov 2026)
+      sz.splice(0, sz.length, ...B.open.size_grp.flatMap(c => [['comp', 'competitive'], ['nc', 'not competitive']].map(([g, w]) =>
+        [Object.assign({}, c[g][hside], {label: `${c.label} pts · ${w}`, side: hside, lo: parseFloat(c.label), grp: g}), null])));
+    const skip = c => c.grp ? (c.lo < H.min_line || (c.grp === 'comp' && (c.lo < HCAP_COMP || (c.side === 'fav' && c.lo >= H.fav_max))) ? ' <span class="muted">(skipped)</span>' : '')
+      : c.lo < 0 ? '' : c.lo < H.min_line ? ' <span class="muted">(skipped)</span>' : c.lo < HCAP_COMP || (c.side === 'fav' && c.lo >= H.fav_max) ? ' <span class="muted">(skipped in competitive leagues)</span>' : '';
     h += T('By the size of the handicap', `${hside ? (hside === 'fav' ? 'Favourites' : 'Underdogs') + ' with' : 'Bets with'} an edge of ${H.edge * 100}% or more, by the market handicap, every league counted. Handicaps under ${H.min_line} points are never bet; in competitive leagues (and leagues with fewer than 2 earlier seasons) handicaps under ${HCAP_COMP} are skipped${hside === 'dog' ? '' : `, and so are favourites giving ${H.fav_max} or more`}. Not competitive leagues bet every size from ${H.min_line}.`, sz.map(([c, o]) => [Object.assign({}, c, {label: c.label + skip(c)}), o]), 'Market handicap');
     if (B.calibration_all){
         const A = B.calibration_all, L = B.luck;
