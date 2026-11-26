@@ -266,7 +266,7 @@ a.gm{color:inherit;text-decoration:none} a.gm:hover{color:var(--gold);text-decor
 <p>Explainer: <a href="/volleyball/research/how-totals-work/">why a volleyball total is really about sets</a>.</p><p>Research note: <a href="/volleyball/research/close-matches/">close matches go under more often than the market expects</a>.</p>
 </section>
 </main>
-<script src="data.js?v=959533c9"></script>
+<script src="data.js?v=21699445"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -378,7 +378,7 @@ function homeTiles(){
   const avg = (d, f, fmt) => { const v = d.map(f).filter(x => x != null && !isNaN(x)); return v.length ? fmt(v.reduce((s, x) => s + x, 0) / v.length) : '–'; };
   const roiV = r => r.n ? `<span class="${cls(r.u)}">${sgn(r.u / r.n * 100, 1)}%</span>` : '–';
   const oLink = (n, l, href) => `<a href="${href}" style="color:inherit">${n} ${l}</a>`;   // each kind links to its own open picks (user, 26 Nov 2026)
-  const oFirst = nOpen ? '#view=picks&to=topen' : nh ? '#view=picks&m=hcap&to=hopen' : nm ? '#view=picks&m=ml&to=mlopen' : '#view=picks';
+  const oFirst = '#view=picks';   // the tile's own link opens every kind's open picks (user, 27 Nov 2026)
   let h = `<div class="metrics"><div class="metric"><div class="lbl"><a href="${oFirst}" style="color:inherit">Open picks</a></div><div class="big"><a href="${oFirst}" style="color:inherit;text-decoration:none">${nOpen + nh + nm}</a></div>`
     + `<div class="sm">${nOpen + nh + nm ? `${oLink(nOpen, 'totals', '#view=picks&to=topen')} · ${oLink(nh, 'handicap', '#view=picks&m=hcap&to=hopen')} · ${oLink(nm, 'winner', '#view=picks&m=ml&to=mlopen')}` : 'none right now'}</div></div>`
     + tile('Record', `${a.w}–${a.n - a.w}`, a.n ? `${(a.w / a.n * 100).toFixed(1)}% won, all picks →` : '0 picks →', '#view=picks&to=settled')   // clickable (user, 26 Nov 2026)
