@@ -267,7 +267,7 @@ a.gm{color:inherit;text-decoration:none} a.gm:hover{color:var(--gold);text-decor
 <p>Explainer: <a href="/volleyball/research/how-totals-work/">why a volleyball total is really about sets</a>.</p><p>Research note: <a href="/volleyball/research/close-matches/">close matches go under more often than the market expects</a>.</p>
 </section>
 </main>
-<script src="data.js?v=74086a2a"></script>
+<script src="data.js?v=a1c1cbc1"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -332,7 +332,15 @@ const liveNames = () => [true, false].map(w => DATA.leagues.filter(l => l.live &
   .map(a => `${andList(a.map(l => l.country))} (${sexOf(a[0])})`).join(', ');
 const one = () => lg === 'all' ? DATA.leagues[0].key : lg;      // tabs that show one league at a time
 
-const setSub = () => { $('sub').textContent = `${view === 'backtest' ? Object.keys(BLG).filter(hasPast).length + ' backtested leagues' : (view === 'projections' ? Object.keys(PJLG).length : Object.keys(PLG).length) + ' leagues'}, women's and men's · ${DATA.season.replace('-','–')} · updated ${DATA.updated} (Athens)`; };   // Backtest counts its own leagues (25 Nov 2026)
+const setSub = () => {   // each Backtest tab counts its own leagues and says whose they are (user, 26 Nov 2026)
+  const H = ((DATA.hcap || {}).backtest || {}).by_side || {};
+  const keys = view !== 'backtest' ? (view === 'projections' ? Object.keys(PJLG) : Object.keys(PLG))
+    : market === 'ml' ? ((DATA.mlbt || {}).open || {leagues: []}).leagues.map(c => c.lg)
+    : market === 'hcap' && hside ? Object.keys((H[hside] || {}).by_league || {})
+    : Object.keys(BLG).filter(hasPast);
+  const w = keys.map(k => { const L = PLG[k] || BLG[k] || PJLG[k]; return L ? !!L.women : /women/.test(k); });
+  const sex = w.every(x => x) ? "women's" : w.every(x => !x) ? "men's" : "women's and men's";
+  $('sub').textContent = `${keys.length} ${view === 'backtest' ? 'backtested ' : ''}leagues, ${sex} · ${DATA.season.replace('-','–')} · updated ${DATA.updated} (Athens)`; };
 setSub();
 
 function renderProjections(){
@@ -918,7 +926,7 @@ function renderMethod(){
   <p>So since 26 November 2026: <b>competitive leagues</b> get the over, and underdogs from 10.5 points, no favourites (they made +16.2% on 156 bets there, against +25.0% on 404 in not competitive leagues); <b>not competitive leagues</b> get no overs, favourites of any size, and underdogs from ${DATA.hcap ? DATA.hcap.min_line : 5.5} points. Underdogs are bet in women's leagues only. Every favourite band that made more than 10% in the backtest is kept. Three and four groups were tried on 25–26 November and made no more; two groups are simpler. Bets logged earlier were moved in or out of the record to match. These choices were made on the same past seasons, so the skipped bets (overs in not competitive leagues; favourites, and underdogs under 10.5, in competitive ones) are followed live as a shadow test, at the bottom of each Live test pill. Each league's group is on its Season Ratings page.</p>
   ${leagueGroups()}
   <h3><span class="num">6</span>The leagues</h3>
-  <p>Live test has ${Object.keys(PLG).length} leagues: the ${DATA.leagues.length} where, on past seasons, backing every low-line over without the model lost 3% or less, and ${DATA.test.leagues.length} more women's leagues bet with the same rules, most without a full backtest because they have lines from one source or on few games. Since 25 November 2026 their picks are part of Live test and its record, with the ${DATA.leagues.length} backtested leagues. Since the same day the Backtest tab covers them too, where past odds exist (leagues with no past odds are left out), so the backtest and the live record count the same leagues. Most of these leagues did worse in the past than the original ${DATA.leagues.length}, which lowers the totals backtest. ${((DATA.hcapx || {}).leagues || []).length} more leagues make handicap picks only, on their own record: they passed the handicap backtest at the opening and the closing line. Kazakhstan's National League (M) joined them on 26 November 2026 on trial: its past prices cover one season only (favourites +44% on 37 bets). The Match winner pill follows the handicap picks that back the favourite on the match winner instead, for comparison only.</p>
+  <p>Live test has ${Object.keys(PLG).length} leagues: the ${DATA.leagues.length} where, on past seasons, backing every low-line over without the model lost 3% or less, and ${DATA.test.leagues.length} more women's leagues bet with the same rules, most without a full backtest because they have lines from one source or on few games. Since 25 November 2026 their picks are part of Live test and its record, with the ${DATA.leagues.length} backtested leagues. Since the same day the Backtest tab covers them too, where past odds exist (leagues with no past odds are left out), so the backtest and the live record count the same leagues. Most of these leagues did worse in the past than the original ${DATA.leagues.length}, which lowers the totals backtest. ${((DATA.hcapx || {}).leagues || []).length} more leagues make handicap picks only, on their own record: they passed the handicap backtest at the opening and the closing line. On 26 November 2026 the competitive men's leagues among them (Portugal, Finland, Poland, Germany, Switzerland, Czech Republic, Spain, and Kazakhstan, added the same day) were removed: with no favourites in competitive leagues and underdogs in women's leagues only, they had no picks left. The Match winner pill follows the handicap picks that back the favourite on the match winner instead, for comparison only.</p>
   <h3><span class="num">7</span>What it cannot see</h3>
   <p>No news: injuries, transfers and rested players are invisible to it. Top teams rotate in Champions League and cup weeks, so those matches can be flagged by hand and the pick held back.</p>
   ${worked()}</div>`;
