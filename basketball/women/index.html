@@ -245,7 +245,7 @@ a.tile:hover{border-color:var(--gold)}
 <p>1H live test records the first-half picks and 1H backtest covers past seasons. Live test records the full-game picks, taken at the opening line, Backtest covers 2021–22 to 2025–26, and Projections shows the next 7 days. A game's line is the median of the main market lines.</p>
 </section>
 </main>
-<script src="data.js?v=w118"></script>
+<script src="data.js?v=w119"></script>
 <script src="live.js"></script>
 <script>
 const $ = id => document.getElementById(id);
@@ -362,7 +362,7 @@ function renderH1Bt(){
   if (!D || !D.picks.length) return '<p class="empty">No 1H backtest yet.</p>';
   const P = D.picks, sk = k => D[k] || [], [g0] = H1GP();
   const gb = (L, lo, hi) => L.filter(x => x.g0 >= lo && x.g0 < hi);
-  let h = `<h2>By points over the line</h2>` + h1Table('Model 1H − line', [
+  let h = calTable(P, 'The chance: Model 1H against the opening first-half line, with each league’s first-half spread.') + `<h2>By points over the line</h2>` + h1Table('Model 1H − line', [
       [`Under 2${SKIPPED}`, gb(sk('skipped_gap'), -99, 2)], [`2 to 3${SKIPPED}`, gb(sk('skipped_gap'), 2, 3)], ['3 to 4', gb(P, 3, 4)], ['4 to 5', gb(P, 4, 5)], ['5 or more', gb(P, 5, 999)]],
     `The rule: Model 1H, rebuilt before each game from earlier first halves only, minus the opening first-half line. Picks need ${D.gap} points or more, on .5 lines, regular season, both teams ${g0}+ games in, in the ${LIVE.leagues.length} full-game leagues${H1LGS()}, 2022–23 to 2025–26. Settled on first-half points. The rows marked skipped are the first halves that met every other rule but sat closer to the line.`);
   h += `<h2>By line</h2>` + h1Table('Opening line', LBANDS(thirds(P)).map(([label, lo, hi]) => [label, P.filter(x => x.line >= lo && x.line < hi)]), 'The opening first-half line in three bands with about a third of the picks each.');
@@ -480,7 +480,7 @@ function h1Tables(list){
   const row = (label, g) => g.length ? grp(label, stat(g), '', btCells(g)) : '';
   const T = (title, first, body, note='') => `<h2>${title}</h2>${note ? `<p class="note">${note}</p>` : ''}<div class="scroll"><table style="max-width:1100px">${GHEAD(first, HEAD)}<tbody>${body}</tbody></table></div>`;
   const band = (bands, key) => bands.map(([label, lo, hi]) => row(label, L.filter(x => x[key] != null && x[key] >= lo && x[key] < hi))).join('');
-  let h = T('By line', '1H line', band([['Under 70', 0, 70], ['70 to 74.5', 70, 75], ['75 or more', 75, 999]], 'line'), 'Settled 1H picks. With few picks these tables say little. Line averages over the picks with a closing 1H line.');
+  let h = calTable(L, 'Settled 1H picks, at the chance logged with each pick (Model 1H against the line, with the league’s first-half spread). With few picks this says little yet.') + T('By line', '1H line', band([['Under 70', 0, 70], ['70 to 74.5', 70, 75], ['75 or more', 75, 999]], 'line'), 'Settled 1H picks. With few picks these tables say little. Line averages over the picks with a closing 1H line.');
   h += T('By league', 'League', lgKeys(L).map(k => { const r = L.filter(b => b.lg === k); return r.length ? row(lgShort(k) + X1M(k), r) : `<tr><td>${lgShort(k)}${X1M(k)}</td><td class="n muted" colspan="7" style="text-align:left">No settled 1H picks yet</td></tr>`; }).join(''));
   const mos = [...new Set(L.map(b => b.dt.slice(0, 7)))].sort();
   h += T('By month', 'Month', mos.map(m => row(new Date(m + '-15T12:00:00').toLocaleDateString('en-GB', {month: 'long', year: 'numeric'}), L.filter(b => b.dt.slice(0, 7) === m))).join(''));
@@ -620,8 +620,22 @@ const GPNOTE = 'How many games each team had played that season before the game:
 const NB = 4;   // four bands: of 2 to 8, the one whose band results repeated best between 2021–23 and 2024–26 (11 Nov 2026)
 
 
+// Calibration (26 Nov 2026, user): each pick's model chance of the over against how often those picks won; at the top of every results tab
+function calTable(list, note){
+  const pv = b => b.p != null ? b.p : (b.edge != null && b.px ? (1 + b.edge) / b.px : null);
+  const S = list.filter(b => b.ret != null && b.ret !== 0 && pv(b) != null);
+  if (!S.length) return '';
+  const pct = v => `${(v * 100).toFixed(1)}%`;
+  const sg = (v, u) => `<td class="n ${v > 0.0005 ? 'pos' : v < -0.0005 ? 'neg' : ''}">${v > 0.0005 ? '+' : v < -0.0005 ? '−' : ''}${Math.abs(v * 100).toFixed(1)}${u}</td>`;
+  const row = (label, g, cls = '') => { if (!g.length) return '';
+    const c = g.reduce((a, b) => a + pv(b), 0) / g.length, w = g.filter(b => b.ret > 0).length / g.length, r = g.reduce((a, b) => a + b.ret, 0) / g.length;
+    return `<tr${cls ? ` class="${cls}"` : ''}><td>${label}</td><td class="n">${g.length}</td><td class="n">${pct(c)}</td><td class="n">${pct(w)}</td>${sg(w - c, ' pts')}${sg(r, '%')}</tr>`; };
+  const B = [['Under 55%', 0, .55], ['55–60%', .55, .6], ['60–65%', .6, .65], ['65–70%', .65, .7], ['70% or more', .7, 2]];
+  const rows = B.map(([l, lo, hi]) => row(l, S.filter(b => pv(b) >= lo && pv(b) < hi))).join('') + row('All picks', S, 'sub tot');
+  return `<h2>Calibration</h2><p class="note">The model's chance of the over for each pick, against how often those picks won. A well-calibrated model's 60% picks win about 60% of the time. ${note || ''} The picks are chosen by the points gap, not by the chance; this table checks the chance itself.</p><div class="scroll"><table style="max-width:900px"><thead><tr><th>Model chance</th><th class="n">Picks</th><th class="n">Model said</th><th class="n">Won</th><th class="n">Won − model</th><th class="n">ROI</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+}
 function btBody(BT, S, pool, leagues){
-  let h = '';                                                 // no Calibration since 21 Nov 2026 (user): the chance does not rank the picks; the points gap leads
+  let h = calTable(BT, 'Each season’s chances come from weights learned on earlier seasons only.');   // Calibration back on top (26 Nov 2026, user)
   // the 4-point rule (21 Nov 2026, on request): projected total minus the opening line, the picks and the games the rule skips
   const SG = skipped('skipped_gap'), gb = (L, lo, hi) => L.filter(x => x.g0 != null && x.g0 >= lo && x.g0 < hi);
   h += `<h2>By points over the line</h2>` + btTable('Projected total − line', [
@@ -697,7 +711,7 @@ function renderProjections(){
 function liveTables(L){
   // the Backtest tab's tables for the settled live picks
   const band = (list, bands, key) => bands.map(([label, lo, hi]) => [label, list.filter(x => x[key] != null && x[key] >= lo && x[key] < hi)]);
-  let h = '';                                                 // no Calibration since 21 Nov 2026 (user)
+  let h = calTable(L, 'Settled live picks, at the chance logged with each pick. With few picks this says little yet.');   // Calibration (26 Nov 2026, user)
   h += `<h2>By points over the line</h2>` + btTable('Projected total − line', band(L.map(b => ({...b, gp_: GAP(b)})), [['4 to 6', 4, 6], ['6 or more', 6, 999]], 'gp_'));
   h += `<h2>By line</h2>` + btTable('Opening line', band(L, LBANDS(thirds(DATA.bets)), 'line'),
     'Settled live picks, the same bands as the Backtest tab. With few picks these tables say little; they show whether the live picks behave like the backtest.');
