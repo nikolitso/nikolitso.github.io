@@ -267,7 +267,7 @@ a.gm{color:inherit;text-decoration:none} a.gm:hover{color:var(--gold);text-decor
 <p>Explainer: <a href="/volleyball/research/how-totals-work/">why a volleyball total is really about sets</a>.</p><p>Research note: <a href="/volleyball/research/close-matches/">close matches go under more often than the market expects</a>.</p>
 </section>
 </main>
-<script src="data.js?v=0555561e"></script>
+<script src="data.js?v=c84927d7"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -903,7 +903,7 @@ function rulesBox(){
   ${li(`The ${Object.keys(PLG).length} Live test leagues and ${((DATA.hcapx || {}).leagues || []).length} handicap-only leagues`, '22 Nov')}</ul>
   <p style="margin:10px 0 4px"><b>Shown, not bet</b></p><ul style="margin:0;padding-left:20px">
   ${li('The Match winner pill and any positive edge on a match page that is not a pick', '22–25 Nov')}
-  ${li(`Match winner backtest (Backtest tab, not bet): the market favourite in <b>not competitive</b> women's leagues only, price ${((DATA.mlbt || {}).min_px || 1.3).toFixed(2)}+, model chance ${((DATA.mlbt || {}).min_p || .65) * 100}%+, edge ${((DATA.mlbt || {}).edge || .1) * 100}%+, every month`, '26 Nov')}
+  ${li(`Match winner backtest (Backtest tab, not bet): the market favourite in <b>not competitive</b> women's leagues only, price above ${((DATA.mlbt || {}).min_px || 1.3).toFixed(2)}, model chance ${((DATA.mlbt || {}).min_p || .65) * 100}%+, edge ${((DATA.mlbt || {}).edge || .1) * 100}%+, every month; followed live as a shadow log (Live test, Match winner), outside every record`, '26 Nov')}
   ${li('The shadow test: overs in not competitive leagues, and in competitive ones favourites and underdogs under 10.5 points, logged and settled but outside the record; the earlier overs with an edge under 15% were moved there too', '25 Nov, 26 Nov')}</ul></div>`;
 }
 
@@ -1222,6 +1222,25 @@ function hcapExtra(){
 
 // Women Leagues test, Match winner pill (user, 22 Nov 2026): the handicap picks that back the favourite (giving points),
 // followed on the match winner instead, for comparison; not a separate rule
+// the match winner shadow log (user, 26 Nov 2026): the backtest's rule logged live before the first serve and settled,
+// outside every record, to see whether it holds on games it was never tuned on
+function mlShadow(){
+  const L = (DATA.mlshadow || []).filter(inLg), done = L.filter(p => 'won' in p), open = L.filter(p => !('won' in p)).sort((a, b) => a.dt.localeCompare(b.dt));
+  const n = done.length, w = done.filter(p => p.won).length, u = done.reduce((s, p) => s + p.profit, 0);
+  const lgLine = p => `<div class="muted" style="font-size:14px">${PLG[p.lg] ? PLG[p.lg].country + ' · ' + PLG[p.lg].name : ''}</div>`;
+  const R = DATA.mlbt || {};
+  let h = `<h2>Match winner: shadow log</h2><div class="metrics"><div class="metric"><div class="lbl">Record</div><div class="big">${w}–${n - w}</div><div class="sm">${n ? pct(w / n) + ' won' : 'none settled yet'}</div></div>`
+    + `<div class="metric"><div class="lbl">ROI</div><div class="big"><span class="${cls(u)}">${n ? sgn(u / n * 100, 1) + '%' : '–'}</span></div><div class="sm">${n ? sgn(u, 2) + ' units' : '1 unit a bet'}</div></div>`
+    + `<div class="metric"><div class="lbl">Open</div><div class="big">${open.length}</div><div class="sm">logged, not started</div></div></div>`;
+  h += `<p class="note">The Match winner backtest rule, followed live since 26 Nov 2026: in not competitive women’s leagues, the market favourite at a price above ${(R.min_px || 1.3).toFixed(2)}, when the model gives it ${(R.min_p || .65) * 100}% or more and an edge of ${(R.edge || .1) * 100}% or more. Logged before the first serve at the first price it qualifies at, which then stays; dropped if it stops qualifying before the start. Settled on who wins, 1 unit a bet, outside every record.</p>`;
+  if (open.length) h += `<h3>Open</h3><div class="scroll"><table><thead><tr><th>Date</th><th>Match</th><th>Backing</th><th class="n">Price</th><th class="n">Price now</th><th class="n">Model</th><th class="n">Edge</th></tr></thead><tbody>`
+    + open.map(p => `<tr><td>${short(p.dt)} ${p.dt.slice(11)}</td><td class="wr">${p.home} – ${p.away}${lgLine(p)}</td><td>${p.team}</td><td class="n">${p.px.toFixed(2)}</td><td class="n">${p.px_now.toFixed(2)}</td><td class="n">${pct(p.p)}</td><td class="n">${sgn(p.edge * 100, 1)}%</td></tr>`).join('') + '</tbody></table></div>';
+  if (done.length) h += `<h3>Settled</h3><div class="scroll"><table><thead><tr><th>Date</th><th>Match</th><th>Backing</th><th class="n">Price</th><th class="n">Sets</th><th class="n">Result</th><th class="n">Profit</th></tr></thead><tbody>`
+    + done.map(p => `<tr><td>${short(p.dt)}</td><td class="wr">${p.home} – ${p.away}${lgLine(p)}</td><td>${p.team}</td><td class="n">${p.px.toFixed(2)}</td><td class="n">${p.sets.replace('-', '–')}</td><td class="n ${cls(p.profit)}">${p.won ? 'Won' : 'Lost'}</td><td class="n ${cls(p.profit)}">${sgn(p.profit, 2)}</td></tr>`).join('') + '</tbody></table></div>';
+  if (!L.length) h += '<p class="empty">Nothing logged yet. A bet appears here once a game fits the rule.</p>';
+  return h;
+}
+
 function wtestML(){
   const T = DATA.test, TL = Object.fromEntries(T.leagues.map(l => [l.key, l]));
   const P = ((DATA.hcap || {}).picks || []).filter(inLg).filter(p => p.line < 0);   // live and test leagues (25 Nov 2026)
@@ -1273,7 +1292,7 @@ const RENDER = {home: renderHome, projections: renderProjections, picks: renderP
 // Live test and Backtest each carry the totals first, then the points handicap, with separate records (user, 22 Nov 2026)
 const SEC = (id, t) => `<h2 id="${id}" style="margin-top:56px;font-size:34px;border-top:1px solid var(--line);padding-top:28px">${t}</h2>`;
 const _picks = RENDER.picks, _bt = RENDER.backtest;
-RENDER.picks = () => market === 'hcap' ? renderHcap('live') + (lg === 'all' ? hcapExtra() : '') + (hside ? shadowSection(hside) : shadowSection('fav') + shadowSection('dog')) : market === 'ml' ? wtestML() : _picks() + shadowSection('over');
+RENDER.picks = () => market === 'hcap' ? renderHcap('live') + (lg === 'all' ? hcapExtra() : '') + (hside ? shadowSection(hside) : shadowSection('fav') + shadowSection('dog')) : market === 'ml' ? mlShadow() + wtestML() : _picks() + shadowSection('over');
 const _wt = RENDER.wtest;
 RENDER.wtest = () => market === 'hcap' ? wtestHcap() : market === 'ml' ? wtestML() : _wt();
 const _lgs = RENDER.leagues;
@@ -1296,7 +1315,7 @@ function mlBacktest(){
   const cal = rows => `<h2>Calibration</h2><p class="note">Is the model's win chance right? The same bets by the model's chance: what it said, what the market said with the margin taken out, and how often the side actually won. Gap is actual minus model, in percentage points; negative means the model was too confident.</p><div class="scroll"><table style="max-width:900px"><thead><tr><th>Model chance</th><th class="n">Bets</th><th class="n">Model said</th><th class="n">Market no-vig</th><th class="n">Actual</th><th class="n">Gap</th><th class="n">ROI</th></tr></thead><tbody>`
     + rows.filter(c => c.n).map(c => `<tr><td>${c.label}</td><td class="n">${c.n}</td><td class="n">${pct(c.p)}</td><td class="n">${pct(c.mkt)}</td><td class="n">${pct(wr(c))}</td><td class="n ${cls(wr(c) - c.p)}">${sgn((wr(c) - c.p) * 100, 1)}</td><td class="n ${cls(c.roi)}">${sgn(c.roi * 100, 1)}%</td></tr>`).join('') + '</tbody></table></div>';
   let h = `<h2>Match winner: the backtest</h2><div class="metrics">${tl.map(([l, v, x]) => `<div class="metric"><div class="lbl">${l}</div><div class="big">${v}</div><div class="sm">${x}</div></div>`).join('')}</div>`;   // women's leagues only (user, 26 Nov 2026): no women/men table
-  h += `<p class="note">${M.games.toLocaleString('en-US')} past games of the Live test leagues with match winner prices, regular season, both teams ${DATA.min_games}+ games, every month. Each match is projected from earlier matches only; in not competitive women's leagues only (each season graded by the league's earlier seasons), the market favourite, at a price of ${(M.min_px || 1).toFixed(2)} or more, is backed when the model gives it ${(M.min_p || .5) * 100}% or more and its win chance × the average price is at least ${M.edge * 100}% above 1, 1 unit a bet, at the opening price. These are the first rules; more filters will follow from the tables below. Games whose stored prices belong to the other side, and edges over 100% (the same price errors), are left out. Not bet live: the Match winner pill on Live test only follows the handicap picks.</p>`;
+  h += `<p class="note">${M.games.toLocaleString('en-US')} past games of the Live test leagues with match winner prices, regular season, both teams ${DATA.min_games}+ games, every month. Each match is projected from earlier matches only; in not competitive women's leagues only (each season graded by the league's earlier seasons), the market favourite, at a price above ${(M.min_px || 1).toFixed(2)}, is backed when the model gives it ${(M.min_p || .5) * 100}% or more and its win chance × the average price is at least ${M.edge * 100}% above 1, 1 unit a bet, at the opening price. These are the first rules; more filters will follow from the tables below. Games whose stored prices belong to the other side, and edges over 100% (the same price errors), are left out. Not bet live: the Match winner pill on Live test only follows the handicap picks.</p>`;
   const lgName = c => { const L = PLG[c.lg] || BLG[c.lg]; return Object.assign({}, c, {label: L ? `${L.country} <span class="muted">${L.name} ${sexAb(L)}</span>` : c.label}); };
   h += T('By league', '', B.leagues.map(lgName), 'League');
   h += T('Home or away', 'The favourite backed, playing at home or away.', B.venue, 'Side');
