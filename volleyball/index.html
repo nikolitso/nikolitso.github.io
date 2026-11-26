@@ -267,7 +267,7 @@ a.gm{color:inherit;text-decoration:none} a.gm:hover{color:var(--gold);text-decor
 <p>Explainer: <a href="/volleyball/research/how-totals-work/">why a volleyball total is really about sets</a>.</p><p>Research note: <a href="/volleyball/research/close-matches/">close matches go under more often than the market expects</a>.</p>
 </section>
 </main>
-<script src="data.js?v=b76509ea"></script>
+<script src="data.js?v=849ae3a2"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -414,6 +414,17 @@ function pickTiles(){
 }
 
 // the front page: the live record, the bet, how the leagues were chosen and what the backtest found. The tables stay in their tabs
+// the match winner shadow log on Home (user, 26 Nov 2026): its own row, outside the record
+function mlHomeRow(){
+  const L = DATA.mlshadow || [], d = L.filter(p => 'won' in p), o = L.filter(p => !('won' in p));
+  const n = d.length, w = d.filter(p => p.won).length, u = d.reduce((s, p) => s + p.profit, 0);
+  const t = (l, v, x) => `<a class="metric" href="#view=picks&m=ml"><div class="lbl">${l}</div><div class="big">${v}</div><div class="sm">${x}</div></a>`;
+  return `<h3 style="margin:22px 0 8px"><a class="gm" href="#view=picks&m=ml">Match winner</a> <span class="muted" style="font-size:14px">shadow log, outside the record</span></h3><div class="metrics">`
+    + t('Open picks', o.length, o.length ? o.map(p => p.team).slice(0, 3).join(', ') + (o.length > 3 ? '…' : '') : 'none right now')
+    + t('Record', `${w}–${n - w}`, n ? pct(w / n) + ' won' : 'none settled yet')
+    + t('ROI', n ? `<span class="${cls(u)}">${sgn(u / n * 100, 1)}%</span>` : '–', n ? sgn(u, 2) + ' units' : '1 unit a bet') + '</div>';
+}
+
 function renderHome(){
   // three kinds of bet (user, 25 Nov 2026): the over on a low total, the handicap favourite, the handicap underdog
   const B = DATA.backtest, A = B.all, H = DATA.hcap || {}, HB = H.backtest || {}, side = k => ((HB.by_side || {})[k] || {}).open || {};
@@ -428,7 +439,7 @@ function renderHome(){
   const best = Object.values(BLG).map(l => ({l, s: B.leagues[l.key]})).filter(x => x.s && x.s.n).sort((a, b) => b.s.roi - a.s.roi)
     .map(({l, s}) => `${chipName(l)} ${sgn(s.roi * 100, 1)}% (${s.n})`).join(', ');
   const r = x => x && x.n ? `<b>${sgn(x.roi * 100, 1)}%</b> on ${x.n.toLocaleString('en-US')} bets` : 'no bets';
-  return homeTiles() + `<div class="doc">
+  return homeTiles() + mlHomeRow() + `<div class="doc">
   <h2>Do the picks make a profit?</h2>
   <p>In the backtest, yes: from ${B.first.slice(0, 4)}–${B.first.slice(7, 9) || (+B.first.slice(2, 4) + 1)} to 2025–26 the over on a low total returned ${r(A)}, handicap favourites ${r(fav)} and handicap underdogs ${r(dog)}. Treat those figures as optimistic: the rules, including where each bet is made, were chosen on these same seasons. The ${DATA.season.replace('-', '–')} record above, logged before every first serve, is the real test.</p>
   <h3><span class="num">1</span>Three kinds of bet</h3>
@@ -456,7 +467,7 @@ function hOpenTop(){
   const o = hOpen();
   if (!o.length) return '';
   return `<h2>Open handicap picks</h2><div class="scroll"><table class="sortable" style="max-width:900px"><thead><tr><th>Date</th>${lg === 'all' ? '<th>League</th>' : ''}<th>Match</th><th>Pick</th><th class="n">Price</th><th class="n">Model handicap</th><th class="n">Edge</th></tr></thead><tbody>`
-    + o.map(p => `<tr><td>${short(p.dt)} ${p.dt.slice(11)}</td>${lg === 'all' ? `<td>${hLgName(p)}${compOf(p.lg) ? `<div style="margin-top:3px">${compBadge(p.lg).replace('margin-left:8px', 'margin-left:0')}</div>` : ''}</td>` : ''}<td class="wr">${gameLink(p)}</td><td><b>${hLabel(p.team, p.line)}</b></td><td class="n">${p.px.toFixed(2)}</td><td class="n">${p.hcap != null ? hLabel('', p.side === 'home' ? p.hcap : -p.hcap).trim() : '–'}</td><td class="n ${cls(hE(p))}">${sgn(hE(p) * 100, 0)}%</td></tr>`).join('')
+    + o.map(p => `<tr><td>${short(p.dt)} ${p.dt.slice(11)}</td>${lg === 'all' ? `<td>${hLgName(p)}</td>` : ''}<td class="wr">${gameLink(p)}</td><td><b>${hLabel(p.team, p.line)}</b></td><td class="n">${p.px.toFixed(2)}</td><td class="n">${p.hcap != null ? hLabel('', p.side === 'home' ? p.hcap : -p.hcap).trim() : '–'}</td><td class="n ${cls(hE(p))}">${sgn(hE(p) * 100, 0)}%</td></tr>`).join('')
     + `</tbody></table></div><p class="note"><a href="#view=picks&m=hcap&to=hopen">The handicap record and its settled picks →</a></p>`;
 }
 
@@ -509,7 +520,7 @@ const compOf = k => { const E_ = (DATA.evenness || {})[k]; if (!E_ || E_.n < 2) 
 const compBadge = k => { const c = compOf(k); if (!c) return '';
   const col = c === 'competitive' ? 'var(--an-accent)' : 'var(--an-warning)';
   return `<span style="display:inline-block;font:600 11px var(--an-body);letter-spacing:.06em;text-transform:uppercase;color:${col};border:1px solid ${col};border-radius:999px;padding:1px 8px;margin-left:8px;vertical-align:2px;white-space:nowrap">${c}</span>`; };
-const compTag = k => compBadge(k);
+const compTag = k => '';   // no competitiveness label in the pick tables (user, 26 Nov 2026)
 
 // Backtest (user, 25 Nov 2026): the three kinds of bet by league competitiveness, past ROI, from data/comp_grid.json
 // the shadow test (user, 25 Nov 2026): the bets the 25 Nov changes skip, logged and settled live, outside the record
@@ -1243,7 +1254,7 @@ function mlShadow(){
 
 function wtestML(){
   const T = DATA.test, TL = Object.fromEntries(T.leagues.map(l => [l.key, l]));
-  const P = ((DATA.hcap || {}).picks || []).filter(inLg).filter(p => p.line < 0);   // live and test leagues (25 Nov 2026)
+  const P = ((DATA.hcap || {}).picks || []).filter(inLg).filter(p => p.line < 0).filter(p => p.ml_px > ((DATA.mlbt || {}).min_px || 1.3) + 1e-9);   // live and test leagues (25 Nov 2026); price above 1.30 only (user, 26 Nov 2026)
   const won = p => { const [a, b] = p.sets.split('-').map(Number); return (a > b) === (p.side === 'home'); };
   const done = P.filter(p => 'won' in p && p.ml_px), open = P.filter(p => !('won' in p)).sort((a, b) => a.dt.localeCompare(b.dt));
   const n = done.length, w = done.filter(won).length, units = done.reduce((s, p) => s + (won(p) ? p.ml_px - 1 : -1), 0);
@@ -1271,7 +1282,7 @@ function wtestML(){
   else h += `<div class="scroll"><table><thead><tr><th>Date</th><th>Match</th><th>Favourite</th><th class="n">Market price</th><th class="n">Model price</th><th class="n">Market chance</th><th class="n">Model chance</th><th class="n">Sets</th><th class="n">Profit</th></tr></thead><tbody>`
     + done.slice().sort((a, b) => b.dt.localeCompare(a.dt)).map(p => { const wn = won(p), pr = wn ? p.ml_px - 1 : -1;
       return `<tr><td>${short(p.dt)}</td><td class="wr">${gameLink(p)}${lgLine(p)}</td><td>${p.team}</td><td class="n">${p.ml_px.toFixed(2)}</td><td class="n">${p.ml_p ? (1 / p.ml_p).toFixed(2) : '–'}</td><td class="n">${pc(p.ml_mkt)}</td><td class="n">${pc(p.ml_p)}</td><td class="n ${wn ? 'w' : 'l'}">${p.sets.replace('-', '–')}</td><td class="n ${cls(pr)}">${sgn(pr, 2)}</td></tr>`; }).join('') + '</tbody></table></div>';
-  return h + `<p class="note">The handicap picks above that back the favourite (giving points), followed on the match winner instead: the average match-winner price (Market price), the model's fair price (Model price = 1 ÷ its win chance), the market's chance with the margin taken out, and the model's win chance as shown on the game pages (league-corrected). Tracked for comparison only, not a separate bet rule; 1 unit a game at the price logged before the start. Underdog handicap picks are left out.</p>`;
+  return h + `<p class="note">The handicap picks above that back the favourite (giving points), followed on the match winner instead, when its price is above ${((DATA.mlbt || {}).min_px || 1.3).toFixed(2)}: the average match-winner price (Market price), the model's fair price (Model price = 1 ÷ its win chance), the market's chance with the margin taken out, and the model's win chance as shown on the game pages (league-corrected). Tracked for comparison only, not a separate bet rule; 1 unit a game at the price logged before the start. Underdog handicap picks are left out.</p>`;
 }
 
 // Women Leagues test open picks (totals and handicap) on the front page and Live test, kept apart from the live record
@@ -1324,7 +1335,7 @@ function mlBacktest(){
   h += T('By odds', 'The price of the side backed.', B.price, 'Odds');
   h += T('By games played', 'The fewer games either team had played that season before the match.', B.games, 'Games played');
   h += cal(B.chance);
-  h += T('By edge', 'The same bets in bands of about 90 to 100 bets each, by the edge the model sees.', B.edge, 'Edge');
+  h += T('By edge', 'The same bets by the edge the model sees.', B.edge, 'Edge');
   h += T('By model chance', 'The model\'s win chance for the side backed.', B.chance, 'Model chance');
   return h;
 }
