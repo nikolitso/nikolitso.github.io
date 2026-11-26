@@ -267,7 +267,7 @@ a.gm{color:inherit;text-decoration:none} a.gm:hover{color:var(--gold);text-decor
 <p>Explainer: <a href="/volleyball/research/how-totals-work/">why a volleyball total is really about sets</a>.</p><p>Research note: <a href="/volleyball/research/close-matches/">close matches go under more often than the market expects</a>.</p>
 </section>
 </main>
-<script src="data.js?v=141a2260"></script>
+<script src="data.js?v=4b5cd53f"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -521,14 +521,14 @@ function shadowSection(kind){
     + '</tbody></table></div>';
 }
 
-function compGrid(){
+function compTable(k){                   // one bet type by league competitiveness, two groups (user, 26 Nov 2026)
   const G = DATA.comp_grid; if (!G) return '';
-  const c = x => !x || !x.n ? '<td class="n muted">–</td>'
-    : x.bet === false ? `<td class="n" style="opacity:.75"><span class="${cls(x.roi)}">${sgn(x.roi * 100, 1)}%</span> <span style="font:600 11px var(--an-body);letter-spacing:.06em;text-transform:uppercase;color:var(--an-muted);border:1px solid var(--an-rule);border-radius:999px;padding:1px 7px;margin-left:4px">skipped</span><div class="muted" style="font-size:13px">${x.n} bets · shadow test</div></td>`
-    : `<td class="n"><span class="${cls(x.roi)}">${sgn(x.roi * 100, 1)}%</span><div class="muted" style="font-size:13px">${x.n} bets</div></td>`;
-  return `<h2>By league competitiveness</h2><div class="scroll"><table style="max-width:900px"><thead><tr><th>League</th><th class="n">Over, low totals</th><th class="n">Favourite</th><th class="n">Underdog</th></tr></thead><tbody>`
-    + G.rows.map(r => `<tr><td>${r.tier[0].toUpperCase() + r.tier.slice(1)}</td>${c(r.totals)}${c(r.fav)}${c(r.dog)}</tr>`).join('')
-    + `</tbody></table></div><p class="note">Past ROI at the opening line, ${G.first.slice(0, 4)}–${G.last.slice(-2)}, the Live test leagues. A league's competitiveness comes from its earlier seasons only (see How it works). Under each ROI: the number of bets. Since 25 November 2026 one cell is <b>skipped</b>, its past ROI still shown: the over in not competitive leagues. Everything else is bet. Its bets are still logged live as a <b>shadow test</b> (Live test, at the bottom of each pill), so the rules can be checked against the original ones on new games.</p>`;
+  const row = r => { const x = r[k] || {}, lab = r.tier[0].toUpperCase() + r.tier.slice(1) + (x.bet === false ? ' <span class="muted">(skipped)</span>' : '');
+    return !x.n ? `<tr><td>${lab}</td><td class="n">0</td><td class="n">–</td><td class="n">–</td><td class="n">–</td></tr>`
+      : `<tr><td>${lab}</td><td class="n">${x.n}</td><td class="n">${pct(x.w / x.n)}</td><td class="n ${cls(x.pl)}">${sgn(x.pl, 1)}</td><td class="n ${cls(x.roi)}">${sgn(x.roi * 100, 1)}%</td></tr>`; };
+  const what = k === 'totals' ? 'Overs under the live rule, competitive leagues and the skipped not competitive ones' : `${k === 'fav' ? 'Favourites' : 'Underdogs'} under the live rule: from 10.5 points in competitive leagues, from ${(DATA.hcap || {}).min_line || 5.5} in not competitive ones`;
+  return `<h2>By league competitiveness</h2><p class="note">${what}. Opening line, ${G.first.slice(0, 4)}–${G.last.slice(-2)}, the Live test leagues; a league's group comes from its earlier seasons only, and leagues with fewer than 2 earlier seasons count as competitive. Profit in units, 1 per bet.</p>`
+    + `<div class="scroll"><table style="max-width:720px"><thead><tr><th>League group</th><th class="n">Bets</th><th class="n">Hit</th><th class="n">Profit</th><th class="n">ROI</th></tr></thead><tbody>${G.rows.map(row).join('')}</tbody></table></div>`;
 }
 
 function evenTile(k){
@@ -634,7 +634,7 @@ function renderBacktest(){
       const s = B.leagues[l.key];
       h += `<tr class="srow" data-lg="${l.key}"><td><span class="caret">▸</span> ${l.country} <span class="muted">${l.name} ${sexAb(l)}</span></td>${hasPast(l.key) ? `<td class="n">${s.n}</td><td class="n">${s.n ? pct(s.w/s.n) : '–'}</td><td class="n ${cls(s.roi)}">${s.n ? sgn(s.roi * s.n, 2) : '–'}</td><td class="n ${cls(s.roi)}">${s.n ? sgn(s.roi*100, 1) + '%' : '–'}</td>` : '<td class="n muted" colspan="4">no past odds</td>'}</tr>`;
     }
-    h += '</tbody></table></div>' + testedTable();
+    h += '</tbody></table></div>' + compTable('totals') + testedTable();
     // the same bets by season, the live leagues together (the tuned-on season left out, as in the totals)
     const live = new Set(Object.values(BLG).filter(l => l.live).map(l => l.key)), by = {};
     for (const x of B.seasons.filter(x => live.has(x.lg) && !x.tuned)){
@@ -859,7 +859,6 @@ function rulesBox(){
   const li = (t, d) => `<li>${t} <span class="muted">(${d})</span></li>`;
   return `<div style="border:1px solid var(--line);border-radius:12px;padding:16px 20px;margin:8px 0 28px">
   <h3 style="margin-top:0">The rules</h3>
-  <p class="note" style="margin-top:-4px"><b>Frozen on 26 November 2026</b>, when the rules were written down again: no changes until each market has about 100 settled live picks, unless something is broken. Every rule below was chosen on the same past seasons, so the backtests run high; only the live record can show whether they work.</p>
   <p style="margin:10px 0 4px"><b>Every pick</b></p><ul style="margin:0 0 8px;padding-left:20px">
   ${li(`Both teams have played ${DATA.min_games}+ league games this season; ratings use this season only`, '7–8 Nov')}
   ${li('Regular season only: no playoffs, play-outs, placement games or finals', '7 Nov')}
@@ -1020,7 +1019,7 @@ function renderHcap(part){   // 'live': on Live test; 'bt': on Backtest (merged 
       + rows.map(([c, o]) => `<tr><td>${c.label}</td><td class="n">${c.n}</td><td class="n">${c.n ? pct(c.w / c.n) : '–'}</td><td class="n">${c.n ? c.px.toFixed(2) : '–'}</td><td class="n ${cls(c.pl)}">${c.n ? sgn(c.pl, 1) : '–'}</td><td class="n ${cls(c.roi)}">${c.n ? sgn(c.roi * 100, 1) + '%' : '–'}</td></tr>`).join('') + '</tbody></table></div>';
     const pair = k => B.open[k].map(c => [c, null]);   // opening line only (user, 25 Nov 2026)
     h += `<p class="note">${B.games.toLocaleString('en-US')} games with a points handicap in the Live test leagues that have past odds (the 8 backtested leagues and, since 25 Nov 2026, the women's leagues added to Live test), regular season, both teams ${DATA.min_games}+ games, no March, April or October. Each match is projected from earlier matches only. The side whose model chance × price is at least ${H.edge * 100}% above 1 is backed at the average price, 1 unit a bet; profit and ROI at the opening line and average price.</p>`;
-    if (lg === 'all') h += T('By league', '', B.open.leagues.map(c => [c, null]), 'League');
+    if (lg === 'all') h += T('By league', '', B.open.leagues.map(c => [c, null]), 'League') + (hside ? compTable(hside) : '');
     h += T('By season', '', pair('seasons'), 'Season');
     h += T('By edge', `Every bet with an edge of 5% or more on a handicap of ${H.min_line} points or more (in competitive leagues 10.5 or more, favourites up to 14.5). Bigger disagreements with the market win more often, so picks need ${H.edge * 100}% or more; the other tables count only those.`, pair('edge').map(([c, o]) => [Object.assign({}, c, {label: c.label + (parseFloat(c.label) < H.edge * 100 ? ' <span class="muted">(skipped)</span>' : '')}), o]), 'Edge');
     if (!hside) h += T('Underdog or favourite', 'The side backed: taking the points or giving them.', pair('side'), 'Side');
