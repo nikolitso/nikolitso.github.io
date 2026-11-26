@@ -7,7 +7,7 @@
 - [Explainer: how dominant the Big 4 are in the Greek Super League](https://antonisnikolitsopoulos.com/superleague/research/big-four/): against Olympiakos, PAOK, AEK and Panathinaikos the other clubs scored 23% fewer goals than their form predicted, in every season since 2019-20 (1,718 matches)
 - [Explainer: how accurate are football predictions?](https://antonisnikolitsopoulos.com/superleague/research/accuracy/): over 517 Greek Super League games the closing odds predicted results better than this site's model; its match-stat projections beat a league average; its picks are 38-17 but only 5 of 40 beat the closing price
 - [Greek Cup](https://antonisnikolitsopoulos.com/football/greek-cup/): results and match stats for every game
-- [Basketball, Greece and Cyprus](https://antonisnikolitsopoulos.com/basketball/): team strength, game projections and handicap margins
+- [Basketball, Greece and Cyprus](https://antonisnikolitsopoulos.com/basketball/greece/): team strength, game projections and handicap margins
 - [Basketball totals](https://antonisnikolitsopoulos.com/basketball/overs/): a totals model for 45 domestic leagues in Europe and Latin America
 - [Women's basketball totals](https://antonisnikolitsopoulos.com/basketball/women/): a totals model for 20 European leagues
 - [Volleyball](https://antonisnikolitsopoulos.com/volleyball/): sets and total points projections

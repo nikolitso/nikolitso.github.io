@@ -267,7 +267,7 @@ def cover_size(image):
 
 def layout(title, body, path, desc, image=None, active="books", full=None, ld=None, og_type="website"):
     full = full or (f"{title} — Antonis Nikolitsopoulos" if title != "Books" else "Books — Book takeaways by Antonis Nikolitsopoulos")
-    img = image if (image or "").startswith("http") else SITE + (image or ("/books.jpg" if active else "/og.png"))
+    img = image if (image or "").startswith("http") else SITE + (image or ("/books.jpg" if active else "/og.png?v=7"))
     # Social previews: a book page shows its cover; other pages the fixed banner, whose size is known.
     alt = f"Cover of {title}" if image else ("Books by Antonis Nikolitsopoulos" if active else "Antonis Nikolitsopoulos")
     dims = cover_size(image) if image else (1200, 675 if active else 630)
