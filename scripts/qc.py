@@ -34,6 +34,7 @@ SKIP_DIRS = {".git", ".claude", ".superpowers", "_bs", "node_modules", "__pycach
 WORDING = [
     (re.compile(r"\b\d+(?:\.\d+)? units?\b|\bunits?, peak to low|1 unit (?:a|per) (?:pick|bet)|[A-Za-z] \(units\)|>Units<|(?-i:['\"]Units['\"])|\} units\b|units</", re.I), "units"),
     (re.compile(r"\bbookies?\b|\bbookmakers?\b", re.I), "bookmaker wording"),
+    (re.compile(r"\bthe books\b|\bbooks'|\bmain book\b|(?-i:\bBooks (?:1H|v |\())", re.I), "'the books' wording (say the market)"),   # 26 Nov 2026
     (re.compile(r"\bsuperbet\b", re.I), "the second book's name"),
 ]
 NAV = re.compile(r'<nav class="an-project-nav".*?</nav>', re.S)

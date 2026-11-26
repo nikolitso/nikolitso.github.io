@@ -7,9 +7,9 @@
 - [Explainer: how dominant the Big 4 are in the Greek Super League](https://antonisnikolitsopoulos.com/superleague/research/big-four/): against Olympiakos, PAOK, AEK and Panathinaikos the other clubs scored 23% fewer goals than their form predicted, in every season since 2019-20 (1,718 matches)
 - [Explainer: how accurate are football predictions?](https://antonisnikolitsopoulos.com/superleague/research/accuracy/): over 517 Greek Super League games the closing odds predicted results better than this site's model; its match-stat projections beat a league average; its picks are 38-17 but only 5 of 40 beat the closing price
 - [Greek Cup](https://antonisnikolitsopoulos.com/football/greek-cup/): results and match stats for every game
-- [Basketball, Greece and Cyprus](https://antonisnikolitsopoulos.com/basketball/greece/): team strength, game projections and handicap margins
-- [Basketball totals](https://antonisnikolitsopoulos.com/basketball/overs/): a totals model for 45 domestic leagues in Europe and Latin America
-- [Women's basketball totals](https://antonisnikolitsopoulos.com/basketball/women/): a totals model for 20 European leagues
+- [Greek Basket League](https://antonisnikolitsopoulos.com/basketball/): team strength, game projections and handicap margins
+- [Basketball totals](https://antonisnikolitsopoulos.com/basketball/overs/): a totals model for 22 domestic leagues in Europe
+- [Women's basketball totals](https://antonisnikolitsopoulos.com/basketball/women/): a totals model for 6 European women's domestic leagues, with backtests and a live record
 - [Volleyball](https://antonisnikolitsopoulos.com/volleyball/): sets and total points projections
 - [Handball](https://antonisnikolitsopoulos.com/handball/): total goals projections, live tests and backtests
 - [Research note: close volleyball matches and the total](https://antonisnikolitsopoulos.com/volleyball/research/close-matches/): in the closest fifth of 36,033 matches the under won 53.1% against 50.0% implied by closing prices; not bettable on its own
