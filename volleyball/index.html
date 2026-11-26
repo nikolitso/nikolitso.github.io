@@ -715,7 +715,7 @@ function calibration(){
     return [`${(g[0].p * 100).toFixed(1)}–${(g[g.length - 1].p * 100).toFixed(1)}%`, g];
   });
   return `<h2>Calibration</h2><p class="note">Is the model's chance right? The same bets, comparing what the model said with how often the over actually won. Gap is actual minus model, in percentage points: near zero means the chance can be trusted, negative means the model was too confident. Market no-vig removes the bookmaker margin using the average over and under prices. The model-chance bands contain equal numbers of bets. 4+ sets is the part of the matches that went past 3 sets. Market line, Model line and Actual total are averages for the band. Small bands move a lot by chance.</p>`
-    + table('By edge (10%+)', [['10–20%', .10, .20], ['20–30%', .20, .30], ['30%+', .30, 9]], b => b.edge)
+    + table('By edge', [...[5, 10, 15, 20, 25, 30, 35].map(x => [`${x}–${x + 5}%`, x / 100, (x + 5) / 100]), ['40%+', .40, 9]], b => b.edge)   // 5-point bands (user, 26 Nov 2026)
     + table('By model chance', chanceBands, b => b.p);
 }
 
