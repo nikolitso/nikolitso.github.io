@@ -261,13 +261,12 @@ a.gm{color:inherit;text-decoration:none} a.gm:hover{color:var(--gold);text-decor
   <div id="out"></div>
 <section class="an-page-about" aria-label="About this page">
 <p class="an-page-about__label">About this page</p>
-<p>This page projects women's and men's volleyball league matches: the chance each one ends in three sets or goes to four or five, and its total points. Every team gets one rating, its chance of winning a rally against an average team in its own league, from this season's matches only. There are three kinds of pick: the over on a low total line, where the market expects a 3-0, and the favourite or the underdog on the points handicap, each when the model's edge clears the page's bar and the league's competitiveness allows it.</p>
-<p>Projections shows the next 7 days against the market line, and Live test records the picks, logged before the first serve. Season Ratings and Backtest show every league's team ratings and past seasons since 2020. <a href="/volleyball/games/">Every game</a> has its own page.</p>
-<p>The projected totals, fair lines and 3/4/5-set chances include a correction fitted on past seasons: the model's sets run short in close matches, so up to 3 points are added there, and its 5-set chances are trimmed. Picks use the model without this correction.</p>
+<p>Projections for women's and men's volleyball league matches: the chance each ends in three, four or five sets, its total points and its points margin, from one rating per team. Four kinds of pick are logged before the first serve and kept on Live test: the over on a low total, the handicap favourite, the handicap underdog and the match winner; How it works has the rules.</p>
+<p>Projections shows the next 7 days, Season Ratings every league's teams and Backtest the past seasons since 2020. <a href="/volleyball/games/">Every game</a> has its own page.</p>
 <p>Explainer: <a href="/volleyball/research/how-totals-work/">why a volleyball total is really about sets</a>.</p><p>Research note: <a href="/volleyball/research/close-matches/">close matches go under more often than the market expects</a>.</p>
 </section>
 </main>
-<script src="data.js?v=47d9444f"></script>
+<script src="data.js?v=1b3037a6"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -378,7 +377,10 @@ function homeTiles(){
   const hcF = x => (x > 0 ? '+' : x < 0 ? '−' : '') + Math.abs(x).toFixed(1);
   const avg = (d, f, fmt) => { const v = d.map(f).filter(x => x != null && !isNaN(x)); return v.length ? fmt(v.reduce((s, x) => s + x, 0) / v.length) : '–'; };
   const roiV = r => r.n ? `<span class="${cls(r.u)}">${sgn(r.u / r.n * 100, 1)}%</span>` : '–';
-  let h = `<div class="metrics">${tile('Open picks', nOpen + nh + nm, nOpen + nh + nm ? `${nOpen} totals · ${nh} handicap · ${nm} winner →` : 'none right now', nh && !nOpen ? '#view=picks&m=hcap&to=hopen' : '#view=picks')}`
+  const oLink = (n, l, href) => `<a href="${href}" style="color:inherit">${n} ${l}</a>`;   // each kind links to its own open picks (user, 26 Nov 2026)
+  const oFirst = nOpen ? '#view=picks&to=topen' : nh ? '#view=picks&m=hcap&to=hopen' : nm ? '#view=picks&m=ml&to=mlopen' : '#view=picks';
+  let h = `<div class="metrics"><div class="metric"><div class="lbl"><a href="${oFirst}" style="color:inherit">Open picks</a></div><div class="big"><a href="${oFirst}" style="color:inherit;text-decoration:none">${nOpen + nh + nm}</a></div>`
+    + `<div class="sm">${nOpen + nh + nm ? `${oLink(nOpen, 'totals', '#view=picks&to=topen')} · ${oLink(nh, 'handicap', '#view=picks&m=hcap&to=hopen')} · ${oLink(nm, 'winner', '#view=picks&m=ml&to=mlopen')}` : 'none right now'}</div></div>`
     + tile('Record', `${a.w}–${a.n - a.w}`, a.n ? `${(a.w / a.n * 100).toFixed(1)}% won, all picks →` : '0 picks →', '#view=picks&to=settled')   // clickable (user, 26 Nov 2026)
     + tile('ROI', roiV(a), a.n ? units1(a.u) + ', all picks →' : 'no settled picks →', '#view=picks&to=settled') + '</div>';
   const kinds = [
@@ -478,8 +480,8 @@ function renderPicks(){
   const note = `<p class="note">Picks logged before the first serve: an over on a line from ${DATA.min_line}.5 to ${DATA.low - 0.5}, when model chance is at least ${DATA.min_chance*100}% and model chance × the average price is at least ${DATA.edge*100}% above 1. Leagues: ${liveNames()}, plus ${Object.keys(TLG).length} more women's leagues without a backtest (see How it works). March, April, October, playoffs, play-outs and placement games are excluded. Equal stakes. Until the start a pick follows the latest line. Once played it moves to Settled picks, at the price logged before the first serve. ROI = profit ÷ total staked (lines end in .5, so there are no pushes). The page judges itself at <b>100 settled picks</b>; before that, the record is mostly noise. Over chance and Edge are corrected: they keep ${REAL * 100}% of the model's advantage over the no-vig market chance, as the model runs too confident, so a pick can show an edge under ${DATA.edge*100}%.</p>`;
   let h = pickTiles();                            // the note goes below the picks (user, 14 Nov 2026)
   const wt = '';   // the test leagues' picks are in the tables above since 25 Nov 2026
-  if (!open.length) return h + '<h2>Open picks</h2><p class="empty">No open totals picks. New ones appear once the market posts lines for a match that qualifies.</p>' + wt + settled() + note;
-  h += `<h2>Open picks</h2><div class="scroll"><table class="sortable"><thead><tr><th>Date</th>${lg === 'all' ? '<th>League</th>' : ''}<th>Match</th><th class="n">Opening line</th><th class="n">Pick line</th><th class="n">Closing line</th><th class="n">Price</th><th class="n">Model line</th><th class="n">Over chance</th><th class="n">Edge</th></tr></thead><tbody>`;
+  if (!open.length) return h + '<h2 id="topen">Open picks</h2><p class="empty">No open totals picks. New ones appear once the market posts lines for a match that qualifies.</p>' + wt + settled() + note;
+  h += `<h2 id="topen">Open picks</h2><div class="scroll"><table class="sortable"><thead><tr><th>Date</th>${lg === 'all' ? '<th>League</th>' : ''}<th>Match</th><th class="n">Opening line</th><th class="n">Pick line</th><th class="n">Closing line</th><th class="n">Price</th><th class="n">Model line</th><th class="n">Over chance</th><th class="n">Edge</th></tr></thead><tbody>`;
   for (const p of open)
     h += `<tr><td>${short(p.dt)} ${p.dt.slice(11)}</td>${lg === 'all' ? `<td>${lgShort(p.lg)}</td>` : ''}<td class="wr">${gameLink(p)}</td><td class="n">${p.line_open ?? "–"}</td><td class="n">Over ${p.line}</td><td class="n">${p.line_close ?? "–"}</td><td class="n">${p.px.toFixed(2)}</td>
       ${fairCell(p)}<td class="n">${pct(realP(p.p, p.px, p.under_px))}</td><td class="n ${cls(p.edge)}">${sgn(realEdge(p.p, p.px, p.under_px)*100, 0)}%</td></tr>`;
@@ -1248,7 +1250,7 @@ function mlShadow(){
     + `<div class="metric"><div class="lbl">ROI</div><div class="big"><span class="${cls(u)}">${n ? sgn(u / n * 100, 1) + '%' : '–'}</span></div><div class="sm">${n ? sgn(u, 2) + ' units' : '1 unit a bet'}</div></div>`
     + `<div class="metric"><div class="lbl">Open</div><div class="big">${open.length}</div><div class="sm">logged, not started</div></div></div>`;
   h += `<p class="note">The Match winner rule, a Live test bet type and part of the record: in not competitive women’s leagues, the market favourite at a price above ${(R.min_px || 1.3).toFixed(2)}, when the model gives it ${(R.min_p || .65) * 100}% or more and an edge of ${(R.edge || .1) * 100}% or more. Logged before the first serve at the first price it qualifies at, which then stays; dropped if it stops qualifying before the start. Settled on who wins, 1 unit a bet. A league is dropped once it has ${DATA.ml_drop_n || 30} or more settled bets here and is losing on them, a rule fixed in advance.${(DATA.ml_dropped || []).length ? ' Dropped so far: ' + DATA.ml_dropped.map(k => PLG[k] ? PLG[k].country + ' ' + PLG[k].name : k).join(', ') + '.' : ' None dropped yet.'}</p>`;
-  if (open.length) h += `<h3>Open</h3><div class="scroll"><table><thead><tr><th>Date</th><th>Match</th><th>Backing</th><th class="n">Price</th><th class="n">Price now</th><th class="n">Model</th><th class="n">Edge</th></tr></thead><tbody>`
+  if (open.length) h += `<h3 id="mlopen">Open</h3><div class="scroll"><table><thead><tr><th>Date</th><th>Match</th><th>Backing</th><th class="n">Price</th><th class="n">Price now</th><th class="n">Model</th><th class="n">Edge</th></tr></thead><tbody>`
     + open.map(p => `<tr><td>${short(p.dt)} ${p.dt.slice(11)}</td><td class="wr">${p.home} – ${p.away}${lgLine(p)}</td><td>${p.team}</td><td class="n">${p.px.toFixed(2)}</td><td class="n">${p.px_now.toFixed(2)}</td><td class="n">${pct(p.p)}</td><td class="n">${sgn(p.edge * 100, 1)}%</td></tr>`).join('') + '</tbody></table></div>';
   if (done.length) h += `<h3>Settled</h3><div class="scroll"><table><thead><tr><th>Date</th><th>Match</th><th>Backing</th><th class="n">Price</th><th class="n">Sets</th><th class="n">Result</th><th class="n">Profit</th></tr></thead><tbody>`
     + done.map(p => `<tr><td>${short(p.dt)}</td><td class="wr">${p.home} – ${p.away}${lgLine(p)}</td><td>${p.team}</td><td class="n">${p.px.toFixed(2)}</td><td class="n">${p.sets.replace('-', '–')}</td><td class="n ${cls(p.profit)}">${p.won ? 'Won' : 'Lost'}</td><td class="n ${cls(p.profit)}">${sgn(p.profit, 2)}</td></tr>`).join('') + '</tbody></table></div>';
@@ -1387,6 +1389,7 @@ function fromHash(){
   if (/to=settled/.test(location.hash)) toSettled();   // the Record pill opens the settled picks (user, 15 Nov 2026)
   if (m && m[1] === 'hcap'){ const el = document.getElementById('hcap'); if (el) el.scrollIntoView({block: 'start'}); }
   if (/to=hopen/.test(location.hash)){ const el = document.getElementById('hopen'); if (el) el.scrollIntoView({behavior: 'smooth', block: 'start'}); }
+  { const t = location.hash.match(/to=(topen|mlopen)/); if (t){ const el = document.getElementById(t[1]); if (el) el.scrollIntoView({behavior: 'smooth', block: 'start'}); } }   // Home's Open picks links (user, 26 Nov 2026)
   if (/to=wopen/.test(location.hash)){ const el = document.getElementById('wopen'); if (el) el.scrollIntoView({behavior: 'smooth', block: 'start'}); }
   if (/to=bets/.test(location.hash)){ const el = document.getElementById('btbets'); if (el) el.scrollIntoView({behavior: 'smooth', block: 'start'}); }
 }
