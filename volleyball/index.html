@@ -267,7 +267,7 @@ a.gm{color:inherit;text-decoration:none} a.gm:hover{color:var(--gold);text-decor
 <p>Explainer: <a href="/volleyball/research/how-totals-work/">why a volleyball total is really about sets</a>.</p><p>Research note: <a href="/volleyball/research/close-matches/">close matches go under more often than the market expects</a>.</p>
 </section>
 </main>
-<script src="data.js?v=4b5cd53f"></script>
+<script src="data.js?v=5f607592"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -1025,14 +1025,8 @@ function renderHcap(part){   // 'live': on Live test; 'bt': on Backtest (merged 
     if (!hside) h += T('Underdog or favourite', 'The side backed: taking the points or giving them.', pair('side'), 'Side');
     // only the side whose pill is on (user, 26 Nov 2026); each band says where the rule skips it
     const sz = B.open.size.flatMap(c => [['dog', 'underdog'], ['fav', 'favourite']].filter(([k]) => !hside || hside === k).map(([k, w]) => [Object.assign({}, c[k], {label: `${c.label} pts${hside ? '' : ' · ' + w}`, side: k, lo: parseFloat(c.label)}), null]));
-    if (hside === 'dog'){                         // underdogs: two bands, 0.5-9.5 and 10.5+ (user, 26 Nov 2026)
-      const sum = (lab, g) => { const n = g.reduce((t, c) => t + c[0].n, 0), w = g.reduce((t, c) => t + c[0].w, 0), pl = g.reduce((t, c) => t + c[0].pl, 0);
-        return [{label: lab, n, w, pl, roi: n ? pl / n : 0, px: n ? g.reduce((t, c) => t + c[0].px * c[0].n, 0) / n : 0, side: 'dog', lo: -1}, null]; };
-      sz.splice(0, sz.length, sum(`0.5–9.5 pts <span class="muted">(only 5.5+ in not competitive leagues is bet)</span>`, sz.filter(c => c[0].lo < HCAP_COMP)),
-                              sum('10.5 or more pts', sz.filter(c => c[0].lo >= HCAP_COMP)));
-    }
     const skip = c => c.lo < 0 ? '' : c.lo < H.min_line ? ' <span class="muted">(skipped)</span>' : c.lo < HCAP_COMP || (c.side === 'fav' && c.lo >= H.fav_max) ? ' <span class="muted">(skipped in competitive leagues)</span>' : '';
-    h += T('By the size of the handicap', `${hside ? (hside === 'fav' ? 'Favourites' : 'Underdogs') + ' with' : 'Bets with'} an edge of ${H.edge * 100}% or more, by the market handicap, every league counted. Handicaps under ${H.min_line} points are never bet; in competitive leagues (and leagues with fewer than 2 earlier seasons) handicaps under ${HCAP_COMP} are skipped, and so are favourites giving ${H.fav_max} or more. Not competitive leagues bet every size from ${H.min_line}.`, sz.map(([c, o]) => [Object.assign({}, c, {label: c.label + skip(c)}), o]), 'Market handicap');
+    h += T('By the size of the handicap', `${hside ? (hside === 'fav' ? 'Favourites' : 'Underdogs') + ' with' : 'Bets with'} an edge of ${H.edge * 100}% or more, by the market handicap, every league counted. Handicaps under ${H.min_line} points are never bet; in competitive leagues (and leagues with fewer than 2 earlier seasons) handicaps under ${HCAP_COMP} are skipped${hside === 'dog' ? '' : `, and so are favourites giving ${H.fav_max} or more`}. Not competitive leagues bet every size from ${H.min_line}.`, sz.map(([c, o]) => [Object.assign({}, c, {label: c.label + skip(c)}), o]), 'Market handicap');
     if (B.calibration_all){
         const A = B.calibration_all, L = B.luck;
         const row = (c, b) => `<tr><td>${b ? '<b>' + c.band + '</b>' : c.band}</td><td class="n">${c.n}</td><td class="n">${pct(c.model)}</td><td class="n">${pct(c.market)}</td><td class="n">${pct(c.need)}</td><td class="n ${c.covered > c.need ? 'pos' : 'neg'}">${b ? '<b>' + pct(c.covered) + '</b>' : pct(c.covered)}</td><td class="n ${cls(c.roi)}">${sgn(c.roi * 100, 1)}%</td></tr>`;
