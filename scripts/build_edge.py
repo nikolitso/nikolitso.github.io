@@ -681,15 +681,15 @@ def sitemap(books):
     added = {b["url"]: str(b["date"])[:10] for b in books if re.match(r"\d{4}-\d{2}-\d{2}", str(b.get("date") or ""))}
 
     def lastmod(p):
-        """When the page last changed: a book's note by its date, any other page by its last commit. Nothing when unknown."""
-        if p in added:
-            return added[p]
+        """When the page last changed: its last commit; a book page never earlier than its note's date (26 Nov 2026: the note
+        date alone gave old dates, back to 1995, to pages rebuilt since). Nothing when unknown."""
         f = ROOT / p.strip("/") if p.endswith(".html") else ROOT / p.strip("/") / "index.html"
         try:
             day = subprocess.run(["git", "log", "-1", "--format=%cs", "--", str(f.relative_to(ROOT))], cwd=ROOT, capture_output=True, text=True, timeout=30).stdout.strip()
         except Exception:
             day = ""
-        return day if re.fullmatch(r"\d{4}-\d{2}-\d{2}", day) else ""
+        day = day if re.fullmatch(r"\d{4}-\d{2}-\d{2}", day) else ""
+        return max(day, added.get(p, "")) or ""
 
     urls = "".join(f"<url><loc>{SITE}{p}</loc>" + (f"<lastmod>{d}</lastmod>" if (d := lastmod(p)) else "") + "</url>" for p in dict.fromkeys(paths))
     (ROOT / "sitemap.xml").write_text(

@@ -105,6 +105,8 @@ html[data-site="books"]{--an-accent:#6d8dff}
 .an-data-key__dot--difference{background:var(--an-muted)}
 
 /* ---- about this page: plain text at the end of a dashboard, readable without its script ---- */
+/* the dashboard's output box keeps a screen's height until its script fills it, so the About box below does not jump (layout shift, 26 Nov 2026) */
+#out:empty{min-height:100vh}
 .an-page-about{max-width:72ch;margin:32px 0 8px;padding:16px 0 0;border-top:1px solid var(--an-rule);color:var(--an-muted);font:400 14px/1.65 var(--an-body)}
 .an-page-about p{margin:0 0 10px;color:inherit;font:inherit}
 .an-page-about p:last-child{margin-bottom:0}

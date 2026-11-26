@@ -113,9 +113,9 @@ def check_page(path, problems):
         say("menu", f"{len(navs)} projects menus")
     elif r != "404.html":
         hidden = r.replace("\\", "/").startswith(HIDDEN)
-        if hidden:
+        if hidden:   # paused pages: the menu they were built with, or today's (they are rebuilt with it, 26 Nov 2026)
             hrefs = re.findall(r'<a (?:class="an-navchip" )?href="([^"]+)"', navs[0])
-            if hrefs != MENU_HIDDEN:
+            if hrefs not in (MENU_HIDDEN, MENU):
                 say("menu", f"entries differ: {hrefs}")
         else:   # every project in one row, grouped by sport (22 Nov 2026)
             hrefs = re.findall(r'<a (?:class="an-navchip" )?href="([^"]+)"', navs[0])
@@ -124,7 +124,7 @@ def check_page(path, problems):
         if '<a class="an-navhome" href="/">Home</a>' not in navs[0]:
             say("menu", "no Home pill first in the menu")
         cur = re.findall(r'aria-current="page"', navs[0])
-        if len(cur) != 1 and not r.replace("\\", "/").startswith(NO_CURRENT):
+        if len(cur) != 1 and not r.replace("\\", "/").startswith(NO_CURRENT) and not (hidden and not cur):   # a paused project is not in the menu
             say("menu", f"{len(cur)} entries marked current")
     if 'class="an-home"' not in html and r != "404.html":
         say("home", "no ← Home link")
