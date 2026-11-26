@@ -247,7 +247,7 @@ a.gm{color:inherit;text-decoration:none} a.gm:hover{color:var(--gold);text-decor
     <a href="#view=method" data-view="method">How it works</a>
   </nav>
 </div></header>
-<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebPage", "@id": "https://antonisnikolitsopoulos.com/volleyball/#webpage", "url": "https://antonisnikolitsopoulos.com/volleyball/", "name": "European Volleyball projections: sets and total points", "inLanguage": "en", "isPartOf": {"@id": "https://antonisnikolitsopoulos.com/#website"}, "author": {"@id": "https://antonisnikolitsopoulos.com/#person"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebPage","@id":"https://antonisnikolitsopoulos.com/volleyball/#webpage","url":"https://antonisnikolitsopoulos.com/volleyball/","name":"European Volleyball projections: sets and total points","inLanguage":"en","isPartOf":{"@id":"https://antonisnikolitsopoulos.com/#website"},"author":{"@id":"https://antonisnikolitsopoulos.com/#person"}},{"@type":"Person","@id":"https://antonisnikolitsopoulos.com/#person","name":"Antonis Nikolitsopoulos","url":"https://antonisnikolitsopoulos.com/","image":"https://antonisnikolitsopoulos.com/photo.jpg","homeLocation":{"@type":"Place","name":"Thessaloniki, Greece"},"knowsAbout":["Sports analytics","Football","Basketball","Probability modelling","Books","World cinema","Greek wine"],"sameAs":["https://www.linkedin.com/in/antonis-nikolitsopoulos/","https://x.com/nikolitso","https://letterboxd.com/nikolitso/","https://whatalgomissed.com/"]},{"@type":"WebSite","@id":"https://antonisnikolitsopoulos.com/#website","url":"https://antonisnikolitsopoulos.com/","name":"Antonis Nikolitsopoulos","inLanguage":"en","publisher":{"@id":"https://antonisnikolitsopoulos.com/#person"}}]}</script>
 <main class="wrap">
 <div class="an-project-context"><span class="an-project-context__label">Scope</span><span>Men's and women's league projections cover set count and total points. The live test, historical backtest and upcoming projections remain separate; league coverage and sample sizes matter when comparing records.</span></div>
 <div class="an-data-key" role="group" aria-label="How to read volleyball projections">
@@ -267,7 +267,7 @@ a.gm{color:inherit;text-decoration:none} a.gm:hover{color:var(--gold);text-decor
 <p>Explainer: <a href="/volleyball/research/how-totals-work/">why a volleyball total is really about sets</a>.</p><p>Research note: <a href="/volleyball/research/close-matches/">close matches go under more often than the market expects</a>.</p>
 </section>
 </main>
-<script src="data.js?v=f9f38ea3"></script>
+<script src="data.js?v=141a2260"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -1024,8 +1024,16 @@ function renderHcap(part){   // 'live': on Live test; 'bt': on Backtest (merged 
     h += T('By season', '', pair('seasons'), 'Season');
     h += T('By edge', `Every bet with an edge of 5% or more on a handicap of ${H.min_line} points or more (in competitive leagues 10.5 or more, favourites up to 14.5). Bigger disagreements with the market win more often, so picks need ${H.edge * 100}% or more; the other tables count only those.`, pair('edge').map(([c, o]) => [Object.assign({}, c, {label: c.label + (parseFloat(c.label) < H.edge * 100 ? ' <span class="muted">(skipped)</span>' : '')}), o]), 'Edge');
     if (!hside) h += T('Underdog or favourite', 'The side backed: taking the points or giving them.', pair('side'), 'Side');
-    const sz = B.open.size.flatMap(c => [[Object.assign({}, c.dog, {label: `${c.label} pts · underdog`}), null], [Object.assign({}, c.fav, {label: `${c.label} pts · favourite`}), null]]);
-    h += T('By the size of the handicap', `Bets with an edge of ${H.edge * 100}% or more, by the market handicap. Every league counted here; handicaps under ${H.min_line} points are never bet, and in competitive leagues neither are those under 10.5 nor favourites giving 15.5 or more.`, sz.map(([c, o]) => [Object.assign({}, c, {label: c.label + (parseFloat(c.label) < H.min_line || (/favourite/.test(c.label) && parseFloat(c.label) >= H.fav_max) ? ' <span class="muted">(skipped)</span>' : '')}), o]), 'Market handicap');
+    // only the side whose pill is on (user, 26 Nov 2026); each band says where the rule skips it
+    const sz = B.open.size.flatMap(c => [['dog', 'underdog'], ['fav', 'favourite']].filter(([k]) => !hside || hside === k).map(([k, w]) => [Object.assign({}, c[k], {label: `${c.label} pts${hside ? '' : ' · ' + w}`, side: k, lo: parseFloat(c.label)}), null]));
+    if (hside === 'dog'){                         // underdogs: two bands, 0.5-9.5 and 10.5+ (user, 26 Nov 2026)
+      const sum = (lab, g) => { const n = g.reduce((t, c) => t + c[0].n, 0), w = g.reduce((t, c) => t + c[0].w, 0), pl = g.reduce((t, c) => t + c[0].pl, 0);
+        return [{label: lab, n, w, pl, roi: n ? pl / n : 0, px: n ? g.reduce((t, c) => t + c[0].px * c[0].n, 0) / n : 0, side: 'dog', lo: -1}, null]; };
+      sz.splice(0, sz.length, sum(`0.5–9.5 pts <span class="muted">(only 5.5+ in not competitive leagues is bet)</span>`, sz.filter(c => c[0].lo < HCAP_COMP)),
+                              sum('10.5 or more pts', sz.filter(c => c[0].lo >= HCAP_COMP)));
+    }
+    const skip = c => c.lo < 0 ? '' : c.lo < H.min_line ? ' <span class="muted">(skipped)</span>' : c.lo < HCAP_COMP || (c.side === 'fav' && c.lo >= H.fav_max) ? ' <span class="muted">(skipped in competitive leagues)</span>' : '';
+    h += T('By the size of the handicap', `${hside ? (hside === 'fav' ? 'Favourites' : 'Underdogs') + ' with' : 'Bets with'} an edge of ${H.edge * 100}% or more, by the market handicap, every league counted. Handicaps under ${H.min_line} points are never bet; in competitive leagues (and leagues with fewer than 2 earlier seasons) handicaps under ${HCAP_COMP} are skipped, and so are favourites giving ${H.fav_max} or more. Not competitive leagues bet every size from ${H.min_line}.`, sz.map(([c, o]) => [Object.assign({}, c, {label: c.label + skip(c)}), o]), 'Market handicap');
     if (B.calibration_all){
         const A = B.calibration_all, L = B.luck;
         const row = (c, b) => `<tr><td>${b ? '<b>' + c.band + '</b>' : c.band}</td><td class="n">${c.n}</td><td class="n">${pct(c.model)}</td><td class="n">${pct(c.market)}</td><td class="n">${pct(c.need)}</td><td class="n ${c.covered > c.need ? 'pos' : 'neg'}">${b ? '<b>' + pct(c.covered) + '</b>' : pct(c.covered)}</td><td class="n ${cls(c.roi)}">${sgn(c.roi * 100, 1)}%</td></tr>`;
@@ -1242,6 +1250,7 @@ const _lgs = RENDER.leagues;
 RENDER.leagues = _lgs;   // team ratings moved to Season Rating (user, 22 Nov 2026): Leagues = games and picks only
 RENDER.backtest = () => market === 'hcap' && DATA.hcap && DATA.hcap.backtest ? hcapBacktest() : _bt();
 // the handicap backtest on its own: the two backtest pills, then the tables (leagues are compared in By league)
+const HCAP_COMP = 10.5;   // competitive leagues: handicap picks only from 10.5 points (26 Nov 2026)
 function hcapBacktest(){
   const H = DATA.hcap;
   if (lg !== 'all' && hside && !((((H.backtest.by_side || {})[hside] || {}).by_league || {})[lg])) return `<p class="empty">No ${hside === 'fav' ? 'favourite' : 'underdog'} bets for this league in the backtest.</p>`;
