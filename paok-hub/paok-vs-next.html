@@ -244,7 +244,7 @@
 
 <nav class="an-project-nav" aria-label="Sports analytics projects"><div><a class="an-navhome" href="/">Home</a>
 <span class="an-navgroup">Football</span>
-<a href="/superleague/">Greek Superleague</a>
+<a href="/superleague/">Greek Super League</a>
 <a href="/football/greek-cup/">Greek Cup</a>
 <span class="an-navgroup">Basketball</span>
 <a href="/basketball/">Greek League</a>
@@ -535,7 +535,7 @@
     var oppRow = teamsData.filter(function (t) { return t.team === meta.opponent; })[0];
 
     if (!paokRow || !oppRow) {
-      showError('Team stats for ' + meta.opponent + ' aren’t in Teams Stats yet (likely a Cup opponent outside the Superleague).');
+      showError('Team stats for ' + meta.opponent + ' aren’t in Teams Stats yet (likely a Cup opponent outside the Super League).');
       return;
     }
 
