@@ -444,6 +444,7 @@ def page_index(books, n_authors):
 </script>"""
     desc = f"Practical takeaways from {len(books)} books on sports analytics, betting, decision-making and personal development, by Antonis Nikolitsopoulos."
     write(BASE, layout("Books", body, BASE, desc,
+                       full=f"Book takeaways: key ideas from {len(books)} books on sports analytics and betting",   # 26 Nov 2026
                        ld=ld_script(collection_node("Books", BASE, desc, [(b["title"], b["url"]) for b in books]), faq_node(faq))))
 
 
@@ -524,7 +525,11 @@ def book_ld(b):
         data["image"] = b["cover"] if b["cover"].startswith("http") else SITE + b["cover"]
     page = {"@context": "https://schema.org", "@type": "WebPage", "name": book_title(b), "url": SITE + b["url"],
             "author": ME, "publisher": ME, "about": data}
-    return ld_script(page)
+    # Home › Books › the book, for the breadcrumb Google can show in place of the URL (26 Nov 2026)
+    crumbs = {"@type": "BreadcrumbList", "itemListElement": [
+        {"@type": "ListItem", "position": i, "name": n, "item": SITE + u}
+        for i, (n, u) in enumerate((("Home", "/"), ("Books", BASE), (b["title"], b["url"])), 1)]}
+    return ld_script(page, crumbs)
 
 
 # Structured data: the same Person (@id from the homepage) and WebSite tie every page to one owner.

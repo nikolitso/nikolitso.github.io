@@ -3,7 +3,7 @@ const ALLR = D.recipes, R = ALLR.filter(r => r.category !== 'Cheeses'), C = ALLR
 
 const UI = {
   en: {
-    docTitle: 'Greek Wine & Food Pairing Finder', kicker: 'Greek wine · Food pairing', title: 'The Pairing Finder',
+    docTitle: 'Greek wine and food pairing: 950+ wines · Ελληνικό κρασί και φαγητό', kicker: 'Greek wine · Food pairing', title: 'The Pairing Finder',
     lede: 'Every dish with the wine that suits it best. Select a dish to see the grape, the reason and more wines.',
     placeholder: 'Try moussaka, octopus, lamb, feta, tomato…', cats: 'Dish type', tags: 'Food or occasion', grapes: 'Grape',
     showAll: 'Show all', showLess: 'Show fewer', viewFinder: 'Pairing Finder', viewList: 'Wine list', viewEstates: 'Estates', estatesTitle: 'The Estates',
