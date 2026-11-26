@@ -267,7 +267,7 @@ a.gm{color:inherit;text-decoration:none} a.gm:hover{color:var(--gold);text-decor
 <p>Explainer: <a href="/volleyball/research/how-totals-work/">why a volleyball total is really about sets</a>.</p><p>Research note: <a href="/volleyball/research/close-matches/">close matches go under more often than the market expects</a>.</p>
 </section>
 </main>
-<script src="data.js?v=1b64a6da"></script>
+<script src="data.js?v=f0bdc466"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -1304,7 +1304,7 @@ function mlBacktest(){
   h += T('By odds', 'The price of the side backed.', B.price, 'Odds');
   h += T('By games played', 'The fewer games either team had played that season before the match.', B.games, 'Games played');
   h += cal(B.chance);
-  h += T('By edge', `Favourites the model gives ${(M.min_p || .5) * 100}% or more, by its edge; the tables above count edges of ${M.edge * 100}% or more.`, B.edge, 'Edge');
+  h += T('By edge', 'The same bets in four bands with the same number of bets each, by the edge the model sees.', B.edge, 'Edge');
   h += T('By model chance', 'The model\'s win chance for the side backed.', B.chance, 'Model chance');
   return h;
 }
