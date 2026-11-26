@@ -662,9 +662,14 @@ def sitemap(books):
             for f in sorted(base.rglob("index.html")):
                 if "games" in f.parts:                 # game pages have their own sitemap
                     continue
-                if "http-equiv=\"refresh\"" in f.read_text(encoding="utf-8", errors="ignore")[:1500]:
+                head = f.read_text(encoding="utf-8", errors="ignore")[:4000]
+                if "http-equiv=\"refresh\"" in head[:1500]:
                     continue
-                paths.append("/" + f.parent.relative_to(ROOT).as_posix() + "/")
+                path = "/" + f.parent.relative_to(ROOT).as_posix() + "/"
+                canon = re.search(r'rel="canonical" href="([^"]+)"', head)
+                if canon and canon.group(1) != SITE + path:   # a copy of another page, e.g. /basketball/ of /basketball/greece/
+                    continue
+                paths.append(path)
     for f in sorted((ROOT / "paok-hub").glob("*.html")):   # every PAOK Hub page, redirects excluded
         if f.name != "index.html" and "http-equiv=\"refresh\"" not in f.read_text(encoding="utf-8", errors="ignore")[:1500]:
             paths.append(f"/paok-hub/{f.name}")
