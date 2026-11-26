@@ -267,7 +267,7 @@ a.gm{color:inherit;text-decoration:none} a.gm:hover{color:var(--gold);text-decor
 <p>Explainer: <a href="/volleyball/research/how-totals-work/">why a volleyball total is really about sets</a>.</p><p>Research note: <a href="/volleyball/research/close-matches/">close matches go under more often than the market expects</a>.</p>
 </section>
 </main>
-<script src="data.js?v=83eb39e2"></script>
+<script src="data.js?v=b3ea7dab"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -531,6 +531,21 @@ function compTable(k){                   // one bet type by league competitivene
     + `<div class="scroll"><table style="max-width:720px"><thead><tr><th>League group</th><th class="n">Bets</th><th class="n">Hit</th><th class="n">Profit</th><th class="n">ROI</th></tr></thead><tbody>${G.rows.map(row).join('')}</tbody></table></div>`;
 }
 
+// every league's group and why (user, 26 Nov 2026): its spread over earlier seasons against the cut, and the bets that follow
+function leagueGroups(){
+  const cut = (DATA.even_cut || 0.112) * 100, E = DATA.evenness || {}, hx = new Set(((DATA.hcapx || {}).leagues || []).map(l => l.key));
+  const all = [...DATA.leagues, ...((DATA.test || {}).leagues || []).map(l => Object.assign({women: true}, l)), ...((DATA.hcapx || {}).leagues || [])];   // test leagues are all women's
+  const rows = all.map(l => { const e = E[l.key], ok = e && e.n >= 2, c = ok ? (e.avg * 100 < cut ? 'competitive' : 'not competitive') : 'too new';
+    const bets = c === 'not competitive' ? `Handicap from ${(DATA.hcap || {}).min_line || 5.5}, favourites any size${hx.has(l.key) ? '' : '; no overs'}`
+      : hx.has(l.key) ? 'Handicap from 10.5, favourites up to 14.5' : 'Over; handicap from 10.5, favourites up to 14.5';
+    const why = !ok ? `fewer than 2 earlier seasons: competitive rules` : c === 'competitive' ? `${(e.avg * 100).toFixed(1)} is under ${cut.toFixed(1)}` : `${(e.avg * 100).toFixed(1)} is ${cut.toFixed(1)} or more`;
+    return {l, e, ok, c, bets, why}; }).sort((a, b) => (a.ok ? a.e.avg : 9) - (b.ok ? b.e.avg : 9));
+  const col = c => c === 'competitive' ? 'var(--an-accent)' : c === 'not competitive' ? 'var(--an-warning)' : 'var(--an-muted)';
+  return `<div class="scroll"><table style="max-width:1180px"><thead><tr><th>League</th><th class="n">Earlier<br>seasons</th><th class="n">Spread</th><th>Group</th><th>Why</th><th>Bets</th></tr></thead><tbody>`
+    + rows.map(r => `<tr><td>${r.l.country} <span class="muted">${r.l.name} ${sexAb(r.l)}</span>${hx.has(r.l.key) ? ' <span class="muted">· handicap only</span>' : ''}</td><td class="n">${r.e ? r.e.n : 0}</td><td class="n">${r.ok ? (r.e.avg * 100).toFixed(1) : '–'}</td><td style="color:${col(r.c)}">${r.c[0].toUpperCase() + r.c.slice(1)}</td><td class="muted">${r.why}</td><td>${r.bets}</td></tr>`).join('')
+    + `</tbody></table></div><p class="note">Spread: the gap, in points out of 100, between the share of points won by the league's best and worst team in a season, averaged over the seasons before this one. Sorted from the most even league to the least.</p>`;
+}
+
 function evenTile(k){
   const E_ = (DATA.evenness || {})[k], cut = DATA.even_cut || 0.096;
   const t = (big, sm) => `<div class="metric"><div class="lbl">Competitiveness</div><div class="big" style="font-size:22px">${big}</div><div class="sm">${sm}</div></div>`;
@@ -632,9 +647,10 @@ function renderBacktest(){
     h += `<div class="scroll"><table style="max-width:760px"><thead><tr><th>League</th><th class="n">Bets</th><th class="n">Hit</th><th class="n">Profit</th><th class="n">ROI</th></tr></thead><tbody>`;
     for (const l of Object.values(BLG)){
       const s = B.leagues[l.key];
+      if (!hasPast(l.key) || !s.n) continue;   // no bets or no past odds: not shown (user, 26 Nov 2026)
       h += `<tr class="srow" data-lg="${l.key}"><td><span class="caret">▸</span> ${l.country} <span class="muted">${l.name} ${sexAb(l)}</span></td>${hasPast(l.key) ? `<td class="n">${s.n}</td><td class="n">${s.n ? pct(s.w/s.n) : '–'}</td><td class="n ${cls(s.roi)}">${s.n ? sgn(s.roi * s.n, 2) : '–'}</td><td class="n ${cls(s.roi)}">${s.n ? sgn(s.roi*100, 1) + '%' : '–'}</td>` : '<td class="n muted" colspan="4">no past odds</td>'}</tr>`;
     }
-    h += '</tbody></table></div>' + compTable('totals') + testedTable();
+    h += '</tbody></table></div>' + compTable('totals');   // All tested leagues removed (user, 26 Nov 2026)
     // the same bets by season, the live leagues together (the tuned-on season left out, as in the totals)
     const live = new Set(Object.values(BLG).filter(l => l.live).map(l => l.key)), by = {};
     for (const x of B.seasons.filter(x => live.has(x.lg) && !x.tuned)){
@@ -673,16 +689,6 @@ function leagueBets(){
 let tSort = {k: 'roi', d: -1}, lSort = {k: 'roi', d: -1};   // lSort: By league on Live test
 const tKey = {league: t => (t.women ? 0 : 1) + t.country + ' ' + t.name, seasons: t => t.seasons, n: t => t.n,
               hit: t => t.n ? t.w / t.n : -1, pl: t => t.n ? t.roi * t.n : -999, roi: t => t.n ? t.roi : -9, blind: t => t.blind_n ? t.blind_roi : -9};
-function testedTable(){
-  const f = tKey[tSort.k];
-  const T = DATA.backtest.tested.filter(t => t.live).sort((a, b) => { const x = f(a), y = f(b); return (x < y ? -1 : x > y ? 1 : 0) * tSort.d || b.roi - a.roi; });
-  const th = (k, lab, n = true) => `<th class="${n ? 'n ' : ''}tsort" data-tsort="${k}">${lab}${tSort.k === k ? (tSort.d > 0 ? ' ▴' : ' ▾') : ''}</th>`;
-  let h = `<h2>All tested leagues</h2><p class="note">Every league the backtest was run on, with the same rule (lines ${DATA.min_line}.5 to ${DATA.low - 1}.5, model chance at least ${DATA.min_chance * 100}%, edge at least ${DATA.edge * 100}%) and only the seasons the settings never saw. Only the leagues with live picks are shown: backing every over without the model did −3.0% or better, with 100+ low-line matches and a market line from two or more sources. ${DATA.backtest.tested.length - T.length} of the ${DATA.backtest.tested.length} tested leagues are left out. Click a column to sort by it.</p>`;
-  h += `<div class="scroll"><table style="max-width:900px"><thead><tr>${th('league', 'League', false)}${th('seasons', 'Seasons')}${th('n', 'Bets')}${th('hit', 'Hit')}${th('pl', 'Profit')}${th('roi', 'ROI')}</tr></thead><tbody>`;
-  for (const t of T)
-    h += `<tr><td>${t.country} <span class="muted">${t.name}</span> <b>${sexAb(t)}</b>${t.live ? ' <span class="muted">· live</span>' : ''}</td><td class="n">${t.seasons}</td><td class="n">${t.n}</td><td class="n">${t.n ? pct(t.w / t.n) : '–'}</td><td class="n ${t.n ? cls(t.roi) : ''}">${t.n ? sgn(t.roi * t.n, 2) : '–'}</td><td class="n ${t.n ? cls(t.roi) : ''}">${t.n ? sgn(t.roi * 100, 1) + '%' : '–'}</td></tr>`;
-  return h + '</tbody></table></div>';
-}
 document.addEventListener('click', e => {
   const c = e.target.closest('th.tsort');
   if (!c) return;
@@ -895,8 +901,9 @@ function renderMethod(){
   <p>A league's spread is the gap between its best and worst team's share of points won (regular season, teams with 5+ games). Averaged over its earlier seasons only (2 or more needed), it is partly a lasting trait: men's leagues such as Poland, Italy, Finland and the Czech Republic tend to be competitive, several women's leagues do not. A league under ${((DATA.even_cut || 0.112) * 100).toFixed(1)} points is <b>competitive</b>, one at or above it <b>not competitive</b>; the cut is the median of all league seasons. A league with fewer than 2 earlier seasons follows the competitive rules.</p>
   <p>On 2020–26, at the opening line: overs made +29.6% in competitive leagues against +9.9% in not competitive ones, favourites +10.7% against +21.5%, and underdogs a profit in both (+22.1% and +17.5%). By the size of the handicap, small handicaps (5.5 to 9.5 points) lost in competitive leagues for both sides (favourites −2.9% on 68 bets, underdogs −1.9% on 70), while from 10.5 points both made a profit there (favourites +17.6% on 134, underdogs +33.1% on 153); in not competitive leagues every size made a profit.</p>
   <p>So since 26 November 2026: <b>competitive leagues</b> get the over, and handicap picks from 10.5 points (favourites up to 14.5); <b>not competitive leagues</b> get no overs, and handicap picks from ${DATA.hcap ? DATA.hcap.min_line : 5.5} points, favourites of any size. Three and four groups were tried on 25–26 November and made no more; two groups are simpler. Bets logged earlier were moved in or out of the record to match. These choices were made on the same past seasons, so the skipped bets (overs in not competitive leagues, handicaps under 10.5 in competitive ones) are followed live as a shadow test, at the bottom of each Live test pill. Each league's group is on its Season Ratings page.</p>
+  ${leagueGroups()}
   <h3><span class="num">6</span>The leagues</h3>
-  <p>Live test has ${Object.keys(PLG).length} leagues: the ${DATA.leagues.length} where, on past seasons, backing every low-line over without the model lost 3% or less, and ${DATA.test.leagues.length} more women's leagues bet with the same rules, most without a full backtest because they have lines from one source or on few games. Since 25 November 2026 their picks are part of Live test and its record, with the ${DATA.leagues.length} backtested leagues. Since the same day the Backtest tab covers them too, where past odds exist (11 of them for totals; the other 6 are listed as having no past odds), so the backtest and the live record count the same leagues. Most of these leagues did worse in the past than the original ${DATA.leagues.length}, which lowers the totals backtest. ${((DATA.hcapx || {}).leagues || []).length} more leagues make handicap picks only, on their own record: they passed the handicap backtest at the opening and the closing line. The Match winner pill follows the handicap picks that back the favourite on the match winner instead, for comparison only.</p>
+  <p>Live test has ${Object.keys(PLG).length} leagues: the ${DATA.leagues.length} where, on past seasons, backing every low-line over without the model lost 3% or less, and ${DATA.test.leagues.length} more women's leagues bet with the same rules, most without a full backtest because they have lines from one source or on few games. Since 25 November 2026 their picks are part of Live test and its record, with the ${DATA.leagues.length} backtested leagues. Since the same day the Backtest tab covers them too, where past odds exist (leagues with no past odds are left out), so the backtest and the live record count the same leagues. Most of these leagues did worse in the past than the original ${DATA.leagues.length}, which lowers the totals backtest. ${((DATA.hcapx || {}).leagues || []).length} more leagues make handicap picks only, on their own record: they passed the handicap backtest at the opening and the closing line. The Match winner pill follows the handicap picks that back the favourite on the match winner instead, for comparison only.</p>
   <h3><span class="num">7</span>What it cannot see</h3>
   <p>No news: injuries, transfers and rested players are invisible to it. Top teams rotate in Champions League and cup weeks, so those matches can be flagged by hand and the pick held back.</p>
   ${worked()}</div>`;
