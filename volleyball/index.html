@@ -267,7 +267,7 @@ a.gm{color:inherit;text-decoration:none} a.gm:hover{color:var(--gold);text-decor
 <p>Explainer: <a href="/volleyball/research/how-totals-work/">why a volleyball total is really about sets</a>.</p><p>Research note: <a href="/volleyball/research/close-matches/">close matches go under more often than the market expects</a>.</p>
 </section>
 </main>
-<script src="data.js?v=c67727a9"></script>
+<script src="data.js?v=55424d8d"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -779,13 +779,16 @@ function byMonth(){
   const live = new Set(Object.values(BLG).filter(l => l.live).map(l => l.key));
   const tuned = new Set(DATA.backtest.seasons.filter(x => x.tuned).map(x => x.lg + '|' + x.season));
   const bets = DATA.backtest.bets.filter(b => (lg === 'all' ? live.has(b.lg) : b.lg === lg) && !tuned.has(b.lg + '|' + b.season));
-  const MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'], by = {};
+  const MON = ['January','February','March','April','May','June','July','August','September','October','November','December'], by = {};
   for (const b of bets){ const m = +b.dt.slice(5, 7); const t = by[m] ||= {n: 0, w: 0, pl: 0}; t.n++; t.w += b.won; t.pl += b.ret; }
-  let h = `<h2>By month</h2><p class="note">The same bets by calendar month, every season together.</p>`;
+  const skM = (DATA.backtest.skipped || []).filter(b => b.why === 'month' && (lg === 'all' ? live.has(b.lg) : b.lg === lg) && !tuned.has(b.lg + '|' + b.season));   // March, April, October (26 Nov 2026)
+  for (const b of skM){ const m = +b.dt.slice(5, 7); const t = by[m] ||= {n: 0, w: 0, pl: 0, sk: true}; t.n++; t.w += b.won; t.pl += b.ret; }
+  let h = `<h2>By month</h2><p class="note">The same bets by calendar month, every season together. March, April and October are never bet; their rows show what the rule would have done.</p>`;
   h += `<div class="scroll"><table style="max-width:700px"><thead><tr><th>Month</th><th class="n">Bets</th><th class="n">Won</th><th class="n">Hit</th><th class="n">Profit</th><th class="n">ROI</th></tr></thead><tbody>`;
   for (const m of [8, 9, 10, 11, 12, 1, 2, 3, 4, 5, 6, 7]){
-    const t = by[m]; if (!t) continue;
-    h += `<tr><td>${MON[m - 1]}</td><td class="n">${t.n}</td><td class="n">${t.w}</td><td class="n">${pct(t.w / t.n)}</td><td class="n ${cls(t.pl)}">${sgn(t.pl, 2)}</td><td class="n ${cls(t.pl)}">${sgn(t.pl / t.n * 100, 1)}%</td></tr>`;
+    const t = by[m] || ([9, 10, 11, 12, 1, 2, 3, 4, 5].includes(m) ? {n: 0, w: 0, pl: 0, sk: [3, 4, 10].includes(m)} : null); if (!t) continue;   // every season month (user, 26 Nov 2026)
+    if (!t.n){ h += `<tr><td>${MON[m - 1]}${t.sk ? ' <span class="muted">(skipped)</span>' : ''}</td><td class="n">0</td>${'<td class="n">–</td>'.repeat(4)}</tr>`; continue; }
+    h += `<tr><td>${MON[m - 1]}${t.sk ? ' <span class="muted">(skipped)</span>' : ''}</td><td class="n">${t.n}</td><td class="n">${t.w}</td><td class="n">${pct(t.w / t.n)}</td><td class="n ${cls(t.pl)}">${sgn(t.pl, 2)}</td><td class="n ${cls(t.pl)}">${sgn(t.pl / t.n * 100, 1)}%</td></tr>`;
   }
   return h + '</tbody></table></div>';
 }
@@ -1050,7 +1053,7 @@ function renderHcap(part){   // 'live': on Live test; 'bt': on Backtest (merged 
     const skip = c => c.grp ? ((c.grp === 'comp' && (c.lo < HCAP_COMP || c.side === 'fav')) || (c.grp === 'nc' && c.side === 'dog' && c.lo < H.min_line) ? ' <span class="muted">(skipped)</span>' : '')
       : c.lo < 0 ? '' : c.lo < H.min_line ? ' <span class="muted">(skipped)</span>' : c.lo < HCAP_COMP || (c.side === 'fav' && c.lo >= H.fav_max) ? ' <span class="muted">(skipped in competitive leagues)</span>' : '';
     h += T('By the size of the handicap', `${hside ? (hside === 'fav' ? 'Favourites' : 'Underdogs') + ' with' : 'Bets with'} an edge of ${sideEdge() * 100}% or more, by the market handicap, every league counted. In competitive leagues (and leagues with fewer than 2 earlier seasons) handicaps under ${HCAP_COMP} are skipped. Not competitive leagues bet ${hside === 'fav' ? 'favourites of every size' : hside === 'dog' ? `underdogs from ${H.min_line}` : `favourites of every size and underdogs from ${H.min_line}`}.`, sz.map(([c, o]) => [Object.assign({}, c, {label: c.label + skip(c)}), o]), 'Market handicap');
-    if (B.open.months) h += T('By month', 'The same bets by the calendar month of the match, every season together. March, April and October are never bet.', B.open.months.filter(c => c.n).map(c => [c, null]), 'Month');   // as on the over (user, 26 Nov 2026)
+    if (B.open.months) h += T('By month', 'The same bets by the calendar month of the match, every season together. March, April and October are never bet; their rows show what the bets would have done.', B.open.months.map(c => [c, null]), 'Month');   // as on the over (user, 26 Nov 2026)
     if (B.open.games) h += T('By games played', `How many league games each team had played that season before the match: the fewer of the two teams. Both need ${DATA.min_games}+. Every band is bet.`, B.open.games.filter(c => c.n).map(c => [c, null]), 'Games played');   // as on the over (user, 26 Nov 2026)
     if (B.calibration_all){
         const A = B.calibration_all, L = B.luck;
@@ -1266,22 +1269,58 @@ const _wt = RENDER.wtest;
 RENDER.wtest = () => market === 'hcap' ? wtestHcap() : market === 'ml' ? wtestML() : _wt();
 const _lgs = RENDER.leagues;
 RENDER.leagues = _lgs;   // team ratings moved to Season Rating (user, 22 Nov 2026): Leagues = games and picks only
-RENDER.backtest = () => market === 'hcap' && DATA.hcap && DATA.hcap.backtest ? hcapBacktest() : _bt();
+RENDER.backtest = () => market === 'hcap' && DATA.hcap && DATA.hcap.backtest ? hcapBacktest() : market === 'ml' ? mlBacktest() : _bt();
 // the handicap backtest on its own: the two backtest pills, then the tables (leagues are compared in By league)
 const sideEdge = () => { const H = DATA.hcap || {}; return hside === 'dog' ? (H.dog_edge || H.edge) : H.edge; };   // underdogs 15%, favourites 20% (26 Nov 2026)
 const HCAP_COMP = 10.5;   // competitive leagues: handicap picks only from 10.5 points (26 Nov 2026)
+// the match winner backtest (user, 26 Nov 2026): every past game of the handicap backtest, the side whose model win chance x price
+// clears 5%, at the opening price; no live rule, so nothing is marked skipped
+function mlBacktest(){
+  const M = DATA.mlbt;
+  if (!M) return '<p class="empty">No match winner backtest yet.</p>';
+  const B = M.open, A = B.all, wr = c => c.n ? c.w / c.n : 0;
+  const tl = [['ROI', `<span class="${cls(A.roi)}">${sgn(A.roi * 100, 1)}%</span>`, `${sgn(A.pl, 1)} units`],
+              ['Record', `${A.w}–${A.n - A.w}`, `${pct(wr(A))} won · price needs ${pct(A.need || 1 / A.px)}`],
+              ['Bets', A.n.toLocaleString('en-US'), `${M.first.slice(0, 4)}–${M.last.slice(-2)}, past seasons`]];
+  const T = (title, note, rows, first, all = false) => !rows || !rows.filter(c => c.n).length ? '' : `<h2>${title}</h2>${note ? `<p class="note">${note}</p>` : ''}<div class="scroll"><table style="max-width:900px"><thead><tr><th>${first}</th><th class="n">Bets</th><th class="n">Hit</th><th class="n">Avg price</th><th class="n">Profit</th><th class="n">ROI</th></tr></thead><tbody>`
+    + rows.filter(c => all || c.n).map(c => !c.n ? `<tr><td>${c.label}</td><td class="n">0</td>${'<td class="n">–</td>'.repeat(4)}</tr>` : `<tr><td>${c.label}</td><td class="n">${c.n}</td><td class="n">${pct(wr(c))}</td><td class="n">${c.px.toFixed(2)}</td><td class="n ${cls(c.pl)}">${sgn(c.pl, 1)}</td><td class="n ${cls(c.roi)}">${sgn(c.roi * 100, 1)}%</td></tr>`).join('') + '</tbody></table></div>';
+  const cal = rows => `<h2>Calibration</h2><p class="note">Is the model's win chance right? The same bets by the model's chance: what it said, what the market said with the margin taken out, and how often the side actually won. Gap is actual minus model, in percentage points; negative means the model was too confident.</p><div class="scroll"><table style="max-width:900px"><thead><tr><th>Model chance</th><th class="n">Bets</th><th class="n">Model said</th><th class="n">Market no-vig</th><th class="n">Actual</th><th class="n">Gap</th><th class="n">ROI</th></tr></thead><tbody>`
+    + rows.filter(c => c.n).map(c => `<tr><td>${c.label}</td><td class="n">${c.n}</td><td class="n">${pct(c.p)}</td><td class="n">${pct(c.mkt)}</td><td class="n">${pct(wr(c))}</td><td class="n ${cls(wr(c) - c.p)}">${sgn((wr(c) - c.p) * 100, 1)}</td><td class="n ${cls(c.roi)}">${sgn(c.roi * 100, 1)}%</td></tr>`).join('') + '</tbody></table></div>';
+  let h = `<h2>Match winner: the backtest</h2><div class="metrics">${tl.map(([l, v, x]) => `<div class="metric"><div class="lbl">${l}</div><div class="big">${v}</div><div class="sm">${x}</div></div>`).join('')}</div>` + sexTable(B.sex);
+  h += `<p class="note">${M.games.toLocaleString('en-US')} past games of the Live test leagues with match winner prices, regular season, both teams ${DATA.min_games}+ games, no March, April or October. Each match is projected from earlier matches only; the side whose model win chance × the average price is at least ${M.edge * 100}% above 1 is backed, 1 unit a bet, at the opening price. Games whose stored prices belong to the other side, and edges over 100% (the same price errors), are left out. Not bet live: the Match winner pill on Live test only follows the handicap picks.</p>`;
+  h += T('By league', '', B.leagues, 'League');
+  h += T('By league competitiveness', 'Each season graded by the league\'s earlier seasons (see How it works).', B.group, 'League group');
+  h += T('Favourite or underdog', '', B.side, 'Side');
+  h += T('By season', '', B.seasons, 'Season');
+  h += T('By month', 'Every season together. March, April and October are never bet; their rows show what the bets would have done.', B.months, 'Month', true);
+  h += T('By odds', 'The price of the side backed.', B.price, 'Odds');
+  h += T('By games played', 'The fewer games either team had played that season before the match.', B.games, 'Games played');
+  h += cal(B.chance);
+  h += T('By edge', 'Every game, by the model\'s edge on the side it prefers; the tables above count edges of 5% or more.', B.edge, 'Edge');
+  h += T('By model chance', 'The model\'s win chance for the side backed.', B.chance, 'Model chance');
+  return h;
+}
+
+// All leagues, women's, men's: the summary table under the tiles, as on the over (user, 26 Nov 2026)
+function sexTable(rows){
+  if (!rows || !rows.length) return '';
+  return `<div class="scroll"><table style="max-width:900px"><thead><tr><th></th><th class="n">Bets</th><th class="n">Won–lost</th><th class="n">Hit</th><th class="n">Avg price</th><th class="n">Profit</th><th class="n">ROI</th></tr></thead><tbody>`
+    + rows.map((r, i) => !r.n ? `<tr><td>${r.label}</td><td class="n">0</td>${'<td class="n">–</td>'.repeat(5)}</tr>` : `<tr${i ? '' : ' style="font-weight:600"'}><td>${r.label}</td><td class="n">${r.n}</td><td class="n">${r.w}–${r.n - r.w}</td><td class="n">${pct(r.w / r.n)}</td><td class="n">${r.px.toFixed(2)}</td><td class="n ${cls(r.pl)}">${sgn(r.pl, 1)}</td><td class="n ${cls(r.roi)}">${sgn(r.roi * 100, 1)}%</td></tr>`).join('')
+    + '</tbody></table></div>';
+}
+
 function hcapBacktest(){
   const H = DATA.hcap;
   if (lg !== 'all' && hside && !((((H.backtest.by_side || {})[hside] || {}).by_league || {})[lg])) return `<p class="empty">No ${hside === 'fav' ? 'favourite' : 'underdog'} bets for this league in the backtest.</p>`;
   const B = sideBT(H), A = B.open.all, name = hside === 'fav' ? 'Favourite' : hside === 'dog' ? 'Underdog' : 'Points handicap';
   const tl = [['ROI', `<span class="${cls(A.roi)}">${sgn(A.roi * 100, 1)}%</span>`, units1(A.pl)], ['Record', `${A.w}–${A.n - A.w}`, `${A.n ? pct(A.w / A.n) : '–'} won · price needs ${B.calibration_all ? pct(B.calibration_all.need) : '–'}`], ['Bets', A.n.toLocaleString('en-US'), `${B.first.slice(0, 4)}–${B.last.slice(-2)}, past seasons`]];
-  return `<h2>${name}: the backtest</h2><div class="metrics">${tl.map(([l, v, x]) => `<div class="metric"><div class="lbl">${l}</div><div class="big">${v}</div><div class="sm">${x}</div></div>`).join('')}</div>` + renderHcap('bt');
+  return `<h2>${name}: the backtest</h2><div class="metrics">${tl.map(([l, v, x]) => `<div class="metric"><div class="lbl">${l}</div><div class="big">${v}</div><div class="sm">${x}</div></div>`).join('')}</div>` + (lg === 'all' ? sexTable(B.open.sex) : '') + renderHcap('bt');
 }
 function render(){
   document.querySelectorAll('#tabs a').forEach(a => { a.classList.toggle('on', a.dataset.view === view); a.href = `#view=${a.dataset.view}${lg === 'all' ? '' : '&lg=' + lg}`; });
   const hb = (view === 'backtest' && DATA.hcap && DATA.hcap.backtest) || view === 'picks' || view === 'wtest';   // the pills: Backtest, Live test, Women Leagues test
   const chips = view === 'method' || view === 'home' || view === 'wtest' || view === 'season' || (view === 'backtest' && market === 'ml') ? [] : [['all', 'All leagues'], ...(view === 'projections' ? Object.values(PJLG) : view === 'picks' ? Object.values(PLG) : view === 'backtest' && market === 'hcap' ? hLeagues() : view === 'backtest' || view === 'leagues' ? Object.values(BLG) : DATA.leagues).map(l => [l.key, chipName(l)])];
-  const sw = hb ? ([['totals', 'Over, low totals'], ['hcap:fav', 'Favourite'], ['hcap:dog', 'Underdog'], ...(view === 'picks' ? [['ml', 'Match winner']] : [])]).map(([k, t]) =>
+  const sw = hb ? ([['totals', 'Over, low totals'], ['hcap:fav', 'Favourite'], ['hcap:dog', 'Underdog'], ...(view === 'picks' || view === 'backtest' ? [['ml', 'Match winner']] : [])]).map(([k, t]) =>
       `<a href="#view=${view}${k.startsWith('hcap') ? '&m=hcap&s=' + k.slice(5) : k === 'ml' ? '&m=ml' : ''}${lg !== 'all' && (k === 'totals' || view === 'picks' || view === 'backtest') && (view === 'backtest' ? BLG[lg] || PLG[lg] : PLG[lg]) ? '&lg=' + lg : ''}" class="${k === market || (market === 'hcap' && k.startsWith('hcap') && (!hside || k.slice(5) === hside)) ? 'on' : ''}" style="font-size:15.5px;padding:6px 14px">${t}</a>`).join('')
       + (chips.length ? '<span style="flex-basis:100%;height:2px"></span>' : '') : '';
   $('chips').innerHTML = sw + chips.map(([k, t]) => `<a href="#view=${view}${(view === 'picks' || view === 'leagues' || view === 'backtest') && market === 'hcap' ? '&m=hcap' + (hside ? '&s=' + hside : '') : ''}${k === 'all' ? '' : '&lg=' + k}" class="${k === lg ? 'on' : ''}">${t}</a>`).join('');
