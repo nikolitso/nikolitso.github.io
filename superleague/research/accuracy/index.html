@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en" data-site="football">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How accurate are football predictions? A Super League model against the market · Antonis Nikolitsopoulos</title>
+<meta name="description" content="Over 517 Greek Super League games, the closing odds predicted results better than this site's model. Its match-stat projections beat a league average, and its picks are 38–17, but only 5 of 40 beat the closing price.">
+<link rel="canonical" href="https://antonisnikolitsopoulos.com/superleague/research/accuracy/">
+<meta property="og:title" content="How accurate are football predictions? A Super League model against the market">
+<meta property="og:description" content="Over 517 Greek Super League games, the closing odds predicted results better than this site's model. Its match-stat projections beat a league average, and its picks are 38–17, but only 5 of 40 beat the closing price.">
+<meta property="og:url" content="https://antonisnikolitsopoulos.com/superleague/research/accuracy/">
+<meta property="og:type" content="article">
+<meta property="og:image" content="https://antonisnikolitsopoulos.com/superleague.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.png" type="image/png" sizes="64x64">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Hanken+Grotesk:ital,wght@0,300..700;1,400&display=swap">
+<style>:root{--an-wrap:860px}
+.wrap{max-width:860px;margin:0 auto;padding:22px 16px 80px;font-family:var(--an-body);color:var(--an-ink)}
+.lede{font-size:17.5px;line-height:1.55;margin:0 0 22px;max-width:62ch}
+.lede b{font-weight:600}
+p,li{font-size:15.5px;line-height:1.6;max-width:68ch}
+h2{font:400 24px/1.2 var(--an-display);margin:34px 0 10px}
+table{border-collapse:collapse;width:100%;font-size:14.5px;margin:8px 0 6px}
+th{text-align:left;font-weight:600;color:var(--an-muted);font-size:14px;letter-spacing:.06em;text-transform:uppercase;border-bottom:1px solid var(--an-rule);padding:8px 10px;vertical-align:bottom}
+td{padding:9px 10px;border-bottom:1px solid var(--an-rule);font-variant-numeric:tabular-nums}
+th.n,td.n{text-align:right}
+td.hi{background:var(--an-accent-soft);font-weight:600}
+.muted{color:var(--an-muted)}
+.note{font-size:14px;color:var(--an-muted);margin:4px 0 0}
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;margin:8px 0 6px}
+.fact{background:var(--an-soft);border:1px solid var(--an-rule);border-radius:10px;padding:12px 14px;font-size:14px;line-height:1.5}
+.fact b{display:block;font:400 30px/1.1 var(--an-display);margin-bottom:4px}
+.fact span{color:var(--an-muted)}
+a.fact{display:block;color:inherit;text-decoration:none;transition:border-color .15s}
+a.fact:hover{border-color:var(--an-accent)}
+a.fact:after{content:"See the numbers →";display:block;margin-top:6px;font-size:14px;color:var(--an-accent)}
+h2{scroll-margin-top:16px}
+ul.short{padding-left:20px;margin:6px 0}
+ul.short li{margin:4px 0}
+.rs-h3{font:600 15px/1.3 var(--an-body);margin:22px 0 4px}
+details.rs-more{margin:14px 0 6px}
+details.rs-more summary{cursor:pointer;color:var(--an-accent);font-size:15px}
+
+.nav{display:flex;justify-content:space-between;gap:16px;margin-top:36px;font-size:14px;flex-wrap:wrap}
+.nav a,.wrap p a,.wrap li a{color:var(--an-accent);text-decoration:none}
+.nav a:hover,.wrap p a:hover,.wrap li a:hover{text-decoration:underline}
+@media (max-width:600px){th,td{padding:7px 6px}table{font-size:14px}th{font-size:14px}}
+.chart{width:100%;height:auto;display:block;margin:10px 0 4px}
+.chart .grid{stroke:var(--an-rule);stroke-width:1}.chart .zero{stroke:var(--an-muted);stroke-width:1.5}
+.chart .ax{fill:var(--an-muted);font-size:14px;font-family:var(--an-body)}
+.chart .bar{fill:var(--an-muted);opacity:.6}.chart .bar.hi{fill:var(--an-accent);opacity:1}.chart .part{opacity:.45}
+.key{display:flex;gap:18px;flex-wrap:wrap;font-size:14px;color:var(--an-muted);margin:4px 0}
+.key i{display:inline-block;width:12px;height:12px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+.scroll{overflow-x:auto}
+.box{border:1px solid var(--an-rule);border-radius:12px;padding:4px 18px 10px;background:var(--an-soft);margin-top:30px}
+ol.checks{padding-left:22px}ol.checks li{margin:6px 0}
+</style>
+<link rel="stylesheet" href="/assets/an.css?v=5">
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "b67bbb76d0e24af196b24ded3ab71ad0"}'></script>
+<meta property="og:site_name" content="Antonis Nikolitsopoulos">
+<meta property="og:locale" content="en_US">
+<meta property="og:image:alt" content="How accurate are football predictions? A Super League model against the market">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="675">
+<meta name="twitter:site" content="@nikolitso">
+<meta name="twitter:creator" content="@nikolitso">
+<meta name="twitter:title" content="How accurate are football predictions? A Super League model against the market">
+<meta name="twitter:description" content="Over 517 Greek Super League games, the closing odds predicted results better than this site's model. Its match-stat projections beat a league average, and its picks are 38–17, but only 5 of 40 beat the closing price.">
+<meta name="twitter:image" content="https://antonisnikolitsopoulos.com/superleague.jpg">
+<meta name="twitter:image:alt" content="How accurate are football predictions? A Super League model against the market">
+</head>
+<body>
+<nav class="an-sitebar" aria-label="Main site"><div><a href="/books/">Books</a><a href="/#projects">Projects</a><a href="/about/">About</a><a href="/" title="Main site: antonisnikolitsopoulos.com" aria-label="Main site"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 2 11.5h3V21h5.5v-6h3v6H19v-9.5h3z"/></svg></a></div></nav>
+<nav class="an-project-nav" aria-label="Sports analytics projects"><div><a class="an-navhome" href="/">Home</a>
+<span class="an-navgroup">Football</span>
+<a href="/superleague/" aria-current="page">Greek Superleague</a>
+<a href="/football/greek-cup/">Greek Cup</a>
+<span class="an-navgroup">Basketball</span>
+<a href="/basketball/">Greek League</a>
+<a href="/basketball/overs/">European</a>
+<a href="/basketball/women/">Women Basketball</a>
+<a class="an-navchip" href="/volleyball/">Volleyball</a>
+<a class="an-navchip" href="/handball/">Handball</a>
+<span class="an-navgroup">PAOK</span>
+<a href="/paok-hub/">Hub</a>
+<a href="/paok-basketball/">Basketball</a></div></nav>
+<header class="an-head"><div><a class="an-home" href="/superleague/">Greek Superleague</a>
+  <a class="an-brand" href="/superleague/"><svg class="an-mark" aria-hidden="true"><use href="/assets/marks.svg#football"/></svg><span><small class="an-kicker">Explainer · 25 Nov 2026</small><h1>How accurate are football predictions?</h1></span></a>
+</div></header>
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Article","@id":"https://antonisnikolitsopoulos.com/superleague/research/accuracy/#article","headline":"How accurate are football predictions? A Super League model against the market","description":"Over 517 Greek Super League games, the closing odds predicted results better than this site's model. Its match-stat projections beat a league average, and its picks are 38–17, but only 5 of 40 beat the closing price.","url":"https://antonisnikolitsopoulos.com/superleague/research/accuracy/","datePublished":"2026-11-25","dateModified":"2026-11-25","inLanguage":"en","author":{"@id":"https://antonisnikolitsopoulos.com/#person"},"isPartOf":{"@id":"https://antonisnikolitsopoulos.com/#website"},"about":["Football predictions","Greek Super League","Betting markets","Forecast accuracy"]},{"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://antonisnikolitsopoulos.com/"},{"@type":"ListItem","position":2,"name":"Greek Superleague","item":"https://antonisnikolitsopoulos.com/superleague/"},{"@type":"ListItem","position":3,"name":"How accurate are football predictions","item":"https://antonisnikolitsopoulos.com/superleague/research/accuracy/"}]},{"@type":"Person","@id":"https://antonisnikolitsopoulos.com/#person","name":"Antonis Nikolitsopoulos","url":"https://antonisnikolitsopoulos.com/","image":"https://antonisnikolitsopoulos.com/photo.jpg","homeLocation":{"@type":"Place","name":"Thessaloniki, Greece"},"knowsAbout":["Sports analytics","Football","Basketball","Probability modelling","Books","World cinema","Greek wine"],"sameAs":["https://www.linkedin.com/in/antonis-nikolitsopoulos/","https://x.com/nikolitso","https://letterboxd.com/nikolitso/","https://whatalgomissed.com/"]},{"@type":"WebSite","@id":"https://antonisnikolitsopoulos.com/#website","url":"https://antonisnikolitsopoulos.com/","name":"Antonis Nikolitsopoulos","inLanguage":"en","publisher":{"@id":"https://antonisnikolitsopoulos.com/#person"}}]}</script>
+<main class="wrap">
+<p class=lede>An honest answer, from this site's own Super League model. Over 517 games since 2024-25, <b>the market's closing odds predicted results more accurately than the model</b>. The model is more useful for match stats such as shots and corners, where it clearly beats a league average. Its 55 published picks have won 38 and lost 17, but 35 of the 40 with a closing price were taken at a worse price than the close, so that record proves little so far.</p>
+
+<div class="facts">
+  <a class="fact" href="#results"><b>517</b>games of model against market since 2024-25; the market was more accurate</a>
+  <a class="fact" href="#stats"><b>20%</b>smaller miss than a league average, on shots</a>
+  <a class="fact" href="#picks"><b>38–17</b>published picks, ROI +30.9%</a>
+  <a class="fact" href="#picks"><b>5 of 40</b>picks beat the closing price</a>
+</div>
+
+<h2 id="three">Three ways to judge a prediction</h2>
+<ul class="short">
+  <li><b>Does it beat a simple average?</b> A prediction is only useful if it does better than the obvious guess. For a match stat, the obvious guess is the league average.</li>
+  <li><b>Are its chances honest?</b> When a model says 60%, it should happen about 60% of the time over many games. A model can pick plenty of winners and still be over-confident.</li>
+  <li><b>Does it beat the market?</b> The closing odds just before kick-off carry everything the market knows, from team news to late money. Beating them is the hardest test, and the one that decides whether a prediction is worth betting on.</li>
+</ul>
+
+<h2 id="results">Results: the market is more accurate</h2>
+<table style="max-width:640px">
+<tr><th>517 games, 2024-25 to 18 October 2026</th><th class=n>Model</th><th class=n>Closing odds</th></tr>
+<tr><td>Home, draw or away: log loss</td><td class=n>0.961</td><td class="n hi">0.944</td></tr>
+<tr><td>Over/under 2.5 goals: Brier score</td><td class=n>0.2466</td><td class="n hi">0.2447</td></tr>
+<tr><td>Its favourite won</td><td class=n>53.2%</td><td class=n>53.2%</td></tr>
+</table>
+<p class=note>Lower is better for both scores. Closing odds: the average across the market just before kick-off, with the margin removed.</p>
+<p>Both scores punish a confident wrong call more than a cautious one. The gaps look small, but they favour the market on both questions, and the two picked a winning favourite equally often. In plain terms: on who wins and on whether there are three goals, the closing odds know a little more than the model.</p>
+<p>Betting the disagreements says the same, only less clearly. Backing every outcome where the model's chance times the average closing price was at least 1.05 returned <b>−5.2%</b> on home, draw or away (346 bets) and <b>+6.6%</b> on over/under 2.5 (178 bets). The 95% ranges are wide, −27.7% to +17.3% and −9.1% to +22.3%, so neither result shows an edge, or rules one out.</p>
+
+<h2 id="stats">Match stats: better than an average</h2>
+<div class="scroll"><table style="max-width:640px">
+<tr><th>Average miss per team</th><th class=n>Model</th><th class=n>League average</th><th class=n>Smaller miss</th></tr>
+<tr><td>Goals</td><td class=n>0.86</td><td class=n>0.96</td><td class="n">11%</td></tr><tr><td>Shots</td><td class=n>3.36</td><td class=n>4.22</td><td class="n hi">20%</td></tr><tr><td>Shots on target</td><td class=n>1.70</td><td class=n>1.93</td><td class="n">12%</td></tr><tr><td>Corners</td><td class=n>1.90</td><td class=n>2.15</td><td class="n">12%</td></tr><tr><td>Cards</td><td class=n>1.23</td><td class=n>1.26</td><td class="n">2%</td></tr><tr><td>Fouls</td><td class=n>3.11</td><td class=n>3.24</td><td class="n">4%</td></tr><tr><td>Saves</td><td class=n>1.46</td><td class=n>1.55</td><td class="n">6%</td></tr>
+</table></div>
+<p class=note>Every league game from 2023-24 on, each projected from earlier games only.</p>
+<p>The model does best where the teams drive the number: shots most of all, then shots on target, corners and goals. Cards and fouls barely move off the average; they depend more on the referee and the course of the game than on the two teams. The site's picks are on these match stats.</p>
+
+<h2 id="picks">The picks: a good record that proves little yet</h2>
+<p>The site publishes a pick when the model's chance times the market's price is at least 1.10. Since the start: <b>55 picks, 38 won, 17 lost</b>, +30.9% on flat stakes. The model gave its picks 64.4% on average, and 69.1% won.</p>
+<p>The closing price tells a different story. Of the 40 picks with a closing price, only 5 were taken at a better price than the close; on average the price was 6.6% worse (95% range 5.1% to 8.1% worse). When the market moves against nearly every pick, a winning record usually means the picks have been lucky, and the next hundred are likely to do worse. Over a few dozen picks, chance alone can move the return by 20 points or more either way.</p>
+<p>Every pick, with the time it was first published, is on the <a href="/track-record/">track record</a>.</p>
+
+<h2 id="checks">What to ask of any football prediction</h2>
+<ol class="checks">
+  <li><b>Compared with what?</b> A record with no comparison to the closing odds says little about skill.</li>
+  <li><b>Are the chances honest?</b> Ask for a table of stated chance against what happened.</li>
+  <li><b>How many?</b> Under a few hundred picks, luck dominates the result.</li>
+  <li><b>Published when?</b> Picks should carry a time from before kick-off that anyone can check.</li>
+</ol>
+
+<div class="box">
+<h2>Limits</h2>
+<ul class="short">
+<li>Results are compared on league games from 2024-25 to 18 October 2026 that have closing odds in the public football-data.co.uk archive.</li>
+<li>The model turns its expected goals into chances with a standard Poisson model; the Big 4 correction and the settings for each stat were fitted on seasons that include these games.</li>
+<li>The betting test uses average closing prices; a bettor shopping for the best price would do somewhat better on every line.</li>
+</ul>
+</div>
+<p>More research: <a href="/superleague/research/big-four/">how dominant the Big 4 are</a> · <a href="/superleague/research/europe/">the Big 4 after a European game</a>.</p>
+<div class="nav"><a href="/superleague/">← Super League projections</a><a href="/superleague/games/">Every game →</a></div>
+</main>
+</body>
+</html>
