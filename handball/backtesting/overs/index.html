@@ -4,11 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Handball backtest: overs | Antonis Nikolitsopoulos</title>
-<meta name="description" content="Handball goal model overs against market lines in Bundesliga (M), 2. Bundesliga (M), Greece (M), 2. Bundesliga (W), Poland I liga (W), Iceland (M), 2020-21 to 2025-26: by gap, league and season, every pick.">
+<meta name="description" content="Handball goal model overs against market lines in Bundesliga (M), 2. Bundesliga (M), Greece (M), 2. Bundesliga (W), Poland I liga (W), Iceland (M), Slovenia (M), 2020-21 to 2025-26: by gap, league and season, every pick.">
 <link rel="canonical" href="https://antonisnikolitsopoulos.com/handball/backtesting/overs/">
-<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebPage","@id":"https://antonisnikolitsopoulos.com/handball/backtesting/overs/#webpage","url":"https://antonisnikolitsopoulos.com/handball/backtesting/overs/","name":"Handball backtest: overs","description":"Handball goal model overs against market lines in Bundesliga (M), 2. Bundesliga (M), Greece (M), 2. Bundesliga (W), Poland I liga (W), Iceland (M), 2020-21 to 2025-26: by gap, league and season, every pick.","inLanguage":"en","isPartOf":{"@id":"https://antonisnikolitsopoulos.com/#website"},"author":{"@id":"https://antonisnikolitsopoulos.com/#person"}},{"@type":"Person","@id":"https://antonisnikolitsopoulos.com/#person","name":"Antonis Nikolitsopoulos","url":"https://antonisnikolitsopoulos.com/","image":"https://antonisnikolitsopoulos.com/photo.jpg","homeLocation":{"@type":"Place","name":"Thessaloniki, Greece"},"knowsAbout":["Sports analytics","Football","Basketball","Probability modelling","Books","World cinema","Greek wine"],"sameAs":["https://www.linkedin.com/in/antonis-nikolitsopoulos/","https://x.com/nikolitso","https://letterboxd.com/nikolitso/","https://whatalgomissed.com/"]},{"@type":"WebSite","@id":"https://antonisnikolitsopoulos.com/#website","url":"https://antonisnikolitsopoulos.com/","name":"Antonis Nikolitsopoulos","inLanguage":"en","publisher":{"@id":"https://antonisnikolitsopoulos.com/#person"}}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"WebPage","@id":"https://antonisnikolitsopoulos.com/handball/backtesting/overs/#webpage","url":"https://antonisnikolitsopoulos.com/handball/backtesting/overs/","name":"Handball backtest: overs","description":"Handball goal model overs against market lines in Bundesliga (M), 2. Bundesliga (M), Greece (M), 2. Bundesliga (W), Poland I liga (W), Iceland (M), Slovenia (M), 2020-21 to 2025-26: by gap, league and season, every pick.","inLanguage":"en","isPartOf":{"@id":"https://antonisnikolitsopoulos.com/#website"},"author":{"@id":"https://antonisnikolitsopoulos.com/#person"}},{"@type":"Person","@id":"https://antonisnikolitsopoulos.com/#person","name":"Antonis Nikolitsopoulos","url":"https://antonisnikolitsopoulos.com/","image":"https://antonisnikolitsopoulos.com/photo.jpg","homeLocation":{"@type":"Place","name":"Thessaloniki, Greece"},"knowsAbout":["Sports analytics","Football","Basketball","Probability modelling","Books","World cinema","Greek wine"],"sameAs":["https://www.linkedin.com/in/antonis-nikolitsopoulos/","https://x.com/nikolitso","https://letterboxd.com/nikolitso/","https://whatalgomissed.com/"]},{"@type":"WebSite","@id":"https://antonisnikolitsopoulos.com/#website","url":"https://antonisnikolitsopoulos.com/","name":"Antonis Nikolitsopoulos","inLanguage":"en","publisher":{"@id":"https://antonisnikolitsopoulos.com/#person"}}]}</script>
 <meta property="og:title" content="Handball backtest: overs | Antonis Nikolitsopoulos">
-<meta property="og:description" content="Handball goal model overs against market lines in Bundesliga (M), 2. Bundesliga (M), Greece (M), 2. Bundesliga (W), Poland I liga (W), Iceland (M), 2020-21 to 2025-26: by gap, league and season, every pick.">
+<meta property="og:description" content="Handball goal model overs against market lines in Bundesliga (M), 2. Bundesliga (M), Greece (M), 2. Bundesliga (W), Poland I liga (W), Iceland (M), Slovenia (M), 2020-21 to 2025-26: by gap, league and season, every pick.">
 <meta property="og:url" content="https://antonisnikolitsopoulos.com/handball/backtesting/overs/">
 <meta property="og:type" content="website">
 <meta property="og:image" content="https://antonisnikolitsopoulos.com/handball.jpg">
@@ -202,7 +202,7 @@ html{scroll-behavior:smooth;font-size:17.5px}   /* one step larger: the page siz
 <meta property="og:image:height" content="675">
 <meta name="twitter:site" content="@nikolitso">
 <meta name="twitter:title" content="Handball backtest: overs | Antonis Nikolitsopoulos">
-<meta name="twitter:description" content="Handball goal model overs against market lines in Bundesliga (M), 2. Bundesliga (M), Greece (M), 2. Bundesliga (W), Poland I liga (W), Iceland (M), 2020-21 to 2025-26: by gap, league and season, every pick.">
+<meta name="twitter:description" content="Handball goal model overs against market lines in Bundesliga (M), 2. Bundesliga (M), Greece (M), 2. Bundesliga (W), Poland I liga (W), Iceland (M), Slovenia (M), 2020-21 to 2025-26: by gap, league and season, every pick.">
 <meta name="twitter:image" content="https://antonisnikolitsopoulos.com/handball.jpg">
 <meta name="twitter:image:alt" content="Handball backtest: overs | Antonis Nikolitsopoulos">
 </head>
@@ -252,7 +252,7 @@ html{scroll-behavior:smooth;font-size:17.5px}   /* one step larger: the page siz
     <li>Line movement: every pick also stores the market's opening and closing line. The record is graded at the opening line; the Line movement table grades the same picks at the opening and at the closing line too, so the edge can be checked against both.</li>
     <li>Longest losing run is the most picks lost in a row, with the picks in date order.</li>
     <li>Every league the model follows is in the main record. Qatar (M) has no past market lines, so it has no backtest; Greece (M) lost in its backtest and is followed live to see whether that holds.</li>
-    <li>A new league is added only when it passes a rule set before its backtest is run: on its side, 30+ picks at +10% ROI or better from 2022-23 to 2024-25, and a profit in 2025-26. 2. Bundesliga (W), Poland I liga (W) and Iceland (M) joined this way, overs only.</li>
+    <li>A new league is added only when it passes a rule set before its backtest is run: on its side, 30+ picks at +10% ROI or better from 2022-23 to 2024-25, and a profit in 2025-26. 2. Bundesliga (W), Poland I liga (W), Iceland (M) and Slovenia (M) joined this way, overs only.</li>
     <li>A data check runs every hour: if a league's source comes back empty, or matches already played still have no result, a note appears at the top of the page.</li>
   </ol>
 </section>
@@ -361,7 +361,7 @@ html{scroll-behavior:smooth;font-size:17.5px}   /* one step larger: the page siz
 </footer>
 </main>
 
-<script src="/handball/data.js?v=98711879"></script>
+<script src="/handball/data.js?v=3b530108"></script>
 <script>
 const $=s=>document.querySelector(s);
 const f=(v,d=2)=>v==null||isNaN(v)?'–':(+v).toFixed(d);
@@ -377,7 +377,7 @@ const day=d=>{if(!d)return '–';const [y,m,dd]=d.split('-');return new Date(+y,
 (function(){
   const G=D.sig, L=G.leagues, byKey=Object.fromEntries(L.map(l=>[l.key,l]));
   const side=s=>s==='over'?'Over':s==='under'?'Under':'Over or Under';
-  const LSL={bl2:'2-bundesliga',il:'israel',w_pt:'portugal-women',t_de:'bundesliga',t_no:'norway',t_pt:'portugal',t_qa:'qatar',t_gr:'greece',w_d2:'2-bundesliga-women',w_pl2:'poland-women-i-liga',t_is:'iceland'}, lgS=(k,t)=>LSL[k]?`<a class="gl" href="${document.querySelector('.wrap').dataset.base?'/handball/':'https://antonisnikolitsopoulos.com/handball/'}leagues/${LSL[k]}/" title="Standings and averages">${t}</a>`:t;
+  const LSL={bl2:'2-bundesliga',il:'israel',w_pt:'portugal-women',t_de:'bundesliga',t_no:'norway',t_pt:'portugal',t_qa:'qatar',t_gr:'greece',w_d2:'2-bundesliga-women',w_pl2:'poland-women-i-liga',t_is:'iceland',m_si:'slovenia'}, lgS=(k,t)=>LSL[k]?`<a class="gl" href="${document.querySelector('.wrap').dataset.base?'/handball/':'https://antonisnikolitsopoulos.com/handball/'}leagues/${LSL[k]}/" title="Standings and averages">${t}</a>`:t;
   // every match links to its page with the model's workings (/handball/games/<date>-<home>-<away>/, built by games.py)
   const gs=t=>String(t).toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,''), gUrl=x=>`${document.querySelector('.wrap').dataset.base?'/handball/':'https://antonisnikolitsopoulos.com/handball/'}games/${x.date}-${gs(x.home)}-${gs(x.away)}/`, ml=(x,plain)=>`<a class="gl" href="${gUrl(x)}" title="How the model got its total">${plain?x.home:'<b>'+x.home+'</b>'} – ${x.away}</a>`;
   window.__gmH={ml,lgS};
@@ -480,7 +480,7 @@ const day=d=>{if(!d)return '–';const [y,m,dd]=d.split('-');return new Date(+y,
   const U=L.flatMap(l=>(l.proj||[]).map(x=>({...x,lg:l}))).sort((a,b)=>(a.date+(a.time||'')).localeCompare(b.date+(b.time||'')));
   const nm=x=>x.lg.name.split(' · ').slice(0,1).join(' · ');
   const lineCell=x=>(x.first==null||x.first===x.line?f(x.line,1):`<span class="muted">${f(x.first,1)} →</span> <b class="${cls(Math.abs(x.ours-x.first)-Math.abs(x.ours-x.line))}">${f(x.line,1)}</b>`);
-  const LG=Object.fromEntries(Object.entries({'2-bundesliga':'bl2',bundesliga:'t_de',israel:'il',norway:'t_no',portugal:'w_pt','portugal-men':'t_pt',greece:'t_gr',qatar:'t_qa','2-bundesliga-women':'w_d2','poland-women-i-liga':'w_pl2','iceland':'t_is'}).filter(([,k])=>L.some(l=>l.key===k))), SL=Object.fromEntries(Object.entries(LG).map(([a,b])=>[b,a]));
+  const LG=Object.fromEntries(Object.entries({'2-bundesliga':'bl2',bundesliga:'t_de',israel:'il',norway:'t_no',portugal:'w_pt','portugal-men':'t_pt',greece:'t_gr',qatar:'t_qa','2-bundesliga-women':'w_d2','poland-women-i-liga':'w_pl2','iceland':'t_is',slovenia:'m_si'}).filter(([,k])=>L.some(l=>l.key===k))), SL=Object.fromEntries(Object.entries(LG).map(([a,b])=>[b,a]));
   const BASE=document.querySelector('.wrap').dataset.base, lgHref=k=>BASE?`${BASE}live-test/${SL[k]}/`:'#'+SL[k];
   window.__LG=LG;
   // League pills on the live test pages (20 Nov 2026): all leagues of the side, then each league; the page's own pill is lit
