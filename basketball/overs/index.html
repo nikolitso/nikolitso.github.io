@@ -272,14 +272,14 @@ const LK = () => LIVE.max_luck ?? 1.5;                       // rule 6: 3-point 
 const GPL = () => { const k = (LIVE.min_gp_by_tier || {}).latam; return k ? ` (${k}+ in some leagues)` : ''; };
 const LKs = () => '+' + LK();
 const luckCell = v => `<td class="n">${v != null ? sgn(v) : '–'}</td>`;
-const lgShort = k => !LG[k] ? k : LG[k].country === 'Europe' ? LG[k].name : LG[k].country + (LG[k].tier === 'second' ? ' (2)' : '');   // EuroLeague and EuroCup share a country
+const lgShort = k => !LG[k] ? ((LIVE.removed || {})[k] ? `${LIVE.removed[k]}<small class="muted" style="display:block;font-size:11px;line-height:1.2">no longer covered</small>` : k) : LG[k].country === 'Europe' ? LG[k].name : LG[k].country + (LG[k].tier === 'second' ? ' (2)' : '');   // EuroLeague and EuroCup share a country
 const inLg = x => lg === 'all' || x.lg === lg;
 const R = DATA.rule;
 const LE = () => LIVE.edge ?? R.edge;
 const RL = k => !LIVE.leagues || LIVE.leagues.includes(k);
 const LIVE = window.LIVE || {updated: DATA.updated, fixtures: DATA.fixtures, picks: [], tracked: 0, start: '1 Nov 2026', taken: {n: 0}, over: {n: 0}, under: {n: 0}, rule: {n: 0}};
 LIVE.fixtures = LIVE.fixtures.filter(g => LG[g.lg]);                       // leagues no longer on the page
-LIVE.picks = (LIVE.picks || []).filter(b => LG[b.lg]);
+LIVE.picks = (LIVE.picks || []).filter(b => LG[b.lg] || (LIVE.removed || {})[b.lg]);   // a removed league keeps its picks in the record (26 Nov 2026)
 if (LIVE.leagues) LIVE.leagues = LIVE.leagues.filter(k => LG[k]);
 
 const AGE = LIVE.ts ? (Date.now() / 1000 - LIVE.ts) / 3600 : null;          // hours since the last hourly run
@@ -763,7 +763,7 @@ document.addEventListener('click', e => {
 function renderMethod(){
   const P = [
     ['Home', 'home', 'The answer in short: do the model’s overs make a profit? The backtest in a few numbers, then the main findings: every season, every league, out-of-sample weights, the line moving toward the picks, calibration and the worst run.'],
-    ['Live test', 'livetest', `The full-game picks logged live with the current model. The tiles give the record, ROI at the opening and closing line and how the line moved. <b>Open picks</b> are the games still to play, with the line, price and edge when logged and now (Line now, Price now, Edge now: the main odds source’s line and price, or the market’s middle line when it has none); <span class="badge">Bet now</span> marks the Fast Moving Leagues, where the line moves toward the picks. Then the rule, every settled pick, and the record broken down by line, edge, pace, league and month, with the picks against the blind over (the over in every game) by league.`],
+    ['Live test', 'livetest', `The full-game picks logged live with the current model. The tiles give the record, ROI at the opening and closing line and how the line moved. The record counts every pick published, including picks in leagues no longer covered, which are marked as such. <b>Open picks</b> are the games still to play, with the line, price and edge when logged and now (Line now, Price now, Edge now: the main odds source’s line and price, or the market’s middle line when it has none); <span class="badge">Bet now</span> marks the Fast Moving Leagues, where the line moves toward the picks. Then the rule, every settled pick, and the record broken down by line, edge, pace, league and month, with the picks against the blind over (the over in every game) by league.`],
     ['Backtest', 'backtest', 'The same rule on every game from 2022–23 to 2025–26, with each projection frozen 4 days before the game. Tiles, then Calibration (chance given v how often the picks won), By edge, By line, By tier, Fast Moving Leagues, By stage, By season, By month, By day of the week, By games played, By pace, By 3-point luck and By rest days. Every figure is shown at the opening line, where picks are taken, and at the closing line. Click a league in By tier for its own page: <b>Picks</b> (the default) breaks its picks down like this tab, <b>All games</b> describes every game in it.'],
     ['Projections', 'projections', 'Every game in the next 7 days: the model total next to the line and price on offer, and the edge of the over. Highlighted games are picks. The league buttons filter the list; each game links to its own match page, which shows how its total is built.'],
     ['How it works', 'how-it-works', 'This page: the pages, then how the model and the rules work.']];
