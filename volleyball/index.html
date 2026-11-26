@@ -267,7 +267,7 @@ a.gm{color:inherit;text-decoration:none} a.gm:hover{color:var(--gold);text-decor
 <p>Explainer: <a href="/volleyball/research/how-totals-work/">why a volleyball total is really about sets</a>.</p><p>Research note: <a href="/volleyball/research/close-matches/">close matches go under more often than the market expects</a>.</p>
 </section>
 </main>
-<script src="data.js?v=6d95dcc8"></script>
+<script src="data.js?v=8aa2ea06"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -743,8 +743,9 @@ function calibration(){
     return [`${(g[0].p * 100).toFixed(1)}–${(g[g.length - 1].p * 100).toFixed(1)}%`, g];
   });
   return `<h2>Calibration</h2><p class="note">Is the model's chance right? The same bets, comparing what the model said with how often the over actually won. Gap is actual minus model, in percentage points: near zero means the chance can be trusted, negative means the model was too confident. Market no-vig removes the market's margin using the average over and under prices. The model-chance bands contain equal numbers of bets. 4+ sets is the part of the matches that went past 3 sets. Market line, Model line and Actual total are averages for the band. Small bands move a lot by chance.</p>`
-    + table('By edge', [...[5, 10, 15, 20, 25, 30, 35].map(x => [x / 100, (x + 5) / 100]), [.40, 9]].map(([lo, hi]) => { const sk = hi <= DATA.edge;   // below the rule's edge: the skipped bets (26 Nov 2026)
-      return [`${Math.round(lo * 100)}${hi < 9 ? '–' + Math.round(hi * 100) : ''}%${hi < 9 ? '' : '+'}${sk ? ' <span class="muted">(skipped)</span>' : ''}`, (sk ? skEdge : bets).filter(b => b.edge >= lo && b.edge < hi)]; }), b => b.edge)   // 5-point bands (user, 26 Nov 2026)
+    + table('By edge', [...[5, 10, 15, 20].map(x => [x / 100, (x + 5) / 100]), [.25, 9]].map(([lo, hi]) =>   // the same edge bands on every bet type (user, 26 Nov 2026)
+      { const sk = hi <= DATA.edge;   // below the rule's edge: the skipped bets (26 Nov 2026)
+      return [`${Math.round(lo * 100)}${hi < 9 ? '–' + Math.round(hi * 100) : ''}%${hi < 9 ? '' : ' or more'}${sk ? ' <span class="muted">(skipped)</span>' : ''}`, (sk ? skEdge : bets).filter(b => b.edge >= lo && b.edge < hi)]; }), b => b.edge)   // 5-point bands (user, 26 Nov 2026)
     + table('By model chance', chanceBands, b => b.p);
 }
 
@@ -780,13 +781,13 @@ function byGames(){
   const bets = DATA.backtest.bets.filter(b => inLg(b) && !tuned.has(b.lg + '|' + b.season) && b.mg != null);
   if (!bets.length) return '';
   const lo = DATA.min_games, bands = [];
-  for (let a = lo; a < 25; a += 4) bands.push([a, a + 3]);
-  bands.push([25, 999]);
+  bands.push([5, 8], [9, 12], [13, 16], [17, 999], [21, 999]);   // the same bands on every bet type; the last row: the games the over skips (user, 26 Nov 2026)
   let h = `<h2>By games played</h2><p class="note">How many games each team had played that season before the game: the fewer of the two teams. Every game of the season counts, a second phase carrying on from the first. Both teams need ${lo} games before a pick, so the first band starts at ${lo}. Lines and totals are averages for the band.</p>`;
   h += `<div class="scroll"><table style="max-width:1100px"><thead><tr><th>Games played</th><th class="n">Bets</th><th class="n">Hit</th><th class="n">Avg price</th><th class="n">Profit</th><th class="n">ROI</th><th class="n">Opening line</th><th class="n">Closing line</th><th class="n">Model line</th><th class="n">Actual total</th></tr></thead><tbody>`;
   const skG = (DATA.backtest.skipped || []).filter(b => b.why === 'games' && inLg(b) && !tuned.has(b.lg + '|' + b.season));
   for (const [a, z] of bands){
     const sk = DATA.max_games && a > DATA.max_games;   // over the games cap: the skipped bets (user, 26 Nov 2026)
+    if (a === 21 && !sk) continue;
     const g = (sk ? skG : bets).filter(b => b.mg >= a && b.mg <= z);
     if (!g.length) continue;
     const gw = g.filter(b => b.won).length, gp = g.reduce((s, b) => s + b.ret, 0), px = g.reduce((s, b) => s + b.px, 0) / g.length;
@@ -1072,7 +1073,7 @@ function renderHcap(part){   // 'live': on Live test; 'bt': on Backtest (merged 
     if (hside && B.open.size_grp)                 // each size split by league group (user, 26 Nov 2026)
       sz.splice(0, sz.length, ...[['comp', 'competitive'], ['nc', 'not competitive']].filter(([g]) => !(hside === 'fav' && g === 'comp') && !(hside === 'dog' && g === 'nc')).flatMap(   // favourites: not competitive only (user, 26 Nov 2026)
         ([g, w]) => B.open.size_grp.map(c =>   // competitive first, then not competitive (user)
-        [Object.assign({}, c[g][hside], {label: `${w[0].toUpperCase() + w.slice(1)} · ${c.label} pts`, side: hside, lo: parseFloat(c.label), grp: g}), null])));
+        [Object.assign({}, c[g][hside], {label: `${c.label} pts`, side: hside, lo: parseFloat(c.label), grp: g}), null])));   // underdogs: one group, no prefix (user, 26 Nov 2026)
     const skip = c => c.grp ? ((c.grp === 'comp' && c.side === 'fav') || (c.grp === 'nc' && c.side === 'dog') ? ' <span class="muted">(skipped)</span>' : '')
       : c.lo < 0 ? '' : c.lo < H.min_line ? ' <span class="muted">(skipped)</span>' : c.lo < HCAP_COMP || (c.side === 'fav' && c.lo >= H.fav_max) ? ' <span class="muted">(skipped in competitive leagues)</span>' : '';
     h += T('By the size of the handicap', `${hside ? (hside === 'fav' ? 'Favourites' : 'Underdogs') + ' with' : 'Bets with'} an edge of ${sideEdge() * 100}% or more, by the market handicap, ${hside === 'fav' ? 'Not competitive leagues only: favourites of every size are bet.' : hside === 'dog' ? 'Competitive women’s leagues only (and those with fewer than 2 earlier seasons): underdogs of every size are bet.' : 'Favourites in not competitive leagues, underdogs in competitive ones, every size.'}`, sz.map(([c, o]) => [Object.assign({}, c, {label: c.label + skip(c)}), o]), 'Market handicap');
