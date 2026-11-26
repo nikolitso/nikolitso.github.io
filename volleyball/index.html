@@ -267,7 +267,7 @@ a.gm{color:inherit;text-decoration:none} a.gm:hover{color:var(--gold);text-decor
 <p>Explainer: <a href="/volleyball/research/how-totals-work/">why a volleyball total is really about sets</a>.</p><p>Research note: <a href="/volleyball/research/close-matches/">close matches go under more often than the market expects</a>.</p>
 </section>
 </main>
-<script src="data.js?v=4bd79b67"></script>
+<script src="data.js?v=8e1fa60a"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -903,7 +903,7 @@ function rulesBox(){
   ${li(`The ${Object.keys(PLG).length} Live test leagues and ${((DATA.hcapx || {}).leagues || []).length} handicap-only leagues`, '22 Nov')}</ul>
   <p style="margin:10px 0 4px"><b>Shown, not bet</b></p><ul style="margin:0;padding-left:20px">
   ${li('The Match winner pill and any positive edge on a match page that is not a pick', '22–25 Nov')}
-  ${li(`Match winner backtest (Backtest tab, not bet): the market favourite in <b>not competitive</b> women's leagues only, model chance ${((DATA.mlbt || {}).min_p || .65) * 100}%+, edge ${((DATA.mlbt || {}).edge || .1) * 100}%+, every month`, '26 Nov')}
+  ${li(`Match winner backtest (Backtest tab, not bet): the market favourite in <b>not competitive</b> women's leagues only, price ${((DATA.mlbt || {}).min_px || 1.3).toFixed(2)}+, model chance ${((DATA.mlbt || {}).min_p || .65) * 100}%+, edge ${((DATA.mlbt || {}).edge || .1) * 100}%+, every month`, '26 Nov')}
   ${li('The shadow test: overs in not competitive leagues, and in competitive ones favourites and underdogs under 10.5 points, logged and settled but outside the record; the earlier overs with an edge under 15% were moved there too', '25 Nov, 26 Nov')}</ul></div>`;
 }
 
@@ -1296,7 +1296,7 @@ function mlBacktest(){
   const cal = rows => `<h2>Calibration</h2><p class="note">Is the model's win chance right? The same bets by the model's chance: what it said, what the market said with the margin taken out, and how often the side actually won. Gap is actual minus model, in percentage points; negative means the model was too confident.</p><div class="scroll"><table style="max-width:900px"><thead><tr><th>Model chance</th><th class="n">Bets</th><th class="n">Model said</th><th class="n">Market no-vig</th><th class="n">Actual</th><th class="n">Gap</th><th class="n">ROI</th></tr></thead><tbody>`
     + rows.filter(c => c.n).map(c => `<tr><td>${c.label}</td><td class="n">${c.n}</td><td class="n">${pct(c.p)}</td><td class="n">${pct(c.mkt)}</td><td class="n">${pct(wr(c))}</td><td class="n ${cls(wr(c) - c.p)}">${sgn((wr(c) - c.p) * 100, 1)}</td><td class="n ${cls(c.roi)}">${sgn(c.roi * 100, 1)}%</td></tr>`).join('') + '</tbody></table></div>';
   let h = `<h2>Match winner: the backtest</h2><div class="metrics">${tl.map(([l, v, x]) => `<div class="metric"><div class="lbl">${l}</div><div class="big">${v}</div><div class="sm">${x}</div></div>`).join('')}</div>`;   // women's leagues only (user, 26 Nov 2026): no women/men table
-  h += `<p class="note">${M.games.toLocaleString('en-US')} past games of the Live test leagues with match winner prices, regular season, both teams ${DATA.min_games}+ games, every month. Each match is projected from earlier matches only; in not competitive women's leagues only (each season graded by the league's earlier seasons), the market favourite is backed when the model gives it ${(M.min_p || .5) * 100}% or more and its win chance × the average price is at least ${M.edge * 100}% above 1, 1 unit a bet, at the opening price. These are the first rules; more filters will follow from the tables below. Games whose stored prices belong to the other side, and edges over 100% (the same price errors), are left out. Not bet live: the Match winner pill on Live test only follows the handicap picks.</p>`;
+  h += `<p class="note">${M.games.toLocaleString('en-US')} past games of the Live test leagues with match winner prices, regular season, both teams ${DATA.min_games}+ games, every month. Each match is projected from earlier matches only; in not competitive women's leagues only (each season graded by the league's earlier seasons), the market favourite, at a price of ${(M.min_px || 1).toFixed(2)} or more, is backed when the model gives it ${(M.min_p || .5) * 100}% or more and its win chance × the average price is at least ${M.edge * 100}% above 1, 1 unit a bet, at the opening price. These are the first rules; more filters will follow from the tables below. Games whose stored prices belong to the other side, and edges over 100% (the same price errors), are left out. Not bet live: the Match winner pill on Live test only follows the handicap picks.</p>`;
   const lgName = c => { const L = PLG[c.lg] || BLG[c.lg]; return Object.assign({}, c, {label: L ? `${L.country} <span class="muted">${L.name} ${sexAb(L)}</span>` : c.label}); };
   h += T('By league', '', B.leagues.map(lgName), 'League');
   h += T('Home or away', 'The favourite backed, playing at home or away.', B.venue, 'Side');
@@ -1305,7 +1305,7 @@ function mlBacktest(){
   h += T('By odds', 'The price of the side backed.', B.price, 'Odds');
   h += T('By games played', 'The fewer games either team had played that season before the match.', B.games, 'Games played');
   h += cal(B.chance);
-  h += T('By edge', 'The same bets in four bands with the same number of bets each, by the edge the model sees.', B.edge, 'Edge');
+  h += T('By edge', 'The same bets in bands of about 90 to 100 bets each, by the edge the model sees.', B.edge, 'Edge');
   h += T('By model chance', 'The model\'s win chance for the side backed.', B.chance, 'Model chance');
   return h;
 }
