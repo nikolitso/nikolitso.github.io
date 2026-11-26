@@ -267,7 +267,7 @@ a.gm{color:inherit;text-decoration:none} a.gm:hover{color:var(--gold);text-decor
 <p>Explainer: <a href="/volleyball/research/how-totals-work/">why a volleyball total is really about sets</a>.</p><p>Research note: <a href="/volleyball/research/close-matches/">close matches go under more often than the market expects</a>.</p>
 </section>
 </main>
-<script src="data.js?v=849ae3a2"></script>
+<script src="data.js?v=593d42c6"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -914,7 +914,7 @@ function rulesBox(){
   ${li(`The ${Object.keys(PLG).length} Live test leagues and ${((DATA.hcapx || {}).leagues || []).length} handicap-only leagues`, '22 Nov')}</ul>
   <p style="margin:10px 0 4px"><b>Shown, not bet</b></p><ul style="margin:0;padding-left:20px">
   ${li('The Match winner pill and any positive edge on a match page that is not a pick', '22–25 Nov')}
-  ${li(`Match winner backtest (Backtest tab, not bet): the market favourite in <b>not competitive</b> women's leagues only, price above ${((DATA.mlbt || {}).min_px || 1.3).toFixed(2)}, model chance ${((DATA.mlbt || {}).min_p || .65) * 100}%+, edge ${((DATA.mlbt || {}).edge || .1) * 100}%+, every month; followed live as a shadow log (Live test, Match winner), outside every record`, '26 Nov')}
+  ${li(`Match winner backtest (Backtest tab, not bet): the market favourite in <b>not competitive</b> women's leagues only, price above ${((DATA.mlbt || {}).min_px || 1.3).toFixed(2)}, model chance ${((DATA.mlbt || {}).min_p || .65) * 100}%+, edge ${((DATA.mlbt || {}).edge || .1) * 100}%+, every month; followed live as a shadow log (Live test, Match winner), outside every record; a league is dropped once it has 30+ settled shadow bets and is losing on them`, '26 Nov')}
   ${li('The shadow test: overs in not competitive leagues, and in competitive ones favourites and underdogs under 10.5 points, logged and settled but outside the record; the earlier overs with an edge under 15% were moved there too', '25 Nov, 26 Nov')}</ul></div>`;
 }
 
@@ -1243,7 +1243,7 @@ function mlShadow(){
   let h = `<h2>Match winner: shadow log</h2><div class="metrics"><div class="metric"><div class="lbl">Record</div><div class="big">${w}–${n - w}</div><div class="sm">${n ? pct(w / n) + ' won' : 'none settled yet'}</div></div>`
     + `<div class="metric"><div class="lbl">ROI</div><div class="big"><span class="${cls(u)}">${n ? sgn(u / n * 100, 1) + '%' : '–'}</span></div><div class="sm">${n ? sgn(u, 2) + ' units' : '1 unit a bet'}</div></div>`
     + `<div class="metric"><div class="lbl">Open</div><div class="big">${open.length}</div><div class="sm">logged, not started</div></div></div>`;
-  h += `<p class="note">The Match winner backtest rule, followed live since 26 Nov 2026: in not competitive women’s leagues, the market favourite at a price above ${(R.min_px || 1.3).toFixed(2)}, when the model gives it ${(R.min_p || .65) * 100}% or more and an edge of ${(R.edge || .1) * 100}% or more. Logged before the first serve at the first price it qualifies at, which then stays; dropped if it stops qualifying before the start. Settled on who wins, 1 unit a bet, outside every record.</p>`;
+  h += `<p class="note">The Match winner backtest rule, followed live since 26 Nov 2026: in not competitive women’s leagues, the market favourite at a price above ${(R.min_px || 1.3).toFixed(2)}, when the model gives it ${(R.min_p || .65) * 100}% or more and an edge of ${(R.edge || .1) * 100}% or more. Logged before the first serve at the first price it qualifies at, which then stays; dropped if it stops qualifying before the start. Settled on who wins, 1 unit a bet, outside every record. A league is dropped once it has ${DATA.ml_drop_n || 30} or more settled bets here and is losing on them, a rule fixed in advance.${(DATA.ml_dropped || []).length ? ' Dropped so far: ' + DATA.ml_dropped.map(k => PLG[k] ? PLG[k].country + ' ' + PLG[k].name : k).join(', ') + '.' : ' None dropped yet.'}</p>`;
   if (open.length) h += `<h3>Open</h3><div class="scroll"><table><thead><tr><th>Date</th><th>Match</th><th>Backing</th><th class="n">Price</th><th class="n">Price now</th><th class="n">Model</th><th class="n">Edge</th></tr></thead><tbody>`
     + open.map(p => `<tr><td>${short(p.dt)} ${p.dt.slice(11)}</td><td class="wr">${p.home} – ${p.away}${lgLine(p)}</td><td>${p.team}</td><td class="n">${p.px.toFixed(2)}</td><td class="n">${p.px_now.toFixed(2)}</td><td class="n">${pct(p.p)}</td><td class="n">${sgn(p.edge * 100, 1)}%</td></tr>`).join('') + '</tbody></table></div>';
   if (done.length) h += `<h3>Settled</h3><div class="scroll"><table><thead><tr><th>Date</th><th>Match</th><th>Backing</th><th class="n">Price</th><th class="n">Sets</th><th class="n">Result</th><th class="n">Profit</th></tr></thead><tbody>`
