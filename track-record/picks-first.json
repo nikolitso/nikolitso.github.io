@@ -193,6 +193,10 @@
 "aac1d032076737d2bf2b4dad6887eb787cd88d20",
 "2026-11-13 20:04"
 ],
+"lithuania-nkl|BC Olimpas Palanga|Telsiai|2026-11-28": [
+"59d2daa7d29c2584884769607f6e60bd6d8f5179",
+"2026-11-26 20:02"
+],
 "lithuania-nkl|Jurbarkas|Vytis VDU|2026-11-24": [
 "e77efb5adab16a846063c74d8dc0b6df0f10ef50",
 "2026-11-21 17:32"
@@ -204,6 +208,10 @@
 "lithuania-nkl|Plunges Olimpas|Vytis VDU|2026-11-26": [
 "a4f761c10d508fd67c3a269238adb63e999537f3",
 "2026-11-24 20:02"
+],
+"lithuania-nkl|Rytas 2|Silute|2026-11-28": [
+"723487e1ddce24f8ddd75976534cb8d071ad746e",
+"2026-11-26 19:01"
 ],
 "lithuania-nkl|Rytas 2|Vytis VDU|2026-11-21": [
 "487daf3e7978ded2d732b131822c506f100096ed",
@@ -499,6 +507,10 @@
 "01d750269f0701a16b2fcbd18c820ee7271f78de",
 "2026-11-18 08:02"
 ],
+"fs:nunBpm1t": [
+"1b030226abe425cad32c50a6f86a82b9d383ae1f",
+"2026-11-26 21:40"
+],
 "fs:pGTIjP0E": [
 "6774d89c2780c2f44eddd23dbaeb0cd050cacd54",
 "2026-11-15 07:02"
@@ -772,6 +784,10 @@
 "fs:nqIdqsgl": [
 "01d750269f0701a16b2fcbd18c820ee7271f78de",
 "2026-11-18 08:02"
+],
+"fs:nunBpm1t": [
+"1b030226abe425cad32c50a6f86a82b9d383ae1f",
+"2026-11-26 21:40"
 ],
 "fs:pGTIjP0E": [
 "6774d89c2780c2f44eddd23dbaeb0cd050cacd54",
@@ -1306,6 +1322,102 @@
 "2026-11-23T17:00|Asteras|shots|under": [
 "c502bd2018d7e57e42e723e3022a9422f6674a0c",
 "2026-11-20 16:01"
+],
+"2026-11-28T17:00|Iraklis|cards|under": [
+"496768bd04ef68681a294da5646819551737dc6d",
+"2026-11-26 16:03"
+],
+"2026-11-28T17:00|Iraklis|saves|under": [
+"18e72945dfbbd2342b8c44972b943ad7f8a12887",
+"2026-11-26 17:02"
+],
+"2026-11-28T17:00|Iraklis|sot|under": [
+"18e72945dfbbd2342b8c44972b943ad7f8a12887",
+"2026-11-26 17:02"
+],
+"2026-11-28T17:00|Volos|cards|under": [
+"496768bd04ef68681a294da5646819551737dc6d",
+"2026-11-26 16:03"
+],
+"2026-11-28T17:00|Volos|fouls|under": [
+"496768bd04ef68681a294da5646819551737dc6d",
+"2026-11-26 16:03"
+],
+"2026-11-28T17:00|Volos|saves|under": [
+"18e72945dfbbd2342b8c44972b943ad7f8a12887",
+"2026-11-26 17:02"
+],
+"2026-11-28T17:00|Volos|shots|under": [
+"18e72945dfbbd2342b8c44972b943ad7f8a12887",
+"2026-11-26 17:02"
+],
+"2026-11-28T17:00|Volos|sot|under": [
+"18e72945dfbbd2342b8c44972b943ad7f8a12887",
+"2026-11-26 17:02"
+],
+"2026-11-28T20:00|Kifisia|cards|under": [
+"496768bd04ef68681a294da5646819551737dc6d",
+"2026-11-26 16:03"
+],
+"2026-11-29T17:00|Atromitos|saves|under": [
+"18e72945dfbbd2342b8c44972b943ad7f8a12887",
+"2026-11-26 17:02"
+],
+"2026-11-29T17:00|Atromitos|shots|under": [
+"18e72945dfbbd2342b8c44972b943ad7f8a12887",
+"2026-11-26 17:02"
+],
+"2026-11-29T17:00|Atromitos|sot|under": [
+"18e72945dfbbd2342b8c44972b943ad7f8a12887",
+"2026-11-26 17:02"
+],
+"2026-11-29T17:30|OFI|cards|under": [
+"496768bd04ef68681a294da5646819551737dc6d",
+"2026-11-26 16:03"
+],
+"2026-11-29T17:30|OFI|saves|under": [
+"18e72945dfbbd2342b8c44972b943ad7f8a12887",
+"2026-11-26 17:02"
+],
+"2026-11-29T17:30|OFI|shots|under": [
+"18e72945dfbbd2342b8c44972b943ad7f8a12887",
+"2026-11-26 17:02"
+],
+"2026-11-29T17:30|OFI|sot|under": [
+"18e72945dfbbd2342b8c44972b943ad7f8a12887",
+"2026-11-26 17:02"
+],
+"2026-11-29T19:00|Aris|cards|under": [
+"496768bd04ef68681a294da5646819551737dc6d",
+"2026-11-26 16:03"
+],
+"2026-11-29T19:00|Aris|fouls|under": [
+"0c98b9d30742a280f3ae9a1419298d324fefe3ae",
+"2026-11-26 18:02"
+],
+"2026-11-29T19:00|Aris|saves|under": [
+"0c98b9d30742a280f3ae9a1419298d324fefe3ae",
+"2026-11-26 18:02"
+],
+"2026-11-29T19:00|Aris|shots|under": [
+"0c98b9d30742a280f3ae9a1419298d324fefe3ae",
+"2026-11-26 18:02"
+],
+"2026-11-29T19:00|Aris|sot|under": [
+"0c98b9d30742a280f3ae9a1419298d324fefe3ae",
+"2026-11-26 18:02"
+],
+"2026-11-29T21:00|AEK|cards|under": [
+"496768bd04ef68681a294da5646819551737dc6d",
+"2026-11-26 16:03"
+],
+"2026-11-29T21:00|AEK|saves|under": [
+"0c98b9d30742a280f3ae9a1419298d324fefe3ae",
+"2026-11-26 18:02"
+],
+"2026-11-29T21:00|AEK|shots|under": [
+"0c98b9d30742a280f3ae9a1419298d324fefe3ae",
+"2026-11-26 18:02"
 ]
 },
 "volleyball": {
@@ -1486,6 +1598,10 @@
 "turkey-kbsl-women|Besiktas|Istanbul GSK|2026-11-21": [
 "a9410f10e095953043d528b3a2545e76b462323d",
 "2026-11-21 00:05"
+],
+"turkey-kbsl-women|Istanbul GSK|Turgutlu|2026-11-28": [
+"b06fd395694d27511c6f73dc2ddd8090efe6c662",
+"2026-11-26 16:03"
 ]
 },
 "women_h1": {
@@ -1560,6 +1676,10 @@
 "france-lfb-women|ESB Villeneuve|Flammes Carolo|2026-11-22": [
 "edd2a84dbed941335c08d0c797c5506bc264a268",
 "2026-11-20 15:57"
+],
+"france-lfb-women|Landerneau Bretagne|Toulouse|2026-11-28": [
+"ef7d8aa8bd2cb04c03cbdb8ac1695882173b3ce2",
+"2026-11-26 21:03"
 ],
 "france-lfb-women|Toulouse|Lyon|2026-11-22": [
 "edd2a84dbed941335c08d0c797c5506bc264a268",
@@ -1673,6 +1793,14 @@
 "e66af01ab1d3f9759ea8f4c073ff3ed18bec2cf3",
 "2026-11-20 17:04"
 ],
+"spain-liga-femenina-women|Leganes|Celta|2026-11-28": [
+"b06fd395694d27511c6f73dc2ddd8090efe6c662",
+"2026-11-26 16:03"
+],
+"spain-liga-femenina-women|Uni Girona|Gernika Bizkaia|2026-11-28": [
+"6e1bef1d7388e4a624bc001160c30644c670205b",
+"2026-11-26 16:49"
+],
 "turkey-kbsl-women|Besiktas|Istanbul GSK|2026-11-21": [
 "604cfafed38b8fa6647424827a593cc73a74f1ab",
 "2026-11-19 12:04"
@@ -1681,6 +1809,14 @@
 "d107f8387284d31cd051bc5a92a258a08a7a699d",
 "2026-11-20 11:04"
 ],
+"turkey-kbsl-women|Galatasaray|Fenerbahce|2026-11-28": [
+"6e1bef1d7388e4a624bc001160c30644c670205b",
+"2026-11-26 16:49"
+],
+"turkey-kbsl-women|Istanbul GSK|Turgutlu|2026-11-28": [
+"b06fd395694d27511c6f73dc2ddd8090efe6c662",
+"2026-11-26 16:03"
+],
 "turkey-kbsl-women|Melikgazi Kayseri|CBK Mersin|2026-11-22": [
 "e88e75afa0c64869101bc035cc61d8e48c350af0",
 "2026-11-20 11:30"
@@ -1688,6 +1824,10 @@
 "turkey-kbsl-women|Nesibe Aydin|Emlak Konut|2026-11-21": [
 "31fbc52ee69e8e0532458f7c19fc5c611221cc68",
 "2026-11-19 14:05"
+],
+"turkey-kbsl-women|Ormanspor|Botas|2026-11-28": [
+"a453ca820d45220864615fd89443ee96e1741325",
+"2026-11-26 15:03"
 ],
 "turkey-kbsl-women|Turgutlu|Galatasaray|2026-11-21": [
 "e66af01ab1d3f9759ea8f4c073ff3ed18bec2cf3",
@@ -1704,12 +1844,12 @@
 }
 },
 "scanned": {
-"basketball/overs/live.js": "e4ab9869bb442fb9efc8441985f43418d776e70c",
-"basketball/women/live.js": "25398b36a5dae8f05e3f6f4ea7897ebfd37213f0",
-"handball/data.js": "7a2202b94c4f2b3132e40cb25675236f33160542",
+"basketball/overs/live.js": "3a726b4986e5b3db3e3248931caa5914c90f67e4",
+"basketball/women/live.js": "ef7d8aa8bd2cb04c03cbdb8ac1695882173b3ce2",
+"handball/data.js": "1b030226abe425cad32c50a6f86a82b9d383ae1f",
 "handball/index.html": "bc0dff9430172025ea5d9ba8dd58b67a2b91660e",
 "handball/projections/index.html": "bc0dff9430172025ea5d9ba8dd58b67a2b91660e",
-"superleague/data.js": "c03d4ef0e22348d9f40c25d62476c2372c6f42bf",
-"volleyball/data.js": "a13ce4ad83286c9d6db8f8ef577673912e39dd66"
+"superleague/data.js": "5941fb37285cc89058f1baf45935930076199fdd",
+"volleyball/data.js": "04ac853ac2f832ddc2e58c0bc68cb56ed1f419d5"
 }
 }

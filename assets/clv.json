@@ -1,21 +1,21 @@
 {
- "updated": "2026-11-26 11:12 UTC",
+ "updated": "2026-11-26 21:46 UTC",
  "basketball_overs": {
-  "n": 36,
-  "avg": 0.0251,
+  "n": 38,
+  "avg": 0.0168,
   "beat": 19,
-  "picks": 36,
-  "won": 27,
+  "picks": 38,
+  "won": 29,
   "lost": 9,
   "push": 0,
-  "roi": 0.3826,
-  "lo": -0.0232,
-  "hi": 0.0733,
+  "roi": 0.4085,
+  "lo": -0.0303,
+  "hi": 0.064,
   "verdict": "level",
   "proof": {
-   "n": 36,
-   "found": 36,
-   "before": 36
+   "n": 38,
+   "found": 38,
+   "before": 38
   }
  },
  "women": {
@@ -55,21 +55,21 @@
   }
  },
  "handball": {
-  "n": 30,
-  "avg": -0.0164,
-  "beat": 12,
-  "picks": 30,
-  "won": 23,
-  "lost": 7,
+  "n": 44,
+  "avg": -0.0298,
+  "beat": 15,
+  "picks": 44,
+  "won": 29,
+  "lost": 15,
   "push": 0,
-  "roi": 0.3997,
-  "lo": -0.0614,
-  "hi": 0.0286,
+  "roi": 0.2064,
+  "lo": -0.0622,
+  "hi": 0.0026,
   "verdict": "level",
   "proof": {
-   "n": 30,
-   "found": 30,
-   "before": 29
+   "n": 44,
+   "found": 44,
+   "before": 43
   }
  },
  "handball_tracking": {
@@ -94,8 +94,8 @@
   "n": 0,
   "avg": null,
   "beat": 0,
-  "picks": 3,
-  "won": 3,
+  "picks": 5,
+  "won": 5,
   "lost": 0,
   "push": 0,
   "roi": 0.835,
@@ -103,9 +103,9 @@
   "hi": null,
   "verdict": "few",
   "proof": {
-   "n": 3,
-   "found": 3,
-   "before": 3
+   "n": 5,
+   "found": 5,
+   "before": 5
   }
  },
  "superleague": {
