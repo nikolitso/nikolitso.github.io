@@ -266,7 +266,7 @@ a.gm{color:inherit;text-decoration:none} a.gm:hover{color:var(--gold);text-decor
 <p>Explainer: <a href="/volleyball/research/how-totals-work/">why a volleyball total is really about sets</a>.</p><p>Research note: <a href="/volleyball/research/close-matches/">close matches go under more often than the market expects</a>.</p>
 </section>
 </main>
-<script src="data.js?v=21699445"></script>
+<script src="data.js?v=a394f46f"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -378,7 +378,7 @@ function homeTiles(){
   const avg = (d, f, fmt) => { const v = d.map(f).filter(x => x != null && !isNaN(x)); return v.length ? fmt(v.reduce((s, x) => s + x, 0) / v.length) : '–'; };
   const roiV = r => r.n ? `<span class="${cls(r.u)}">${sgn(r.u / r.n * 100, 1)}%</span>` : '–';
   const oLink = (n, l, href) => `<a href="${href}" style="color:inherit">${n} ${l}</a>`;   // each kind links to its own open picks (user, 26 Nov 2026)
-  const oFirst = '#view=picks';   // the tile's own link opens every kind's open picks (user, 27 Nov 2026)
+  const oFirst = '#view=picks&to=allopen';   // the tile's own link opens every kind's open picks (user, 27 Nov 2026)
   let h = `<div class="metrics"><div class="metric"><div class="lbl"><a href="${oFirst}" style="color:inherit">Open picks</a></div><div class="big"><a href="${oFirst}" style="color:inherit;text-decoration:none">${nOpen + nh + nm}</a></div>`
     + `<div class="sm">${nOpen + nh + nm ? `${oLink(nOpen, 'totals', '#view=picks&to=topen')} · ${oLink(nh, 'handicap', '#view=picks&m=hcap&to=hopen')} · ${oLink(nm, 'winner', '#view=picks&m=ml&to=mlopen')}` : 'none right now'}</div></div>`
     + tile('Record', `${a.w}–${a.n - a.w}`, a.n ? `${(a.w / a.n * 100).toFixed(1)}% won, all picks →` : '0 picks →', '#view=picks&to=settled')   // clickable (user, 26 Nov 2026)
@@ -1308,8 +1308,21 @@ function wOpenTop(){
 const RENDER = {home: renderHome, projections: renderProjections, picks: renderPicks, season: renderSeason, backtest: renderBacktest, leagues: renderLeagues, wtest: renderWtest, method: renderMethod};
 // Live test and Backtest each carry the totals first, then the points handicap, with separate records (user, 22 Nov 2026)
 const SEC = (id, t) => `<h2 id="${id}" style="margin-top:56px;font-size:34px;border-top:1px solid var(--line);padding-top:28px">${t}</h2>`;
+// every open pick of all four kinds in one table, at the top of Live test (user, 27 Nov 2026)
+function allOpen(){
+  const hc = x => (x > 0 ? '+' : x < 0 ? '−' : '') + Math.abs(x).toFixed(1);
+  const rows = DATA.picks.filter(inLg).filter(p => !('won' in p)).map(p => ({p, k: 'Over, low totals', pick: `Over ${p.line}`, ch: realP(p.p, p.px, p.under_px), e: realEdge(p.p, p.px, p.under_px)}))
+    .concat(hOpen().map(p => ({p, k: p.line < 0 ? 'Favourite' : 'Underdog', pick: `${p.team} ${hc(p.line)}`, ch: hP(p), e: hE(p)})))
+    .concat((DATA.mlshadow || []).filter(inLg).filter(p => !('won' in p)).map(p => ({p, k: 'Match winner', pick: `${p.team} to win`, ch: p.p, e: p.edge})))
+    .sort((a, b) => a.p.dt.localeCompare(b.p.dt));
+  if (!rows.length) return '<h2 id="allopen">Open picks</h2><p class="empty">No open picks right now. New ones appear once the market posts prices for a match that qualifies.</p>';
+  return `<h2 id="allopen">Open picks <span class="muted" style="font-size:16px">${rows.length}</span></h2><div class="scroll"><table class="sortable"><thead><tr><th>Date</th><th>Match</th><th>Bet</th><th>Pick</th><th class="n">Price</th><th class="n">Model chance</th><th class="n">Edge</th></tr></thead><tbody>`
+    + rows.map(({p, k, pick, ch, e}) => `<tr><td>${short(p.dt)} ${p.dt.slice(11)}</td><td class="wr">${gameLink(p)}<div class="muted" style="font-size:14px">${lgShort(p.lg)}</div></td><td>${k}</td><td><b>${pick}</b></td><td class="n">${p.px.toFixed(2)}</td><td class="n">${pct(ch)}</td><td class="n ${cls(e)}">${sgn(e * 100, 0)}%</td></tr>`).join('')
+    + '</tbody></table></div>';
+}
+
 const _picks = RENDER.picks, _bt = RENDER.backtest;
-RENDER.picks = () => market === 'all' ? ['<h2 style="margin-top:8px">Over, low totals</h2>' + _picks() + shadowSection('over'), '<h2 style="margin-top:40px">Favourite and Underdog</h2>' + renderHcap('live') + (lg === 'all' ? hcapExtra() : '') + shadowSection('fav') + shadowSection('dog'), '<div style="margin-top:40px"></div>' + mlShadow()].join('')
+RENDER.picks = () => market === 'all' ? [allOpen(), '<h2 style="margin-top:40px">Over, low totals</h2>' + _picks() + shadowSection('over'), '<h2 style="margin-top:40px">Favourite and Underdog</h2>' + renderHcap('live') + (lg === 'all' ? hcapExtra() : '') + shadowSection('fav') + shadowSection('dog'), '<div style="margin-top:40px"></div>' + mlShadow()].join('')
   : market === 'hcap' ? renderHcap('live') + (lg === 'all' ? hcapExtra() : '') + (hside ? shadowSection(hside) : shadowSection('fav') + shadowSection('dog')) : market === 'ml' ? mlShadow() + wtestML() : _picks() + shadowSection('over');
 const _wt = RENDER.wtest;
 RENDER.wtest = () => market === 'hcap' ? wtestHcap() : market === 'ml' ? wtestML() : _wt();
@@ -1390,7 +1403,7 @@ function fromHash(){
   if (/to=settled/.test(location.hash)) toSettled();   // the Record pill opens the settled picks (user, 15 Nov 2026)
   if (m && m[1] === 'hcap'){ const el = document.getElementById('hcap'); if (el) el.scrollIntoView({block: 'start'}); }
   if (/to=hopen/.test(location.hash)){ const el = document.getElementById('hopen'); if (el) el.scrollIntoView({behavior: 'smooth', block: 'start'}); }
-  { const t = location.hash.match(/to=(topen|mlopen)/); if (t){ const el = document.getElementById(t[1]); if (el) el.scrollIntoView({behavior: 'smooth', block: 'start'}); } }   // Home's Open picks links (user, 26 Nov 2026)
+  { const t = location.hash.match(/to=(topen|mlopen|allopen)/); if (t){ const el = document.getElementById(t[1]); if (el) el.scrollIntoView({behavior: 'smooth', block: 'start'}); } }   // Home's Open picks links (user, 26 Nov 2026)
   if (/to=wopen/.test(location.hash)){ const el = document.getElementById('wopen'); if (el) el.scrollIntoView({behavior: 'smooth', block: 'start'}); }
   if (/to=bets/.test(location.hash)){ const el = document.getElementById('btbets'); if (el) el.scrollIntoView({behavior: 'smooth', block: 'start'}); }
 }
