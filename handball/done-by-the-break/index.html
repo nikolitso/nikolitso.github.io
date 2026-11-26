@@ -210,7 +210,7 @@ html{scroll-behavior:smooth;font-size:17.5px}   /* one step larger: the page siz
 <noscript><p style="max-width:60ch;margin:2rem auto;padding:0 1rem;font-family:sans-serif">This page builds its tables in the browser. Please turn on JavaScript to see the handball projections.</p></noscript>
 <header class="an-head"><div><a class="an-home" href="/handball/"><h1>Handball</h1></a>
   <a class="an-brand" href="/handball/"><svg class="an-mark" aria-hidden="true"><use href="/assets/marks.svg#handball"/></svg><span><small class="an-kicker">Projections</small></span></a>
-  <nav class="tabs an-tabs" aria-label="Pages"><a data-id="home" href="/handball/">Home</a><a data-id="lt-overs" href="/handball/live-test/overs/">Live test overs</a><a data-id="lt-unders" href="/handball/live-test/unders/">Live test unders</a><a data-id="games" href="/handball/projections/">Projections</a><a data-id="bt-overs" href="/handball/backtesting/overs/">Backtest overs</a><a data-id="bt-unders" href="/handball/backtesting/unders/">Backtest unders</a><a data-id="done-by-the-break" href="/handball/done-by-the-break/">Done by the Break</a></nav>
+  <nav class="tabs an-tabs" aria-label="Pages"><a data-id="home" href="/handball/">Home</a><a data-id="lt-overs" href="/handball/live-test/overs/">Live test overs</a><a data-id="lt-unders" href="/handball/live-test/unders/">Live test unders</a><a data-id="games" href="/handball/projections/">Projections</a><a data-id="bt-overs" href="/handball/backtesting/overs/">Backtest overs</a><a data-id="bt-unders" href="/handball/backtesting/unders/">Backtest unders</a><a data-id="done-by-the-break" href="/handball/done-by-the-break/">Done by the Break</a><a data-id="how" href="/handball/how-it-works/">How it works</a></nav>
 </div></header>
 <main class="wrap" data-page="done-by-the-break" data-base="/handball/">
 <div class="an-top">
@@ -240,7 +240,10 @@ html{scroll-behavior:smooth;font-size:17.5px}   /* one step larger: the page siz
   <div class="tbl"><table id="sgLM"></table></div>
   <h3>Explore</h3>
   <div class="tiles" id="hmPages"></div>
-  <h3>How it works</h3>
+</section>
+
+<section id="how">
+  <div><h2>How it works</h2></div>
   <ol class="small">
     <li>Each team gets attack and defence ratings from this season's results only.</li>
     <li>Bundesliga (M) and 2. Bundesliga (M) add a shooting and pace correction (from 19 Nov 2026), from the leagues' official box scores: totals come back towards normal when opponents have been shooting unusually well or badly against the two teams (hot or cold goalkeepers even out), and go up when the two teams play more possessions a game (shots plus technical faults) than the league average. Its weights are fitted on earlier seasons only; tested season by season from 2018-19, it cut the average miss of the total in 8 of 9 seasons, and in the backtest its picks beat the line by more.</li>
@@ -357,7 +360,7 @@ html{scroll-behavior:smooth;font-size:17.5px}   /* one step larger: the page siz
 </footer>
 </main>
 
-<script src="/handball/data.js?v=c4a21644"></script>
+<script src="/handball/data.js?v=76880762"></script>
 <script>
 const $=s=>document.querySelector(s);
 const f=(v,d=2)=>v==null||isNaN(v)?'–':(+v).toFixed(d);
@@ -682,9 +685,9 @@ window.__gm=()=>{if(window.__gmDone)return;window.__gmDone=1;
 
 /* ---------- pages: one section per page (site: real pages; artifact: #hash) ---------- */
 (function(){
-  const main=['home','games','projections','backtesting','testing','done-by-the-break'], LG=window.__LG, slugs=Object.keys(LG), names={home:'Home',projections:'Live test overs','lt-overs':'Live test overs','lt-unders':'Live test unders',games:'Projections','bt-overs':'Backtest overs','bt-unders':'Backtest unders',testing:'Testing leagues','done-by-the-break':'Done by the Break'};
+  const main=['home','games','projections','backtesting','testing','done-by-the-break','how'], LG=window.__LG, slugs=Object.keys(LG), names={home:'Home',projections:'Live test overs','lt-overs':'Live test overs','lt-unders':'Live test unders',games:'Projections','bt-overs':'Backtest overs','bt-unders':'Backtest unders',testing:'Testing leagues','done-by-the-break':'Done by the Break',how:'How it works'};
   const ids=main.concat(['bt-overs','bt-unders','lt-overs','lt-unders'], slugs, slugs.map(x=>'bt-'+x)), btSd=c=>c==='bt-unders'?'under':c==='bt-overs'||c==='backtesting'?'over':((window.__LGSIDE||{})[LG[c.slice(3)]]||'over');
-  const path=id=>id==='home'?'':id.startsWith('bt-')?'backtesting/'+id.slice(3)+'/':id.startsWith('lt-')?'live-test/'+id.slice(3)+'/':LG[id]?'live-test/'+id+'/':id==='backtesting'?'backtesting/overs/':id==='projections'?'live-test/overs/':id==='games'?'projections/':id+'/';
+  const path=id=>id==='home'?'':id.startsWith('bt-')?'backtesting/'+id.slice(3)+'/':id.startsWith('lt-')?'live-test/'+id.slice(3)+'/':LG[id]?'live-test/'+id+'/':id==='backtesting'?'backtesting/overs/':id==='projections'?'live-test/overs/':id==='games'?'projections/':id==='how'?'how-it-works/':id+'/';
   const wrap=document.querySelector('.wrap'), fixed=wrap.dataset.page, base=wrap.dataset.base;
   if(!base){const hm=document.querySelector('a.home');if(hm)hm.href='#home'}
   if(base) document.querySelectorAll('.tabs a').forEach(a=>{a.href=base+path(a.dataset.id)});
@@ -694,7 +697,7 @@ window.__gm=()=>{if(window.__gmDone)return;window.__gmDone=1;
   function show(){const c0=cur(), c=c0==='backtesting'?'bt-overs':c0==='projections'?'lt-overs':c0, bt=c.startsWith('bt-'), lt=c.startsWith('lt-'), lg=LG[c], tab=lg?'lt-'+(((window.__LGSIDE||{})[lg])==='under'?'unders':'overs'):bt?'bt-'+(btSd(c)==='over'?'overs':'unders'):c, sec=lg?'league':bt?'backtesting':lt?'projections':c;
     if(lt&&window.__lt) window.__lt(c==='lt-unders'?'under':'over');
     if(c==='games'&&window.__gm) window.__gm();
-    ['home','games','projections','backtesting','testing','done-by-the-break','league'].forEach(i=>{document.getElementById(i).style.display=i===sec?'':'none'});
+    ['home','games','projections','backtesting','testing','done-by-the-break','how','league'].forEach(i=>{document.getElementById(i).style.display=i===sec?'':'none'});
     if(lg&&window.__lg) window.__lg(lg);
     if(window.__ar&&bt) window.__ar(LG[c.slice(3)]||'all',btSd(c));
     document.querySelectorAll('.tabs a').forEach(a=>{const on=a.dataset.id===tab;a.classList.toggle('on',on);if(on)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current')});
