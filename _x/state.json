@@ -175,7 +175,8 @@
       "statistical-sports-models-in-excel",
       "statistical-sports-models-in-excel-volume-1",
       "hbr-guide-to-generative-ai-for-managers",
-      "unsubscribe-how-to-kill-email-anxiety"
+      "unsubscribe-how-to-kill-email-anxiety",
+      "the-scout-mindset"
     ],
     "log": [
       {
@@ -543,9 +544,15 @@
         "slot": "2026-11-24 14",
         "slug": "unsubscribe-how-to-kill-email-anxiety",
         "id": "2125197811687792671"
+      },
+      {
+        "day": "2026-11-26",
+        "slot": "2026-11-26 14",
+        "slug": "the-scout-mindset",
+        "id": "2125930124268708162"
       }
     ],
-    "last_day": "2026-11-24"
+    "last_day": "2026-11-26"
   },
   "film": {
     "seen": [
@@ -1131,7 +1138,7 @@
     ],
     "last_day": "2026-11-16"
   },
-  "last_slot": "2026-11-25 14",
+  "last_slot": "2026-11-26 14",
   "quote": {
     "seen": [
       "1",
