@@ -267,7 +267,7 @@ a.gm{color:inherit;text-decoration:none} a.gm:hover{color:var(--gold);text-decor
 <p>Explainer: <a href="/volleyball/research/how-totals-work/">why a volleyball total is really about sets</a>.</p><p>Research note: <a href="/volleyball/research/close-matches/">close matches go under more often than the market expects</a>.</p>
 </section>
 </main>
-<script src="data.js?v=00f73c54"></script>
+<script src="data.js?v=8f5e2376"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -638,7 +638,8 @@ function btSummary(){
   const row = (label, g) => { const n = g.length, w = g.filter(b => b.won).length, u = g.reduce((a, b) => a + b.ret, 0);
     return {label, n, w, u, roi: n ? u / n : 0, line: avgLine(g, 'line'), fair: avgLine(g, 'fair'), total: avgLine(g, 'total')}; };
   const A = row('All leagues', bets), W = row("Women's leagues", bets.filter(b => BLG[b.lg].women)), M = row("Men's leagues", bets.filter(b => !BLG[b.lg].women));
-  const tl = [['ROI', `<span class="${cls(A.roi)}">${sgn(A.roi * 100, 1)}%</span>`, units1(A.u)], ['Record', `${A.w}–${A.n - A.w}`, `${A.n ? pct(A.w / A.n) : '–'} won`], ['Bets', A.n, `${DATA.backtest.first.slice(0, 4)}–26, past seasons`]];
+  const tl = [['ROI', `<span class="${cls(A.roi)}">${sgn(A.roi * 100, 1)}%</span>`, units1(A.u)], ['Record', `${A.w}–${A.n - A.w}`, `${A.n ? pct(A.w / A.n) : '–'} won`], ['Bets', A.n, `${DATA.backtest.first.slice(0, 4)}–26, past seasons`],
+    ['Model line', A.fair, 'avg of the bets'], ['Market line', A.line, 'avg of the bets'], ['Actual total', A.total, 'avg of the bets']];   // as on Live test (user, 26 Nov 2026)
   return `<h2>Over, low totals: the backtest</h2><div class="metrics">${tl.map(([l, v, x]) => `<div class="metric"><div class="lbl">${l}</div><div class="big">${v}</div><div class="sm">${x}</div></div>`).join('')}</div>`
     + `<div class="scroll"><table style="max-width:1000px"><thead><tr><th></th><th class="n">Bets</th><th class="n">Won–lost</th><th class="n">Hit</th><th class="n">Profit</th><th class="n">ROI</th><th class="n">Model line</th><th class="n">Market line</th><th class="n">Actual total</th></tr></thead><tbody>`
     + [A, W, M].map((r, i) => `<tr${i ? '' : ' style="font-weight:600"'}><td>${r.label}</td><td class="n">${r.n}</td><td class="n">${r.w}–${r.n - r.w}</td><td class="n">${r.n ? pct(r.w / r.n) : '–'}</td><td class="n ${cls(r.u)}">${sgn(r.u, 1)}</td><td class="n ${cls(r.roi)}">${sgn(r.roi * 100, 1)}%</td><td class="n">${r.fair}</td><td class="n">${r.line}</td><td class="n">${r.total}</td></tr>`).join('')
@@ -1060,7 +1061,7 @@ function renderHcap(part){   // 'live': on Live test; 'bt': on Backtest (merged 
       + rows.map(([c, o]) => `<tr><td>${c.label}</td><td class="n">${c.n}</td><td class="n">${c.n ? pct(c.w / c.n) : '–'}</td><td class="n">${c.n ? c.px.toFixed(2) : '–'}</td><td class="n ${cls(c.pl)}">${c.n ? sgn(c.pl, 1) : '–'}</td><td class="n ${cls(c.roi)}">${c.n ? sgn(c.roi * 100, 1) + '%' : '–'}</td></tr>`).join('') + '</tbody></table></div>';
     const pair = k => B.open[k].map(c => [c, null]);   // opening line only (user, 25 Nov 2026)
     h += `<p class="note">${B.games.toLocaleString('en-US')} games with a points handicap in the Live test leagues that have past odds (the 8 backtested leagues and, since 25 Nov 2026, the women's leagues added to Live test), regular season, both teams ${DATA.min_games}+ games, no April or October, no March except favourites, no May for underdogs. Each match is projected from earlier matches only. Games whose stored prices turn out to belong to the other side (the feed's own handicap result contradicts the score) are left out. The side whose model chance × price is at least ${sideEdge() * 100}% above 1 is backed at the average price, 1 unit a bet; profit and ROI at the opening line and average price.</p>`;
-    if (lg === 'all') h += T('By league', '', B.open.leagues.map(c => [c, null]), 'League') + (hside ? compTable(hside) : '');
+    if (lg === 'all') h += T('By league', '', B.open.leagues.map(c => [c, null]), 'League') + (hside === 'dog' ? compTable('dog') : '');   // Favourite: not competitive only, no table (user, 26 Nov 2026)
     h += T('By season', '', pair('seasons'), 'Season');
     h += T('By edge', `Every bet with an edge of 5% or more on a handicap of ${H.min_line} points or more (in competitive leagues underdogs from 10.5, no favourites; not competitive favourites of any size). Bigger disagreements with the market win more often, so picks need ${sideEdge() * 100}% or more; the other tables count only those.`, pair('edge').map(([c, o]) => [Object.assign({}, c, {label: c.label + (parseFloat(c.label) < sideEdge() * 100 ? ' <span class="muted">(skipped)</span>' : '')}), o]), 'Edge');
     if (!hside) h += T('Underdog or favourite', 'The side backed: taking the points or giving them.', pair('side'), 'Side');
@@ -1351,8 +1352,10 @@ function sexTable(rows){
 function hcapBacktest(){
   const H = DATA.hcap;
   if (lg !== 'all' && hside && !((((H.backtest.by_side || {})[hside] || {}).by_league || {})[lg])) return `<p class="empty">No ${hside === 'fav' ? 'favourite' : 'underdog'} bets for this league in the backtest.</p>`;
+  const hf = x => (x > 0 ? '+' : x < 0 ? '−' : '') + Math.abs(x).toFixed(1);
   const B = sideBT(H), A = B.open.all, name = hside === 'fav' ? 'Favourite' : hside === 'dog' ? 'Underdog' : 'Points handicap';
-  const tl = [['ROI', `<span class="${cls(A.roi)}">${sgn(A.roi * 100, 1)}%</span>`, units1(A.pl)], ['Record', `${A.w}–${A.n - A.w}`, `${A.n ? pct(A.w / A.n) : '–'} won · price needs ${B.calibration_all ? pct(B.calibration_all.need) : '–'}`], ['Bets', A.n.toLocaleString('en-US'), `${B.first.slice(0, 4)}–${B.last.slice(-2)}, past seasons`]];
+  const tl = [['ROI', `<span class="${cls(A.roi)}">${sgn(A.roi * 100, 1)}%</span>`, units1(A.pl)], ['Record', `${A.w}–${A.n - A.w}`, `${A.n ? pct(A.w / A.n) : '–'} won · price needs ${B.calibration_all ? pct(B.calibration_all.need) : '–'}`], ['Bets', A.n.toLocaleString('en-US'), `${B.first.slice(0, 4)}–${B.last.slice(-2)}, past seasons`],
+    ...(A.s_line != null ? [['Model handicap', hf(A.s_model), 'avg of the bets'], ['Market handicap', hf(A.s_line), 'avg of the bets'], ['Actual handicap', hf(A.s_actual), 'avg of the bets']] : [])];   // as on Live test (user, 26 Nov 2026)
   return `<h2>${name}: the backtest</h2><div class="metrics">${tl.map(([l, v, x]) => `<div class="metric"><div class="lbl">${l}</div><div class="big">${v}</div><div class="sm">${x}</div></div>`).join('')}</div>` + (lg === 'all' && hside !== 'dog' ? sexTable(B.open.sex) : '') + renderHcap('bt');   // underdogs: women only, no women/men table
 }
 function render(){
