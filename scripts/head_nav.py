@@ -37,7 +37,7 @@ SPORTS = [
 # the header pill's name for each project: the title on the project's own home page, so a renamed project renames
 # its pills on every page (user, 22 Nov 2026); these are only the fallback
 NAMES = {"/superleague/": "Greek Super League", "/football/greek-cup/": "Greek Cup", "/paok-hub/": "PAOK Hub",
-         "/basketball/": "Greek Basketball League", "/basketball/overs/": "European Basketball",
+         "/basketball/": "Greek Basketball League", "/basketball/overs/": "Men Basketball",
          "/basketball/women/": "Women Basketball", "/paok-basketball/": "PAOK Basketball",
          "/volleyball/": "European Volleyball", "/handball/": "Handball"}
 # pills that keep their own name whatever the section's title says (user, 22 Nov 2026: PAOK Hub's pages say PAOK FC)
