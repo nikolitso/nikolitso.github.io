@@ -245,7 +245,7 @@ a.tile:hover{border-color:var(--gold)}
 <p>1H live test records the first-half picks and 1H backtest covers past seasons. Live test records the full-game picks, taken at the opening line, Backtest covers 2021–22 to 2025–26, and Projections shows the next 7 days. A game's line is the median of the main market lines.</p>
 </section>
 </main>
-<script src="data.js?v=w119"></script>
+<script src="data.js?v=w120"></script>
 <script src="live.js"></script>
 <script>
 const $ = id => document.getElementById(id);
@@ -371,6 +371,7 @@ function renderH1Bt(){
   const sy = s => `${s}–${String(s + 1).slice(2)}`;
   h += `<h2>By season</h2>` + h1Table('Season', [2022, 2023, 2024, 2025].map(s => [sy(s), P.filter(b => b.sy === s)]));
   h += `<h2>By league</h2>` + h1Table('League', lgRows(P), LGNOTE);
+  h += shareTable(P, D.share);
   const mrows = [9, 10, 11, 12, 1, 2, 3, 4, 5].map(m => [MON[m - 1], P.filter(b => +b.dt.slice(5, 7) === m)]);   // every month since 23 Nov 2026 (user: April back; October left out 21-22 Nov, April 22-23 Nov)
   h += `<h2>By month</h2>` + h1Table('Month', mrows, 'Every month counts.');
   h += `<h2>By games played</h2>` + h1Table('Games played', gpRows([...P, ...sk('skipped_gp')], g0, 21),
@@ -621,6 +622,21 @@ const NB = 4;   // four bands: of 2 to 8, the one whose band results repeated be
 
 
 // Calibration (26 Nov 2026, user): each pick's model chance of the over against how often those picks won; at the top of every results tab
+// First half v second half (27 Nov 2026, user): the picks' first-half share of regulation points, against every regular-season game in the league
+function shareTable(P, SH){
+  const S = P.filter(b => b.ft != null && b.ft > b.total);
+  if (!S.length) return '';
+  const pct = v => `${(v * 100).toFixed(1)}%`, f1 = v => v.toFixed(1);
+  const sg = v => `<td class="n">${v > 0.0005 ? '+' : v < -0.0005 ? '−' : ''}${Math.abs(v * 100).toFixed(1)} pts</td>`;
+  const row = (label, g, ref, cls = '') => { if (!g.length) return '';
+    const a = g.reduce((x, b) => x + b.total, 0) / g.length, z = g.reduce((x, b) => x + b.ft - b.total, 0) / g.length, sh = a / (a + z);
+    const rs = ref && ref.h1 + ref.h2 > 0 ? ref.h1 / (ref.h1 + ref.h2) : null;
+    return `<tr${cls ? ` class="${cls}"` : ''}><td>${label}</td><td class="n">${g.length}</td><td class="n">${f1(a)}</td><td class="n">${f1(z)}</td><td class="n">${pct(sh)}</td><td class="n">${rs == null ? '–' : pct(rs)}</td>${rs == null ? '<td class="n">–</td>' : sg(sh - rs)}</tr>`; };
+  const ks = lgKeys(S).filter(k => S.some(b => b.lg === k));
+  const all = Object.values(SH || {}).reduce((a, r) => ({h1: a.h1 + r.h1 * r.n, h2: a.h2 + r.h2 * r.n}), {h1: 0, h2: 0});
+  const rows = ks.map(k => row(lgShort(k) + X1M(k), S.filter(b => b.lg === k), (SH || {})[k])).join('') + row('All picks', S, all, 'sub tot');
+  return `<h2>First half v second half</h2><p class="note">Points per game in the first and second halves of the picked games, regulation time only (overtime left out). The last two columns compare the first-half share with every regular-season game in the same league, 2022–23 to 2025–26.</p><div class="scroll"><table style="max-width:1040px"><thead><tr><th>League</th><th class="n">Picks</th><th class="n">1H points</th><th class="n">2H points</th><th class="n">1H share</th><th class="n">All games 1H share</th><th class="n">Difference</th></tr></thead><tbody>${rows}</tbody></table></div>`;
+}
 function calTable(list, note){
   const pv = b => b.p != null ? b.p : (b.edge != null && b.px ? (1 + b.edge) / b.px : null);
   const S = list.filter(b => b.ret != null && b.ret !== 0 && pv(b) != null);
