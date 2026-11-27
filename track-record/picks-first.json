@@ -435,6 +435,10 @@
 "6a4504d7e4ebe9229eb4c05ae49a35377c7c5d5b",
 "2026-11-14 14:03"
 ],
+"fs:QV8gS5oC": [
+"16ca3fdee946870a0dc05432b0e989238806ec1a",
+"2026-11-27 00:53"
+],
 "fs:SIVsh24j": [
 "34c4612dad676c9a6676360a6599168f874c3ad4",
 "2026-10-23 06:24"
@@ -712,6 +716,10 @@
 "fs:QFz37zOc": [
 "6a4504d7e4ebe9229eb4c05ae49a35377c7c5d5b",
 "2026-11-14 14:03"
+],
+"fs:QV8gS5oC": [
+"16ca3fdee946870a0dc05432b0e989238806ec1a",
+"2026-11-27 00:53"
 ],
 "fs:SIVsh24j": [
 "34c4612dad676c9a6676360a6599168f874c3ad4",
@@ -1844,12 +1852,12 @@
 }
 },
 "scanned": {
-"basketball/overs/live.js": "3a726b4986e5b3db3e3248931caa5914c90f67e4",
-"basketball/women/live.js": "ef7d8aa8bd2cb04c03cbdb8ac1695882173b3ce2",
-"handball/data.js": "1b030226abe425cad32c50a6f86a82b9d383ae1f",
+"basketball/overs/live.js": "9912187fffbafc0a80e0cd989099d11cd71ad58c",
+"basketball/women/live.js": "54fc5ce311f7e55cc4b092ae648ecb85b42a8e44",
+"handball/data.js": "9ae3dca51bcfe8fcdc5301935656bfd7d869e57c",
 "handball/index.html": "bc0dff9430172025ea5d9ba8dd58b67a2b91660e",
 "handball/projections/index.html": "bc0dff9430172025ea5d9ba8dd58b67a2b91660e",
-"superleague/data.js": "5941fb37285cc89058f1baf45935930076199fdd",
-"volleyball/data.js": "04ac853ac2f832ddc2e58c0bc68cb56ed1f419d5"
+"superleague/data.js": "ad1e32047619a909dcaf3e6e681216f14734905f",
+"volleyball/data.js": "599fe68153b520192e826d3687dbdbc47f8351dc"
 }
 }
