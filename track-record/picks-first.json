@@ -1878,10 +1878,10 @@
 "scanned": {
 "basketball/overs/live.js": "4d9b216ec6c7c8e9bfad393b24682464bd52053a",
 "basketball/women/live.js": "4c4b58c305cd7366d0b79246b8f749daf5637cb7",
-"handball/data.js": "463b515be8e9327c6a2eca742f700d8d76c675c9",
+"handball/data.js": "62b3950d7f1a36df6b218fea53c4194af360872f",
 "handball/index.html": "bc0dff9430172025ea5d9ba8dd58b67a2b91660e",
 "handball/projections/index.html": "bc0dff9430172025ea5d9ba8dd58b67a2b91660e",
 "superleague/data.js": "29afc61295bd43b2d76df71367c2c66669557e3d",
-"volleyball/data.js": "2166cba3bc3a7d3625902221b67f50f4b8e0638a"
+"volleyball/data.js": "cc36fbdf20b981a82c17ea7b6fa9ca4599c03fa5"
 }
 }
