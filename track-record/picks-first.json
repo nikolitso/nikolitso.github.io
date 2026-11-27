@@ -1367,6 +1367,14 @@
 "496768bd04ef68681a294da5646819551737dc6d",
 "2026-11-26 16:03"
 ],
+"2026-11-28T20:00|Kifisia|shots|over": [
+"9a2209a226aa5fcc6810d177761c9febadfa9c67",
+"2026-11-27 15:02"
+],
+"2026-11-29T17:00|Atromitos|cards|under": [
+"7dc68c8cdf0f1b9b4b9a064d34102e059b18cf0e",
+"2026-11-27 22:03"
+],
 "2026-11-29T17:00|Atromitos|saves|under": [
 "18e72945dfbbd2342b8c44972b943ad7f8a12887",
 "2026-11-26 17:02"
@@ -1677,6 +1685,10 @@
 "e66af01ab1d3f9759ea8f4c073ff3ed18bec2cf3",
 "2026-11-20 17:04"
 ],
+"france-lfb-women|Bourges|ESB Villeneuve|2026-11-29": [
+"21178cf8664d653d8f97a078d420a198208faed6",
+"2026-11-27 16:04"
+],
 "france-lfb-women|Chartres|Landes|2026-11-22": [
 "edd2a84dbed941335c08d0c797c5506bc264a268",
 "2026-11-20 15:57"
@@ -1704,6 +1716,14 @@
 "greece-wbl1-women|Kavala|Amyntas|2026-11-22": [
 "08647f3c2571ee4346447caedb80ebd95539fec6",
 "2026-11-21 15:34"
+],
+"greece-wbl1-women|Kronos|Amyntas|2026-11-29": [
+"21178cf8664d653d8f97a078d420a198208faed6",
+"2026-11-27 16:04"
+],
+"greece-wbl1-women|Panathlitikos|Proteas Voulas|2026-11-29": [
+"3b0988f808ed0880d038c5306422d112f1e3d931",
+"2026-11-27 17:03"
 ],
 "greece-wbl1-women|Panseraikos|Kronos|2026-11-22": [
 "edd2a84dbed941335c08d0c797c5506bc264a268",
@@ -1745,6 +1765,10 @@
 "849729b47039fce8d7f61154cd3aab1997e506e6",
 "2026-11-22 07:46"
 ],
+"italy-serie-a2-women-gr-a|San Salvatore Selargius|Vicenza|2026-11-29": [
+"ba1a2dbc8f0cf17caa84b79459825c2823fb58fb",
+"2026-11-27 21:03"
+],
 "italy-serie-a2-women-gr-a|Sanga Milano|Virtus Cagliari|2026-11-28": [
 "4e71af1dca2ade2c26e19bacd399cae6904f71d2",
 "2026-11-27 12:03"
@@ -1752,6 +1776,10 @@
 "italy-serie-a2-women-gr-a|Trieste|Milano Basket Stars|2026-11-28": [
 "4e71af1dca2ade2c26e19bacd399cae6904f71d2",
 "2026-11-27 12:03"
+],
+"italy-serie-a2-women-gr-a|Usmate|Alpo VillaFranca|2026-11-28": [
+"ba1a2dbc8f0cf17caa84b79459825c2823fb58fb",
+"2026-11-27 21:03"
 ],
 "italy-serie-a2-women-gr-b|Frascati|Matelica|2026-11-24": [
 "c8eeb908f98bc78bd10b3a97b0e9c7c53c98efd2",
@@ -1768,6 +1796,14 @@
 "italy-serie-a2-women-gr-b|Umbertide|Ragusa|2026-11-22": [
 "849729b47039fce8d7f61154cd3aab1997e506e6",
 "2026-11-22 07:46"
+],
+"lithuania-moteru-lyga-women|Aistes LSU Kaunas|Kibirkstis Vilnius|2026-11-28": [
+"92fbc84e9fdd8c789ee438e320e445f2e1b6f50f",
+"2026-11-27 17:59"
+],
+"lithuania-moteru-lyga-women|Siauliai|Alytaus Dzukija|2026-11-28": [
+"3b0988f808ed0880d038c5306422d112f1e3d931",
+"2026-11-27 17:03"
 ],
 "lithuania-moteru-lyga-women|Siauliai|Liepajas Papirs/LSSS|2026-11-20": [
 "b11c19f11ef2d2e9462c8ec2a820d85745599d9b",
@@ -1876,12 +1912,12 @@
 }
 },
 "scanned": {
-"basketball/overs/live.js": "4d9b216ec6c7c8e9bfad393b24682464bd52053a",
-"basketball/women/live.js": "4c4b58c305cd7366d0b79246b8f749daf5637cb7",
-"handball/data.js": "62b3950d7f1a36df6b218fea53c4194af360872f",
+"basketball/overs/live.js": "154471ef2530ad57b26d330a907d0ce92ae01a18",
+"basketball/women/live.js": "f1c8f72d4845376f2ce19bc3a64be4823493e778",
+"handball/data.js": "836ab5dd970ef64f86d023099a15bf20444ef829",
 "handball/index.html": "bc0dff9430172025ea5d9ba8dd58b67a2b91660e",
 "handball/projections/index.html": "bc0dff9430172025ea5d9ba8dd58b67a2b91660e",
-"superleague/data.js": "29afc61295bd43b2d76df71367c2c66669557e3d",
-"volleyball/data.js": "cc36fbdf20b981a82c17ea7b6fa9ca4599c03fa5"
+"superleague/data.js": "7dc68c8cdf0f1b9b4b9a064d34102e059b18cf0e",
+"volleyball/data.js": "0b744cbb3dc870e0bae235c0bbda63fad17247a2"
 }
 }
