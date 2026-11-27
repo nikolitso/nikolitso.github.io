@@ -499,7 +499,7 @@ function h1Proj(){
   const H = LIVE.h1;
   if (!H) return '';
   let h = '<h2 id="h1proj">Next 7 days</h2>';
-  const note = `<p class="note">Games in the next 7 days with <b>Model 1H</b>, the first-half projection built only from earlier first halves (the league's first-half average and each team's first halves this season, plus ${sgn(H.bias, 1)}), next to the market's first-half line. It never sees the full-game line or the model total. Over chance from how widely first halves spread around the projection in each league. Gap: Model 1H minus the first-half line; the 1H picks are the overs with a gap of ${H.gap ?? 3} points or more. Highlighted games have a 1H test pick, listed under Open 1H picks above, at the line and price shown when it was taken, on a .5 line. Regular season only. Greyed: no pick possible (whole-number line, or a team under ${H1GP()[0]} games). Each match page shows the projection part by part.</p>`;
+  const note = `<p class="note">Games in the next 7 days with <b>Model 1H</b>, the first-half projection built only from earlier first halves (the league's first-half average and each team's first halves this season, plus ${sgn(H.bias, 1)}), next to the market's first-half line. It never sees the full-game line or the model total. Over chance from how widely first halves spread around the projection in each league. Gap: Model 1H minus the first-half line; the 1H picks are the overs with a gap of ${H.gap ?? 3} points or more. Highlighted games have a 1H test pick, listed under Open 1H picks above, at the line and price shown when it was taken, on a .5 line. Regular season only. Greyed: no pick possible (whole-number line, or a team under ${H1GP()[0]} games). Last seen: no first-half line on offer now; the last line and prices the feed showed, and no pick is taken from them. Each match page shows the projection part by part.</p>`;
   const fx = H.rows.filter(inLg);
   if (!fx.length) return h + '<p class="empty">No games in the next 7 days.</p>' + note;
   const byDay = {};
@@ -514,7 +514,7 @@ function h1Proj(){
       const ed = tk ? `<td class="n pos">${sgn(tk.m1 - tk.line, 1)}</td>` : !g.ok ? `<td class="n muted">${sgn(gv, 1)}</td>` : gapCell(gv, H.gap ?? 3);
       h += `<tr class="${g.pick ? 'pk' : ''}"><td>${g.dt.slice(11)}</td>${lg === 'all' ? `<td>${lgShort(g.lg)}</td>` : ''}
         <td class="wr">${g.slug ? `<a class="gm" href="games/${g.slug}/">${g.home} – ${g.away}</a>` : `${g.home} – ${g.away}`}${g.pick ? `<span class="badge">${g.pick}</span>` : ''}</td><td class="n"><b>${g.m1.toFixed(1)}</b></td>
-        ${g.line == null ? '<td class="n muted" colspan="5">no first-half line yet</td>' : `<td class="n">${g.line}</td><td class="n">${g.op.toFixed(2)}</td><td class="n">${g.up.toFixed(2)}</td><td class="n">${pct(g.p)}</td>${ed}`}</tr>`;
+        ${g.line == null ? '<td class="n muted" colspan="5">no first-half line yet</td>' : `<td class="n">${g.line}${g.line_last ? ' <span class="muted">last seen</span>' : ''}</td><td class="n">${g.op.toFixed(2)}</td><td class="n">${g.up.toFixed(2)}</td><td class="n">${pct(g.p)}</td>${ed}`}</tr>`;
     }
     h += '</tbody></table></div>';
   }
