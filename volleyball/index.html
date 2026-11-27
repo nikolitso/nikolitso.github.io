@@ -266,7 +266,7 @@ a.gm{color:inherit;text-decoration:none} a.gm:hover{color:var(--gold);text-decor
 <p>Explainer: <a href="/volleyball/research/how-totals-work/">why a volleyball total is really about sets</a>.</p><p>Research note: <a href="/volleyball/research/close-matches/">close matches go under more often than the market expects</a>.</p>
 </section>
 </main>
-<script src="data.js?v=300fcd0f"></script>
+<script src="data.js?v=6de65eb8"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -572,9 +572,11 @@ function evenTile(k){
   const E_ = (DATA.evenness || {})[k], cut = DATA.even_cut || 0.096;
   const t = (big, sm) => `<div class="metric"><div class="lbl">Competitiveness</div><div class="big" style="font-size:22px">${big}</div><div class="sm">${sm}</div></div>`;
   if (!E_ || E_.n < 2) return t('Too new', 'under 2 earlier seasons · overs and underdogs');
+  // match winner: not competitive women's leagues and the men's handicap-only leagues (ML_MEN in update.py), unless dropped (user, 27 Nov 2026)
+  const mlOn = (k.includes('women') || ((DATA.hcapx || {}).leagues || []).some(l => l.key === k && !l.women)) && !(DATA.ml_dropped || []).includes(k);
   const c = compOf(k), spread = `favourite wins ${(50 + E_.avg * 100).toFixed(0)}% over ${E_.n} earlier seasons`;   // wording (user, 27 Nov 2026; was 'typical game 83–17')
   return c === 'competitive' ? t('<span style="color:var(--an-accent)">Competitive</span>', `${spread} · overs and underdogs`)
-       : c === 'not competitive' ? t('<span style="color:var(--an-warning)">Not competitive</span>', `${spread} · favourites; no overs or underdogs`)
+       : c === 'not competitive' ? t('<span style="color:var(--an-warning)">Not competitive</span>', `${spread} · favourites${mlOn ? ' and match winner' : ''}; no overs or underdogs`)
        : t('Standard', `${spread} · overs and underdogs`);
 }
 
