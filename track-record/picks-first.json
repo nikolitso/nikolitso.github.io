@@ -1737,13 +1737,33 @@
 "64de169088740acca0a4b0644179b6501d883a0f",
 "2026-11-20 18:04"
 ],
+"italy-serie-a2-women-gr-a|Cagliari|Itas Alperia Bolzano|2026-11-28": [
+"4e71af1dca2ade2c26e19bacd399cae6904f71d2",
+"2026-11-27 12:03"
+],
 "italy-serie-a2-women-gr-a|Milano Basket Stars|Cagliari|2026-11-22": [
 "849729b47039fce8d7f61154cd3aab1997e506e6",
 "2026-11-22 07:46"
 ],
+"italy-serie-a2-women-gr-a|Sanga Milano|Virtus Cagliari|2026-11-28": [
+"4e71af1dca2ade2c26e19bacd399cae6904f71d2",
+"2026-11-27 12:03"
+],
+"italy-serie-a2-women-gr-a|Trieste|Milano Basket Stars|2026-11-28": [
+"4e71af1dca2ade2c26e19bacd399cae6904f71d2",
+"2026-11-27 12:03"
+],
 "italy-serie-a2-women-gr-b|Frascati|Matelica|2026-11-24": [
 "c8eeb908f98bc78bd10b3a97b0e9c7c53c98efd2",
 "2026-11-23 18:04"
+],
+"italy-serie-a2-women-gr-b|Matelica|Empoli|2026-11-28": [
+"4e71af1dca2ade2c26e19bacd399cae6904f71d2",
+"2026-11-27 12:03"
+],
+"italy-serie-a2-women-gr-b|Salerno|Umbertide|2026-11-28": [
+"4e71af1dca2ade2c26e19bacd399cae6904f71d2",
+"2026-11-27 12:03"
 ],
 "italy-serie-a2-women-gr-b|Umbertide|Ragusa|2026-11-22": [
 "849729b47039fce8d7f61154cd3aab1997e506e6",
@@ -1813,6 +1833,10 @@
 "604cfafed38b8fa6647424827a593cc73a74f1ab",
 "2026-11-19 12:04"
 ],
+"turkey-kbsl-women|CBK Mersin|Besiktas|2026-11-29": [
+"ae5aba1be8229e9e9bcb7116c9febb636533ddb6",
+"2026-11-27 13:03"
+],
 "turkey-kbsl-women|Fenerbahce|Ormanspor|2026-11-22": [
 "d107f8387284d31cd051bc5a92a258a08a7a699d",
 "2026-11-20 11:04"
@@ -1852,12 +1876,12 @@
 }
 },
 "scanned": {
-"basketball/overs/live.js": "9912187fffbafc0a80e0cd989099d11cd71ad58c",
-"basketball/women/live.js": "54fc5ce311f7e55cc4b092ae648ecb85b42a8e44",
-"handball/data.js": "9ae3dca51bcfe8fcdc5301935656bfd7d869e57c",
+"basketball/overs/live.js": "4d9b216ec6c7c8e9bfad393b24682464bd52053a",
+"basketball/women/live.js": "4c4b58c305cd7366d0b79246b8f749daf5637cb7",
+"handball/data.js": "463b515be8e9327c6a2eca742f700d8d76c675c9",
 "handball/index.html": "bc0dff9430172025ea5d9ba8dd58b67a2b91660e",
 "handball/projections/index.html": "bc0dff9430172025ea5d9ba8dd58b67a2b91660e",
-"superleague/data.js": "ad1e32047619a909dcaf3e6e681216f14734905f",
-"volleyball/data.js": "599fe68153b520192e826d3687dbdbc47f8351dc"
+"superleague/data.js": "29afc61295bd43b2d76df71367c2c66669557e3d",
+"volleyball/data.js": "2166cba3bc3a7d3625902221b67f50f4b8e0638a"
 }
 }
