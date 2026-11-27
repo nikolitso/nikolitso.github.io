@@ -266,7 +266,7 @@ a.gm{color:inherit;text-decoration:none} a.gm:hover{color:var(--gold);text-decor
 <p>Explainer: <a href="/volleyball/research/how-totals-work/">why a volleyball total is really about sets</a>.</p><p>Research note: <a href="/volleyball/research/close-matches/">close matches go under more often than the market expects</a>.</p>
 </section>
 </main>
-<script src="data.js?v=f933cbe7"></script>
+<script src="data.js?v=77101d66"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -565,14 +565,14 @@ function leagueGroups(){
   const col = c => c === 'competitive' ? 'var(--an-accent)' : c === 'not competitive' ? 'var(--an-warning)' : 'var(--an-muted)';
   return `<div class="scroll"><table style="max-width:1180px"><thead><tr><th>League</th><th class="n">Earlier<br>seasons</th><th class="n">Balance</th><th>Group</th><th>Bets</th></tr></thead><tbody>`
     + rows.map(r => `<tr><td>${r.l.country} <span class="muted">${r.l.name} ${sexAb(r.l)}</span>${hx.has(r.l.key) ? ' <span class="muted">· handicap only</span>' : ''}</td><td class="n">${r.e ? r.e.n : 0}</td><td class="n">${r.ok ? (r.e.avg * 100).toFixed(1) : '–'}</td><td style="color:${col(r.c)}">${r.c[0].toUpperCase() + r.c.slice(1)}</td><td>${r.bets}</td></tr>`).join('')
-    + `</tbody></table></div><p class="note">A league is competitive under ${cut.toFixed(1)} and not competitive at ${cut.toFixed(1)} or more; with fewer than 2 earlier seasons it follows the competitive rules. Balance: how lopsided its typical game is: how far the model's pre-game win chance sits from 50%, averaged over a season's regular-season games and then over the league's earlier seasons, in points of chance (25 means the typical game is a 75–25 match). Sorted from the most even league to the least.</p>`;
+    + `</tbody></table></div><p class="note">A league is competitive under ${cut.toFixed(1)} and not competitive at ${cut.toFixed(1)} or more; with fewer than 2 earlier seasons it follows the competitive rules. Balance: how lopsided its typical game is: how far the model's pre-game win chance sits from 50%, averaged over a season's regular-season games and then over the league's earlier seasons, in points of chance (25 means the favourite wins 75%). Sorted from the most even league to the least.</p>`;
 }
 
 function evenTile(k){
   const E_ = (DATA.evenness || {})[k], cut = DATA.even_cut || 0.096;
   const t = (big, sm) => `<div class="metric"><div class="lbl">Competitiveness</div><div class="big" style="font-size:22px">${big}</div><div class="sm">${sm}</div></div>`;
   if (!E_ || E_.n < 2) return t('Too new', 'under 2 earlier seasons · overs and underdogs');
-  const c = compOf(k), spread = `typical game ${(50 + E_.avg * 100).toFixed(0)}–${(50 - E_.avg * 100).toFixed(0)} over ${E_.n} earlier seasons`;
+  const c = compOf(k), spread = `favourite wins ${(50 + E_.avg * 100).toFixed(0)}% over ${E_.n} earlier seasons`;   // wording (user, 27 Nov 2026; was 'typical game 83–17')
   return c === 'competitive' ? t('<span style="color:var(--an-accent)">Competitive</span>', `${spread} · overs and underdogs`)
        : c === 'not competitive' ? t('<span style="color:var(--an-warning)">Not competitive</span>', `${spread} · favourites; no overs or underdogs`)
        : t('Standard', `${spread} · overs and underdogs`);
