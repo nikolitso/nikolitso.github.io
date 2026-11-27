@@ -582,7 +582,7 @@ function summary(bs){
 function recordTable(title, groups, note, byEv){
   const rows = Object.entries(groups).map(([k, bs]) => [k, summary(bs)]).sort(byEv ? (a, b) => parseInt(a[0]) - parseInt(b[0]) : (a, b) => b[1].n - a[1].n);
   if (!rows.length) return '';
-  let h = `<h2>${title}</h2>${note ? `<p class="muted" style="margin:-4px 0 10px;font-size:15.5px">${note}</p>` : ''}<div class="scroll"><table class="mk" style="max-width:820px"><thead><tr><th></th><th class="n">Picks</th><th class="n">Won</th><th class="n">Hit rate</th><th class="n">Avg odds</th><th class="n">ROI</th></tr></thead><tbody>`;
+  let h = `<h2>${title}</h2>${note ? `<p class="muted" style="margin:-4px 0 10px;font-size:15.5px">${note}</p>` : ''}<div class="scroll"><table class="mk sortable" style="max-width:820px"><thead><tr><th${byEv ? ' data-ord' : ''}>${byEv ? 'EV' : ''}</th><th class="n">Picks</th><th class="n">Won</th><th class="n">Hit rate</th><th class="n">Avg odds</th><th class="n">ROI</th></tr></thead><tbody>`;
   for (const [k, r] of rows) h += `<tr><td>${k}</td><td class="n">${r.n}</td><td class="n">${r.won}</td><td class="n">${pct(r.hit)}</td><td class="n muted">${r.odds.toFixed(2)}</td><td class="n ${r.roi >= 0 ? 'w' : 'l'}">${evPct(r.roi)}</td></tr>`;
   return h + '</tbody></table></div>';
 }
@@ -604,14 +604,14 @@ function renderValue(){
     <div class="metric"><div class="lbl">Started, waiting for result</div><div class="big">${started.length}</div></div></div>`;
   if (!bets.length) h += `<p class="empty">No picks at EV 10% or more for the coming games.</p>`;
   else {
-    h += `<h2>Open picks</h2><div class="scroll"><table class="mk"><thead><tr><th>Kick-off</th><th>Match</th><th>Pick</th><th class="n">Market odds</th><th class="n">Model odds</th><th class="n">Market %</th><th class="n">Model %</th><th class="n">EV</th></tr></thead><tbody>`;
+    h += `<h2>Open picks</h2><div class="scroll"><table class="mk sortable"><thead><tr><th data-ord>Kick-off</th><th>Match</th><th>Pick</th><th class="n">Market odds</th><th class="n">Model odds</th><th class="n">Market %</th><th class="n">Model %</th><th class="n">EV</th></tr></thead><tbody>`;
     // data-g: the stat, for the filter buttons above the table (assets/openpicks.js, 23 Nov 2026)
     for (const b of bets) h += `<tr data-g="${b.stat === 'result' ? 'Result' : lc(b.stat).replace(/^./, c => c.toUpperCase())}"><td class="muted">${dayName(b.kickoff)} ${b.kickoff.slice(11)}</td><td>${b.home} – ${b.away}</td><td><b>${betName(b)}</b></td><td class="n">${b.odds.toFixed(2)}</td><td class="n tot">${modelOdds(b.ours)}</td><td class="n">${pct(b.fair)}</td><td class="n tot">${pct(b.ours)}</td><td class="n ${b.ev >= .15 ? 'w' : ''}">${evPct(b.ev)}</td></tr>`;
     h += '</tbody></table></div>';
   }
   // kicked off, result not in the data yet (settled on the next update after the stats arrive)
   if (started.length){
-    h += `<h2>Started, waiting for result</h2><p class="muted" style="margin:-4px 0 10px;font-size:15.5px">These games have kicked off. Each pick is settled when the game's stats arrive in the data, usually a day or two after.</p><div class="scroll"><table class="mk"><thead><tr><th>Kick-off</th><th>Match</th><th>Pick</th><th class="n">Market odds</th><th class="n">Model %</th><th class="n">EV</th></tr></thead><tbody>`;
+    h += `<h2>Started, waiting for result</h2><p class="muted" style="margin:-4px 0 10px;font-size:15.5px">These games have kicked off. Each pick is settled when the game's stats arrive in the data, usually a day or two after.</p><div class="scroll"><table class="mk sortable"><thead><tr><th data-ord>Kick-off</th><th>Match</th><th>Pick</th><th class="n">Market odds</th><th class="n">Model %</th><th class="n">EV</th></tr></thead><tbody>`;
     for (const b of started) h += `<tr><td class="muted">${dayName(b.kickoff)} ${b.kickoff.slice(11)}</td><td>${b.home} – ${b.away}</td><td><b>${betName(b)}</b></td><td class="n">${b.odds.toFixed(2)}</td><td class="n tot">${pct(b.ours)}</td><td class="n">${evPct(b.ev)}</td></tr>`;
     h += '</tbody></table></div>';
   }
@@ -627,7 +627,7 @@ function calibTable(bs){
     const op = mean(g.map(b => b.fair)), d = hit - m;
     return `<tr class="${cls}"><td>${name}</td><td class="n">${g.length}</td><td class="n tot">${pct(m)}</td><td class="n">${pct(op)}</td><td class="n"><b>${pct(hit)}</b></td><td class="n ${d >= 0 ? 'w' : 'l'}">${d >= 0 ? '+' : '−'}${Math.abs(d * 100).toFixed(0)} pts</td></tr>`;
   };
-  let h = `<h2>Calibration</h2><p class="muted" style="margin:-4px 0 10px;font-size:15.5px">Settled picks grouped by the model's chance. If the model is right, picks it gave 60% should win about 60% of the time. The market's chance is shown at the odds taken. Under about 30 picks in a row, the hit rate is still mostly luck.</p><div class="scroll"><table class="mk" style="max-width:820px"><thead><tr><th>Model chance</th><th class="n">Picks</th><th class="n">Model %</th><th class="n">Market %</th><th class="n">Won</th><th class="n">Won − model</th></tr></thead><tbody>`;
+  let h = `<h2>Calibration</h2><p class="muted" style="margin:-4px 0 10px;font-size:15.5px">Settled picks grouped by the model's chance. If the model is right, picks it gave 60% should win about 60% of the time. The market's chance is shown at the odds taken. Under about 30 picks in a row, the hit rate is still mostly luck.</p><div class="scroll"><table class="mk sortable" style="max-width:820px"><thead><tr><th data-ord>Model chance</th><th class="n">Picks</th><th class="n">Model %</th><th class="n">Market %</th><th class="n">Won</th><th class="n">Won − model</th></tr></thead><tbody>`;
   for (const [lo, hi, name] of bins){ const g = bs.filter(b => b.ours >= lo && b.ours < hi); if (g.length) h += row(name, g); }
   return h + row('All', bs, 'sum') + '</tbody></table></div>';
 }
@@ -657,7 +657,7 @@ function renderSettled(settled, all){
   h += recordTable('Record by market and side', group(b => b.stat === 'result' ? 'Result' : `${L[b.stat]} ${b.side}`));
   h += recordTable('Record by EV', group(band), 'If the model finds real value, bigger EV should mean bigger returns.', true);
   // the full list of settled picks goes last (user, 23 Nov 2026)
-  h += `<h2>${stMkt === 'all' ? 'All settled picks' : `Settled ${mktName(stMkt).toLowerCase()} picks`}</h2><p class="muted" style="margin:-4px 0 10px;font-size:15.5px">Every pick from EV +${Math.round(valMin * 100)}% with its result, newest first.</p><div class="scroll"><table class="mk"><thead><tr><th>Date</th><th>Match</th><th>Pick</th><th class="n">Odds</th><th class="n">EV</th><th class="n" title="What happened: the final score for 1X2 picks, the match total for the rest">Actual</th><th class="n">Result</th></tr></thead><tbody>`;
+  h += `<h2>${stMkt === 'all' ? 'All settled picks' : `Settled ${mktName(stMkt).toLowerCase()} picks`}</h2><p class="muted" style="margin:-4px 0 10px;font-size:15.5px">Every pick from EV +${Math.round(valMin * 100)}% with its result, newest first. Click a column heading to sort.</p><div class="scroll"><table class="mk sortable"><thead><tr><th data-ord>Date</th><th>Match</th><th>Pick</th><th class="n">Odds</th><th class="n">EV</th><th class="n" title="What happened: the final score for 1X2 picks, the match total for the rest">Actual</th><th class="n">Result</th></tr></thead><tbody>`;
   for (const b of settled) h += `<tr><td class="muted">${dayName(b.date)}</td><td>${b.home} – ${b.away}</td><td>${betName(b)}</td><td class="n">${b.odds.toFixed(2)}</td><td class="n">${evPct(b.ev)}</td><td class="n"><b>${b.actual ?? '–'}</b></td><td class="n ${b.result === 'won' ? 'w' : 'l'}">${b.result === 'won' ? 'Won +' + (b.odds - 1).toFixed(2) : 'Lost −1'}</td></tr>`;
   h += '</tbody></table></div>';
   return h;
@@ -1091,6 +1091,7 @@ function render(){
   $('tip').style.display = 'none';
   $('out').innerHTML = {projections: renderProjections, picks: renderValue, teams: renderTeams, refs: renderRefs, experts: renderExperts, research: renderResearch, method: renderMethod}[view]();
   if (view === 'refs') bindRefs();
+  if (view === 'picks') document.querySelectorAll('table.sortable').forEach(makeSortable);   // sortable pick tables (user, 27 Nov 2026)
   document.querySelectorAll('#pjmode button').forEach(b => b.onclick = () => { pjMode = b.dataset.m; render(); });
   const chips = (id, set) => document.querySelectorAll(`#${id} .chip`).forEach(b => b.onclick = () => { set(b.dataset.s); render(); });
   chips('pjstat', s => pjStat = s); chips('tmstat', s => tmStat = s);
