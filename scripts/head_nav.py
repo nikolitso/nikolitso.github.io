@@ -28,7 +28,7 @@ NAV_CURRENT = re.compile(r'<a (?:class="an-navchip" )?href="([^"]+)" aria-curren
 # The projects menu (user, 22 Nov 2026): Home, then every project in one row, grouped by sport; PAOK is its own group.
 SPORTS = [
     ("Football", [("/superleague/", "Greek Super League"), ("/football/greek-cup/", "Greek Cup")]),
-    ("Basketball", [("/basketball/", "Greek League"), ("/basketball/overs/", "European"),
+    ("Basketball", [("/basketball/", "Greek League"), ("/basketball/overs/", "Men Basketball"),
                     ("/basketball/women/", "Women Basketball")]),   # user, 23 Nov 2026
     ("Volleyball", [("/volleyball/", "Volleyball")]),
     ("Handball", [("/handball/", "Handball")]),
