@@ -51,5 +51,5 @@ jobs:
           git commit -q -m "Basketball handicap: refresh $(TZ=Europe/Athens date '+%Y-%m-%d %H:%M')"
           # generated files only: if another run pushed the same file meanwhile, this newer build wins (-X theirs keeps
           # the commit being replayed) instead of the run failing on a conflict
-          for i in 1 2 3 4 5; do git pull -q --rebase -X theirs && git push -q && exit 0; git rebase --abort 2>/dev/null; sleep $((RANDOM % 10 + 5)); done
+          for i in 1 2 3 4 5; do git pull -q --rebase -X theirs && git push -q && exit 0; git rebase --abort 2>/dev/null || true; sleep $((RANDOM % 10 + 5)); done
           exit 1
