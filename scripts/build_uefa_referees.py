@@ -39,7 +39,9 @@ COMPS = {"UCL": "Champions League", "UEL": "Europa League", "UECL": "Conference 
 POINTS = {"YC": 1, "Y2C": 2, "RC": 2}
 NORMAL_TIME = {1, 2, 10}          # 10 = the half-time break: a card shown then is still a normal-time card
 BUCKETS = ["1–15", "16–30", "31–45+", "46–60", "61–75", "76–90+"]
-SHRINK = 10                       # matches of league-average record added to every referee's card index
+SHRINK = 20                       # matches of league-average record added to every referee's card index. Set by test
+                                  # (user, 28 Nov 2026: decide from data): each game predicted from the referee's earlier
+                                  # games only, 1,314 games; error lowest at 15-20 (5.400), 10 gave 5.413, none 5.457
 LINES = (3.5, 4.5, 5.5)
 
 
@@ -210,6 +212,21 @@ def band(we):
     return sum(fav >= e for e in BAND_EDGES)
 
 
+STAGES = ["Matchday 1", "Matchday 2", "Matchday 3", "Matchday 4", "Matchday 5", "Matchday 6", "Matchday 7", "Matchday 8",
+          "Knockout play-offs", "Round of 16", "Quarter-finals", "Semi-finals", "Final"]
+KO_STAGES = {"Knockout Round Play-offs": 8, "8th Finals": 9, "Quarter-finals": 10, "Semi-finals": 11, "Final": 12}
+
+
+def stage_code(m):
+    """Index into STAGES: league-phase matchday 1-8, then the knockout rounds."""
+    if m.get("stage") == "League Stage":
+        try:
+            return min(max(int(m.get("week") or 1), 1), 8) - 1
+        except ValueError:
+            return 0
+    return KO_STAGES.get(m.get("stage"), 8)
+
+
 def build_rows(matches):
     """Played matches with a referee, settled: the rows every page is made from."""
     rows = []
@@ -236,7 +253,8 @@ def build_rows(matches):
         })
         c = ctx.get(m["id"], {})
         we = c.get("we", .5)
-        rows[-1].update(we=we, band=band(we), fav="h" if we >= .5 else "a", leg=c.get("leg", 0), tie=c.get("tie"))
+        rows[-1].update(we=we, band=band(we), fav="h" if we >= .5 else "a", leg=c.get("leg", 0), tie=c.get("tie"),
+                        stage_code=stage_code(m))
     rows.sort(key=lambda r: (r["date"], r["home"]))
     return rows
 
@@ -467,7 +485,8 @@ def build(matches):
 
     # ---- referee profiles
     for rid, rs in by_ref.items():
-        written.append(profile(rid, names[rid], slugs[rid], rs, base, nxt.get(rid), seasons, updated, sit_avg, sides_all))
+        written.append(profile(rid, names[rid], slugs[rid], rs, base, nxt.get(rid), seasons, updated, sit_avg, sides_all,
+                                      sum(r["rc"] > 0 for r in rows) / len(rows)))
 
     # ---- appointments
     written.append(appointments_page(upcoming, by_ref, base, slugs, updated))
@@ -527,6 +546,21 @@ SITUATIONS = [("Evenly matched (favourite under 70%)", lambda r: r["band"] <= 1)
               ("Second legs", lambda r: r["leg"] == 2)]
 
 
+def red_stability(rows, min_games=16):
+    """Do referees' red-card rates repeat? Correlation of the share of games with a red in each referee's odd and even
+    games (by date), referees with min_games or more. Near 0 or below: no."""
+    by = defaultdict(list)
+    for r in sorted(rows, key=lambda r: r["date"]):
+        by[r["ref_id"]].append(r["rc"] > 0)
+    pairs = [(sum(v[0::2]) / len(v[0::2]), sum(v[1::2]) / len(v[1::2])) for v in by.values() if len(v) >= min_games]
+    if len(pairs) < 3:
+        return len(pairs), None
+    mx, my = sum(a for a, _ in pairs) / len(pairs), sum(b for _, b in pairs) / len(pairs)
+    sxy = sum((a - mx) * (b - my) for a, b in pairs)
+    sxx, syy = sum((a - mx) ** 2 for a, _ in pairs), sum((b - my) ** 2 for _, b in pairs)
+    return len(pairs), (sxy / math.sqrt(sxx * syy) if sxx and syy else None)
+
+
 def situation_averages(rows):
     """Average cards per game in each situation and competition, over every referee: what a referee's games in that
     situation are compared with."""
@@ -572,7 +606,7 @@ def situations_panel(rs, sit_avg, sides_all):
 """
 
 
-def profile(rid, name, slug, rs, base, nxt, seasons, updated, sit_avg, sides_all):
+def profile(rid, name, slug, rs, base, nxt, seasons, updated, sit_avg, sides_all, red_all):
     s = summary(rs, base)
     comps = {r["comp"] for r in rs}
     # by competition and season
@@ -615,7 +649,7 @@ def profile(rid, name, slug, rs, base, nxt, seasons, updated, sit_avg, sides_all
 <div class="metric"><span class="eyebrow">Yellows · reds</span><strong>{f2(s["yc"])} · {f2(s["rc"])}</strong><small>per game</small></div>
 <div class="metric"><span class="eyebrow">Fouls per game</span><strong>{f1(s["fouls"])}</strong><small>{f2(s["per_foul"])} cards per foul</small></div>
 </div>
-<p class="note">Adjusted for the competitions refereed, {esc(name)} shows {idx_text}. Last 10 games: {f1(last10["avg"])} cards a game. {reliability(s["n"])} A 90% range for the true average: {rng} cards.</p></section>
+<p class="note">Adjusted for the competitions refereed, {esc(name)} shows {idx_text}. Last 10 games: {f1(last10["avg"])} cards a game. {reliability(s["n"])} A 90% range for the true average: {rng} cards. A red card in {sum(r["rc"] > 0 for r in rs)} of {s["n"]} games ({pct(sum(r["rc"] > 0 for r in rs) / s["n"])}); every referee {pct(red_all)}, and red-card rates hardly carry over from game to game.</p></section>
 
 <section class="section"><div class="cols">
 <div class="panel"><h3>Match card totals</h3><p class="desc">How many cards the referee's games produced (yellow 1, red 2).</p>{columns(s["dist"], [str(i) for i in range(9)] + ["9+"])}
@@ -657,7 +691,7 @@ function agg(rs) {
   const n = rs.length; if (!n) return null;
   let p = 0, e = 0, hp = 0, ap = 0, p1 = 0, p2 = 0, yc = 0, rc = 0, f = 0, fn = 0, o45 = 0;
   rs.forEach(r => { const t = r[3] + r[4]; p += t; e += base[r[0] + r[1]]; hp += r[3]; ap += r[4]; p1 += r[5]; p2 += r[6]; yc += r[7]; rc += r[8]; if (r[9] != null) { f += r[9]; fn++; } if (t > 4.5) o45++; });
-  return {n, avg: p / n, exp: e / n, idx: (p + 10 * e / n) / (e + 10 * e / n), hp: hp / n, ap: ap / n, p1: p1 / n, p2: p2 / n, yc: yc / n, rc: rc / n, fouls: fn ? f / fn : null, o45: o45 / n};
+  return {n, avg: p / n, exp: e / n, idx: (p + D.shrink * e / n) / (e + D.shrink * e / n), hp: hp / n, ap: ap / n, p1: p1 / n, p2: p2 / n, yc: yc / n, rc: rc / n, fouls: fn ? f / fn : null, o45: o45 / n};
 }
 function render() {
   const rs = pick(), a = agg(rs) || {};
@@ -692,6 +726,23 @@ function render() {
   $('#drv-legs tbody').innerHTML = (legRow('First legs', rs.filter(r => r[13] === 1)) + legRow('Second leg, home side leading', rs.filter(r => r[13] === 2 && r[14] === 1)) +
     legRow('Second leg, level', rs.filter(r => r[13] === 2 && r[14] === 0)) + legRow('Second leg, home side trailing', rs.filter(r => r[13] === 2 && r[14] === -1))) ||
     '<tr><td colspan="5" class="muted">No two-legged ties in this selection yet.</td></tr>';
+  // more patterns
+  const rel = xs => { const p = xs.reduce((t, r) => t + r[3] + r[4], 0), e = xs.reduce((t, r) => t + base[r[0] + r[1]], 0); return e ? p / e : null; };
+  $('#pat-stage tbody').innerHTML = D.stages.map((st, k) => { const xs = rs.filter(r => r[15] === k); if (!xs.length) return '';
+    const x = rel(xs); return `<tr><td>${st}</td><td class="n">${xs.length}</td><td class="n">${f1(xs.reduce((t, r) => t + r[3] + r[4], 0) / xs.length)}</td><td class="n">${x == null ? '–' : (x >= 1 ? '+' : '−') + Math.abs(Math.round(100 * (x - 1))) + '%'}</td></tr>`; }).join('');
+  $('#pat-red tbody').innerHTML = [['UCL', 'Champions League'], ['UEL', 'Europa League'], ['UECL', 'Conference League'], ['all', 'All three']].map(([c, nm]) => {
+    const xs = rs.filter(r => c === 'all' || r[0] === c); if (!xs.length) return '';
+    return `<tr><td>${nm}</td><td class="n">${xs.length}</td><td class="n">${Math.round(100 * xs.filter(r => r[8] > 0).length / xs.length)}%</td><td class="n">${f2(xs.reduce((t, r) => t + r[8], 0) / xs.length)}</td></tr>`; }).join('');
+  const byC = {}; rs.forEach(r => { const c = D.refs[r[2]][2] || '?'; (byC[c] = byC[c] || []).push(r); });
+  $('#pat-country tbody').innerHTML = Object.entries(byC).filter(([c, xs]) => c !== '?' && xs.length >= 15).sort((a, b) => b[1].length - a[1].length).map(([c, xs]) => {
+    const a = agg(xs); return `<tr><td>${c}</td><td class="n">${new Set(xs.map(r => r[2])).size}</td><td class="n">${xs.length}</td><td class="n">${f1(a.avg)}</td><td class="n"><b class="${a.idx >= 1 ? 'idx-up' : 'idx-down'}">${f2(a.idx)}</b></td></tr>`; }).join('') ||
+    '<tr><td colspan="5" class="muted">No country has 15 games in this selection.</td></tr>';
+  const hb = [[], [], [], [], []]; rs.forEach(r => hb[Math.min(r[5], 4)].push(r[6]));
+  $('#pat-halves tbody').innerHTML = hb.map((xs, k) => xs.length ? `<tr><td>${k === 4 ? '4 or more' : k} card${k === 1 ? '' : 's'}</td><td class="n">${xs.length}</td><td class="n">${f2(xs.reduce((t, v) => t + v, 0) / xs.length)}</td></tr>` : '').join('');
+  { const n = rs.length, mx = rs.reduce((t, r) => t + r[5], 0) / (n || 1), my = rs.reduce((t, r) => t + r[6], 0) / (n || 1);
+    let sxy = 0, sxx = 0, syy = 0; rs.forEach(r => { sxy += (r[5] - mx) * (r[6] - my); sxx += (r[5] - mx) ** 2; syy += (r[6] - my) ** 2; });
+    const c = sxx && syy ? sxy / Math.sqrt(sxx * syy) : 0;
+    $('#pat-halves-note').textContent = n ? `Correlation between first-half and second-half cards: ${c.toFixed(2)} (0 = none). A busy first half says almost nothing about the second.` : ''; }
   // seasons trend
   $('#trend tbody').innerHTML = D.seasons.map(s => { const x = agg(D.m.filter(r => r[1] === s && (comp === 'all' || r[0] === comp))); return x ? `<tr><td>${s.replace('-', '–')}</td><td class="n">${x.n}</td><td class="n">${f1(x.avg)}</td><td class="n">${f1(x.hp)}–${f1(x.ap)}</td><td class="n">${f1(x.p1)}–${f1(x.p2)}</td><td class="n">${f1(x.fouls)}</td></tr>` : ''; }).join('');
 }
@@ -716,8 +767,8 @@ def dashboard(rows, base, by_ref, names, slugs, seasons, upcoming, updated):
         # comp, season, referee, home cards, away cards, 1st half, 2nd half, yellows, reds, fouls, quarter-hours,
         # mismatch band, home side favourite (1/0), leg (0 none, 1, 2), second-leg home lead (1, 0, -1 or null)
         "m": [[r["comp"], r["season"], idx[r["ref_id"]], r["hp"], r["ap"], r["p1"], r["p2"], r["yc"], r["rc"], r["fouls"], r["b"],
-               r["band"], 1 if r["fav"] == "h" else 0, r["leg"], r["tie"]] for r in rows],
-        "bands": BANDS,
+               r["band"], 1 if r["fav"] == "h" else 0, r["leg"], r["tie"], r["stage_code"]] for r in rows],
+        "bands": BANDS, "stages": STAGES, "shrink": SHRINK,
     }
     announced = [(ko, m, ref) for ko, m, ref in upcoming if ref][:6]
     appt = "".join(appt_card(ko, m, ref, by_ref, base, slugs) for ko, m, ref in announced)
@@ -733,6 +784,10 @@ def dashboard(rows, base, by_ref, names, slugs, seasons, upcoming, updated):
         f'<li data-s="{esc(slugify(names[r]).replace("-", " "))} {esc(slugify(country(r)).replace("-", " "))} {esc(names[r].lower())} {esc(country(r).lower())} {" ".join(sorted({x["comp"].lower() for x in by_ref[r]}))}">'
         f'<a href="{URL}{slugs[r]}/">{esc(names[r])}</a>{f" <span class=\"ctry\">{esc(country(r))}</span>" if country(r) else ""}<small>{len(by_ref[r])} · {"/".join(c for c in ["UCL", "UEL", "UECL"] if any(x["comp"] == c for x in by_ref[r]))}</small></li>'
         for r in ref_ids)
+    n_st, c_st = red_stability(rows)
+    red_note = (f"Does a referee's red-card rate carry over? Across the {n_st} referees with 16 or more games, the rates in alternate "
+                f"games correlate at {c_st:.2f} (0 = none, 1 = fully): " +
+                ("treat any one referee's red-card share as mostly chance." if c_st < .3 else "there is some carry-over.")) if c_st is not None else ""
     total_pts = sum(r["pts"] for r in rows)
     excluded = sum(len(r["excluded"]) for r in rows)
     et = sum(1 for r in rows if r["et"])
@@ -768,6 +823,23 @@ def dashboard(rows, base, by_ref, names, slugs, seasons, upcoming, updated):
 <div class="scroll"><table id="drv-legs"><thead><tr><th>Game</th><th class="n">Games</th><th class="n">Cards/g</th><th class="n">Home</th><th class="n">Away</th></tr></thead><tbody></tbody></table></div></div>
 </div></section>
 
+<section class="section" id="patterns"><div class="section-head"><h2>More patterns</h2></div>
+<p class="desc">Four more questions from the card literature, answered with these games. Where the answer is "no pattern", that is shown too.</p>
+<div class="cols">
+<div class="panel"><h3>By stage</h3><p class="desc">Cards per game at each stage, and against the average game in the same competition and season.</p>
+<div class="scroll"><table id="pat-stage"><thead><tr><th>Stage</th><th class="n">Games</th><th class="n">Cards/g</th><th class="n">v average</th></tr></thead><tbody></tbody></table></div></div>
+<div class="panel"><h3>Red cards</h3><p class="desc">Games with at least one red card (a second yellow included).</p>
+<div class="scroll"><table id="pat-red"><thead><tr><th>Competition</th><th class="n">Games</th><th class="n">With a red</th><th class="n">Reds/g</th></tr></thead><tbody></tbody></table></div>
+<p class="note">{red_note}</p></div>
+</div>
+<div class="cols" style="margin-top:14px">
+<div class="panel"><h3>By the referee's country</h3><p class="desc">Card index of each association's referees together (1.00 = average), countries with 15 or more games in this selection.</p>
+<div class="scroll"><table id="pat-country"><thead><tr><th>Country</th><th class="n">Referees</th><th class="n">Games</th><th class="n">Cards/g</th><th class="n">Index</th></tr></thead><tbody></tbody></table></div></div>
+<div class="panel"><h3>Do early cards mean more later?</h3><p class="desc">Second-half cards per game by the number of first-half cards.</p>
+<div class="scroll"><table id="pat-halves"><thead><tr><th>First half</th><th class="n">Games</th><th class="n">Second half</th></tr></thead><tbody></tbody></table></div>
+<p class="note" id="pat-halves-note"></p></div>
+</div></section>
+
 <section class="section"><div class="section-head"><h2>Statistics and trends</h2></div><div class="cols">
 <div class="panel"><h3>Cards per game</h3><p class="desc">Share of games that ended with each card count.</p><div class="cols-chart" id="dist" role="img" aria-label="Distribution of match card counts"></div><div class="cols-x">{"".join(f"<span>{x}</span>" for x in [str(i) for i in range(9)] + ["9+"])}</div></div>
 <div class="panel"><h3>When the cards come</h3><p class="desc">Cards per game by quarter-hour; stoppage time sits in the last block of each half.</p><div class="bars" id="timing"></div></div>
@@ -780,7 +852,7 @@ def dashboard(rows, base, by_ref, names, slugs, seasons, upcoming, updated):
 <section class="section method" id="method"><div class="section-head"><h2>Methodology</h2></div>
 <h3>Which games</h3><p>The Champions League, Europa League and Conference League from 2024–25 on, league phase onwards: the knockout play-offs and every knockout round, no qualifying rounds. Only the referee in charge counts; assistants, fourth officials and VAR are not credited with cards.</p>
 <h3>How cards are counted</h3><p>As bookmakers settle card markets: a yellow card counts 1 and a red card 2. A second yellow is ignored and only its red counts, so one player can add at most 3 (yellow 1 + red 2). Cards shown to non-players do not count: managers and staff, substitutes who have not come on, and players already substituted off. Whether a carded player was on the pitch is checked against the lineups and the exact time of each substitution. Only the scheduled 90 minutes count, stoppage time included: cards shown after the full-time whistle, in extra time or in a penalty shoot-out are left out. In these {len(rows)} games, {excluded} card{'s' if excluded != 1 else ''} to non-players {'were' if excluded != 1 else 'was'} left out and {et} game{'s' if et != 1 else ''} had cards in extra time or a shoot-out that were left out.</p>
-<h3>The card index</h3><p>Referees do not choose their games. A Conference League referee and a Champions League referee face different matches, so each referee's games are compared with the average game in the same competition and season. The index is the referee's cards divided by that average, after adding {SHRINK} average games to every record: a referee with few games sits close to 1.00 until their own games say otherwise. Above 1.00 means more cards than expected, below means fewer.</p>
+<h3>The card index</h3><p>Referees do not choose their games. A Conference League referee and a Champions League referee face different matches, so each referee's games are compared with the average game in the same competition and season. The index is the referee's cards divided by that average, after adding {SHRINK} average games to every record: a referee with few games sits close to 1.00 until their own games say otherwise. The {SHRINK} is set by a test: every game was predicted from the referee's earlier games only, and {SHRINK} gave the smallest errors. The same test shows how little a referee's record adds: predictions using it were only about 1% better than using the competition average alone. Above 1.00 means more cards than expected, below means fewer.</p>
 <h3>How evenly matched the teams were</h3><p>Each club gets a rating built only from UEFA results before the game, so no game is rated with hindsight. Every club starts from a level set by the competition it first appears in, gains or loses rating with each result (more for a bigger winning margin), and the home side gets a small edge, except in a final. The favourite's chance is its expected score from those ratings, a draw counting half: under 60% is an even game, 80% or more a big mismatch. Early in a club's record the rating is rough, so read the bands as broad groups.</p><h3>Two-legged ties</h3><p>The two games of a knockout tie are paired, and each second leg is grouped by the first-leg score from the second-leg hosts' side: leading, level or trailing. Finals and league-phase games are single games.</p><h3>Reading the numbers</h3><p>One referee's average carries a lot of noise. Each profile shows a 90% range for the referee's true average and a sample label; with fewer than 10 games treat everything as a first impression. These are descriptive statistics, not predictions: the games a referee is given, the teams and what is at stake all shape the cards.</p>
 <h3>Data</h3><p>Match data from the Opta feed: referee, every card with its type, minute and player, substitutions, lineups and fouls. Referee appointments appear when UEFA announces them, usually two or three days before kick-off. Fouls are the fouls committed by both teams. A referee's country is the football association they referee for, which is not in the feed and is added separately.</p>
 </section>
