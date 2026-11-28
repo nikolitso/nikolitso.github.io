@@ -519,6 +519,10 @@
 "6774d89c2780c2f44eddd23dbaeb0cd050cacd54",
 "2026-11-15 07:02"
 ],
+"fs:ph7wWmnm": [
+"1c73e43c06a307151fa81d845bb44ceb97f27d18",
+"2026-11-28 01:04"
+],
 "fs:prpec7Mj": [
 "e1586b96f16cac9f94a744944fcaf24abd546964",
 "2026-10-31 22:13"
@@ -800,6 +804,10 @@
 "fs:pGTIjP0E": [
 "6774d89c2780c2f44eddd23dbaeb0cd050cacd54",
 "2026-11-15 07:02"
+],
+"fs:ph7wWmnm": [
+"1c73e43c06a307151fa81d845bb44ceb97f27d18",
+"2026-11-28 01:04"
 ],
 "fs:prpec7Mj": [
 "e1586b96f16cac9f94a744944fcaf24abd546964",
@@ -1367,6 +1375,10 @@
 "496768bd04ef68681a294da5646819551737dc6d",
 "2026-11-26 16:03"
 ],
+"2026-11-28T20:00|Kifisia|saves|under": [
+"65d50768955f28d35c4d2056553a9da9feadfc65",
+"2026-11-28 07:03"
+],
 "2026-11-28T20:00|Kifisia|shots|over": [
 "9a2209a226aa5fcc6810d177761c9febadfa9c67",
 "2026-11-27 15:02"
@@ -1426,6 +1438,10 @@
 "2026-11-29T21:00|AEK|cards|under": [
 "496768bd04ef68681a294da5646819551737dc6d",
 "2026-11-26 16:03"
+],
+"2026-11-29T21:00|AEK|fouls|under": [
+"692371c524377fd36191676ebd8eafa9dbbdb940",
+"2026-11-27 23:02"
 ],
 "2026-11-29T21:00|AEK|saves|under": [
 "0c98b9d30742a280f3ae9a1419298d324fefe3ae",
@@ -1785,6 +1801,10 @@
 "c8eeb908f98bc78bd10b3a97b0e9c7c53c98efd2",
 "2026-11-23 18:04"
 ],
+"italy-serie-a2-women-gr-b|Golfobasket|Roma San Raffaele|2026-11-29": [
+"eac975f5a4367441e923bd85b208778d6fa4919b",
+"2026-11-28 06:04"
+],
 "italy-serie-a2-women-gr-b|Matelica|Empoli|2026-11-28": [
 "4e71af1dca2ade2c26e19bacd399cae6904f71d2",
 "2026-11-27 12:03"
@@ -1912,12 +1932,12 @@
 }
 },
 "scanned": {
-"basketball/overs/live.js": "154471ef2530ad57b26d330a907d0ce92ae01a18",
-"basketball/women/live.js": "f1c8f72d4845376f2ce19bc3a64be4823493e778",
-"handball/data.js": "836ab5dd970ef64f86d023099a15bf20444ef829",
+"basketball/overs/live.js": "10877ea610e9f83fa50639fbd8135be93da6b1ce",
+"basketball/women/live.js": "55e70aec57cb91a4a8d79de34d3da2d05aee4364",
+"handball/data.js": "e6b3cdcd0ebacdfe17295fe42d2da6d1b472669f",
 "handball/index.html": "bc0dff9430172025ea5d9ba8dd58b67a2b91660e",
 "handball/projections/index.html": "bc0dff9430172025ea5d9ba8dd58b67a2b91660e",
-"superleague/data.js": "7dc68c8cdf0f1b9b4b9a064d34102e059b18cf0e",
-"volleyball/data.js": "0b744cbb3dc870e0bae235c0bbda63fad17247a2"
+"superleague/data.js": "81ea897d7cfcdfc48e7b90b3b62e137fc59f8d98",
+"volleyball/data.js": "b861b39f9734a7cfb574088df8a86121b482042e"
 }
 }
