@@ -630,6 +630,37 @@ def dashboard(rows, base, by_ref, names, slugs, seasons, upcoming, updated):
                           body=body, tab="overview", script=script))
 
 
+LIVE = re.compile(r"(<!-- live:uefa-referees:start -->).*?(<!-- live:uefa-referees:end -->)", re.S)
+SITEMAP_URL = re.compile(r"<url><loc>" + re.escape(SITE + URL) + r"[^<]*</loc>(?:<lastmod>[^<]*</lastmod>)?</url>")
+
+
+def update_home(rows, n_refs, upcoming):
+    """The homepage card's stats line (between its live markers) and this section's entries in the root sitemap.
+    scripts/build_edge.py rebuilds the sitemap with every page of this folder too; this keeps it right in between."""
+    home = ROOT / "index.html"
+    text = home.read_text(encoding="utf-8")
+    last = max(r["date"] for r in rows)
+    nxt = next((ko for ko, m, ref in upcoming), None)
+    spans = [f"Last: {fdate_short(last)}", f"{len(rows):,} games", f"{n_refs} referees"]
+    if nxt:
+        spans.append(f"Next: {nxt.strftime('%a %d %b').replace(' 0', ' ')}")
+    meta = '<div class="meta">' + "".join(f"<span>{esc(s)}</span>" for s in spans) + "</div>"
+    new = LIVE.sub(lambda m: m.group(1) + meta + m.group(2), text)
+    if new != text:
+        home.write_text(new, encoding="utf-8", newline="")
+    sm = ROOT / "sitemap.xml"
+    if sm.exists():
+        s = sm.read_text(encoding="utf-8")
+        today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+        pages = sorted("/" + f.parent.relative_to(ROOT).as_posix() + "/" for f in OUT.rglob("index.html"))
+        urls = "".join(f"<url><loc>{SITE}{p}</loc><lastmod>{today}</lastmod></url>" for p in pages)
+        s = SITEMAP_URL.sub("", s)
+        anchor = f"<url><loc>{SITE}/football/greek-cup/</loc>"
+        at = s.find(anchor)
+        at = s.find("</url>", at) + len("</url>") if at >= 0 else s.rfind("</urlset>")
+        sm.write_text(s[:at] + urls + s[at:], encoding="utf-8", newline="")
+
+
 def main():
     matches = load()
     if not matches:
@@ -645,6 +676,12 @@ def main():
         return
     rows, written = build(matches)
     print(f"{len(rows)} games, {len(written)} pages written to {OUT.relative_to(ROOT)}")
+    if "--no-home" not in sys.argv:
+        now = datetime.now(timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0)
+        upcoming = sorted(((kickoff(m), m) for m in matches
+                           if m.get("status") in ("Fixture", "Playing") and kickoff(m) and kickoff(m) >= now), key=lambda x: x[0])
+        update_home(rows, len({r["ref_id"] for r in rows}), [(k, m, main_ref(m)) for k, m in upcoming])
+        print("homepage card and sitemap updated")
 
 
 if __name__ == "__main__":
