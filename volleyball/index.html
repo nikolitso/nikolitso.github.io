@@ -267,7 +267,7 @@ a.gm{color:inherit;text-decoration:none} a.gm:hover{color:var(--gold);text-decor
 <p>Explainer: <a href="/volleyball/research/how-totals-work/">why a volleyball total is really about sets</a>.</p><p>Research note: <a href="/volleyball/research/close-matches/">close matches go under more often than the market expects</a>.</p>
 </section>
 </main>
-<script src="data.js?v=8fa42a8d"></script>
+<script src="data.js?v=2c196eae"></script>
 <script>
 const $ = id => document.getElementById(id);
 const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'], MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -322,7 +322,7 @@ const BLG = Object.fromEntries(Object.entries(PLG).filter(([k]) => ((DATA.backte
 const hasPast = k => { const x = ((DATA.backtest || {}).leagues || {})[k]; return !!x && (x.n > 0 || x.blind_n > 0); };
 // a chip names the league too when its country has more than one women's or men's league with picks (25 Nov 2026)
 const chipName = l => Object.values(PJLG).filter(x => x.country === l.country && !!x.women === !!l.women).length > 1 ? `${l.country} ${l.name} ${sexAb(l)}` : `${l.country} ${sexAb(l)}`;
-const lgShort = k => { const x = PLG[k] || (((DATA.hcapx || {}).leagues) || []).find(l => l.key === k); return x ? `${x.country} ${sexAb(x)}` : ''; };
+const lgShort = k => { const x = PLG[k] || (((DATA.hcapx || {}).leagues) || []).find(l => l.key === k); return x ? `${x.country}${/(^|\s)2\.|\bA2\b/.test(x.name || '') ? ' 2' : ''} ${sexAb(x)}` : ''; };   // second divisions read 'Austria 2 (W)' (user, 28 Nov 2026)
 const sexOf = l => l.women ? 'women' : 'men';
 const sexAb = l => l.women ? '(W)' : '(M)';   // short label: chips, league cells
 const inLg = x => lg === 'all' || x.lg === lg;
