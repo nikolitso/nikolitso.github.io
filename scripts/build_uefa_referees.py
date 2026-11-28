@@ -285,9 +285,10 @@ input[type=search]{min-width:min(340px,100%)}
 .bars .track{height:14px;background:color-mix(in srgb,var(--an-rule) 55%,transparent);border-radius:4px;overflow:hidden}
 .bars .fill{display:block;height:100%;background:var(--an-accent);border-radius:0 4px 4px 0}
 .bars .v{text-align:right;color:var(--an-ink)}
-.cols-chart{display:flex;align-items:flex-end;gap:4px;height:150px;padding-top:8px;border-bottom:1px solid var(--an-rule)}
+.cols-chart{display:flex;align-items:flex-end;gap:4px;height:170px;padding-top:24px;border-bottom:1px solid var(--an-rule)}
 .cols-chart span{flex:1;background:var(--an-accent);border-radius:4px 4px 0 0;min-height:2px;position:relative}
-.cols-chart span:hover{opacity:.8}
+.cols-chart span:hover{opacity:.8}.cols-chart span i{position:absolute;bottom:100%;left:50%;transform:translateX(-50%);padding-bottom:3px;font:normal 13px var(--an-mono);color:var(--an-ink);white-space:nowrap}
+@media(max-width:520px){.cols-chart span i{font-size:10.5px}}
 .cols-x{display:flex;gap:4px;font:13.5px var(--an-mono);color:var(--an-muted);margin-top:5px}.cols-x span{flex:1;text-align:center}
 .tag{display:inline-block;font:500 13px var(--an-mono);letter-spacing:.05em;border:1px solid var(--an-rule);border-radius:6px;padding:1px 7px;color:var(--an-muted);margin-right:4px}
 .idx-up{color:var(--an-ink)}.idx-down{color:var(--an-muted)}
@@ -357,7 +358,7 @@ def bars(values, labels, fmt=f1, title=""):
 def columns(counts, labels, unit="games"):
     top = max(counts) or 1
     total = sum(counts) or 1
-    cols = "".join(f'<span style="height:{100 * c / top:.1f}%" title="{esc(l)} cards: {c} {unit} ({round(100 * c / total)}%)"></span>'
+    cols = "".join(f'<span style="height:{100 * c / top:.1f}%" title="{esc(l)} cards: {c} {unit} ({round(100 * c / total)}%)"><i>{round(100 * c / total)}%</i></span>'
                    for c, l in zip(counts, labels))
     xs = "".join(f"<span>{esc(l)}</span>" for l in labels)
     return f'<div class="cols-chart" role="img" aria-label="Distribution of match card counts">{cols}</div><div class="cols-x">{xs}</div>'
@@ -564,7 +565,7 @@ function render() {
   $('#comp tbody').innerHTML = ['UCL', 'UEL', 'UECL'].map(c => { const x = agg(cs.filter(r => r[0] === c)); return x ? `<tr><td>${C[c]}</td><td class="n">${x.n}</td><td class="n">${f1(x.avg)}</td><td class="n">${f2(x.yc)}</td><td class="n">${f2(x.rc)}</td><td class="n">${f1(x.hp)}–${f1(x.ap)}</td><td class="n">${f1(x.p1)}–${f1(x.p2)}</td><td class="n">${f1(x.fouls)}</td><td class="n">${Math.round(100 * x.o45)}%</td></tr>` : ''; }).join('');
   // distribution and timing
   const dist = Array(10).fill(0); rs.forEach(r => dist[Math.min(r[3] + r[4], 9)]++); const top = Math.max(...dist, 1);
-  $('#dist').innerHTML = dist.map((c, i) => `<span style="height:${100 * c / top}%" title="${i === 9 ? '9+' : i} cards: ${c} games (${rs.length ? Math.round(100 * c / rs.length) : 0}%)"></span>`).join('');
+  $('#dist').innerHTML = dist.map((c, i) => { const p = rs.length ? Math.round(100 * c / rs.length) : 0; return `<span style="height:${100 * c / top}%" title="${i === 9 ? '9+' : i} cards: ${c} games (${p}%)"><i>${p}%</i></span>`; }).join('');
   const b = [0, 0, 0, 0, 0, 0]; rs.forEach(r => r[10].forEach((v, i) => b[i] += v)); const bt = Math.max(...b, 1);
   $('#timing').innerHTML = b.map((v, i) => `<div class="row" title="${D.buckets[i]}: ${f2(v / (rs.length || 1))} cards per game"><span>${D.buckets[i]}</span><span class="track"><span class="fill" style="width:${100 * v / bt}%"></span></span><span class="v">${f2(v / (rs.length || 1))}</span></div>`).join('');
   // seasons trend
@@ -628,7 +629,7 @@ def dashboard(rows, base, by_ref, names, slugs, seasons, upcoming, updated):
 <div class="scroll"><table id="comp"><thead><tr><th>Competition</th><th class="n">Games</th><th class="n">Cards/g</th><th class="n">YC/g</th><th class="n">RC/g</th><th class="n">Home–away</th><th class="n">1st–2nd half</th><th class="n">Fouls/g</th><th class="n">Over 4.5</th></tr></thead><tbody></tbody></table></div></section>
 
 <section class="section"><div class="section-head"><h2>Statistics and trends</h2></div><div class="cols">
-<div class="panel"><h3>Cards per game</h3><p class="desc">How many games ended with each card count.</p><div class="cols-chart" id="dist" role="img" aria-label="Distribution of match card counts"></div><div class="cols-x">{"".join(f"<span>{x}</span>" for x in [str(i) for i in range(9)] + ["9+"])}</div></div>
+<div class="panel"><h3>Cards per game</h3><p class="desc">Share of games that ended with each card count.</p><div class="cols-chart" id="dist" role="img" aria-label="Distribution of match card counts"></div><div class="cols-x">{"".join(f"<span>{x}</span>" for x in [str(i) for i in range(9)] + ["9+"])}</div></div>
 <div class="panel"><h3>When the cards come</h3><p class="desc">Cards per game by quarter-hour; stoppage time sits in the last block of each half.</p><div class="bars" id="timing"></div></div>
 </div>
 <div class="panel" style="margin-top:14px"><h3>Season by season</h3><div class="scroll"><table id="trend"><thead><tr><th>Season</th><th class="n">Games</th><th class="n">Cards/g</th><th class="n">Home–away</th><th class="n">1st–2nd half</th><th class="n">Fouls/g</th></tr></thead><tbody></tbody></table></div></div></section>
