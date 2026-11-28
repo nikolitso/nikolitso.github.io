@@ -27,7 +27,8 @@ NAV_CURRENT = re.compile(r'<a (?:class="an-navchip" )?href="([^"]+)" aria-curren
 
 # The projects menu (user, 22 Nov 2026): Home, then every project in one row, grouped by sport; PAOK is its own group.
 SPORTS = [
-    ("Football", [("/superleague/", "Greek Super League"), ("/football/greek-cup/", "Greek Cup")]),
+    ("Football", [("/superleague/", "Greek Super League"), ("/football/greek-cup/", "Greek Cup"),
+                  ("/football/uefa-referees/", "UEFA Referees")]),   # user, 28 Nov 2026
     ("Basketball", [("/basketball/", "Greek League"), ("/basketball/overs/", "Men Basketball"),
                     ("/basketball/women/", "Women Basketball")]),   # user, 23 Nov 2026
     ("Volleyball", [("/volleyball/", "Volleyball")]),
@@ -37,6 +38,7 @@ SPORTS = [
 # the header pill's name for each project: the title on the project's own home page, so a renamed project renames
 # its pills on every page (user, 22 Nov 2026); these are only the fallback
 NAMES = {"/superleague/": "Greek Super League", "/football/greek-cup/": "Greek Cup", "/paok-hub/": "PAOK Hub",
+         "/football/uefa-referees/": "UEFA Referees",
          "/basketball/": "Greek Basketball League", "/basketball/overs/": "Men Basketball",
          "/basketball/women/": "Women Basketball", "/paok-basketball/": "PAOK Basketball",
          "/volleyball/": "European Volleyball", "/handball/": "Handball"}
