@@ -164,8 +164,16 @@ def kickoff(m):
 
 ELO_SEED = {"UCL": 1650, "UEL": 1550, "UECL": 1450}   # a club's first rating, by the competition it first appears in
 ELO_HOME, ELO_K = 60, 30
-BANDS = ["Even", "Slight favourite", "Clear favourite", "Big mismatch"]
-BAND_EDGES = (.6, .7, .8)                            # the favourite's expected score (win 1, draw 0.5)
+# How evenly matched: the favourite's win chance from the betting market, margin removed (user, 28 Nov 2026: "I want
+# betting odds"). Past games: collected average closing odds (_uefa/market.json, scripts/uefa_market_match.py); later
+# games: the last pre-match read of the offer feed (_uefa/market_upcoming.json, scripts/uefa_superbet.py). Tested on
+# 1,313 games: 4.6 cards a game under 55%, 3.4 at 75% or more. The Elo ratings below only pick the favourite of a game
+# with no odds; such a game is left out of the bands.
+BANDS = ["Toss-up", "Narrow favourite", "Favourite", "Clear favourite", "Heavy favourite"]
+BAND_LABELS = ["under 45%", "45–55%", "55–65%", "65–75%", "75% or more"]
+BAND_EDGES = (.45, .55, .65, .75)                     # the favourite's win chance
+MARKET = ROOT / "_uefa" / "market.json"
+MARKET_UPCOMING = ROOT / "_uefa" / "market_upcoming.json"
 TIE_STATES = {1: "Home side leading", 0: "Level", -1: "Home side trailing"}
 
 
@@ -207,9 +215,23 @@ def context(matches):
     return out
 
 
-def band(we):
-    fav = max(we, 1 - we)
-    return sum(fav >= e for e in BAND_EDGES)
+def band(p_fav):
+    return sum(p_fav >= e for e in BAND_EDGES)
+
+
+_market = None
+
+
+def market(mid):
+    """The game's fair [home, draw, away] chances, or None: collected closing odds first, else the last feed read."""
+    global _market
+    if _market is None:
+        _market = {}
+        if MARKET_UPCOMING.exists():
+            _market.update({k: v["p"] for k, v in json.loads(MARKET_UPCOMING.read_text(encoding="utf-8")).items()})
+        if MARKET.exists():
+            _market.update(json.loads(MARKET.read_text(encoding="utf-8")))
+    return _market.get(mid)
 
 
 STAGES = ["Matchday 1", "Matchday 2", "Matchday 3", "Matchday 4", "Matchday 5", "Matchday 6", "Matchday 7", "Matchday 8",
@@ -253,7 +275,9 @@ def build_rows(matches):
         })
         c = ctx.get(m["id"], {})
         we = c.get("we", .5)
-        rows[-1].update(we=we, band=band(we), fav="h" if we >= .5 else "a", leg=c.get("leg", 0), tie=c.get("tie"),
+        mk = market(m["id"])
+        fav = ("h" if mk[0] >= mk[2] else "a") if mk else ("h" if we >= .5 else "a")
+        rows[-1].update(we=we, mk=mk, band=band(max(mk[0], mk[2])) if mk else None, fav=fav, leg=c.get("leg", 0), tie=c.get("tie"),
                         stage_code=stage_code(m))
     rows.sort(key=lambda r: (r["date"], r["home"]))
     return rows
@@ -507,8 +531,11 @@ def appt_card(ko, m, ref, by_ref, base, slugs):
     comp = COMPS.get(m["comp"], m["comp"])
     head = f'<p class="eyebrow">{comp} · {esc(m.get("stage") or "")}</p><h3>{esc(m["home"]["name"])} – {esc(m["away"]["name"])}</h3>'
     when = ko.strftime("%a %d %b, %H:%M UTC").replace(" 0", " ")
+    mk = market(m["id"])
+    mk_html = (f'<div class="facts"><span>Market: home <b>{pct(mk[0])}</b> · draw <b>{pct(mk[1])}</b> · away <b>{pct(mk[2])}</b></span></div>'
+               if mk else "")
     if not ref:
-        return f'<article class="panel">{head}<div class="facts"><span>{when}</span><span>Referee not announced</span></div></article>'
+        return f'<article class="panel">{head}<div class="facts"><span>{when}</span><span>Referee not announced</span></div>{mk_html}</article>'
     rs = by_ref.get(ref["id"], [])
     s = summary(rs, base) if rs else None
     link = (f'<a href="{URL}{slugs[ref["id"]]}/">{esc(ref["name"])}</a>' if ref["id"] in slugs and rs else esc(ref["name"]))
@@ -516,7 +543,7 @@ def appt_card(ko, m, ref, by_ref, base, slugs):
     facts = (f'<span>Games <b>{s["n"]}</b></span><span>Cards/game <b>{f1(s["avg"])}</b></span>'
              f'<span>Index <b>{f2(s["index"])}</b></span><span>Over 4.5 <b>{pct(s["over"][4.5])}</b></span>') if s else \
         '<span>No UEFA main-competition games since 2024–25</span>'
-    return f'<article class="panel">{head}<p style="margin:6px 0 0">Referee {link}</p><div class="facts"><span>{when}</span>{facts}</div></article>'
+    return f'<article class="panel">{head}<p style="margin:6px 0 0">Referee {link}</p><div class="facts"><span>{when}</span>{facts}</div>{mk_html}</article>'
 
 
 def appointments_page(upcoming, by_ref, base, slugs, updated):
@@ -540,8 +567,8 @@ def appointments_page(upcoming, by_ref, base, slugs, updated):
                                        body=body, tab="appointments"))
 
 
-SITUATIONS = [("Evenly matched (favourite under 70%)", lambda r: r["band"] <= 1),
-              ("Clear favourite (70% or more)", lambda r: r["band"] >= 2),
+SITUATIONS = [("Evenly matched (favourite under 55%)", lambda r: r["band"] is not None and r["band"] <= 1),
+              ("Clear favourite (65% or more)", lambda r: r["band"] is not None and r["band"] >= 3),
               ("First legs", lambda r: r["leg"] == 1),
               ("Second legs", lambda r: r["leg"] == 2)]
 
@@ -606,19 +633,38 @@ def situations_panel(rs, sit_avg, sides_all):
 """
 
 
+PROFILE_JS = """<script>
+document.querySelectorAll('button[data-ps]').forEach(b => b.addEventListener('click', () => {
+  document.querySelectorAll('button[data-ps]').forEach(x => x.classList.toggle('on', x === b));
+  document.querySelectorAll('#ps-table tbody[data-ps]').forEach(t => t.hidden = t.dataset.ps !== b.dataset.ps);
+}));
+</script>"""
+
+
 def profile(rid, name, slug, rs, base, nxt, seasons, updated, sit_avg, sides_all, red_all):
     s = summary(rs, base)
     comps = {r["comp"] for r in rs}
-    # by competition and season
-    groups = defaultdict(list)
-    for r in rs:
-        groups[(r["season"], r["comp"])].append(r)
-    split_rows = ""
-    for (season, comp) in sorted(groups, key=lambda k: (k[0], ["UCL", "UEL", "UECL"].index(k[1])), reverse=True):
-        g = summary(groups[(season, comp)], base)
-        split_rows += (f'<tr><td>{season.replace("-", "–")}</td><td>{COMPS[comp]}</td><td class="n">{g["n"]}</td>'
-                       f'<td class="n">{f1(g["avg"])}</td><td class="n">{f1(g["exp"])}</td><td class="n">{f2(g["yc"])}</td>'
-                       f'<td class="n">{f2(g["rc"])}</td><td class="n">{f1(g["fouls"])}</td></tr>')
+    # by competition, one table per season chosen with pills (user, 28 Nov 2026)
+    ref_seasons = sorted({r["season"] for r in rs})
+    split_bodies, split_pills = "", ""
+    for key in ref_seasons + ["all"]:
+        xs = rs if key == "all" else [r for r in rs if r["season"] == key]
+        body_rows = ""
+        for comp in ["UCL", "UEL", "UECL"]:
+            cx = [r for r in xs if r["comp"] == comp]
+            if cx:
+                g = summary(cx, base)
+                body_rows += (f'<tr><td>{COMPS[comp]}</td><td class="n">{g["n"]}</td><td class="n">{f1(g["avg"])}</td>'
+                              f'<td class="n">{f1(g["exp"])}</td><td class="n">{f2(g["yc"])}</td><td class="n">{f2(g["rc"])}</td>'
+                              f'<td class="n">{f1(g["fouls"])}</td></tr>')
+        if len({r["comp"] for r in xs}) > 1:
+            g = summary(xs, base)
+            body_rows += (f'<tr><td><b>All competitions</b></td><td class="n"><b>{g["n"]}</b></td><td class="n"><b>{f1(g["avg"])}</b></td>'
+                          f'<td class="n">{f1(g["exp"])}</td><td class="n">{f2(g["yc"])}</td><td class="n">{f2(g["rc"])}</td>'
+                          f'<td class="n">{f1(g["fouls"])}</td></tr>')
+        split_bodies += f'<tbody data-ps="{key}"{"" if key == "all" else " hidden"}>{body_rows}</tbody>'
+        split_pills += (f'<button class="chip{" on" if key == "all" else ""}" data-ps="{key}">'
+                        f'{"All seasons" if key == "all" else key.replace("-", "–")}</button>')
     # match history
     hist = ""
     for r in sorted(rs, key=lambda r: r["date"], reverse=True):
@@ -666,8 +712,9 @@ def profile(rid, name, slug, rs, base, nxt, seasons, updated, sit_avg, sides_all
 </div></section>
 
 {situations_panel(rs, sit_avg, sides_all)}
-<section class="section"><div class="section-head"><h2>By season and competition</h2></div>
-<div class="scroll"><table><thead><tr><th>Season</th><th>Competition</th><th class="n">Games</th><th class="n">Cards/g</th><th class="n">Comp. avg</th><th class="n">YC/g</th><th class="n">RC/g</th><th class="n">Fouls/g</th></tr></thead><tbody>{split_rows}</tbody></table></div></section>
+<section class="section"><div class="section-head"><h2>By competition</h2></div>
+<div class="controls"><div class="seg" role="group" aria-label="Season">{split_pills}</div></div>
+<div class="scroll"><table id="ps-table"><thead><tr><th>Competition</th><th class="n">Games</th><th class="n">Cards/g</th><th class="n">Comp. avg</th><th class="n">YC/g</th><th class="n">RC/g</th><th class="n">Fouls/g</th></tr></thead>{split_bodies}</table></div></section>
 
 <section class="section"><div class="section-head"><h2>Every game</h2><span class="muted small">Cards: home · away · total · YC · RC · 1st–2nd half</span></div>
 <div class="scroll"><table class="sortable"><thead><tr><th>Date</th><th></th><th>Game</th><th class="n">Home</th><th class="n">Away</th><th class="n">Cards</th><th class="n">YC</th><th class="n">RC</th><th class="n">Halves</th><th class="n">Fouls</th></tr></thead><tbody>{hist}</tbody></table></div>
@@ -676,7 +723,7 @@ def profile(rid, name, slug, rs, base, nxt, seasons, updated, sit_avg, sides_all
     nat = f" ({country(rid)})" if country(rid) else ""
     title = f"{name}{nat}: referee stats in the Champions League, Europa League and Conference League"
     desc = f"{name}{nat}: UEFA referee record since 2024-25: {s['n']} games, {s['avg']:.1f} cards per game, card timing, home and away, fouls and every game."
-    return write(slug, page(path=f"{URL}{slug}/", title=title, h1=name, desc=desc, body=body, tab="referees"))
+    return write(slug, page(path=f"{URL}{slug}/", title=title, h1=name, desc=desc, body=body, tab="referees", script=PROFILE_JS))
 
 
 DASH_JS = r"""
@@ -715,7 +762,7 @@ function render() {
   const b = [0, 0, 0, 0, 0, 0]; rs.forEach(r => r[10].forEach((v, i) => b[i] += v)); const bt = Math.max(...b, 1);
   $('#timing').innerHTML = b.map((v, i) => `<div class="row" title="${D.buckets[i]}: ${f2(v / (rs.length || 1))} cards per game"><span>${D.buckets[i]}</span><span class="track"><span class="fill" style="width:${100 * v / bt}%"></span></span><span class="v">${f2(v / (rs.length || 1))}</span></div>`).join('');
   // what drives the cards
-  const pc = x => Math.round(100 * x) + '%', bandName = (i) => D.bands[i] + [' (favourite under 60%)', ' (60–70%)', ' (70–80%)', ' (80% or more)'][i];
+  const pc = x => Math.round(100 * x) + '%', bandName = (i) => D.bands[i] + ' (' + D.bandLabels[i] + ')';
   $('#drv-band tbody').innerHTML = D.bands.map((_, k) => { const xs = rs.filter(r => r[11] === k), n = xs.length; if (!n) return '';
     let f = 0, u = 0, um = 0, lv = 0, fm = 0; xs.forEach(r => { const fv = r[12] ? r[3] : r[4], dg = r[12] ? r[4] : r[3]; f += fv; u += dg; if (dg > fv) um++; else if (dg === fv) lv++; else fm++; });
     return `<tr><td>${bandName(k)}</td><td class="n">${n}</td><td class="n">${f1((f + u) / n)}</td><td class="n">${f2(f / n)}</td><td class="n">${f2(u / n)}</td><td class="n">${pc(um / n)}</td><td class="n">${pc(lv / n)}</td><td class="n">${pc(fm / n)}</td></tr>`; }).join('');
@@ -768,7 +815,7 @@ def dashboard(rows, base, by_ref, names, slugs, seasons, upcoming, updated):
         # mismatch band, home side favourite (1/0), leg (0 none, 1, 2), second-leg home lead (1, 0, -1 or null)
         "m": [[r["comp"], r["season"], idx[r["ref_id"]], r["hp"], r["ap"], r["p1"], r["p2"], r["yc"], r["rc"], r["fouls"], r["b"],
                r["band"], 1 if r["fav"] == "h" else 0, r["leg"], r["tie"], r["stage_code"]] for r in rows],
-        "bands": BANDS, "stages": STAGES, "shrink": SHRINK,
+        "bands": BANDS, "bandLabels": BAND_LABELS, "stages": STAGES, "shrink": SHRINK,
     }
     announced = [(ko, m, ref) for ko, m, ref in upcoming if ref][:6]
     appt = "".join(appt_card(ko, m, ref, by_ref, base, slugs) for ko, m, ref in announced)
@@ -788,6 +835,7 @@ def dashboard(rows, base, by_ref, names, slugs, seasons, upcoming, updated):
     red_note = (f"Does a referee's red-card rate carry over? Across the {n_st} referees with 16 or more games, the rates in alternate "
                 f"games correlate at {c_st:.2f} (0 = none, 1 = fully): " +
                 ("treat any one referee's red-card share as mostly chance." if c_st < .3 else "there is some carry-over.")) if c_st is not None else ""
+    mk_n = sum(1 for r in rows if r["mk"])
     total_pts = sum(r["pts"] for r in rows)
     excluded = sum(len(r["excluded"]) for r in rows)
     et = sum(1 for r in rows if r["et"])
@@ -796,7 +844,7 @@ def dashboard(rows, base, by_ref, names, slugs, seasons, upcoming, updated):
 
 <section class="section"><div class="controls"><div class="seg" role="group" aria-label="Season">{season_btns}</div><div class="seg" role="group" aria-label="Competition">{comp_btns}</div></div>
 <div class="metric-grid">
-<div class="metric"><span class="eyebrow">Games</span><strong id="k-m">–</strong><small>played, with a referee</small></div>
+<div class="metric"><span class="eyebrow">Games</span><strong id="k-m">–</strong><small>played</small></div>
 <div class="metric"><span class="eyebrow">Referees</span><strong id="k-r">–</strong><small>in charge of at least one</small></div>
 <div class="metric"><span class="eyebrow">Cards per game</span><strong id="k-c">–</strong><small id="k-cs"></small></div>
 <div class="metric"><span class="eyebrow">Fouls per game</span><strong id="k-f">–</strong><small id="k-fs"></small></div>
@@ -813,7 +861,7 @@ def dashboard(rows, base, by_ref, names, slugs, seasons, upcoming, updated):
 <div class="scroll"><table id="comp"><thead><tr><th>Competition</th><th class="n">Games</th><th class="n">Cards/g</th><th class="n">YC/g</th><th class="n">RC/g</th><th class="n">Home–away</th><th class="n">1st–2nd half</th><th class="n">Fouls/g</th><th class="n">Over 4.5</th></tr></thead><tbody></tbody></table></div></section>
 
 <section class="section" id="drivers"><div class="section-head"><h2>What drives the cards</h2></div>
-<p class="desc">Three things that move card counts in these games, each tested on them first. How evenly matched the teams were comes from ratings built only from earlier UEFA results (see the methodology); the favourite's chance is its expected score, a draw counting half.</p>
+<p class="desc">Three things that move card counts in these games, each tested on them first. How evenly matched the teams were comes from the betting market: the favourite's win chance from the closing odds, with the bookmaker margin taken out.</p>
 <div class="panel"><h3>How evenly matched</h3><p class="desc">Close games produce the most cards, and the underdog collects more of them.</p>
 <div class="scroll"><table id="drv-band"><thead><tr><th>Game</th><th class="n">Games</th><th class="n">Cards/g</th><th class="n">Favourite</th><th class="n">Underdog</th><th class="n">Underdog more</th><th class="n">Level</th><th class="n">Favourite more</th></tr></thead><tbody></tbody></table></div></div>
 <div class="cols" style="margin-top:14px">
@@ -853,7 +901,7 @@ def dashboard(rows, base, by_ref, names, slugs, seasons, upcoming, updated):
 <h3>Which games</h3><p>The Champions League, Europa League and Conference League from 2024–25 on, league phase onwards: the knockout play-offs and every knockout round, no qualifying rounds. Only the referee in charge counts; assistants, fourth officials and VAR are not credited with cards.</p>
 <h3>How cards are counted</h3><p>As bookmakers settle card markets: a yellow card counts 1 and a red card 2. A second yellow is ignored and only its red counts, so one player can add at most 3 (yellow 1 + red 2). Cards shown to non-players do not count: managers and staff, substitutes who have not come on, and players already substituted off. Whether a carded player was on the pitch is checked against the lineups and the exact time of each substitution. Only the scheduled 90 minutes count, stoppage time included: cards shown after the full-time whistle, in extra time or in a penalty shoot-out are left out. In these {len(rows)} games, {excluded} card{'s' if excluded != 1 else ''} to non-players {'were' if excluded != 1 else 'was'} left out and {et} game{'s' if et != 1 else ''} had cards in extra time or a shoot-out that were left out.</p>
 <h3>The card index</h3><p>Referees do not choose their games. A Conference League referee and a Champions League referee face different matches, so each referee's games are compared with the average game in the same competition and season. The index is the referee's cards divided by that average, after adding {SHRINK} average games to every record: a referee with few games sits close to 1.00 until their own games say otherwise. The {SHRINK} is set by a test: every game was predicted from the referee's earlier games only, and {SHRINK} gave the smallest errors. The same test shows how little a referee's record adds: predictions using it were only about 1% better than using the competition average alone. Above 1.00 means more cards than expected, below means fewer.</p>
-<h3>How evenly matched the teams were</h3><p>Each club gets a rating built only from UEFA results before the game, so no game is rated with hindsight. Every club starts from a level set by the competition it first appears in, gains or loses rating with each result (more for a bigger winning margin), and the home side gets a small edge, except in a final. The favourite's chance is its expected score from those ratings, a draw counting half: under 60% is an even game, 80% or more a big mismatch. Early in a club's record the rating is rough, so read the bands as broad groups.</p><h3>Two-legged ties</h3><p>The two games of a knockout tie are paired, and each second leg is grouped by the first-leg score from the second-leg hosts' side: leading, level or trailing. Finals and league-phase games are single games.</p><h3>Reading the numbers</h3><p>One referee's average carries a lot of noise. Each profile shows a 90% range for the referee's true average and a sample label; with fewer than 10 games treat everything as a first impression. These are descriptive statistics, not predictions: the games a referee is given, the teams and what is at stake all shape the cards.</p>
+<h3>How evenly matched the teams were</h3><p>From the betting market. Each game's average closing odds for home, draw and away are turned into chances, with the bookmaker margin taken out in proportion; the favourite's win chance places the game in a band, from a toss-up (under 45%) to a heavy favourite (75% or more). Games still to be played use the latest pre-match odds. Market odds cover {mk_n} of the {len(rows)} games; a game without them is left out of the bands.</p><h3>Two-legged ties</h3><p>The two games of a knockout tie are paired, and each second leg is grouped by the first-leg score from the second-leg hosts' side: leading, level or trailing. Finals and league-phase games are single games.</p><h3>Reading the numbers</h3><p>One referee's average carries a lot of noise. Each profile shows a 90% range for the referee's true average and a sample label; with fewer than 10 games treat everything as a first impression. These are descriptive statistics, not predictions: the games a referee is given, the teams and what is at stake all shape the cards.</p>
 <h3>Data</h3><p>Match data from the Opta feed: referee, every card with its type, minute and player, substitutions, lineups and fouls. Referee appointments appear when UEFA announces them, usually two or three days before kick-off. Fouls are the fouls committed by both teams. A referee's country is the football association they referee for, which is not in the feed and is added separately.</p>
 </section>
 <p class="foot">Updated {updated} · {len(rows)} games, {total_pts} counted cards · Data: Opta match feed.</p>"""
