@@ -11,8 +11,8 @@ Card count, as bookmakers settle card markets (user, 27-28 Nov 2026):
   maximum is 3 (yellow 1 + red 2);
 - cards to non-players do not count: managers and staff, substitutes who have not come on, and players already
   substituted off (checked against the lineups and the substitution timestamps);
-- normal time only (first and second half, stoppage time included). Extra time and penalty shoot-outs are kept
-  apart and never counted.
+- the scheduled 90 minutes only (first and second half, stoppage time included); cards after the full-time whistle,
+  in extra time or in a shoot-out never count (Opta puts these in periods other than 1 and 2).
 """
 import html
 import json
@@ -26,6 +26,10 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 RAW = ROOT / "_uefa" / "raw"
+# each referee's football association, by Opta referee id (user, 28 Nov 2026: country next to the name). Not in the
+# Opta feed: Wikidata nationality, set to the association UEFA lists (England/Scotland, not United Kingdom), the rest
+# by hand; checked against the data: no referee ever had a game with a club from that country. Add new referees here.
+COUNTRIES = ROOT / "_uefa" / "referee_countries.json"
 OUT = ROOT / "football" / "uefa-referees"
 URL = "/football/uefa-referees/"
 SITE = "https://antonisnikolitsopoulos.com"
@@ -115,6 +119,21 @@ def main_ref(m):
         if o.get("type") == "Main" and o.get("name"):
             return o
     return None
+
+
+_countries = None
+
+
+def country(rid):
+    global _countries
+    if _countries is None:
+        _countries = json.loads(COUNTRIES.read_text(encoding="utf-8")) if COUNTRIES.exists() else {}
+    return (_countries.get(rid) or {}).get("country", "")
+
+
+def with_country(name, rid):
+    c = country(rid)
+    return f'{esc(name)}{f" <span class=\"ctry\">{esc(c)}</span>" if c else ""}'
 
 
 def slugify(name):
@@ -255,7 +274,7 @@ td{padding:10px 8px;border-bottom:1px solid color-mix(in srgb,var(--an-rule) 70%
 td.n,th.n{text-align:right;font-family:var(--an-mono);font-size:16px;white-space:nowrap}
 th.sort{cursor:pointer}th.sort:hover{color:var(--an-ink)}th.sort[aria-sort]{color:var(--an-accent)}
 td a{text-decoration:none;border-bottom:1px solid var(--an-accent-line)}td a:hover{color:var(--an-accent)}
-.muted{color:var(--an-muted)}.small{font-size:15px}
+.ctry{color:var(--an-muted);font-size:.78em;font-weight:400;margin-left:.35em;white-space:nowrap}.muted{color:var(--an-muted)}.small{font-size:15px}
 .controls{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;margin:0 0 14px}
 .seg{display:flex;flex-wrap:wrap;gap:6px}
 .chip{background:none;border:1px solid var(--an-rule);border-radius:999px;color:var(--an-muted);font:500 15px var(--an-mono);padding:6px 13px;cursor:pointer}
@@ -412,7 +431,8 @@ def appt_card(ko, m, ref, by_ref, base, slugs):
         return f'<article class="panel">{head}<div class="facts"><span>{when}</span><span>Referee not announced</span></div></article>'
     rs = by_ref.get(ref["id"], [])
     s = summary(rs, base) if rs else None
-    link = f'<a href="{URL}{slugs[ref["id"]]}/">{esc(ref["name"])}</a>' if ref["id"] in slugs and rs else esc(ref["name"])
+    link = (f'<a href="{URL}{slugs[ref["id"]]}/">{esc(ref["name"])}</a>' if ref["id"] in slugs and rs else esc(ref["name"]))
+    link += f' <span class="ctry">{esc(country(ref["id"]))}</span>' if country(ref["id"]) else ""
     facts = (f'<span>Games <b>{s["n"]}</b></span><span>Cards/game <b>{f1(s["avg"])}</b></span>'
              f'<span>Index <b>{f2(s["index"])}</b></span><span>Over 4.5 <b>{pct(s["over"][4.5])}</b></span>') if s else \
         '<span>No UEFA main-competition games since 2024–25</span>'
@@ -474,7 +494,7 @@ def profile(rid, name, slug, rs, base, nxt, seasons, updated):
                 f"{round(abs(idx - 1) * 100)}% {'more' if idx > 1 else 'fewer'} cards than the average referee in the same competitions")
     first = s["first"]
     med_first = first[len(first) // 2] if first else None
-    body = f"""<section class="intro"><p class="eyebrow">Referee profile · Updated {updated}</p><h2>{esc(name)}</h2>
+    body = f"""<section class="intro"><p class="eyebrow">Referee profile · Updated {updated}</p><h2>{with_country(name, rid)}</h2>
 <p class="lede">{esc(name)}'s card and foul record in UEFA's main club competitions since 2024–25: {s["n"]} game{'s' if s['n'] != 1 else ''} {comp_tags(comps)}</p></section>
 {nxt_html}
 <section class="section"><div class="metric-grid">
@@ -506,8 +526,9 @@ def profile(rid, name, slug, rs, base, nxt, seasons, updated):
 <div class="scroll"><table class="sortable"><thead><tr><th>Date</th><th></th><th>Game</th><th class="n">Home</th><th class="n">Away</th><th class="n">Cards</th><th class="n">YC</th><th class="n">RC</th><th class="n">Halves</th><th class="n">Fouls</th></tr></thead><tbody>{hist}</tbody></table></div>
 <p class="note">* a card was shown that does not count (to a manager, a substitute on the bench or a player already substituted off); hover the total to see whose.</p></section>
 <p class="foot"><a href="{URL}">← All UEFA referees</a> · <a href="{URL}#method">How the numbers are made</a> · Data: Opta match feed.</p>"""
-    title = f"{name}: referee stats in the Champions League, Europa League and Conference League"
-    desc = f"{name}'s UEFA referee record since 2024-25: {s['n']} games, {s['avg']:.1f} cards per game, card timing, home and away, fouls and every game."
+    nat = f" ({country(rid)})" if country(rid) else ""
+    title = f"{name}{nat}: referee stats in the Champions League, Europa League and Conference League"
+    desc = f"{name}{nat}: UEFA referee record since 2024-25: {s['n']} games, {s['avg']:.1f} cards per game, card timing, home and away, fouls and every game."
     return write(slug, page(path=f"{URL}{slug}/", title=title, h1=name, desc=desc, body=body, tab="referees"))
 
 
@@ -535,7 +556,7 @@ function render() {
   const by = {}; rs.forEach(r => (by[r[2]] = by[r[2]] || []).push(r));
   let list = Object.entries(by).map(([i, xs]) => ({i: +i, ...agg(xs)})).filter(x => x.n >= minN);
   list.sort((x, y) => sortKey === 'name' ? sortDir * D.refs[x.i][0].localeCompare(D.refs[y.i][0]) : sortDir * ((x[sortKey] ?? -1) - (y[sortKey] ?? -1)));
-  $('#rank tbody').innerHTML = list.map(x => `<tr><td><a href="${D.url}${D.refs[x.i][1]}/">${D.refs[x.i][0]}</a></td><td class="n">${x.n}</td><td class="n">${f1(x.avg)}</td><td class="n">${f2(x.yc)}</td><td class="n">${f2(x.rc)}</td><td class="n">${f1(x.hp)}–${f1(x.ap)}</td><td class="n">${f1(x.p1)}–${f1(x.p2)}</td><td class="n">${f1(x.fouls)}</td><td class="n">${Math.round(100 * x.o45)}%</td><td class="n"><b class="${x.idx >= 1 ? 'idx-up' : 'idx-down'}">${f2(x.idx)}</b></td></tr>`).join('') || '<tr><td colspan="10" class="muted">No referee has that many games in this selection.</td></tr>';
+  $('#rank tbody').innerHTML = list.map(x => `<tr><td><a href="${D.url}${D.refs[x.i][1]}/">${D.refs[x.i][0]}</a>${D.refs[x.i][2] ? ` <span class="ctry">${D.refs[x.i][2]}</span>` : ''}</td><td class="n">${x.n}</td><td class="n">${f1(x.avg)}</td><td class="n">${f2(x.yc)}</td><td class="n">${f2(x.rc)}</td><td class="n">${f1(x.hp)}–${f1(x.ap)}</td><td class="n">${f1(x.p1)}–${f1(x.p2)}</td><td class="n">${f1(x.fouls)}</td><td class="n">${Math.round(100 * x.o45)}%</td><td class="n"><b class="${x.idx >= 1 ? 'idx-up' : 'idx-down'}">${f2(x.idx)}</b></td></tr>`).join('') || '<tr><td colspan="10" class="muted">No referee has that many games in this selection.</td></tr>';
   $('#rank-note').textContent = `${list.length} referee${list.length === 1 ? '' : 's'} with ${minN}+ game${minN === 1 ? '' : 's'} · ${season === 'all' ? 'all seasons' : season.replace('-', '–')} · ${comp === 'all' ? 'all three competitions' : C[comp]}`;
   document.querySelectorAll('#rank th.sort').forEach(th => th.dataset.k === sortKey ? th.setAttribute('aria-sort', sortDir < 0 ? 'descending' : 'ascending') : th.removeAttribute('aria-sort'));
   // competitions
@@ -564,7 +585,7 @@ def dashboard(rows, base, by_ref, names, slugs, seasons, upcoming, updated):
     idx = {rid: i for i, rid in enumerate(ref_ids)}
     data = {
         "url": URL, "seasons": seasons, "buckets": BUCKETS,
-        "refs": [[names[r], slugs[r]] for r in ref_ids],
+        "refs": [[names[r], slugs[r], country(r)] for r in ref_ids],
         # comp, season, referee, home cards, away cards, 1st half, 2nd half, yellows, reds, fouls, quarter-hours
         "m": [[r["comp"], r["season"], idx[r["ref_id"]], r["hp"], r["ap"], r["p1"], r["p2"], r["yc"], r["rc"], r["fouls"], r["b"]] for r in rows],
     }
@@ -579,13 +600,13 @@ def dashboard(rows, base, by_ref, names, slugs, seasons, upcoming, updated):
     comp_btns = '<button class="chip on" data-comp="all">All</button>' + "".join(
         f'<button class="chip" data-comp="{c}">{COMPS[c]}</button>' for c in ["UCL", "UEL", "UECL"])
     directory = "".join(
-        f'<li data-s="{esc(slugify(names[r]).replace("-", " "))} {" ".join(sorted({x["comp"].lower() for x in by_ref[r]}))}">'
-        f'<a href="{URL}{slugs[r]}/">{esc(names[r])}</a><small>{len(by_ref[r])} · {"/".join(c for c in ["UCL", "UEL", "UECL"] if any(x["comp"] == c for x in by_ref[r]))}</small></li>'
+        f'<li data-s="{esc(slugify(names[r]).replace("-", " "))} {esc(slugify(country(r)).replace("-", " "))} {" ".join(sorted({x["comp"].lower() for x in by_ref[r]}))}">'
+        f'<a href="{URL}{slugs[r]}/">{esc(names[r])}</a>{f" <span class=\"ctry\">{esc(country(r))}</span>" if country(r) else ""}<small>{len(by_ref[r])} · {"/".join(c for c in ["UCL", "UEL", "UECL"] if any(x["comp"] == c for x in by_ref[r]))}</small></li>'
         for r in ref_ids)
     total_pts = sum(r["pts"] for r in rows)
     excluded = sum(len(r["excluded"]) for r in rows)
     et = sum(1 for r in rows if r["et"])
-    body = f"""<section class="intro"><p class="eyebrow">Updated {updated} · {len(rows)} games · {len(by_ref)} referees</p><h2>UEFA Referee Intelligence</h2>
+    body = f"""<section class="intro"><p class="eyebrow">Updated {updated} · {len(rows)} games · {len(by_ref)} referees</p><h2>UEFA Referees</h2>
 <p class="lede">Statistical profiles, match appointments and disciplinary trends across European club competitions: every referee in the Champions League, Europa League and Conference League since 2024–25, league phase onwards.</p></section>
 
 <section class="section"><div class="controls"><div class="seg" role="group" aria-label="Season">{season_btns}</div><div class="seg" role="group" aria-label="Competition">{comp_btns}</div></div>
@@ -612,19 +633,19 @@ def dashboard(rows, base, by_ref, names, slugs, seasons, upcoming, updated):
 </div>
 <div class="panel" style="margin-top:14px"><h3>Season by season</h3><div class="scroll"><table id="trend"><thead><tr><th>Season</th><th class="n">Games</th><th class="n">Cards/g</th><th class="n">Home–away</th><th class="n">1st–2nd half</th><th class="n">Fouls/g</th></tr></thead><tbody></tbody></table></div></div></section>
 
-<section class="section" id="referees"><div class="section-head"><h2>Explore referees</h2><input id="q" type="search" placeholder="Search by name or competition (ucl, uel, uecl)" aria-label="Search referees"></div>
+<section class="section" id="referees"><div class="section-head"><h2>Explore referees</h2><input id="q" type="search" placeholder="Search by name, country or competition (ucl, uel, uecl)" aria-label="Search referees"></div>
 <ul class="dir" id="dir">{directory}</ul></section>
 
 <section class="section method" id="method"><div class="section-head"><h2>Methodology</h2></div>
 <h3>Which games</h3><p>The Champions League, Europa League and Conference League from 2024–25 on, league phase onwards: the knockout play-offs and every knockout round, no qualifying rounds. Only the referee in charge counts; assistants, fourth officials and VAR are not credited with cards.</p>
-<h3>How cards are counted</h3><p>As bookmakers settle card markets: a yellow card counts 1 and a red card 2. A second yellow is ignored and only its red counts, so one player can add at most 3 (yellow 1 + red 2). Cards shown to non-players do not count: managers and staff, substitutes who have not come on, and players already substituted off. Whether a carded player was on the pitch is checked against the lineups and the exact time of each substitution. Only normal time counts, stoppage time included; extra time and penalty shoot-outs are left out. In these {len(rows)} games, {excluded} card{'s' if excluded != 1 else ''} to non-players {'were' if excluded != 1 else 'was'} left out and {et} game{'s' if et != 1 else ''} went to extra time.</p>
+<h3>How cards are counted</h3><p>As bookmakers settle card markets: a yellow card counts 1 and a red card 2. A second yellow is ignored and only its red counts, so one player can add at most 3 (yellow 1 + red 2). Cards shown to non-players do not count: managers and staff, substitutes who have not come on, and players already substituted off. Whether a carded player was on the pitch is checked against the lineups and the exact time of each substitution. Only the scheduled 90 minutes count, stoppage time included: cards shown after the full-time whistle, in extra time or in a penalty shoot-out are left out. In these {len(rows)} games, {excluded} card{'s' if excluded != 1 else ''} to non-players {'were' if excluded != 1 else 'was'} left out and {et} game{'s' if et != 1 else ''} had cards in extra time or a shoot-out that were left out.</p>
 <h3>The card index</h3><p>Referees do not choose their games. A Conference League referee and a Champions League referee face different matches, so each referee's games are compared with the average game in the same competition and season. The index is the referee's cards divided by that average, after adding {SHRINK} average games to every record: a referee with few games sits close to 1.00 until their own games say otherwise. Above 1.00 means more cards than expected, below means fewer.</p>
 <h3>Reading the numbers</h3><p>One referee's average carries a lot of noise. Each profile shows a 90% range for the referee's true average and a sample label; with fewer than 10 games treat everything as a first impression. These are descriptive statistics, not predictions: the games a referee is given, the teams and what is at stake all shape the cards.</p>
-<h3>Data</h3><p>Match data from the Opta feed: referee, every card with its type, minute and player, substitutions, lineups and fouls. Referee appointments appear when UEFA announces them, usually two or three days before kick-off. Fouls are the fouls committed by both teams. Nationality is not in the feed yet.</p>
+<h3>Data</h3><p>Match data from the Opta feed: referee, every card with its type, minute and player, substitutions, lineups and fouls. Referee appointments appear when UEFA announces them, usually two or three days before kick-off. Fouls are the fouls committed by both teams. A referee's country is the football association they referee for, which is not in the feed and is added separately.</p>
 </section>
 <p class="foot">Updated {updated} · {len(rows)} games, {total_pts} counted cards · Data: Opta match feed.</p>"""
     script = f"<script>window.UEFA={json.dumps(data, separators=(',', ':'), ensure_ascii=False)}</script>" + DASH_JS
-    return write("", page(path=URL, title="UEFA Referee Intelligence: referee stats for the Champions League, Europa League and Conference League",
+    return write("", page(path=URL, title="UEFA Referees: referee stats for the Champions League, Europa League and Conference League",
                           h1="UEFA Referees",
                           desc="Statistical profiles, match appointments and disciplinary trends for every referee in the Champions League, Europa League and Conference League since 2024-25.",
                           body=body, tab="overview", script=script))
