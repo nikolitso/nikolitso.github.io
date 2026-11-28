@@ -39,5 +39,5 @@ jobs:
             git add basketball-handicap/data/ah
             git diff --cached --quiet && continue
             git commit -q -m "Basketball handicap: backfill $k"
-            for i in 1 2 3 4 5; do git pull -q --rebase && git push -q && break; sleep $((RANDOM % 10 + 5)); done
+            for i in 1 2 3 4 5; do git pull -q --rebase -X theirs && git push -q && break; git rebase --abort 2>/dev/null || true; sleep $((RANDOM % 10 + 5)); done
           done
