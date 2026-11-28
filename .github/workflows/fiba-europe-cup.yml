@@ -71,7 +71,7 @@ jobs:
           if git diff --cached --quiet; then echo "game pages unchanged"; exit 0; fi
           git commit -q -m "FIBA Europe Cup: game pages $(date '+%Y-%m-%d %H:%M')"
           # several pipelines push at once: on a rejected push, rebase and try again
-          for i in 1 2 3 4 5; do git pull -q --rebase --autostash && git push -q && exit 0; sleep $((RANDOM % 10 + 5)); done
+          for i in 1 2 3 4 5; do git pull -q --rebase --autostash -X theirs && git push -q && exit 0; git rebase --abort 2>/dev/null || true; sleep $((RANDOM % 10 + 5)); done
           exit 1
       - name: New picks
         # the open picks on the published Picks tab not announced yet (scripts/page_picks.py runs the page's own rule);
@@ -87,7 +87,7 @@ jobs:
           git add fibaeuropecup/data/alerted_picks.json
           if git diff --cached --quiet; then echo "no new picks"; exit 0; fi
           git commit -q -m "FIBA Europe Cup: picks announced $(TZ=Europe/Athens date '+%Y-%m-%d %H:%M')"
-          for i in 1 2 3 4 5; do git pull -q --rebase --autostash && git push -q && exit 0; sleep $((RANDOM % 10 + 5)); done
+          for i in 1 2 3 4 5; do git pull -q --rebase --autostash -X theirs && git push -q && exit 0; git rebase --abort 2>/dev/null || true; sleep $((RANDOM % 10 + 5)); done
           exit 1
       - name: Message new picks
         # an ntfy push for every new pick on the Picks tab (scripts/page_picks.py runs the page's own rule),

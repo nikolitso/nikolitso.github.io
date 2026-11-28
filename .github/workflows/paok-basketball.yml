@@ -91,7 +91,7 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git commit -q -m "PAOK Basketball: refresh $(TZ=Europe/Athens date '+%Y-%m-%d %H:%M')"
           # several pipelines push at once: on a rejected push, rebase and try again
-          for i in 1 2 3 4 5; do git pull -q --rebase && git push -q && exit 0; sleep $((RANDOM % 10 + 5)); done
+          for i in 1 2 3 4 5; do git pull -q --rebase -X theirs && git push -q && exit 0; git rebase --abort 2>/dev/null || true; sleep $((RANDOM % 10 + 5)); done
           exit 1
       - name: Data check (every shown competition fetched, every played game complete)
         run: python $S/check.py

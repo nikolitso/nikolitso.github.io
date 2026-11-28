@@ -51,7 +51,7 @@ jobs:
           git add basketball/overs/live.js basketball/overs/games basketball/overs/sitemap.xml
           if git diff --cached --quiet; then echo "page unchanged"; exit 0; fi
           git commit -q -m "Basketball totals: refresh $(TZ=Europe/Athens date '+%Y-%m-%d %H:%M')"
-          for i in 1 2 3 4 5; do git pull -q --rebase && git push -q && exit 0; sleep $((RANDOM % 10 + 5)); done
+          for i in 1 2 3 4 5; do git pull -q --rebase -X theirs && git push -q && exit 0; git rebase --abort 2>/dev/null || true; sleep $((RANDOM % 10 + 5)); done
           exit 1
       - name: Message new picks
         # an ntfy push for every new pick (11 Nov 2026), sent once the page has it; the topic is the NTFY_TOPIC secret
@@ -85,5 +85,5 @@ jobs:
           git add -A
           if git diff --cached --quiet; then echo "data unchanged"; exit 0; fi
           git commit -q -m "Basketball totals: live test $(TZ=Europe/Athens date '+%Y-%m-%d %H:%M')"
-          for i in 1 2 3 4 5; do git pull -q --rebase && git push -q && exit 0; sleep $((RANDOM % 10 + 5)); done
+          for i in 1 2 3 4 5; do git pull -q --rebase -X theirs && git push -q && exit 0; git rebase --abort 2>/dev/null || true; sleep $((RANDOM % 10 + 5)); done
           exit 1
