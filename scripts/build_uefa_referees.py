@@ -185,17 +185,23 @@ def context(matches):
         delta = ELO_K * g * ((1 if gd > 0 else .5 if gd == 0 else 0) - we)
         rating[h] += delta
         rating[a] -= delta
+    # pair the legs from every knockout game, scheduled ones too, so a played first leg counts as one before its return
+    # leg is played (Codex review, PR #49)
+    done = {m["id"] for m in played}
     ties = defaultdict(list)
-    for m in played:
-        if m.get("stage") not in ("League Stage", "Final"):
+    for m in matches:
+        if m.get("stage") not in ("League Stage", "Final") and m.get("home") and m.get("away"):
             ties[(m["comp"], m["season"], m.get("stage"), frozenset((m["home"]["id"], m["away"]["id"])))].append(m)
     for legs in ties.values():
         if len(legs) != 2:
             continue
         l1, l2 = sorted(legs, key=lambda m: (day(m), m.get("time") or ""))
-        lead = l1["scores"]["ft"]["away"] - l1["scores"]["ft"]["home"]   # the second-leg hosts were the first-leg visitors
+        if l1["id"] not in done:
+            continue
         out[l1["id"]]["leg"] = 1
-        out[l2["id"]].update(leg=2, tie=(lead > 0) - (lead < 0))
+        if l2["id"] in done:
+            lead = l1["scores"]["ft"]["away"] - l1["scores"]["ft"]["home"]   # the second-leg hosts were the first-leg visitors
+            out[l2["id"]].update(leg=2, tie=(lead > 0) - (lead < 0))
     return out
 
 
