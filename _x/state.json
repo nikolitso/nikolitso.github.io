@@ -176,7 +176,8 @@
       "statistical-sports-models-in-excel-volume-1",
       "hbr-guide-to-generative-ai-for-managers",
       "unsubscribe-how-to-kill-email-anxiety",
-      "the-scout-mindset"
+      "the-scout-mindset",
+      "the-greatest-the-quest-for-sporting"
     ],
     "log": [
       {
@@ -550,9 +551,15 @@
         "slot": "2026-11-26 14",
         "slug": "the-scout-mindset",
         "id": "2125930124268708162"
+      },
+      {
+        "day": "2026-11-28",
+        "slot": "2026-11-28 14",
+        "slug": "the-greatest-the-quest-for-sporting",
+        "id": "2126647357219676269"
       }
     ],
-    "last_day": "2026-11-26"
+    "last_day": "2026-11-28"
   },
   "film": {
     "seen": [
@@ -1138,7 +1145,7 @@
     ],
     "last_day": "2026-11-16"
   },
-  "last_slot": "2026-11-27 14",
+  "last_slot": "2026-11-28 14",
   "quote": {
     "seen": [
       "1",
