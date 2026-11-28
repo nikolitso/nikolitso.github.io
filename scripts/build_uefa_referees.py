@@ -575,7 +575,9 @@ document.querySelectorAll('[data-season]').forEach(b => b.addEventListener('clic
 document.querySelectorAll('[data-comp]').forEach(b => b.addEventListener('click', () => { comp = b.dataset.comp; document.querySelectorAll('[data-comp]').forEach(x => x.classList.toggle('on', x === b)); render(); }));
 $('#minn').addEventListener('input', e => { minN = Math.max(1, +e.target.value || 1); render(); });
 document.querySelectorAll('#rank th.sort').forEach(th => th.addEventListener('click', () => { const k = th.dataset.k; sortDir = sortKey === k ? -sortDir : (k === 'name' ? 1 : -1); sortKey = k; render(); }));
-const q = $('#q'); q.addEventListener('input', () => { const v = q.value.trim().toLowerCase(); document.querySelectorAll('#dir li').forEach(li => li.hidden = v && !li.dataset.s.includes(v)); });
+// the query is folded like the index (accents off, lower case), and the index also keeps names as shown, so 'Türkiye' and 'turkiye' both match
+const fold = t => t.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[-\s]+/g, ' ').trim();
+const q = $('#q'); q.addEventListener('input', () => { const v = fold(q.value), w = q.value.trim().toLowerCase(); document.querySelectorAll('#dir li').forEach(li => li.hidden = v && !li.dataset.s.includes(v) && !li.dataset.s.includes(w)); });
 render();
 })();
 </script>"""
@@ -601,7 +603,7 @@ def dashboard(rows, base, by_ref, names, slugs, seasons, upcoming, updated):
     comp_btns = '<button class="chip on" data-comp="all">All</button>' + "".join(
         f'<button class="chip" data-comp="{c}">{COMPS[c]}</button>' for c in ["UCL", "UEL", "UECL"])
     directory = "".join(
-        f'<li data-s="{esc(slugify(names[r]).replace("-", " "))} {esc(slugify(country(r)).replace("-", " "))} {" ".join(sorted({x["comp"].lower() for x in by_ref[r]}))}">'
+        f'<li data-s="{esc(slugify(names[r]).replace("-", " "))} {esc(slugify(country(r)).replace("-", " "))} {esc(names[r].lower())} {esc(country(r).lower())} {" ".join(sorted({x["comp"].lower() for x in by_ref[r]}))}">'
         f'<a href="{URL}{slugs[r]}/">{esc(names[r])}</a>{f" <span class=\"ctry\">{esc(country(r))}</span>" if country(r) else ""}<small>{len(by_ref[r])} · {"/".join(c for c in ["UCL", "UEL", "UECL"] if any(x["comp"] == c for x in by_ref[r]))}</small></li>'
         for r in ref_ids)
     total_pts = sum(r["pts"] for r in rows)
